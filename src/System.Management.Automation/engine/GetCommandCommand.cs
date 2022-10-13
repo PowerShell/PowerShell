@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllCommandSet")]
         public uint FuzzyMinimumDistance { get; set; } = 5;
 
-        private List<CommandScore> _commandScores = new List<CommandScore>();
+        private FuzzyMatcher _fuzzyMatcher;
 
         /// <summary>
         /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
@@ -367,7 +367,10 @@ namespace Microsoft.PowerShell.Commands
 #if LEGACYTELEMETRY
             _timer.Start();
 #endif
-            base.BeginProcessing();
+            if (UseFuzzyMatching)
+            {
+                _fuzzyMatcher = new FuzzyMatcher(FuzzyMinimumDistance);
+            }
 
             if (ShowCommandInfo.IsPresent && Syntax.IsPresent)
             {
@@ -503,18 +506,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void OutputResultsHelper(IEnumerable<CommandInfo> results)
         {
-            CommandOrigin origin = this.MyInvocation.CommandOrigin;
+            CommandOrigin origin = MyInvocation.CommandOrigin;
 
-            if (UseFuzzyMatching)
-            {
-                _commandScores = _commandScores
-                    .Where(x => x.Score <= FuzzyMinimumDistance)
-                    .OrderBy(static x => x.Score)
-                    .ToList();
-                results = _commandScores.Select(static x => x.Command);
-            }
-
-            int count = 0;
             foreach (CommandInfo result in results)
             {
                 // Only write the command if it is visible to the requestor
@@ -531,31 +524,23 @@ namespace Microsoft.PowerShell.Commands
                             WriteObject(syntax);
                         }
                     }
+                    else if (ShowCommandInfo.IsPresent)
+                    {
+                        // Write output as ShowCommandCommandInfo object.
+                        WriteObject(ConvertToShowCommandInfo(result));
+                    }
+                    else if (UseFuzzyMatching && _fuzzyMatcher.ScoreMap.TryGetValue(result.Name, out int score))
+                    {
+                        // If the result was retrieved because of fuzzy searching, the attach the matching score.
+                        var obj = new PSObject(result);
+                        obj.Properties.Add(new PSNoteProperty("Score", score));
+                        WriteObject(obj);
+                    }
                     else
                     {
-                        if (ShowCommandInfo.IsPresent)
-                        {
-                            // Write output as ShowCommandCommandInfo object.
-                            WriteObject(
-                                ConvertToShowCommandInfo(result));
-                        }
-                        else
-                        {
-                            if (UseFuzzyMatching)
-                            {
-                                PSObject obj = new PSObject(result);
-                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores[count].Score));
-                                WriteObject(obj);
-                            }
-                            else
-                            {
-                                WriteObject(result);
-                            }
-                        }
+                        WriteObject(result);
                     }
                 }
-
-                count += 1;
             }
 
 #if LEGACYTELEMETRY
@@ -784,11 +769,6 @@ namespace Microsoft.PowerShell.Commands
                 options |= SearchResolutionOptions.UseAbbreviationExpansion;
             }
 
-            if (UseFuzzyMatching)
-            {
-                options |= SearchResolutionOptions.FuzzyMatch;
-            }
-
             if ((this.CommandType & CommandTypes.Alias) != 0)
             {
                 options |= SearchResolutionOptions.ResolveAliasPatterns;
@@ -861,24 +841,20 @@ namespace Microsoft.PowerShell.Commands
                                 IEnumerable<CommandInfo> commands;
                                 if (UseFuzzyMatching)
                                 {
-                                    foreach (var commandScore in System.Management.Automation.Internal.ModuleUtils.GetFuzzyMatchingCommands(
+                                    commands = ModuleUtils.GetMatchingCommands(
                                         plainCommandName,
-                                        this.Context,
-                                        this.MyInvocation.CommandOrigin,
+                                        Context,
+                                        MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
-                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified))
-                                    {
-                                        _commandScores.Add(commandScore);
-                                    }
-
-                                    commands = _commandScores.Select(static x => x.Command).ToList();
+                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified,
+                                        fuzzyMatcher: _fuzzyMatcher);
                                 }
                                 else
                                 {
-                                    commands = System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands(
+                                    commands = ModuleUtils.GetMatchingCommands(
                                         plainCommandName,
-                                        this.Context,
-                                        this.MyInvocation.CommandOrigin,
+                                        Context,
+                                        MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified,
                                         useAbbreviationExpansion: UseAbbreviationExpansion);
@@ -939,12 +915,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool FindCommandForName(SearchResolutionOptions options, string commandName, bool isPattern, bool emitErrors, ref int currentCount, out bool isDuplicate)
         {
-            CommandSearcher searcher =
-                    new CommandSearcher(
-                        commandName,
-                        options,
-                        this.CommandType,
-                        this.Context);
+            var searcher = new CommandSearcher(
+                commandName,
+                options,
+                CommandType,
+                Context,
+                _fuzzyMatcher);
 
             bool resultFound = false;
             isDuplicate = false;
@@ -1028,12 +1004,6 @@ namespace Microsoft.PowerShell.Commands
                         if (TotalCount >= 0 && currentCount > TotalCount)
                         {
                             break;
-                        }
-
-                        if (UseFuzzyMatching)
-                        {
-                            int score = FuzzyMatcher.GetDamerauLevenshteinDistance(current.Name, commandName);
-                            _commandScores.Add(new CommandScore(current, score));
                         }
 
                         _accumulatedResults.Add(current);

@@ -380,27 +380,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets a list of fuzzy matching commands and their scores.
-        /// </summary>
-        /// <param name="pattern">Command pattern.</param>
-        /// <param name="context">Execution context.</param>
-        /// <param name="commandOrigin">Command origin.</param>
-        /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
-        /// <param name="moduleVersionRequired">Specific module version to be required.</param>
-        /// <returns>IEnumerable tuple containing the CommandInfo and the match score.</returns>
-        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
-        {
-            foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, useFuzzyMatching: true))
-            {
-                int score = FuzzyMatcher.GetDamerauLevenshteinDistance(command.Name, pattern);
-                if (score <= FuzzyMatcher.MinimumDistance)
-                {
-                    yield return new CommandScore(command, score);
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets a list of matching commands.
         /// </summary>
         /// <param name="pattern">Command pattern.</param>
@@ -408,10 +387,10 @@ namespace System.Management.Automation.Internal
         /// <param name="commandOrigin">Command origin.</param>
         /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
-        /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
+        /// <param name="fuzzyMatcher">Fuzzy matcher for fuzzy searching.</param>
         /// <param name="useAbbreviationExpansion">Use abbreviation expansion for matching.</param>
         /// <returns>Returns matching CommandInfo IEnumerable.</returns>
-        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false, bool useAbbreviationExpansion = false)
+        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, FuzzyMatcher fuzzyMatcher = null, bool useAbbreviationExpansion = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
             // type of command info.
@@ -449,7 +428,7 @@ namespace System.Management.Automation.Internal
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
-                                    (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
+                                    fuzzyMatcher?.IsFuzzyMatch(entry.Value.Name, pattern) == true ||
                                     (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
@@ -509,7 +488,7 @@ namespace System.Management.Automation.Internal
                         CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName) ||
-                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
+                            fuzzyMatcher?.IsFuzzyMatch(commandName, pattern) == true ||
                             (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(commandName), StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;
