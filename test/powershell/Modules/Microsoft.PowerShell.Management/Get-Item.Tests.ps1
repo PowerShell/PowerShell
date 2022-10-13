@@ -193,7 +193,7 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
         } else {
             $fso = New-Object -ComObject Scripting.FileSystemObject
             $shortPath = $fso.GetFile("$PSHOME\pwsh.exe").ShortPath.Replace('\', '/')
-            $valDirect, $valGetItem, $unused = node.exe -pe @"
+            $script = @"
                 env = {}
                 env.testVar = process.env.testVar // include the original case variant with its original value.
                 env.TESTVAR = 'b' // redefine with a case variant name and different value
@@ -201,8 +201,11 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
                 //       `$env:testvar and Get-Item env:testvar report the same value.
                 //       The nondeterministic behavior makes it hard to prove that the values are *always* the
                 //       same, however.
-                require('child_process').execSync("$shortPath -noprofile -command `$env:testvar, (Get-Item env:testvar).Value", { env: env }).toString()
+                require('child_process').execSync('$shortPath -noprofile -command `$env:testvar, (Get-Item env:testvar).Value', { env: env }).toString()
 "@
+            $valDirect, $valGetItem, $unused = node.exe -pe $script
+            $LASTEXITCODE | Should -Be 0
+            $valDirect | Should -Not -BeNullOrEmpty
             $valGetItem | Should -BeExactly $valDirect
         }
     }
