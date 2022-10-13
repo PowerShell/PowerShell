@@ -428,7 +428,7 @@ namespace System.Management.Automation.Internal
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
-                                    fuzzyMatcher?.IsFuzzyMatch(entry.Value.Name, pattern) == true ||
+                                    (fuzzyMatcher is not null && fuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
                                     (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
@@ -488,7 +488,7 @@ namespace System.Management.Automation.Internal
                         CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName) ||
-                            fuzzyMatcher?.IsFuzzyMatch(commandName, pattern) == true ||
+                            (fuzzyMatcher is not null && fuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
                             (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(commandName), StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;

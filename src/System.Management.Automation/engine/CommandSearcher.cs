@@ -697,7 +697,7 @@ namespace System.Management.Automation
                     foreach (KeyValuePair<string, AliasInfo> aliasEntry in _context.EngineSessionState.GetAliasTable())
                     {
                         if (aliasMatcher.IsMatch(aliasEntry.Key) ||
-                            _fuzzyMatcher?.IsFuzzyMatch(aliasEntry.Key, _commandName) == true)
+                            (_fuzzyMatcher is not null && _fuzzyMatcher.IsFuzzyMatch(aliasEntry.Key, _commandName)))
                         {
                             matchingAliases.Add(aliasEntry.Value);
                         }
@@ -776,7 +776,7 @@ namespace System.Management.Automation
                     foreach ((string functionName, FunctionInfo functionInfo) in _context.EngineSessionState.GetFunctionTable())
                     {
                         if (functionMatcher.IsMatch(functionName) ||
-                            _fuzzyMatcher?.IsFuzzyMatch(functionName, _commandName) == true)
+                            (_fuzzyMatcher is not null && _fuzzyMatcher.IsFuzzyMatch(functionName, _commandName)))
                         {
                             matchingFunction.Add(functionInfo);
                         }
@@ -1008,8 +1008,8 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletMatcher?.IsMatch(cmdlet.Name) == true ||
-                                _fuzzyMatcher?.IsFuzzyMatch(cmdlet.Name, _commandName) == true)
+                            if ((cmdletMatcher is not null && cmdletMatcher.IsMatch(cmdlet.Name)) ||
+                                (_fuzzyMatcher is not null && _fuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
                                 if (string.IsNullOrEmpty(moduleName) || moduleName.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase))
                                 {
