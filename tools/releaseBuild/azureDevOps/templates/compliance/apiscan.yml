@@ -78,6 +78,24 @@ jobs:
       retryCountOnTaskFailure: 2
       workingDirectory: '$(Build.SourcesDirectory)'
 
+    - pwsh: |
+        Get-ChildItem '$(BinDir)' -File |
+        Foreach-Object {
+          [pscustomobject]@{
+            Path = $_.FullName
+            Version = $_.VersionInfo.FileVersion
+            Md5Hash = (Get-FileHash -Algorithm MD5 -Path $_.FullName).Hash
+            Sha512Hash = (Get-FileHash -Algorithm SHA512 -Path $_.FullName).Hash
+          }
+        } | Export-Csv -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+      displayName: 'Create release file hash artifact'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build File Hash artifact'
+      inputs:
+        pathToPublish: '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+        artifactName: ReleaseFilesHash
+
     - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
       displayName: 'Run APIScan'
       inputs:
