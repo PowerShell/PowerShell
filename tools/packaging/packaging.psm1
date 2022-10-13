@@ -2043,7 +2043,7 @@ function New-ILNugetPackageSource
 
     #region ref
     $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
-    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
+    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
     #endregion ref
 
     $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -2192,7 +2192,8 @@ function CopyReferenceAssemblies
         [string] $assemblyName,
         [string] $refBinPath,
         [string] $refNugetPath,
-        [string[]] $assemblyFileList
+        [string[]] $assemblyFileList,
+        [string] $winBinPath
     )
 
     $supportedRefList = @(
@@ -2221,7 +2222,8 @@ function CopyReferenceAssemblies
         default {
             $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
             $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
-            Copy-Item $ref_SMA, $ref_doc -Destination $refNugetPath -Force
+            $self_ref_doc = Join-Path -Path $winBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $ref_SMA, $ref_doc, $self_ref_doc -Destination $refNugetPath -Force
             Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
         }
     }
