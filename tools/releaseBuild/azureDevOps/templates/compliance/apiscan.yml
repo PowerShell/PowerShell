@@ -79,7 +79,7 @@ jobs:
       workingDirectory: '$(Build.SourcesDirectory)'
 
     - pwsh: |
-        Get-ChildItem '$(BinDir)' -File |
+        Get-ChildItem '$(BinDir)' -File -Recurse |
         Foreach-Object {
           [pscustomobject]@{
             Path = $_.FullName
