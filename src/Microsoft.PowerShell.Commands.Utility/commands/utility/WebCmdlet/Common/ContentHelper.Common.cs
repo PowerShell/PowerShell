@@ -36,34 +36,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         internal static Encoding GetDefaultEncoding()
-        {
-            return GetEncodingOrDefault((string)null);
-        }
-
-        internal static Encoding GetEncoding(HttpResponseMessage response)
-        {
-            // ContentType may not exist in response header.
-            string charSet = response.Content.Headers.ContentType?.CharSet;
-            return GetEncodingOrDefault(charSet);
-        }
-
-        internal static Encoding GetEncodingOrDefault(string characterSet)
-        {
-            // get the name of the codepage to use for response content
-            string codepage = (string.IsNullOrEmpty(characterSet) ? _defaultCodePage : characterSet);
-            Encoding encoding = null;
-
-            try
-            {
-                encoding = Encoding.GetEncoding(codepage);
-            }
-            catch (ArgumentException)
-            {
-                // 0, default code page
-                encoding = Encoding.GetEncoding(0);
-            }
-
-            return encoding;
+        { 
+            Encoding encoding = Encoding.GetEncoding(_defaultCodePage);
+            return encoding;    
         }
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)
