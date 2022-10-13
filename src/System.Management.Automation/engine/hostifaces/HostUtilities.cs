@@ -69,7 +69,7 @@ namespace System.Management.Automation
             [System.Diagnostics.DebuggerHidden()]
             param([string] $formatString)
 
-            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
+            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatching -FuzzyMinimumDistance 1 | Select-Object -First 5 -Unique -ExpandProperty Name))
         ";
 
         private static readonly List<Hashtable> s_suggestions = InitializeSuggestions();

@@ -88,7 +88,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                 {
                     _fuzzySb ??= ScriptBlock.CreateDelayParsedScriptBlock(@$"
                         param([string] $target)
-                        $cmdNames = Get-Command $target -UseFuzzyMatch | Select-Object -First 10 -ExpandProperty Name
+                        $cmdNames = Get-Command $target -UseFuzzyMatching -FuzzyMinimumDistance 1 | Select-Object -First 5 -Unique -ExpandProperty Name
                         if ($cmdNames) {{
                             [string]::Join(', ', $cmdNames)
                         }}
