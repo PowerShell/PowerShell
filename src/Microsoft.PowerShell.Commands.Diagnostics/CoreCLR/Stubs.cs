@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#if CORECLR
-
 namespace System.Diagnostics
 {
     /// <summary>
@@ -249,4 +247,3 @@ namespace System.Diagnostics
         CounterDelta64 = 4195584
     }
 }
-#endif
