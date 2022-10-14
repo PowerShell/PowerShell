@@ -34,6 +34,8 @@ resources:
   clean: true
 jobs:
 - job: SSHRemotingTests
+  pool:
+    vmImage: ubuntu-20.04
   container: mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
   displayName: SSH Remoting Tests
 
