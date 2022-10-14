@@ -23,6 +23,63 @@ Describe "Format-Custom" -Tags "CI" {
         }
 
     }
+
+    Context "Treats datetime as scalar unless Expanded" {
+        BeforeAll{
+            $date = [DateTime]::new(2000,01,02)
+            $obj = [PSCustomObject] @{
+                Date = $date
+                PSTypeName="DateTimeTest"
+            }
+            # locale aware formatting
+            [string] $dateStr = $date.ToString()
+            [string] $longDate = $date.ToString("F")
+
+        }
+
+        It "Should treat datetime as scalar by default" {
+            $res = ($obj | Format-Custom | Out-String).Trim()
+            $res | Should -BeExactly @"
+class DateTimeTest
+{
+  Date = $dateStr
+}
+"@
+        }
+
+        It "Treats datetime as non-scalar when Expanded" {
+            $res = ($obj | Format-Custom -ExpandType:System.DateTime -Depth:1 | Out-String).Trim()
+
+            $expected = @"
+class DateTimeTest
+{
+  Date =
+    class DateTime
+    {
+      Date = 2000-01-02 00:00:00
+      Day = 2
+      DayOfWeek = Sunday
+      DayOfYear = 2
+      Hour = 0
+      Kind = Unspecified
+      Millisecond = 0
+      Microsecond = 0
+      Nanosecond = 0
+      Minute = 0
+      Month = 1
+      Second = 0
+      Ticks = 630823680000000000
+      TimeOfDay = 00:00:00
+      Year = 2000
+      DateTime = $longDate
+    }
+}
+"@ -replace '=\r\n', "= `r`n"
+
+            $res | Should -BeExactly $expected
+        }
+
+    }
 }
 
 Describe "Format-Custom DRT basic functionality" -Tags "CI" {
