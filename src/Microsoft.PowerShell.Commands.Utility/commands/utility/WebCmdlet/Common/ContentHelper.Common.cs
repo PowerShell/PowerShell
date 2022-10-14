@@ -13,13 +13,6 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class ContentHelper
     {
-        #region Fields
-
-        // used to split contentType arguments
-        private static readonly char[] s_contentTypeParamSeparator = { ';' };
-
-        #endregion Fields
-
         #region Internal Methods
 
         internal static string GetContentType(HttpResponseMessage response)
@@ -175,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(contentType))
                 return null;
 
-            string sig = contentType.Split(s_contentTypeParamSeparator, 2)[0].ToUpperInvariant();
+            string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
             return (sig);
         }
 
