@@ -31,28 +31,20 @@ namespace Microsoft.PowerShell.Commands
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
-        public object[] Property
-        {
-            get { return _props; }
-
-            set { _props = value; }
-        }
-
-        private object[] _props;
+        public object[] Property { get; set; }
 
         /// <summary>
+        /// Specifies the number of levels to recurse complex properties
         /// </summary>
-        /// <value></value>
         [ValidateRangeAttribute(1, int.MaxValue)]
         [Parameter]
-        public int Depth
-        {
-            get { return _depth; }
+        public int Depth {get; set; } = ComplexSpecificParameters.maxDepthAllowable;
 
-            set { _depth = value; }
-        }
-
-        private int _depth = ComplexSpecificParameters.maxDepthAllowable;
+        /// <summary>
+        /// Types that by default are rendered as scalars (such as System.DateTime), but should be expanded.
+        /// </summary>
+        [Parameter]
+        public string[] ExpandType { get; set; }
 
         #endregion
 
@@ -60,11 +52,11 @@ namespace Microsoft.PowerShell.Commands
         {
             FormattingCommandLineParameters parameters = new();
 
-            if (_props != null)
+            if (Property != null)
             {
                 ParameterProcessor processor = new(new FormatObjectParameterDefinition());
                 TerminatingErrorContext invocationContext = new(this);
-                parameters.mshParameterList = processor.ProcessParameters(_props, invocationContext);
+                parameters.mshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
 
             if (!string.IsNullOrEmpty(this.View))
@@ -88,7 +80,8 @@ namespace Microsoft.PowerShell.Commands
             parameters.expansion = ProcessExpandParameter();
 
             ComplexSpecificParameters csp = new();
-            csp.maxDepth = _depth;
+            csp.maxDepth = Depth;
+            csp.scalarTypesToExpand = ExpandType;
             parameters.shapeParameters = csp;
 
             return parameters;

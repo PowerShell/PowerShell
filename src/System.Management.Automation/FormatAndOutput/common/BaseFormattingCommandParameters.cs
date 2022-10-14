@@ -105,6 +105,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Max depth of recursion on sub objects.
         /// </summary>
         internal int maxDepth = maxDepthAllowable;
+
+        /// <summary>
+        /// list of types that are by default rendered as scalar, but should be expanded
+        /// </summary>
+        internal string[] scalarTypesToExpand {
+            get => _scalarTypesToExpand ?? Array.Empty<string>();
+            set => _scalarTypesToExpand = value; }
+
+        private string[] _scalarTypesToExpand;
     }
 
     #endregion

@@ -418,6 +418,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class ComplexViewObjectBrowser
     {
+        private static readonly HashSet<string> s_defaultLeafTypes = new() { "System.DateTime" };
+
         internal ComplexViewObjectBrowser(FormatErrorManager resultErrorManager, PSPropertyExpressionFactory mshExpressionFactory, int enumerationLimit)
         {
             _errorManager = resultErrorManager;
@@ -445,7 +447,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // create a top level entry as root of the tree
             ComplexViewEntry cve = new ComplexViewEntry();
             var typeNames = so.InternalTypeNames;
-            if (TreatAsScalarType(typeNames))
+            if (TreatAsScalarType(typeNames, _complexSpecificParameters.scalarTypesToExpand))
             {
                 FormatEntry fe = new FormatEntry();
 
@@ -589,7 +591,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatValueList.Add(new FormatNewLine());
                     DisplayEnumeration(e, level.NextLevel, AddIndentationLevel(formatValueList));
                 }
-                else if (val == null || TreatAsLeafNode(val, level))
+                else if (val == null || TreatAsLeafNode(val, level, _complexSpecificParameters.scalarTypesToExpand))
                 {
                     DisplayLeaf(val, formatValueList);
                 }
@@ -640,7 +642,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     enumCount++;
                 }
 
-                if (TreatAsLeafNode(x, level))
+                if (TreatAsLeafNode(x, level, _complexSpecificParameters.scalarTypesToExpand))
                 {
                     DisplayLeaf(x, formatValueList);
                 }
@@ -681,23 +683,43 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="val">Object to verify.</param>
         /// <param name="level">Current level of recursion.</param>
+        /// <param name="scalarTypesToExpand">Array of names of types that should not be rendered as scalars.</param>
         /// <returns></returns>
-        private static bool TreatAsLeafNode(object val, TraversalInfo level)
+        private static bool TreatAsLeafNode(object val, TraversalInfo level, string[] scalarTypesToExpand)
         {
             if (level.Level >= level.MaxDepth || val == null)
                 return true;
 
-            return TreatAsScalarType(PSObject.GetTypeNames(val));
+            return TreatAsScalarType(PSObject.GetTypeNames(val), scalarTypesToExpand);
         }
 
         /// <summary>
         /// Treat as scalar check.
         /// </summary>
         /// <param name="typeNames">Name of the type to check.</param>
+        /// <param name="scalarTypesToExpand">Array of names of types that should not be rendered as scalars.</param>
         /// <returns>True if it has to be treated as a scalar.</returns>
-        private static bool TreatAsScalarType(Collection<string> typeNames)
+        private static bool TreatAsScalarType(Collection<string> typeNames, string[] scalarTypesToExpand)
         {
-            return DefaultScalarTypes.IsTypeInList(typeNames);
+            return TypeIsScalarForComplexView(typeNames, scalarTypesToExpand) || DefaultScalarTypes.IsTypeInList(typeNames);
+        }
+
+        private static bool TypeIsScalarForComplexView(Collection<string> typeNames, string[] scalarTypesToExpand)
+        {
+            foreach (var type in typeNames)
+            {
+                // if the type is in the scalarTypesToExpand, we should not treat it as a scalar
+                if (s_defaultLeafTypes.Contains(type))
+                {
+                    if (System.Array.Find(scalarTypesToExpand, t => t == type) is not null){
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private string GetObjectDisplayName(PSObject so)
