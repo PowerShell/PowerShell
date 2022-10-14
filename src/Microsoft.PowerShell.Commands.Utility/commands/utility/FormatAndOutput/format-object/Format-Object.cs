@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int Depth { get; set; } = ComplexSpecificParameters.maxDepthAllowable;
 
-        /// <inheritdoc <see cref="ComplexSpecificParameters.scalarTypesToExpand" />
+        /// <inheritdoc cref="ComplexSpecificParameters.ScalarTypesToExpand" />
         [Parameter]
         public string[] ExpandType { get; set; }
 

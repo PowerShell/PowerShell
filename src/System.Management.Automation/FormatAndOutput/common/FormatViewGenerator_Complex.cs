@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // create a top level entry as root of the tree
             ComplexViewEntry cve = new ComplexViewEntry();
             var typeNames = so.InternalTypeNames;
-            if (TreatAsScalarType(typeNames, _complexSpecificParameters.scalarTypesToExpand))
+            if (TreatAsScalarType(typeNames, _complexSpecificParameters.ScalarTypesToExpand))
             {
                 FormatEntry fe = new FormatEntry();
 
@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatValueList.Add(new FormatNewLine());
                     DisplayEnumeration(e, level.NextLevel, AddIndentationLevel(formatValueList));
                 }
-                else if (val == null || TreatAsLeafNode(val, level, _complexSpecificParameters.scalarTypesToExpand))
+                else if (val == null || TreatAsLeafNode(val, level, _complexSpecificParameters.ScalarTypesToExpand))
                 {
                     DisplayLeaf(val, formatValueList);
                 }
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     enumCount++;
                 }
 
-                if (TreatAsLeafNode(x, level, _complexSpecificParameters.scalarTypesToExpand))
+                if (TreatAsLeafNode(x, level, _complexSpecificParameters.ScalarTypesToExpand))
                 {
                     DisplayLeaf(x, formatValueList);
                 }
@@ -684,11 +684,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="val">Object to verify.</param>
         /// <param name="level">Current level of recursion.</param>
         /// <param name="scalarTypesToExpand">Array of names of types that should not be rendered as scalars.</param>
-        /// <returns></returns>
+        /// <returns>True if it has to be treated as leaf node.</returns>
         private static bool TreatAsLeafNode(object val, TraversalInfo level, string[] scalarTypesToExpand)
         {
             if (level.Level >= level.MaxDepth || val == null)
+            {
                 return true;
+            }
 
             return TreatAsScalarType(PSObject.GetTypeNames(val), scalarTypesToExpand);
         }

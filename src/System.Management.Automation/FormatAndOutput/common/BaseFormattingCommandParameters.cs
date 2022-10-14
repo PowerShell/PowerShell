@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Gets or sets an array of type names that are by default rendered as scalar, but should be expanded.
         /// </summary>
-        internal string[] scalarTypesToExpand
+        internal string[] ScalarTypesToExpand
         {
             get => _scalarTypesToExpand ?? Array.Empty<string>();
             set => _scalarTypesToExpand = value;
