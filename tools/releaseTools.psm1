@@ -631,11 +631,35 @@ function Update-PsVersionInCode
 
 ##############################
 #.SYNOPSIS
-# Test if the GithubCli is in the path#
+# Test if the GithubCli is in the path
 ##############################
 function Test-GitHubCli {
     $gitHubCli = Get-Command -Name 'gh' -ErrorAction SilentlyContinue
+
     if ($gitHubCli) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is the required version
+##############################
+function Test-GitHubCliVersion {
+    param(
+        [Parameter(Mandatory)]
+        [System.Management.Automation.SemanticVersion]
+        $RequiredVersion
+    )
+    [System.Management.Automation.SemanticVersion] $version = gh --version | ForEach-Object {
+        if ($_ -match ' (\d+\.\d+\.\d+) ') {
+            $matches[1]
+        }
+    }
+
+    if ($version -ge $RequiredVersion) {
         return $true
     } else {
         return $false
@@ -667,6 +691,11 @@ function Get-PRBackportReport {
 
     if (!(Test-GitHubCli)) {
         throw "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    }
+
+    $requiredVersion = '2.17'
+    if (!(Test-GitHubCliVersion -RequiredVersion $requiredVersion)) {
+        throw "Please upgrade the GitHub CLI to version $requiredVersion. Please install it from https://cli.github.com/"
     }
 
     if (!(gh auth status 2>&1  | Select-String 'logged in')){
