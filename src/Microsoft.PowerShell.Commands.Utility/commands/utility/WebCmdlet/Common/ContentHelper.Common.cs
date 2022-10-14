@@ -13,13 +13,6 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class ContentHelper
     {
-        #region Constants
-
-        // default codepage encoding for web content.  See RFC 2616.
-        private const string _defaultCodePage = "ISO-8859-1";
-
-        #endregion Constants
-
         #region Fields
 
         // used to split contentType arguments
@@ -36,8 +29,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         internal static Encoding GetDefaultEncoding()
-        { 
-            Encoding encoding = Encoding.GetEncoding(_defaultCodePage);
+        {
+            // default codepage encoding for web content.  See RFC 2616.
+            Encoding encoding = Encoding.GetEncoding("ISO-8859-1");
             return encoding;    
         }
 
