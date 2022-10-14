@@ -166,8 +166,8 @@ function Get-CGRegistrations {
             "osx-x64",
             "win-arm",
             "win-arm64",
-            "win7-x64",
-            "win7-x86",
+            "win81-x64",
+            "win81-x86",
             "modules")]
         [string]$Runtime,
 
@@ -178,7 +178,7 @@ function Get-CGRegistrations {
     $registrationChanged = $false
 
     $dotnetTargetName = 'net7.0'
-    $dotnetTargetNameWin7 = 'net7.0-windows7.0'
+    $dotnetTargetNameWin7 = 'net7.0-windows8.1'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -196,7 +196,7 @@ function Get-CGRegistrations {
             $folder = $unixProjectName
             $target = "$dotnetTargetName|$Runtime"
         }
-        "win7-.*" {
+        "win81-.*" {
             $sdkToUse = $winDesktopSdk
             $folder = $windowsProjectName
             $target = "$dotnetTargetNameWin7|$Runtime"
@@ -264,7 +264,7 @@ function Get-CGRegistrations {
 $registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
 $lastCount = 0
 $registrationChanged = $false
-foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86") {
+foreach ($runtime in "win81-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win81-x86") {
     $registrationChanged = (Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations) -or $registrationChanged
     $count = $registrations.Count
     $newCount = $count - $lastCount
@@ -276,7 +276,7 @@ $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $regist
 
 $count = $newRegistrations.Count
 $newJson = @{
-    Registrations = $newRegistrations 
+    Registrations = $newRegistrations
      '$schema' = "https://json.schemastore.org/component-detection-manifest.json"
 } | ConvertTo-Json -depth 99
 
