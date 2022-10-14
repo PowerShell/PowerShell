@@ -702,7 +702,7 @@ function Get-PRBackportReport {
         throw "Please login to GitHub CLI using 'gh auth login'"
     }
 
-    $prs = gh pr list --state merged --label "Backport-$Version.x-$TriageState" --json title --json number --json mergeCommit --json mergedAt |
+    $prs = gh pr list --state merged --label "Backport-$Version.x-$TriageState" --json title,number,mergeCommit,mergedAt |
         ConvertFrom-Json |
         ForEach-Object {
             [PScustomObject]@{
