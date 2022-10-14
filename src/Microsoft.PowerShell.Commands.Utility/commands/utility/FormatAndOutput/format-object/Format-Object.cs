@@ -38,11 +38,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [ValidateRangeAttribute(1, int.MaxValue)]
         [Parameter]
-        public int Depth {get; set; } = ComplexSpecificParameters.maxDepthAllowable;
+        public int Depth { get; set; } = ComplexSpecificParameters.maxDepthAllowable;
 
-        /// <summary>
-        /// Types that by default are rendered as scalars (such as System.DateTime), but should be expanded.
-        /// </summary>
+        /// <inheritdoc <see cref="ComplexSpecificParameters.scalarTypesToExpand" />
         [Parameter]
         public string[] ExpandType { get; set; }
 

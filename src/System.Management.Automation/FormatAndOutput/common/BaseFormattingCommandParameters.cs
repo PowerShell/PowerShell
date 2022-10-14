@@ -107,11 +107,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal int maxDepth = maxDepthAllowable;
 
         /// <summary>
-        /// list of types that are by default rendered as scalar, but should be expanded
+        /// Gets or sets an array of type names that are by default rendered as scalar, but should be expanded.
         /// </summary>
-        internal string[] scalarTypesToExpand {
+        internal string[] scalarTypesToExpand
+        {
             get => _scalarTypesToExpand ?? Array.Empty<string>();
-            set => _scalarTypesToExpand = value; }
+            set => _scalarTypesToExpand = value;
+        }
 
         private string[] _scalarTypesToExpand;
     }

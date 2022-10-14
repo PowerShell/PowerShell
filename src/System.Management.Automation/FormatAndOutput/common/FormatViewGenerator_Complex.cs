@@ -711,7 +711,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // if the type is in the scalarTypesToExpand, we should not treat it as a scalar
                 if (s_defaultLeafTypes.Contains(type))
                 {
-                    if (System.Array.Find(scalarTypesToExpand, t => t == type) is not null){
+                    if (System.Array.Find(scalarTypesToExpand, t => t == type) is not null)
+                    {
                         return false;
                     }
 
