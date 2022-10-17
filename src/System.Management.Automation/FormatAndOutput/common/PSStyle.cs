@@ -4,7 +4,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
-using System.Security.Policy;
 
 namespace System.Management.Automation
 {
