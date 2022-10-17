@@ -230,7 +230,7 @@ decimal : 4567.123456789
     }
 }
 
-Describe 'Format-List color tests' {
+Describe 'Format-List color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'

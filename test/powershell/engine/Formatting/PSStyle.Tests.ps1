@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Tests for $PSStyle automatic variable' {
+Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
     BeforeAll {
         $styleDefaults = @{
             Reset = "`e[0m"
@@ -380,7 +380,7 @@ Describe 'Tests for $PSStyle automatic variable' {
     }
 }
 
-Describe 'Handle strings with escape sequences in formatting' {
+Describe 'Handle strings with escape sequences in formatting' -Tag 'CI' {
 
     BeforeAll {
         function Get-DemoObjects {
