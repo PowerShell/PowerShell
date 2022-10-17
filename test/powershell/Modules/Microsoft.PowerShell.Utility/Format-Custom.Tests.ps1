@@ -32,9 +32,8 @@ Describe "Format-Custom" -Tags "CI" {
                 PSTypeName="DateTimeTest"
             }
             # locale aware formatting
-            [string] $dateStr = $date.ToString()
-            [string] $longDate = $date.ToString("F")
-
+            $dateStr = $date.ToString()
+            $longDate = $date.ToString("F")
         }
 
         It "Should treat datetime as scalar by default" {
@@ -48,9 +47,8 @@ class DateTimeTest
         }
 
         It "Treats datetime as non-scalar when Expanded" {
-            $res = $obj | Format-Custom -ExpandType:System.DateTime -Depth:1 | Out-String
 
-            $expected = @"
+          $expected = @"
 class DateTimeTest
 {
   Date =
@@ -74,12 +72,11 @@ class DateTimeTest
       DateTime = $longDate
     }
 }
-"@ -replace '=\r?\n', "=`n"
-            $res = ($res -replace '\r?\n', "`n").Trim()
-            $expected = ($expected -replace '\r?\n', "`n").Trim()
-            $res | Should -BeExactly $expected
-        }
+"@ -replace 'Date =\r?\n', "Date = `n" -replace '\r\n', "`n" # the 'Date = ' replacement is needed as editors trim whitespace at the end of lines.
 
+            $actual = ($obj | Format-Custom -ExpandType:System.DateTime -Depth:1 | Out-String).Trim() -replace '\r?\n', "`n"
+            $actual | Should -BeExactly $expected
+        }
     }
 }
 
