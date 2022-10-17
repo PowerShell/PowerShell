@@ -330,6 +330,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private const char SoftHyphen = '\u00AD';
         private const char HardHyphen = '\u2011';
         private const char NonBreakingSpace = '\u00A0';
+
         private static readonly Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
