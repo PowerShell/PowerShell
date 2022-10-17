@@ -33,7 +33,9 @@ Describe "Format-Custom" -Tags "CI" {
             }
             # locale aware formatting
             $dateStr = $date.ToString()
+            $shortDate = $date.Date.ToString()
             $longDate = $date.ToString("F")
+
         }
 
         It "Should treat datetime as scalar by default" {
@@ -54,7 +56,7 @@ class DateTimeTest
   Date =
     class DateTime
     {
-      Date = 2000-01-02 00:00:00
+      Date = $shortDate
       Day = 2
       DayOfWeek = Sunday
       DayOfYear = 2
