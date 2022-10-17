@@ -2829,6 +2829,13 @@ namespace Microsoft.PowerShell
                     string textStyle = PSStyle.Instance.Formatting.FeedbackText;
                     string ansiReset = PSStyle.Instance.Reset;
 
+                    if (!ui.SupportsVirtualTerminal)
+                    {
+                        nameStyle = string.Empty;
+                        textStyle = string.Empty;
+                        ansiReset = string.Empty;
+                    }
+
                     int count = 0;
                     var output = new StringBuilder();
 
