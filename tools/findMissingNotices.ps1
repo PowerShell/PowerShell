@@ -178,7 +178,7 @@ function Get-CGRegistrations {
     $registrationChanged = $false
 
     $dotnetTargetName = 'net7.0'
-    $dotnetTargetNameWin7 = 'net7.0-windows8.1'
+    $dotnetTargetNameWin81 = 'net7.0-windows8.1'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -199,11 +199,11 @@ function Get-CGRegistrations {
         "win81-.*" {
             $sdkToUse = $winDesktopSdk
             $folder = $windowsProjectName
-            $target = "$dotnetTargetNameWin7|$Runtime"
+            $target = "$dotnetTargetNameWin81|$Runtime"
         }
         "win-.*" {
             $folder = $windowsProjectName
-            $target = "$dotnetTargetNameWin7|$Runtime"
+            $target = "$dotnetTargetNameWin81|$Runtime"
         }
         "modules" {
             $folder = "modules"
