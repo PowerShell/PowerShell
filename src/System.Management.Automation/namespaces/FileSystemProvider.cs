@@ -2489,6 +2489,8 @@ namespace Microsoft.PowerShell.Commands
                             try
                             {
                                 pathDirInfo.Delete();
+                                CreateDirectory(path, false);
+                                pathDirInfo = new DirectoryInfo(path);
                             }
                             catch (Exception exception)
                             {
@@ -2517,7 +2519,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     else
-                    {                        
+                    {
                         CreateDirectory(path, false);
                         pathDirInfo = new DirectoryInfo(path);
                     }
