@@ -224,7 +224,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                 {
                     // The line is a candidate if it starts with "sudo ", such as "sudo apt install python3".
                     // 'sudo' is a command name that remains the same, so this check should work for all locales.
-                    bool isCandidate = text.StartsWith("sudo ");
+                    bool isCandidate = text.StartsWith("sudo ", StringComparison.Ordinal);
                     int index = text.IndexOf('\n');
                     if (isCandidate)
                     {
