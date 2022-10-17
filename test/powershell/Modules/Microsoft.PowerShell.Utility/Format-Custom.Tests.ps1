@@ -48,7 +48,7 @@ class DateTimeTest
         }
 
         It "Treats datetime as non-scalar when Expanded" {
-            $res = ($obj | Format-Custom -ExpandType:System.DateTime -Depth:1 | Out-String).Trim()
+            $res = $obj | Format-Custom -ExpandType:System.DateTime -Depth:1 | Out-String
 
             $expected = @"
 class DateTimeTest
@@ -74,8 +74,9 @@ class DateTimeTest
       DateTime = $longDate
     }
 }
-"@ -replace '=\r\n', "= `r`n"
-
+"@ -replace '=\r?\n', "=`n"
+            $res = ($res -replace '\r?\n', "`n").Trim()
+            $expected = ($expected -replace '\r?\n', "`n").Trim()
             $res | Should -BeExactly $expected
         }
 
