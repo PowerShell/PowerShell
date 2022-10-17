@@ -992,7 +992,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         // allow sharing of nested objects.
                         if (!IsSameNestedObject(cimClass, c))
                         {
-                            var files = string.Join(",", GetFileDefiningClass(className));
+                            var files = string.Join(',', GetFileDefiningClass(className));
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                 ParserStrings.DuplicateCimClassDefinition, className, path, files);
 

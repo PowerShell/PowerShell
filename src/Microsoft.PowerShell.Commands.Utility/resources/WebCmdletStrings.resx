@@ -199,13 +199,13 @@
     <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response completed. (Number of bytes read: {0})</value>
+    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response</value>
+    <value>Reading web response stream</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Reading response stream... (Number of bytes read: {0})</value>
+    <value>Downloaded: {0} of {1}</value>
   </data>
   <data name="RequestTimeout" xml:space="preserve">
     <value>The operation has timed out.</value>
@@ -219,11 +219,14 @@
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Web request completed. (Number of bytes processed: {0})</value>
   </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+  </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
     <value>Web request status</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Number of bytes processed: {0}</value>
+    <value>Downloaded: {0} of {1}</value>
   </data>
   <data name="JsonNetModuleRequired" xml:space="preserve">
     <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the 'Json.Net' module. {0}</value>

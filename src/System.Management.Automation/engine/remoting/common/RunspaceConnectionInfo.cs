@@ -18,6 +18,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using System.Text;
 using System.Threading;
 
 using Microsoft.Win32.SafeHandles;
@@ -2404,23 +2405,31 @@ namespace System.Management.Automation.Runspaces
             if (startInfo.RedirectStandardInput)
             {
                 Debug.Assert(stdinFd >= 0, "Invalid Fd");
-                standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
-                    Utils.utf8NoBom, StreamBufferSize)
+                standardInput = new StreamWriter(
+                    OpenStream(stdinFd, FileAccess.Write),
+                    Encoding.Default,
+                    StreamBufferSize)
                 { AutoFlush = true };
             }
 
             if (startInfo.RedirectStandardOutput)
             {
                 Debug.Assert(stdoutFd >= 0, "Invalid Fd");
-                standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
-                    startInfo.StandardOutputEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+                standardOutput = new StreamReader(
+                    OpenStream(stdoutFd, FileAccess.Read),
+                    startInfo.StandardOutputEncoding ?? Encoding.Default,
+                    detectEncodingFromByteOrderMarks: true,
+                    StreamBufferSize);
             }
 
             if (startInfo.RedirectStandardError)
             {
                 Debug.Assert(stderrFd >= 0, "Invalid Fd");
-                standardError = new StreamReader(OpenStream(stderrFd, FileAccess.Read),
-                    startInfo.StandardErrorEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+                standardError = new StreamReader(
+                    OpenStream(stderrFd, FileAccess.Read),
+                    startInfo.StandardErrorEncoding ?? Encoding.Default,
+                    detectEncodingFromByteOrderMarks: true,
+                    StreamBufferSize);
             }
 
             return childPid;

@@ -1582,5 +1582,6 @@ vmImage
 ci.psm1
 jcotton42
 centos-7
+Security.types.ps1xml
  - ADOPTERS.md
 MicrosoftPowerBIMgmt

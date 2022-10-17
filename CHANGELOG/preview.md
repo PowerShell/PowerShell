@@ -1,5 +1,45 @@
 # Current preview release
 
+## [7.3.0-preview.8] - 2022-09-20
+
+### General Cmdlet Updates and Fixes
+
+- Filter out compiler generated types for `Add-Type -PassThru` (#18095)
+- Fix error formatting to use color defined in `$PSStyle.Formatting` (#17987)
+- Handle `PSObject` argument specially in method invocation logging (#18060)
+- Revert the experimental feature `PSStrictModeAssignment` (#18040)
+- Make experimental feature `PSAMSIMethodInvocationLogging` stable (#18041)
+- Make experimental feature `PSAnsiRenderingFileInfo` stable (#18042)
+- Make experimental feature `PSCleanBlock` stable (#18043)
+- Make experimental feature `PSNativeCommandArgumentPassing` stable (#18044)
+- Make experimental feature `PSExec` stable (#18045)
+- Make experimental feature `PSRemotingSSHTransportErrorHandling` stable (#18046)
+- Add the `ConfigurationFile` option to the PowerShell help content (#18093)
+
+### Build and Packaging Improvements
+
+<summary>
+<p>Bump .NET SDK to version `7.0.100-rc.1`</p>
+</summary>
+
+<details>
+<ul>
+<li>Update ThirdPartyNotices.txt for 7.3.0-preview.8 (Internal 22553)</li>
+<li>Update cgmanifest.json for 7.3.0-preview.8 (Internal 22551)</li>
+<li>Re-enable building with Ready-to-Run (#18107)</li>
+<li>Make sure <code>Security.types.ps1xml</code> gets signed in release build (#17930)</li>
+<li>Update <code>DotnetRuntimeMetadata.json</code> for .NET 7 RC1 build (#18106)</li>
+<li>Add XML reference documents to NuPkg files for SDK (#18017)</li>
+<li>Make Register MU timeout (#17995)</li>
+<li>Bump Microsoft.NET.Test.Sdk from 17.2.0 to 17.3.0 (#17924)</li>
+<li>Update list of PS team members in release tools (#17928)</li>
+<li>Update to use version 2.21.0 of Application Insights (#17927)</li>
+<li>Complete ongoing <code>Write-Progress</code> in test (#17922)</li>
+</ul>
+</details>
+
+[7.3.0-preview.8]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.7...v7.3.0-preview.8
+
 ## [7.3.0-preview.7] - 2022-08-09
 
 ### Breaking Changes

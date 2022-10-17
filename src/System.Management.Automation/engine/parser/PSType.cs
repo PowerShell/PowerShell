@@ -1472,4 +1472,18 @@ namespace System.Management.Automation.Language
             }
         }
     }
+
+    /// <summary>
+    /// The attribute for a PowerShell class to not affiliate with a particular Runspace\SessionState.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class NoRunspaceAffinityAttribute : ParsingBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the attribute.
+        /// </summary>
+        public NoRunspaceAffinityAttribute()
+        {
+        }
+    }
 }

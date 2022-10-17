@@ -421,7 +421,7 @@ namespace System.Management.Automation
             // in single shell mode
             if (requiresPSVersion != null)
             {
-                if (!Utils.IsPSVersionSupported(requiresPSVersion))
+                if (!PSVersionInfo.IsValidPSVersion(requiresPSVersion))
                 {
                     ScriptRequiresException scriptRequiresException =
                         new ScriptRequiresException(
@@ -454,11 +454,11 @@ namespace System.Management.Automation
                 //
                 if (isRequiresPSEditionSpecified && !isCurrentEditionListed)
                 {
-                    var specifiedEditionsString = string.Join(",", scriptInfo.RequiresPSEditions);
+                    var specifiedEditionsString = string.Join(',', scriptInfo.RequiresPSEditions);
                     var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible,
                         scriptInfo.Name,
                         specifiedEditionsString,
-                        PSVersionInfo.PSEdition);
+                        PSVersionInfo.PSEditionValue);
                     var ex = new RuntimeException(message);
                     ex.SetErrorId("ScriptRequiresUnmatchedPSEdition");
                     ex.SetTargetObject(scriptInfo.Name);

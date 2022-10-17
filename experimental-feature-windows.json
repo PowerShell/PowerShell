@@ -1,5 +1,6 @@
 [
   "PSCommandNotFoundSuggestion",
+  "PSCustomTableHeaderLabelDecoration",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
   "PSSubsystemPluginModel",

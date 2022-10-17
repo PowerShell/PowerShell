@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, _cancelToken.Token);
+                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))

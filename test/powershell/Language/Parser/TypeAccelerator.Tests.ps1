@@ -410,15 +410,19 @@ Describe "Type accelerators" -Tags "CI" {
                     Accelerator = 'ordered'
                     Type        = [System.Collections.Specialized.OrderedDictionary]
                 }
+                @{
+                    Accelerator = 'NoRunspaceAffinity'
+                    Type        = [System.Management.Automation.Language.NoRunspaceAffinityAttribute]
+                }
             )
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 101
+                $totalAccelerators = 102
             }
             else
             {
-                $totalAccelerators = 106
+                $totalAccelerators = 107
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{

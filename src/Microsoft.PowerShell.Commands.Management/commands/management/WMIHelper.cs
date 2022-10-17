@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
             returnValue.Append(computer);
-            returnValue.Append("\\");
+            returnValue.Append('\\');
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }
@@ -1659,7 +1659,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSWmiChildJob job in ChildJobs)
             {
                 location.Append(job.Location);
-                location.Append(",");
+                location.Append(',');
             }
 
             location.Remove(location.Length - 1, 1);
