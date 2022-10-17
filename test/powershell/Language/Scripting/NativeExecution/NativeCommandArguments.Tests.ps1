@@ -162,7 +162,7 @@ Describe "Will error correctly if an attempt to set variable to improper value" 
     }
 }
 
-Describe "find.exe uses legacy behavior on Windows" {
+Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
     BeforeAll {
         $currentSetting = $PSNativeCommandArgumentPassing
         $PSNativeCommandArgumentPassing = "Windows"
