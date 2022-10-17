@@ -10,7 +10,7 @@ namespace System.Management.Automation
     {
         internal readonly uint MinimumDistance;
 
-        internal FuzzyMatcher(uint minimumDistance = 5)
+        internal FuzzyMatcher(uint minimumDistance)
         {
             MinimumDistance = minimumDistance;
         }
