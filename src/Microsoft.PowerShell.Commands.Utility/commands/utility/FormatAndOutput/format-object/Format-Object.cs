@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <inheritdoc cref="ComplexSpecificParameters.ScalarTypesToExpand" />
         [Parameter]
+        [ValidateSet("System.DateTime", "System.DateTimeOffset")] // if we get more types here, consider moving to IValidateSetValuesGenerator
         public string[] ExpandType { get; set; }
 
         #endregion
@@ -79,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
 
             ComplexSpecificParameters csp = new();
             csp.maxDepth = Depth;
-            csp.scalarTypesToExpand = ExpandType;
+            csp.ScalarTypesToExpand = ExpandType;
             parameters.shapeParameters = csp;
 
             return parameters;

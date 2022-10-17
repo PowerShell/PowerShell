@@ -418,7 +418,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class ComplexViewObjectBrowser
     {
-        private static readonly HashSet<string> s_defaultLeafTypes = new() { "System.DateTime" };
+        private static readonly HashSet<string> s_defaultLeafTypes = new(System.StringComparer.OrdinalIgnoreCase) 
+        { 
+            "System.DateTime", 
+            "System.DateTimeOffset" 
+        };
 
         internal ComplexViewObjectBrowser(FormatErrorManager resultErrorManager, PSPropertyExpressionFactory mshExpressionFactory, int enumerationLimit)
         {
@@ -703,7 +707,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>True if it has to be treated as a scalar.</returns>
         private static bool TreatAsScalarType(Collection<string> typeNames, string[] scalarTypesToExpand)
         {
-            return TypeIsScalarForComplexView(typeNames, scalarTypesToExpand) || DefaultScalarTypes.IsTypeInList(typeNames);
+            return DefaultScalarTypes.IsTypeInList(typeNames) || TypeIsScalarForComplexView(typeNames, scalarTypesToExpand);
         }
 
         private static bool TypeIsScalarForComplexView(Collection<string> typeNames, string[] scalarTypesToExpand)
