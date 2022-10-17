@@ -2505,17 +2505,19 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
+                        else
+                        {
+                            // Junctions cannot have files
+                            if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
+                            {
+                                string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
+                                WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
+                                return;
+                            }
+                        }
                     }
                     else
                     {                        
-                        // Junctions cannot have files
-                        if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
-                        {
-                            string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
-                            WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
-                            return;
-                        }
-
                         CreateDirectory(path, false);
                         pathDirInfo = new DirectoryInfo(path);
                     }
