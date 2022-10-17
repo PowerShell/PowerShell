@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the minimum fuzzy matching distance.
         /// </summary>
         [Parameter(ParameterSetName = "AllCommandSet")]
-        public uint FuzzyMinimumDistance { get; set; } = 3;
+        public uint FuzzyMinimumDistance { get; set; } = 5;
 
         private FuzzyMatcher _fuzzyMatcher;
         private List<CommandScore> _commandScores;
