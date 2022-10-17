@@ -2484,14 +2484,6 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        // Junctions cannot have files
-                        if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
-                        {
-                            string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
-                            WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
-                            return;
-                        }
-
                         if (Force)
                         {
                             try
@@ -2515,7 +2507,15 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     else
-                    {
+                    {                        
+                        // Junctions cannot have files
+                        if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
+                        {
+                            string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
+                            WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
+                            return;
+                        }
+
                         CreateDirectory(path, false);
                         pathDirInfo = new DirectoryInfo(path);
                     }
