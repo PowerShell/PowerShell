@@ -50,7 +50,7 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     }
 }
 
-Describe 'Switch-Process for Windows' {
+Describe 'Switch-Process for Windows' -Tag 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if (!$IsWindows)
