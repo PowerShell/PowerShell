@@ -245,7 +245,7 @@ Describe "Set-Location" -Tags "CI" {
             cd..
             (Get-Location).Path | Should -BeExactly $ParentDir
         }
-        It 'Should go to root of current drive on cd\ run' -Skip:(!$IsLinux){
+        It 'Should go to root of current drive on cd\ run' -Skip:($IsLinux){
             #root is / on linux, so it's not happy with this check.
             Set-Location 'TestDrive:\'
             $DriveRoot = (Get-Location).path
