@@ -550,6 +550,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         $nonFile = Join-Path $TestPath "not-a-file"
         $fileContent = "some text"
         $realDir = Join-Path $TestPath "subdir"
+        $realDir2 = Join-Path $TestPath "second-subdir"
         $nonDir = Join-Path $TestPath "not-a-dir"
         $hardLinkToFile = Join-Path $TestPath "hard-to-file.txt"
         $symLinkToFile = Join-Path $TestPath "sym-link-to-file.txt"
@@ -560,6 +561,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
         New-Item -ItemType File -Path $realFile -Value $fileContent > $null
         New-Item -ItemType Directory -Path $realDir > $null
+        New-Item -ItemType Directory -Path $realDir2 > $null
     }
 
     Context "New-Item and hard/symbolic links" {
