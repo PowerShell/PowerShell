@@ -237,12 +237,19 @@ Describe "Set-Location" -Tags "CI" {
             cd~
             (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
         }
-        It 'Should go to the Parent folder on cd.. run'{
+        It 'Should go to the parent folder on cd.. run' {
             $ParentDir = 'TestDrive:\'
             New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory
             Set-Location 'TestDrive:\Directory1'
             cd..
             (Get-Location).Path | Should -BeExactly $ParentDir
+        }
+        It 'Should go to root of current drive on cd\ run' {
+            $DriveRoot = 'TestDrive:\'
+            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory
+            Set-Location 'TestDrive:\Directory1\Directory2'
+            cd\
+            (Get-Location).Path | Should -BeExactly $DriveRoot
         }
     }
 }
