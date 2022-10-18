@@ -245,7 +245,8 @@ Describe "Set-Location" -Tags "CI" {
             cd..
             (Get-Location).Path | Should -BeExactly $ParentDir
         }
-        It 'Should go to root of current drive on cd\ run' {
+        It 'Should go to root of current drive on cd\ run' -Skip:(!$IsLinux){
+            #root is / on linux, so it's not happy with this check.
             Set-Location 'TestDrive:\'
             $DriveRoot = (Get-Location).path
             New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory
