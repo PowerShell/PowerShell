@@ -467,7 +467,7 @@ function Get-ReleaseTag
 function Invoke-CIFinish
 {
     param(
-        [string] $Runtime = 'win7-x64',
+        [string] $Runtime = 'win81-x64',
         [string] $Channel = 'preview',
         [Validateset('Build','Package')]
         [string[]] $Stage = ('Build','Package')

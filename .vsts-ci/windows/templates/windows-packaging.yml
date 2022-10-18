@@ -4,7 +4,7 @@ parameters:
   - name: jobName
     default: 'win_packaging'
   - name: runtimePrefix
-    default: 'win7'
+    default: 'win81'
   - name: architecture
     default: 'x64'
   - name: channel
