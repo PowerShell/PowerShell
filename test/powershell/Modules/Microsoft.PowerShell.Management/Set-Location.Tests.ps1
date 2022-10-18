@@ -230,4 +230,19 @@ Describe "Set-Location" -Tags "CI" {
             $PWD.Path | Should -Be $location.Path
         }
     }
+
+    Context 'Parsing of Set-Location to cd' {
+        It 'Should go to Filesystem home on cd~ run' {
+            Set-Location 'TestDrive:\'
+            cd~
+            (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
+        }
+        It 'Should go to the Parent folder on cd.. run'{
+            $ParentDir = 'TestDrive:\'
+            New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory
+            Set-Location 'TestDrive:\Directory1'
+            cd..
+            (Get-Location).Path | Should -BeExactly $ParentDir
+        }
+    }
 }
