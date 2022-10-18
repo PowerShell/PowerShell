@@ -270,7 +270,7 @@ function Test-IsReleaseCandidate
     return $false
 }
 
-$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win81|osx)-(x64|x86|arm64|arm)'
+$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx)-(x64|x86|arm64|arm)'
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
@@ -315,8 +315,8 @@ function Start-PSBuild {
                      "osx-x64",
                      "win-arm",
                      "win-arm64",
-                     "win81-x64",
-                     "win81-x86")]
+                     "win7-x64",
+                     "win7-x86")]
         [string]$Runtime,
 
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')] # We might need "Checked" as well
@@ -349,8 +349,8 @@ function Start-PSBuild {
     }
 
     if ($ForMinimalSize) {
-        if ($Runtime -and "linux-x64", "win81-x64", "osx-x64" -notcontains $Runtime) {
-            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win81-x64', 'osx-x64'"
+        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+            throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
     }
 
@@ -528,7 +528,7 @@ Fix steps:
         if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
             Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win81-*' -and !$ForMinimalSize) {
+            if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
                 ## when 'Microsoft.NET.Sdk.WindowsDesktop' is used.
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
@@ -721,7 +721,7 @@ function Restore-PSPackage
         }
         else {
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win81-*' -and !$Options.ForMinimalSize) {
+            if ($Options.Runtime -like 'win7-*' -and !$Options.ForMinimalSize) {
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
         }
@@ -836,8 +836,8 @@ function New-PSOptions {
                      "osx-x64",
                      "win-arm",
                      "win-arm64",
-                     "win81-x64",
-                     "win81-x86")]
+                     "win7-x64",
+                     "win7-x86")]
         [string]$Runtime,
 
         # Accept a path to the output directory
@@ -871,9 +871,9 @@ function New-PSOptions {
 
         switch ($Platform) {
             'Windows' {
-                # For x86 and x64 architectures, we use win81-x64 and win81-x86 RIDs.
+                # For x86 and x64 architectures, we use win7-x64 and win7-x86 RIDs.
                 # For arm and arm64 architectures, we use win-arm and win-arm64 RIDs.
-                $Platform = if ($Architecture[0] -eq 'x') { 'win81' } else { 'win' }
+                $Platform = if ($Architecture[0] -eq 'x') { 'win7' } else { 'win' }
                 $Runtime = "${Platform}-${Architecture}"
             }
 
