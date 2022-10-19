@@ -630,6 +630,17 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $i = New-Item -ItemType File -Path "$TestDrive\file.txt" -Force -ErrorAction Ignore
             { New-Item -ItemType HardLink -Path $i -Target $i -Force -ErrorAction Stop } | Should -Throw -ErrorId "TargetIsSameAsLink,Microsoft.PowerShell.Commands.NewItemCommand"
         }
+
+        It "New-Item -Force can overwrite a junction" -Skip:(-Not $IsWindows){
+            $rd2 = Get-Item -Path $realDir2
+            New-Item -Name testfile.txt -ItemType file -Path $realDir
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
+            Test-Path $junctionToDir | Should -BeTrue
+            { New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null -ErrorAction Stop } | Should -Throw -ErrorId "DirectoryNotEmpty,Microsoft.PowerShell.Commands.NewItemCommand"
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir2 > $null -Force
+            $Junction = Get-Item -Path $junctionToDir
+            $Junction.Target | Should -BeExactly $rd2.ToString()
+        }
     }
 
     Context "Get-ChildItem and symbolic links" {
