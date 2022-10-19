@@ -2489,8 +2489,6 @@ namespace Microsoft.PowerShell.Commands
                             try
                             {
                                 pathDirInfo.Delete();
-                                CreateDirectory(path, false);
-                                pathDirInfo = new DirectoryInfo(path);
                             }
                             catch (Exception exception)
                             {
@@ -2506,7 +2504,9 @@ namespace Microsoft.PowerShell.Commands
                                     throw;
                                 }
                             }
-                        }
+                            CreateDirectory(path, false);
+                            pathDirInfo = new DirectoryInfo(path);
+                    }
                         else
                         {
                             // Junctions cannot have files
