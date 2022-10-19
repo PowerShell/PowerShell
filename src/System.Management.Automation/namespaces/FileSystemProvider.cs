@@ -2506,7 +2506,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             CreateDirectory(path, false);
                             pathDirInfo = new DirectoryInfo(path);
-                    }
+                        }
                         else
                         {
                             // Junctions cannot have files
