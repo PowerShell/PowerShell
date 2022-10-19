@@ -2504,6 +2504,7 @@ namespace Microsoft.PowerShell.Commands
                                     throw;
                                 }
                             }
+
                             CreateDirectory(path, false);
                             pathDirInfo = new DirectoryInfo(path);
                         }
