@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'OutputRendering tests' {
+Describe 'OutputRendering tests' -Tag 'CI' {
     BeforeEach {
         if ($null -ne $PSStyle) {
             $oldOutputRendering = $PSStyle.OutputRendering

@@ -866,7 +866,7 @@ A Name                                  B
         }
     }
 
-Describe 'Table color tests' {
+Describe 'Table color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
