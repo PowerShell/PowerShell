@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         ConvertFromStringData.InvalidDataLine,
-                        line);
+                        s);
                 }
 
                 string name = s.Substring(0, index);
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         ConvertFromStringData.DataItemAlreadyDefined,
-                        line,
+                        s,
                         name);
                 }
 
