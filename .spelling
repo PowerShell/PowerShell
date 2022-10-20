@@ -86,6 +86,8 @@ catchable
 cdxml
 celsius
 CentOS
+cgmanifest.json
+cgmanifest
 changelog
 changelogs
 changelog.md
@@ -466,6 +468,7 @@ new-timespan
 new-winevent
 new-wsmaninstance
 new-wsmansessionoption
+Newtonsoft.Json
 NJsonSchema
 non-22
 non-cim
@@ -791,6 +794,7 @@ v6.2.0
 v6.2.1
 v6.2.2
 v6.2.3
+v7.0.13
 validatenotnullorempty
 versioned
 versioning
