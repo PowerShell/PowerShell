@@ -663,18 +663,6 @@ namespace System.Management.Automation
                 }
             }
 
-            if (remoteToWin7 && (results == null || results.Count == 0))
-            {
-                string quoteStr = quote == '\0' ? string.Empty : quote.ToString();
-                results = PSv2CompletionCompleter.PSv2GenerateMatchSetOfFiles(helper, lastword, replacementIndex == 0, quoteStr);
-                var cmdletResults = PSv2CompletionCompleter.PSv2GenerateMatchSetOfCmdlets(helper, lastword, quoteStr, replacementIndex == 0);
-
-                if (cmdletResults != null && cmdletResults.Count > 0)
-                {
-                    results.AddRange(cmdletResults);
-                }
-            }
-
             return results;
         }
 
