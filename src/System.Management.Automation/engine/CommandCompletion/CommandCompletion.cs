@@ -4,11 +4,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 #if LEGACYTELEMETRY
+using System.Diagnostics;
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
 
