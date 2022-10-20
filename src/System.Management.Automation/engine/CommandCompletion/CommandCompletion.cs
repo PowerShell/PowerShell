@@ -17,7 +17,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides a set of possible completions for given input.
     /// </summary>
-    public partial class CommandCompletion
+    public class CommandCompletion
     {
         /// <summary>
         /// Construct the result CompleteInput or TabExpansion2.
@@ -129,7 +129,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invokes the script function TabExpansion2.
-        /// For legacy support, TabExpansion2 will indirectly call TabExpansion if it exists.
         /// </summary>
         /// <param name="input">The input script to complete.</param>
         /// <param name="cursorIndex">The offset in <paramref name="input"/> where completion is requested.</param>
@@ -178,17 +177,12 @@ namespace System.Management.Automation
                 if (!powershell.IsChild)
                 {
                     CheckScriptCallOnRemoteRunspace(remoteRunspace);
+
+                    // Validate the remote server is running on PSv3 or later.
+                    // If the remote runspace only has legacy capabilities, assume the version is PSv2 or earlier.
                     if (remoteRunspace.GetCapabilities().Equals(Runspaces.RunspaceCapability.Default))
                     {
-                        // Remoting to a Win7 machine. Use the legacy tab completion function from V1/V2
-                        int replacementIndex;
-                        int replacementLength;
-
-                        powershell.Commands.Clear();
-                        var results = InvokeLegacyTabExpansion(powershell, input, cursorIndex, true, out replacementIndex, out replacementLength);
-                        return new CommandCompletion(
-                            new Collection<CompletionResult>(results ?? EmptyCompletionResult),
-                            -1, replacementIndex, replacementLength);
+                        throw new NotSupportedException("Remote server must be running on PSv3 or later.");
                     }
                 }
             }
@@ -198,7 +192,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invokes the script function TabExpansion2.
-        /// For legacy support, TabExpansion2 will indirectly call TabExpansion if it exists.
         /// </summary>
         /// <param name="ast">The ast for pre-parsed input.</param>
         /// <param name="tokens"></param>
@@ -249,22 +242,12 @@ namespace System.Management.Automation
                 if (!powershell.IsChild)
                 {
                     CheckScriptCallOnRemoteRunspace(remoteRunspace);
+
+                    // Validate the remote server is running on PSv3 or later.
+                    // If the remote runspace only has legacy capabilities, assume the version is PSv2 or earlier.
                     if (remoteRunspace.GetCapabilities().Equals(Runspaces.RunspaceCapability.Default))
                     {
-                        // Capability:
-                        //      SupportsDisconnect (0x1)            -> If remoteMachine is Win8 or later
-                        //      Default (0x0)                       -> If remoteMachine is Win7
-                        // Remoting to a Win7 machine. Use the legacy tab completion function from V1/V2
-                        int replacementIndex;
-                        int replacementLength;
-
-                        // When call the win7 TabExpansion script, the input should be the single current line
-                        powershell.Commands.Clear();
-                        var inputAndCursor = GetInputAndCursorFromAst(cursorPosition);
-                        var results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, true, out replacementIndex, out replacementLength);
-                        return new CommandCompletion(
-                            new Collection<CompletionResult>(results ?? EmptyCompletionResult),
-                            -1, replacementIndex + inputAndCursor.Item3, replacementLength);
+                        throw new NotSupportedException("Remote server must be running on PSv3 or later.");
                     }
                     else
                     {
@@ -520,20 +503,10 @@ namespace System.Management.Automation
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                // First, check if a V1/V2 implementation of TabExpansion exists.  If so, the user had overridden
-                // the built-in version, so we should continue to use theirs.
                 int replacementIndex = -1;
                 int replacementLength = -1;
                 List<CompletionResult> results = null;
 
-                if (NeedToInvokeLegacyTabExpansion(powershell))
-                {
-                    var inputAndCursor = GetInputAndCursorFromAst(positionOfCursor);
-                    results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, false, out replacementIndex, out replacementLength);
-                    replacementIndex += inputAndCursor.Item3;
-                }
-
-                if (results == null || results.Count == 0)
                 {
                     /* BROKEN code commented out, fix sometime
                     // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
@@ -582,88 +555,21 @@ namespace System.Management.Automation
                     }
                     */
                 }
-
+            
                 var completionResults = results ?? EmptyCompletionResult;
 
 #if LEGACYTELEMETRY
-                    // no telemetry here. We don't capture tab completion performance.
-                    sw.Stop();
-                    TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
-                        completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
+                // no telemetry here. We don't capture tab completion performance.
+                sw.Stop();
+                TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
+                    completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
-                return new CommandCompletion(
-                    new Collection<CompletionResult>(completionResults),
-                    -1,
-                    replacementIndex,
-                    replacementLength);
+            return new CommandCompletion(
+                new Collection<CompletionResult>(completionResults),
+                -1,
+                replacementIndex,
+                replacementLength);
             }
-        }
-
-        private static Tuple<string, int, int> GetInputAndCursorFromAst(IScriptPosition cursorPosition)
-        {
-            var line = cursorPosition.Line;
-            var cursor = cursorPosition.ColumnNumber - 1;
-            var adjustment = cursorPosition.Offset - cursor;
-            return Tuple.Create(line.Substring(0, cursor), cursor, adjustment);
-        }
-
-        private static bool NeedToInvokeLegacyTabExpansion(PowerShell powershell)
-        {
-            var executionContext = powershell.GetContextFromTLS();
-
-            // We don't want command discovery to search unloaded modules for TabExpansion.
-            var functionInfo = executionContext.EngineSessionState.GetFunction("TabExpansion");
-            if (functionInfo != null)
-                return true;
-
-            var aliasInfo = executionContext.EngineSessionState.GetAlias("TabExpansion");
-            if (aliasInfo != null)
-                return true;
-
-            return false;
-        }
-
-        private static List<CompletionResult> InvokeLegacyTabExpansion(PowerShell powershell, string input, int cursorIndex, bool remoteToWin7, out int replacementIndex, out int replacementLength)
-        {
-            List<CompletionResult> results = null;
-
-            var legacyInput = (cursorIndex != input.Length) ? input.Substring(0, cursorIndex) : input;
-            char quote;
-            var lastword = LastWordFinder.FindLastWord(legacyInput, out replacementIndex, out quote);
-            replacementLength = legacyInput.Length - replacementIndex;
-            var helper = new PowerShellExecutionHelper(powershell);
-
-            powershell.AddCommand("TabExpansion").AddArgument(legacyInput).AddArgument(lastword);
-
-            Exception exceptionThrown;
-            var oldResults = helper.ExecuteCurrentPowerShell(out exceptionThrown);
-            if (oldResults != null)
-            {
-                results = new List<CompletionResult>();
-                foreach (var oldResult in oldResults)
-                {
-                    var completionResult = PSObject.Base(oldResult) as CompletionResult;
-                    if (completionResult == null)
-                    {
-                        var oldResultStr = oldResult.ToString();
-
-                        // Add back the quotes we removed if the result isn't quoted
-                        if (quote != '\0')
-                        {
-                            if (oldResultStr.Length > 2 && oldResultStr[0] != quote)
-                            {
-                                oldResultStr = quote + oldResultStr + quote;
-                            }
-                        }
-
-                        completionResult = new CompletionResult(oldResultStr);
-                    }
-
-                    results.Add(completionResult);
-                }
-            }
-
-            return results;
         }
 
         #endregion private methods
