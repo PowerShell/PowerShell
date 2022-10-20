@@ -808,11 +808,6 @@ namespace System.Management.Automation.Remoting
                 var value = PSObject.Base(_senderInfo.ApplicationArguments["PSversionTable"]) as PSPrimitiveDictionary;
                 if (value != null)
                 {
-                    if (value.ContainsKey("WSManStackVersion"))
-                    {
-                        var wsmanStackVersion = PSObject.Base(value["WSManStackVersion"]) as Version;
-                    }
-
                     if (value.ContainsKey("PSVersion"))
                     {
                         psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
