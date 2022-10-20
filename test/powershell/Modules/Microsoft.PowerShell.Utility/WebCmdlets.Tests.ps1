@@ -1193,39 +1193,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
-        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
+        It "Verifies Invoke-WebRequest defaults to iso-UTF-8 when an unsupported/invalid charset is declared" {
             $query = @{
                 contenttype = 'text/html'
                 body        = '<html><head><meta charset="invalid"></head></html>'
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
-        }
-
-        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
-            $query = @{
-                contenttype = 'text/html'
-                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
-        }
-
-        It "Verifies Invoke-WebRequest defaults to UTF8 on application/json when no charset is present" {
-            # when contenttype is set, WebListener suppresses charset unless it is included in the query
-            $query = @{
-                contenttype = 'application/json'
-                body        = '{"Test": "Test"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::UTF8
@@ -1234,7 +1205,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
             $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
-            $response.Output.Content | Should -BeExactly $query.body
+        }
+
+        It "Verifies Invoke-WebRequest defaults to UTF-8 when an unsupported/invalid charset is declared using http-equiv" {
+            $query = @{
+                contenttype = 'text/html'
+                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
     }
 
@@ -3056,37 +3040,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
         }
 
-        It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
+        It "Verifies Invoke-RestMethod defaults to UTF-8 when an unsupported/invalid charset is declared" {
             $query = @{
                 contenttype = 'text/html'
                 body        = '<html><head><meta charset="invalid"></head></html>'
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
-            $query = @{
-                contenttype = 'text/html'
-                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod defaults to UTF8 on application/json when no charset is present" {
-            # when contenttype is set, WebListener suppresses charset unless it is included in the query
-            $query = @{
-                contenttype = 'application/json'
-                body        = '{"Test": "Test"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::UTF8
@@ -3094,7 +3051,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.output.Test | Should -BeExactly 'Test'
+        }
+
+        It "Verifies Invoke-RestMethod defaults to UTF-8 when an unsupported/invalid charset is declared using http-equiv" {
+            $query = @{
+                contenttype = 'text/html'
+                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
         }
     }
 
