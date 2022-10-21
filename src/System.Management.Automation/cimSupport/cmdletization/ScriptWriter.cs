@@ -521,11 +521,49 @@ function __cmdletization_BindCommonParameters
 
             if (_cmdletizationMetadata.Enums is not null)
             {
-                List<EnumMetadataEnum> matchingEnums = _cmdletizationMetadata.Enums
-                    .Where(e => string.Equals(typeMetadata.PSType, e.EnumName, StringComparison.InvariantCulture))
-                    .ToList();
+                string psType = typeMetadata.PSType;
+                foreach (EnumMetadataEnum e in _cmdletizationMetadata.Enums)
+                {
+                    int index = psType.IndexOf(e.EnumName, StringComparison.InvariantCulture);
+                    if (index == -1)
+                    {
+                        // Fast return if 'PSType' doesn't contains the enum name at all.
+                        continue;
+                    }
 
-                matchingEnum = matchingEnums.Count == 1 ? matchingEnums[0] : null;
+                    bool matchFound = false;
+                    if (index == 0)
+                    {
+                        // Handle 2 common cases here (cover 99% of how enum name is used in 'PSType'):
+                        //  - 'PSType' is exactly the enum name.
+                        //  - 'PSType' is the array format of the enum.
+                        ReadOnlySpan<char> remains = psType.AsSpan(e.EnumName.Length);
+                        matchFound = remains.Length is 0 || remains.Equals("[]", StringComparison.Ordinal);
+                    }
+
+                    if (!matchFound)
+                    {
+                        // Now we have to fall back to the expensive regular expression matching, because the 'PSType'
+                        // could be a composite type like 'Nullable<enum_name>' or 'Dictionary<enum_name, object>'.
+                        matchFound = Regex.IsMatch(
+                            psType,
+                            string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
+                            RegexOptions.CultureInvariant);
+                    }
+
+                    if (matchFound)
+                    {
+                        if (matchingEnum is null)
+                        {
+                            matchingEnum = e;
+                            continue;
+                        }
+
+                        // If more than one matching enum names were found, we treat it as no match found.
+                        matchingEnum = null;
+                        break;
+                    }
+                }
             }
 
             if (matchingEnum != null)
