@@ -517,13 +517,17 @@ function __cmdletization_BindCommonParameters
             Dbg.Assert(typeMetadata != null, "Caller should verify typeMetadata != null");
 
             string psTypeText;
-            List<EnumMetadataEnum> matchingEnums = (_cmdletizationMetadata.Enums ?? Enumerable.Empty<EnumMetadataEnum>())
-                .Where(e => Regex.IsMatch(
-                    typeMetadata.PSType,
-                    string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
-                    RegexOptions.CultureInvariant))
-                .ToList();
-            EnumMetadataEnum matchingEnum = matchingEnums.Count == 1 ? matchingEnums[0] : null;
+            EnumMetadataEnum matchingEnum = null;
+
+            if (_cmdletizationMetadata.Enums is not null)
+            {
+                List<EnumMetadataEnum> matchingEnums = _cmdletizationMetadata.Enums
+                    .Where(e => string.Equals(typeMetadata.PSType, e.EnumName, StringComparison.InvariantCulture))
+                    .ToList();
+
+                matchingEnum = matchingEnums.Count == 1 ? matchingEnums[0] : null;
+            }
+
             if (matchingEnum != null)
             {
                 psTypeText = typeMetadata.PSType.Replace(matchingEnum.EnumName, EnumWriter.GetEnumFullName(matchingEnum));
