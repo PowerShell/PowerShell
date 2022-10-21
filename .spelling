@@ -114,8 +114,9 @@ cdxml
 celsius
 CentOS
 codeql-action
-cgmanifest
 CGManifest
+cgmanifest.json
+cgmanifest
 changelog
 changelog.md
 changelogs
@@ -325,6 +326,7 @@ functionprovider
 FunctionTable
 fxdependent
 gabrielsroka
+GAC_Arm64
 gamified
 gc.regions.xml
 Generic.SortedList
@@ -614,6 +616,7 @@ new-wsmaninstance
 new-wsmansessionoption
 NextTurn
 ngharo
+Newtonsoft.Json
 NJsonSchema
 NoMoreFood
 non-22
@@ -1052,6 +1055,7 @@ v7.1.6
 v7.1.7
 v7.2.2
 v7.3.0
+v7.0.13
 validatenotnullorempty
 ValidateSet
 varunsh-coder
