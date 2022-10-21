@@ -3968,7 +3968,7 @@ namespace System.Management.Automation.Language
                         case 'X':
                             sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
                             ScanHexDigits(sb);
-                            if (sb.Length == 0)
+                            if (sb.Length == 1) // 1 instead of 0 to account for append ↑↑
                             {
                                 notNumber = true;
                             }
