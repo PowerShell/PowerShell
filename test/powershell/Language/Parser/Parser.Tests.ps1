@@ -182,6 +182,16 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $result | Should -Be 1
     }
 
+    It "Test that hex named command executed without tabcompleted prefix will run" {
+        Set-Location $TestDrive
+        New-Item -ItemType Directory -Path $TestDrive -Name "testfolder"
+        $ScriptFolder = Join-Path $TestDrive -ChildPath "testfolder"
+        New-Item -ItemType File -Name 0x.ps1 -Path ".\testfolder\" -Value {Write-Output "Hello"}
+        $env:PATH += ";$ScriptFolder" #To execute without .\<script>\ we must add the script location to PATH.
+        $result = 0x.ps1
+        $result | Should -BeExactly "Hello"
+    }
+
     It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
         $result = ExecuteCommand "Set-Location $TestDrive; Get-ChildItem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
         $result.Count | Should -Be 2
