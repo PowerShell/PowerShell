@@ -818,6 +818,11 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Break"
     }
 
+    it 'Should complete command with an empty arrayexpression element' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem @()' -cursorColumn 1
+        $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
