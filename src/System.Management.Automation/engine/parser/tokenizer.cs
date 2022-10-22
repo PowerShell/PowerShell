@@ -3937,6 +3937,7 @@ namespace System.Management.Automation.Language
             multiplier = 1;
 
             bool notNumber = false;
+            bool hasSign = false;
             int signIndex = -1;
             char c;
             var sb = GetStringBuilder();
@@ -3945,6 +3946,7 @@ namespace System.Management.Automation.Language
             {
                 sb.Append(firstChar);
                 firstChar = GetChar();
+                hasSign = true;
             }
 
             if (firstChar == '.')
@@ -3968,7 +3970,7 @@ namespace System.Management.Automation.Language
                         case 'X':
                             sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
                             ScanHexDigits(sb);
-                            if (sb.Length == 1) // 1 instead of 0 to account for append ↑↑
+                            if (sb.Length == 1 || sb.Length == 2 && hasSign) // 1 instead of 0 to account for append ↑↑
                             {
                                 notNumber = true;
                             }
