@@ -543,8 +543,9 @@ function __cmdletization_BindCommonParameters
 
                     if (!matchFound)
                     {
-                        // Now we have to fall back to the expensive regular expression matching, because the 'PSType'
-                        // could be a composite type like 'Nullable<enum_name>' or 'Dictionary<enum_name, object>'.
+                        // Now we have to fall back to the expensive regular expression matching, because 'PSType'
+                        // could be a composite type like 'Nullable<enum_name>' or 'Dictionary<enum_name, object>',
+                        // but we don't want the case where the enum name is part of another type's name.
                         matchFound = Regex.IsMatch(
                             psType,
                             string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
