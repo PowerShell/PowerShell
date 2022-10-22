@@ -527,14 +527,14 @@ function __cmdletization_BindCommonParameters
                     int index = psType.IndexOf(e.EnumName, StringComparison.InvariantCulture);
                     if (index == -1)
                     {
-                        // Fast return if 'PSType' doesn't contains the enum name at all.
+                        // Fast return if 'PSType' doesn't contain the enum name at all.
                         continue;
                     }
 
                     bool matchFound = false;
                     if (index == 0)
                     {
-                        // Handle 2 common cases here (cover 99% of how enum name is used in 'PSType'):
+                        // Handle 2 common cases here (cover over 99% of how enum name is used in 'PSType'):
                         //  - 'PSType' is exactly the enum name.
                         //  - 'PSType' is the array format of the enum.
                         ReadOnlySpan<char> remains = psType.AsSpan(e.EnumName.Length);
