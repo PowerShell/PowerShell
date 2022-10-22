@@ -64,6 +64,8 @@ namespace System.Management.Automation
         /// For each later release of PowerShell, this constant needs to
         /// be updated to reflect the right version.
         /// </remarks>
+        private static readonly Version s_psV1Version = new(1, 0);
+        private static readonly Version s_psV2Version = new(2, 0);
         private static readonly Version s_psV3Version = new(3, 0);
         private static readonly Version s_psV4Version = new(4, 0);
         private static readonly Version s_psV5Version = new(5, 0);
@@ -95,7 +97,7 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionName] = s_psSemVersion;
             s_psVersionTable[PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = GitCommitId;
-            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV61Version, s_psV62Version, s_psV7Version, s_psV71Version, s_psV72Version, s_psVersion };
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV61Version, s_psV62Version, s_psV7Version, s_psV71Version, s_psV72Version, s_psVersion };
             s_psVersionTable[SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[WSManStackVersionName] = GetWSManStackVersion();
