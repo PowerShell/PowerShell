@@ -515,7 +515,7 @@ namespace System.Management.Automation
                 {
                     using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
-                        Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
+                        Encoding defaultEncoding = Encoding.Default;
 
                         using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
                         {

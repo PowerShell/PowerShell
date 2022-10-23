@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets property that sets append parameter.
@@ -615,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are one or more unspecified names.
