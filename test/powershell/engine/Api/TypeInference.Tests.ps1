@@ -796,6 +796,11 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Int32'
     }
 
+    It 'Infers type from empty Return statement' {
+        $res = [AstTypeInference]::InferTypeOf( { return }.Ast)
+        $res.Count | Should -Be 0
+    }
+
     It 'Infers type from New-Object statement' {
         $res = [AstTypeInference]::InferTypeOf( {
                 New-Object -TypeName 'System.Diagnostics.Stopwatch'
