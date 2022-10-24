@@ -1110,7 +1110,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in ModuleIntrinsics.GetModulePath(false, Context))
             {
-                string uniquePath = path.AsSpan().TrimEnd("\\/").ToString();
+                string uniquePath = path.TrimEnd(Utils.Separators.Directory);
 
                 // Ignore repeated module path.
                 if (!modulePathSet.Add(uniquePath))

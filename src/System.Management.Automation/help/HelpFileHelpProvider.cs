@@ -276,7 +276,7 @@ namespace System.Management.Automation
             if (filePath.StartsWith(psmodulePathRoot, StringComparison.OrdinalIgnoreCase))
             {
                 var moduleRootSubPath = filePath.Remove(0, psmodulePathRoot.Length);
-                var pathParts = moduleRootSubPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+                var pathParts = moduleRootSubPath.Split(Utils.Separators.Directory, StringSplitOptions.RemoveEmptyEntries);
                 moduleName = pathParts[0];
                 var potentialVersion = pathParts[1];
                 Version result;

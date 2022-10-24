@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
             var modulePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string path in ModuleIntrinsics.GetModulePath(includeSystemModulePath: false, Context))
             {
-                string uniquePath = path.AsSpan().TrimEnd("\\/").ToString();
+                string uniquePath = path.TrimEnd(Utils.Separators.Directory);
                 if (!modulePaths.Add(uniquePath)) { continue; }
 
                 foreach (string moduleFile in ModuleUtils.GetDefaultAvailableModuleFiles(uniquePath))

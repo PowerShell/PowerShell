@@ -850,7 +850,7 @@ namespace System.Management.Automation
                                 lineContents.Append(bufferContents[row, column].Character);
                             }
 
-                            bufferText.Append(lineContents.ToString().AsSpan().TrimEnd(" \t"));
+                            bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
                         }
 
                         this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());

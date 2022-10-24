@@ -1454,8 +1454,9 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
-
+            internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
+            internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
             internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
