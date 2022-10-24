@@ -23,6 +23,7 @@ namespace System.Management.Automation
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
+        internal const string PSFeedbackProvider = "PSFeedbackProvider";
 
         #endregion
 
@@ -120,6 +121,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSCustomTableHeaderLabelDecoration,
                     description: "Formatting differentiation for table header labels that aren't property members"),
+                new ExperimentalFeature(
+                    name: PSFeedbackProvider,
+                    description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

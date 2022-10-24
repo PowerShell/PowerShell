@@ -3,5 +3,6 @@
   "PSCustomTableHeaderLabelDecoration",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
-  "PSSubsystemPluginModel"
+  "PSSubsystemPluginModel",
+  "PSFeedbackProvider"
 ]
