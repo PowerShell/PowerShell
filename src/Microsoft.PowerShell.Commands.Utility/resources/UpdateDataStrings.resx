@@ -135,9 +135,6 @@
   <data name="CannotUpdateMemberType" xml:space="preserve">
     <value>Cannot update a member with type "{0}". Specify a different type for the MemberType parameter.</value>
   </data>
-  <data name="SerializationDepthNegative" xml:space="preserve">
-    <value>The value of the SerializationDepth property should not be negative.</value>
-  </data>
   <data name="ShouldBeSpecified" xml:space="preserve">
     <value>The {0} parameter is required for the type "{1}". Please specify the {0} parameter.</value>
   </data>
