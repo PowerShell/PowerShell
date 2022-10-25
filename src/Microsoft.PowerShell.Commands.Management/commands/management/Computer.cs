@@ -306,7 +306,7 @@ foreach ($computerName in $array[1])
         ComputerName = $computerName
         ScriptBlock = { $true }
 
-        SessionOption = NewPSSessionOption -NoMachineProfile
+        SessionOption = New-PSSessionOption -NoMachineProfile
         ErrorAction = 'SilentlyContinue'
     }
 
