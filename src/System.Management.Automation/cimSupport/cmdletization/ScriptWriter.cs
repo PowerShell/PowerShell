@@ -524,7 +524,7 @@ function __cmdletization_BindCommonParameters
                 string psType = typeMetadata.PSType;
                 foreach (EnumMetadataEnum e in _cmdletizationMetadata.Enums)
                 {
-                    int index = psType.IndexOf(e.EnumName, StringComparison.InvariantCulture);
+                    int index = psType.IndexOf(e.EnumName, StringComparison.Ordinal);
                     if (index == -1)
                     {
                         // Fast return if 'PSType' doesn't contain the enum name at all.
@@ -546,10 +546,7 @@ function __cmdletization_BindCommonParameters
                         // Now we have to fall back to the expensive regular expression matching, because 'PSType'
                         // could be a composite type like 'Nullable<enum_name>' or 'Dictionary<enum_name, object>',
                         // but we don't want the case where the enum name is part of another type's name.
-                        matchFound = Regex.IsMatch(
-                            psType,
-                            string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
-                            RegexOptions.CultureInvariant);
+                        matchFound = Regex.IsMatch(psType, $@"\b{Regex.Escape(e.EnumName)}\b");
                     }
 
                     if (matchFound)
