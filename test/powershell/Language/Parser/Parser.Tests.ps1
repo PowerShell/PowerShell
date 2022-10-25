@@ -182,23 +182,19 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $result | Should -Be 1
     }
 
-    It "Test that hex named script executed without tabcompleted prefix will run" {
-        Set-Location $TestDrive
-        New-Item -ItemType Directory -Path $TestDrive -Name "testfolder"
-        $ScriptFolder = Join-Path $TestDrive -ChildPath "testfolder"
-        New-Item -ItemType File -Name 0x.ps1 -Path $ScriptFolder -Value {Write-Output "Hello"}
-        $env:PATH += ";$ScriptFolder" #To execute without .\<script>\ we must add the script location to PATH.
-        $result = 0x.ps1
-        $result | Should -BeExactly "Hello"
-    }
 
-    It "Test that a dash hex named script executed without tabcompleted prefix will run" {
+    It "Test that a hex named script executed without prefix will run case: <case>" -TestCases @(
+            @{ case = "0x.ps1" }
+            @{ case = "-0x.ps1" }
+            @{ case = "+0x.ps1" }
+    ){
+        param ($case)
         Set-Location $TestDrive
         New-Item -ItemType Directory -Path $TestDrive -Name "testfolder"
         $ScriptFolder = Join-Path $TestDrive -ChildPath "testfolder"
-        New-Item -ItemType File -Name `-0x.ps1 -Path $ScriptFolder -Value {Write-Output "Hello"}
+        New-Item -ItemType File -Name $case -Path $ScriptFolder -Value {Write-Output "Hello"}
         $env:PATH += ";$ScriptFolder" #To execute without .\<script>\ we must add the script location to PATH.
-        $result = -0x.ps1
+        $result = $case
         $result | Should -BeExactly "Hello"
     }
 
