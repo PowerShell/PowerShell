@@ -41,7 +41,7 @@ function Start-PSPackage {
         [string[]]$Type,
 
         # Generate windows downlevel package
-        [ValidateSet("win81-x86", "win81-x64", "win-arm", "win-arm64")]
+        [ValidateSet("win7-x86", "win7-x64", "win-arm", "win-arm64")]
         [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
@@ -102,7 +102,7 @@ function Start-PSPackage {
         }
 
         if ($Environment.IsWindows) {
-            # Runtime will be one of win81-x64, win81-x86, "win-arm" and "win-arm64" on Windows.
+            # Runtime will be one of win7-x64, win7-x86, "win-arm" and "win-arm64" on Windows.
             # Build the name suffix for universal win-plat packages.
             switch ($Runtime) {
                 "win-arm"   { $NameSuffix = "win-arm32" }
@@ -3200,7 +3200,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win81-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -3591,7 +3591,7 @@ function Start-MsiBuild {
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win81-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {

@@ -239,8 +239,8 @@ jobs:
   - pwsh: |
       $runtime = switch ($env:Architecture)
         {
-          "x64" { "win81-x64" }
-          "x86" { "win81-x86" }
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
           "arm" { "win-arm"}
           "arm64" { "win-arm64" }
           "fxdependent" { "fxdependent" }

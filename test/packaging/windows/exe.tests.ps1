@@ -63,17 +63,17 @@ Describe -Name "Windows EXE" -Fixture {
     Context "$Channel-$Runtime" {
         BeforeAll {
             Write-Verbose "cr-$channel-$runtime" -Verbose
-            switch -regex ("$channel-$runtime") {
-                "preview-win\d*-x64" {
+            switch ("$channel-$runtime") {
+                "preview-win7-x64" {
                     $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
                 }
-                "stable-win\d*-x64" {
+                "stable-win7-x64" {
                     $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
                 }
-                "preview-win\d*-x86" {
+                "preview-win7-x86" {
                     $msiUpgradeCode = '86abcfbd-1ccc-4a88-b8b2-0facfde29094'
                 }
-                "stable-win\d*-x86" {
+                "stable-win7-x86" {
                     $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
                 }
                 default {
