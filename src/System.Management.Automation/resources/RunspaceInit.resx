@@ -159,6 +159,9 @@
   <data name="PSEmailServerDescription" xml:space="preserve">
     <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
   </data>
+  <data name="PSModuleAutoLoadingPreferenceDescription" xml:space="preserve">
+    <value>Enables and disables automatic importing of modules in the session.</value>
+  </data>
   <data name="ConfirmPreferenceDescription" xml:space="preserve">
     <value>Dictates when confirmation should be requested. Confirmation is requested when the ConfirmImpact of the operation is equal to or greater than $ConfirmPreference. If $ConfirmPreference is None, actions will only be confirmed when Confirm is specified.</value>
   </data>
