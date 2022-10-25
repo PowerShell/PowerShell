@@ -101,7 +101,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $BackupEnvPATH = $env:PATH
         $env:PATH += '{0}{1}' -f @(
             [System.IO.Path]::PathSeparator
-            $ScriptFolder
+            $testfolder1
         )
         $testdirfile1 = Join-Path -Path $testfolder2 -ChildPath "testdirfile1.txt"
         $testdirfile2 = Join-Path -Path $testfolder2 -ChildPath "testdirfile2.txt"
@@ -197,7 +197,6 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         param ($case)
         Set-Location $TestDrive
         New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
-        $env:PATH += ";$ScriptFolder" #To execute without .\<script>\ we must add the script location to PATH.
         & $case | Should -BeExactly "Hello"
     }
 
