@@ -132,13 +132,14 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         if (Test-Path $testfolder1) {
             Remove-Item $testfolder1 -Recurse -Force -ErrorAction SilentlyContinue
         }
+        
+        $env:PATH = $BackupEnvPATH
     }
 
     AfterAll {
         if (Test-Path $functionDefinitionFile) {
             Remove-Item $functionDefinitionFile
         }
-        $env:PATH = $BackupEnvPATH
     }
 
     It "Throws a syntax error when parsing a string without a closing quote. (line 164)" {
