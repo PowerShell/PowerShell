@@ -178,11 +178,10 @@ namespace System.Management.Automation
                 {
                     CheckScriptCallOnRemoteRunspace(remoteRunspace);
 
-                    // Validate the remote server is running on PSv3 or later.
-                    // If the remote runspace only has legacy capabilities, assume the version is PSv2 or earlier.
+                    // TabExpansion2 script is not available prior to PSv3.
                     if (remoteRunspace.GetCapabilities().Equals(Runspaces.RunspaceCapability.Default))
                     {
-                        throw new NotSupportedException("Remote server must be running on PSv3 or later.");
+                        return s_emptyCommandCompletion;
                     }
                 }
             }
@@ -243,20 +242,17 @@ namespace System.Management.Automation
                 {
                     CheckScriptCallOnRemoteRunspace(remoteRunspace);
 
-                    // Validate the remote server is running on PSv3 or later.
-                    // If the remote runspace only has legacy capabilities, assume the version is PSv2 or earlier.
+                    // TabExpansion2 script is not available prior to PSv3.
                     if (remoteRunspace.GetCapabilities().Equals(Runspaces.RunspaceCapability.Default))
                     {
-                        throw new NotSupportedException("Remote server must be running on PSv3 or later.");
+                        return s_emptyCommandCompletion;
                     }
-                    else
-                    {
-                        // Call script on a remote win8 machine
-                        // when call the win8 TabExpansion2 script, the input should be the whole script text
-                        string input = ast.Extent.Text;
-                        int cursorIndex = ((InternalScriptPosition)cursorPosition).Offset;
-                        return CallScriptWithStringParameterSet(input, cursorIndex, options, powershell);
-                    }
+
+                    // Call script on a remote win8 machine
+                    // when call the win8 TabExpansion2 script, the input should be the whole script text
+                    string input = ast.Extent.Text;
+                    int cursorIndex = ((InternalScriptPosition)cursorPosition).Offset;
+                    return CallScriptWithStringParameterSet(input, cursorIndex, options, powershell);
                 }
             }
 
