@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FileListenerNotFound" xml:space="preserve">
-    <value>A file listener with name '{0}' was not found.</value>
-  </data>
   <data name="TraceFileOnly" xml:space="preserve">
     <value>Trace output can only be written to the file system. The path '{0}' referred to a '{1}' provider path.</value>
   </data>

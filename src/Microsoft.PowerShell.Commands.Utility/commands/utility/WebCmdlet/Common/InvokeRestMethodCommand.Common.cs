@@ -404,8 +404,6 @@ namespace Microsoft.PowerShell.Commands
                     string charSet = response.Content.Headers.ContentType?.CharSet;
                     if (!string.IsNullOrEmpty(charSet))
                     {
-                        // NOTE: Don't use ContentHelper.GetEncoding; it returns a
-                        // default which bypasses checking for a meta charset value.
                         StreamHelper.TryGetEncoding(charSet, out encoding);
                     }
 

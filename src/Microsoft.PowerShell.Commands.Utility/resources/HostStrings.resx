@@ -120,7 +120,4 @@
   <data name="InvalidColorErrorTemplate" xml:space="preserve">
     <value>Cannot process the color because {0} is not a valid color.</value>
   </data>
-  <data name="NoStringToEvalulateError" xml:space="preserve">
-    <value>Cannot evaluate the error because a string is not specified.</value>
-  </data>
 </root>

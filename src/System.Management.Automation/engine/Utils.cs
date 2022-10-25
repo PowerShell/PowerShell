@@ -638,41 +638,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether current monad session supports version specified
-        /// by ver.
-        /// </summary>
-        /// <param name="ver">Version to check.</param>
-        /// <returns>True if supported, false otherwise.</returns>
-        internal static bool IsPSVersionSupported(string ver)
-        {
-            // Convert version to supported format ie., x.x
-            Version inputVersion = StringToVersion(ver);
-            return IsPSVersionSupported(inputVersion);
-        }
-
-        /// <summary>
-        /// Checks whether current monad session supports version specified
-        /// by checkVersion.
-        /// </summary>
-        /// <param name="checkVersion">Version to check.</param>
-        /// <returns>True if supported, false otherwise.</returns>
-        internal static bool IsPSVersionSupported(Version checkVersion)
-        {
-            if (checkVersion == null)
-            {
-                return false;
-            }
-
-            foreach (Version compatibleVersion in PSVersionInfo.PSCompatibleVersions)
-            {
-                if (checkVersion.Major == compatibleVersion.Major && checkVersion.Minor <= compatibleVersion.Minor)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Checks whether current PowerShell session supports edition specified
         /// by checkEdition.
         /// </summary>
@@ -680,7 +645,7 @@ namespace System.Management.Automation
         /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSEditionSupported(string checkEdition)
         {
-            return PSVersionInfo.PSEdition.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
+            return PSVersionInfo.PSEditionValue.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -690,7 +655,7 @@ namespace System.Management.Automation
         /// <returns>True if the edition is supported by this runtime, false otherwise.</returns>
         internal static bool IsPSEditionSupported(IEnumerable<string> editions)
         {
-            string currentPSEdition = PSVersionInfo.PSEdition;
+            string currentPSEdition = PSVersionInfo.PSEditionValue;
             foreach (string edition in editions)
             {
                 if (currentPSEdition.Equals(edition, StringComparison.OrdinalIgnoreCase))
@@ -1821,6 +1786,20 @@ namespace System.Management.Automation.Internal
             if (!precondition)
             {
                 throw new ArgumentException(paramName);
+            }
+        }
+
+        internal static void OneSpecificSubsystemKind(Subsystem.SubsystemKind kind)
+        {
+            uint value = (uint)kind;
+            if (value == 0 || (value & (value - 1)) != 0)
+            {
+                // The value is either invalid or a composite value because it's not power of 2.
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.RequireOneSpecificSubsystemKind,
+                        kind.ToString()),
+                    nameof(kind));
             }
         }
     }

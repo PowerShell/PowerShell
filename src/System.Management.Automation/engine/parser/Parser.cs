@@ -5115,13 +5115,6 @@ namespace System.Management.Automation.Language
 
                         assemblyFileName = workingDirectory + @"\" + assemblyFileName;
                     }
-
-#if !CORECLR
-                    if (!File.Exists(assemblyFileName))
-                    {
-                        GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                    }
-#endif
                 }
                 catch
                 {

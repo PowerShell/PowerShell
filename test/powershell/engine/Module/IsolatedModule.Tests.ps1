@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Isolated module scenario - load the whole module in custom ALC" {
+Describe "Isolated module scenario - load the whole module in custom ALC" -Tag 'CI' {
     It "Loading 'IsolatedModule' should work as expected" {
         ## The 'IsolatedModule' module can be found at '<repo-root>\test\tools\Modules'.
         ## The module assemblies are created and deployed by '<repo-root>\test\tools\TestAlc'.

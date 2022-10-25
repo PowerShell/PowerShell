@@ -12,6 +12,10 @@ jobs:
       # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
       # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
       - group: symbols
+      - name: branchCounterKey
+        value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+      - name: branchCounter
+        value: $[counter(variables['branchCounterKey'], 1)]
 
     pool:
       name: PowerShell1ES
@@ -73,6 +77,24 @@ jobs:
       displayName: 'Download Symbols for binaries'
       retryCountOnTaskFailure: 2
       workingDirectory: '$(Build.SourcesDirectory)'
+
+    - pwsh: |
+        Get-ChildItem '$(BinDir)' -File -Recurse |
+        Foreach-Object {
+          [pscustomobject]@{
+            Path = $_.FullName
+            Version = $_.VersionInfo.FileVersion
+            Md5Hash = (Get-FileHash -Algorithm MD5 -Path $_.FullName).Hash
+            Sha512Hash = (Get-FileHash -Algorithm SHA512 -Path $_.FullName).Hash
+          }
+        } | Export-Csv -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+      displayName: 'Create release file hash artifact'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build File Hash artifact'
+      inputs:
+        pathToPublish: '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+        artifactName: ReleaseFilesHash
 
     - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
       displayName: 'Run APIScan'
