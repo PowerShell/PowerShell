@@ -194,7 +194,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $ScriptFolder = Join-Path $TestDrive -ChildPath "testfolder"
         New-Item -ItemType File -Name $case -Path $ScriptFolder -Value {Write-Output "Hello"}
         $env:PATH += ";$ScriptFolder" #To execute without .\<script>\ we must add the script location to PATH.
-        $result = $case
+        $result = Powershell $case
         $result | Should -BeExactly "Hello"
     }
 
