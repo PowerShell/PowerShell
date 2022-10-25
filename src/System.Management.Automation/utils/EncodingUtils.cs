@@ -63,11 +63,7 @@ namespace System.Management.Automation
             Encoding foundEncoding;
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
-                // Write a warning if using utf7 as it is obsolete in .NET5
-                if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
-                {
-                    cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
-                }
+                WarnIfObsolete(cmdlet, foundEncoding);
 
                 return foundEncoding;
             }
