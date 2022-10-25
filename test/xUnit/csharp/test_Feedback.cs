@@ -89,7 +89,7 @@ namespace PSTests.Sequential
                 // Expect the result from 'General' only because the 'slow' one cannot finish before the specified timeout.
                 // The specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                var feedbacks = FeedbackHub.GetFeedback(pwsh.Runspace, millisecondsTimeout: 2000);
+                var feedbacks = FeedbackHub.GetFeedback(pwsh.Runspace, millisecondsTimeout: 1500);
                 string expectedCmd = Path.Combine(".", "feedbacktest");
 
                 // Test the result from the 'General' feedback provider.
