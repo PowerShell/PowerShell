@@ -98,6 +98,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         if (-not(Test-Path $testfolder2)) {
             New-Item $testfolder2 -Type Directory
         }
+        $BackupEnvPATH = $env:PATH
+        $env:PATH += '{0}{1}' -f @(
+            [System.IO.Path]::PathSeparator
+            $ScriptFolder
+        )
         $testdirfile1 = Join-Path -Path $testfolder2 -ChildPath "testdirfile1.txt"
         $testdirfile2 = Join-Path -Path $testfolder2 -ChildPath "testdirfile2.txt"
         Set-Content -Path $testdirfile1 -Value ""
@@ -133,6 +138,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         if (Test-Path $functionDefinitionFile) {
             Remove-Item $functionDefinitionFile
         }
+        $env:PATH = $BackupEnvPATH
     }
 
     It "Throws a syntax error when parsing a string without a closing quote. (line 164)" {
@@ -190,12 +196,9 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     ){
         param ($case)
         Set-Location $TestDrive
-        New-Item -ItemType Directory -Path $TestDrive -Name "testfolder"
-        $ScriptFolder = Join-Path $TestDrive -ChildPath "testfolder"
-        New-Item -ItemType File -Name $case -Path $ScriptFolder -Value {Write-Output "Hello"}
+        New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
         $env:PATH += ";$ScriptFolder" #To execute without .\<script>\ we must add the script location to PATH.
-        $result = Powershell $case
-        $result | Should -BeExactly "Hello"
+        & $case | Should -BeExactly "Hello"
     }
 
     It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
