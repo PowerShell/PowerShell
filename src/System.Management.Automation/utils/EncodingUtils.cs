@@ -91,9 +91,11 @@ namespace System.Management.Automation
         /// <param name="encoding">The encoding to check for obsolescence.</param>
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
-            // Check for UTF-7 by checking for code page 65000
-            // See: https://docs.microsoft.com/dotnet/core/compatibility/core-libraries/5.0/utf-7-code-paths-obsolete
-            if (encoding != null && encoding.CodePage == 65000)
+            const int CodePageUtf7 = 65000;
+
+            // Compare against the the well-known UTF-7 code page, see:
+            // https://docs.microsoft.com/dotnet/core/compatibility/core-libraries/5.0/utf-7-code-paths-obsolete
+            if (encoding is { CodePage: CodePageUtf7 })
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
             }
