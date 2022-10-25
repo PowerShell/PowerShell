@@ -92,7 +92,7 @@ namespace System.Management.Automation
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
             // Check for UTF-7 by checking for code page 65000
-            // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+            // See: https://docs.microsoft.com/dotnet/core/compatibility/core-libraries/5.0/utf-7-code-paths-obsolete
             if (encoding != null && encoding.CodePage == 65000)
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
