@@ -1249,7 +1249,7 @@ clean
 
             // This should only be called with 1 valid category
             ParameterMetadata categoryParameter = new ParameterMetadata("Category", typeof(string[]));
-            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
+            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames<HelpCategory>()));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
             return GetRestrictedCmdlet("Get-Help", null, "https://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);
