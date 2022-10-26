@@ -450,6 +450,44 @@ namespace System.Management.Automation
                     commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
+                    if (commandProcessor.CommandInfo is ApplicationInfo)
+                    {
+                        var applicationInfo = (ApplicationInfo)commandProcessor.CommandInfo;
+                        // Handle the JSON ADAPTER
+                        if (applicationInfo.JsonAdapter != null)
+                        {
+                            Token[] tokenList;
+                            ParseError[] errorList;
+                            var ast = Parser.ParseInput(applicationInfo.JsonAdapter.Name, out tokenList, out errorList);
+                            CommandBaseAst cmdAst = ast?.Find(a => a is CommandBaseAst, false) as CommandBaseAst;
+                            CommandAst jsonCommandAst = ast?.Find(a => a is CommandAst, false) as CommandAst;
+                            if (jsonCommandAst != null)
+                            {
+                                // We will attach the ast of the original native command
+                                var commandParameters = new List<CommandParameterInternal>();
+                                foreach (var commandElement in jsonCommandAst.CommandElements)
+                                {
+                                    var commandParameterAst = commandElement as CommandParameterAst;
+                                    if (commandParameterAst != null)
+                                    {
+                                        commandParameters.Add(GetCommandParameter(commandParameterAst, true, context));
+                                        continue;
+                                    }
+
+                                    var exprAst = (ExpressionAst)commandElement;
+                                    var argument = Compiler.GetExpressionValue(exprAst, true, context);
+                                    var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
+                                    commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
+                                }
+                                foreach (var commandElement in pipeElements[i])
+                                {
+                                    commandParameters.Add(commandElement);
+                                }
+                                commandProcessor = AddCommand(pipelineProcessor, commandParameters.ToArray(), cmdAst, commandRedirection, context);
+                            }
+                        }
+
+                    }
                 }
 
                 var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
