@@ -190,16 +190,18 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 
-#    It "Test that a hex named script executed without prefix will run case: <case>" -TestCases @(
-#            @{ case = "0x.ps1" }
-#            @{ case = "-0x.ps1" }
-#            @{ case = "+0x.ps1" }
-#    ){
-#        param ($case)
-#        Set-Location $TestDrive
-#        New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
-#        & $case | Should -BeExactly "Hello"
-#    }
+    It "Test that a hex named script executed without prefix will run case: <case>" -TestCases @(
+            @{ case = "0x.ps1" }
+            @{ case = "-0x.ps1" }
+            @{ case = "+0x.ps1" }
+    ){
+        param ($case)
+        Set-Location $TestDrive
+        New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
+        & $case | Should -BeExactly "Hello"
+        $pathtodelete = Join-Path -Path $testfolder1 -ChildPath $case
+        Remove-Item $Pathtodelete -Force
+    }
 
     It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
         $result = ExecuteCommand "Set-Location $TestDrive; Get-ChildItem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
