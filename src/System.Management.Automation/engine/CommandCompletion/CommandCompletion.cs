@@ -248,8 +248,7 @@ namespace System.Management.Automation
                         return s_emptyCommandCompletion;
                     }
 
-                    // Call script on a remote win8 machine
-                    // when call the win8 TabExpansion2 script, the input should be the whole script text
+                    // When calling the TabExpansion2 script, the input should be the whole script text
                     string input = ast.Extent.Text;
                     int cursorIndex = ((InternalScriptPosition)cursorPosition).Offset;
                     return CallScriptWithStringParameterSet(input, cursorIndex, options, powershell);
