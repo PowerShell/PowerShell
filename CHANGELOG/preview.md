@@ -2,7 +2,7 @@
 
 ## [7.3.0-rc.1] - 2022-10-26
 
-## Breaking Change
+### Breaking Change
 
 - Update to use `ComputeCore.dll` for PowerShell Direct (#18194)
 
