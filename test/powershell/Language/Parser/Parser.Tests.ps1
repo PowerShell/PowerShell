@@ -98,11 +98,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         if (-not(Test-Path $testfolder2)) {
             New-Item $testfolder2 -Type Directory
         }
-        $BackupEnvPATH = $env:PATH
-        $env:PATH += '{0}{1}' -f @(
-            [System.IO.Path]::PathSeparator
-            $testfolder1
-        )
+#        $BackupEnvPATH = $env:PATH
+#        $env:PATH += '{0}{1}' -f @(
+#            [System.IO.Path]::PathSeparator
+#            $testfolder1
+#        )
         $testdirfile1 = Join-Path -Path $testfolder2 -ChildPath "testdirfile1.txt"
         $testdirfile2 = Join-Path -Path $testfolder2 -ChildPath "testdirfile2.txt"
         Set-Content -Path $testdirfile1 -Value ""
@@ -132,8 +132,8 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         if (Test-Path $testfolder1) {
             Remove-Item $testfolder1 -Recurse -Force -ErrorAction SilentlyContinue
         }
-        
-        $env:PATH = $BackupEnvPATH
+
+#        $env:PATH = $BackupEnvPATH
     }
 
     AfterAll {
@@ -190,16 +190,16 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 
-    It "Test that a hex named script executed without prefix will run case: <case>" -TestCases @(
-            @{ case = "0x.ps1" }
-            @{ case = "-0x.ps1" }
-            @{ case = "+0x.ps1" }
-    ){
-        param ($case)
-        Set-Location $TestDrive
-        New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
-        & $case | Should -BeExactly "Hello"
-    }
+#    It "Test that a hex named script executed without prefix will run case: <case>" -TestCases @(
+#            @{ case = "0x.ps1" }
+#            @{ case = "-0x.ps1" }
+#            @{ case = "+0x.ps1" }
+#    ){
+#        param ($case)
+#        Set-Location $TestDrive
+#        New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
+#        & $case | Should -BeExactly "Hello"
+#    }
 
     It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
         $result = ExecuteCommand "Set-Location $TestDrive; Get-ChildItem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
