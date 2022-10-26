@@ -450,10 +450,10 @@ namespace System.Management.Automation
                     commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
-                    if (commandProcessor.CommandInfo is ApplicationInfo)
+                    if (ExperimentalFeature.IsEnabled("PSNativeJsonAdapter") && commandProcessor.CommandInfo is ApplicationInfo && commandRedirection is null)
                     {
                         var applicationInfo = (ApplicationInfo)commandProcessor.CommandInfo;
-                        // Handle the JSON ADAPTER
+                        // Handle the Json adapter if it is set.
                         if (applicationInfo.JsonAdapter != null)
                         {
                             Token[] tokenList;
@@ -461,7 +461,8 @@ namespace System.Management.Automation
                             var ast = Parser.ParseInput(applicationInfo.JsonAdapter.Name, out tokenList, out errorList);
                             CommandBaseAst cmdAst = ast?.Find(a => a is CommandBaseAst, false) as CommandBaseAst;
                             CommandAst jsonCommandAst = ast?.Find(a => a is CommandAst, false) as CommandAst;
-                            if (jsonCommandAst != null)
+                            // Process the Json adapter and add it to the pipeline.
+                            if (jsonCommandAst != null && errorList.Length == 0)
                             {
                                 // We will attach the ast of the original native command
                                 var commandParameters = new List<CommandParameterInternal>();
@@ -479,14 +480,17 @@ namespace System.Management.Automation
                                     var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
                                     commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
                                 }
+                                
+                                // Attach the parameters of the original native command as arguments for the adapter.
+                                // Output from the original native command will be piped to the adapter.
                                 foreach (var commandElement in pipeElements[i])
                                 {
                                     commandParameters.Add(commandElement);
                                 }
+
                                 commandProcessor = AddCommand(pipelineProcessor, commandParameters.ToArray(), cmdAst, commandRedirection, context);
                             }
                         }
-
                     }
                 }
 

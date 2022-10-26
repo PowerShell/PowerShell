@@ -51,9 +51,12 @@ namespace System.Management.Automation
             Extension = System.IO.Path.GetExtension(path);
             _context = context;
 
-            // Look for a json adapter.
-            // These take the shape of name-json.extension
-            FindJsonAdapter();
+            if (ExperimentalFeature.IsEnabled("PSNativeJsonAdapter"))
+            {
+                // Look for a json adapter.
+                // These take the shape of name-json.extension
+                FindJsonAdapter();
+            }
         }
 
         private readonly ExecutionContext _context;
@@ -70,15 +73,10 @@ namespace System.Management.Automation
         public string Extension { get; } = string.Empty;
 
         /// <summary>
-        /// Does this native application have a json adapter
+        /// The Json adapter for this application.
+        /// If this is not null, the adapter will be added to the pipeline following the application.
         /// </summary>
         public CommandInfo JsonAdapter { get; private set; } = null;
-
-        /// <summary>
-        /// Should we automatically call ConvertFrom-Json after the JsonAdapter is called.
-        /// This can also be used if the native command emits json.
-        /// </summary>
-        public bool AutoJsonConversion { get; private set; } = false;
 
         /// <summary>
         /// Gets the path of the application file.
@@ -154,14 +152,14 @@ namespace System.Management.Automation
 
         private ReadOnlyCollection<PSTypeName> _outputType = null;
 
+        /// <summary>
+        /// Search for a Json adapter for this application.
+        /// It will have the shape of name-json.extension, it can be any type of command.
+        /// </summary>
         private void FindJsonAdapter()
         {
             string jsonAdapterName = string.Format("{0}-json{1}", System.IO.Path.GetFileNameWithoutExtension(this.Path), Extension);
             JsonAdapter = _context.SessionState.InvokeCommand.GetCommand(jsonAdapterName, CommandTypes.All);
-            if (JsonAdapter != null)
-            {
-                AutoJsonConversion = true;
-            }
             return;
         }
     }

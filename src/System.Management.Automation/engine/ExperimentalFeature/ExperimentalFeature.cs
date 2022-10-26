@@ -132,6 +132,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSCommandWithArgs,
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
+                new ExperimentalFeature(
+                    name: "PSNativeJsonAdapter",
+                    description: "Automatically call an adapter to convert output to Json when a native command is executed."),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
