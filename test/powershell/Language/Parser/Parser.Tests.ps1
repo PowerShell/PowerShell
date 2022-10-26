@@ -98,11 +98,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         if (-not(Test-Path $testfolder2)) {
             New-Item $testfolder2 -Type Directory
         }
-#        $BackupEnvPATH = $env:PATH
-#        $env:PATH += '{0}{1}' -f @(
-#            [System.IO.Path]::PathSeparator
-#            $testfolder1
-#        )
+        $BackupEnvPATH = $env:PATH
+        $env:PATH += '{0}{1}' -f @(
+            [System.IO.Path]::PathSeparator
+            $testfolder1
+        )
         $testdirfile1 = Join-Path -Path $testfolder2 -ChildPath "testdirfile1.txt"
         $testdirfile2 = Join-Path -Path $testfolder2 -ChildPath "testdirfile2.txt"
         Set-Content -Path $testdirfile1 -Value ""
@@ -133,7 +133,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             Remove-Item $testfolder1 -Recurse -Force -ErrorAction SilentlyContinue
         }
 
-#        $env:PATH = $BackupEnvPATH
+        $env:PATH = $BackupEnvPATH
     }
 
     AfterAll {
