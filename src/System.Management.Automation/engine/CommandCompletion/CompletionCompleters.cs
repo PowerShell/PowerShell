@@ -195,7 +195,7 @@ namespace System.Management.Automation
                 if (commandInfos != null && commandInfos.Count > 1)
                 {
                     // OrderBy is using stable sorting
-                    var sortedCommandInfos = commandInfos.OrderBy(static a => a, new CommandNameComparer());
+                    var sortedCommandInfos = commandInfos.Order(new CommandNameComparer());
                     completionResults = MakeCommandsUnique(sortedCommandInfos, useModulePrefix, addAmpersandIfNecessary, quote);
                 }
                 else
@@ -4563,7 +4563,7 @@ namespace System.Management.Automation
                     }
 
                     // Sorting the results by the path
-                    var sortedPsobjs = psobjs.OrderBy(static a => a, new ItemPathComparer());
+                    var sortedPsobjs = psobjs.Order(new ItemPathComparer());
 
                     foreach (PSObject psobj in sortedPsobjs)
                     {
