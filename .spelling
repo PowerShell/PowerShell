@@ -726,6 +726,7 @@ preview.8
 preview1-24530-04
 preview1.22217.1
 preview7
+ProcessorArchitecture
 productversion
 program.cs
 prototyyppi
@@ -759,6 +760,7 @@ pvs-studio
 pwd
 pwrshplughin.dll
 pwsh
+pwsh.deps.json
 qmfrederik
 raghav710
 RandomNoun7
@@ -768,6 +770,7 @@ rc.1
 rc.1.21455.2
 rc.1.21458.32
 rc.2
+rc.2.22477.20
 rc.3
 rc2-24027
 rc3-24011
@@ -1073,6 +1076,7 @@ wildcards
 win32
 win32-openssh
 win7
+win8
 windos
 windowspsmodulepath
 windowsversion
