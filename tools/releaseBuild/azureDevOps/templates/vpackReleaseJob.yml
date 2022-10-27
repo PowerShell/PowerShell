@@ -59,7 +59,7 @@ jobs:
 
   - pwsh: |
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
-          if($_.Name -match 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
+          if($_.Name -match 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
           {
               $destDir = "$(System.ArtifactsDirectory)\vpack${{ parameters.architecture }}"
               $null = new-item -ItemType Directory -Path $destDir
