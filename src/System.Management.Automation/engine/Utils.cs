@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
         /// <returns>Command name and as appropriate Module name in out parameter.</returns>
         internal static string ParseCommandName(string commandName, out string moduleName)
         {
-            var names = commandName.Split(Separators.Backslash, 2);
+            var names = commandName.Split('\\', 2);
             if (names.Length == 2)
             {
                 moduleName = names[0];
@@ -1416,25 +1416,10 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
-            internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
-
-            internal static readonly char[] Colon = new char[] { ':' };
-            internal static readonly char[] Dot = new char[] { '.' };
-            internal static readonly char[] Pipe = new char[] { '|' };
-            internal static readonly char[] Comma = new char[] { ',' };
-            internal static readonly char[] Semicolon = new char[] { ';' };
-            internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
-            internal static readonly char[] ColonOrBackslash = new char[] { '\\', ':' };
-            internal static readonly char[] PathSeparator = new char[] { Path.PathSeparator };
-
-            internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
-            internal static readonly char[] Space = new char[] { ' ' };
-            internal static readonly char[] QuotesSpaceOrTab = new char[] { ' ', '\t', '\'', '"' };
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
-            internal static readonly char[] Newline = new char[] { '\n' };
-            internal static readonly char[] CrLf = new char[] { '\r', '\n' };
+            internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
             // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
@@ -1506,7 +1491,7 @@ namespace System.Management.Automation
 
             return oldMode;
         }
-                
+
         internal static string DisplayHumanReadableFileSize(long bytes)
         {
             return bytes switch

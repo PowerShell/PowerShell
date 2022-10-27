@@ -718,7 +718,7 @@ namespace System.Management.Automation
             {
                 StringBuilder result = new StringBuilder();
 
-                result.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
+                result.Append(Major).Append('.').Append(Minor).Append('.').Append(Patch);
 
                 if (!string.IsNullOrEmpty(PreReleaseLabel))
                 {

@@ -156,7 +156,7 @@ namespace System.Management.Automation
                 searchNestedScriptBlocks: true).ToList();
 
             // If the last ast is an unnamed block that starts with "param" the cursor is inside a param block.
-            // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion. 
+            // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion.
             if (relatedAsts[^1].Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)
                 && relatedAsts[^1] is NamedBlockAst namedBlock && namedBlock.Unnamed)
             {
@@ -905,7 +905,7 @@ namespace System.Management.Automation
                         {
                             switch (completionContext.TokenBeforeCursor.Kind)
                             {
-                               
+
                                 case TokenKind.Dot:
                                 case TokenKind.ColonColon:
                                 case TokenKind.QuestionDot:
@@ -940,7 +940,7 @@ namespace System.Management.Automation
                                         result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
                                     }
                                     break;
-                                    
+
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
@@ -949,7 +949,7 @@ namespace System.Management.Automation
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
                                     break;
-                                    
+
                                 default:
                                     break;
                             }
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation
                         typeNameToComplete = FindTypeNameToComplete(typeConstraintAst.TypeName, _cursorPosition);
                     }
                 }
-                
+
                 if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
                     typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation
             hasNewLine = false;
             if (!string.IsNullOrEmpty(stringToComplete))
             {
-                var index = stringToComplete.IndexOfAny(Utils.Separators.CrLf);
+                var index = stringToComplete.AsSpan().IndexOfAny('\r', '\n');
                 if (index >= 0)
                 {
                     stringToComplete = stringToComplete.Substring(0, index);
@@ -2042,7 +2042,7 @@ namespace System.Management.Automation
                     {
                         if (cursorAst.Extent.EndOffset == tokenAtCursor.Extent.StartOffset)
                         {
-                            if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
+                            if (tokenAtCursorText.AsSpan().IndexOfAny('\\', '/') == 0)
                             {
                                 string wordToComplete =
                                     CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
@@ -2292,7 +2292,7 @@ namespace System.Management.Automation
                     completionContext.WordToComplete = wordToComplete;
                 }
             }
-            else if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
+            else if (tokenAtCursorText.AsSpan().IndexOfAny('\\', '/') == 0)
             {
                 var command = lastAst.Parent as CommandBaseAst;
                 if (command != null && command.Redirections.Count > 0)
@@ -2384,7 +2384,7 @@ namespace System.Management.Automation
                     // Ignore getter-only properties and properties that have already been set.
                     if (!property.CanWrite || existingArguments.Contains(property.Name))
                     {
-                        continue; 
+                        continue;
                     }
 
                     if (property.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase))

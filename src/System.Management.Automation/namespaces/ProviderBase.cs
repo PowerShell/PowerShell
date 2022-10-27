@@ -1352,7 +1352,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         public virtual char AltItemSeparator =>
 #if UNIX
-            Utils.Separators.Backslash[0];
+            '\\';
 #else
             Path.AltDirectorySeparatorChar;
 #endif

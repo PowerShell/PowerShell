@@ -707,7 +707,7 @@ namespace System.Management.Automation
             {
                 isSnapinSpecified = false;
 
-                string[] cmdletParts = lastWord.Split(Utils.Separators.Backslash);
+                string[] cmdletParts = lastWord.Split('\\');
                 if (cmdletParts.Length == 1)
                 {
                     return s_cmdletTabRegex.IsMatch(lastWord);
