@@ -1273,24 +1273,23 @@ namespace System.Management.Automation
             };
 
             var modulePathList = new List<string>();
-            foreach (var path in currentModulePath.Split(';'))
+            foreach (var path in currentModulePath.Split(';', StringSplitOptions.TrimEntries))
             {
-                var trimmedPath = path.Trim();
-                if (!excludeModulePaths.Contains(trimmedPath))
+                if (!excludeModulePaths.Contains(path))
                 {
                     // make sure this module path is Not part of other PS Core installation
-                    var possiblePwshDir = Path.GetDirectoryName(trimmedPath);
+                    var possiblePwshDir = Path.GetDirectoryName(path);
 
                     if (string.IsNullOrEmpty(possiblePwshDir))
                     {
                         // i.e. module dir is in the drive root
-                        modulePathList.Add(trimmedPath);
+                        modulePathList.Add(path);
                     }
                     else
                     {
                         if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.dll")))
                         {
-                            modulePathList.Add(trimmedPath);
+                            modulePathList.Add(path);
                         }
                     }
                 }
