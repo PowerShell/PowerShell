@@ -93,7 +93,7 @@ namespace System.Management.Automation
         {
             const int CodePageUtf7 = 65000;
 
-            // Compare against the the well-known UTF-7 code page, see:
+            // Use the recommended pattern to check for UTF-7.
             // https://docs.microsoft.com/dotnet/core/compatibility/core-libraries/5.0/utf-7-code-paths-obsolete
             if (encoding is { CodePage: CodePageUtf7 })
             {
