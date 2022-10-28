@@ -164,16 +164,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
           "Version": "7.2.0"
         }
@@ -235,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -656,26 +646,6 @@
         "Nuget": {
           "Name": "runtime.win.System.Runtime.Extensions",
           "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7-x86.Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
         }
       },
       "DevelopmentDependency": false
