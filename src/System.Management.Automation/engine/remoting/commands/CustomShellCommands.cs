@@ -1462,7 +1462,7 @@ else
         {
             if (groups == null) { return string.Empty; }
 
-            return string.Join(";", groups);
+            return string.Join(';', groups);
         }
 
         /// <summary>
