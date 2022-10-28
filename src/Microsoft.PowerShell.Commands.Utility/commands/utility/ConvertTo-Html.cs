@@ -635,7 +635,7 @@ namespace Microsoft.PowerShell.Commands
                 if (result.Result != null)
                 {
                     string htmlEncodedResult = WebUtility.HtmlEncode(SafeToString(result.Result));
-                    Listtag.Append(htmlEncodedResult);
+                    Listtag.Append(CheckUri(htmlEncodedResult));
                 }
 
                 Listtag.Append(", ");
@@ -645,6 +645,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 Listtag.Remove(Listtag.Length - 2, 2);
             }
+        }
+
+        /// <summary>
+        /// Check if a string is uri, if true, then change to hyperlink format.
+        /// </summary>
+        private static string CheckUri(string s)
+        {
+            if (Uri.TryCreate(s, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+            {
+                return "<a href=\"" + s + "\">" + s + "</a>";
+            }
+            return s;
         }
 
         /// <summary>
