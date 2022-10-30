@@ -49,11 +49,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.Name = this.GetType().Name + _myJobNumber.ToString(CultureInfo.InvariantCulture);
             UsesResultsCollection = true;
 
-            lock (s_globalRandom)
-            {
-                _random = new Random(s_globalRandom.Next());
-            }
-
             _jobSpecificCustomOptions = new Lazy<CimCustomOptionsDictionary>(this.CalculateJobSpecificCustomOptions);
         }
 
@@ -158,8 +153,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     });
         }
 
-        private static readonly Random s_globalRandom = new();
-        private readonly Random _random;
         private int _sleepAndRetryDelayRangeMs = 1000;
         private int _sleepAndRetryExtraDelayMs = 0;
 
@@ -194,7 +187,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private void SleepAndRetry()
         {
-            int tmpRandomDelay = _random.Next(0, _sleepAndRetryDelayRangeMs);
+            int tmpRandomDelay = Random.Shared.Next(0, _sleepAndRetryDelayRangeMs);
             int delay = MinRetryDelayMs + _sleepAndRetryExtraDelayMs + tmpRandomDelay;
             _sleepAndRetryExtraDelayMs = _sleepAndRetryDelayRangeMs - tmpRandomDelay;
             if (_sleepAndRetryDelayRangeMs < MaxRetryDelayMs)
