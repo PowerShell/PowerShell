@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
                                 System.Globalization.CultureInfo.InvariantCulture,
                                 CommandBaseStrings.ExecFailed,
                                 Marshal.GetLastPInvokeError(),
-                                string.Join(" ", WithCommand)
+                                string.Join(' ', WithCommand)
                             )
                         ),
                         "ExecutionFailed",

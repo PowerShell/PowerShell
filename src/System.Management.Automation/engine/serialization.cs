@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
                 instanceMetadata.Properties.Add(
                     new PSNoteProperty(
                         InternalDeserializer.CimModifiedProperties,
-                        string.Join(" ", namesOfModifiedProperties)));
+                        string.Join(' ', namesOfModifiedProperties)));
             }
         }
 
