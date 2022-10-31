@@ -4,6 +4,7 @@ parameters:
   parentJob: ''
 
 jobs:
+
 - job: build_${{ parameters.buildName }}
   displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
