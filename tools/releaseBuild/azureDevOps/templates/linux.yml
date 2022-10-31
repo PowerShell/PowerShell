@@ -125,28 +125,43 @@ jobs:
         sourceScanPath: '$(PowerShellRoot)/tools'
 
   - ${{ if eq(variables.build,'deb') }} :
-    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+        artifactName: pwshLinuxBuild
 
   - ${{ if eq(variables.build,'deb') }} :
-    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        artifactName: pwshLinuxBuildMinSize
 
   - ${{ if eq(variables.build,'deb') }} :
-    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        artifactName: pwshLinuxBuildArm32
 
   - ${{ if eq(variables.build,'deb') }} :
-    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        artifactName: pwshLinuxBuildArm64
 
   - ${{ if eq(variables.build,'rpm') }} :
-    - publish: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        artifactName: pwshMarinerBuildAmd64
 
 - job: pkg_${{ parameters.buildName }}
-  displayName: Build ${{ parameters.buildName }}
+  displayName: Package ${{ parameters.buildName }}
   condition: succeeded()
   pool:
     name: PowerShell1ES
     demands:
     - ImageOverride -equals PSMMSUbuntu20.04-Secure
-  dependsOn: ${{ parameters.parentJob }}
+  dependsOn: build_${{ parameters.buildName }}
   variables:
     - name: runCodesignValidationInjection
       value: false
