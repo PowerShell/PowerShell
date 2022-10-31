@@ -133,8 +133,20 @@ jobs:
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuild-meta
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
         artifactName: pwshLinuxBuildMinSize
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta'
+        artifactName: pwshLinuxBuildMinSize-meta
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
@@ -145,14 +157,32 @@ jobs:
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta'
+        artifactName: pwshLinuxBuildArm32-meta
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
         artifactName: pwshLinuxBuildArm64
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta'
+        artifactName: pwshLinuxBuildArm64-meta
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
         artifactName: pwshMarinerBuildAmd64
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
+        artifactName: pwshMarinerBuildAmd64-meta
 
 - job: pkg_${{ parameters.buildName }}
   displayName: Package ${{ parameters.buildName }}
@@ -175,30 +205,55 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuild
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildMinSize
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildArm32
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildArm64
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshMarinerBuildAmd64
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuild-meta
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildMinSize-meta
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize-meta
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildArm32-meta
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32-meta
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildArm64-meta
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64-meta
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshMarinerBuildAmd64-meta
+      path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-meta
 
   - pwsh: |
-      Get-ChildItem '$(Build.ArtifactStagingDirectory)'
+      Get-ChildItem '$(Build.ArtifactStagingDirectory)' | Select-Object -expandProperty unixmode, size, name
     displayName: Capture downloads
 
   - checkout: self
