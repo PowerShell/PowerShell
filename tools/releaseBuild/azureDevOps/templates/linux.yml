@@ -124,6 +124,94 @@ jobs:
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
 
+  - ${{ if eq(variables.build,'deb') }} :
+    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - publish: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - publish: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+
+- job: pkg_${{ parameters.buildName }}
+  displayName: Build ${{ parameters.buildName }}
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
+  dependsOn: ${{ parameters.parentJob }}
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: build
+      value: ${{ parameters.buildName }}
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: ESRP
+
+  steps:
+  - download: current
+    artifact: pwshLinuxBuild
+    path: $(Build.ArtifactStagingDirectory)
+
+  - download: current
+    artifact: pwshLinuxBuildMinSize
+    path: $(Build.ArtifactStagingDirectory)
+
+  - download: current
+    artifact: pwshLinuxBuildArm32
+    path: $(Build.ArtifactStagingDirectory)
+
+  - download: current
+    artifact: pwshLinuxBuildArm64
+    path: $(Build.ArtifactStagingDirectory)
+
+  - download: current
+    artifact: pwshMarinerBuildAmd64
+    path: $(Build.ArtifactStagingDirectory)
+
+  - pwsh: |
+      Get-ChildItem '$(Build.ArtifactStagingDirectory)'
+    displayName: Capture downloads
+
+  - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
+    clean: true
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - pwsh: |
+      # create folder
+      sudo mkdir /PowerShell
+
+      # make the current user the owner
+      sudo chown $env:USER /PowerShell
+    displayName: 'Create /PowerShell'
+
+  - template: cloneToOfficialPath.yml
+
+  - template: insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - powershell: |
+      import-module "$env:POWERSHELLROOT/build.psm1"
+      Sync-PSTags -AddRemoteIfMissing
+    displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
+
   - powershell: |
       try {
         Import-Module "$env:POWERSHELLROOT/build.psm1"
@@ -167,7 +255,7 @@ jobs:
 
 - job: upload_${{ parameters.buildName }}
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
-  dependsOn: build_${{ parameters.buildName }}
+  dependsOn: pkg_${{ parameters.buildName }}
   condition: succeeded()
   pool:
     name: PowerShell1ES
