@@ -111,7 +111,7 @@ stages:
         parameters:
           buildName: alpine
 
-      - template: templates/signBuildFiles.yml
+      - template: templates/linux-authenticode-sign.yml
 
       - template: templates/linux-packaging.yml
         parameters:
