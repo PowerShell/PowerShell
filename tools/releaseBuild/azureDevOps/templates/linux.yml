@@ -183,3 +183,27 @@ jobs:
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
         artifactName: pwshMarinerBuildAmd64-meta
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+        artifactName: pwshLinuxBuildAlpine
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuildAlpine-meta
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+        artifactName: pwshLinuxBuild-fxdependent
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuildFxdependent-meta
