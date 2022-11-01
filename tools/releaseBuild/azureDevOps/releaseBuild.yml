@@ -100,7 +100,7 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: rpm
-          uploadDisplayName: Upload and Sign
+          parentJob: build_deb
 
       - template: templates/linux.yml
         parameters:
@@ -119,6 +119,7 @@ stages:
       - template: templates/linux-packaging.yml
         parameters:
           buildName: rpm
+          uploadDisplayName: Upload and Sign
           parentJob: build_rpm
 
   - stage: windows
