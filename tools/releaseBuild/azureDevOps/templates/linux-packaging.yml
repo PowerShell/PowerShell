@@ -22,64 +22,96 @@ jobs:
     - group: ESRP
 
   steps:
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifact: pwshLinuxBuild
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+  - ${{ if or(eq(variables.build,'deb'), eq(variables.build,'rpm') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshLinuxBuild
+        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+      displayName: Download deb build
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildMinSize
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
+      displayName: Download min-size build
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildArm32
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
+      displayName: Download arm32 build
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildArm64
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
+      displayName: Download arm64 build
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshMarinerBuildAmd64
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+      displayName: Download mariner build
 
-  - ${{ if eq(variables.build,'deb') }} :
+  - ${{ if eq(variables.build,'alpine') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuild-meta
+        artifact: pwshLinuxBuildAlpine
+        path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+      displayName: Download mariner build
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshLinuxBuildFxdependent-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+      displayName: Download deb build meta
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildMinSize-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize-meta
+      displayName: Download min-size build meta
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildArm32-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32-meta
+      displayName: Download arm32 build meta
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildArm64-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64-meta
+      displayName: Download arm64 build meta
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshMarinerBuildAmd64-meta
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-meta
+      displayName: Download mariner build meta
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshMarinerBuildAlpine-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
+      displayName: Download alpine build meta
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshMarinerBuildFxdependent-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
+      displayName: Download mariner build meta
 
   - pwsh: |
       Get-ChildItem '$(Build.ArtifactStagingDirectory)' | Select-Object -Property 'unixmode', 'size', 'name'
@@ -113,6 +145,14 @@ jobs:
       import-module "$env:POWERSHELLROOT/build.psm1"
       Sync-PSTags -AddRemoteIfMissing
     displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
+
+  - powershell: |
+      Import-Module "$env:POWERSHELLROOT/build.psm1"
+
+      Start-PSBootstrap -Package
+    displayName: 'Bootstrap'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
 
