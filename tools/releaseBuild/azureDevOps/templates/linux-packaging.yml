@@ -22,11 +22,10 @@ jobs:
     - group: ESRP
 
   steps:
-  - ${{ if eq(variables.build,'deb') }} :
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        artifact: pwshLinuxBuild
-        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuild
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
