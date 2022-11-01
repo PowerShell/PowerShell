@@ -1,3 +1,4 @@
+jobs:
 - job: sign_linux_builds
   displayName: Sign all linux builds
   condition: succeeded()
