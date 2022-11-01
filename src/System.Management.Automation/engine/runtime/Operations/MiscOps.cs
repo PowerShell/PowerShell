@@ -482,7 +482,7 @@ namespace System.Management.Automation
                                     var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
                                     commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
                                 }
-                                
+
                                 // Attach the parameters of the original native command as arguments for the adapter.
                                 // Output from the original native command will be piped to the adapter.
                                 foreach (var commandElement in pipeElements[i])
