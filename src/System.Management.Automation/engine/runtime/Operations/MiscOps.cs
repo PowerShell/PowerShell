@@ -444,6 +444,8 @@ namespace System.Management.Automation
 
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
+                // If we add a json adapter, we need to modify the history string to include the adapter name.
+                bool commandAdded = false;
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
@@ -489,6 +491,7 @@ namespace System.Management.Automation
                                 }
 
                                 commandProcessor = AddCommand(pipelineProcessor, commandParameters.ToArray(), cmdAst, commandRedirection, context);
+                                commandAdded = true;
                             }
                         }
                     }
@@ -532,6 +535,12 @@ namespace System.Management.Automation
                     }
                 }
 
+                if (commandAdded)
+                {
+                    // We've added a json adapter, update the history string.
+                    UpdateHistory(context, pipelineProcessor);
+                }
+
                 context.PushPipelineProcessor(pipelineProcessor);
                 try
                 {
@@ -546,6 +555,29 @@ namespace System.Management.Automation
             {
                 context.QuestionMarkVariableValue = !pipelineProcessor.ExecutionFailed;
                 pipelineProcessor.Dispose();
+            }
+        }
+
+        // This is best effort to change history.
+        internal static void UpdateHistory(ExecutionContext context, PipelineProcessor pipelineProcessor)
+        {
+            try
+            {
+                var runningPipeline =  context.CurrentRunspace.GetCurrentlyRunningPipeline() as LocalPipeline;
+                if (runningPipeline is null)
+                {
+                    return;
+                }
+                List<string> commands = new List<string>();
+                foreach (var commandProcessor in pipelineProcessor.Commands)
+                {
+                    commands.Add(commandProcessor.Command.InvocationExtent.Text);
+                }
+                runningPipeline.HistoryString = string.Join(" | ", commands);
+            }
+            catch (Exception)
+            {
+                // Ignore any exception.
             }
         }
 
