@@ -25,49 +25,49 @@ jobs:
   - ${{ if or(eq(variables.build,'deb'), eq(variables.build,'rpm')) }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuild
+        artifact: pwshLinuxBuild-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
       displayName: Download deb build
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuildMinSize
+        artifact: pwshLinuxBuildMinSize-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
       displayName: Download min-size build
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuildArm32
+        artifact: pwshLinuxBuildArm32-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
       displayName: Download arm32 build
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuildArm64
+        artifact: pwshLinuxBuildArm64-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
       displayName: Download arm64 build
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshMarinerBuildAmd64
+        artifact: pwshMarinerBuildAmd64-signed
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
       displayName: Download mariner build
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuildAlpine
+        artifact: pwshLinuxBuildAlpine-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
       displayName: Download alpine build
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuildFxdependent
+        artifact: pwshLinuxBuildFxdependent-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
       displayName: Download fxdependent build
 
