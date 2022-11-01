@@ -168,4 +168,4 @@ steps:
       $uploadFolder = '$(System.ArtifactsDirectory)/${{ parameters.binLocation }}'
       $containerName = '${{ parameters.binLocation }}-signed'
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadFolder"
-    displayName: Upload alpine signed to artifacts
+  displayName: Upload alpine signed to artifacts
