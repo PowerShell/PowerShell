@@ -67,8 +67,8 @@ jobs:
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshLinuxBuildFxdependent-meta
-        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+        artifact: pwshLinuxBuildFxdependent
+        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
       displayName: Download deb build meta
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -102,14 +102,14 @@ jobs:
   - ${{ if eq(variables.build,'alpine') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshMarinerBuildAlpine-meta
+        artifact: pwshLinuxBuildAlpine-meta
         path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
       displayName: Download alpine build meta
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: pwshMarinerBuildFxdependent-meta
+        artifact: pwshLinuxBuildFxdependent-meta
         path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
       displayName: Download mariner build meta
 
