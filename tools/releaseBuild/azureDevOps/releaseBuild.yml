@@ -122,6 +122,11 @@ stages:
           uploadDisplayName: Upload and Sign
           parentJob: build_rpm
 
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: alpine
+          parentJob: build_alpine
+
   - stage: windows
     dependsOn: ['prep']
     jobs:
