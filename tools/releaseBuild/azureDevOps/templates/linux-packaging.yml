@@ -22,7 +22,7 @@ jobs:
     - group: ESRP
 
   steps:
-  - ${{ if or(eq(variables.build,'deb'), eq(variables.build,'rpm') }} :
+  - ${{ if or(eq(variables.build,'deb'), eq(variables.build,'rpm')) }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuild
