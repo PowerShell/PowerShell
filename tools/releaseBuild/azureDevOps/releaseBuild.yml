@@ -114,23 +114,23 @@ stages:
       - template: templates/linux-packaging.yml
         parameters:
           buildName: deb
-          parentJob: build_fxdependent
+          parentJob: sign_linux_builds
 
       - template: templates/linux-packaging.yml
         parameters:
           buildName: rpm
           uploadDisplayName: Upload and Sign
-          parentJob: build_rpm
+          parentJob: sign_linux_builds
 
       - template: templates/linux-packaging.yml
         parameters:
           buildName: alpine
-          parentJob: build_alpine
+          parentJob: sign_linux_builds
 
       - template: templates/linux-packaging.yml
         parameters:
           buildName: fxdependent
-          parentJob: build_fxdependent
+          parentJob: sign_linux_builds
 
   - stage: windows
     dependsOn: ['prep']
