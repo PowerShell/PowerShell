@@ -127,6 +127,11 @@ stages:
           buildName: alpine
           parentJob: build_alpine
 
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: alpine
+          parentJob: build_fxdependent
+
   - stage: windows
     dependsOn: ['prep']
     jobs:
