@@ -230,10 +230,10 @@ jobs:
     clean: true
 
   - task: DownloadPipelineArtifact@2
-      inputs:
-        artifact: pwshLinuxBuild
-        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
-      displayName: Download deb build
+    inputs:
+      artifact: pwshLinuxBuild
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+    displayName: Download deb build
 
   - task: DownloadPipelineArtifact@2
     inputs:
