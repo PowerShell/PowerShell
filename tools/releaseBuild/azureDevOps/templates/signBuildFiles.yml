@@ -21,7 +21,7 @@ steps:
 
     $signedFilesDirectory = "$(System.ArtifactsDirectory)\signed"
 
-    if ((Test-Path -Path $filesToSignDirectory))  {
+    if ((Test-Path -Path $signedFilesDirectory))  {
       Remove-Item -Path $signedFilesDirectory -Recurse -Force
     }
 
