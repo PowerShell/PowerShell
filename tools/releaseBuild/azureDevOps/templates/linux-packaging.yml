@@ -110,14 +110,14 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildAlpine-meta
-        path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
       displayName: Download alpine build meta
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildFxdependent-meta
-        path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
       displayName: Download fxdependent build meta
 
   - pwsh: |
