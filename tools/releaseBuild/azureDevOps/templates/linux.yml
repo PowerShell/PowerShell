@@ -200,7 +200,7 @@ jobs:
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-        artifactName: pwshLinuxBuild-fxdependent
+        artifactName: pwshLinuxBuildFxdependent
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: PublishPipelineArtifact@1
