@@ -61,14 +61,21 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildAlpine
-        path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
-      displayName: Download mariner build
+        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+      displayName: Download alpine build
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildFxdependent
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+      displayName: Download fxdependent build
+
+  - ${{ if or(eq(variables.build,'deb'), eq(variables.build,'rpm')) }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshLinuxBuild-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
       displayName: Download deb build meta
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -111,7 +118,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuildFxdependent-meta
         path: $(Build.ArtifactStagingDirectory)/pwshBuild-meta
-      displayName: Download mariner build meta
+      displayName: Download fxdependent build meta
 
   - pwsh: |
       Get-ChildItem '$(Build.ArtifactStagingDirectory)' | Select-Object -Property 'unixmode', 'size', 'name'
