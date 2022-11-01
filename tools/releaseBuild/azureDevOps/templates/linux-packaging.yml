@@ -11,7 +11,7 @@ jobs:
     name: PowerShell1ES
     demands:
     - ImageOverride -equals PSMMSUbuntu20.04-Secure
-  dependsOn: build_${{ parameters.buildName }}
+  dependsOn: sign_linux_builds
   variables:
     - name: runCodesignValidationInjection
       value: false
