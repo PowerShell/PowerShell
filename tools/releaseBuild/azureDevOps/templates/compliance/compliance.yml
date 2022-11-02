@@ -54,7 +54,7 @@ jobs:
       optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
     continueOnError: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
     displayName: 'Publish Security Analysis Logs to Build Artifacts'
     continueOnError: true
 
