@@ -96,7 +96,7 @@ steps:
         **\*.exe
       useMinimatch: true
       shouldSign: $(SHOULD_SIGN)
-      displayName: ${{ parameters.buildPrefixName }} - Sign our binaries
+      displayName: ${{ parameters.buildPrefixName }} - Authenticode
 
 - pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -168,4 +168,4 @@ steps:
       $uploadFolder = '$(System.ArtifactsDirectory)/${{ parameters.binLocation }}'
       $containerName = '${{ parameters.binLocation }}-signed'
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadFolder"
-  displayName: Upload alpine signed to artifacts
+  displayName: ${{ parameters.buildPrefixName }} - Upload signed files to artifacts
