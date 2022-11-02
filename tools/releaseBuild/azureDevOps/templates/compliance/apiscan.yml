@@ -118,7 +118,7 @@ jobs:
       env:
         AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
 
-    - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@2
       displayName: 'TSA upload to Codebase: PowerShellCore_201906'
       inputs:
         tsaVersion: TsaV2
