@@ -476,19 +476,21 @@ namespace System.Management.Automation.Runspaces
         #region Runspace - Remote Factory
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
         ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
+        ///
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <param name="host"></param>
-        /// <param name="connectionInfo"></param>
         /// <returns></returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
@@ -496,19 +498,21 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
         ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
+        ///
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <param name="host"></param>
-        /// <param name="connectionInfo"></param>
         /// <param name="applicationArguments">
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
@@ -519,15 +523,17 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
-        /// <param name="connectionInfo"></param>
-        /// <param name="host"></param>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
         ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
+        ///
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
@@ -548,9 +554,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
-        /// <param name="host"></param>
-        /// <param name="connectionInfo"></param>
+        /// <param name="host">The explicit PSHost implementation.</param>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
         /// <returns></returns>
         public static Runspace CreateRunspace(PSHost host, RunspaceConnectionInfo connectionInfo)
         {
@@ -558,8 +565,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
-        /// <param name="connectionInfo"></param>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
         /// <returns></returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo)
         {
@@ -571,8 +579,19 @@ namespace System.Management.Automation.Runspaces
         #region V3 Extensions
 
         /// <summary>
+        /// Creates an out-of-process remote Runspace.
         /// </summary>
-        /// <param name="typeTable"></param>
+        /// <param name="typeTable">
+        /// The TypeTable to use while deserializing/serializing remote objects.
+        /// TypeTable has the following information used by serializer:
+        ///   1. SerializationMethod
+        ///   2. SerializationDepth
+        ///   3. SpecificSerializationProperties
+        ///
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
+        ///   2. TypeConverter
+        /// </param>
         /// <returns></returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable)
         {
@@ -582,9 +601,20 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates an out-of-process remote Runspace.
         /// </summary>
-        /// <param name="typeTable"></param>
-        /// <param name="processInstance"></param>
+        /// <param name="typeTable">
+        /// The TypeTable to use while deserializing/serializing remote objects.
+        /// TypeTable has the following information used by serializer:
+        ///   1. SerializationMethod
+        ///   2. SerializationDepth
+        ///   3. SpecificSerializationProperties
+        ///
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
+        ///   2. TypeConverter
+        /// </param>
+        /// <param name="processInstance">It represents a PowerShell process that is used for an out-of-process remote Runspace</param>
         /// <returns></returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable, PowerShellProcessInstance processInstance)
         {

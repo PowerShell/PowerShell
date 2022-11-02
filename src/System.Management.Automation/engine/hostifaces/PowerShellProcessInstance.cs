@@ -11,6 +11,7 @@ using System.Text;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
+    /// This class represents a PowerShell process that is used for an out-of-process remote Runspace.
     /// </summary>
     public sealed class PowerShellProcessInstance : IDisposable
     {
