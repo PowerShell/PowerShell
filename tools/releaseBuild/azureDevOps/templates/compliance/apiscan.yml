@@ -137,6 +137,12 @@ jobs:
         GdnExportGdnToolApiScan: true
         #this didn't do anything GdnExportCustomLogsFolder: '$(Build.ArtifactStagingDirectory)/Guardian'
 
+    - task: TSAUpload@2
+      displayName: 'TSA upload'
+      inputs:
+        GdnPublishTsaOnboard: false
+        GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\tools\guardian\tsaconfig-APIScan.json'
+
     - pwsh: |
         Get-ChildItem -Path env:
       displayName: Capture Environment
