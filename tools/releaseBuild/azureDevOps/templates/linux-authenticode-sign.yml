@@ -6,7 +6,7 @@ jobs:
     name: PowerShell1ES
     demands:
     - ImageOverride -equals PSMMS2019-Secure
-  dependsOn: build_fxdependent
+  dependsOn: ['build_fxdependent', 'build_rpm']
   variables:
     - name: runCodesignValidationInjection
       value: false
