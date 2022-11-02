@@ -110,6 +110,22 @@ jobs:
       env:
         AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
 
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
+      displayName: 'TSA upload to Codebase: PowerShellCore_201906'
+      inputs:
+        tsaVersion: TsaV2
+        codeBaseName: 'PowerShellCore_201906'
+        uploadFortifySCA: false
+        uploadFxCop: false
+        uploadModernCop: false
+        uploadPREfast: false
+        uploadRoslyn: false
+        uploadTSLint: false
+        uploadCredScan: false
+        uploadPoliCheck: false
+        uploadBinSkim: false
+        uploadAPIScan: true
+
     - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@2
       continueOnError: true
       displayName: 'Guardian Export'
