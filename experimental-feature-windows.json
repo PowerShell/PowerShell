@@ -3,6 +3,7 @@
   "PSCustomTableHeaderLabelDecoration",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
+  "PSNativeJsonAdapter",
   "PSSubsystemPluginModel",
   "PSModuleAutoLoadSkipOfflineFiles",
   "PSFeedbackProvider",
