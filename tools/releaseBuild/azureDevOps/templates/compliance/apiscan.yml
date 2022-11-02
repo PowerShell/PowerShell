@@ -96,14 +96,6 @@ jobs:
         pathToPublish: '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
         artifactName: ReleaseFilesHash
 
-    - task: Trivy@1
-      displayName: 'Run Trivy'
-      continueOnError: true
-      inputs:
-        Target: '$(BinDir)'
-        Severities: medium
-        VulTypes: all
-
     - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
       displayName: 'Run APIScan'
       inputs:
