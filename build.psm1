@@ -3342,7 +3342,8 @@ function Clear-NativeDependencies
 
     $filesToDeleteCore = @($diasymFileName)
 
-    $filesToDeleteWinDesktop = @('penimc_cor3.dll')
+    ## Currently we do not need to remove any files from WinDesktop runtime.
+    $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
     $targetRuntime = ".NETCoreApp,Version=v6.0/$($script:Options.Runtime)"
