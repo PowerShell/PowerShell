@@ -491,7 +491,7 @@ namespace System.Management.Automation.Runspaces
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
             return CreateRunspace(connectionInfo, host, typeTable, null, null);
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="applicationArguments">
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
         {
             return CreateRunspace(connectionInfo, host, typeTable, applicationArguments, null);
@@ -542,7 +542,7 @@ namespace System.Management.Automation.Runspaces
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
         /// <param name="name">Name for remote runspace.</param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments, string name)
         {
             if (connectionInfo is WSManConnectionInfo)
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(PSHost host, RunspaceConnectionInfo connectionInfo)
         {
             return CreateRunspace(connectionInfo, host, null);
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates a remote Runspace.
         /// </summary>
         /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo)
         {
             return CreateRunspace(null, connectionInfo);
@@ -592,7 +592,7 @@ namespace System.Management.Automation.Runspaces
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <returns></returns>
+        /// <returns>An out-of-process remote Runspace.</returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable)
         {
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null);
@@ -615,7 +615,7 @@ namespace System.Management.Automation.Runspaces
         ///   2. TypeConverter
         /// </param>
         /// <param name="processInstance">It represents a PowerShell process that is used for an out-of-process remote Runspace</param>
-        /// <returns></returns>
+        /// <returns>An out-of-process remote Runspace.</returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable, PowerShellProcessInstance processInstance)
         {
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null) { Process = processInstance };
