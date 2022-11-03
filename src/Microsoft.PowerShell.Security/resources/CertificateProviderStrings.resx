@@ -144,9 +144,6 @@
   <data name="Action_Invoke" xml:space="preserve">
     <value>Invoke Certificate Manager</value>
   </data>
-  <data name="NotSupported_CertificateProvider" xml:space="preserve">
-      <value>{0} is not supported in the current operating system. </value>
-  </data>
   <data name="MoveItemTemplate" xml:space="preserve">
       <value>Item: {0} Destination: {1} </value>
   </data>
