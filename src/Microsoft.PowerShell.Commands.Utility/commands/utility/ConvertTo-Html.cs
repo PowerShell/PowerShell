@@ -199,6 +199,27 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _fragment;
 
         /// <summary>
+        /// When this switch is specified auto
+        /// generate hyperlinks for URI.
+        /// </summary>
+        [Parameter(ParameterSetName = "Hyperlink")]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter Hyperlink
+        {
+            get
+            {
+                return _hyperlink;
+            }
+
+            set
+            {
+                _hyperlink = value;
+            }
+        }
+        
+        private SwitchParameter _hyperlink;
+
+        /// <summary>
         /// Specifies the text to include prior the closing body tag of the HTML output.
         /// </summary>
         [Parameter]
@@ -635,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
                 if (result.Result != null)
                 {
                     string htmlEncodedResult = WebUtility.HtmlEncode(SafeToString(result.Result));
-                    Listtag.Append(CheckUri(htmlEncodedResult));
+                    Listtag.Append(CheckUri(htmlEncodedResult, _hyperlink));
                 }
 
                 Listtag.Append(", ");
@@ -650,9 +671,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Check if a string is uri, if true, then change to hyperlink format.
         /// </summary>
-        private static string CheckUri(string s)
+        private static string CheckUri(string s, bool hyper)
         {
-            if (Uri.TryCreate(s, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+            if (hyper && Uri.TryCreate(s, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
             {
                 return "<a href=\"" + s + "\">" + s + "</a>";
             }
