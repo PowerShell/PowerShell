@@ -58,6 +58,13 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
         $out = pwsh -noprofile -outputformat text -command { exec /bin/echo 1 -w 2 }
         $out | Should -BeExactly '1 -w 2'
     }
+
+    It 'Error is returned if target command is not found' {
+        $invalidCommand = 'doesNotExist'
+        $e = { Switch-Process $invalidCommand } | Should -Throw -ErrorId 'CommandNotFound,Microsoft.PowerShell.Commands.SwitchProcessCommand' -PassThru
+        $e.Exception.Message | Should -BeLike "*'$invalidCommand'*"
+        $e.TargetObject | Should -BeExactly $invalidCommand
+    }
 }
 
 Describe 'Switch-Process for Windows' -Tag 'CI' {
