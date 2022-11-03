@@ -1434,7 +1434,7 @@ namespace System.Management.Automation.Language
 
             nameParts.Reverse();
             nameParts.Add(typeDefinitionAst.Name);
-            return string.Join(".", nameParts);
+            return string.Join('.', nameParts);
         }
 
         private static readonly OpCode[] s_ldc =

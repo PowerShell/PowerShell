@@ -120,9 +120,6 @@
   <data name="PropertyNotFound" xml:space="preserve">
     <value>The property "{0}" cannot be found in the input for any objects.</value>
   </data>
-  <data name="NonNumericProperty" xml:space="preserve">
-    <value>Property "{0}" is not numeric.</value>
-  </data>
   <data name="NonNumericInputObject" xml:space="preserve">
     <value>Input object "{0}" is not numeric.</value>
   </data>
