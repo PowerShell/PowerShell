@@ -4,6 +4,10 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
 
     BeforeAll {
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
+        $CustomParameters_2 = @{
+            Uri             = 'https://microsoft.com/powershell'
+            SessionVariable = 'Session'
+            }
         $newLine = "`r`n"
     }
 
@@ -164,6 +168,43 @@ After the object
         $returnString | Should -Be $expectedValue
     }
 
+    It "Test ConvertTo-Html URI Auto Create HyperLink #1" {
+        $returnString = ([uri]"https://bing.com/" | convertto-html -Property absoluteuri,authority,host,idnhost) -join $newLine
+        $expectedValue = normalizeLineEnds @"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>HTML TABLE</title>
+</head><body>
+<table>
+<colgroup><col/><col/><col/><col/></colgroup>
+<tr><th>AbsoluteUri</th><th>Authority</th><th>Host</th><th>IdnHost</th></tr>
+<tr><td><a href="https://bing.com/">https://bing.com/</a></td><td>bing.com</td><td>bing.com</td><td>bing.com</td></tr>
+</table>
+</body></html>
+"@
+        $returnString | Should -Be $expectedValue
+    }
+
+    It "Test ConvertTo-Html URI Auto Create HyperLink #2" {
+        $returnString = ($CustomParameters_2 | ConvertTo-Html) -join $newLine
+
+        $expectedValue = normalizeLineEnds @"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>HTML TABLE</title>
+</head><body>
+<table>
+<colgroup><col/><col/></colgroup>
+<tr><th>SessionVariable</th><th>Uri</th></tr>
+<tr><td>Session</td><td><a href="https://microsoft.com/powershell">https://microsoft.com/powershell</a></td></tr>
+</table>
+</body></html>
+"@
+        $returnString | Should -Be $expectedValue
+    }
+
     It "Test ConvertTo-HTML transitional"{
         $returnString = $customObject | ConvertTo-Html -Transitional | Select-Object -First 1
         $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
@@ -193,5 +234,4 @@ After the object
         $returnString = ($customObject | ConvertTo-Html @{ e = 'Age'; width = '10' }) -join $newLine
         $returnString | Should -Match '\swidth\s*=\s*(["''])10\1'
     }
-
 }
