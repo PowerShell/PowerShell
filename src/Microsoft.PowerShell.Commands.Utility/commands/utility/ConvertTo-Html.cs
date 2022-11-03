@@ -213,11 +213,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _hyperlink = value;
+                _hyperlink = true;
             }
         }
         
-        private auto _hyperlink;
+        private bool _hyperlink = false;
 
         /// <summary>
         /// Specifies the text to include prior the closing body tag of the HTML output.
