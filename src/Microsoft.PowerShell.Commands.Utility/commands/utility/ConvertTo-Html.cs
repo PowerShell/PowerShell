@@ -677,6 +677,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return "<a href=\"" + s + "\">" + s + "</a>";
             }
+
             return s;
         }
 
