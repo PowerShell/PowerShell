@@ -124,229 +124,86 @@ jobs:
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - powershell: |
-      try {
-        Import-Module "$env:POWERSHELLROOT/build.psm1"
-        Import-Module "$env:POWERSHELLROOT/tools/packaging"
-
-        $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
-
-        # LTSRelease.Package indicates that the release should be packaged as an LTS
-        $LTS = $metadata.LTSRelease.Package
-        Write-Verbose -Verbose -Message "LTS is set to: $LTS"
-
-        Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
-
-        if ($LTS) {
-            Write-Verbose -Verbose "Packaging LTS"
-            Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
-        }
-      } catch {
-        Get-Error
-        throw
-      }
-    displayName: 'Package'
-    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
-    workingDirectory: $(PowerShellRoot)
-
-  - powershell: |
-      $linuxPackages = Get-ChildItem "$env:POWERSHELLROOT/powershell*" -Include *.deb,*.rpm,*.tar.gz
-
-      $bucket = 'release'
-      foreach ($linuxPackage in $linuxPackages)
-      {
-          $filePath = $linuxPackage.FullName
-          Write-Verbose "Publishing $filePath to $bucket" -Verbose
-          Write-Host "##vso[artifact.upload containerfolder=$bucket;artifactname=$bucket]$filePath"
-      }
-    displayName: Publish artifacts
-    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
-    workingDirectory: $(PowerShellRoot)
-
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
-
-- job: upload_${{ parameters.buildName }}
-  displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
-  dependsOn: build_${{ parameters.buildName }}
-  condition: succeeded()
-  pool:
-    name: PowerShell1ES
-    demands:
-    - ImageOverride -equals PSMMS2019-Secure
-  variables:
-    - name: buildName
-      value: ${{ parameters.buildName }}
-    - group: ESRP
-    - name: runCodesignValidationInjection
-      value: false
-    - name: NugetSecurityAnalysisWarningLevel
-      value: none
-    - name: skipComponentGovernanceDetection
-      value: true
-
-  steps:
-  - checkout: self
-    clean: true
-
-  - checkout: ComplianceRepo
-    clean: true
-
-  - template: SetVersionVariables.yml
-    parameters:
-      ReleaseTagVar: $(ReleaseTagVar)
-  - template: shouldSign.yml
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download Deb Artifacts'
-    inputs:
-      downloadType: specific
-      itemPattern: '**/*.deb'
-      downloadPath: '$(System.ArtifactsDirectory)\finished'
-    condition: and(eq(variables['buildName'], 'DEB'), succeeded())
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download tar.gz Artifacts copy'
-    inputs:
-      downloadType: specific
-      itemPattern: '**/*.tar.gz'
-      downloadPath: '$(System.ArtifactsDirectory)\finished'
-
-  - powershell: |
-      Write-Host 'We handle the min-size package only when uploading for deb build.'
-      Write-Host '- For deb build, the min-size package is moved to a separate folder "finished\minSize",'
-      Write-Host '  so that the min-size package can be uploaded to a different Az Blob container.'
-      Write-Host '- For other builds, the min-size package is removed after being downloaded, so that it'
-      Write-Host '  does not get accidentally uploaded to the wrong Az Blob container.'
-
-      $minSizePkg = '$(System.ArtifactsDirectory)\finished\release\*-gc.tar.gz'
-      if (Test-Path -Path $minSizePkg)
-      {
-          if ('$(buildName)' -eq 'DEB')
-          {
-              $minSizeDir = '$(System.ArtifactsDirectory)\finished\minSize'
-              New-Item -Path $minSizeDir -Type Directory -Force > $null
-              Move-Item -Path $minSizePkg -Destination $minSizeDir
-
-              Write-Host "`nCapture the min-size package moved to the target folder."
-              Get-ChildItem -Path $minSizeDir
-          }
-          else
-          {
-              Write-Host '$(buildName): Remove the min-size package.'
-              Remove-Item -Path $minSizePkg -Force
-          }
-      }
-      else
-      {
-          Write-Host 'min-size package not found, so skip this step.'
-      }
-    displayName: 'Move minSize package to separate folder'
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download rpm Artifacts copy'
-    inputs:
-      downloadType: specific
-      itemPattern: '**/*.rpm'
-      downloadPath: '$(System.ArtifactsDirectory)\rpm'
-    condition: and(eq(variables['buildName'], 'RPM'), succeeded())
-
-  - template: EsrpScan.yml@ComplianceRepo
-    parameters:
-        scanPath: $(System.ArtifactsDirectory)
-        pattern: |
-          **\*.rpm
-          **\*.deb
-          **\*.tar.gz
-
-  - ${{ if eq(variables['buildName'], 'RPM') }}:
-    - template: EsrpSign.yml@ComplianceRepo
-      parameters:
-          buildOutputPath: $(System.ArtifactsDirectory)\rpm
-          signOutputPath: $(Build.StagingDirectory)\signedPackages
-          certificateId: "CP-450779-Pgp"
-          pattern: |
-            **\*.rh.*.rpm
-          useMinimatch: true
-          shouldSign: $(SHOULD_SIGN)
-          displayName: Sign RedHat RPM
-          OutputMode: AlwaysCopy
-
-  - ${{ if eq(variables['buildName'], 'RPM') }}:
-    - template: EsrpSign.yml@ComplianceRepo
-      parameters:
-          # Sign in-place, previous task copied the files to this folder
-          buildOutputPath: $(Build.StagingDirectory)\signedPackages
-          signOutputPath: $(Build.StagingDirectory)\signedPackages
-          certificateId: "CP-459159-Pgp"
-          pattern: |
-            **\*.cm.*.rpm
-            **\*.cm?.*.rpm
-          useMinimatch: true
-          shouldSign: $(SHOULD_SIGN)
-          displayName: Sign Mariner RPM
-          OutputMode: NeverCopy
-
-  # requires windows
-  - ${{ if ne(variables['buildName'], 'RPM') }}:
-    - task: AzureFileCopy@4
-      displayName: 'Upload to Azure - DEB and tar.gz'
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
       inputs:
-        SourcePath: '$(System.ArtifactsDirectory)\finished\release\*'
-        azureSubscription: '$(AzureFileCopySubscription)'
-        Destination: AzureBlob
-        storage: '$(StorageAccount)'
-        ContainerName: '$(AzureVersion)'
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+        artifactName: pwshLinuxBuild
 
-  - template: upload-final-results.yml
-    parameters:
-      artifactPath: $(System.ArtifactsDirectory)\finished\release
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuild-meta
 
-  # requires windows
-  - task: AzureFileCopy@4
-    displayName: 'Upload to Azure - min-size package for Guest Config'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\finished\minSize\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)-gc'
-    condition: and(eq(variables['buildName'], 'DEB'), succeeded())
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        artifactName: pwshLinuxBuildMinSize
 
-  - template: upload-final-results.yml
-    parameters:
-      artifactPath: $(System.ArtifactsDirectory)\finished\minSize
-      condition: and(eq(variables['buildName'], 'DEB'), succeeded())
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta'
+        artifactName: pwshLinuxBuildMinSize-meta
 
-  # requires windows
-  - task: AzureFileCopy@4
-    displayName: 'Upload to Azure - RPM - Unsigned'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\rpm\release\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
-    condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        artifactName: pwshLinuxBuildArm32
 
-  # requires windows
-  - task: AzureFileCopy@4
-    displayName: 'Upload to Azure - RPM - Signed'
-    inputs:
-      SourcePath: '$(Build.StagingDirectory)\signedPackages\release\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta'
+        artifactName: pwshLinuxBuildArm32-meta
 
-  - template: upload-final-results.yml
-    parameters:
-      artifactPath: $(System.ArtifactsDirectory)\rpm\release
-      condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        artifactName: pwshLinuxBuildArm64
 
-  - template: upload-final-results.yml
-    parameters:
-      artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
-      condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta'
+        artifactName: pwshLinuxBuildArm64-meta
 
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        artifactName: pwshMarinerBuildAmd64
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
+        artifactName: pwshMarinerBuildAmd64-meta
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+        artifactName: pwshLinuxBuildAlpine
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuildAlpine-meta
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+        artifactName: pwshLinuxBuildFxdependent
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuildFxdependent-meta

@@ -407,11 +407,6 @@ namespace Microsoft.PowerShell.Commands
                         StreamHelper.TryGetEncoding(charSet, out encoding);
                     }
 
-                    if (string.IsNullOrEmpty(charSet) && returnType == RestReturnType.Json)
-                    {
-                        encoding = Encoding.UTF8;
-                    }
-
                     object obj = null;
                     Exception ex = null;
 

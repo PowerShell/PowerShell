@@ -3677,7 +3677,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // Do the property values map
             if (prop.ValueMap != null && prop.ValueMap.Count > 0)
             {
-                formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.OrderBy(static x => x)) + " }");
+                formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.Order()) + " }");
             }
 
             // We prepend optional property with "[" so close out it here. This way it is shown with [ ] to indication optional

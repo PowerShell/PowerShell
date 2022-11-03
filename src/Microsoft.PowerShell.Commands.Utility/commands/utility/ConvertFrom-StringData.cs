@@ -55,35 +55,34 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            string[] lines = _stringData.Split('\n');
+            string[] lines = _stringData.Split('\n', StringSplitOptions.TrimEntries);
 
             foreach (string line in lines)
             {
-                string s = line.Trim();
 
-                if (string.IsNullOrEmpty(s) || s[0] == '#')
+                if (string.IsNullOrEmpty(line) || line[0] == '#')
                     continue;
 
-                int index = s.IndexOf(Delimiter);
+                int index = line.IndexOf(Delimiter);
                 if (index <= 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         ConvertFromStringData.InvalidDataLine,
-                        s);
+                        line);
                 }
 
-                string name = s.Substring(0, index);
+                string name = line.Substring(0, index);
                 name = name.Trim();
 
                 if (result.ContainsKey(name))
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         ConvertFromStringData.DataItemAlreadyDefined,
-                        s,
+                        line,
                         name);
                 }
 
-                string value = s.Substring(index + 1);
+                string value = line.Substring(index + 1);
                 value = value.Trim();
 
                 value = Regex.Unescape(value);

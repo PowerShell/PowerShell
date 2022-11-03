@@ -23,8 +23,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static Encoding GetDefaultEncoding()
         {
-            // default codepage encoding for web content.  See RFC 2616.
-            Encoding encoding = Encoding.GetEncoding("ISO-8859-1");
+            Encoding encoding = Encoding.UTF8;
             return encoding;    
         }
 
