@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         
-        private SwitchParameter _hyperlink;
+        private auto _hyperlink;
 
         /// <summary>
         /// Specifies the text to include prior the closing body tag of the HTML output.
@@ -670,6 +670,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Check if a string is uri, if true, then change to hyperlink format.
+        /// returns the midified string/unmodified string.
         /// </summary>
         private static string CheckUri(string s, bool hyper)
         {
@@ -677,6 +678,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return "<a href=\"" + s + "\">" + s + "</a>";
             }
+
             return s;
         }
 
