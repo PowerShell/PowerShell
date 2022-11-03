@@ -35,7 +35,7 @@ jobs:
       debugMode: false
     continueOnError: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@2
     displayName: 'Run PoliCheck'
     inputs:
       # targetType F means file or folder and is the only applicable value and the default
@@ -54,24 +54,15 @@ jobs:
       optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
     continueOnError: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
     displayName: 'Publish Security Analysis Logs to Build Artifacts'
     continueOnError: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
-    displayName: 'TSA upload to Codebase: PowerShellCore_201906'
+  - task: TSAUpload@2
+    displayName: 'TSA upload'
     inputs:
-      tsaVersion: TsaV2
-      codeBaseName: 'PowerShellCore_201906'
-      uploadFortifySCA: false
-      uploadFxCop: false
-      uploadModernCop: false
-      uploadPREfast: false
-      uploadRoslyn: false
-      uploadTSLint: false
-      uploadCredScan: true
-      uploadPoliCheck: true
-      uploadBinSkim: false
+      GdnPublishTsaOnboard: false
+      GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\tools\guardian\tsaconfig-others.json'
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@1
     displayName: 'Create Security Analysis Report'
