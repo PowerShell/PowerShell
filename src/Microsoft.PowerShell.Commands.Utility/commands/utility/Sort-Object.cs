@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -238,6 +239,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+
+            // #17953: PSCustomObject contains only NoteProperties ignored by -Unique by default
+            // If first object is PSCustomObject, then default to "*" instead
+            if (Unique && Property?.Any() != true && InputObjects.FirstOrDefault()?.BaseObject is PSCustomObject)
+            {
+                Property = new[] { "*" };
+            }
+
             OrderByProperty orderByProperty = new(
                 this, InputObjects, Property, !Descending, ConvertedCulture, CaseSensitive);
 

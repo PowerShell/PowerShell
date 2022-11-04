@@ -160,6 +160,19 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$results[2] | Should -Be $employees[1]
 	}
 
+	It 'SortObject with Unique should work with PSCustomObject and no -Property' {
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
+		$employees = @($employee1,$employee2,$employee3)
+		$results = ($employees + $employees) | Sort-Object -Unique
+
+		$results.Count | Should -Be 3
+		$results[0] | Should -Be $employees[1]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[2]
+	}
+
 	It "Sort-Object with Two Order Entry Keys should work"{
 		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
 		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
