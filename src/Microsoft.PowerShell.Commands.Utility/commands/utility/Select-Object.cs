@@ -100,6 +100,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "SkipLastParameter")]
         public string ExpandProperty { get; set; }
 
+        // Helper for common pattern for Property and ExcludeProperty
+        private static bool IsNullOrEmpty(object[] objs) => objs == null || objs.Length == 0;
+
         /// <summary>
         /// </summary>
         /// <value></value>
@@ -344,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new(this);
             ParameterProcessor processor =
                 new(new SelectObjectExpressionParameterDefinition());
-            if ((Property != null) && (Property.Length != 0))
+            if (!IsNullOrEmpty(Property))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
 
@@ -361,11 +364,11 @@ namespace Microsoft.PowerShell.Commands
                 _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
             }
 
-            if (ExcludeProperty != null)
+            if (!IsNullOrEmpty(ExcludeProperty))
             {
                 _exclusionFilter = new PSPropertyExpressionFilter(ExcludeProperty);
                 // ExcludeProperty implies -Property * for better UX
-                if ((Property == null) || (Property.Length == 0))
+                if (IsNullOrEmpty(Property))
                 {
                     Property = new object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
@@ -375,7 +378,20 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessObject(PSObject inputObject)
         {
-            if ((Property == null || Property.Length == 0) && string.IsNullOrEmpty(ExpandProperty))
+            // Delay initialization until type of first object is known
+            if (_propertyMshParameterList == null)
+            {
+                // #17953: PSCustomObject contains only NoteProperties ignored by -Unique by default
+                // If first object is PSCustomObject, then default to "*" instead
+                if (IsNullOrEmpty(Property) && Unique && inputObject.BaseObject is PSCustomObject)
+                {
+                    Property = new[] { "*" };
+                }
+
+                ProcessExpressionParameter();
+            }
+
+            if (IsNullOrEmpty(Property) && string.IsNullOrEmpty(ExpandProperty))
             {
                 FilteredWriteObject(inputObject, new List<PSNoteProperty>());
                 return;
@@ -689,8 +705,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            ProcessExpressionParameter();
-
             if (_unique)
             {
                 _uniques = new List<UniquePSObjectHelper>();

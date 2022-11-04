@@ -196,6 +196,16 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
         $results[2].YearsInMS | Should -Be $employees[3].YearsInMS
     }
 
+    # Special case because by default, NoteProperties are ignored and PSCustomObjects are nothing but
+    It "Select-Object with Unique should work work for PSCustomObject and <name>" -TestCases @(
+        @{ name = '-Property *'; splat = @{ Property = '*' } }
+        @{ name = 'no -Property'; splat = @{} }
+    ) {
+        param ($name, $splat)
+        $results = ($employees + $employees) | Select-Object -Unique @splat
+        $results.Count | Should -Be $employees.Count
+    }
+
     It "Select-Object with Simple should work" {
         $employee1 = [pscustomobject]@{"FirstName" = "joesph"; "LastName" = "smith"; "YearsInMS" = 15 }
         $employee2 = [pscustomobject]@{"FirstName" = "paul"; "LastName" = "smith"; "YearsInMS" = 15 }
