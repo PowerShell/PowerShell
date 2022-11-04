@@ -23,6 +23,13 @@ Describe "Sort-Object" -Tags "CI" {
 }
 
 Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
+	BeforeEach {
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
+		$employees = @($employee1,$employee2,$employee3)
+	}
+
 	It "Sort-Object with object array should work"{
 		$employee1 = [pscustomobject]@{"FirstName"="Eight"; "LastName"="Eight"; "YearsInMS"=8}
 		$employee2 = [pscustomobject]@{"FirstName"="Eight"; "YearsInMS"=$null}
@@ -48,10 +55,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Non Conflicting Order Entry Keys should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
-		$employees = @($employee1,$employee2,$employee3)
 		$ht = @{"e"="YearsInMS"; "descending"=$false; "ascending"=$true}
 		$results = $employees | Sort-Object -Property $ht -Descending
 
@@ -61,10 +64,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Conflicting Order Entry Keys should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
-		$employees = @($employee1,$employee2,$employee3)
 		$ht = @{"e"="YearsInMS"; "descending"=$false; "ascending"=$false}
 		$results = $employees | Sort-Object -Property $ht -Descending
 
@@ -74,10 +73,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with One Order Entry Key should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
-		$employees = @($employee1,$employee2,$employee3)
 		$ht = @{"e"="YearsInMS"; "descending"=$false}
 		$results = $employees | Sort-Object -Property $ht -Descending
 
@@ -137,10 +132,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Non Case-Sensitive Unique should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
-		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName" -Descending -Unique
 
 		$results[0] | Should -Be $employees[2]
@@ -149,10 +140,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Case-Sensitive Unique should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
-		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending -Unique -CaseSensitive
 
 		$results[0] | Should -Be $employees[2]
@@ -161,10 +148,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It 'SortObject with Unique should work with PSCustomObject and no -Property' {
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
-		$employees = @($employee1,$employee2,$employee3)
 		$results = ($employees + $employees) | Sort-Object -Unique
 
 		$results.Count | Should -Be 3
@@ -174,10 +157,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Two Order Entry Keys should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
-		$employees = @($employee1,$employee2,$employee3)
 		$ht1 = @{"expression"="LastName"; "ascending"=$false}
 		$ht2 = @{"expression"="FirstName"; "ascending"=$true}
 		$results = $employees | Sort-Object -Property @($ht1,$ht2) -Descending
@@ -188,10 +167,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with -Descending:$false and Two Order Entry Keys should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
-		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending:$false
 
 		$results[0] | Should -Be $employees[1]
@@ -200,10 +175,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with -Descending and Two Order Entry Keys should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
-		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending
 
 		$results[0] | Should -Be $employees[2]
@@ -212,10 +183,6 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Two Order Entry Keys with asc=true should work"{
-		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
-		$employees = @($employee1,$employee2,$employee3)
 		$ht1 = @{"e"="FirstName"; "asc"=$true}
 		$ht2 = @{"e"="LastName";}
 		$results = $employees | Sort-Object -Property @($ht1,$ht2) -Descending
