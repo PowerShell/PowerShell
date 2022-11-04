@@ -15,6 +15,7 @@ jobs:
     - template: release-SetReleaseTagAndContainerName.yml
 
     - task: DownloadPipelineArtifact@2
+      retryCountOnTaskFailure: 2
       inputs:
         source: specific
         project: PowerShellCore
@@ -46,6 +47,7 @@ jobs:
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
       displayName: Install makeappx tool
+      retryCountOnTaskFailure: 1
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
@@ -64,9 +66,11 @@ jobs:
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
       displayName: Create MsixBundle
+      retryCountOnTaskFailure: 1
 
     - task: AzureFileCopy@4
       displayName: 'Upload MSIX Bundle package to Az Blob'
+      retryCountOnTaskFailure: 2
       inputs:
         SourcePath: '$(BundleDir)/*.msixbundle'
         azureSubscription: '$(AzureFileCopySubscription)'
