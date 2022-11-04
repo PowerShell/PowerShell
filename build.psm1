@@ -3347,7 +3347,7 @@ function Install-AzCopy {
 }
 
 function Find-AzCopy {
-    $searchPaths = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    $searchPaths = @("C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe", "C:\azcopy10\AzCopy.exe")
 
     foreach ($filter in $searchPaths) {
         $azCopy = Get-ChildItem -Path $filter -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName -First 1
