@@ -65,10 +65,11 @@ jobs:
         Write-Host "##$vstsCommandString"
       displayName: Create MsixBundle
 
-    - pwsh: |
-        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-        Install-AzCopy
-      displayName: Install AzCopy
+    # Removing install as AzCopy is expected to be on the image
+    #- pwsh: |
+    #    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    #    Install-AzCopy
+    #  displayName: Install AzCopy
 
     - pwsh: |
         ## We use AzCopy v8.1 in our release pipeline, see the documentation at:
