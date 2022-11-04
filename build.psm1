@@ -19,7 +19,8 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
-$dotnetAzureFeed = $dotnetMetadata.Sdk.azureFeed
+$dotnetAzureFeed = $env:__DONET_RUNTIME_FEED ?? $dotnetMetadata.Sdk.azureFeed
+$dotnetAzureFeedSecret = $env:__DONET_RUNTIME_FEED_KEY
 $dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
@@ -1960,7 +1961,8 @@ function Install-Dotnet {
 
             $psArgs += @('-SkipNonVersionedFiles')
 
-            $psArgs -join ' ' | Write-Verbose -Verbose
+            # Removing the verbose message to not expose the secret
+            # $psArgs -join ' ' | Write-Verbose -Verbose
 
             Start-NativeExecution {
                 & $fullPSPath @psArgs
@@ -2180,7 +2182,7 @@ function Start-PSBootstrap {
 
             if ($dotnetAzureFeed) {
                 $null = $DotnetArguments.Add("AzureFeed", $dotnetAzureFeed)
-                $null = $DotnetArguments.Add("FeedCredential", $null)
+                $null = $DotnetArguments.Add("FeedCredential", $dotnetAzureFeedSecret)
             }
 
             Install-Dotnet @DotnetArguments
