@@ -69,34 +69,11 @@ namespace Microsoft.PowerShell.Commands
             // need null terminator at end
             execArgs[execArgs.Length - 1] = null;
 
-            // set termios to reasonble default before execv since .NET modifies it during ReadKey
-            Termios t;
-            int exitCode = TcGetAttr(STDIN_FILENO, out t);
-            bool resetTerminal = false;
-            Termios old_t = t;
-            if (exitCode == 0)
-            {
-                t.c_lflag = ECHOE | ECHOK | ECHOCTL | ECHOKE | PENDIN;
-                t.c_iflag = IUTF8;
-                t.c_cflag = CS8 | ~PARENB;
-                t.c_oflag = ~OXTABS;
-                exitCode = TcSetAttr(STDIN_FILENO, TCSANOW, ref t);
-                if (exitCode == 0)
-                {
-                    Termios t2;
-                    exitCode = TcGetAttr(STDIN_FILENO, out t2);
-                    resetTerminal = true;
-                }
-            }
-
-            exitCode = Exec(command.Source, execArgs);
-            if (resetTerminal)
-            {
-                TcSetAttr(STDIN_FILENO, TCSANOW, ref old_t);
-            }
-
+            ConfigureTerminalForChildProcess(true);
+            int exitCode = Exec(command.Source, execArgs);
             if (exitCode < 0)
             {
+                ConfigureTerminalForChildProcess(false);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new Exception(
@@ -133,44 +110,8 @@ namespace Microsoft.PowerShell.Commands
             SetLastError = true)]
         private static extern int Exec(string path, string?[] args);
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct Termios
-        {
-            public int c_iflag; /* input flags */
-            public int c_oflag; /* output flags */
-            public int c_cflag; /* control flags */
-            public int c_lflag; /* local flags */
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] c_cc; /* control chars */
-            public int c_ispeed; /* input speed */
-            public int c_ospeed; /* output speed */
-        }
-
-        [DllImport("libc",
-            EntryPoint = "tcgetattr",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi,
-            SetLastError = true)]
-        private static extern int TcGetAttr(int fd, out Termios termios);
-
-        [DllImport("libc",
-            EntryPoint = "tcsetattr",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi,
-            SetLastError = true)]
-        private static extern int TcSetAttr(int fd, int optional_actions, ref Termios termios);
-
-        private const int STDIN_FILENO = 0;
-        private const int TCSANOW = 0;          // change immediately
-        private const int ECHOE = (1 << 1); //0x00000010;   // visual erase for ERASE
-        private const int ECHOK = (1 << 2); //0x00000020;   // echo newline after kill
-        private const int ECHOCTL = (1 << 6); //0x00000200; // echo control characters as ^X
-        private const int ECHOKE = (1 << 0); //0x00000800;  // visual erase for KILL
-        private const int PENDIN = (1 << 29); //0x00004000;  // retype pending input
-        private const int IUTF8 = 0x20000; // 0x00004000;   // UTF8
-        private const int OXTABS = (1 << 2);
-        private const int PARENB = (1 << 12);
-        private const int CS8 = (1 << 8) | (1 << 9);
+        [DllImport("libSystem.Native", EntryPoint = "SystemNative_ConfigureTerminalForChildProcess")]
+        private static extern void ConfigureTerminalForChildProcess([MarshalAs(UnmanagedType.Bool)] bool childUsesTerminal);
     }
 }
 
