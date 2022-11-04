@@ -57,8 +57,8 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     }
 
     It 'The environment will be copied to the child process' {
-        $env = pwsh -noprofile -outputformat text -command { $env:TEST_FOO='my_test_value'; Switch-Process bash -c 'echo $TEST_FOO' }
-        $env | Should -BeExactly 'my_test_value'
+        $env = pwsh -noprofile -outputformat text -command { $env:TEST_FOO='my test = value'; Switch-Process bash -c 'echo $TEST_FOO' }
+        $env | Should -BeExactly 'my test = value'
     }
 }
 
