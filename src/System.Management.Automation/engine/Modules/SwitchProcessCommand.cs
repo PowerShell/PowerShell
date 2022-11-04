@@ -69,6 +69,7 @@ namespace Microsoft.PowerShell.Commands
             // need null terminator at end
             execArgs[execArgs.Length - 1] = null;
 
+            // setup termios for a child process as .NET modifies termios dynamically for use with ReadKey()
             ConfigureTerminalForChildProcess(true);
             int exitCode = Exec(command.Source, execArgs);
             if (exitCode < 0)
@@ -110,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
             SetLastError = true)]
         private static extern int Exec(string path, string?[] args);
 
+        // leverage .NET runtime's native library which abstracts the need to handle different OS and architectures for termios api
         [DllImport("libSystem.Native", EntryPoint = "SystemNative_ConfigureTerminalForChildProcess")]
         private static extern void ConfigureTerminalForChildProcess([MarshalAs(UnmanagedType.Bool)] bool childUsesTerminal);
     }
