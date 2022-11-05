@@ -196,7 +196,6 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             @{ case = "+0x.ps1" }
     ){
         param ($case)
-        Set-Location $TestDrive
         New-Item -ItemType File -Name $case -Path $testfolder1 -Value {Write-Output "Hello"}
         & $case | Should -BeExactly "Hello"
         $pathtodelete = Join-Path -Path $testfolder1 -ChildPath $case
