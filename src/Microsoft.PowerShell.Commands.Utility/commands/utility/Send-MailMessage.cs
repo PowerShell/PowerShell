@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                EncodingConversion.WarnIfObsolete(this, value);
+                EncodingConversion.WarnIfUtf7Encoding(this, value);
                 _encoding = value;
             }
         }

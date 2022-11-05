@@ -7656,12 +7656,12 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                WarnIfObsolete(value);
+                WarnIfUtf7Encoding(value);
                 _encoding = value;
                 // If an encoding was explicitly set, be sure to capture that.
                 WasStreamTypeSpecified = true;
 
-                void WarnIfObsolete(Encoding value)
+                void WarnIfUtf7Encoding(Encoding value)
                 {
                     const int CodePageUtf7 = 65000;
 

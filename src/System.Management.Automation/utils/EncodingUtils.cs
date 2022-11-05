@@ -63,7 +63,7 @@ namespace System.Management.Automation
             Encoding foundEncoding;
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
-                WarnIfObsolete(cmdlet, foundEncoding);
+                WarnIfUtf7Encoding(cmdlet, foundEncoding);
 
                 return foundEncoding;
             }
@@ -85,11 +85,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Warn if the encoding has been designated as obsolete.
+        /// Warn if the encoding is obsolete UTF-7 encoding.
         /// </summary>
         /// <param name="cmdlet">A cmdlet instance which is used to emit the warning.</param>
         /// <param name="encoding">The encoding to check for obsolescence.</param>
-        internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
+        internal static void WarnIfUtf7Encoding(Cmdlet cmdlet, Encoding encoding)
         {
             const int CodePageUtf7 = 65000;
 
