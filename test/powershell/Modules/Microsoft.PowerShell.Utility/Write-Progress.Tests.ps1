@@ -28,4 +28,8 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
         { Write-Progress -Activity $activity -Status ('b' * ([console]::WindowWidth + 1)) -Id 1 } | Should -Not -Throw
         Write-Progress -Activity $activity -Id 1 -Completed
     }
+
+    It 'Should be able to complete a progress record with no activity specified' {
+        { Write-Progress -Completed } | Should -Not -Throw
+    }
 }
