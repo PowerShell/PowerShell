@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 // the changes
                 if (waitChanges)
                 {
-                    WaitForChanges(_path, _mode, _access, _share, ClrFacade.GetDefaultEncoding());
+                    WaitForChanges(_path, _mode, _access, _share, Encoding.Default);
                     byteRead = _stream.ReadByte();
                 }
             }
