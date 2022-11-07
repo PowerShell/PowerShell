@@ -1,5 +1,49 @@
 # Current preview release
 
+## [7.3.0-rc.1] - 2022-10-26
+
+### Breaking Change
+
+- Update to use `ComputeCore.dll` for PowerShell Direct (#18194)
+
+### Engine Updates and Fixes
+
+- On Unix, explicitly terminate the native process during cleanup only if it's not running in background (#18215)
+
+### General Cmdlet Updates and Fixes
+
+- Remove the `ProcessorArchitecture` portion from the full name as it's obsolete (#18320)
+
+### Tests
+
+- Add missing `-Tag 'CI'` to describe blocks. (#18317)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+<p>Bump to .NET 7 to <code>7.0.100-rc.2.22477.20</code> (#18328)(#18286)</p>
+</summary>
+
+<ul>
+<li>Update ThirdPartyNotices (Internal 22987)</li>
+<li>Remove API sets (#18304) (#18376)</li>
+<li>Do not cleanup <code>pwsh.deps.json</code> for framework dependent packages (#18300)</li>
+<li>Bump <code>Microsoft.PowerShell.Native</code> from <code>7.3.0-preview.1</code> to <code>7.3.0-rc.1</code> (#18217)</li>
+<li>Remove unnecessary native dependencies from the package (#18213)</li>
+<li>Make the link to minimal package blob public during release (#18158)</li>
+<li>Create tasks to collect and publish hashes for build files. (#18276)(#18277)</li>
+<li>Add branch counter to compliance build (#18214)</li>
+<li>Move APIScan to compliance build (#18191)</li>
+<li>Update MSI exit message (#18137)</li>
+<li>Remove XML files for min-size package (#18189)</li>
+</ul>
+
+</details>
+
+[7.3.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.8...v7.3.0-rc.1
+
 ## [7.3.0-preview.8] - 2022-09-20
 
 ### General Cmdlet Updates and Fixes

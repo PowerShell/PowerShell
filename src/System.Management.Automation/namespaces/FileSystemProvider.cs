@@ -6610,7 +6610,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Defaults for the file read operation
             string delimiter = "\n";
-            Encoding encoding = ClrFacade.GetDefaultEncoding();
+            Encoding encoding = Encoding.Default;
             bool waitForChanges = false;
 
             bool streamTypeSpecified = false;
@@ -6792,7 +6792,7 @@ namespace Microsoft.PowerShell.Commands
             // If this is true, then the content will be read as bytes
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
-            Encoding encoding = ClrFacade.GetDefaultEncoding();
+            Encoding encoding = Encoding.Default;
             const FileMode filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
@@ -7668,7 +7668,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Return file contents as a byte stream or create file from a series of bytes.
@@ -8592,7 +8592,7 @@ namespace System.Management.Automation.Internal
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
                     data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(Utils.Separators.Colon);
+                    data.FileName = data.FileName.Trim(':');
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();

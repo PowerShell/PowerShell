@@ -142,7 +142,7 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     }
 }
 
-Describe "Error message with settable Property information" {
+Describe "Error message with settable Property information" -Tag 'CI' {
     BeforeAll {
         Add-Type @"
 namespace HashtableConversionTest {

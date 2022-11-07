@@ -2804,12 +2804,6 @@ namespace System.Management.Automation.Language
                     assemblyFileName = Path.GetDirectoryName(scriptFileName) + "\\" + assemblyFileName;
                 }
 
-#if !CORECLR
-                if (!File.Exists(assemblyFileName))
-                {
-                    Microsoft.CodeAnalysis.GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                }
-#endif
                 if (File.Exists(assemblyFileName))
                 {
                     assembly = Assembly.LoadFrom(assemblyFileName);

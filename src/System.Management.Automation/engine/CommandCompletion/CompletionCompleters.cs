@@ -195,7 +195,7 @@ namespace System.Management.Automation
                 if (commandInfos != null && commandInfos.Count > 1)
                 {
                     // OrderBy is using stable sorting
-                    var sortedCommandInfos = commandInfos.OrderBy(static a => a, new CommandNameComparer());
+                    var sortedCommandInfos = commandInfos.Order(new CommandNameComparer());
                     completionResults = MakeCommandsUnique(sortedCommandInfos, useModulePrefix, addAmpersandIfNecessary, quote);
                 }
                 else
@@ -890,7 +890,7 @@ namespace System.Management.Automation
                             partialPathAst.StringConstantType == StringConstantType.BareWord &&
                             secondToLastAst.Extent.EndLineNumber == partialPathAst.Extent.StartLineNumber &&
                             secondToLastAst.Extent.EndColumnNumber == partialPathAst.Extent.StartColumnNumber &&
-                            partialPathAst.Value.IndexOfAny(Utils.Separators.Directory) == 0)
+                            partialPathAst.Value.AsSpan().IndexOfAny('\\', '/') == 0)
                         {
                             var secondToLastStringConstantAst = secondToLastAst as StringConstantExpressionAst;
                             var secondToLastExpandableStringAst = secondToLastAst as ExpandableStringExpressionAst;
@@ -1270,7 +1270,7 @@ namespace System.Management.Automation
                 // Treat it as the file name completion
                 // Handle this scenario: & 'c:\a b'\<tab>
                 string fileName = pathAst.Value;
-                if (commandAst.InvocationOperator != TokenKind.Unknown && fileName.IndexOfAny(Utils.Separators.Directory) == 0 &&
+                if (commandAst.InvocationOperator != TokenKind.Unknown && fileName.AsSpan().IndexOfAny('\\', '/') == 0 &&
                     commandAst.CommandElements.Count == 2 && commandAst.CommandElements[0] is StringConstantExpressionAst &&
                     commandAst.CommandElements[0].Extent.EndLineNumber == expressionAst.Extent.StartLineNumber &&
                     commandAst.CommandElements[0].Extent.EndColumnNumber == expressionAst.Extent.StartColumnNumber)
@@ -2924,7 +2924,7 @@ namespace System.Management.Automation
             string prefixOfChildNamespace = string.Empty;
             if (!string.IsNullOrEmpty(context.WordToComplete))
             {
-                int lastSlashOrBackslash = context.WordToComplete.LastIndexOfAny(Utils.Separators.Directory);
+                int lastSlashOrBackslash = context.WordToComplete.AsSpan().LastIndexOfAny('\\', '/');
                 if (lastSlashOrBackslash != (-1))
                 {
                     containerNamespace = context.WordToComplete.Substring(0, lastSlashOrBackslash);
@@ -4395,7 +4395,7 @@ namespace System.Management.Automation
                 // specified a drive or portion of the path.
                 var executionContext = context.ExecutionContext;
                 var defaultRelative = string.IsNullOrWhiteSpace(wordToComplete)
-                                      || (wordToComplete.IndexOfAny(Utils.Separators.Directory) != 0 &&
+                                      || (wordToComplete.AsSpan().IndexOfAny('\\', '/') != 0 &&
                                           !Regex.Match(wordToComplete, @"^~[\\/]+.*").Success &&
                                           !executionContext.LocationGlobber.IsAbsolutePath(wordToComplete, out _));
                 var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
@@ -4563,7 +4563,7 @@ namespace System.Management.Automation
                     }
 
                     // Sorting the results by the path
-                    var sortedPsobjs = psobjs.OrderBy(static a => a, new ItemPathComparer());
+                    var sortedPsobjs = psobjs.Order(new ItemPathComparer());
 
                     foreach (PSObject psobj in sortedPsobjs)
                     {
@@ -6137,7 +6137,7 @@ namespace System.Management.Automation
             string memberName,
             Func<object, bool> filter,
             bool isStatic,
-            HashSet<string> excludedMembers = null, 
+            HashSet<string> excludedMembers = null,
             bool addMethodParenthesis = true)
         {
             bool extensionMethodsAdded = false;
@@ -6206,7 +6206,7 @@ namespace System.Management.Automation
             {
                 memberName = methodCacheEntry[0].method.Name;
                 isMethod = true;
-                getToolTip = () => string.Join("\n", methodCacheEntry.methodInformationStructures.Select(static m => m.methodDefinition));
+                getToolTip = () => string.Join('\n', methodCacheEntry.methodInformationStructures.Select(static m => m.methodDefinition));
             }
 
             var psMemberInfo = member as PSMemberInfo;

@@ -652,7 +652,7 @@ namespace System.Management.Automation.Runspaces
         public string Description { get; } = string.Empty;
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
     }
@@ -809,7 +809,7 @@ namespace System.Management.Automation.Runspaces
         internal ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
 
@@ -2781,7 +2781,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     case "ValidatePattern":
-                        string pattern = "^(" + string.Join("|", parameterValidationValues) + ")$";
+                        string pattern = "^(" + string.Join('|', parameterValidationValues) + ")$";
                         ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
                         metadata.Parameters[parameterName].Attributes.Add(validatePattern);
                         break;
@@ -4709,6 +4709,7 @@ end {
            // Functions that don't require full language mode
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd~", "Set-Location ~", isProductCode: true, languageMode: systemLanguageMode),
             // Win8: 320909. Retaining the original definition to ensure backward compatability.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
