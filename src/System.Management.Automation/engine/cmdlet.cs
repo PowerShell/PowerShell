@@ -23,7 +23,7 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the PowerSHell Runtime (for example, variables in the session state,
+    /// If your Cmdlet requires access to the PowerShell Runtime (for example, variables in the session state,
     /// access to the host, or information about the current Cmdlet Providers,) then you should instead
     /// derive from the PSCmdlet base class.
     /// In both cases, users should first develop and implement an object model to accomplish their
