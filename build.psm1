@@ -2361,7 +2361,11 @@ function Start-ResGen
     }
 }
 
-function Find-Dotnet() {
+function Find-Dotnet {
+    param (
+        [switch] $SetDotnetRoot
+    )
+
     Write-Verbose "In Find-DotNet"
 
     $originalPath = $env:PATH
@@ -2388,6 +2392,14 @@ function Find-Dotnet() {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
             # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
             $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
+
+            if ($SetDotnetRoot) {
+                Write-Verbose -Verbose "Setting DOTNET_ROOT to $dotnetPath"
+                $env:DOTNET_ROOT = $dotnetPath
+            }
+        } elseif ($SetDotnetRoot) {
+            Write-Verbose -Verbose "Expected dotnet version found, setting DOTNET_ROOT to $dotnetPath"
+            $env:DOTNET_ROOT = $dotnetPath
         }
     }
     else {
