@@ -5,7 +5,7 @@
     "editorconfig.editorconfig",
     "ms-azure-devops.azure-pipelines",
     "ms-vscode.cpptools",
-    "ms-dotnettools.csharp",
+    "ms-vscode.csharp",
     "ms-vscode.PowerShell",
     "twxs.cmake",
     "DavidAnson.vscode-markdownlint",

@@ -8,7 +8,7 @@
 
 	"extensions": [
 		"ms-azure-devops.azure-pipelines",
-		"ms-dotnettools.csharp",
+		"ms-vscode.csharp",
 		"ms-vscode.powershell",
 		"DavidAnson.vscode-markdownlint",
 		"vitaliymaz.vscode-svg-previewer"
