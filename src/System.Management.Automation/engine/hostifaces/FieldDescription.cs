@@ -16,7 +16,7 @@ namespace System.Management.Automation.Host
 {
     /// <summary>
     /// Provides a description of a field for use by <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>.
-    /// <!--Used by the Msh engine to describe cmdlet parameters.-->
+    /// <!--Used by the engine to describe cmdlet parameters.-->
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="System.Management.Automation.Host.FieldDescription"/>
@@ -284,7 +284,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Gets the Attribute classes that apply to the field. In the case that <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
-        /// is being called from the MSH engine, this will contain the set of prompting attributes that are attached to a
+        /// is being called from the engine, this will contain the set of prompting attributes that are attached to a
         /// cmdlet parameter declaration.
         /// </summary>
         public

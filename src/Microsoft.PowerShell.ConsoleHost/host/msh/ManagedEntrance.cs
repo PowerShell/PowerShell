@@ -16,18 +16,18 @@ using System.Threading;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Defines an entry point from unmanaged code to managed Msh.
+    /// Defines an entry point from unmanaged code to PowerShell.
     /// </summary>
     public sealed class UnmanagedPSEntry
     {
         /// <summary>
-        /// Starts managed MSH.
+        /// Starts PowerShell.
         /// </summary>
         /// <param name="consoleFilePath">
-        /// Deprecated: Console file used to create a runspace configuration to start MSH
+        /// Deprecated: Console file used to create a runspace configuration to start PowerShell
         /// </param>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to the PowerShell
         /// </param>
         /// <param name="argc">
         /// Length of the passed in argument array.
@@ -39,10 +39,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Starts managed MSH.
+        /// Starts PowerShell.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to PowerShell
         /// </param>
         /// <param name="argc">
         /// Length of the passed in argument array.

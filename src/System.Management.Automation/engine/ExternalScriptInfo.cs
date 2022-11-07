@@ -14,7 +14,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides information for MSH scripts that are directly executable by MSH
+    /// Provides information for scripts that are directly executable by PowerShell
     /// but are not built into the runspace configuration.
     /// </summary>
     public class ExternalScriptInfo : CommandInfo, IScriptCommandInfo
