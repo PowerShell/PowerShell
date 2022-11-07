@@ -634,11 +634,12 @@ Fix steps:
     }
 
     # publish powershell.config.json
-    $config = @{}
+    $config = [ordered]@{}
 
     if ($Options.Runtime -like "*win*") {
         # Execution Policy is only supported on Windows
-        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
+        $config = [ordered]@{
+            "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
             "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
         }
     }
@@ -647,19 +648,29 @@ Fix steps:
         (Test-IsPreview $psVersion) -and
         -not (Test-IsReleaseCandidate $psVersion)
     ) {
-
-        $ExperimentalFeatureJsonFilePath = if ($Options.Runtime -like "*win*") {
-            "$PSScriptRoot/experimental-feature-windows.json"
+        if (-not $env:PS_RELEASE_BUILD -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
+            Write-Verbose "Build experimental feature list by running 'Get-ExperimentalFeature'" -Verbose
+            $json = & $publishPath\pwsh -noprofile -command {
+                $expFeatures = Get-ExperimentalFeature | ForEach-Object -MemberName Name
+                ConvertTo-Json $expFeatures
+            }
         } else {
-            "$PSScriptRoot/experimental-feature-linux.json"
+            Write-Verbose "Build experimental feature list by using the pre-generated JSON files" -Verbose
+            $ExperimentalFeatureJsonFilePath = if ($Options.Runtime -like "*win*") {
+                "$PSScriptRoot/experimental-feature-windows.json"
+            } else {
+                "$PSScriptRoot/experimental-feature-linux.json"
+            }
+
+            if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
+                throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
+            }
+
+            $json = Get-Content -Raw $ExperimentalFeatureJsonFilePath
         }
 
-        if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
-            throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
-        }
+        $config.Add('ExperimentalFeatures', [string[]]($json | ConvertFrom-Json));
 
-        $json = Get-Content -Raw $ExperimentalFeatureJsonFilePath
-        $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
     } else {
         Write-Warning -Message "Experimental features are not enabled in powershell.config.json file"
     }
