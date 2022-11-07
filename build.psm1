@@ -637,11 +637,9 @@ Fix steps:
     $config = [ordered]@{}
 
     if ($Options.Runtime -like "*win*") {
-        # Execution Policy is only supported on Windows
-        $config = [ordered]@{
-            "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
-            "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
-        }
+        # Execution Policy and WinCompat feature are only supported on Windows.
+        $config.Add("Microsoft.PowerShell:ExecutionPolicy", "RemoteSigned")
+        $config.Add("WindowsPowerShellCompatibilityModuleDenyList", @("PSScheduledJob", "BestPractices", "UpdateServices"))
     }
 
     if (-not $SkipExperimentalFeatureGeneration -and
