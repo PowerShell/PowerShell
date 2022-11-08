@@ -251,7 +251,7 @@ namespace System.Management.Automation
     internal delegate object PowerShellBinaryOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval);
 
     /// <summary>
-    /// A static class holding various operations specific to the msh interpreter such as
+    /// A static class holding various operations specific to the PowerShell interpreter such as
     /// various math operations, ToString() and a routine to extract the base object from an
     /// PSObject in a canonical fashion.
     /// </summary>
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation
         /// methods and ScriptBlock notes. Native methods currently take precedence over notes...
         /// </summary>
         /// <param name="errorPosition">The position to use for error reporting.</param>
-        /// <param name="target">The object to call the method on. It shouldn't be an msh object.</param>
+        /// <param name="target">The object to call the method on. It shouldn't be a PSObject.</param>
         /// <param name="methodName">The name of the method to call.</param>
         /// <param name="invocationConstraints">Invocation constraints.</param>
         /// <param name="paramArray">The arguments to pass to the method.</param>

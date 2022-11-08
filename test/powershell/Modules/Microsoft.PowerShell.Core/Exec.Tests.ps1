@@ -55,6 +55,11 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
         $e.Exception.Message | Should -BeLike "*'$invalidCommand'*"
         $e.TargetObject | Should -BeExactly $invalidCommand
     }
+
+    It 'The environment will be copied to the child process' {
+        $env = pwsh -noprofile -outputformat text -command { $env:TEST_FOO='my test = value'; Switch-Process bash -c 'echo $TEST_FOO' }
+        $env | Should -BeExactly 'my test = value'
+    }
 }
 
 Describe 'Switch-Process for Windows' -Tag 'CI' {
