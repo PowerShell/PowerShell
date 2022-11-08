@@ -7,7 +7,10 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
         $CustomParameters_2 = @{
             Uri             = 'https://microsoft.com/powershell'
             SessionVariable = 'Session'
-            }
+        }
+        $CustomParameters_3 = @{
+            String          = 'https://microsoft.com/powershell can be installed on different https://www.linux.org/ distributions. Most https://www.linux.org/ platforms and distributions have a major release each year, and provide a package manager that is used to install https://microsoft.com/powershell.'
+        }
         $newLine = "`r`n"
     }
 
@@ -205,8 +208,27 @@ After the object
         $returnString | Should -Be $expectedValue
     }
 
+    It "Test ConvertTo-Html URI Auto Create HyperLink #3 - embedded" {
+        $returnString = ($CustomParameters_3 | ConvertTo-Html -hyperlink) -join $newLine
 
-    It "Test ConvertTo-Html URI Auto Create HyperLink #3" {
+        $expectedValue = normalizeLineEnds @"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>HTML TABLE</title>
+</head><body>
+<table>
+<colgroup><col/></colgroup>
+<tr><th>String</th></tr>
+<tr><td><a href="https://microsoft.com/powershell">https://microsoft.com/powershell</a> can be installed on different <a href="https://www.linux.org/">https://www.linux.org/</a> distributions. Most <a href="https://www.linux.org/">https://www.linux.org/</a> platforms and distributions have a major release each year, and provide a package manager that is used to install <a href="https://microsoft.com/powershell">https://microsoft.com/powershell</a>.</td></tr>
+</table>
+</body></html>
+"@
+        $returnString | Should -Be $expectedValue
+    }
+
+
+    It "Test ConvertTo-Html URI Auto Create HyperLink #4" {
         $returnString = ([uri]"https://bing.com/" | convertto-html -Property absoluteuri,authority,host,idnhost) -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

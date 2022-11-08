@@ -9,6 +9,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -669,17 +670,33 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Check if a string is uri, if true, then change to hyperlink format.
+        /// Check if a string or substrings in a string is uri, if true, then change to hyperlink format.
         /// returns the midified string/unmodified string.
         /// </summary>
         private static string CheckUri(string s, bool hyper)
         {
-            if (hyper && Uri.TryCreate(s, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+            if (hyper){
+            Regex regExHttpLinks = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            // s = s.Replace(Environment.NewLine, "<br />");
+            var periodReplacement = "[[[replace:period]]]";
+            s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", periodReplacement);
+            var linkMatches = regExHttpLinks.Matches(s);
+            for (int i = 0; i < linkMatches.Count; i++)
             {
-                return "<a href=\"" + s + "\">" + s + "</a>";
+                var temp = linkMatches[i].ToString();
+                if (!temp.Contains("://"))
+                {
+                    temp = "http://" + temp;
+                }
+            s = s.Replace(linkMatches[i].ToString(), String.Format("<a href=\"{0}\">{1}</a>", temp.Replace(".", periodReplacement).ToLower(), linkMatches[i].ToString().Replace(".", periodReplacement)));
             }
-
+            s = s.Replace(periodReplacement, ".");
             return s;
+            }
+            else
+            {
+                return s;
+            }
         }
 
         /// <summary>
