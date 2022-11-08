@@ -5,6 +5,7 @@ jobs:
 - job: vpack_${{ parameters.architecture }}
   variables:
     - group: vPack
+    - group: ReleasePipelineSecrets
 
   displayName: Build and Publish VPack - ${{ parameters.architecture }}
   condition: succeeded()
@@ -29,16 +30,16 @@ jobs:
 
   - pwsh: |
       Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-      Install-AzCopy
-    displayName: Install AzCopy
-
-  - pwsh: |
-      Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
       $azcopy = Find-AzCopy
+      Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-      Write-Host "running: $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:****** /Pattern:PowerShell-$(Version)-win-${{ parameters.architecture }}.zip /Z:$(AGENT.TEMPDIRECTORY)"
-      & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey) /Pattern:PowerShell-$(Version)-win-${{ parameters.architecture }}.zip /Z:$(AGENT.TEMPDIRECTORY)
+      & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
+
+      Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --include-pattern PowerShell-$(Version)-win-${{ parameters.architecture }}.zip"
+
+      & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --include-pattern PowerShell-$(Version)-win-${{ parameters.architecture }}.zip
     displayName: 'Download Azure Artifacts'
+    retryCountOnTaskFailure: 2
 
   - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
     displayName: 'Capture Artifact Listing'
