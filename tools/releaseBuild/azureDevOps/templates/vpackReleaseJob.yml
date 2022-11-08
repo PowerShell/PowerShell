@@ -40,6 +40,8 @@ jobs:
       & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --include-pattern PowerShell-$(Version)-win-${{ parameters.architecture }}.zip
     displayName: 'Download Azure Artifacts'
     retryCountOnTaskFailure: 2
+    env:
+      AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
 
   - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
     displayName: 'Capture Artifact Listing'
