@@ -3365,7 +3365,7 @@ function Install-AzCopy {
     }
 
     $destination = "$env:TEMP\azcopy10.zip"
-    $downloadLocation = (Invoke-WebRequest -Uri https://aka.ms/downloadazcopy-v10-windows -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck).headers.location
+    $downloadLocation = (Invoke-WebRequest -Uri https://aka.ms/downloadazcopy-v10-windows -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck).headers.location | Select-Object -First 1
 
     Invoke-WebRequest -Uri $downloadLocation -OutFile $destination -Verbose
     Expand-archive -Path $destination -Destinationpath '$(Agent.ToolsDirectory)\azcopy10'
