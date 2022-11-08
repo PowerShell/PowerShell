@@ -79,7 +79,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>
         /// When implementing this member, it should return the product version number for the product
-        /// that is hosting the Monad engine.
+        /// that is hosting the PowerShell engine.
         /// </remarks>
         /// <value>
         /// The version number of the hosting application.

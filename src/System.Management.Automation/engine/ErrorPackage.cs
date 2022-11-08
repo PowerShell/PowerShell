@@ -18,7 +18,7 @@ using System.Security.Permissions;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Errors reported by Monad will be in one of these categories.
+    /// Errors reported by PowerShell will be in one of these categories.
     /// </summary>
     /// <remarks>
     /// Do not specify ErrorCategory.NotSpecified when creating an
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         WriteError = 23,
 
         /// <summary>
-        /// A non-Monad command reported an error to its STDERR pipe.
+        /// A native command reported an error to its STDERR pipe.
         /// </summary>
         /// <remarks>
         /// The Engine uses this ErrorCategory when it executes a native
