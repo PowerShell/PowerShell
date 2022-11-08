@@ -30,6 +30,12 @@ jobs:
 
   - pwsh: |
       Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+      Install-AzCopy
+    displayName: Install AzCopy
+    retryCountOnTaskFailure: 2
+
+  - pwsh: |
+      Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
       $azcopy = Find-AzCopy
       Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
