@@ -676,22 +676,21 @@ namespace Microsoft.PowerShell.Commands
         private static string CheckUri(string s, bool hyper)
         {
             if (hyper){
-            Regex regExHttpLinks = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            // s = s.Replace(Environment.NewLine, "<br />");
-            var periodReplacement = "[[[replace:period]]]";
-            s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", periodReplacement);
-            var linkMatches = regExHttpLinks.Matches(s);
-            for (int i = 0; i < linkMatches.Count; i++)
-            {
-                var temp = linkMatches[i].ToString();
-                if (!temp.Contains("://"))
+                Regex regExHttpLinks = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var periodReplacement = "[[[replace:period]]]";
+                s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", periodReplacement);
+                var htmls = regExHttpLinks.Matches(s);
+                for (int i = 0; i < htmls.Count; i++)
                 {
-                    temp = "http://" + temp;
+                    var temp = htmls[i].ToString();
+                    if (!temp.Contains("://"))
+                    {
+                        temp = "http://" + temp;
+                    }
+                    s = s.Replace(htmls[i].ToString(), String.Format("<a href=\"{0}\">{1}</a>", temp.Replace(".", periodReplacement).ToLower(), htmls[i].ToString().Replace(".", periodReplacement)));
                 }
-            s = s.Replace(linkMatches[i].ToString(), String.Format("<a href=\"{0}\">{1}</a>", temp.Replace(".", periodReplacement).ToLower(), linkMatches[i].ToString().Replace(".", periodReplacement)));
-            }
-            s = s.Replace(periodReplacement, ".");
-            return s;
+                s = s.Replace(periodReplacement, ".");
+                return s;
             }
             else
             {
