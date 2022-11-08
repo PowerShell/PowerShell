@@ -32,19 +32,19 @@ namespace Microsoft.PowerShell
     public enum ExecutionPolicy
     {
         /// Unrestricted - No files must be signed.  If a file originates from the
-        ///    internet, Monad provides a warning prompt to alert the user.  To
+        ///    internet, PowerShell provides a warning prompt to alert the user.  To
         ///    suppress this warning message, right-click on the file in File Explorer,
         ///    select "Properties," and then "Unblock."
         Unrestricted = 0,
 
         /// RemoteSigned - Only .ps1 and .ps1xml files originating from the internet
-        ///    must be digitally signed.  If remote, signed, and executed, Monad
+        ///    must be digitally signed.  If remote, signed, and executed, PowerShell
         ///    prompts to determine if files from the signing publisher should be
         ///    run or not.  This is the default setting.
         RemoteSigned = 1,
 
         /// AllSigned - All .ps1 and .ps1xml files must be digitally signed.  If
-        ///    signed and executed, Monad prompts to determine if files from the
+        ///    signed and executed, PowerShell prompts to determine if files from the
         ///    signing publisher should be run or not.
         AllSigned = 2,
 
