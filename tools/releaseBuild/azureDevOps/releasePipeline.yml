@@ -291,6 +291,7 @@ stages:
     variables:
     - group: 'Azure Blob variable group'
     - group: 'AzDevOpsArtifacts'
+    - group: ReleasePipelineSecrets
     dependsOn: AzureBlobPublic
     steps:
     - template: templates/release-CreateGitHubDraft.yml
