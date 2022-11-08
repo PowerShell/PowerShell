@@ -4,5 +4,6 @@
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
   "PSSubsystemPluginModel",
+  "PSModuleAutoLoadSkipOfflineFiles",
   "PSFeedbackProvider"
 ]
