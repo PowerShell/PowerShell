@@ -675,7 +675,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static string CheckUri(string s, bool hyper)
         {
-            if (hyper){
+            if (hyper)
+            {
                 Regex regExHttpLinks = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var periodReplacement = "[[[replace:period]]]";
                 s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", periodReplacement);
