@@ -1986,7 +1986,10 @@ namespace System.Management.Automation
                 // Handle completion for a path with variable, such as: $PSHOME\ty<tab>
                 if (completionContext.RelatedAsts.Count > 0 && completionContext.RelatedAsts[0] is ScriptBlockAst)
                 {
-                    Ast cursorAst = completionContext.RelatedAsts[0].FindAll(ast => ast.Extent.EndOffset <= tokenAtCursor.Extent.StartOffset, true).LastOrDefault();
+                    Ast cursorAst = completionContext.RelatedAsts[0].FindAll(
+                        ast => ast.Extent.EndOffset <= tokenAtCursor.Extent.StartOffset
+                            && ast.Extent is not EmptyScriptExtent,
+                        searchNestedScriptBlocks: true).LastOrDefault();
 
                     if (cursorAst is not null)
                     {
