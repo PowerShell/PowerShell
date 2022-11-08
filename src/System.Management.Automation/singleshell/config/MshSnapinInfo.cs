@@ -69,7 +69,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains information about a mshsnapin.
+    /// Contains information about a PSSnapin.
     /// </summary>
     public class PSSnapInInfo
     {
@@ -189,22 +189,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Unique Name of the mshsnapin.
+        /// Unique Name of the PSSnapin.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Is this mshsnapin default mshsnapin.
+        /// Is this PSSnapin default PSSnapin.
         /// </summary>
         public bool IsDefault { get; }
 
         /// <summary>
-        /// Returns applicationbase for mshsnapin.
+        /// Returns applicationbase for PSSnapin.
         /// </summary>
         public string ApplicationBase { get; }
 
         /// <summary>
-        /// Strong name of mshSnapIn assembly.
+        /// Strong name of PSSnapin assembly.
         /// </summary>
         public string AssemblyName { get; }
 
@@ -231,12 +231,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Monad version used by mshsnapin.
+        /// Monad version used by PSSnapin.
         /// </summary>
         public Version PSVersion { get; }
 
         /// <summary>
-        /// Version of mshsnapin.
+        /// Version of PSSnapin.
         /// </summary>
         public Version Version { get; }
 
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         private readonly string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
-        /// Description of mshsnapin.
+        /// Description of PSSnapin.
         /// </summary>
         public string Description
         {
@@ -273,7 +273,7 @@ namespace System.Management.Automation
         private readonly string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
-        /// Vendor of mshsnapin.
+        /// Vendor of PSSnapin.
         /// </summary>
         public string Vendor
         {

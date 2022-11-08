@@ -2297,10 +2297,10 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Exception used to wrap the error coming from
-    /// remote instance of Msh.
+    /// remote instance of PowerShell.
     /// </summary>
     /// <remarks>
-    /// This remote instance of Msh can be in a separate process,
+    /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
     [Serializable]
@@ -2394,7 +2394,7 @@ namespace System.Management.Automation
         private readonly PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
-        /// Original Serialized Exception from remote msh.
+        /// Original Serialized Exception from remote PowerShell.
         /// </summary>
         /// <remarks>This is the exception which was thrown in remote.
         /// </remarks>
@@ -2410,7 +2410,7 @@ namespace System.Management.Automation
         /// InvocationInfo, if any, associated with the SerializedRemoteException.
         /// </summary>
         /// <remarks>
-        /// This is the serialized InvocationInfo from the remote msh.
+        /// This is the serialized InvocationInfo from the remote PowerShell.
         /// </remarks>
         public PSObject SerializedRemoteInvocationInfo
         {
