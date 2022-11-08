@@ -2038,7 +2038,8 @@ namespace System.Management.Automation
                 {
                     Ast cursorAst = completionContext.RelatedAsts[0].FindAll(
                         ast => ast.Extent.EndOffset <= tokenAtCursor.Extent.StartOffset
-                        && ast.Extent is not EmptyScriptExtent, true).LastOrDefault();
+                            && ast.Extent is not EmptyScriptExtent,
+                        searchNestedScriptBlocks: true).LastOrDefault();
 
                     if (cursorAst is not null)
                     {
