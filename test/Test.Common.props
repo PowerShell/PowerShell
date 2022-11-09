@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
