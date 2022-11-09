@@ -14,6 +14,10 @@ jobs:
   - checkout: self
     clean: true
 
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(Build.SourcesDirectory)
+
   - pwsh: |
       Import-Module ./build.psm1
       Start-PSBootstrap
@@ -59,5 +63,6 @@ jobs:
       BuildTestPackage -runtime linux-musl-x64
 
     displayName: Build test package and upload
+    retryCountOnTaskFailure: 1
 
   - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
