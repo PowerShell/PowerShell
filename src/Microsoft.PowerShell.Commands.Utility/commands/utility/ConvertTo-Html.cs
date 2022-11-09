@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 _hyperlink = true;
             }
         }
-        
+
         private bool _hyperlink = false;
 
         /// <summary>
@@ -677,11 +677,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (hyper)
             {
-                Regex regExHttpLinks = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)
+                Regex regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)
                 [-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var p = "[[[replace:period]]]";
                 s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", p);
-                var htmls = regExHttpLinks.Matches(s);
+                var htmls = regHttp.Matches(s);
                 for (int i = 0; i < htmls.Count; i++)
                 {
                     var temp = htmls[i].ToString();
@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         temp = "http://" + temp;
                     }
-                    s = s.Replace(htmls[i].ToString(), String.Format("<a href=\"{0}\">{1}</a>", 
+                    s = s.Replace(htmls[i].ToString(), String.Format("<a href=\"{0}\">{1}</a>",
                     temp.Replace(".", p).ToLower(), htmls[i].ToString().Replace(".", p)));
                 }
                 s = s.Replace(p, ".");

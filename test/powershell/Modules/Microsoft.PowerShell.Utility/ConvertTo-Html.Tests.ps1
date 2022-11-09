@@ -190,7 +190,7 @@ After the object
     }
 
     It "Test ConvertTo-Html URI Auto Create HyperLink #2" {
-        $returnString = ($CustomParameters_2 | ConvertTo-Html -hyperlink) -join $newLine 
+        $returnString = ($CustomParameters_2 | ConvertTo-Html -hyperlink) -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
