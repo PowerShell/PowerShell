@@ -66,7 +66,7 @@ steps:
       "preview.md"
     }
     else {
-      $semanticVersion.Major + "." + $semanticVersion.Minor + ".md"
+      $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
     }
 
     $filePath = "$env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName"
