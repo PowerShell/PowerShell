@@ -17,6 +17,7 @@ jobs:
       value: false
     - name: NugetSecurityAnalysisWarningLevel
       value: none
+    - group: DotNetPrivateBuildAccess
   steps:
   - checkout: self
     clean: true
@@ -116,6 +117,9 @@ jobs:
         throw
       }
     displayName: 'Bootstrap VM'
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
@@ -127,6 +131,9 @@ jobs:
         throw
       }
     displayName: 'Package'
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

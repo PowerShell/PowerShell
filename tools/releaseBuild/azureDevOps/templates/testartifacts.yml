@@ -5,6 +5,7 @@ jobs:
       value: false
     - name: NugetSecurityAnalysisWarningLevel
       value: none
+    - group: DotNetPrivateBuildAccess
   displayName: Build test artifacts
   condition: succeeded()
   pool:
@@ -22,6 +23,9 @@ jobs:
       Import-Module ./build.psm1
       Start-PSBootstrap
     displayName: Bootstrap
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       Import-Module ./build.psm1

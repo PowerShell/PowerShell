@@ -16,6 +16,7 @@ jobs:
         value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
       - name: branchCounter
         value: $[counter(variables['branchCounterKey'], 1)]
+      - group: DotNetPrivateBuildAccess
 
     pool:
       name: PowerShell1ES
@@ -38,6 +39,9 @@ jobs:
       workingDirectory: '$(Build.SourcesDirectory)'
       retryCountOnTaskFailure: 2
       displayName: 'Bootstrap'
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         Import-Module .\build.psm1 -force
