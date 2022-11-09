@@ -41,9 +41,9 @@ jobs:
 
       & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
 
-      Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --include-pattern PowerShell-$(Version)-win-${{ parameters.architecture }}.zip"
+      Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
 
-      & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --include-pattern PowerShell-$(Version)-win-${{ parameters.architecture }}.zip
+      & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)
     displayName: 'Download Azure Artifacts'
     retryCountOnTaskFailure: 2
     env:
