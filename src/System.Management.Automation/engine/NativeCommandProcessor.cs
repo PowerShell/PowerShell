@@ -1602,20 +1602,23 @@ namespace System.Management.Automation
         // SHSTDAPI_(HINSTANCE) FindExecutableW(LPCWSTR lpFile, LPCWSTR lpDirectory, __out_ecount(MAX_PATH) LPWSTR lpResult);
         // HINSTANCE is void* so we need to use IntPtr as API return value.
 
-        [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16, EntryPoint = "FindExecutable")]
-        private static partial IntPtr FindExecutableW(
-          string fileName, string directoryPath, out string pathFound);
+        [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
+        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "0")]
+        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "1")]
+        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "2")]
+        private static extern IntPtr FindExecutableW(
+          string fileName, string directoryPath, StringBuilder pathFound);
 
         [ArchitectureSensitive]
         private static string FindExecutable(string filename)
         {
             // Preallocate a
-            string objResultBuffer = new string('\0', MaxExecutablePath);
+            StringBuilder objResultBuffer = new StringBuilder(MaxExecutablePath);
             IntPtr resultCode = (IntPtr)0;
 
             try
             {
-                resultCode = FindExecutableW(filename, string.Empty, out objResultBuffer);
+                resultCode = FindExecutableW(filename, string.Empty, objResultBuffer);
             }
             catch (System.IndexOutOfRangeException e)
             {
