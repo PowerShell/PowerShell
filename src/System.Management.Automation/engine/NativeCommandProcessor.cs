@@ -228,7 +228,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides way to create and execute native commands.
     /// </summary>
-    internal partial class NativeCommandProcessor : CommandProcessorBase
+    internal class NativeCommandProcessor : CommandProcessorBase
     {
         // This is the list of files which will trigger Legacy behavior if
         // PSNativeCommandArgumentPassing is set to "Windows".
