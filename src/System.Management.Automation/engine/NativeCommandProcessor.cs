@@ -228,7 +228,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides way to create and execute native commands.
     /// </summary>
-    internal class NativeCommandProcessor : CommandProcessorBase
+    internal partial class NativeCommandProcessor : CommandProcessorBase
     {
         // This is the list of files which will trigger Legacy behavior if
         // PSNativeCommandArgumentPassing is set to "Windows".
@@ -1602,23 +1602,20 @@ namespace System.Management.Automation
         // SHSTDAPI_(HINSTANCE) FindExecutableW(LPCWSTR lpFile, LPCWSTR lpDirectory, __out_ecount(MAX_PATH) LPWSTR lpResult);
         // HINSTANCE is void* so we need to use IntPtr as API return value.
 
-        [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "0")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "1")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "2")]
-        private static extern IntPtr FindExecutableW(
-          string fileName, string directoryPath, StringBuilder pathFound);
+        [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16, EntryPoint = "FindExecutable")]
+        private static partial IntPtr FindExecutableW(
+          string fileName, string directoryPath, out string pathFound);
 
         [ArchitectureSensitive]
         private static string FindExecutable(string filename)
         {
             // Preallocate a
-            StringBuilder objResultBuffer = new StringBuilder(MaxExecutablePath);
+            string objResultBuffer = new string('\0', MaxExecutablePath);
             IntPtr resultCode = (IntPtr)0;
 
             try
             {
-                resultCode = FindExecutableW(filename, string.Empty, objResultBuffer);
+                resultCode = FindExecutableW(filename, string.Empty, out objResultBuffer);
             }
             catch (System.IndexOutOfRangeException e)
             {
@@ -2154,15 +2151,15 @@ namespace System.Management.Automation
     /// Static class that allows you to show and hide the console window
     /// associated with this process.
     /// </summary>
-    internal static class ConsoleVisibility
+    internal static partial class ConsoleVisibility
     {
         /// <summary>
         /// If set to true, then native commands will always be run redirected...
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
 
-        [DllImport("Kernel32.dll")]
-        internal static extern IntPtr GetConsoleWindow();
+        [LibraryImport("Kernel32.dll")]
+        internal static partial IntPtr GetConsoleWindow();
 
         internal const int SW_HIDE = 0;
         internal const int SW_SHOWNORMAL = 1;
@@ -2186,32 +2183,33 @@ namespace System.Management.Automation
         /// <param name="hWnd">The window to show...</param>
         /// <param name="nCmdShow">The command to do.</param>
         /// <returns>True if it was successful.</returns>
-        [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
         /// <returns>True if a console was created...</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AllocConsole();
+        internal static partial bool AllocConsole();
 
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window.
         /// </summary>
         /// <returns>A handle to the foreground window.</returns>
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetForegroundWindow();
 
         /// <summary>
         /// Called to restore the foreground window after allocating a hidden console window.
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
         /// <returns>True if the window was brought to the foreground.</returns>
-        [DllImport("user32.dll")]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static partial bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
         /// If no console window is attached to this process, then allocate one,
