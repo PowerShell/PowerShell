@@ -2019,6 +2019,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         It "Charset Parsing" {
+            Set-ItResult -Pending -Because "We need a better way to test this and .NET has made bad regex's run faster"
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='charset'
                 dosLength='2850'
