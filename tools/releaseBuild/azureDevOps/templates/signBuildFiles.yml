@@ -113,9 +113,17 @@ steps:
     Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
 
     $filesToSignDirectory = "$(System.ArtifactsDirectory)\thirdPartyToBeSigned"
+    if (Test-Path $filesToSignDirectory) {
+      Remove-Item -Path $filesToSignDirectory -Recurse -Force
+    }
+
     $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force -Verbose
 
     $signedFilesDirectory = "$(System.ArtifactsDirectory)\thirdPartySigned"
+    if (Test-Path $signedFilesDirectory) {
+      Remove-Item -Path $signedFilesDirectory -Recurse -Force
+    }
+
     $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force -Verbose
 
     $missingSignatures | ForEach-Object {
