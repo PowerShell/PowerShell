@@ -2194,7 +2194,7 @@ namespace System.Management.Automation
         /// Code to allocate a console...
         /// </summary>
         /// <returns>True if a console was created...</returns>
-        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static partial bool AllocConsole();
 

@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell
             public IntPtr InheritedFromUniqueProcessId;
         }
 
-        [LibraryImport("ntdll.dll", SetLastError = true)]
+        [LibraryImport("ntdll.dll")]
         private static partial int NtQueryInformationProcess(
                 IntPtr processHandle,
                 int processInformationClass,

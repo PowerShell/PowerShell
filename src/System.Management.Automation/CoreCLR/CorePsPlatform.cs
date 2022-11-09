@@ -555,7 +555,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>The Common Stat class.</summary>
-            public partial class CommonStat
+            public class CommonStat
             {
                 /// <summary>The inode of the filesystem item.</summary>
                 public long Inode;
@@ -945,7 +945,7 @@ namespace System.Management.Automation
                 [return: MarshalAs(UnmanagedType.I1)]
                 internal static partial bool IsExecutable(string filePath);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                [LibraryImport(psLib)]
                 internal static partial uint GetCurrentThreadId();
 
                 [LibraryImport(psLib)]
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                [LibraryImport(psLib)]
                 internal static unsafe partial int SetDate(UnixTm* tm);
 
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 internal static partial int CreateHardLink(string filePath, string target);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static partial string GetUserFromPid(int pid);
 
