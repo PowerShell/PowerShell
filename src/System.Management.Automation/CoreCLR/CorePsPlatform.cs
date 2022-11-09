@@ -932,18 +932,18 @@ namespace System.Management.Automation
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
                 // C bools are 1 byte and so must be marshaled as I1
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                [LibraryImport(psLib)]
                 internal static partial int GetErrorCategory(int errno);
 
                 [LibraryImport(psLib)]
                 internal static partial int GetPPid(int pid);
 
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int GetLinkCount([MarshalAs(UnmanagedType.LPStr)] string filePath, out int linkCount);
+                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static partial bool IsExecutable([MarshalAs(UnmanagedType.LPStr)] string filePath);
+                internal static partial bool IsExecutable(string filePath);
 
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 internal static partial uint GetCurrentThreadId();
@@ -1003,29 +1003,25 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 internal static unsafe partial int SetDate(UnixTm* tm);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int CreateSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                         [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateSymLink(string filePath, string target);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateHardLink(string filePath, string target);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static partial string GetUserFromPid(int pid);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static partial bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)] string filePathOne,
-                                                                 [MarshalAs(UnmanagedType.LPStr)] string filePathTwo);
+                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
-                internal static partial int GetInodeData([MarshalAs(UnmanagedType.LPStr)] string path,
-                                                        out ulong device, out ulong inode);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1109,10 +1105,10 @@ namespace System.Management.Automation
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
                 internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 internal static partial string GetPwUid(int id);
 
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 internal static partial string GetGrGid(int id);
             }
         }
