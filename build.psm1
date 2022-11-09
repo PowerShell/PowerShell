@@ -3287,13 +3287,15 @@ function Install-AzCopy {
         return
     }
 
-    $destination = "$env:TEMP\azcopy81.msi"
-    Invoke-WebRequest "https://aka.ms/downloadazcopy" -OutFile $destination
-    Start-Process -FilePath $destination -ArgumentList "/quiet" -Wait
+    $destination = "$env:TEMP\azcopy10.zip"
+    $downloadLocation = (Invoke-WebRequest -Uri https://aka.ms/downloadazcopy-v10-windows -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck).headers.location | Select-Object -First 1
+
+    Invoke-WebRequest -Uri $downloadLocation -OutFile $destination -Verbose
+    Expand-archive -Path $destination -Destinationpath '$(Agent.ToolsDirectory)\azcopy10'
 }
 
 function Find-AzCopy {
-    $searchPaths = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    $searchPaths = @('$(Agent.ToolsDirectory)\azcopy10\AzCopy.exe', "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe", "C:\azcopy10\AzCopy.exe")
 
     foreach ($filter in $searchPaths) {
         $azCopy = Get-ChildItem -Path $filter -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName -First 1
