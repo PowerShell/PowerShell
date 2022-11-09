@@ -19,12 +19,12 @@ jobs:
         xunit/**/*
       downloadPath: '$(System.ArtifactsDirectory)'
 
-  - powershell: |
+  - pwsh: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
 
-  - powershell: |
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
 
