@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// These are platform abstractions and platform specific implementations.
     /// </summary>
-    public static class Platform
+    public static partial class Platform
     {
         /// <summary>
         /// True if the current platform is Linux.
@@ -453,18 +453,18 @@ namespace System.Management.Automation
             return Unix.NativeMethods.WaitPid(pid, nohang);
         }
 
-        internal static class Windows
+        internal static partial class Windows
         {
             /// <summary>The native methods class.</summary>
-            internal static class NativeMethods
+            internal static partial class NativeMethods
             {
                 private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
 
-                [DllImport(ole32Lib)]
-                internal static extern int CoInitializeEx(IntPtr reserve, int coinit);
+                [LibraryImport(ole32Lib)]
+                internal static partial int CoInitializeEx(IntPtr reserve, int coinit);
 
-                [DllImport(ole32Lib)]
-                internal static extern void CoUninitialize();
+                [LibraryImport(ole32Lib)]
+                internal static partial void CoUninitialize();
             }
         }
 
@@ -475,7 +475,7 @@ namespace System.Management.Automation
         // to a PAL value and calls strerror_r underneath to generate the message.
 
         /// <summary>Unix specific implementations of required functionality.</summary>
-        internal static class Unix
+        internal static partial class Unix
         {
             private static readonly Dictionary<int, string> usernameCache = new();
             private static readonly Dictionary<int, string> groupnameCache = new();
@@ -925,35 +925,35 @@ namespace System.Management.Automation
             }
 
             /// <summary>The native methods class.</summary>
-            internal static class NativeMethods
+            internal static partial class NativeMethods
             {
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
                 // C bools are 1 byte and so must be marshaled as I1
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern int GetErrorCategory(int errno);
+                [LibraryImport(psLib)]
+                internal static partial int GetErrorCategory(int errno);
 
-                [DllImport(psLib)]
-                internal static extern int GetPPid(int pid);
+                [LibraryImport(psLib)]
+                internal static partial int GetPPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)] string filePath, out int linkCount);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)] string filePath);
+                internal static partial bool IsExecutable(string filePath);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern uint GetCurrentThreadId();
+                [LibraryImport(psLib)]
+                internal static partial uint GetCurrentThreadId();
 
-                [DllImport(psLib)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.Bool)]
-                internal static extern bool KillProcess(int pid);
+                internal static partial bool KillProcess(int pid);
 
-                [DllImport(psLib)]
-                internal static extern int WaitPid(int pid, bool nohang);
+                [LibraryImport(psLib)]
+                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
                 // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]
@@ -1003,29 +1003,25 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int SetDate(UnixTm* tm);
+                [LibraryImport(psLib)]
+                internal static unsafe partial int SetDate(UnixTm* tm);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                         [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateSymLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateHardLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserFromPid(int pid);
+                internal static partial string GetUserFromPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)] string filePathOne,
-                                                                 [MarshalAs(UnmanagedType.LPStr)] string filePathTwo);
+                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)] string path,
-                                                        out ulong device, out ulong inode);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1103,17 +1099,17 @@ namespace System.Management.Automation
                     internal int IsSticky;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int GetCommonLStat(string filePath, [Out] out CommonStatStruct cs);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonLStat(string filePath, out CommonStatStruct cs);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int GetCommonStat(string filePath, [Out] out CommonStatStruct cs);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern string GetPwUid(int id);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetPwUid(int id);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern string GetGrGid(int id);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetGrGid(int id);
             }
         }
     }
