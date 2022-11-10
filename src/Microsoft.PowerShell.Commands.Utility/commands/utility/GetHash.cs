@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Security.Cryptography;
@@ -124,10 +125,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Calculate the hash data from the Stream with the specified hash algorithm
-        /// </summary>
-        /// <returns>The computed hash data</returns>
         private byte[] ComputeHash(Stream stream)
         {
             switch (Algorithm)
@@ -142,9 +139,9 @@ namespace Microsoft.PowerShell.Commands
                     return SHA512.HashData(stream);
                 case HashAlgorithmNames.MD5:
                     return MD5.HashData(stream);
-                default:
-                    return SHA256.HashData(stream);
             }
+            Debug.Assert(false, "invalid hash algorithm");
+            return SHA256.HashData(stream);
         }
 
         /// <summary>
