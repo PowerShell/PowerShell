@@ -8712,8 +8712,8 @@ namespace System.Management.Automation.Internal
 
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 
-            [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern SafeFileHandle CreateFile(string lpFileName,
+            [LibraryImport(PinvokeDllNames.CreateFileDllName, EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            internal static partial SafeFileHandle CreateFile(string lpFileName,
                 FileAccess dwDesiredAccess, FileShare dwShareMode,
                 IntPtr lpSecurityAttributes, FileMode dwCreationDisposition,
                 int dwFlagsAndAttributes, IntPtr hTemplateFile);
