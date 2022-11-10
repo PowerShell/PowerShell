@@ -7150,7 +7150,7 @@ namespace Microsoft.PowerShell.Commands
             return NativeMethods.PathIsNetworkPath(path); // call the native method
         }
 
-        private static class NativeMethods
+        private static partial class NativeMethods
         {
             /// <summary>
             /// WNetAddConnection2 API makes a connection to a network resource
@@ -7196,8 +7196,8 @@ namespace Microsoft.PowerShell.Commands
             /// else the error code describing the type of failure that occurred while
             /// trying to remove the connection is returned.
             /// </returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetCancelConnection2(string driveName, int flags, bool force);
+            [LibraryImport("mpr.dll", EntryPoint ="WNetCancelConnection2W", StringMarshalling = StringMarshalling.Utf16)]
+            internal static partial int WNetCancelConnection2(string driveName, int flags, [MarshalAs(UnmanagedType.Bool)] bool force);
 
             /// <summary>
             /// WNetGetConnection function retrieves the name of the network resource associated with a local device.
@@ -7223,8 +7223,8 @@ namespace Microsoft.PowerShell.Commands
             /// Path of the file being executed
             /// </param>
             /// <returns>Returns 0 through 25 (corresponding to 'A' through 'Z') if the path has a drive letter, or -1 otherwise.</returns>
-            [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
-            internal static extern int PathGetDriveNumber(string path);
+            [LibraryImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", EntryPoint ="PathGetDriveNumberW", StringMarshalling = StringMarshalling.Utf16)]
+            internal static partial int PathGetDriveNumber(string path);
 
             private static bool _WNetApiAvailable = true;
 
@@ -7288,9 +7288,9 @@ namespace Microsoft.PowerShell.Commands
             /// Path of the file being executed.
             /// </param>
             /// <returns>True if the path is a network path or else returns false.</returns>
-            [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+            [LibraryImport("shlwapi.dll", EntryPoint = "PathIsNetworkPathW", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool PathIsNetworkPath(string path);
+            internal static partial bool PathIsNetworkPath(string path);
 #endif
 
             /// <summary>
@@ -7320,9 +7320,9 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="destination">Path of the target of the symbolic link.</param>
             /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
             /// <returns>1 on successful creation.</returns>
-            [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [LibraryImport(PinvokeDllNames.CreateSymbolicLinkDllName, EntryPoint = "CreateSymbolicLinkW", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
+            internal static partial bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
 
             /// <summary>
             /// Flags used when creating a symbolic link.
@@ -7353,9 +7353,9 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="existingFileName">Path to the target of the hard link.</param>
             /// <param name="SecurityAttributes"></param>
             /// <returns></returns>
-            [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            [LibraryImport(PinvokeDllNames.CreateHardLinkDllName, EntryPoint = "CreateHardLinkW", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
+            internal static partial bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
 
             // OneDrive placeholder support
 #if !UNIX
@@ -7363,16 +7363,16 @@ namespace Microsoft.PowerShell.Commands
             /// Returns the placeholder compatibility mode for the current process.
             /// </summary>
             /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [DllImport("ntdll.dll")]
-            internal static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
+            [LibraryImport("ntdll.dll")]
+            internal static partial sbyte RtlQueryProcessPlaceholderCompatibilityMode();
 
             /// <summary>
             /// Sets the placeholder compatibility mode for the current process.
             /// </summary>
             /// <param name="pcm">The placeholder compatibility mode to set.</param>
             /// <returns>The process's previous placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [DllImport("ntdll.dll")]
-            internal static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
+            [LibraryImport("ntdll.dll")]
+            internal static partial sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
 
             internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
             internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
@@ -7870,7 +7870,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class to find the symbolic link target.
     /// </summary>
-    public static class InternalSymbolicLinkLinkCodeMethods
+    public static partial class InternalSymbolicLinkLinkCodeMethods
     {
         // This size comes from measuring the size of the header of REPARSE_GUID_DATA_BUFFER
         private const int REPARSE_GUID_DATA_BUFFER_HEADER_SIZE = 24;
@@ -8018,8 +8018,9 @@ namespace Microsoft.PowerShell.Commands
             public char[] DataBuffer;
         }
 
-        [DllImport(PinvokeDllNames.DeviceIoControlDllName, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
-        private static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
+        [LibraryImport(PinvokeDllNames.DeviceIoControlDllName, StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
             IntPtr InBuffer, int nInBufferSize,
             IntPtr OutBuffer, int nOutBufferSize,
             out int pBytesReturned, IntPtr lpOverlapped);
@@ -8040,7 +8041,7 @@ namespace Microsoft.PowerShell.Commands
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
+        internal sealed partial class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             private SafeFindHandle() : base(true) { }
 
@@ -8049,9 +8050,9 @@ namespace Microsoft.PowerShell.Commands
                 return FindClose(this.handle);
             }
 
-            [DllImport(PinvokeDllNames.FindCloseDllName)]
+            [LibraryImport(PinvokeDllNames.FindCloseDllName)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool FindClose(IntPtr handle);
+            private static partial bool FindClose(IntPtr handle);
         }
 
         // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
@@ -8539,7 +8540,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed by both the FileSystem provider and Unblock-File cmdlet.")]
-    public static class AlternateDataStreamUtilities
+    public static partial class AlternateDataStreamUtilities
     {
         /// <summary>
         /// List all of the streams on a file.
@@ -8704,7 +8705,7 @@ namespace System.Management.Automation.Internal
             // the code above seems cleaner and more robust than the IAttachmentExecute approach
         }
 
-        internal static class NativeMethods
+        internal static partial class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
             internal const int ERROR_INVALID_PARAMETER = 87;
@@ -8733,7 +8734,7 @@ namespace System.Management.Automation.Internal
                 AlternateStreamNativeData lpFindStreamData);
         }
 
-        internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
+        internal sealed partial class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             private SafeFindHandle() : base(true) { }
 
@@ -8742,9 +8743,9 @@ namespace System.Management.Automation.Internal
                 return FindClose(this.handle);
             }
 
-            [DllImport(PinvokeDllNames.FindCloseDllName)]
+            [LibraryImport(PinvokeDllNames.FindCloseDllName)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool FindClose(IntPtr handle);
+            private static partial bool FindClose(IntPtr handle);
         }
 
         /// <summary>
