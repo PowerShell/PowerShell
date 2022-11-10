@@ -8031,8 +8031,8 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
 
-        [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern IntPtr CreateFile(
+        [LibraryImport(PinvokeDllNames.CreateFileDllName, EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        internal static partial IntPtr CreateFile(
             string lpFileName,
             FileDesiredAccess dwDesiredAccess,
             FileShareMode dwShareMode,
