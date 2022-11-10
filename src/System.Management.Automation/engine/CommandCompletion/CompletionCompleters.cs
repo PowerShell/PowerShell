@@ -30,7 +30,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// </summary>
-    public static class CompletionCompleters
+    public static partial class CompletionCompleters
     {
         static CompletionCompleters()
         {
@@ -4751,8 +4751,8 @@ namespace System.Management.Automation
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
 
-        [DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
-        private static extern int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,
+        [LibraryImport("Netapi32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,
                                                out uint entriesRead, out uint totalEntries, ref uint resumeHandle);
 
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)

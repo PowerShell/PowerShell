@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// ClrFacade contains all diverging code (different implementation for FullCLR and CoreCLR using if/def).
     /// It exposes common APIs that can be used by the rest of the code base.
     /// </summary>
-    internal static class ClrFacade
+    internal static partial class ClrFacade
     {
         /// <summary>
         /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
@@ -366,13 +366,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Native methods that are used by facade methods.
         /// </summary>
-        private static class NativeMethods
+        private static partial class NativeMethods
         {
             /// <summary>
             /// Pinvoke for GetOEMCP to get the OEM code page.
             /// </summary>
-            [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetOEMCP();
+            [LibraryImport(PinvokeDllNames.GetOEMCPDllName)]
+            internal static partial uint GetOEMCP();
         }
     }
 }
