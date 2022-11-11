@@ -1318,10 +1318,8 @@ namespace Microsoft.PowerShell.Commands
             int intCode = (int)code;
             return
             (
-                (intCode >= 300 && intCode < 304)
-                ||
-                intCode == 307
-                ||
+                (intCode >= 300 && intCode < 304) ||
+                intCode == 307 ||
                 intCode == 308
             );
         }
@@ -1332,18 +1330,12 @@ namespace Microsoft.PowerShell.Commands
         {
             return
             (
-                code == HttpStatusCode.Found
-                ||
-                code == HttpStatusCode.Moved
-                ||
-                code == HttpStatusCode.Redirect
-                ||
-                code == HttpStatusCode.RedirectMethod
-                ||
-                code == HttpStatusCode.SeeOther
-                ||
-                code == HttpStatusCode.Ambiguous
-                ||
+                code == HttpStatusCode.Found ||
+                code == HttpStatusCode.Moved ||
+                code == HttpStatusCode.Redirect ||
+                code == HttpStatusCode.RedirectMethod ||
+                code == HttpStatusCode.SeeOther ||
+                code == HttpStatusCode.Ambiguous ||
                 code == HttpStatusCode.MultipleChoices
             );
         }
