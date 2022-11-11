@@ -447,7 +447,7 @@ namespace System.Management.Automation.Runspaces
     #endregion
 
     /// <summary>
-    /// Public interface to Msh Runtime. Provides APIs for creating pipelines,
+    /// Public interface to PowerShell Runtime. Provides APIs for creating pipelines,
     /// access session state etc.
     /// </summary>
     public abstract class Runspace : IDisposable

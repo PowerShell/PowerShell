@@ -7,7 +7,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH scripts that are directly executable by MSH.
+    /// The command information for scripts that are directly executable by PowerShell.
     /// </summary>
     public class ScriptInfo : CommandInfo, IScriptCommandInfo
     {

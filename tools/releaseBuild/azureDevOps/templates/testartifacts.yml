@@ -5,6 +5,7 @@ jobs:
       value: false
     - name: NugetSecurityAnalysisWarningLevel
       value: none
+    - group: DotNetPrivateBuildAccess
   displayName: Build test artifacts
   condition: succeeded()
   pool:
@@ -14,10 +15,17 @@ jobs:
   - checkout: self
     clean: true
 
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(Build.SourcesDirectory)
+
   - pwsh: |
       Import-Module ./build.psm1
       Start-PSBootstrap
     displayName: Bootstrap
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       Import-Module ./build.psm1
@@ -59,5 +67,6 @@ jobs:
       BuildTestPackage -runtime linux-musl-x64
 
     displayName: Build test package and upload
+    retryCountOnTaskFailure: 1
 
   - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

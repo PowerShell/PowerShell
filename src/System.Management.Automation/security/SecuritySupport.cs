@@ -37,18 +37,18 @@ namespace Microsoft.PowerShell
         ///    select "Properties," and then "Unblock."
         Unrestricted = 0,
 
-        /// RemoteSigned - Only .msh and .mshxml files originating from the internet
+        /// RemoteSigned - Only .ps1 and .ps1xml files originating from the internet
         ///    must be digitally signed.  If remote, signed, and executed, Monad
         ///    prompts to determine if files from the signing publisher should be
         ///    run or not.  This is the default setting.
         RemoteSigned = 1,
 
-        /// AllSigned - All .msh and .mshxml files must be digitally signed.  If
+        /// AllSigned - All .ps1 and .ps1xml files must be digitally signed.  If
         ///    signed and executed, Monad prompts to determine if files from the
         ///    signing publisher should be run or not.
         AllSigned = 2,
 
-        /// Restricted - All .msh files are blocked.  Mshxml files must be digitally
+        /// Restricted - All .ps1 files are blocked.  Ps1xml files must be digitally
         ///    signed, and by a trusted publisher.  If you haven't made a trust decision
         ///    on the publisher yet, prompting is done as in AllSigned mode.
         Restricted = 3,

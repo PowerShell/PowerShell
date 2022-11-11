@@ -59,10 +59,10 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// Starts the managed MSH.
+        /// Starts PowerShell.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to PowerShell
         /// </param>
         public static int Main(string[] args)
         {
