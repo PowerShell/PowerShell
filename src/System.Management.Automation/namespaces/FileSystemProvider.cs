@@ -7995,7 +7995,7 @@ namespace Microsoft.PowerShell.Commands
             public uint FileIndexLow;
         }
 
-        private struct FILE_TIME
+        internal struct FILE_TIME
         {
             public uint dwLowDateTime;
             public uint dwHighDateTime;
@@ -8063,16 +8063,16 @@ namespace Microsoft.PowerShell.Commands
 
         // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
         // See https://github.com/PowerShell/PowerShell/issues/16804
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
+        [LibraryImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        private static partial SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal unsafe struct WIN32_FIND_DATA
         {
             internal uint dwFileAttributes;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+            internal FILE_TIME ftCreationTime;
+            internal FILE_TIME ftLastAccessTime;
+            internal FILE_TIME ftLastWriteTime;
             internal uint nFileSizeHigh;
             internal uint nFileSizeLow;
             internal uint dwReserved0;
