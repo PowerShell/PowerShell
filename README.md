@@ -44,7 +44,6 @@ You can download and install a PowerShell package for any of the following platf
 | [macOS 10.13+ (x64)][corefx-macos]         | [.pkg][lts-macos]       | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
 | [macOS 10.13+ (arm64)][corefx-macos]       | [.pkg][lts-macos-arm64] | [.pkg][rl-macos-arm64]  | [.pkg][pv-macos-arm64]| [Instructions][in-macos]      |
 | Docker                                     |                         |                         |                       | [Instructions][in-docker]     |
-| Raspberry Pi                               |                         |                         |                       | [![badge](https://github.com/Botspot/pi-apps/blob/master/icons/badge.png?raw=true)](https://github.com/Botspot/pi-apps)|
 
 You can download and install a PowerShell package for any of the following platforms, **which are supported by the community.**
 
@@ -53,6 +52,7 @@ You can download and install a PowerShell package for any of the following platf
 | Arch Linux               |                         |                               | [Instructions][in-archlinux]  |
 | Kali Linux               | [.deb][rl-ubuntu16]     | [.deb][pv-deb]           | [Instructions][in-kali]       |
 | Many Linux distributions | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]          |                               |
+| Raspberry Pi      | [Pi-Apps](https://github.com/Botspot/pi-apps)   | | [Pi-Apps Download](https://pi-apps.io/install.html)|
 
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
 
