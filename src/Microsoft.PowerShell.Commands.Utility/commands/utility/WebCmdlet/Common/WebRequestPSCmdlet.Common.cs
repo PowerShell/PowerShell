@@ -1321,6 +1321,8 @@ namespace Microsoft.PowerShell.Commands
                 (intCode >= 300 && intCode < 304)
                 ||
                 intCode == 307
+                ||
+                intCode == 308
             );
         }
 
