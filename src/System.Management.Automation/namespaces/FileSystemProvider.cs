@@ -7984,15 +7984,21 @@ namespace Microsoft.PowerShell.Commands
         private struct BY_HANDLE_FILE_INFORMATION
         {
             public uint FileAttributes;
-            public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+            public FILE_TIME CreationTime;
+            public FILE_TIME LastAccessTime;
+            public FILE_TIME LastWriteTime;
             public uint VolumeSerialNumber;
             public uint FileSizeHigh;
             public uint FileSizeLow;
             public uint NumberOfLinks;
             public uint FileIndexHigh;
             public uint FileIndexLow;
+        }
+
+        private struct FILE_TIME
+        {
+            public uint dwLowDateTime;
+            public uint dwHighDateTime;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -8025,9 +8031,9 @@ namespace Microsoft.PowerShell.Commands
             IntPtr OutBuffer, int nOutBufferSize,
             out int pBytesReturned, IntPtr lpOverlapped);
 
-        [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        [LibraryImport(PinvokeDllNames.GetFileInformationByHandleDllName)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetFileInformationByHandle(
+        private static partial bool GetFileInformationByHandle(
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
 
