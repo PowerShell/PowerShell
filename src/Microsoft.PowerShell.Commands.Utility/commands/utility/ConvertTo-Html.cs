@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _fragment;
 
         /// <summary>
-        /// When this switch is specified auto
+        /// Sets the _hyperlink switch, if true, then auto
         /// generate hyperlinks for URI.
         /// </summary>
         [Parameter(ParameterSetName = "Hyperlink")]
@@ -671,14 +671,15 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Check if a string or substrings in a string is uri, if true, then change to hyperlink format.
-        /// returns the midified string/unmodified string.
         /// </summary>
+        /// <param name="s"> the string that needs to be altered </param>
+        /// <param name="hyper"> if true, then change to hyperlink format </param>
+        /// <returns>the midified string/unmodified string.</returns>
         private static string CheckUri(string s, bool hyper)
         {
             if (hyper)
             {
-                Regex regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)
-                [-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                Regex regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)&[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var p = "[[[replace:period]]]";
                 s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", p);
                 var htmls = regHttp.Matches(s);
@@ -689,9 +690,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         temp = "http://" + temp;
                     }
-                    s = s.Replace(htmls[i].ToString(), String.Format("<a href=\"{0}\">{1}</a>",
-                    temp.Replace(".", p).ToLower(), htmls[i].ToString().Replace(".", p)));
+
+                    s = s.Replace(htmls[i].ToString(), string.Format("<a href=\"{0}\">{1}</a>", temp.Replace(".", p).ToLower(), htmls[i].ToString().Replace(".", p)));
                 }
+
                 s = s.Replace(p, ".");
                 return s;
             }

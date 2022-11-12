@@ -6,7 +6,6 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
         $CustomParameters_2 = @{
             Uri             = 'https://microsoft.com/powershell'
-            SessionVariable = 'Session'
         }
         $CustomParameters_3 = @{
             String          = 'https://microsoft.com/powershell can be installed on different https://www.linux.org/ distributions. Most https://www.linux.org/ platforms and distributions have a major release each year, and provide a package manager that is used to install https://microsoft.com/powershell.'
@@ -198,9 +197,9 @@ After the object
 <title>HTML TABLE</title>
 </head><body>
 <table>
-<colgroup><col/><col/></colgroup>
-<tr><th>SessionVariable</th><th>Uri</th></tr>
-<tr><td>Session</td><td><a href="https://microsoft.com/powershell">https://microsoft.com/powershell</a></td></tr>
+<colgroup><col/></colgroup>
+<tr><th>Uri</th></tr>
+<tr><td><a href="https://microsoft.com/powershell">https://microsoft.com/powershell</a></td></tr>
 </table>
 </body></html>
 "@
