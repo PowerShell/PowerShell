@@ -120,6 +120,9 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access to the path '{0}' is denied.</value>
   </data>
+  <data name="AllowInsecureRedirectMaximumRedirection" xml:space="preserve">
+    <value>The cmdlet set MaximumRedirection while redirecting HTTPS to HTTP. Reissue the command without specifying the MaximumRedirection parameter.</value>
+  </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
     <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
   </data>
