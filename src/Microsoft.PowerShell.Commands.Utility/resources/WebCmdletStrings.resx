@@ -120,7 +120,7 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access to the path '{0}' is denied.</value>
   </data>
-  <data name="AllowInsecureRedirectMaximumRedirection" xml:space="preserve">
+  <data name="AllowInsecureRedirectMaximumRedirectionConflict" xml:space="preserve">
     <value>The cmdlet set MaximumRedirection while redirecting HTTPS to HTTP. Reissue the command without specifying the MaximumRedirection parameter.</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
