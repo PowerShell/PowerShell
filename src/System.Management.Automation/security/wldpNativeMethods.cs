@@ -696,6 +696,7 @@ namespace System.Management.Automation.Security
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpCanExecuteFile")]
             internal static extern int WldpCanExecuteFile(
+                [MarshalAs(UnmanagedType.LPStruct)]
                 Guid host,
                 WLDP_EXECUTION_EVALUATION_OPTIONS options,
                 IntPtr fileHandle,
