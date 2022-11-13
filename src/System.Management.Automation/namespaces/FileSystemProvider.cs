@@ -879,6 +879,7 @@ namespace Microsoft.PowerShell.Commands
         {
 #if UNIX
             throw new PlatformNotSupportedException();
+        }
 #else
             return WinGetSubstitutedPathForNetworkDosDevice(driveName);
         }
