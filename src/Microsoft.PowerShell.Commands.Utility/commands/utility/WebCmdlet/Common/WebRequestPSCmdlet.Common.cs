@@ -1347,7 +1347,7 @@ namespace Microsoft.PowerShell.Commands
             int intCode = (int)code;
             return
             (
-                ((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
             );
         }
 
