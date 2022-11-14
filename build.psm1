@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+#requires -Version 7.0
+
 param(
     # Skips a check that prevents building PowerShell on unsupported Linux distributions
     [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
@@ -8,7 +10,6 @@ param(
 
 . "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
-# CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon
@@ -883,7 +884,7 @@ function New-PSOptions {
             'Windows' {
                 # For x86 and x64 architectures, we use win7-x64 and win7-x86 RIDs.
                 # For arm and arm64 architectures, we use win-arm and win-arm64 RIDs.
-                $Platform = if ($Architecture[0] -eq 'x') { 'win7' } else { 'win' }
+                $Platform = $Architecture[0] -eq 'x' ? 'win7' : 'win'
                 $Runtime = "${Platform}-${Architecture}"
             }
 
