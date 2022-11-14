@@ -412,9 +412,8 @@ namespace Microsoft.PowerShell.Commands
             // sessions
             if ((WebSession != null) && (SessionVariable != null))
             {
-                ErrorRecord error = GetValidationError(
-                    WebCmdletStrings.SessionConflict,
-                    "WebCmdletSessionConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict,
+                                                        "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
             }
 
@@ -422,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
             if (UseDefaultCredentials && (Authentication != WebAuthenticationType.None))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict,
-                                                       "WebCmdletAuthenticationConflictException");
+                                                        "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
 
