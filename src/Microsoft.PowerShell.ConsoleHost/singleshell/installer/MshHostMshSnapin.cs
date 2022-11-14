@@ -8,10 +8,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// PSHostPSSnapIn is a class for facilitating registry
-    /// of necessary information for monad host PSSnapin.
-    ///
-    /// This class will be built with monad host engine dll
-    /// (Microsoft.PowerShell.ConsoleHost.dll).
+    /// of necessary information for PowerShell host PSSnapin.
     /// </summary>
     [RunInstaller(true)]
     public sealed class PSHostPSSnapIn : PSSnapIn
