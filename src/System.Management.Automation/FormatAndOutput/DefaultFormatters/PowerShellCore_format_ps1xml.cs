@@ -1000,6 +1000,11 @@ namespace System.Management.Automation.Runspaces
                                     if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
+                                        $errorColor = ''
+                                        if ($Host.UI.SupportsVirtualTerminal) {
+                                            $errorColor = $PSStyle.Formatting.Error
+                                        }
+
                                         if ($myinv -and $myinv.MyCommand)
                                         {
                                             switch -regex ( $myinv.MyCommand.CommandType )
@@ -1008,7 +1013,7 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.Path)
                                                     {
-                                                        $myinv.MyCommand.Path + ' : '
+                                                        $errorColor + $myinv.MyCommand.Path + ' : '
                                                     }
 
                                                     break
@@ -1018,7 +1023,7 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.ScriptBlock)
                                                     {
-                                                        $myinv.MyCommand.ScriptBlock.ToString() + ' : '
+                                                        $errorColor + $myinv.MyCommand.ScriptBlock.ToString() + ' : '
                                                     }
 
                                                     break
@@ -1029,12 +1034,12 @@ namespace System.Management.Automation.Runspaces
                                                     {
                                                         if ($myinv.MyCommand.Name)
                                                         {
-                                                            $myinv.MyCommand.Name + ' : '
+                                                            $errorColor + $myinv.MyCommand.Name + ' : '
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        $myinv.InvocationName + ' : '
+                                                        $errorColor + $myinv.InvocationName + ' : '
                                                     }
 
                                                     break
@@ -1043,7 +1048,7 @@ namespace System.Management.Automation.Runspaces
                                         }
                                         elseif ($myinv -and $myinv.InvocationName)
                                         {
-                                            $myinv.InvocationName + ' : '
+                                            $errorColor + $myinv.InvocationName + ' : '
                                         }
                                     }
                                 ")
