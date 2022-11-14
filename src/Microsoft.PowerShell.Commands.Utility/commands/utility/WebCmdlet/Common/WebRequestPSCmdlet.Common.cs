@@ -412,8 +412,9 @@ namespace Microsoft.PowerShell.Commands
             // sessions
             if ((WebSession != null) && (SessionVariable != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict,
-                                                       "WebCmdletSessionConflictException");
+                ErrorRecord error = GetValidationError(
+                    WebCmdletStrings.SessionConflict,
+                    "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
             }
 
@@ -740,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if ((bodyAsDictionary != null)
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                     || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
+                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
@@ -1340,16 +1341,14 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
+        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
         private bool ShouldRetry(HttpStatusCode code)
         {
             int intCode = (int)code;
-
-            if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return
+            (
+                ((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+            );
         }
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
