@@ -40,12 +40,12 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         [DllImport(LocalizationDllName, EntryPoint = "GetUserDefaultLangID", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         private static extern ushort GetUserDefaultLangID();
 
-        public static uint FormatMessageFromModule(uint lastError, string moduleName, out String msg)
+        public static uint FormatMessageFromModule(uint lastError, string moduleName, out string msg)
         {
             Debug.Assert(!string.IsNullOrEmpty(moduleName));
 
             uint formatError = 0;
-            msg = String.Empty;
+            msg = string.Empty;
 
             IntPtr moduleHandle = LoadLibraryEx(moduleName, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
             if (moduleHandle == IntPtr.Zero)

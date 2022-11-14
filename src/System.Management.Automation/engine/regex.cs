@@ -57,11 +57,11 @@ namespace System.Management.Automation
         // The size is less than MaxShortPath = 260.
         private const int StackAllocThreshold = 256;
 
+        // chars that are considered special in a wildcard pattern
+        private const string SpecialChars = "*?[]`";
+
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
-
-        // chars that are considered special in a wildcard pattern
-        private static readonly char[] s_specialChars = new[] { '*', '?', '[', ']', '`' };
 
         // static match-all delegate that is shared by all WildcardPattern instances
         private static readonly Predicate<string> s_matchAll = _ => true;
@@ -173,8 +173,8 @@ namespace System.Management.Automation
                 return;
             }
 
-            int index = Pattern.IndexOfAny(s_specialChars);
-            if (index == -1)
+            int index = Pattern.AsSpan().IndexOfAny(SpecialChars);
+            if (index < 0)
             {
                 // No special characters present in the pattern, so we can just do a string comparison.
                 _isMatch = str => string.Equals(str, Pattern, GetStringComparison());
@@ -1001,7 +1001,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class PatternPositionsVisitor : IDisposable
+        private sealed class PatternPositionsVisitor : IDisposable
         {
             private readonly int _lengthOfPattern;
 
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class LiteralCharacterElement : QuestionMarkElement
+        private sealed class LiteralCharacterElement : QuestionMarkElement
         {
             private readonly char _literalCharacter;
 
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class BracketExpressionElement : QuestionMarkElement
+        private sealed class BracketExpressionElement : QuestionMarkElement
         {
             private readonly Regex _regex;
 
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class AsterixElement : PatternElement
+        private sealed class AsterixElement : PatternElement
         {
             public override void ProcessStringCharacter(
                             char currentStringCharacter,
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class MyWildcardPatternParser : WildcardPatternParser
+        private sealed class MyWildcardPatternParser : WildcardPatternParser
         {
             private readonly List<PatternElement> _patternElements = new List<PatternElement>();
             private CharacterNormalizer _characterNormalizer;

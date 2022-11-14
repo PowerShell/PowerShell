@@ -13,7 +13,9 @@ jobs:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
 
   steps:
   #- task: <task type name>@<version>
@@ -49,5 +51,7 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

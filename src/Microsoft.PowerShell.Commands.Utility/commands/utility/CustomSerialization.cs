@@ -170,10 +170,7 @@ namespace System.Management.Automation
         internal void Stop()
         {
             CustomInternalSerializer serializer = _serializer;
-            if (serializer != null)
-            {
-                serializer.Stop();
-            }
+            serializer?.Stop();
         }
 
         #endregion

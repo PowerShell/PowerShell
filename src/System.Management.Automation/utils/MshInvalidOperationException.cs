@@ -115,14 +115,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        _errorId,
-                        _errorCategory,
-                        _target);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    _errorId,
+                    _errorCategory,
+                    _target);
 
                 return _errorRecord;
             }

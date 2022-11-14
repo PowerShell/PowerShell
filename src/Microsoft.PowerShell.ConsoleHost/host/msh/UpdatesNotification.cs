@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell
                 // We calculate how much whitespace we need to make it look nice
                 if (hostUI.SupportsVirtualTerminal)
                 {
-                    // Use Warning Color
+                    // Swaps foreground and background colors.
                     notificationColor = "\x1B[7m";
                     resetColor = "\x1B[0m";
 
@@ -126,6 +126,7 @@ namespace Microsoft.PowerShell
 
                 string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
 
+                hostUI.WriteLine();
                 hostUI.WriteLine(notificationMsg);
             }
         }
@@ -411,7 +412,7 @@ namespace Microsoft.PowerShell
         private enum NotificationType
         {
             /// <summary>
-            /// Turn off the udpate notification.
+            /// Turn off the update notification.
             /// </summary>
             Off = 0,
 
@@ -428,7 +429,7 @@ namespace Microsoft.PowerShell
             LTS = 2
         }
 
-        private class Release
+        private sealed class Release
         {
             internal Release(string publishAt, string tagName)
             {

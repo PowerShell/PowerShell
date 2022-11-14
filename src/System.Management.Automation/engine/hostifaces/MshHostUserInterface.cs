@@ -232,6 +232,147 @@ namespace System.Management.Automation.Host
         /// </summary>
         public virtual void WriteInformation(InformationRecord record) { }
 
+        private static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
+        {
+            var outputRendering = OutputRendering.PlainText;
+
+            if (supportsVirtualTerminal != false)
+            {
+                switch (PSStyle.Instance.OutputRendering)
+                {
+                    case OutputRendering.Host:
+                        outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                        break;
+                    default:
+                        outputRendering = PSStyle.Instance.OutputRendering;
+                        break;
+                }
+            }
+
+            return outputRendering == OutputRendering.PlainText;
+        }
+
+        /// <summary>
+        /// The format styles that are supported by the host.
+        /// </summary>
+        public enum FormatStyle
+        {
+            /// <summary>
+            /// Reset the formatting to the default.
+            /// </summary>
+            Reset,
+
+            /// <summary>
+            /// Highlight text used in output formatting.
+            /// </summary>
+            FormatAccent,
+
+            /// <summary>
+            /// Highlight for table headers.
+            /// </summary>
+            TableHeader,
+
+            /// <summary>
+            /// Highlight for detailed error view.
+            /// </summary>
+            ErrorAccent,
+
+            /// <summary>
+            /// Style for error messages.
+            /// </summary>
+            Error,
+
+            /// <summary>
+            /// Style for warning messages.
+            /// </summary>
+            Warning,
+
+            /// <summary>
+            /// Style for verbose messages.
+            /// </summary>
+            Verbose,
+
+            /// <summary>
+            /// Style for debug messages.
+            /// </summary>
+            Debug,
+        }
+
+        /// <summary>
+        /// Get the ANSI escape sequence for the given format style.
+        /// </summary>
+        /// <param name="formatStyle">
+        /// The format style to get the escape sequence for.
+        /// </param>
+        /// <returns>
+        /// The ANSI escape sequence for the given format style.
+        /// </returns>
+        public static string GetFormatStyleString(FormatStyle formatStyle)
+        {
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
+            {
+                return string.Empty;
+            }
+
+            PSStyle psstyle = PSStyle.Instance;                
+            switch (formatStyle)
+            {
+                case FormatStyle.Reset:
+                    return psstyle.Reset;
+                case FormatStyle.FormatAccent:
+                    return psstyle.Formatting.FormatAccent;
+                case FormatStyle.TableHeader:
+                    return psstyle.Formatting.TableHeader;
+                case FormatStyle.ErrorAccent:
+                    return psstyle.Formatting.ErrorAccent;
+                case FormatStyle.Error:
+                    return psstyle.Formatting.Error;
+                case FormatStyle.Warning:
+                    return psstyle.Formatting.Warning;
+                case FormatStyle.Verbose:
+                    return psstyle.Formatting.Verbose;
+                case FormatStyle.Debug:
+                    return psstyle.Formatting.Debug;
+                default:
+                    return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Get the appropriate output string based on different criteria.
+        /// </summary>
+        /// <param name="text">
+        /// The text to format.
+        /// </param>
+        /// <param name="supportsVirtualTerminal">
+        /// True if the host supports virtual terminal.
+        /// </param>
+        /// <returns>
+        /// The formatted text.
+        /// </returns>
+        public static string GetOutputString(string text, bool supportsVirtualTerminal)
+        {
+            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal);
+        }
+
+        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null)
+        {
+            var sd = new ValueStringDecorated(text);
+
+            if (sd.IsDecorated)
+            {
+                var outputRendering = OutputRendering.Ansi;
+                if (ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                {
+                    outputRendering = OutputRendering.PlainText;
+                }
+
+                text = sd.ToString(outputRendering);
+            }
+
+            return text;
+        }
+
         // Gets the state associated with PowerShell transcription.
         //
         // Ideally, this would be associated with the host instance, but remoting recycles host instances
@@ -620,13 +761,10 @@ namespace System.Management.Automation.Host
 
                     resultText = resultText.TrimEnd();
 
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    var text = new ValueStringDecorated(resultText);
+                    if (text.IsDecorated)
                     {
-                        var text = new ValueStringDecorated(resultText);
-                        if (text.IsDecorated)
-                        {
-                            resultText = text.ToString(OutputRendering.PlainText);
-                        }
+                        resultText = text.ToString(OutputRendering.PlainText);
                     }
 
                     foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
@@ -952,10 +1090,7 @@ namespace System.Management.Automation.Host
                 // This way, multiple runspaces opened by the same process will share the same transcript.
                 lock (s_systemTranscriptLock)
                 {
-                    if (systemTranscript == null)
-                    {
-                        systemTranscript = PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
-                    }
+                    systemTranscript ??= PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
                 }
             }
 
@@ -1108,7 +1243,7 @@ namespace System.Management.Automation.Host
         {
             static Encoding GetPathEncoding(string path)
             {
-                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                using StreamReader reader = new StreamReader(path, Encoding.Default, detectEncodingFromByteOrderMarks: true);
                 _ = reader.Read();
                 return reader.CurrentEncoding;
             }
@@ -1136,7 +1271,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                Utils.utf8NoBom);
+                                Encoding.Default);
                         }
 
                         _contentWriter.AutoFlush = true;
@@ -1262,7 +1397,7 @@ namespace System.Management.Automation.Host
                     Text.StringBuilder splitLabel = new Text.StringBuilder(choices[i].Label.Substring(0, andPos), choices[i].Label.Length);
                     if (andPos + 1 < choices[i].Label.Length)
                     {
-                        splitLabel.Append(choices[i].Label.Substring(andPos + 1));
+                        splitLabel.Append(choices[i].Label.AsSpan(andPos + 1));
                         hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.AsSpan(andPos + 1, 1).Trim().ToString());
                     }
 

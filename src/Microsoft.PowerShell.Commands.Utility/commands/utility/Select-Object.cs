@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
 
         private SelectObjectQueue _selectObjectQueue;
 
-        private class SelectObjectQueue : Queue<PSObject>
+        private sealed class SelectObjectQueue : Queue<PSObject>
         {
             internal SelectObjectQueue(int first, int last, int skip, int skipLast, bool firstOrLastSpecified)
             {
@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
 
         private PSPropertyExpressionFilter _exclusionFilter;
 
-        private class UniquePSObjectHelper
+        private sealed class UniquePSObjectHelper
         {
             internal UniquePSObjectHelper(PSObject o, int notePropertyCount)
             {

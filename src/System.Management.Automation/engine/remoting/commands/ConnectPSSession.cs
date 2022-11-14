@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Throttle class to perform a remoterunspace connect operation.
         /// </summary>
-        private class ConnectRunspaceOperation : IThrottleOperation
+        private sealed class ConnectRunspaceOperation : IThrottleOperation
         {
             private PSSession _session;
             private PSSession _oldSession;
@@ -569,10 +569,7 @@ namespace Microsoft.PowerShell.Commands
 
             internal override void StopOperation()
             {
-                if (_queryRunspaces != null)
-                {
-                    _queryRunspaces.StopAllOperations();
-                }
+                _queryRunspaces?.StopAllOperations();
 
                 _session.Runspace.StateChanged -= StateCallBackHandler;
                 SendStopComplete();

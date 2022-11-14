@@ -624,4 +624,7 @@
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Cannot create new module while the session is in ConstrainedLanguage mode.</value>
   </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>Cannot find the built-in module '{0}' that is compatible with the 'Core' edition. Please make sure the PowerShell built-in modules are available. They usually come with the PowerShell package under the $PSHOME module path, and are required for PowerShell to function properly.</value>
+  </data>
 </root>

@@ -862,10 +862,7 @@ namespace System.Management.Automation
             }
 
             // Stop the job
-            if (subscriber.Action != null)
-            {
-                subscriber.Action.NotifyJobStopped();
-            }
+            subscriber.Action?.NotifyJobStopped();
 
             lock (_eventSubscribers)
             {
@@ -1532,10 +1529,7 @@ namespace System.Management.Automation
             {
                 lock (_eventSubscribers)
                 {
-                    if (_timer != null)
-                    {
-                        _timer.Dispose();
-                    }
+                    _timer?.Dispose();
 
                     foreach (PSEventSubscriber currentSubscriber in _eventSubscribers.Keys.ToArray())
                     {
@@ -2042,6 +2036,19 @@ namespace System.Management.Automation
 
         #region IComparable<PSEventSubscriber> Members
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true"/> if the specified object is equal to the current object;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        public override bool Equals(object obj)
+        {
+            return obj is PSEventSubscriber es && Equals(es);
+        }
+        
         /// <summary>
         /// Determines if two PSEventSubscriber instances are equal
         /// <param name="other">

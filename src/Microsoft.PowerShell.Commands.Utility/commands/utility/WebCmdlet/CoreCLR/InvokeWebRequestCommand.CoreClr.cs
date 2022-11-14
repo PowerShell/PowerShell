@@ -13,6 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097126", DefaultParameterSetName = "StandardMethod")]
+    [OutputType(typeof(BasicHtmlWebResponseObject))]
     public class InvokeWebRequestCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
@@ -37,7 +38,11 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldWriteToPipeline)
             {
                 // creating a MemoryStream wrapper to response stream here to support IsStopping.
-                responseStream = new WebResponseContentMemoryStream(responseStream, StreamHelper.ChunkSize, this);
+                responseStream = new WebResponseContentMemoryStream(
+                    responseStream,
+                    StreamHelper.ChunkSize,
+                    this,
+                    response.Content.Headers.ContentLength.GetValueOrDefault());
                 WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
@@ -51,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, _cancelToken.Token);
+                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
         }
 

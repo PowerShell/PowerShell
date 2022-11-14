@@ -154,7 +154,14 @@ set-psbreakpoint -command foo
     }
 
     It "Fail to set psbreakpoints when script is a file of wrong type" {
-        $tempFile = [System.IO.Path]::GetTempFileName()
+
+        if ($IsWindows) {
+            $tempFile = [System.IO.Path]::GetTempFileName()
+        }
+        else {
+            $tempFile = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
+        }
+
         $ErrorActionPreference = "Stop"
         {
             Set-PSBreakpoint -Script $tempFile -Line 1

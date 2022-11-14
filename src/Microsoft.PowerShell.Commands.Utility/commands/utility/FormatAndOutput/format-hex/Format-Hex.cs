@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets count of bytes to read from the input stream.
@@ -391,7 +391,6 @@ namespace Microsoft.PowerShell.Commands
             byte[] result = null;
             int elements = 1;
             bool isArray = false;
-            bool isBool = false;
             bool isEnum = false;
             if (baseType.IsArray)
             {
@@ -424,11 +423,6 @@ namespace Microsoft.PowerShell.Commands
                     _lastInputType = baseType;
                 }
 
-                if (baseType == typeof(bool))
-                {
-                    isBool = true;
-                }
-
                 var elementSize = Marshal.SizeOf(baseType);
                 result = new byte[elementSize * elements];
                 if (!isArray)
@@ -449,11 +443,6 @@ namespace Microsoft.PowerShell.Commands
                         if (isEnum)
                         {
                             toBytes = Convert.ChangeType(obj, baseType);
-                        }
-                        else if (isBool)
-                        {
-                            // bool is 1 byte apparently
-                            toBytes = Convert.ToByte(obj);
                         }
                         else
                         {

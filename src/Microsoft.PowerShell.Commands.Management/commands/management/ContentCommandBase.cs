@@ -377,10 +377,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    if (holder.Writer != null)
-                    {
-                        holder.Writer.Close();
-                    }
+                    holder.Writer?.Close();
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
@@ -414,10 +411,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (holder.Reader != null)
-                    {
-                        holder.Reader.Close();
-                    }
+                    holder.Reader?.Close();
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {

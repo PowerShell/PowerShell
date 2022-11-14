@@ -23,7 +23,7 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state,
+    /// If your Cmdlet requires access to the PowerShell Runtime (for example, variables in the session state,
     /// access to the host, or information about the current Cmdlet Providers,) then you should instead
     /// derive from the PSCmdlet base class.
     /// In both cases, users should first develop and implement an object model to accomplish their
@@ -801,8 +801,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
         ///             public class RemoveMyObjectType1 : Cmdlet
@@ -824,7 +824,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -897,8 +897,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
         ///             public class RemoveMyObjectType2 : Cmdlet
@@ -920,7 +920,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1001,8 +1001,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : Cmdlet
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1117,8 +1117,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : Cmdlet
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1233,8 +1233,8 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType4 : Cmdlet
@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string,ref bool,ref bool)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1362,8 +1362,8 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType5 : Cmdlet
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1502,8 +1502,8 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType5 : Cmdlet
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1824,7 +1824,7 @@ namespace System.Management.Automation
         /// WhatIf behavior was requested.
         /// </summary>
         /// <remarks>
-        /// In the MSH host, WhatIf behavior can be requested explicitly
+        /// In the host, WhatIf behavior can be requested explicitly
         /// for one cmdlet instance using the -WhatIf commandline parameter,
         /// or implicitly for all SupportsShouldProcess cmdlets with $WhatIfPreference.
         /// Other hosts may have other ways to request WhatIf behavior.

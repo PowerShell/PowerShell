@@ -67,6 +67,8 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             }
 
             end {}
+
+            clean {}
         }
 '@
         $functionDefinition>$functionDefinitionFile
@@ -141,7 +143,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         { ExecuteCommand "(" } | Should -Throw -ErrorId "IncompleteParseException"
     }
 
-    It "Throws an exception if the the first statement starts with an empty pipe element (line 188)" {
+    It "Throws an exception if the first statement starts with an empty pipe element (line 188)" {
         { ExecuteCommand "| Get-Location" } | Should -Throw -ErrorId "ParseException"
     }
 
@@ -864,6 +866,7 @@ foo``u{2195}abc
             @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
             @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
             @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
+
             @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
             @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
             @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
@@ -1047,6 +1050,7 @@ foo``u{2195}abc
             @{ Script = "0xFFu"; ExpectedValue = "255"; ExpectedType = [uint] }
             @{ Script = "0xFFFFu"; ExpectedValue = "65535"; ExpectedType = [uint] }
             @{ Script = "0xFFFFFFu"; ExpectedValue = "16777215"; ExpectedType = [uint] }
+
             @{ Script = "0xFFFFFFFFu"; ExpectedValue = "$([uint]::MaxValue)"; ExpectedType = [uint] }
             @{ Script = "0xFFFFFFFFFFu"; ExpectedValue = "1099511627775"; ExpectedType = [ulong] }
             @{ Script = "0xFFFFFFFFFFFFu"; ExpectedValue = "281474976710655"; ExpectedType = [ulong] }

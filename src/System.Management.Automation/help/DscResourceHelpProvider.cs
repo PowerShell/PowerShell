@@ -141,7 +141,7 @@ namespace System.Management.Automation
                 }
                 else if (!string.IsNullOrEmpty(moduleDir))
                 {
-                    string[] splitPath = moduleDir.Split(Utils.Separators.Backslash);
+                    string[] splitPath = moduleDir.Split('\\');
                     moduleName = splitPath[splitPath.Length - 1];
                 }
 
@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                s_tracer.WriteLine("Error occured in DscResourceHelpProvider {0}", e.Message);
+                s_tracer.WriteLine("Error occurred in DscResourceHelpProvider {0}", e.Message);
 
             if (reportErrors && (e != null))
             {

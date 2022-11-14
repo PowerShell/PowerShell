@@ -49,7 +49,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     It "Should output an array of objects" {
         $result = $testObject | ConvertTo-Csv
-        ,$result | Should -BeOfType System.Array
+        $result.GetType() | Should -Be ([object[]])
     }
 
     It "Should return the type of data in the first element of the output array" {
@@ -59,16 +59,16 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     }
 
     It "Should return the column info in the second element of the output array" {
-       $result = $testObject | ConvertTo-Csv -IncludeTypeInformation
+        $result = $testObject | ConvertTo-Csv -IncludeTypeInformation
 
         $result[1] | Should -Match "`"FirstColumn`""
-       $result[1] | Should -Match "`"SecondColumn`""
+        $result[1] | Should -Match "`"SecondColumn`""
     }
 
     It "Should return the data as a comma-separated list in the third element of the output array" {
         $result = $testObject | ConvertTo-Csv -IncludeTypeInformation
         $result[2] | Should -Match "`"Hello`""
-       $result[2] | Should -Match "`"World`""
+        $result[2] | Should -Match "`"World`""
     }
 
     It "Includes type information when -IncludeTypeInformation is supplied" {
@@ -109,7 +109,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
             $result[0] | Should -BeExactly "`"FirstColumn`",SecondColumn"
             $result[1] | Should -BeExactly "`"Hello`",World"
 
-            $result = $testObject | ConvertTo-Csv -QuoteFields FiRstCoLumn,SeCondCoLumn -Delimiter ','
+            $result = $testObject | ConvertTo-Csv -QuoteFields FiRstCoLumn, SeCondCoLumn -Delimiter ','
 
             $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
             $result[1] | Should -BeExactly "`"Hello`",`"World`""
@@ -158,6 +158,77 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "`"FirstColumn`"rSecondColumn"
             $result[1] | Should -BeExactly "Hellor"
+        }
+
+        It "UseQuotes AsNeeded Escapes Delimiters" {
+            $testDelimitersObject = [pscustomobject]@{ "FirstColumn" = "Hello,"; "Second,Column" = "World" };
+
+            $result = $testDelimitersObject | ConvertTo-Csv -UseQuotes AsNeeded -Delimiter ','
+
+            $result[0] | Should -BeExactly "FirstColumn,`"Second,Column`""
+            $result[1] | Should -BeExactly "`"Hello,`",World"
+
+            $result = $testDelimitersObject | ConvertTo-Csv -UseQuotes AsNeeded -Delimiter "r"
+
+            $result[0] | Should -BeExactly "`"FirstColumn`"rSecond,Column"
+            $result[1] | Should -BeExactly "Hello,r`"World`""
+        }
+
+        It "UseQuotes AsNeeded Escapes Newlines" {
+            $testCRLFObject = [pscustomobject]@{ "First`r`nColumn" = "Hello`r`nWorld" };
+            $testLFObject = [pscustomobject]@{ "First`nColumn" = "Hello`nWorld" };
+
+            $result = $testCRLFObject | ConvertTo-Csv -UseQuotes AsNeeded
+
+            $result[0] | Should -BeExactly "`"First`r`nColumn`""
+            $result[1] | Should -BeExactly "`"Hello`r`nWorld`""
+
+            $result = $testLFObject | ConvertTo-Csv -UseQuotes AsNeeded
+
+            $result[0] | Should -BeExactly "`"First`nColumn`""
+            $result[1] | Should -BeExactly "`"Hello`nWorld`""
+        }
+
+        It "UseQuotes AsNeeded Escapes Quotes" {
+            $testQuotesObject = [pscustomobject]@{ "First`"Column" = "`"Hello`" World" };
+
+            $result = $testQuotesObject | ConvertTo-Csv -UseQuotes AsNeeded
+
+            $result[0] | Should -BeExactly "`"First`"`"Column`""
+            $result[1] | Should -BeExactly "`"`"`"Hello`"`" World`""
+        }
+
+    }
+
+    Context 'Converting IDictionary Objects' {
+        BeforeAll {
+            $Letters = 'A', 'B', 'C', 'D', 'E', 'F'
+            $Items = 0..5 | ForEach-Object {
+                [ordered]@{ Number = $_; Letter = $Letters[$_] }
+            }
+            $CsvString = $Items | ConvertTo-Csv
+        }
+
+        It 'should treat dictionary entries as properties' {
+            $CsvString[0] | Should -MatchExactly ($Items[0].Keys -join '","')
+
+            for ($i = 0; $i -lt $Items.Count; $i++) {
+                # Index in the CSV strings will be +1 due to header line
+                $ValuesPattern = $Items[$i].Values -join '","'
+                $CsvString[$i + 1] | Should -MatchExactly $ValuesPattern
+            }
+        }
+
+        It 'should ignore regular object properties' {
+            $PropertyPattern = $Items[0].PSObject.Properties.Name -join '|'
+            $CsvString[0] | Should -Not -Match $PropertyPattern
+        }
+
+        It 'should account for extended properties added deliberately' {
+            $Items | Add-Member -MemberType NoteProperty -Name 'Extra' -Value 'Surprise!'
+            $NewCsvString = $Items | ConvertTo-Csv
+            $NewCsvString[0] | Should -MatchExactly 'Extra'
+            $NewCsvString | Select-Object -Skip 1 | Should -MatchExactly 'Surprise!'
         }
     }
 }

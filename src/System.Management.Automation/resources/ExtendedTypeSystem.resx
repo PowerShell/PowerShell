@@ -156,6 +156,9 @@
   <data name="MethodArgumentCountException" xml:space="preserve">
     <value>Cannot find an overload for "{0}" and the argument count: "{1}".</value>
   </data>
+  <data name="MethodGenericArgumentCountException" xml:space="preserve">
+    <value>Could not find a suitable generic method overload for "{0}" with "{1}" type parameters, and the argument count: "{2}".</value>
+  </data>
   <data name="MethodAmbiguousException" xml:space="preserve">
     <value>Multiple ambiguous overloads found for "{0}" and the argument count: "{1}".</value>
   </data>
@@ -349,7 +352,10 @@
     <value>"{0}" returned a null value.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The {0} property was not found for the {1} object. The available property is: {2}</value>
+    <value>The property '{0}' was not found for the '{1}' object. The settable properties are: {2}.</value>
+  </data>
+  <data name="NoSettableProperty" xml:space="preserve">
+    <value>The property '{0}' was not found for the '{1}' object. There is no settable property available.</value>
   </data>
   <data name="ObjectCreationError" xml:space="preserve">
     <value>Cannot create object of type "{0}". {1}</value>

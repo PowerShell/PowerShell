@@ -15,7 +15,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
     It 'Exceptions not thrown do not get formatted as ErrorRecord' {
         $exp = [System.Exception]::new('test') | Out-String
-        $exp | Should -BeLike "*Message        : test*"
+        $exp | Should -BeLike "*Message        : *test*"
     }
 
     Context 'ConciseView tests' {
@@ -115,7 +115,8 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Error shows for advanced function" {
             # need to have it virtually interactive so that InvocationInfo.MyCommand is empty
-            $e = '[cmdletbinding()]param()$pscmdlet.writeerror([System.Management.Automation.ErrorRecord]::new(([System.NotImplementedException]::new("myTest")),"stub","notimplemented","command"))' | pwsh -noprofile -file - 2>&1 | Out-String
+            $e = '[cmdletbinding()]param()$pscmdlet.writeerror([System.Management.Automation.ErrorRecord]::new(([System.NotImplementedException]::new("myTest")),"stub","notimplemented","command"))' | pwsh -noprofile -file - 2>&1
+            $e = $e | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | Out-String
             $e | Should -Not -BeNullOrEmpty
 
             # need to see if ANSI escape sequences are in the output as ANSI is disabled for CI

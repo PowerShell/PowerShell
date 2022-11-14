@@ -156,6 +156,15 @@
   <data name="PauseHelpMessage" xml:space="preserve">
     <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
   </data>
+  <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
+    <!-- NOTE:
+      This string was added for the native command error action preference integration feature.
+      ParserStrings already declares a ProgramFailedToExecute string,
+      however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
+      In this case, we have a more specific error for the native command scenario, so the two are not conflated.
+    -->
+    <value>Program "{0}" ended with non-zero exit code: {1}.</value>
+  </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
     <value>Performing the operation "{0}" on target "{1}".</value>
   </data>
@@ -212,5 +221,11 @@ Reviewed by TArcher on 2010-07-20
   </data>
   <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
     <value>The {0} is obsolete. {1}</value>
+  </data>
+  <data name="ExecFailed" xml:space="preserve">
+    <value>Exec call failed with errorno {0} for command line: {1}</value>
+  </data>
+  <data name="NativeCommandNotFound" xml:space="preserve">
+    <value>Command '{0}' was not found. The specified command must be an executable.</value>
   </data>
 </root>

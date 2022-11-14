@@ -107,22 +107,42 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error adds ExceptionType for Exceptions' {
+
         try {
-            [System.Net.DNS]::GetHostByName((New-Guid))
+            throw [ArgumentException] 'myexception'
         }
         catch {
         }
 
         $out = Get-Error | Out-String
-        $out | Should -BeLikeExactly '*Type*'
+        $out | Should -Match "Type\s+:\s(.\[\d+m)?System.ArgumentException"
+    }
 
-        if ($IsWindows) {
-            $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
-        }
-        else {
-            $expectedExceptionType = "System.Net.Internals.SocketExceptionFactory+ExtendedSocketException"
+    It 'Get-Error uses Error color for Message and PositionMessage members' {
+        $suppressVT = $false
+        if (Test-Path env:/__SuppressAnsiEscapeSequences) {
+            $suppressVT = $true
+            $env:__SuppressAnsiEscapeSequences = $null
         }
 
-        $out | Should -BeLikeExactly "*$expectedExceptionType*"
+        try {
+            $originalRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'Ansi'
+            $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; try { 1/0 } catch { }; Get-Error' | Out-String
+
+            # need to escape the open square bracket so the regex works
+            $resetColor = $PSStyle.Reset.Replace('[','\[')
+            $errorColor = $PSStyle.Formatting.Error.Replace('[','\[')
+            $out | Should -Match "Message +: ${resetColor}${errorColor}[A-z]+"
+            # match the position message underline
+            $out | Should -Match ".*?${errorColor}~~~"
+        }
+        finally
+        {
+            $PSStyle.OutputRendering = $originalRendering
+            if ($suppressVT) {
+                $env:__SuppressAnsiEscapeSequences = 1
+            }
+        }
     }
 }

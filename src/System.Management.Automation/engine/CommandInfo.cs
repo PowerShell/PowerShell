@@ -17,7 +17,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the types of commands that MSH can execute.
+    /// Defines the types of commands that PowerShell can execute.
     /// </summary>
     [Flags]
     public enum CommandTypes
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         Cmdlet = 0x0008,
 
         /// <summary>
-        /// An MSH script (*.ps1 file)
+        /// An PowerShell script (*.ps1 file)
         /// </summary>
         ExternalScript = 0x0010,
 
@@ -467,11 +467,8 @@ namespace System.Management.Automation
                         processInCurrentThread: true,
                         waitForCompletionInCurrentThread: true);
 
-                    if (eventArgs.Exception != null)
-                    {
-                        // An exception happened on a different thread, rethrow it here on the correct thread.
-                        eventArgs.Exception.Throw();
-                    }
+                    // An exception happened on a different thread, rethrow it here on the correct thread.
+                    eventArgs.Exception?.Throw();
 
                     return eventArgs.Result;
                 }
@@ -481,7 +478,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
+        private sealed class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
         {
             public MergedCommandParameterMetadata Result;
             public ExceptionDispatchInfo Exception;
@@ -529,7 +526,7 @@ namespace System.Management.Automation
                 processor = scriptCommand != null
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
-                    : new CommandProcessor((CmdletInfo)this, _context) { UseLocalScope = true };
+                    : new CommandProcessor((CmdletInfo)this, _context);
 
                 ParameterBinderController.AddArgumentsToCommandProcessor(processor, Arguments);
                 CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;

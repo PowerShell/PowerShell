@@ -104,7 +104,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public UInt32 OperationTimeoutSec
+        public uint OperationTimeoutSec
         {
             get
             {
@@ -118,7 +118,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32 operationTimeout;
+        private uint operationTimeout;
         internal bool operationTimeoutSet = false;
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// This is specificly for wsman protocol.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public UInt32 Port
+        public uint Port
         {
             get
             {
@@ -150,7 +150,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32 port;
+        private uint port;
         private bool portSet = false;
 
         /// <summary>
@@ -334,10 +334,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             base.DisposeInternal();
 
             // Dispose managed resources.
-            if (this.cimNewSession != null)
-            {
-                this.cimNewSession.Dispose();
-            }
+            this.cimNewSession?.Dispose();
         }
         #endregion
     }

@@ -1026,10 +1026,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
-            if (errorId == null)
-            {
-                errorId = string.Empty;
-            }
+            errorId ??= string.Empty;
 
             // targetObject may be null
             _error = exception;
@@ -1726,10 +1723,10 @@ namespace System.Management.Automation
     /// information.
     /// </summary>
     /// <remarks>
-    /// MSH defines certain exception classes which implement this interface.
+    /// PowerShell defines certain exception classes which implement this interface.
     /// This includes wrapper exceptions such as
     /// <see cref="System.Management.Automation.CmdletInvocationException"/>,
-    /// and also MSH engine errors such as
+    /// and also PowerShell engine errors such as
     /// <see cref="System.Management.Automation.GetValueException"/>.
     /// Cmdlets and providers should not define this interface;
     /// instead, they should use the

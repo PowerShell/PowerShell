@@ -343,10 +343,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            if (ConfigurationName == null)
-            {
-                ConfigurationName = string.Empty;
-            }
+            ConfigurationName ??= string.Empty;
         }
 
         /// <summary>

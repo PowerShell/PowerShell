@@ -3,21 +3,22 @@
 
 #pragma warning disable 1634, 1691
 
-using System.Diagnostics;
-using System.IO;
-using System.ComponentModel;
-using System.Text;
 using System.Collections;
-using System.Threading;
-using System.Management.Automation.Internal;
-using System.Xml;
-using System.Runtime.InteropServices;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Runtime.Serialization;
-using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading;
+using System.Xml;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -130,11 +131,126 @@ namespace System.Management.Automation
         }
     }
 
+    #nullable enable
+    /// <summary>
+    /// This exception is used by the NativeCommandProcessor to indicate an error
+    /// when a native command retuns a non-zero exit code.
+    /// </summary>
+    [Serializable]
+    public sealed class NativeCommandExitException : RuntimeException
+    {
+        // NOTE:
+        // When implementing the native error action preference integration,
+        // reusing ApplicationFailedException was rejected.
+        // Instead of reusing a type already used in another scenario
+        // it was decided instead to use a fresh type to avoid conflating the two scenarios:
+        // * ApplicationFailedException: PowerShell was not able to complete execution of the application.
+        // * NativeCommandExitException: the application completed execution but returned a non-zero exit code.
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with information on the native
+        /// command, a specified error message and a specified error ID.
+        /// </summary>
+        /// <param name="path">The full path of the native command.</param>
+        /// <param name="exitCode">The exit code returned by the native command.</param>
+        /// <param name="processId">The process ID of the process before it ended.</param>
+        /// <param name="message">The error message.</param>
+        /// <param name="errorId">The PowerShell runtime error ID.</param>
+        internal NativeCommandExitException(string path, int exitCode, int processId, string message, string errorId)
+            : base(message)
+        {
+            SetErrorId(errorId);
+            SetErrorCategory(ErrorCategory.NotSpecified);
+            Path = path;
+            ExitCode = exitCode;
+            ProcessId = processId;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            if (info is null)
+            {
+                throw new PSArgumentNullException(nameof(info));
+            }
+
+            Path = info.GetString(nameof(Path));
+            ExitCode = info.GetInt32(nameof(ExitCode));
+            ProcessId = info.GetInt32(nameof(ProcessId));
+        }
+
+        #endregion Constructors
+
+        /// <summary>
+        /// Serializes the exception data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info is null)
+            {
+                throw new PSArgumentNullException(nameof(info));
+            }
+
+            base.GetObjectData(info, context);
+
+            info.AddValue(nameof(Path), Path);
+            info.AddValue(nameof(ExitCode), ExitCode);
+            info.AddValue(nameof(ProcessId), ProcessId);
+        }
+
+        /// <summary>
+        /// Gets the path of the native command.
+        /// </summary>
+        public string? Path { get; }
+
+        /// <summary>
+        /// Gets the exit code returned by the native command.
+        /// </summary>
+        public int ExitCode { get; }
+
+        /// <summary>
+        /// Gets the native command's process ID.
+        /// </summary>
+        public int ProcessId { get; }
+
+    }
+    #nullable restore
+
     /// <summary>
     /// Provides way to create and execute native commands.
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
     {
+        // This is the list of files which will trigger Legacy behavior if
+        // PSNativeCommandArgumentPassing is set to "Windows".
+        private static readonly IReadOnlySet<string> s_legacyFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".js",
+            ".wsf",
+            ".cmd",
+            ".bat",
+            ".vbs",
+        };
+
+        // The following native commands have non-standard behavior with regard to argument passing,
+        // so we use Legacy argument parsing for them when PSNativeCommandArgumentPassing is set to Windows.
+        private static readonly IReadOnlySet<string> s_legacyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "cmd",
+            "cscript",
+            "wscript",
+            "find",
+        };
+
         #region ctor/native command properties
 
         /// <summary>
@@ -306,7 +422,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
                 // Do cleanup in case of exception
-                CleanUp();
+                CleanUp(killBackgroundProcess: true);
                 throw;
             }
         }
@@ -328,7 +444,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
                 // Do cleanup in case of exception
-                CleanUp();
+                CleanUp(killBackgroundProcess: true);
                 throw;
             }
         }
@@ -430,15 +546,14 @@ namespace System.Management.Automation
             Exception exceptionToRethrow = null;
             try
             {
-                // If this process is being run standalone, tell the host, which might want
-                // to save off the window title or other such state as might be tweaked by
-                // the native process
+                // Before start the executable, tell the host, which might want to save off the
+                // window title or other such state as might be tweaked by the native process.
+                Command.Context.EngineHostInterface.NotifyBeginApplication();
+                _hasNotifiedBeginApplication = true;
+
                 if (_runStandAlone)
                 {
-                    this.Command.Context.EngineHostInterface.NotifyBeginApplication();
-                    _hasNotifiedBeginApplication = true;
-
-                    // Also, store the Raw UI coordinates so that we can scrape the screen after
+                    // Store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
                     if (_isTranscribing && (s_supportScreenScrape == true))
                     {
@@ -474,6 +589,7 @@ namespace System.Management.Automation
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;
+                        // check to see what mode we should be in for argument passing
                         if (!string.IsNullOrEmpty(executable))
                         {
                             isWindowsApplication = IsWindowsApplication(executable);
@@ -485,7 +601,16 @@ namespace System.Management.Automation
 
                             string oldArguments = startInfo.Arguments;
                             string oldFileName = startInfo.FileName;
-                            startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
+                            // Check to see whether this executable should be using Legacy mode argument parsing
+                            bool useSpecialArgumentPassing = UseSpecialArgumentPassing(oldFileName);
+                            if (useSpecialArgumentPassing)
+                            {
+                                startInfo.Arguments = "\"" + oldFileName + "\" " + startInfo.Arguments;
+                            }
+                            else
+                            {
+                                startInfo.ArgumentList.Insert(0, oldFileName);
+                            }
                             startInfo.FileName = executable;
                             try
                             {
@@ -495,7 +620,14 @@ namespace System.Management.Automation
                             catch (Win32Exception)
                             {
                                 // Restore the old filename and arguments to try shell execute last...
-                                startInfo.Arguments = oldArguments;
+                                if (useSpecialArgumentPassing)
+                                {
+                                    startInfo.Arguments = oldArguments;
+                                }
+                                else
+                                {
+                                    startInfo.ArgumentList.RemoveAt(0);
+                                }
                                 startInfo.FileName = oldFileName;
                             }
                         }
@@ -725,8 +857,35 @@ namespace System.Management.Automation
                     }
 
                     this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
-                    if (_nativeProcess.ExitCode != 0)
-                        this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                    if (_nativeProcess.ExitCode == 0)
+                    {
+                        return;
+                    }
+
+                    this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
+                        || !Command.Context.GetBooleanPreference(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath, defaultPref: false, out _))
+                    {
+                        return;
+                    }
+
+                    const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
+
+                    string errorMsg = StringUtil.Format(
+                        CommandBaseStrings.ProgramExitedWithNonZeroCode,
+                        NativeCommandName,
+                        _nativeProcess.ExitCode);
+
+                    var exception = new NativeCommandExitException(
+                        Path,
+                        _nativeProcess.ExitCode,
+                        _nativeProcess.Id,
+                        errorMsg,
+                        errorId);
+
+                    var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: Path);
+                    this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
                 }
             }
             catch (Win32Exception e)
@@ -745,7 +904,7 @@ namespace System.Management.Automation
             finally
             {
                 // Do some cleanup
-                CleanUp();
+                CleanUp(killBackgroundProcess: false);
             }
 
             // An exception was thrown while attempting to run the program
@@ -942,15 +1101,9 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
-            if (!Platform.IsWindowsDesktop) { return false; }
-
-            // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error")
-            // so we are trying to get a real path before.
-            // It is a workaround for Microsoft Store applications.
-            string realPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.WinInternalGetTarget(fileName);
-            if (realPath is not null)
+            if (!Platform.IsWindowsDesktop)
             {
-                fileName = realPath;
+                return false;
             }
 
             SHFILEINFO shinfo = new SHFILEINFO();
@@ -1008,33 +1161,34 @@ namespace System.Management.Automation
         /// <summary>
         /// Aggressively clean everything up...
         /// </summary>
-        private void CleanUp()
+        /// <param name="killBackgroundProcess">If set, also terminate background process.</param>
+        private void CleanUp(bool killBackgroundProcess)
         {
             // We need to call 'NotifyEndApplication' as appropriate during cleanup
             if (_hasNotifiedBeginApplication)
             {
-                this.Command.Context.EngineHostInterface.NotifyEndApplication();
+                Command.Context.EngineHostInterface.NotifyEndApplication();
             }
 
             try
             {
-                if (_nativeProcess != null)
-                {
-                    // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
-                    // closes the redirected streams and the processs does not exit on macOS.  However,
-                    // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+                // on Unix, we need to kill the process (if not running in background) to ensure it terminates,
+                // as Dispose() merely closes the redirected streams and the process does not exit.
+                // However, on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
+                if (killBackgroundProcess || !_isRunningInBackground)
+                {
                     try
                     {
-                        _nativeProcess.Kill();
+                        _nativeProcess?.Kill();
                     }
                     catch
                     {
-                        // Ignore all exception since it is cleanup.
+                        // Ignore all exceptions since it is cleanup.
                     }
-#endif
-                    _nativeProcess.Dispose();
                 }
+#endif
+                _nativeProcess?.Dispose();
             }
             catch (Exception)
             {
@@ -1050,7 +1204,7 @@ namespace System.Management.Automation
                 ErrorRecord record = outputValue.Data as ErrorRecord;
                 Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
                 record.SetInvocationInfo(this.Command.MyInvocation);
-                this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
+                this.commandRuntime._WriteErrorSkipAllowCheck(record, isFromNativeStdError: true);
             }
             else if (outputValue.Stream == MinishellStream.Output)
             {
@@ -1108,25 +1262,69 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the start info for process.
+        /// Get whether we should treat this executable with special handling and use the legacy passing style.
         /// </summary>
-        /// <param name="redirectOutput"></param>
-        /// <param name="redirectError"></param>
-        /// <param name="redirectInput"></param>
-        /// <param name="soloCommand"></param>
-        /// <returns></returns>
-        private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = this.Path;
+        /// <param name="filePath"></param>
+        private bool UseSpecialArgumentPassing(string filePath) =>
+            NativeParameterBinderController.ArgumentPassingStyle switch
+            {
+                NativeArgumentPassingStyle.Legacy => true,
+                NativeArgumentPassingStyle.Windows => ShouldUseLegacyPassingStyle(filePath),
+                _ => false
+            };
 
-            if (IsExecutable(this.Path))
+        /// <summary>
+        /// Gets the ProcessStartInfo for process.
+        /// </summary>
+        /// <param name="redirectOutput">A boolean that indicates that, when true, output from the process is redirected to a stream, and otherwise is sent to stdout.</param>
+        /// <param name="redirectError">A boolean that indicates that, when true, error output from the process is redirected to a stream, and otherwise is sent to stderr.</param>
+        /// <param name="redirectInput">A boolean that indicates that, when true, input to the process is taken from a stream, and otherwise is taken from stdin.</param>
+        /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that it is.</param>
+        /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
+        private ProcessStartInfo GetProcessStartInfo(
+            bool redirectOutput,
+            bool redirectError,
+            bool redirectInput,
+            bool soloCommand)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = this.Path
+            };
+
+            if (!IsExecutable(this.Path))
+            {
+                if (Platform.IsNanoServer || Platform.IsIoT)
+                {
+                    // Shell doesn't exist on headless SKUs, so documents cannot be associated with an application.
+                    // Therefore, we cannot run document in this case.
+                    throw InterpreterError.NewInterpreterException(
+                        this.Path,
+                        typeof(RuntimeException),
+                        this.Command.InvocationExtent,
+                        "CantActivateDocumentInPowerShellCore",
+                        ParserStrings.CantActivateDocumentInPowerShellCore,
+                        this.Path);
+                }
+
+                // We only want to ShellExecute something that is standalone...
+                if (!soloCommand)
+                {
+                    throw InterpreterError.NewInterpreterException(
+                        this.Path,
+                        typeof(RuntimeException),
+                        this.Command.InvocationExtent,
+                        "CantActivateDocumentInPipeline",
+                        ParserStrings.CantActivateDocumentInPipeline,
+                        this.Path);
+                }
+
+                startInfo.UseShellExecute = true;
+            }
+            else
             {
                 startInfo.UseShellExecute = false;
-                if (redirectInput)
-                {
-                    startInfo.RedirectStandardInput = true;
-                }
+                startInfo.RedirectStandardInput = redirectInput;
 
                 if (redirectOutput)
                 {
@@ -1140,32 +1338,13 @@ namespace System.Management.Automation
                     startInfo.StandardErrorEncoding = Console.OutputEncoding;
                 }
             }
-            else
-            {
-                if (Platform.IsNanoServer || Platform.IsIoT)
-                {
-                    // Shell doesn't exist on headless SKUs, so documents cannot be associated with an application.
-                    // Therefore, we cannot run document in this case.
-                    throw InterpreterError.NewInterpreterException(this.Path, typeof(RuntimeException),
-                        this.Command.InvocationExtent, "CantActivateDocumentInPowerShellCore", ParserStrings.CantActivateDocumentInPowerShellCore, this.Path);
-                }
-
-                // We only want to ShellExecute something that is standalone...
-                if (!soloCommand)
-                {
-                    throw InterpreterError.NewInterpreterException(this.Path, typeof(RuntimeException),
-                        this.Command.InvocationExtent, "CantActivateDocumentInPipeline", ParserStrings.CantActivateDocumentInPipeline, this.Path);
-                }
-
-                startInfo.UseShellExecute = true;
-            }
 
             // For minishell value of -outoutFormat parameter depends on value of redirectOutput.
             // So we delay the parameter binding. Do parameter binding for minishell now.
             if (_isMiniShell)
             {
                 MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
-                mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
+                mpc.BindParameters(arguments, startInfo.RedirectStandardOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
@@ -1174,7 +1353,8 @@ namespace System.Management.Automation
             // We provide the user a way to select the new behavior via a new preference variable
             using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
             {
-                if (!NativeParameterBinderController.UseArgumentList)
+                // We need to check if we're using legacy argument passing or it's a special case.
+                if (UseSpecialArgumentPassing(startInfo.FileName))
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
@@ -1202,8 +1382,31 @@ namespace System.Management.Automation
             string rawPath =
                 context.EngineSessionState.GetNamespaceCurrentLocation(
                     context.ProviderNames.FileSystem).ProviderPath;
-            startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
+
+            // Only set this if the PowerShell's current working directory still exists.
+            if (Directory.Exists(rawPath))
+            {
+                startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
+            }
+
             return startInfo;
+        }
+
+        /// <summary>
+        /// Determine if we have a special file which will change the way native argument passing
+        /// is done on Windows. We use legacy behavior for cmd.exe, .bat, .cmd files.
+        /// </summary>
+        /// <param name="filePath">The file to use when checking how to pass arguments.</param>
+        /// <returns>A boolean indicating what passing style should be used.</returns>
+        private static bool ShouldUseLegacyPassingStyle(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return false;
+            }
+
+            return s_legacyFileExtensions.Contains(IO.Path.GetExtension(filePath))
+                || s_legacyCommands.Contains(IO.Path.GetFileNameWithoutExtension(filePath));
         }
 
         private static bool IsDownstreamOutDefault(Pipe downstreamPipe)
@@ -1373,7 +1576,7 @@ namespace System.Management.Automation
             }
             else
             {
-                extensionList = pathext.Split(Utils.Separators.Semicolon);
+                extensionList = pathext.Split(';');
             }
 
             foreach (string extension in extensionList)
@@ -1858,11 +2061,12 @@ namespace System.Management.Automation
             // Get the encoding for writing to native command. Note we get the Encoding
             // from the current scope so a script or function can use a different encoding
             // than global value.
-            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Utils.utf8NoBom;
+            Encoding outputEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as Encoding;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
-            _streamWriter.AutoFlush = true;
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, outputEncoding ?? Encoding.Default)
+            {
+                AutoFlush = true
+            };
 
             _inputFormat = inputFormat;
 
@@ -1929,10 +2133,7 @@ namespace System.Management.Automation
         {
             if (_inputFormat == NativeCommandIOFormat.Xml)
             {
-                if (_xmlSerializer != null)
-                {
-                    _xmlSerializer.Done();
-                }
+                _xmlSerializer?.Done();
             }
             else // Text
             {
@@ -1953,15 +2154,15 @@ namespace System.Management.Automation
     /// Static class that allows you to show and hide the console window
     /// associated with this process.
     /// </summary>
-    internal static class ConsoleVisibility
+    internal static partial class ConsoleVisibility
     {
         /// <summary>
         /// If set to true, then native commands will always be run redirected...
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
 
-        [DllImport("Kernel32.dll")]
-        internal static extern IntPtr GetConsoleWindow();
+        [LibraryImport("Kernel32.dll")]
+        internal static partial IntPtr GetConsoleWindow();
 
         internal const int SW_HIDE = 0;
         internal const int SW_SHOWNORMAL = 1;
@@ -1985,32 +2186,33 @@ namespace System.Management.Automation
         /// <param name="hWnd">The window to show...</param>
         /// <param name="nCmdShow">The command to do.</param>
         /// <returns>True if it was successful.</returns>
-        [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
         /// <returns>True if a console was created...</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AllocConsole();
+        internal static partial bool AllocConsole();
 
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window.
         /// </summary>
         /// <returns>A handle to the foreground window.</returns>
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetForegroundWindow();
 
         /// <summary>
         /// Called to restore the foreground window after allocating a hidden console window.
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
         /// <returns>True if the window was brought to the foreground.</returns>
-        [DllImport("user32.dll")]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static partial bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
         /// If no console window is attached to this process, then allocate one,
@@ -2096,10 +2298,10 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Exception used to wrap the error coming from
-    /// remote instance of Msh.
+    /// remote instance of PowerShell.
     /// </summary>
     /// <remarks>
-    /// This remote instance of Msh can be in a separate process,
+    /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
     [Serializable]
@@ -2193,7 +2395,7 @@ namespace System.Management.Automation
         private readonly PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
-        /// Original Serialized Exception from remote msh.
+        /// Original Serialized Exception from remote PowerShell.
         /// </summary>
         /// <remarks>This is the exception which was thrown in remote.
         /// </remarks>
@@ -2209,7 +2411,7 @@ namespace System.Management.Automation
         /// InvocationInfo, if any, associated with the SerializedRemoteException.
         /// </summary>
         /// <remarks>
-        /// This is the serialized InvocationInfo from the remote msh.
+        /// This is the serialized InvocationInfo from the remote PowerShell.
         /// </remarks>
         public PSObject SerializedRemoteInvocationInfo
         {

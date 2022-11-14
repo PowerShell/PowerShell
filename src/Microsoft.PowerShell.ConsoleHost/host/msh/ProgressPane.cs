@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell
 
                     // create cleared region to clear progress bar later
                     _savedRegion = tempProgressRegion;
-                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.View != ProgressView.Minimal)
+                    if (PSStyle.Instance.Progress.View != ProgressView.Minimal)
                     {
                         for (int row = 0; row < rows; row++)
                         {
@@ -301,7 +301,17 @@ namespace Microsoft.PowerShell
         {
             if (_content is not null)
             {
+                // On Windows, we can check if the cursor is currently visible and not change it to visible
+                // if it is intentionally hidden.  On Unix, it is not currently supported to read the cursor visibility.
+#if UNIX
                 Console.CursorVisible = false;
+#else
+                bool currentCursorVisible = Console.CursorVisible;
+                if (currentCursorVisible)
+                {
+                    Console.CursorVisible = false;
+                }
+#endif
 
                 var currentPosition = _rawui.CursorPosition;
                 _rawui.CursorPosition = _location;
@@ -319,7 +329,11 @@ namespace Microsoft.PowerShell
                 }
 
                 _rawui.CursorPosition = currentPosition;
+#if UNIX
                 Console.CursorVisible = true;
+#else
+                Console.CursorVisible = currentCursorVisible;
+#endif
             }
         }
 

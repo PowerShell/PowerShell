@@ -376,22 +376,16 @@ namespace System.Management.Automation
 
             foreach (var requiresPSSnapIn in requiresPSSnapIns)
             {
-                IEnumerable<PSSnapInInfo> loadedPSSnapIns = null;
-                loadedPSSnapIns = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
-                if (loadedPSSnapIns == null || !loadedPSSnapIns.Any())
+                var loadedPSSnapIn = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
+                if (loadedPSSnapIn is null)
                 {
-                    if (requiresMissingPSSnapIns == null)
-                    {
-                        requiresMissingPSSnapIns = new Collection<string>();
-                    }
-
+                    requiresMissingPSSnapIns ??= new Collection<string>();
                     requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
                 }
                 else
                 {
                     // the requires PSSnapin is loaded. now check the PSSnapin version
-                    PSSnapInInfo loadedPSSnapIn = loadedPSSnapIns.First();
-                    Diagnostics.Assert(loadedPSSnapIn.Version != null,
+                    Dbg.Assert(loadedPSSnapIn.Version != null,
                         string.Format(
                             CultureInfo.InvariantCulture,
                             "Version is null for loaded PSSnapin {0}.", loadedPSSnapIn));
@@ -400,11 +394,7 @@ namespace System.Management.Automation
                         if (!AreInstalledRequiresVersionsCompatible(
                             requiresPSSnapIn.Version, loadedPSSnapIn.Version))
                         {
-                            if (requiresMissingPSSnapIns == null)
-                            {
-                                requiresMissingPSSnapIns = new Collection<string>();
-                            }
-
+                            requiresMissingPSSnapIns ??= new Collection<string>();
                             requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
                         }
                     }
@@ -431,7 +421,7 @@ namespace System.Management.Automation
             // in single shell mode
             if (requiresPSVersion != null)
             {
-                if (!Utils.IsPSVersionSupported(requiresPSVersion))
+                if (!PSVersionInfo.IsValidPSVersion(requiresPSVersion))
                 {
                     ScriptRequiresException scriptRequiresException =
                         new ScriptRequiresException(
@@ -464,11 +454,11 @@ namespace System.Management.Automation
                 //
                 if (isRequiresPSEditionSpecified && !isCurrentEditionListed)
                 {
-                    var specifiedEditionsString = string.Join(",", scriptInfo.RequiresPSEditions);
+                    var specifiedEditionsString = string.Join(',', scriptInfo.RequiresPSEditions);
                     var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible,
                         scriptInfo.Name,
                         specifiedEditionsString,
-                        PSVersionInfo.PSEdition);
+                        PSVersionInfo.PSEditionValue);
                     var ex = new RuntimeException(message);
                     ex.SetErrorId("ScriptRequiresUnmatchedPSEdition");
                     ex.SetTargetObject(scriptInfo.Name);
@@ -819,10 +809,7 @@ namespace System.Management.Automation
                     }
 
                     // Otherwise, invoke the CommandNotFound handler
-                    if (result == null)
-                    {
-                        result = InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
-                    }
+                    result ??= InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
                 } while (false);
             }
             else
@@ -1058,19 +1045,17 @@ namespace System.Management.Automation
                 // If commandName had a slash, it was module-qualified or path-qualified.
                 // In that case, we should not return anything (module-qualified is handled
                 // by the previous call to TryModuleAutoLoading().
-                int colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
+                int colonOrBackslash = commandName.AsSpan().IndexOfAny('\\', ':');
                 if (colonOrBackslash != -1)
                     return null;
 
                 CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Get-Module");
-                if ((commandOrigin == CommandOrigin.Internal) ||
-                    ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
+                if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                 {
                     // Search for a module with a matching command, as long as the user would have the ability to
                     // import the module.
                     cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
-                    if (((commandOrigin == CommandOrigin.Internal) ||
-                         ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
+                    if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                     {
                         discoveryTracer.WriteLine("Executing non module-qualified search: {0}", commandName);
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
@@ -1085,30 +1070,33 @@ namespace System.Management.Automation
                         {
                             // WinBlue:69141 - We need to get the full path here because the module path might be C:\Users\User1\DOCUME~1
                             // While the exportedCommands are cached, they are cached with the full path
-                            string expandedModulePath = IO.Path.GetFullPath(modulePath);
-                            string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(expandedModulePath);
+                            string expandedModulePath = Path.GetFullPath(modulePath);
+                            string moduleShortName = Path.GetFileNameWithoutExtension(expandedModulePath);
                             var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
                             if (exportedCommands == null) { continue; }
 
-                            CommandTypes exportedCommandTypes;
                             // Skip if module only has class or other types and no commands.
-                            if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
+                            if (exportedCommands.TryGetValue(commandName, out CommandTypes exportedCommandTypes))
                             {
-                                Exception exception;
                                 discoveryTracer.WriteLine("Found in module: {0}", expandedModulePath);
-                                Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(expandedModulePath, context,
+                                Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(
+                                    expandedModulePath,
+                                    context,
                                     cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
-                                        out exception);
-                                lastError = exception;
-                                if ((matchingModule == null) || (matchingModule.Count == 0))
+                                    out lastError);
+
+                                if (matchingModule is null || matchingModule.Count == 0)
                                 {
-                                    string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName);
-                                    CommandNotFoundException commandNotFound = new CommandNotFoundException(
+                                    string errorMessage = lastError is null
+                                        ? StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName)
+                                        : StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModuleWithErrorMessage, commandName, moduleShortName, lastError.Message);
+
+                                    throw new CommandNotFoundException(
                                         originalCommandName,
                                         lastError,
-                                        "CouldNotAutoloadMatchingModule", error);
-                                    throw commandNotFound;
+                                        "CouldNotAutoloadMatchingModule",
+                                        errorMessage);
                                 }
 
                                 result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
@@ -1151,7 +1139,7 @@ namespace System.Management.Automation
             CommandInfo result = null;
 
             // If commandName was module-qualified. In that case, we should load the module.
-            var colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
+            var colonOrBackslash = commandName.AsSpan().IndexOfAny('\\', ':');
 
             // If we don't see '\', there is no module specified, so no module to load.
             // If we see ':' before '\', then we probably have a drive qualified path, not a module name
@@ -1162,7 +1150,7 @@ namespace System.Management.Automation
             string moduleName;
 
             // Now we check if there exists the second '\'
-            var secondBackslash = moduleCommandName.IndexOfAny(Utils.Separators.Backslash);
+            var secondBackslash = moduleCommandName.IndexOf('\\');
             if (secondBackslash == -1)
             {
                 moduleName = commandName.Substring(0, colonOrBackslash);
@@ -1318,7 +1306,7 @@ namespace System.Management.Automation
 
                 if (_pathCacheKey != null)
                 {
-                    string[] tokenizedPath = _pathCacheKey.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedPath = new Collection<string>();
 
                     foreach (string directory in tokenizedPath)
@@ -1410,7 +1398,7 @@ namespace System.Management.Automation
             lock (s_lockObject)
             {
                 s_cachedPathExtCollection = pathExt != null
-                    ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.ToLower().Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
@@ -1482,7 +1470,7 @@ namespace System.Management.Automation
                         }
                         // The engine cmdlets get imported (via Import-Module) once when PowerShell starts and the cmdletInfo is added to PSSnapinHelpers._cmdletcache(static) with ModuleName
                         // as "System.Management.Automation.dll" instead of the actual snapin name. The next time we load something in an InitialSessionState, we look at this _cmdletcache and
-                        // if the the assembly is already loaded, we just return the cmdlets back. So, the CmdletInfo has moduleName has "System.Management.Automation.dll". So, when M3P Activity
+                        // if the assembly is already loaded, we just return the cmdlets back. So, the CmdletInfo has moduleName has "System.Management.Automation.dll". So, when M3P Activity
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
                         else if (InitialSessionState.IsEngineModule(cmdletInfo.ModuleName))
                         {

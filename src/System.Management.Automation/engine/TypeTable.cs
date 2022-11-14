@@ -139,17 +139,17 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.UnknownNode, _reader.LocalName, expectedNodes);
-                SkipUntillNodeEnd(_reader.LocalName);
+                SkipUntilNodeEnd(_reader.LocalName);
             }
         }
 
-        private void SkipUntillNodeEnd(string nodeName)
+        private void SkipUntilNodeEnd(string nodeName)
         {
             while (_reader.Read())
             {
                 if (_reader.IsStartElement() && _reader.LocalName.Equals(nodeName))
                 {
-                    SkipUntillNodeEnd(nodeName);
+                    SkipUntilNodeEnd(nodeName);
                 }
                 else if ((_reader.NodeType == XmlNodeType.EndElement) && _reader.LocalName.Equals(nodeName))
                 {
@@ -771,10 +771,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Somewhat pointlessly (backcompat), we allow a missing Member node
-            if (members == null)
-            {
-                members = new Collection<TypeMemberData>();
-            }
+            members ??= new Collection<TypeMemberData>();
 
             if (_context.errors.Count != errorCount)
             {
@@ -841,10 +838,7 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties == null)
-                                            {
-                                                referencedProperties = new List<string>(8);
-                                            }
+                                            referencedProperties ??= new List<string>(8);
 
                                             referencedProperties.Add(ReadElementString(_idName));
                                         }
@@ -1683,7 +1677,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static readonly IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 
-        private class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
+        private sealed class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
         {
             bool IEqualityComparer<ConsolidatedString>.Equals(ConsolidatedString x, ConsolidatedString y)
             {
@@ -1747,7 +1741,7 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// This exception is used by TypeTable constructor to indicate errors
-    /// occured during construction time.
+    /// occurred during construction time.
     /// </summary>
     [Serializable]
     public class TypeTableLoadException : RuntimeException
@@ -1796,7 +1790,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occurred
         /// </param>
         internal TypeTableLoadException(ConcurrentBag<string> loadErrors)
             : base(TypesXmlStrings.TypeTableLoadErrors)
@@ -3724,10 +3718,7 @@ namespace System.Management.Automation.Runspaces
 
             if (hasStandardMembers)
             {
-                if (typeMembers == null)
-                {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
-                }
+                typeMembers ??= _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers, propertySets, typeMembers, typeData.IsOverride);
             }
@@ -3937,8 +3928,7 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewArgumentException("typeFile", TypesXmlStrings.TypeFileNotRooted, typefile);
                 }
 
-                bool unused;
-                Initialize(string.Empty, typefile, errors, authorizationManager, host, out unused);
+                Initialize(string.Empty, typefile, errors, authorizationManager, host, out _);
                 _typeFileList.Add(typefile);
             }
 

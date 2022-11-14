@@ -1177,7 +1177,7 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeDynamicMemberBinder : DynamicMetaObjectBinder
     {
-        private class KeyComparer : IEqualityComparer<PSInvokeDynamicMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSInvokeDynamicMemberBinderKeyType>
         {
             public bool Equals(PSInvokeDynamicMemberBinderKeyType x, PSInvokeDynamicMemberBinderKeyType y)
             {
@@ -2089,9 +2089,7 @@ namespace System.Management.Automation.Language
 
         internal static object CopyInstanceMembersOfValueType<T>(T t, object boxedT) where T : struct
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> unused1;
-            ConsolidatedString unused2;
-            if (PSObject.HasInstanceMembers(boxedT, out unused1) || PSObject.HasInstanceTypeName(boxedT, out unused2))
+            if (PSObject.HasInstanceMembers(boxedT, out _) || PSObject.HasInstanceTypeName(boxedT, out _))
             {
                 var psobj = PSObject.AsPSObject(boxedT);
                 return PSObject.Base(psobj.Copy());
@@ -4887,7 +4885,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal class PSGetMemberBinder : GetMemberBinder
     {
-        private class KeyComparer : IEqualityComparer<PSGetMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSGetMemberBinderKeyType>
         {
             public bool Equals(PSGetMemberBinderKeyType x, PSGetMemberBinderKeyType y)
             {
@@ -4911,7 +4909,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private class ReservedMemberBinder : PSGetMemberBinder
+        private sealed class ReservedMemberBinder : PSGetMemberBinder
         {
             internal ReservedMemberBinder(string name, bool ignoreCase, bool @static) : base(name, null, ignoreCase, @static, nonEnumerating: false)
             {
@@ -5277,7 +5275,17 @@ namespace System.Management.Automation.Language
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
                                 }
 
-                                expr = Expression.Property(targetExpr, propertyAccessor);
+                                if (propertyAccessor.PropertyType.IsByRef)
+                                {
+                                    expr = Expression.Call(
+                                        CachedReflectionInfo.ByRefOps_GetByRefPropertyValue,
+                                        targetExpr,
+                                        Expression.Constant(propertyAccessor));
+                                }
+                                else
+                                {
+                                    expr = Expression.Property(targetExpr, propertyAccessor);
+                                }
                             }
                             else
                             {
@@ -5335,13 +5343,9 @@ namespace System.Management.Automation.Language
                 if (!isGeneric || genericTypeArg != null)
                 {
                     var temp = Expression.Variable(typeof(object));
-                    if (expr == null)
-                    {
-                        // If expr is not null, it's the fallback when no member exists.  If it is null,
-                        // the fallback is the result from PropertyDoesntExist.
-
-                        expr = (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).Expression;
-                    }
+                    // If expr is not null, it's the fallback when no member exists.  If it is null,
+                    // the fallback is the result from PropertyDoesntExist.
+                    expr ??= (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).Expression;
 
                     var method = isGeneric
                         ? CachedReflectionInfo.PSGetMemberBinder_TryGetGenericDictionaryValue.MakeGenericMethod(genericTypeArg)
@@ -5406,18 +5410,6 @@ namespace System.Management.Automation.Language
             }
 
             var type = castToType ?? ((value != null) ? value.GetType() : typeof(object));
-
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
-            // the derivation chain to find the first public parent, and use reflection methods on the public parent.
-            if (!TypeResolver.IsPublic(type) && DotNetAdapter.DisallowPrivateReflection(type))
-            {
-                var publicType = DotNetAdapter.GetFirstPublicParentType(type);
-                if (publicType != null)
-                {
-                    type = publicType;
-                }
-                // else we'll probably fail, but the error message might be more helpful than NullReferenceException
-            }
 
             if (expr.Type != type)
             {
@@ -5625,8 +5617,7 @@ namespace System.Management.Automation.Language
 
             canOptimize = false;
 
-            PSMemberInfo unused;
-            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out unused),
+            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out _),
                                 "shouldn't get here if there is an instance member");
 
             PSMemberInfo memberInfo = null;
@@ -5687,19 +5678,13 @@ namespace System.Management.Automation.Language
             restrictions = versionRestriction;
 
             // When returning aliasRestrictions always include the version restriction
-            if (aliasRestrictions != null)
-            {
-                aliasRestrictions.Add(versionRestriction);
-            }
+            aliasRestrictions?.Add(versionRestriction);
 
             var alias = memberInfo as PSAliasProperty;
             if (alias != null)
             {
                 aliasConversionType = alias.ConversionType;
-                if (aliasRestrictions == null)
-                {
-                    aliasRestrictions = new List<BindingRestrictions>();
-                }
+                aliasRestrictions ??= new List<BindingRestrictions>();
 
                 memberInfo = ResolveAlias(alias, target, aliases, aliasRestrictions);
                 if (memberInfo == null)
@@ -5750,10 +5735,7 @@ namespace System.Management.Automation.Language
                                 var methodInfo = member as MethodInfo;
                                 if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
                                 {
-                                    if (candidateMethods == null)
-                                    {
-                                        candidateMethods = new List<MethodBase>();
-                                    }
+                                    candidateMethods ??= new List<MethodBase>();
 
                                     candidateMethods.Add(methodInfo);
                                 }
@@ -5779,7 +5761,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
+                        DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods);
                         memberInfo = PSMethod.Create(this.Name, PSObject.DotNetInstanceAdapter, null, method);
                     }
                 }
@@ -5846,10 +5828,7 @@ namespace System.Management.Automation.Language
             }
 
             var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
-            if (memberInfo == null)
-            {
-                memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
-            }
+            memberInfo ??= adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
 
             if (memberInfo == null && adapterSet.DotNetAdapter != null)
             {
@@ -5936,7 +5915,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal class PSSetMemberBinder : SetMemberBinder
     {
-        private class KeyComparer : IEqualityComparer<PSSetMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSSetMemberBinderKeyType>
         {
             public bool Equals(PSSetMemberBinderKeyType x, PSSetMemberBinderKeyType y)
             {
@@ -6450,10 +6429,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
-                if (memberInfo == null)
-                {
-                    memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
-                }
+                memberInfo ??= adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
 
                 if (memberInfo == null && adapterSet.DotNetAdapter != null)
                 {
@@ -6519,7 +6495,7 @@ namespace System.Management.Automation.Language
             NonVirtual,
         }
 
-        private class KeyComparer : IEqualityComparer<PSInvokeMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSInvokeMemberBinderKeyType>
         {
             public bool Equals(PSInvokeMemberBinderKeyType x, PSInvokeMemberBinderKeyType y)
             {
@@ -6915,6 +6891,20 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
+                // Expression block runs two expressions in order:
+                //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+                //  - Invoke method
+                string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
+                expr = Expression.Block(
+                    Expression.Call(
+                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                        Expression.Constant(targetName),
+                        Expression.Constant(name),
+                        Expression.NewArrayInit(
+                            typeof(object),
+                            args.Select(static e => e.Expression.Cast(typeof(object))))),
+                    expr);
+
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
                 // propagation and ensure errors are attributed to the correct code (the
@@ -7248,14 +7238,11 @@ namespace System.Management.Automation.Language
         private static DynamicMetaObject GetTargetAsEnumerable(DynamicMetaObject target)
         {
             var enumerableTarget = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerableTarget == null)
-            {
-                // Wrap the target in an array.
-                enumerableTarget = PSEnumerableBinder.IsEnumerable(
-                    new DynamicMetaObject(
-                        Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
-                        target.GetSimpleTypeRestriction()));
-            }
+            // If null wrap the target in an array.
+            enumerableTarget ??= PSEnumerableBinder.IsEnumerable(
+                new DynamicMetaObject(
+                    Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
+                    target.GetSimpleTypeRestriction()));
 
             return enumerableTarget;
         }
@@ -7362,11 +7349,15 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            return args.All(element =>
-                            {
-                                var obj = PSObject.Base(element);
-                                return obj != null && obj.GetType().Equals(typeof(T));
-                            });
+            foreach (object element in args)
+            {
+                if (Adapter.GetObjectType(element, debase: true) != typeof(T))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static bool IsHeterogeneousArray(object[] args)
@@ -7394,11 +7385,15 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            return args.Skip(1).Any(element =>
-                                    {
-                                        var obj = PSObject.Base(element);
-                                        return obj == null || !firstType.Equals(obj.GetType());
-                                    });
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (Adapter.GetObjectType(args[i], debase: true) != firstType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
@@ -7439,7 +7434,20 @@ namespace System.Management.Automation.Language
             if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
-                return EnumerableOps.ForEach(enumerator, args[0], Array.Empty<object>());
+                object[] argsToPass;
+
+                if (args.Length > 1)
+                {
+                    int length = args.Length - 1;
+                    argsToPass = new object[length];
+                    Array.Copy(args, sourceIndex: 1, argsToPass, destinationIndex: 0, length: length);
+                }
+                else
+                {
+                    argsToPass = Array.Empty<object>();
+                }
+
+                return EnumerableOps.ForEach(enumerator, args[0], argsToPass);
             }
 
             throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), null,
@@ -7509,7 +7517,7 @@ namespace System.Management.Automation.Language
         private readonly bool _publicTypeOnly;
         private int _version;
 
-        private class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints, bool>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints, bool>>
         {
             public bool Equals(Tuple<CallInfo, PSMethodInvocationConstraints, bool> x,
                                Tuple<CallInfo, PSMethodInvocationConstraints, bool> y)
@@ -7687,7 +7695,7 @@ namespace System.Management.Automation.Language
         private readonly CallInfo _callInfo;
         private readonly PSMethodInvocationConstraints _constraints;
 
-        private class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints>>
         {
             public bool Equals(Tuple<CallInfo, PSMethodInvocationConstraints> x,
                                Tuple<CallInfo, PSMethodInvocationConstraints> y)

@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
             // The pipeline will be blocked while we don't return
             if (this.Wait || this.OutputMode != OutputModeOption.None)
             {
-                _windowProxy.BlockUntillClosed();
+                _windowProxy.BlockUntilClosed();
             }
 
             // Output selected items to pipeline.

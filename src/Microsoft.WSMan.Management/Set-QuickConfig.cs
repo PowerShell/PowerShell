@@ -30,6 +30,7 @@ namespace Microsoft.WSMan.Management
     /// 4. Enable firewall exception for WS-Management traffic.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097112")]
+    [OutputType(typeof(string))]
     public class SetWSManQuickConfigCommand : PSCmdlet, IDisposable
     {
         /// <summary>

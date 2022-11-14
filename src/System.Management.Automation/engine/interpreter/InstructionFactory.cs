@@ -119,10 +119,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (elementCount < MaxArrayInitElementCountCache)
             {
-                if (_newArrayInit == null)
-                {
-                    _newArrayInit = new Instruction[MaxArrayInitElementCountCache];
-                }
+                _newArrayInit ??= new Instruction[MaxArrayInitElementCountCache];
 
                 return _newArrayInit[elementCount] ?? (_newArrayInit[elementCount] = new NewArrayInitInstruction<T>(elementCount));
             }

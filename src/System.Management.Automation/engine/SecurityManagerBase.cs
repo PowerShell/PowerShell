@@ -18,7 +18,7 @@ namespace System.Management.Automation
         Runspace,
 
         /// <summary>
-        /// The command was dispatched by the msh engine as a result of
+        /// The command was dispatched by the engine as a result of
         /// a dispatch request from an already running command.
         /// </summary>
         Internal

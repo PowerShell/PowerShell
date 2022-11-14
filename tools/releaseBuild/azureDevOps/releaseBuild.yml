@@ -10,6 +10,15 @@ pr:
     - master
     - release*
 
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+      - true
+      - false
+    default: false
+
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -19,16 +28,30 @@ resources:
     ref: master
 
 variables:
+  - name: PS_RELEASE_BUILD
+    value: 1
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
   - name: NugetSecurityAnalysisWarningLevel
     value: none
+  # Prevents auto-injection of nuget-security-analysis@0
+  - name: skipNugetSecurityAnalysis
+    value: true
   - name: branchCounterKey
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
+  - name: ForceAzureBlobDelete
+    value:  ${{ parameters.ForceAzureBlobDelete }}
+  - name: Github_Build_Repository_Uri
+    value: https://github.com/powershell/powershell
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
+  - name: BUILDSECMON_OPT_IN
+    value: true
+
 stages:
   - stage: prep
     jobs:
@@ -38,18 +61,36 @@ stages:
     dependsOn: ['prep']
     jobs:
       - template: templates/mac.yml
+        parameters:
+          buildArchitecture: x64
+
+      - template: templates/mac.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-file-signing.yml
         parameters:
-          parentJob: build_macOS
+          buildArchitecture: x64
+
+      - template: templates/mac-file-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-build.yml
         parameters:
-          parentJob: MacFileSigningJob
+          buildArchitecture: x64
+
+      - template: templates/mac-package-build.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-signing.yml
         parameters:
-          parentJob: package_macOS
+          buildArchitecture: x64
+
+      - template: templates/mac-package-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
   - stage: linux
     dependsOn: ['prep']
@@ -61,7 +102,7 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: rpm
-          uploadDisplayName: Upload and Sign
+          parentJob: build_deb
 
       - template: templates/linux.yml
         parameters:
@@ -71,6 +112,29 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: alpine
+
+      - template: templates/linux-authenticode-sign.yml
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: deb
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: rpm
+          uploadDisplayName: Upload and Sign
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: alpine
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: fxdependent
+          parentJob: sign_linux_builds
 
   - stage: windows
     dependsOn: ['prep']
@@ -171,7 +235,9 @@ stages:
       - job: release_json
         displayName: Create and Upload release.json
         pool:
-          vmImage: 'windows-latest'
+          name: PowerShell1ES
+          demands:
+          - ImageOverride -equals PSMMS2019-Secure
         steps:
         - checkout: self
           clean: true
@@ -181,8 +247,10 @@ stages:
 
         - powershell: |
             $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
-            $LTS = $metadata.LTSRelease
+            $LTS = $metadata.LTSRelease.Package
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
             Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
           displayName: Create and upload release.json file to build artifact
+
+        - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

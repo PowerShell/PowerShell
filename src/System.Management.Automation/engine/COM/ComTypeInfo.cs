@@ -183,10 +183,7 @@ namespace System.Management.Automation
                 _properties[strName] = prop;
             }
 
-            if (prop != null)
-            {
-                prop.UpdateFuncDesc(funcdesc, index);
-            }
+            prop?.UpdateFuncDesc(funcdesc, index);
         }
 
         private void AddMethod(string strName, int index)
@@ -198,10 +195,7 @@ namespace System.Management.Automation
                 _methods[strName] = method;
             }
 
-            if (method != null)
-            {
-                method.AddFuncDesc(index);
-            }
+            method?.AddFuncDesc(index);
         }
 
         /// <summary>

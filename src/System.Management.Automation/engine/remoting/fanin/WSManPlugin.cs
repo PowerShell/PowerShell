@@ -306,10 +306,16 @@ namespace System.Management.Automation.Remoting
                     PSOpcode.Connect, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                     requestDetails.ToString(), senderInfo.UserInfo.Identity.Name, requestDetails.resourceUri);
-                ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                requestDetails.resourceUri,
-                extraInfo,
-                serverTransportMgr);
+
+                ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(
+                    senderInfo: senderInfo,
+                    configurationProviderId: requestDetails.resourceUri,
+                    initializationParameters: extraInfo,
+                    transportManager: serverTransportMgr,
+                    initialCommand: null,       // Not used by WinRM endpoint.
+                    configurationName: null,    // Not used by WinRM endpoint, which has its own configuration.
+                    configurationFile: null,    // Same.
+                    initialLocation: null);     // Same.
 
                 if (remoteShellSession == null)
                 {

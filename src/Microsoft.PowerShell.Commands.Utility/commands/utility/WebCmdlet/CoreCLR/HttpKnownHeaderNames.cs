@@ -78,31 +78,29 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Known_HTTP_Header_Names
 
-        private static HashSet<string> s_contentHeaderSet = null;
+        private static readonly HashSet<string> s_contentHeaderSet;
+
+        static HttpKnownHeaderNames()
+        {
+            // Thread-safe initialization.
+            s_contentHeaderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.Allow);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentDisposition);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentEncoding);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLanguage);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLength);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLocation);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentMD5);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentRange);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentType);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.Expires);
+            s_contentHeaderSet.Add(HttpKnownHeaderNames.LastModified);
+        }
 
         internal static HashSet<string> ContentHeaders
         {
-            get
-            {
-                if (s_contentHeaderSet == null)
-                {
-                    s_contentHeaderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.Allow);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentDisposition);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentEncoding);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLanguage);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLength);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLocation);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentMD5);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentRange);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentType);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.Expires);
-                    s_contentHeaderSet.Add(HttpKnownHeaderNames.LastModified);
-                }
-
-                return s_contentHeaderSet;
-            }
+            get => s_contentHeaderSet;
         }
     }
 }

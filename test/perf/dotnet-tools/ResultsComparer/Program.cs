@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 
 namespace ResultsComparer
 {
-    public class Program
+    public sealed class Program
     {
         private const string FullBdnJsonFileExtension = "full.json";
 

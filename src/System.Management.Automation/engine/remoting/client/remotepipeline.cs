@@ -34,7 +34,7 @@ namespace System.Management.Automation
         private readonly ConnectCommandInfo _connectCmdInfo = null;
 
         /// <summary>
-        /// This is queue of all the state change event which have occured for
+        /// This is queue of all the state change event which have occurred for
         /// this pipeline. RaisePipelineStateEvents raises event for each
         /// item in this queue. We don't raise the event with in SetPipelineState
         /// because often SetPipelineState is called with in a lock.
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// </summary>
         private Queue<ExecutionEventQueueItem> _executionEventQueue = new Queue<ExecutionEventQueueItem>();
 
-        private class ExecutionEventQueueItem
+        private sealed class ExecutionEventQueueItem
         {
             public ExecutionEventQueueItem(PipelineStateInfo pipelineStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {

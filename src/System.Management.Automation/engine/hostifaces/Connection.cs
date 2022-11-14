@@ -414,7 +414,7 @@ namespace System.Management.Automation.Runspaces
     public enum RunspaceCapability
     {
         /// <summary>
-        /// No additional capabilities beyond a default runspace.
+        /// Legacy capabilities for WinRM only, from Win7 timeframe.
         /// </summary>
         Default = 0x0,
 
@@ -436,13 +436,18 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Runspace is based on SSH transport.
         /// </summary>
-        SSHTransport = 0x8
+        SSHTransport = 0x8,
+
+        /// <summary>
+        /// Runspace is based on open custom connection/transport support.
+        /// </summary>
+        CustomTransport = 0x100
     }
 
     #endregion
 
     /// <summary>
-    /// Public interface to Msh Runtime. Provides APIs for creating pipelines,
+    /// Public interface to PowerShell Runtime. Provides APIs for creating pipelines,
     /// access session state etc.
     /// </summary>
     public abstract class Runspace : IDisposable

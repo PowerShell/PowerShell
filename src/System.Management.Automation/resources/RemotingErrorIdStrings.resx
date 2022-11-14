@@ -837,8 +837,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>A {1} job source adapter threw an exception with the following message: {0}</value>
   </data>
   <data name="PSVersionParameterOutOfRange" xml:space="preserve">
-    <value>The value {0} is not valid for the {1} parameter. The available values are 2.0, 3.0, 4.0, 5.0, 5.1.</value>
-    <comment>{StrContains="2.0"} {StrContains="3.0"}</comment>
+    <value>The value {0} is not valid for the {1} parameter. The only allowed value is 5.1.</value>
   </data>
   <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
     <value>The Wait and Keep parameters cannot be used together in the same command.</value>
@@ -846,8 +845,8 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
     <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
   </data>
-  <data name="PowerShellNotInstalled" xml:space="preserve">
-    <value>PowerShell {0} is not installed. Install PowerShell {0}, and then try again.</value>
+  <data name="PowerShellVersionNotSupported" xml:space="preserve">
+    <value>PowerShell remoting endpoint versioning is not supported on PowerShell Core.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
     <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
@@ -1361,7 +1360,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell {0} or greater.</value>
+    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
     <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
@@ -1409,7 +1408,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process {0} because it has not loaded the PowerShell engine.</value>
+    <value>Cannot enter process with Id '{0}' because it has not loaded the PowerShell engine.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
     <value>No process was found with Id: {0}.</value>
@@ -1702,5 +1701,17 @@ SSH client process terminated before connection could be established.</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
     <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+  </data>
+  <data name="InvalidPSSessionArgument" xml:space="preserve">
+    <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+  </data>
+  <data name="DISCInvalidConfigKeyType" xml:space="preserve">
+    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+  </data>
+  <data name="DISCUnsupportedConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+  </data>
+  <data name="DISCUnknownConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unknown configuration option: {0}.</value>
   </data>
 </root>

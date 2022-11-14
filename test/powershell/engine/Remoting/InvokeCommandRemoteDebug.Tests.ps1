@@ -174,7 +174,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
         $ps.Commands.Clear()
         $ps2.Commands.Clear()
 
-        Remove-PSSession $remoteSession -ErrorAction SilentlyContinue
+        if ($null -ne $remoteSession) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
         $remoteSession = $null
     }
 

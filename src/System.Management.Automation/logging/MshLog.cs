@@ -60,13 +60,13 @@ namespace System.Management.Automation
         /// The value of this dictionary is never empty. A value of type DummyProvider means
         /// no logging.
         /// </summary>
-        private static ConcurrentDictionary<string, Collection<LogProvider>> s_logProviders =
+        private static readonly ConcurrentDictionary<string, Collection<LogProvider>> s_logProviders =
             new ConcurrentDictionary<string, Collection<LogProvider>>();
 
         private const string _crimsonLogProviderAssemblyName = "MshCrimsonLog";
         private const string _crimsonLogProviderTypeName = "System.Management.Automation.Logging.CrimsonLogProvider";
 
-        private static Collection<string> s_ignoredCommands = new Collection<string>();
+        private static readonly Collection<string> s_ignoredCommands = new Collection<string>();
 
         /// <summary>
         /// Static constructor.
@@ -134,11 +134,6 @@ namespace System.Management.Automation
 
             try
             {
-#if !CORECLR    // TODO:CORECLR EventLogLogProvider not handled yet
-                LogProvider eventLogLogProvider = new EventLogLogProvider(shellId);
-                providers.Add(eventLogLogProvider);
-#endif
-
 #if UNIX
                 LogProvider sysLogProvider = new PSSysLogProvider();
                 providers.Add(sysLogProvider);
@@ -776,7 +771,7 @@ namespace System.Management.Automation
                 logContext.HostId = (string)executionContext.EngineHostInterface.InstanceId.ToString();
             }
 
-            logContext.HostApplication = string.Join(" ", Environment.GetCommandLineArgs());
+            logContext.HostApplication = string.Join(' ', Environment.GetCommandLineArgs());
 
             if (executionContext.CurrentRunspace != null)
             {

@@ -53,22 +53,12 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetManagers()
         {
-            if (_debugger != null)
-            {
-                _debugger.ResetDebugger();
-            }
+            _debugger?.ResetDebugger();
 
-            if (Events != null)
-            {
-                Events.Dispose();
-            }
-
+            Events?.Dispose();
             Events = new PSLocalEventManager(this);
-            if (this.transactionManager != null)
-            {
-                this.transactionManager.Dispose();
-            }
 
+            this.transactionManager?.Dispose();
             this.transactionManager = new PSTransactionManager();
         }
         /// <summary>
@@ -114,10 +104,7 @@ namespace System.Management.Automation
         // Helper for generated code to handle running w/ no execution context
         internal static bool IsStrictVersion(ExecutionContext context, int majorVersion)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             return (context != null) && context.IsStrictVersion(majorVersion);
         }
@@ -219,10 +206,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_providerNames == null)
-                {
-                    _providerNames = new SingleShellProviderNames();
-                }
+                _providerNames ??= new SingleShellProviderNames();
 
                 return _providerNames;
             }
@@ -379,8 +363,7 @@ namespace System.Management.Automation
             var baseValue = PSObject.Base(value);
             if (baseValue != null && baseValue != NullString.Value)
             {
-                object unused;
-                result = UntrustedObjects.TryGetValue(baseValue, out unused);
+                result = UntrustedObjects.TryGetValue(baseValue, out _);
             }
 
             return result;
@@ -525,9 +508,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path, object defaultValue)
         {
-            CmdletProviderContext context;
-            SessionStateScope scope;
-            return EngineSessionState.GetVariableValue(path, out context, out scope) ?? defaultValue;
+            return EngineSessionState.GetVariableValue(path, out _, out _) ?? defaultValue;
         }
 
         /// <summary>
@@ -612,19 +593,15 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal bool GetBooleanPreference(VariablePath preferenceVariablePath, bool defaultPref, out bool defaultUsed)
         {
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
-            if (val == null)
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
+            if (val is null)
             {
                 defaultUsed = true;
                 return defaultPref;
             }
 
-            bool converted = defaultPref;
-            defaultUsed = !LanguagePrimitives.TryConvertTo<bool>
-                (val, out converted);
-            return (defaultUsed) ? defaultPref : converted;
+            defaultUsed = !LanguagePrimitives.TryConvertTo(val, out bool converted);
+            return defaultUsed ? defaultPref : converted;
         }
         #endregion GetSetVariable methods
 
@@ -789,11 +766,6 @@ namespace System.Management.Automation
             return oldPipe;
         }
 
-        internal void RestoreErrorPipe(Pipe pipe)
-        {
-            ShellFunctionErrorOutputPipe = pipe;
-        }
-
         /// <summary>
         /// Reset all of the redirection book keeping variables. This routine should be called when starting to
         /// execute a script.
@@ -846,15 +818,13 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord == null && obj is not Exception)
+            if (objAsErrorRecord is null && obj is not Exception)
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
             }
 
-            object old = this.DollarErrorVariable;
-            ArrayList arraylist = old as ArrayList;
-            if (arraylist == null)
+            if (DollarErrorVariable is not ArrayList arraylist)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;
@@ -1175,22 +1145,12 @@ namespace System.Management.Automation
         {
             EngineSessionState.RunspaceClosingNotification();
 
-            if (_debugger != null)
-            {
-                _debugger.Dispose();
-            }
+            _debugger?.Dispose();
 
-            if (Events != null)
-            {
-                Events.Dispose();
-            }
-
+            Events?.Dispose();
             Events = null;
-            if (this.transactionManager != null)
-            {
-                this.transactionManager.Dispose();
-            }
 
+            this.transactionManager?.Dispose();
             this.transactionManager = null;
         }
 
@@ -1282,55 +1242,150 @@ namespace System.Management.Automation
 
         internal PSTransactionManager transactionManager;
 
-        internal Assembly AddAssembly(string name, string filename, out Exception error)
+        /// <summary>
+        /// This method is used for assembly loading requests stemmed from 'InitialSessionState' binding and module loading.
+        /// </summary>
+        /// <param name="source">Source of the assembly loading request, should be a module name when specified.</param>
+        /// <param name="assemblyName">Name of the assembly to be loaded.</param>
+        /// <param name="filePath">Path of the assembly to be loaded.</param>
+        /// <param name="error">Exception that is caught when the loading fails.</param>
+        internal Assembly AddAssembly(string source, string assemblyName, string filePath, out Exception error)
         {
-            Assembly loadedAssembly = LoadAssembly(name, filename, out error);
-
-            if (loadedAssembly == null)
-                return null;
-
-            if (AssemblyCache.ContainsKey(loadedAssembly.FullName))
+            // Search the cache by the path, and return the assembly if we find it.
+            // It's common to have two loading requests for the same assembly when loading a module -- the first time for
+            // resolving a binary module path, and the second time for actually processing that module.
+            //
+            // That's not a problem when all the module assemblies are loaded into the default ALC. But in a scenario where
+            // a module tries to hide its nested/root binary modules in a custom ALC, that will become a problem. This is
+            // because:
+            // in that scenario, the module will usually setup a handler to load the specific assemblies to the custom ALC,
+            // and that will be how the first loading request gets served. However, after the module path is resolved with
+            // the first loading, the path will be used for the second loading upon real module processing. Since we prefer
+            // loading-by-path over loading-by-name in the 'LoadAssembly' call, we will end up loading the same assembly in
+            // the default ALC (because we use 'Assembly.LoadFrom' which always loads an assembly to the default ALC) if we
+            // do not search in the cache first. That will break the scenario, because the module means to isolate all its
+            // dependencies from the default ALC, and it failed to do so.
+            //
+            // Therefore, we need to search the cache first. The reason we use path as the key is to make sure the request
+            // is for exactly the same assembly. The same assembly file should not be loaded into different ALC's by module
+            // loading within the same PowerShell session (Runspace).
+            //
+            // An example module targeting the abovementioned scenario will likely have the following file structure:
+            // IsolatedModule
+            //  │   IsolatedModule.psd1 (has 'NestedModules = @('Test.Isolated.Init.dll', 'Test.Isolated.Nested.dll')')
+            //  │   Test.Isolated.Init.dll (contains the custom ALC and code to setup 'Resolving' handler)
+            //  └───Dependencies (folder under module base)
+            //         Newtonsoft.Json.dll (version 10.0.0.0 dependency)
+            //         Test.Isolated.Nested.dll (nested binary module referencing the particular dependency)
+            //
+            // In this example, the following events will happen in sequence:
+            //  1. PowerShell is able to find 'Test.Isolated.Init.dll' under module base folder, so it will be loaded into
+            //     the default ALC as expected and setup the 'Resolving' handler via the 'OnImport' call.
+            //  2. PowerShell cannot find 'Test.Isolated.Nested.dll' under the module base folder, so it will call the method
+            //     'FixFileName(.., bool canLoadAssembly)' to resolve the path of this binary module.
+            //     This particular overload will attempt to load the assembly by name, which will be served by the 'Resolving'
+            //     handler that was setup in the step 1. So, the assembly will be loaded into the custom ALC and insert to the
+            //     assembly cache.
+            //  3. Path of the nested module 'Test.Isolated.Init.dll' now has been resolved by the step 2 (assembly.Location).
+            //     Now it's time to actually load this binary module for processing in the method 'LoadBinaryModule', which
+            //     will make a call to this method with the resolved assembly file path.
+            // At this poin, we will have to query the cache first, instead of calling 'LoadAssembly' directly, to make sure
+            // that the assembly instance loaded in the custom ALC in step 2 gets returned back. Otherwise, the same assembly
+            // file will be loaded in the default ALC because 'Assembly.LoadFrom' is used in 'LoadAssembly' and that API will
+            // always load an assembly file to the default ALC, and that will break this scenario.
+            if (TryGetFromAssemblyCache(source, filePath, out Assembly loadedAssembly))
             {
-                // we should ignore this assembly.
+                error = null;
                 return loadedAssembly;
             }
-            // We will cache the assembly by both full name and
-            // file name
-            AssemblyCache.Add(loadedAssembly.FullName, loadedAssembly);
 
-            if (AssemblyCache.ContainsKey(loadedAssembly.GetName().Name))
+            // Attempt to load the requested assembly, first by path then by name.
+            loadedAssembly = LoadAssembly(assemblyName, filePath, out error);
+            if (loadedAssembly is not null)
             {
-                // we should ignore this assembly.
-                return loadedAssembly;
+                AddToAssemblyCache(source, loadedAssembly);
             }
 
-            AssemblyCache.Add(loadedAssembly.GetName().Name, loadedAssembly);
             return loadedAssembly;
         }
 
-        internal void RemoveAssembly(string name)
+        /// <summary>
+        /// Add a loaded assembly to the 'AssemblyCache'.
+        /// The <paramref name="source"/> is used as a prefix for the key to make it easy to remove all associated
+        /// assemblies from the cache when a module gets unloaded.
+        /// </summary>
+        /// <param name="source">The source where the assembly comes from, should be a module name when specified.</param>
+        /// <param name="assembly">The assembly we try to cache.</param>
+        internal void AddToAssemblyCache(string source, Assembly assembly)
         {
-            Assembly loadedAssembly;
-            if (AssemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly != null)
-            {
-                AssemblyCache.Remove(name);
+            // Try caching the assembly by its location if possible.
+            // When it's a dynamic assembly, we use it's full name. This could happen with 'Import-Module -Assembly'.
+            string key = string.IsNullOrEmpty(assembly.Location) ? assembly.FullName : assembly.Location;
 
-                AssemblyCache.Remove(loadedAssembly.GetName().Name);
+            // When the assembly is from a module loading, we prefix the key with the source,
+            // so we can remove it from the cache when the module gets unloaded.
+            if (!string.IsNullOrEmpty(source))
+            {
+                // Both 'source' and 'key' are of the string type, so no need to specify 'InvariantCulture'.
+                key = $"{source}@{key}";
+            }
+
+            AssemblyCache.TryAdd(key, assembly);
+        }
+
+        /// <summary>
+        /// Remove all cache entries that are associated with the specified source.
+        /// </summary>
+        internal void RemoveFromAssemblyCache(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+
+            var keysToRemove = new List<string>();
+            string prefix = $"{source}@";
+
+            foreach (string key in AssemblyCache.Keys)
+            {
+                if (key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    keysToRemove.Add(key);
+                }
+            }
+
+            foreach (string key in keysToRemove)
+            {
+                AssemblyCache.Remove(key);
             }
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadWithPartialName")]
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
-        internal static Assembly LoadAssembly(string name, string filename, out Exception error)
+        /// <summary>
+        /// Try to get an assembly from the cache.
+        /// </summary>
+        private bool TryGetFromAssemblyCache(string source, string filePath, out Assembly assembly)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                assembly = null;
+                return false;
+            }
+
+            // Both 'source' and 'filePath' are of the string type, so no need to specify 'InvariantCulture'.
+            string key = string.IsNullOrEmpty(source) ? filePath : $"{source}@{filePath}";
+            return AssemblyCache.TryGetValue(key, out assembly);
+        }
+
+        private static Assembly LoadAssembly(string name, string filePath, out Exception error)
         {
             // First we try to load the assembly based on the filename
             Assembly loadedAssembly = null;
             error = null;
-            if (!string.IsNullOrEmpty(filename))
+            if (!string.IsNullOrEmpty(filePath))
             {
                 try
                 {
-                    loadedAssembly = Assembly.LoadFrom(filename);
+                    loadedAssembly = Assembly.LoadFrom(filePath);
                     return loadedAssembly;
                 }
                 catch (FileNotFoundException fileNotFound)
@@ -1502,8 +1557,7 @@ namespace System.Management.Automation
             try
             {
                 Cmdlet currentRunningModuleCommand;
-                string unused;
-                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out unused))
+                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out _))
                 {
                     currentRunningModuleCommand.WriteError(errorRecord);
                 }
@@ -1568,23 +1622,6 @@ namespace System.Management.Automation
         private void InitializeCommon(AutomationEngine engine, PSHost hostInterface)
         {
             Engine = engine;
-#if !CORECLR// System.AppDomain is not in CoreCLR
-            // Set the assembly resolve handler if it isn't already set...
-            if (!_assemblyEventHandlerSet)
-            {
-                // we only want to set the event handler once for the entire app domain...
-                lock (lockObject)
-                {
-                    // Need to check again inside the lock due to possibility of a race condition...
-                    if (!_assemblyEventHandlerSet)
-                    {
-                        AppDomain currentAppDomain = AppDomain.CurrentDomain;
-                        currentAppDomain.AssemblyResolve += new ResolveEventHandler(PowerShellAssemblyResolveHandler);
-                        _assemblyEventHandlerSet = true;
-                    }
-                }
-            }
-#endif
             Events = new PSLocalEventManager(this);
             transactionManager = new PSTransactionManager();
             _debugger = new ScriptDebugger(this);
@@ -1592,52 +1629,20 @@ namespace System.Management.Automation
             EngineHostInterface = hostInterface as InternalHost ?? new InternalHost(hostInterface, this);
 
             // Hook up the assembly cache
-            AssemblyCache = new Dictionary<string, Assembly>();
+            AssemblyCache = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
             // Initialize the fixed toplevel session state and the current session state
             TopLevelSessionState = EngineSessionState = new SessionStateInternal(this);
 
-            if (AuthorizationManager == null)
-            {
-                // if authorizationmanager==null, this means the configuration
-                // explicitly asked for dummy authorization manager.
-                AuthorizationManager = new AuthorizationManager(null);
-            }
+            // if authorizationmanager==null, this means the configuration
+            // explicitly asked for dummy authorization manager.
+            AuthorizationManager ??= new AuthorizationManager(null);
 
             // Set up the module intrinsics
             Modules = new ModuleIntrinsics(this);
         }
 
         private static readonly object lockObject = new object();
-
-#if !CORECLR // System.AppDomain is not in CoreCLR
-        private static bool _assemblyEventHandlerSet = false;
-
-        /// <summary>
-        /// AssemblyResolve event handler that will look in the assembly cache to see
-        /// if the named assembly has been loaded. This is necessary so that assemblies loaded
-        /// with LoadFrom, which are in a different loaded context than Load, can still be used to
-        /// resolve types.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="args">The event args.</param>
-        /// <returns>The resolve assembly or null if not found.</returns>
-        private static Assembly PowerShellAssemblyResolveHandler(object sender, ResolveEventArgs args)
-        {
-            ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (ecFromTLS != null)
-            {
-                if (ecFromTLS.AssemblyCache != null)
-                {
-                    Assembly assembly;
-                    ecFromTLS.AssemblyCache.TryGetValue(args.Name, out assembly);
-                    return assembly;
-                }
-            }
-
-            return null;
-        }
-#endif
     }
 
     /// <summary>

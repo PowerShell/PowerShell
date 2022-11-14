@@ -689,7 +689,7 @@ namespace System.Management.Automation
 
             private List<CimModuleFile> _moduleFiles;
 
-            private class CimModuleManifestFile : CimModuleFile
+            private sealed class CimModuleManifestFile : CimModuleFile
             {
                 internal CimModuleManifestFile(string fileName, byte[] rawFileData)
                 {
@@ -705,7 +705,7 @@ namespace System.Management.Automation
                 internal override byte[] RawFileDataCore { get; }
             }
 
-            private class CimModuleImplementationFile : CimModuleFile
+            private sealed class CimModuleImplementationFile : CimModuleFile
             {
                 private readonly CimInstance _baseObject;
 

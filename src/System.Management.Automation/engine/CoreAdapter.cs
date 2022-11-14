@@ -833,7 +833,7 @@ namespace System.Management.Automation
                 return GetArgumentType(PSObject.Base(psref.Value), isByRefParameter: false);
             }
 
-            return argument.GetType();
+            return GetObjectType(argument, debase: false);
         }
 
         internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType, bool isByRef, bool allowCastingToByRefLikeType)
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
         }
 
         [DebuggerDisplay("OverloadCandidate: {method.methodDefinition}")]
-        private class OverloadCandidate
+        private sealed class OverloadCandidate
         {
             internal MethodInformation method;
             internal ParameterInformation[] parameters;
@@ -1377,6 +1377,27 @@ namespace System.Management.Automation
             return methodInfo;
         }
 
+        private static Type[] ResolveGenericTypeParameters(object[] genericTypeParameters)
+        {
+            if (genericTypeParameters is null || genericTypeParameters.Length == 0)
+            {
+                return null;
+            }
+
+            Type[] genericParamTypes = new Type[genericTypeParameters.Length];
+            for (int i = 0; i < genericTypeParameters.Length; i++)
+            {
+                genericParamTypes[i] = genericTypeParameters[i] switch
+                {
+                    Type paramType => paramType,
+                    ITypeName paramTypeName => TypeOps.ResolveTypeName(paramTypeName, paramTypeName.Extent),
+                    _ => throw new ArgumentException("Unexpected value"),
+                };
+            }
+
+            return genericParamTypes;
+        }
+
         private static MethodInformation FindBestMethodImpl(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
@@ -1394,59 +1415,84 @@ namespace System.Management.Automation
             // be turned into an array.
             // We also skip the optimization if the number of arguments and parameters is different
             // so we let the loop deal with possible optional parameters.
-            if ((methods.Length == 1) &&
-                (!methods[0].hasVarArgs) &&
-                (!methods[0].isGeneric) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
+            if (methods.Length == 1
+                && !methods[0].hasVarArgs
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
-                (methods[0].parameters.Length == arguments.Length))
+                && !methods[0].isGeneric
+                && (methods[0].method is null || !methods[0].method.DeclaringType.IsGenericTypeDefinition)
+                && methods[0].parameters.Length == arguments.Length)
             {
                 return methods[0];
             }
 
-            Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
-            List<OverloadCandidate> candidates = new List<OverloadCandidate>();
+            Type[] genericParamTypes = ResolveGenericTypeParameters(invocationConstraints?.GenericTypeParameters);
+            var candidates = new List<OverloadCandidate>();
+
             for (int i = 0; i < methods.Length; i++)
             {
-                MethodInformation method = methods[i];
+                MethodInformation methodInfo = methods[i];
 
-                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition)
+                if (methodInfo.method?.DeclaringType.IsGenericTypeDefinition == true
+                    || (!methodInfo.isGeneric && genericParamTypes is not null))
                 {
-                    continue; // skip methods defined by an *open* generic type
+                    // If method is defined by an *open* generic type, or
+                    // if generic parameters were provided and this method isn't generic, skip it.
+                    continue;
                 }
 
-                if (method.isGeneric)
+                if (methodInfo.isGeneric)
                 {
-                    Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
-                    Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
-                    if (invocationConstraints != null && invocationConstraints.ParameterTypes != null)
+                    if (genericParamTypes is not null)
                     {
-                        int parameterIndex = 0;
-                        foreach (Type typeConstraintFromCallSite in invocationConstraints.ParameterTypes)
+                        try
                         {
-                            if (typeConstraintFromCallSite != null)
-                            {
-                                argumentTypesForTypeInference[parameterIndex] = typeConstraintFromCallSite;
-                            }
-
-                            parameterIndex++;
+                            // This cast is safe, because
+                            // 1. Only ConstructorInfo and MethodInfo derive from MethodBase
+                            // 2. ConstructorInfo.IsGenericMethod is always false
+                            var originalMethod = (MethodInfo)methodInfo.method;
+                            methodInfo = new MethodInformation(
+                                originalMethod.MakeGenericMethod(genericParamTypes),
+                                parametersToIgnore: 0);
+                        }
+                        catch (ArgumentException)
+                        {
+                            // Just skip this possibility if the generic type parameters can't be used to make
+                            // a valid generic method here.
+                            continue;
                         }
                     }
-
-                    method = TypeInference.Infer(method, argumentTypesForTypeInference);
-                    if (method == null)
+                    else
                     {
-                        // Skip generic methods for which we cannot infer type arguments
-                        continue;
+                        // Infer the generic method when generic parameter types are not specified.
+                        Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
+                        Type[] paramConstraintTypes = invocationConstraints?.ParameterTypes;
+
+                        if (paramConstraintTypes is not null)
+                        {
+                            for (int k = 0; k < paramConstraintTypes.Length; k++)
+                            {
+                                if (paramConstraintTypes[k] is not null)
+                                {
+                                    argumentTypes[k] = paramConstraintTypes[k];
+                                }
+                            }
+                        }
+
+                        methodInfo = TypeInference.Infer(methodInfo, argumentTypes);
+                        if (methodInfo is null)
+                        {
+                            // Skip generic methods for which we cannot infer type arguments
+                            continue;
+                        }
                     }
                 }
 
-                if (!IsInvocationTargetConstraintSatisfied(method, invocationConstraints))
+                if (!IsInvocationTargetConstraintSatisfied(methodInfo, invocationConstraints))
                 {
                     continue;
                 }
 
-                ParameterInformation[] parameters = method.parameters;
+                ParameterInformation[] parameters = methodInfo.parameters;
                 if (arguments.Length != parameters.Length)
                 {
                     // Skip methods w/ an incorrect # of arguments.
@@ -1454,7 +1500,7 @@ namespace System.Management.Automation
                     if (arguments.Length > parameters.Length)
                     {
                         // If too many args,it's only OK if the method is varargs.
-                        if (!method.hasVarArgs)
+                        if (!methodInfo.hasVarArgs)
                         {
                             continue;
                         }
@@ -1462,12 +1508,12 @@ namespace System.Management.Automation
                     else
                     {
                         // Too few args, OK if there are optionals, or varargs with the param array omitted
-                        if (!method.hasOptional && (!method.hasVarArgs || (arguments.Length + 1) != parameters.Length))
+                        if (!methodInfo.hasOptional && (!methodInfo.hasVarArgs || (arguments.Length + 1) != parameters.Length))
                         {
                             continue;
                         }
 
-                        if (method.hasOptional)
+                        if (methodInfo.hasOptional)
                         {
                             // Count optionals.  This code is rarely hit, mainly when calling code in the
                             // assembly Microsoft.VisualBasic.  If it were more frequent, the optional count
@@ -1490,7 +1536,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                OverloadCandidate candidate = new OverloadCandidate(method, arguments.Length);
+                OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
                 for (int j = 0; candidate != null && j < parameters.Length; j++)
                 {
                     ParameterInformation parameter = parameters[j];
@@ -1581,13 +1627,23 @@ namespace System.Management.Automation
 
             if (candidates.Count == 0)
             {
-                if ((methods.Length > 0) && (methods.All(static m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
+                if (methods.Length > 0 && methods.All(static m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic))
                 {
                     errorId = "CannotInvokeStaticMethodOnUninstantiatedGenericType";
                     errorMsg = string.Format(
                         CultureInfo.InvariantCulture,
                         ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType,
                         methods[0].method.DeclaringType.FullName);
+                    return null;
+                }
+                else if (genericParamTypes is not null)
+                {
+                    errorId = "MethodCountCouldNotFindBestGeneric";
+                    errorMsg = string.Format(
+                        ExtendedTypeSystem.MethodGenericArgumentCountException,
+                        methods[0].method.Name,
+                        genericParamTypes.Length,
+                        arguments.Length);
                     return null;
                 }
                 else
@@ -1614,18 +1670,21 @@ namespace System.Management.Automation
 
         internal static Type EffectiveArgumentType(object arg)
         {
-            if (arg != null)
+            arg = PSObject.Base(arg);
+            if (arg is null)
             {
-                arg = PSObject.Base(arg);
-                object[] argAsArray = arg as object[];
-                if (argAsArray != null && argAsArray.Length > 0 && PSObject.Base(argAsArray[0]) != null)
-                {
-                    Type firstType = PSObject.Base(argAsArray[0]).GetType();
-                    bool allSameType = true;
+                return typeof(LanguagePrimitives.Null);
+            }
 
-                    for (int j = 1; j < argAsArray.Length; ++j)
+            if (arg is object[] array && array.Length > 0)
+            {
+                Type firstType = GetObjectType(array[0], debase: true);
+                if (firstType is not null)
+                {
+                    bool allSameType = true;
+                    for (int j = 1; j < array.Length; ++j)
                     {
-                        if (argAsArray[j] == null || firstType != PSObject.Base(argAsArray[j]).GetType())
+                        if (firstType != GetObjectType(array[j], debase: true))
                         {
                             allSameType = false;
                             break;
@@ -1637,13 +1696,19 @@ namespace System.Management.Automation
                         return firstType.MakeArrayType();
                     }
                 }
+            }
 
-                return arg.GetType();
-            }
-            else
+            return GetObjectType(arg, debase: false);
+        }
+
+        internal static Type GetObjectType(object obj, bool debase)
+        {
+            if (debase)
             {
-                return typeof(LanguagePrimitives.Null);
+                obj = PSObject.Base(obj);
             }
+
+            return obj == NullString.Value ? typeof(string) : obj?.GetType();
         }
 
         internal static void SetReferences(object[] arguments, MethodInformation methodInformation, object[] originalArguments)
@@ -2202,10 +2267,7 @@ namespace System.Management.Automation
 
             if (!_useReflection)
             {
-                if (_methodInvoker == null)
-                {
-                    _methodInvoker = GetMethodInvoker(methodInfo);
-                }
+                _methodInvoker ??= GetMethodInvoker(methodInfo);
 
                 if (_methodInvoker != null)
                 {
@@ -2616,7 +2678,7 @@ namespace System.Management.Automation
             /// </summary>
             internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> PSMethodCtor;
 
-            internal MethodCacheEntry(MethodBase[] methods)
+            internal MethodCacheEntry(IList<MethodBase> methods)
             {
                 methodInformationStructures = DotNetAdapter.GetMethodInformationArray(methods);
             }
@@ -2991,10 +3053,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
-                    {
-                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
-                    }
+                    _isHidden ??= member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
 
                     return _isHidden.Value;
                 }
@@ -3075,9 +3134,8 @@ namespace System.Management.Automation
 
         private static void PopulateMethodReflectionTable(Type type, MethodInfo[] methods, CacheTable typeMethods)
         {
-            for (int i = 0; i < methods.Length; i++)
+            foreach (MethodInfo method in methods)
             {
-                MethodInfo method = methods[i];
                 if (method.DeclaringType == type)
                 {
                     string methodName = method.Name;
@@ -3102,7 +3160,7 @@ namespace System.Management.Automation
 
         private static void PopulateMethodReflectionTable(ConstructorInfo[] ctors, CacheTable typeMethods)
         {
-            foreach (var ctor in ctors)
+            foreach (ConstructorInfo ctor in ctors)
             {
                 var previousMethodEntry = (List<MethodBase>)typeMethods["new"];
                 if (previousMethodEntry == null)
@@ -3127,26 +3185,14 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">BindingFlags to use.</param>
         private static void PopulateMethodReflectionTable(Type type, CacheTable typeMethods, BindingFlags bindingFlags)
         {
-            Type typeToGetMethod = type;
+            bool isStatic = bindingFlags.HasFlag(BindingFlags.Static);
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
-            // the derivation chain to find the first public parent, and use reflection methods on the public parent.
-            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
-            {
-                typeToGetMethod = GetFirstPublicParentType(type);
-            }
-
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            if (typeToGetMethod != null)
-            {
-                MethodInfo[] methods = typeToGetMethod.GetMethods(bindingFlags);
-                PopulateMethodReflectionTable(typeToGetMethod, methods, typeMethods);
-            }
+            MethodInfo[] methods = type.GetMethods(bindingFlags);
+            PopulateMethodReflectionTable(type, methods, typeMethods);
 
             Type[] interfaces = type.GetInterfaces();
-            for (int interfaceIndex = 0; interfaceIndex < interfaces.Length; interfaceIndex++)
+            foreach (Type interfaceType in interfaces)
             {
-                var interfaceType = interfaces[interfaceIndex];
                 if (!TypeResolver.IsPublic(interfaceType))
                 {
                     continue;
@@ -3154,41 +3200,50 @@ namespace System.Management.Automation
 
                 if (interfaceType.IsGenericType && type.IsArray)
                 {
-                    continue; // GetInterfaceMap is not supported in this scenario... not sure if we need to do something special here...
+                    // A bit of background: Array doesn't directly support any generic interface at all. Instead, a stub class
+                    // named 'SZArrayHelper' provides these generic interfaces at runtime for zero-based one-dimension arrays.
+                    // This is why '[object[]].GetInterfaceMap([ICollection[object]])' throws 'ArgumentException'.
+                    // (see https://stackoverflow.com/a/31883327)
+                    //
+                    // We had always been skipping generic interfaces for array types because 'GetInterfaceMap' doesn't work
+                    // for it. Today, even though we don't use 'GetInterfaceMap' anymore, the same code is kept here because
+                    // methods from generic interfaces of an array type could cause ambiguity in method overloads resolution.
+                    // For example, "$objs = @(1,2,3,4); $objs.Contains(1)" would fail because there would be 2 overloads of
+                    // the 'Contains' methods which are equally good matches for the call.
+                    //    bool IList.Contains(System.Object value)
+                    //    bool ICollection[Object].Contains(System.Object item)
+                    continue;
                 }
 
-                MethodInfo[] methods;
-                if (type.IsInterface)
-                {
-                    methods = interfaceType.GetMethods(bindingFlags);
-                }
-                else
-                {
-                    InterfaceMapping interfaceMapping = type.GetInterfaceMap(interfaceType);
-                    methods = interfaceMapping.InterfaceMethods;
-                }
+                methods = interfaceType.GetMethods(bindingFlags);
 
-                for (int methodIndex = 0; methodIndex < methods.Length; methodIndex++)
+                foreach (MethodInfo interfaceMethod in methods)
                 {
-                    MethodInfo interfaceMethodDefinition = methods[methodIndex];
-
-                    if ((!interfaceMethodDefinition.IsPublic) ||
-                        (interfaceMethodDefinition.IsStatic != ((BindingFlags.Static & bindingFlags) != 0)))
+                    if (isStatic && interfaceMethod.IsVirtual)
                     {
+                        // Ignore static virtual/abstract methods on an interface because:
+                        //  1. if it's implicitly implemented, which will be mostly the case, then the corresponding
+                        //     methods were already retrieved from the 'type.GetMethods' step above;
+                        //  2. if it's explicitly implemented, we cannot call 'Invoke(null, args)' on the static method,
+                        //     but have to use 'type.GetInterfaceMap(interfaceType)' to get the corresponding target
+                        //     methods, and call 'Invoke(null, args)' on them. The target methods will be non-public
+                        //     in this case, which we always ignore.
+                        //  3. The recommendation from .NET team is to ignore the static virtuals on interfaces,
+                        //     especially given that the APIs may change in .NET 7.
                         continue;
                     }
 
-                    var previousMethodEntry = (List<MethodBase>)typeMethods[interfaceMethodDefinition.Name];
+                    var previousMethodEntry = (List<MethodBase>)typeMethods[interfaceMethod.Name];
                     if (previousMethodEntry == null)
                     {
-                        var methodEntry = new List<MethodBase> { interfaceMethodDefinition };
-                        typeMethods.Add(interfaceMethodDefinition.Name, methodEntry);
+                        var methodEntry = new List<MethodBase> { interfaceMethod };
+                        typeMethods.Add(interfaceMethod.Name, methodEntry);
                     }
                     else
                     {
-                        if (!previousMethodEntry.Contains(interfaceMethodDefinition))
+                        if (!previousMethodEntry.Contains(interfaceMethod))
                         {
-                            previousMethodEntry.Add(interfaceMethodDefinition);
+                            previousMethodEntry.Add(interfaceMethod);
                         }
                     }
                 }
@@ -3211,7 +3266,7 @@ namespace System.Management.Automation
             for (int i = 0; i < typeMethods.memberCollection.Count; i++)
             {
                 typeMethods.memberCollection[i] =
-                    new MethodCacheEntry(((List<MethodBase>)typeMethods.memberCollection[i]).ToArray());
+                    new MethodCacheEntry((List<MethodBase>)typeMethods.memberCollection[i]);
             }
         }
 
@@ -3224,38 +3279,24 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">BindingFlags to use.</param>
         private static void PopulateEventReflectionTable(Type type, Dictionary<string, EventCacheEntry> typeEvents, BindingFlags bindingFlags)
         {
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
-            // the derivation chain to find the first public parent, and use reflection events on the public parent.
-            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
+            EventInfo[] events = type.GetEvents(bindingFlags);
+            var tempTable = new Dictionary<string, List<EventInfo>>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (EventInfo typeEvent in events)
             {
-                type = GetFirstPublicParentType(type);
+                string eventName = typeEvent.Name;
+                if (!tempTable.TryGetValue(eventName, out List<EventInfo> entryList))
+                {
+                    entryList = new List<EventInfo>();
+                    tempTable.Add(eventName, entryList);
+                }
+
+                entryList.Add(typeEvent);
             }
 
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            if (type != null)
+            foreach (KeyValuePair<string, List<EventInfo>> entry in tempTable)
             {
-                EventInfo[] events = type.GetEvents(bindingFlags);
-                var tempTable = new Dictionary<string, List<EventInfo>>(StringComparer.OrdinalIgnoreCase);
-                for (int i = 0; i < events.Length; i++)
-                {
-                    var typeEvent = events[i];
-                    string eventName = typeEvent.Name;
-                    List<EventInfo> previousEntry;
-                    if (!tempTable.TryGetValue(eventName, out previousEntry))
-                    {
-                        var eventEntry = new List<EventInfo> { typeEvent };
-                        tempTable.Add(eventName, eventEntry);
-                    }
-                    else
-                    {
-                        previousEntry.Add(typeEvent);
-                    }
-                }
-
-                foreach (var entry in tempTable)
-                {
-                    typeEvents.Add(entry.Key, new EventCacheEntry(entry.Value.ToArray()));
-                }
+                typeEvents.Add(entry.Key, new EventCacheEntry(entry.Value.ToArray()));
             }
         }
 
@@ -3270,9 +3311,8 @@ namespace System.Management.Automation
             ParameterInfo[] propertyParameters = property.GetIndexParameters();
             int propertyIndexLength = propertyParameters.Length;
 
-            for (int propertyIndex = 0; propertyIndex < previousProperties.Count; propertyIndex++)
+            foreach (PropertyInfo previousProperty in previousProperties)
             {
-                var previousProperty = previousProperties[propertyIndex];
                 ParameterInfo[] previousParameters = previousProperty.GetIndexParameters();
                 if (previousParameters.Length == propertyIndexLength)
                 {
@@ -3308,79 +3348,81 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">BindingFlags to use.</param>
         private static void PopulatePropertyReflectionTable(Type type, CacheTable typeProperties, BindingFlags bindingFlags)
         {
+            bool isStatic = bindingFlags.HasFlag(BindingFlags.Static);
             var tempTable = new Dictionary<string, List<PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
-            Type typeToGetPropertyAndField = type;
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up the
-            // derivation chain to find the first public parent, and use reflection properties/fields on the public parent.
-            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
+            PropertyInfo[] properties = type.GetProperties(bindingFlags);
+            foreach (PropertyInfo property in properties)
             {
-                typeToGetPropertyAndField = GetFirstPublicParentType(type);
-            }
-
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            PropertyInfo[] properties;
-            if (typeToGetPropertyAndField != null)
-            {
-                properties = typeToGetPropertyAndField.GetProperties(bindingFlags);
-                for (int i = 0; i < properties.Length; i++)
-                {
-                    PopulateSingleProperty(type, properties[i], tempTable, properties[i].Name);
-                }
+                PopulateSingleProperty(type, property, tempTable, property.Name);
             }
 
             Type[] interfaces = type.GetInterfaces();
-            for (int interfaceIndex = 0; interfaceIndex < interfaces.Length; interfaceIndex++)
+            foreach (Type interfaceType in interfaces)
             {
-                Type interfaceType = interfaces[interfaceIndex];
                 if (!TypeResolver.IsPublic(interfaceType))
                 {
                     continue;
                 }
 
                 properties = interfaceType.GetProperties(bindingFlags);
-                for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++)
+                foreach (PropertyInfo property in properties)
                 {
-                    PopulateSingleProperty(type, properties[propertyIndex], tempTable, properties[propertyIndex].Name);
+                    if (isStatic &&
+                        (property.GetMethod?.IsVirtual == true || property.SetMethod?.IsVirtual == true))
+                    {
+                        // Ignore static virtual/abstract properties on an interface because:
+                        //  1. if it's implicitly implemented, which will be mostly the case, then the corresponding
+                        //     properties were already retrieved from the 'type.GetProperties' step above;
+                        //  2. if it's explicitly implemented, we cannot call 'GetValue(null)' on the static property,
+                        //     but have to use 'type.GetInterfaceMap(interfaceType)' to get the corresponding target
+                        //     get/set accessor methods, and call 'Invoke(null, args)' on them. The target methods will
+                        //     be non-public in this case, which we always ignore.
+                        //  3. The recommendation from .NET team is to ignore the static virtuals on interfaces,
+                        //     especially given that the APIs may change in .NET 7.
+                        continue;
+                    }
+
+                    PopulateSingleProperty(type, property, tempTable, property.Name);
                 }
             }
 
-            foreach (var pairs in tempTable)
+            foreach (KeyValuePair<string, List<PropertyInfo>> entry in tempTable)
             {
-                var propertiesList = pairs.Value;
+                List<PropertyInfo> propertiesList = entry.Value;
                 PropertyInfo firstProperty = propertiesList[0];
                 if ((propertiesList.Count > 1) || (firstProperty.GetIndexParameters().Length != 0))
                 {
-                    typeProperties.Add(pairs.Key, new ParameterizedPropertyCacheEntry(propertiesList));
+                    typeProperties.Add(entry.Key, new ParameterizedPropertyCacheEntry(propertiesList));
                 }
                 else
                 {
-                    typeProperties.Add(pairs.Key, new PropertyCacheEntry(firstProperty));
+                    typeProperties.Add(entry.Key, new PropertyCacheEntry(firstProperty));
                 }
             }
 
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            if (typeToGetPropertyAndField != null)
+            FieldInfo[] fields = type.GetFields(bindingFlags);
+            foreach (FieldInfo field in fields)
             {
-                FieldInfo[] fields = typeToGetPropertyAndField.GetFields(bindingFlags);
-                for (int i = 0; i < fields.Length; i++)
+                string fieldName = field.Name;
+                var previousMember = (PropertyCacheEntry)typeProperties[fieldName];
+                if (previousMember == null)
                 {
-                    FieldInfo field = fields[i];
-                    string fieldName = field.Name;
-                    var previousMember = (PropertyCacheEntry)typeProperties[fieldName];
-                    if (previousMember == null)
-                    {
-                        typeProperties.Add(fieldName, new PropertyCacheEntry(field));
-                    }
-                    else
-                    {
-                        // A property/field declared with new in a derived class might appear twice
-                        if (!string.Equals(previousMember.member.Name, fieldName))
-                        {
-                            throw new ExtendedTypeSystemException("NotACLSComplaintField", null,
-                                ExtendedTypeSystem.NotAClsCompliantFieldProperty, fieldName, type.FullName, previousMember.member.Name);
-                        }
-                    }
+                    typeProperties.Add(fieldName, new PropertyCacheEntry(field));
+                }
+                else if (!string.Equals(previousMember.member.Name, fieldName))
+                {
+                    // A property/field declared with 'new' in a derived class might appear twice, and it's OK to ignore
+                    // the second property/field in that case.
+                    // However, if the names of two properties/fields are different only in letter casing, then it's not
+                    // CLS complaint and we throw an exception.
+                    throw new ExtendedTypeSystemException(
+                        "NotACLSComplaintField",
+                        innerException: null,
+                        ExtendedTypeSystem.NotAClsCompliantFieldProperty,
+                        fieldName,
+                        type.FullName,
+                        previousMember.member.Name);
                 }
             }
         }
@@ -3410,68 +3452,6 @@ namespace System.Management.Automation
                 previousPropertyEntry.Add(property);
             }
         }
-
-        #region Handle_Internal_Type_Reflection_In_CoreCLR
-
-        /// <summary>
-        /// The dictionary cache about if an assembly supports reflection execution on its internal types.
-        /// </summary>
-        private static readonly ConcurrentDictionary<string, bool> s_disallowReflectionCache =
-            new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-
-        /// <summary>
-        /// Check if the type is defined in an assembly that disallows reflection execution on internal types.
-        ///  - .NET Framework assemblies don't support reflection execution on their internal types.
-        /// </summary>
-        internal static bool DisallowPrivateReflection(Type type)
-        {
-            bool disallowReflection = false;
-            Assembly assembly = type.Assembly;
-            if (s_disallowReflectionCache.TryGetValue(assembly.FullName, out disallowReflection))
-            {
-                return disallowReflection;
-            }
-
-            var productAttribute = assembly.GetCustomAttribute<AssemblyProductAttribute>();
-            if (productAttribute != null && string.Equals(productAttribute.Product, "Microsoft® .NET Framework", StringComparison.OrdinalIgnoreCase))
-            {
-                disallowReflection = true;
-            }
-            else
-            {
-                #pragma warning disable SYSLIB0015
-                // Check for 'DisablePrivateReflectionAttribute'. It's applied at the assembly level, and allow an assembly to opt-out of private/internal reflection.
-                var disablePrivateReflectionAttribute = assembly.GetCustomAttribute<System.Runtime.CompilerServices.DisablePrivateReflectionAttribute>();
-                disallowReflection = disablePrivateReflectionAttribute != null;
-                #pragma warning restore SYSLIB0015
-            }
-
-            s_disallowReflectionCache.TryAdd(assembly.FullName, disallowReflection);
-            return disallowReflection;
-        }
-
-        /// <summary>
-        /// Walk up the derivation chain to find the first public parent type.
-        /// </summary>
-        internal static Type GetFirstPublicParentType(Type type)
-        {
-            Dbg.Assert(!TypeResolver.IsPublic(type), "type should not be public.");
-            Type parent = type.BaseType;
-            while (parent != null)
-            {
-                if (parent.IsPublic)
-                {
-                    return parent;
-                }
-
-                parent = parent.BaseType;
-            }
-
-            // Return null when type is an interface
-            return null;
-        }
-
-        #endregion Handle_Internal_Type_Reflection_In_CoreCLR
 
         /// <summary>
         /// Called from GetProperty and GetProperties to populate the
@@ -3888,6 +3868,33 @@ namespace System.Management.Automation
             return entry.isStatic;
         }
 
+        /// <summary>
+        /// Get the string representation of the default value of passed-in parameter.
+        /// </summary>
+        /// <param name="parameterInfo">ParameterInfo containing the parameter's default value.</param>
+        /// <returns>String representation of the parameter's default value.</returns>
+        private static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
+        {
+            var parameterType = parameterInfo.ParameterType;
+            var parameterDefaultValue = parameterInfo.DefaultValue;
+
+            if (parameterDefaultValue == null)
+            {
+                return (parameterType.IsValueType || parameterType.IsGenericMethodParameter)
+                    ? "default"
+                    : "null";
+            }
+
+            if (parameterType.IsEnum)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterDefaultValue.ToString());
+            }
+
+            return (parameterDefaultValue is string)
+                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterDefaultValue.ToString())
+                : parameterDefaultValue.ToString();
+        }
+
         #endregion auxiliary methods and classes
 
         #region virtual
@@ -4286,11 +4293,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="methods">The methods to be converted.</param>
         /// <returns>The MethodInformation[] corresponding to methods.</returns>
-        internal static MethodInformation[] GetMethodInformationArray(MethodBase[] methods)
+        internal static MethodInformation[] GetMethodInformationArray(IList<MethodBase> methods)
         {
-            int methodCount = methods.Length;
-            MethodInformation[] returnValue = new MethodInformation[methodCount];
-            for (int i = 0; i < methods.Length; i++)
+            var returnValue = new MethodInformation[methods.Count];
+            for (int i = 0; i < methods.Count; i++)
             {
                 returnValue[i] = new MethodInformation(methods[i], 0);
             }
@@ -4481,6 +4487,13 @@ namespace System.Management.Automation
                     builder.Append(ToStringCodeMethods.Type(parameterType));
                     builder.Append(' ');
                     builder.Append(parameter.Name);
+
+                    if (parameter.HasDefaultValue)
+                    {
+                        builder.Append(" = ");
+                        builder.Append(GetDefaultValueStringRepresentation(parameter));
+                    }
+
                     builder.Append(", ");
                 }
 
@@ -5964,7 +5977,7 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    s_tracer.WriteLine("Inference succesful: {0}", instantiatedMethod);
+                    s_tracer.WriteLine("Inference successful: {0}", instantiatedMethod);
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)

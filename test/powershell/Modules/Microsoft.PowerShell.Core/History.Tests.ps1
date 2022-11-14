@@ -49,6 +49,58 @@ Describe "History cmdlet test cases" -Tags "CI" {
         }
     }
 
+    Context 'Conversions and Culture tests' {
+
+        BeforeAll {
+            $cultureTestCases = @(
+                @{
+                    Culture   = 'en-us'
+                    StartTime = '08/18/2021 16:43:50'
+                    EndTime   = '08/18/2021 16:44:50'
+                }
+                @{
+                    Culture   = 'en-au'
+                    StartTime = '18/08/2021 16:43:50'
+                    EndTime   = '18/08/2021 16:44:50'
+                }
+            )
+
+            $oldCulture = [cultureinfo]::CurrentCulture
+        }
+
+        AfterEach {
+            [cultureinfo]::CurrentCulture = $oldCulture
+        }
+
+        It "respects current culture settings when handling datetime conversions" -TestCases $cultureTestCases {
+            param($Culture, $StartTime, $EndTime)
+
+            [cultureinfo]::CurrentCulture = [cultureinfo]::GetCultureInfo($Culture)
+
+            $history = [PSCustomObject] @{
+                CommandLine        = "test-command"
+                ExecutionStatus    = [Management.Automation.Runspaces.PipelineState]::Completed
+                StartExecutionTime = $StartTime
+                EndExecutionTime   = $EndTime
+            }
+
+            { $history | Add-History -ErrorAction Stop } | Should -Not -Throw -Because 'the datetime should be converted according to the current culture'
+        }
+
+        It "throws an error when asked to convert a date format that doesn't match the current culture" {
+            [cultureinfo]::CurrentCulture = [cultureinfo]::GetCultureInfo('en-au')
+            $history = [PSCustomObject] @{
+                CommandLine        = "test-command"
+                ExecutionStatus    = [Management.Automation.Runspaces.PipelineState]::Completed
+                StartExecutionTime = '08/18/2021 16:43:50'
+                EndExecutionTime   = '08/18/2021 16:44:50'
+            }
+
+            $errorMessage = 'Cannot add history because the input object has a format that is not valid.'
+            { $history | Add-History -ErrorAction Stop } | Should -Throw -ExpectedMessage $errorMessage
+        }
+    }
+
     It "Tests Invoke-History on a cmdlet that generates output on all streams" {
         $streamSpammer = '
         function StreamSpammer

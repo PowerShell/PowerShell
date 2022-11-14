@@ -1,18 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-$FeatureEnabled = $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace')
-
 Describe 'Runspace Breakpoint Unit Tests - Feature-Enabled' -Tags 'CI' {
 
     BeforeAll {
-        if (!$FeatureEnabled) {
-            Write-Verbose 'Test series skipped. This series of tests requires the experimental feature ''Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace'' to be enabled.' -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues['it:skip'] = $true
-            return
-        }
-
         # Start a job; this will create a runspace in which we can manage breakpoints
         $job = Start-Job -ScriptBlock {
             Set-PSBreakpoint -Command Start-Sleep
@@ -37,11 +28,6 @@ Describe 'Runspace Breakpoint Unit Tests - Feature-Enabled' -Tags 'CI' {
     }
 
     AfterAll {
-        if (!$FeatureEnabled) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            return
-        }
-
         # Remove the running job forcibly (whether it has finished or not)
         Remove-Job -Job $job -Force
     }

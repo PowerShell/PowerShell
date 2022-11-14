@@ -1,6 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
         It "Should call format table on piped input without error" {
                 { Get-Date | Format-Table } | Should -Not -Throw
         }
@@ -832,4 +845,42 @@ A Name                                  B
             $actual = $obj | Format-Table | Out-String
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
+
+        It 'Table should format floats, doubles, and decimals with number of decimals from current culture' {
+            $o = [PSCustomObject]@{
+                double = [double]1234.56789
+                float = [float]9876.54321
+                decimal = [decimal]4567.123456789
+            }
+
+            $table = $o | Format-Table | Out-String
+
+            $line = foreach ($line in $table.split([System.Environment]::NewLine)) { if ($line -match '^1234') { $line } }
+            $line | Should -Not -BeNullOrEmpty
+            $expectedDecimals = (Get-Culture).NumberFormat.NumberDecimalDigits
+
+            foreach ($num in $line.split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)) {
+                $numDecimals = $num.length - $num.indexOf((Get-Culture).NumberFormat.NumberDecimalSeparator) - 1
+                $numDecimals | Should -Be $expectedDecimals -Because $num
+            }
+        }
     }
+
+Describe 'Table color tests' -Tag 'CI' {
+    BeforeAll {
+        $originalRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = 'Ansi'
+    }
+
+    AfterAll {
+        $PSStyle.OutputRendering = $originalRendering
+    }
+
+    It 'Table header should use TableHeader' {
+        ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
+$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)
+$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)
+  1
+"@
+    }
+}

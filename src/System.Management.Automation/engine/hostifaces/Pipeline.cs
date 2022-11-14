@@ -445,7 +445,7 @@ namespace System.Management.Automation.Runspaces
         ///
         /// This flag is used to force the redirection. By default it is false to maintain compatibility with
         /// V1, but the V2 hosting interface (PowerShell class) sets this flag to true to ensure the global
-        /// error output pipe is always set and $ErrorActionPreference when invoking the Pipeline.
+        /// error output pipe is always set and $ErrorActionPreference is checked when invoking the Pipeline.
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = false;
 

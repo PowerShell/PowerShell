@@ -1057,12 +1057,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isLocalSession == null)
-                {
-                    // Remote debug sessions always have a ServerRemoteHost.  Otherwise it is a local session.
-                    _isLocalSession = !(((_context.InternalHost.ExternalHost != null) &&
-                                         (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)));
-                }
+                // Remote debug sessions always have a ServerRemoteHost.  Otherwise it is a local session.
+                _isLocalSession ??= !((_context.InternalHost.ExternalHost != null) &&
+                    (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost));
 
                 return _isLocalSession.Value;
             }
@@ -1575,7 +1572,7 @@ namespace System.Management.Automation
         #region private members
 
         [DebuggerDisplay("{FunctionContext.CurrentPosition}")]
-        private class CallStackInfo
+        private sealed class CallStackInfo
         {
             internal InvocationInfo InvocationInfo { get; set; }
 
@@ -1807,7 +1804,8 @@ namespace System.Management.Automation
                 {
                     // Fix up prompt.
                     ++index;
-                    string debugPrompt = "\"[DBG]: " + originalPromptString.Substring(index, originalPromptString.Length - index);
+                    string debugPrompt = string.Concat("\"[DBG]: ", originalPromptString.AsSpan(index, originalPromptString.Length - index));
+
                     defaultPromptInfo.Update(
                         ScriptBlock.Create(debugPrompt), true, ScopedItemOptions.Unspecified);
                 }
@@ -1948,10 +1946,7 @@ namespace System.Management.Automation
                 if (_preserveUnhandledDebugStopEvent)
                 {
                     // Lazily create the event object.
-                    if (_preserveDebugStopEvent == null)
-                    {
-                        _preserveDebugStopEvent = new ManualResetEventSlim(true);
-                    }
+                    _preserveDebugStopEvent ??= new ManualResetEventSlim(true);
 
                     // Set the event handle to non-signaled.
                     if (!_preserveDebugStopEvent.IsSet)
@@ -2151,11 +2146,8 @@ namespace System.Management.Automation
                 {
                     lock (_syncObject)
                     {
-                        if (_isSystemLockedDown == null)
-                        {
-                            _isSystemLockedDown = (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                                System.Management.Automation.Security.SystemEnforcementMode.Enforce);
-                        }
+                        _isSystemLockedDown ??= (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                            System.Management.Automation.Security.SystemEnforcementMode.Enforce);
                     }
                 }
 
@@ -2394,10 +2386,7 @@ namespace System.Management.Automation
             }
 
             PowerShell ps = _psDebuggerCommand;
-            if (ps != null)
-            {
-                ps.BeginStop(null, null);
-            }
+            ps?.BeginStop(null, null);
         }
 
         /// <summary>
@@ -3248,11 +3237,7 @@ namespace System.Management.Automation
                 try
                 {
                     Debugger nestedDebugger = item.NestedDebugger;
-
-                    if (nestedDebugger != null)
-                    {
-                        nestedDebugger.SetDebuggerStepMode(enableStepping);
-                    }
+                    nestedDebugger?.SetDebuggerStepMode(enableStepping);
                 }
                 catch (PSNotImplementedException) { }
             }
@@ -4544,10 +4529,7 @@ namespace System.Management.Automation
                 // If this is a remote server debugger then we want to convert the pending remote
                 // debugger stop to a local debugger stop event for this Debug-Runspace to handle.
                 ServerRemoteDebugger serverRemoteDebugger = this._wrappedDebugger as ServerRemoteDebugger;
-                if (serverRemoteDebugger != null)
-                {
-                    serverRemoteDebugger.ReleaseAndRaiseDebugStopLocal();
-                }
+                serverRemoteDebugger?.ReleaseAndRaiseDebugStopLocal();
             }
         }
 
@@ -4959,10 +4941,7 @@ namespace System.Management.Automation
             else
             {
                 Pipeline pipelineCommand = runningCmd as Pipeline;
-                if (pipelineCommand != null)
-                {
-                    pipelineCommand.ResumeIncomingData();
-                }
+                pipelineCommand?.ResumeIncomingData();
             }
         }
 
@@ -5337,47 +5316,29 @@ namespace System.Management.Automation
 
         private static void WriteLine(string line, PSHost host, IList<PSObject> output)
         {
-            if (host != null)
-            {
-                host.UI.WriteLine(line);
-            }
+            host?.UI.WriteLine(line);
 
-            if (output != null)
-            {
-                output.Add(new PSObject(line));
-            }
+            output?.Add(new PSObject(line));
         }
 
         private static void WriteCR(PSHost host, IList<PSObject> output)
         {
-            if (host != null)
-            {
-                host.UI.WriteLine();
-            }
+            host?.UI.WriteLine();
 
-            if (output != null)
-            {
-                output.Add(new PSObject(Crlf));
-            }
+            output?.Add(new PSObject(Crlf));
         }
 
         private static void WriteErrorLine(string error, PSHost host, IList<PSObject> output)
         {
-            if (host != null)
-            {
-                host.UI.WriteErrorLine(error);
-            }
+            host?.UI.WriteErrorLine(error);
 
-            if (output != null)
-            {
-                output.Add(
-                    new PSObject(
-                        new ErrorRecord(
-                            new RuntimeException(error),
-                            "DebuggerError",
-                            ErrorCategory.InvalidOperation,
-                            null)));
-            }
+            output?.Add(
+                new PSObject(
+                    new ErrorRecord(
+                        new RuntimeException(error),
+                        "DebuggerError",
+                        ErrorCategory.InvalidOperation,
+                        null)));
         }
     }
 

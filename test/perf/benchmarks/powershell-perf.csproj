@@ -46,6 +46,7 @@
   <ItemGroup Condition="'$(PerfTargetVersion)' == ''">
     <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
     <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+    <ProjectReference Include="../../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PerfTargetVersion)' != ''">
@@ -59,6 +60,8 @@
     <PackageReference Include="Microsoft.PowerShell.ConsoleHost" Version="$(PerfTargetVersion)" />
     <PackageReference Include="Microsoft.PowerShell.Security" Version="$(PerfTargetVersion)" />
     <PackageReference Include="Microsoft.PowerShell.CoreCLR.Eventing" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.WSMan.Management" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.WSMan.Runtime" Version="$(PerfTargetVersion)" />
     <PackageReference Include="System.Management.Automation" Version="$(PerfTargetVersion)" />
   </ItemGroup>
 

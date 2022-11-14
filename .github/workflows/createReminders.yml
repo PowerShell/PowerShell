@@ -1,0 +1,19 @@
+name: 'Create reminder'
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  reminder:
+    permissions:
+      issues: write  # for agrc/create-reminder-action to set reminders on issues
+      pull-requests: write  # for agrc/create-reminder-action to set reminders on PRs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check for reminder
+        uses: agrc/create-reminder-action@v1

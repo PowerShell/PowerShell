@@ -1344,7 +1344,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "RemoveSource".
-        /// Specifies either to remove the event log and and associated source or
+        /// Specifies either to remove the event log and associated source or
         /// source. alone.
         /// When this parameter is not specified, the cmdlet uses Delete Method which
         /// clears the eventlog and also the source associated with it.

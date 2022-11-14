@@ -214,7 +214,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// Used primarily by the private ThrowOnFailure method when building
         /// Exception objects to throw.
         /// </remarks>
-        private class Context
+        private sealed class Context
         {
             public ContextOperation operation;
             public ContextObjectType type;
@@ -308,7 +308,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// AccountInfo is the return type from the private
         /// LookupAccountInfo method.
         /// </remarks>
-        private class AccountInfo
+        private sealed class AccountInfo
         {
             public string AccountName;
             public string DomainName;

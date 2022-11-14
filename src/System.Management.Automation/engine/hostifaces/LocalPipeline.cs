@@ -487,10 +487,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSLocalEventManager eventManager = LocalRunspace.Events as PSLocalEventManager;
-                    if (eventManager != null)
-                    {
-                        eventManager.ProcessPendingActions();
-                    }
+                    eventManager?.ProcessPendingActions();
 
                     // restore the trap state...
                     this.LocalRunspace.ExecutionContext.PropagateExceptionsToEnclosingStatementBlock = oldTrapState;

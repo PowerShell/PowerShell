@@ -187,7 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimSessionProxy proxy = CreateCimSessionProxy(newCimInstanceContext.Proxy);
-            string nameSpace = (cimInstance.CimSystemProperties.Namespace == null) ? newCimInstanceContext.Namespace : cimInstance.CimSystemProperties.Namespace;
+            string nameSpace = cimInstance.CimSystemProperties.Namespace ?? newCimInstanceContext.Namespace;
             proxy.GetInstanceAsync(nameSpace, cimInstance);
         }
 

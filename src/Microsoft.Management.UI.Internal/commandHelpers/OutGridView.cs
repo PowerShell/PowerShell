@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
@@ -246,7 +247,6 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="outputMode">Output mode of the out-gridview.</param>
         /// <returns>A new ManagementList.</returns>
-        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();
@@ -497,6 +497,16 @@ namespace Microsoft.Management.UI.Internal
                     {
                         try
                         {
+                            // Remove any potential ANSI decoration
+                            foreach (var property in value.Properties)
+                            {
+                                if (property.Value is string str)
+                                {
+                                    StringDecorated decoratedString = new StringDecorated(str);
+                                    property.Value = decoratedString.ToString(OutputRendering.PlainText);
+                                }
+                            }
+
                             this.listItems.Add(value);
                         }
                         catch (Exception e)

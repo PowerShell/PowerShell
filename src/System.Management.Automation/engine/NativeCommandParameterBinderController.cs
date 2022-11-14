@@ -50,13 +50,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a value indicating whether to use the new API for StartInfo.
+        /// Gets the value indicating what type of native argument binding to use.
         /// </summary>
-        internal bool UseArgumentList
+        internal NativeArgumentPassingStyle ArgumentPassingStyle
         {
             get
             {
-                return ((NativeCommandParameterBinder)DefaultParameterBinder).UseArgumentList;
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).ArgumentPassingStyle;
             }
         }
 

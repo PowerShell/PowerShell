@@ -21,8 +21,10 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
-        internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
+        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
+        internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
+        internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
+        internal const string PSFeedbackProvider = "PSFeedbackProvider";
 
         #endregion
 
@@ -106,40 +108,26 @@ namespace System.Management.Automation
                     description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
-                    name: "PSImplicitRemotingBatching",
-                    description: "Batch implicit remoting proxy commands to improve performance"),
-                new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
-#if UNIX
-                new ExperimentalFeature(
-                    name: "PSUnixFileStat",
-                    description: "Provide unix permission information for files and directories"),
-#endif
-                new ExperimentalFeature(
-                    name: "PSCultureInvariantReplaceOperator",
-                    description: "Use culture invariant to-string convertor for lval in replace operator"),
-                new ExperimentalFeature(
-                    name: "PSNativePSPathResolution",
-                    description: "Convert PSPath to filesystem path, if possible, for native commands"),
-                new ExperimentalFeature(
-                    name: "PSNotApplyErrorActionToStderr",
-                    description: "Don't have $ErrorActionPreference affect stderr output"),
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
-                    name: "PSAnsiRendering",
-                    description: "Enable $PSStyle variable to control ANSI rendering of strings"),
-                new ExperimentalFeature(
-                    name: PSAnsiProgressFeatureName,
-                    description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
-                new ExperimentalFeature(
-                    name: PSNativeCommandArgumentPassingFeatureName,
-                    description: "Use ArgumentList when invoking a native command"),
-                new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandErrorActionPreferenceFeatureName,
+                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
+                new ExperimentalFeature(
+                    name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
+                    description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
+                new ExperimentalFeature(
+                    name: PSCustomTableHeaderLabelDecoration,
+                    description: "Formatting differentiation for table header labels that aren't property members"),
+                new ExperimentalFeature(
+                    name: PSFeedbackProvider,
+                    description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

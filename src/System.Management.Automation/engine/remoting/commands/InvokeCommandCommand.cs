@@ -792,6 +792,25 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public override Hashtable Options
+        {
+            get 
+            {
+                return base.Options;
+            }
+
+            set 
+            {
+                base.Options = value;
+            }
+        }
+
         #endregion
 
         #region Remote Debug Parameters
@@ -1444,10 +1463,7 @@ namespace Microsoft.PowerShell.Commands
             operation.RunspaceDebugStop -= HandleRunspaceDebugStop;
 
             var hostDebugger = GetHostDebugger();
-            if (hostDebugger != null)
-            {
-                hostDebugger.QueueRunspaceForDebug(args.Runspace);
-            }
+            hostDebugger?.QueueRunspaceForDebug(args.Runspace);
         }
 
         private void HandleJobStateChanged(object sender, JobStateEventArgs e)
@@ -1464,10 +1480,7 @@ namespace Microsoft.PowerShell.Commands
                 // Signal that this job has been disconnected, or has ended.
                 lock (_jobSyncObject)
                 {
-                    if (_disconnectComplete != null)
-                    {
-                        _disconnectComplete.Set();
-                    }
+                    _disconnectComplete?.Set();
                 }
             }
         }
@@ -2071,11 +2084,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_asjob)
                 {
-                    if (_job != null)
-                    {
-                        // job will be null in the "InProcess" case
-                        _job.Dispose();
-                    }
+                    // job will be null in the "InProcess" case
+                    _job?.Dispose();
 
                     _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                     _throttleManager.Dispose();

@@ -27,7 +27,7 @@ using System.Text;
 
 namespace Microsoft.PowerShell.CoreCLR
 {
-    public class TypeCatalogGen
+    public static class TypeCatalogGen
     {
         // Help messages
         private const string Param_TargetCSharpFilePath = "TargetCSharpFilePath";
@@ -461,7 +461,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper class to keep the metadata of a type.
         /// </summary>
-        private class TypeMetadata
+        private sealed class TypeMetadata
         {
             internal readonly string AssemblyName;
             internal readonly bool IsObsolete;

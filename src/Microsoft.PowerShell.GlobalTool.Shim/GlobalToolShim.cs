@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
     /// <summary>
     /// Shim layer to chose the appropriate runtime for PowerShell DotNet Global tool.
     /// </summary>
-    public class EntryPoint
+    public static class EntryPoint
     {
         private const string PwshDllName = "pwsh.dll";
 
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
         public static int Main(string[] args)
         {
             var currentPath = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory.FullName;
-            var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            var isWindows = OperatingSystem.IsWindows();
 
             string platformFolder = isWindows ? WinFolderName : UnixFolderName;
 

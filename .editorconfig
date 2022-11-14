@@ -44,6 +44,9 @@ indent_size = 2
 [*.{props,targets,config,nuspec}]
 indent_size = 2
 
+[*.tsv]
+indent_style = tab
+
 # Dotnet code style settings:
 [*.cs]
 # Sort using and Import directives with System.* appearing first

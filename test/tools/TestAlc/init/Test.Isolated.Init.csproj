@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\Test.Common.props"/>
+
+  <PropertyGroup>
+    <!-- Disable PDB generation -->
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
+
+    <!-- Disable deps.json generation -->
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+
+    <!-- Deploy the produced assembly -->
+    <PublishDir>..\..\Modules\IsolatedModule</PublishDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

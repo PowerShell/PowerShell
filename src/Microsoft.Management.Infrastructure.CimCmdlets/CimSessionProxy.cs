@@ -540,13 +540,33 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region set operation options
 
         /// <summary>
+        /// Gets or sets a value indicating whether to retrieve localized information for the CIM class.
+        /// </summary>
+        public bool Amended
+        {
+            get => OperationOptions.Flags.HasFlag(CimOperationFlags.LocalizedQualifiers);
+
+            set
+            {
+                if (value)
+                {
+                    OperationOptions.Flags |= CimOperationFlags.LocalizedQualifiers;
+                }
+                else
+                {
+                    OperationOptions.Flags &= ~CimOperationFlags.LocalizedQualifiers;
+                }
+            }
+        }
+
+        /// <summary>
         /// Set timeout value (seconds) of the operation.
         /// </summary>
-        public UInt32 OperationTimeout
+        public uint OperationTimeout
         {
             get
             {
-                return (UInt32)this.OperationOptions.Timeout.TotalSeconds;
+                return (uint)this.OperationOptions.Timeout.TotalSeconds;
             }
 
             set
@@ -666,9 +686,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.OperationOptions = new CimOperationOptions(operOptions);
             }
-            else if (this.OperationOptions == null)
+            else
             {
-                this.OperationOptions = new CimOperationOptions();
+                this.OperationOptions ??= new CimOperationOptions();
             }
 
             this.EnableMethodResultStreaming = true;
@@ -821,7 +841,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="message"></param>
-        internal void WriteMessage(UInt32 channel, string message)
+        internal void WriteMessage(uint channel, string message)
         {
             DebugHelper.WriteLogEx("Channel = {0} message = {1}", 0, channel, message);
             try
@@ -863,7 +883,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimCmdletStrings.CimOperationStart,
                 operation,
                 (parameters.Length == 0) ? "null" : parameters.ToString());
-            WriteMessage((UInt32)CimWriteMessageChannel.Verbose, operationStartMessage);
+            WriteMessage((uint)CimWriteMessageChannel.Verbose, operationStartMessage);
         }
 
         /// <summary>
@@ -878,7 +898,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string operationCompleteMessage = string.Format(CultureInfo.CurrentUICulture,
                 CimCmdletStrings.CimOperationCompleted,
                 operation);
-            WriteMessage((UInt32)CimWriteMessageChannel.Verbose, operationCompleteMessage);
+            WriteMessage((uint)CimWriteMessageChannel.Verbose, operationCompleteMessage);
         }
 
         /// <summary>
@@ -894,8 +914,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public void WriteProgress(string activity,
             string currentOperation,
             string statusDescription,
-            UInt32 percentageCompleted,
-            UInt32 secondsRemaining)
+            uint percentageCompleted,
+            uint secondsRemaining)
         {
             DebugHelper.WriteLogEx("activity:{0}; currentOperation:{1}; percentageCompleted:{2}; secondsRemaining:{3}",
                 0, activity, currentOperation, percentageCompleted, secondsRemaining);
@@ -1879,7 +1899,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="credential"></param>
         /// <returns></returns>
         internal static CimSessionOptions CreateCimSessionOption(string computerName,
-            UInt32 timeout, CimCredential credential)
+            uint timeout, CimCredential credential)
         {
             DebugHelper.WriteLogEx();
 

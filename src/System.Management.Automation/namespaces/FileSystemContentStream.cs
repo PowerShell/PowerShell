@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
                     (e is UnauthorizedAccessException) ||
                     (e is ArgumentNullException))
                 {
-                    // Exception contains specific message about the error occured and so no need for errordetails.
+                    // Exception contains specific message about the error occurred and so no need for errordetails.
                     _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));
                     return null;
                 }
@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
                     (e is UnauthorizedAccessException) ||
                     (e is ArgumentNullException))
                 {
-                    // Exception contains specific message about the error occured and so no need for errordetails.
+                    // Exception contains specific message about the error occurred and so no need for errordetails.
                     _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));
                 }
                 else
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 // the changes
                 if (waitChanges)
                 {
-                    WaitForChanges(_path, _mode, _access, _share, ClrFacade.GetDefaultEncoding());
+                    WaitForChanges(_path, _mode, _access, _share, Encoding.Default);
                     byteRead = _stream.ReadByte();
                 }
             }
@@ -987,9 +987,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Seek to the place we last left off.
             _stream.Seek(_fileOffset, SeekOrigin.Begin);
-            if (_reader != null) { _reader.DiscardBufferedData(); }
-
-            if (_backReader != null) { _backReader.DiscardBufferedData(); }
+            _reader?.DiscardBufferedData();
+            _backReader?.DiscardBufferedData();
         }
 
         /// <summary>
@@ -1003,15 +1002,13 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         public void Seek(long offset, SeekOrigin origin)
         {
-            if (_writer != null) { _writer.Flush(); }
+            _writer?.Flush();
 
             _stream.Seek(offset, origin);
 
-            if (_writer != null) { _writer.Flush(); }
-
-            if (_reader != null) { _reader.DiscardBufferedData(); }
-
-            if (_backReader != null) { _backReader.DiscardBufferedData(); }
+            _writer?.Flush();
+            _reader?.DiscardBufferedData();
+            _backReader?.DiscardBufferedData();
         }
 
         /// <summary>
@@ -1135,14 +1132,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (_stream != null)
-                    _stream.Dispose();
-                if (_reader != null)
-                    _reader.Dispose();
-                if (_backReader != null)
-                    _backReader.Dispose();
-                if (_writer != null)
-                    _writer.Dispose();
+                _stream?.Dispose();
+                _reader?.Dispose();
+                _backReader?.Dispose();
+                _writer?.Dispose();
             }
         }
     }

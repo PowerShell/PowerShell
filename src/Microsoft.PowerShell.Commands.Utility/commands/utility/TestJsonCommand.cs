@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Test-Json command.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = ParameterAttribute.AllParameterSets, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096609")]
+    [OutputType(typeof(bool))]
     public class TestJsonCommand : PSCmdlet
     {
         private const string SchemaFileParameterSet = "SchemaFile";
@@ -41,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         public string Schema { get; set; }
 
         /// <summary>
-        /// Gets or sets path to the file containg schema to validate the JSON string against.
+        /// Gets or sets path to the file containing schema to validate the JSON string against.
         /// This is optional parameter.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
@@ -135,12 +136,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            JObject parsedJson = null;
             bool result = true;
 
             try
             {
-                parsedJson = JObject.Parse(Json);
+                var parsedJson = JToken.Parse(Json);
 
                 if (_jschema != null)
                 {

@@ -12,8 +12,8 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to resolve MSH paths containing glob characters to
-    /// MSH paths that match the glob strings.
+    /// A command to resolve PowerShell paths containing glob characters to
+    /// PowerShell paths that match the glob strings.
     /// </summary>
     [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097149")]
     [OutputType(typeof(string), ParameterSetName = new[] { leafSet,
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
-        /// the MSH path.
+        /// the PowerShell path.
         /// </value>
         [Parameter(ParameterSetName = qualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Qualifier { get; set; }
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
-        /// the MSH path.
+        /// the PowerShell path.
         /// </value>
         [Parameter(ParameterSetName = noQualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier { get; set; }

@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -309,7 +308,6 @@ namespace Microsoft.Management.UI.Internal
 
         #region View Manager Callbacks
 
-        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         partial void OnSaveViewCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
             string viewName = (string)e.Parameter;

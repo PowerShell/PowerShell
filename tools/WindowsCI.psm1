@@ -1,11 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-if($PSVersionTable.PSEdition -ne 'Desktop')
-{
-    throw 'Must be run from Windows PowerShell'
-}
-
 function New-LocalUser
 {
   <#

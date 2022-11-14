@@ -10,9 +10,9 @@
 // On the use of DangerousGetHandle: If the handle has been invalidated, then the API we pass it to will return an error.  These
 // handles should not be exposed to recycling attacks (because they are not exposed at all), but if they were, the worse they
 // could do is diddle with the console buffer.
-#pragma warning disable 1634, 1691
 
 using System;
+using System.Buffers;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
@@ -275,13 +275,13 @@ namespace Microsoft.PowerShell
             /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the x coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
-            internal Int32 X;
+            internal int X;
 
             /// <summary>
             /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the y coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
-            internal Int32 Y;
+            internal int Y;
 
             /// <summary>
             /// If dwFlags contains MOUSEEVENTF_WHEEL, then mouseData specifies the amount of wheel movement. A positive value indicates that the wheel was rotated forward, away from the user;
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell
         /// <returns>True if it was successful.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         internal static void SetConsoleMode(ProcessWindowStyle style)
         {
@@ -1479,9 +1479,7 @@ namespace Microsoft.PowerShell
                         bSize.X++;
                         SMALL_RECT wRegion = writeRegion;
                         wRegion.Right++;
-                        // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                        // get the error code.
-#pragma warning disable 56523
+
                         result = NativeMethods.WriteConsoleOutput(
                             consoleHandle.DangerousGetHandle(),
                             characterBuffer,
@@ -1491,9 +1489,6 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                        // get the error code.
-#pragma warning disable 56523
                         result = NativeMethods.WriteConsoleOutput(
                             consoleHandle.DangerousGetHandle(),
                             characterBuffer,
@@ -1732,10 +1727,7 @@ namespace Microsoft.PowerShell
                 if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 < bufferInfo.BufferSize.X &&
                     ShouldCheck(contentsRegion.Right, contents, contentsRegion))
                 {
-                    if (cellArray == null)
-                    {
-                        cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
-                    }
+                    cellArray ??= new BufferCell[cellArrayRegion.Bottom + 1, 2];
 
                     checkOrigin = new Coordinates(origin.X +
                         (contentsRegion.Right - contentsRegion.Left), origin.Y);
@@ -1799,9 +1791,7 @@ namespace Microsoft.PowerShell
             readRegion.Top = (short)origin.Y;
             readRegion.Right = (short)(origin.X + bufferSize.X - 1);
             readRegion.Bottom = (short)(origin.Y + bufferSize.Y - 1);
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
+
             bool result = NativeMethods.ReadConsoleOutput(
                                         consoleHandle.DangerousGetHandle(),
                                         characterBuffer,
@@ -2270,14 +2260,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputCharacter(
                     consoleHandle.DangerousGetHandle(),
                     character,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
@@ -2324,14 +2313,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputAttribute(
                     consoleHandle.DangerousGetHandle(),
                     attribute,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
 
             if (!result)
             {
@@ -2479,9 +2467,6 @@ namespace Microsoft.PowerShell
             DWORD result;
             StringBuilder consoleTitle = new StringBuilder((int)bufferSize);
 
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
             result = NativeMethods.GetConsoleTitle(consoleTitle, bufferSize);
             // If the result is zero, it may mean and error but it may also mean
             // that the window title has been set to null. Since we can't tell the
@@ -2494,6 +2479,8 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
+        private static bool s_dontsetConsoleWindowTitle;
+
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
         /// </summary>
@@ -2505,11 +2492,26 @@ namespace Microsoft.PowerShell
         /// </exception>
         internal static void SetConsoleWindowTitle(string consoleTitle)
         {
+            if (s_dontsetConsoleWindowTitle)
+            {
+                return;
+            }
+
             bool result = NativeMethods.SetConsoleTitle(consoleTitle);
 
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
+
+                // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
+                if (err == 0x1f)
+                {
+                    tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
+                    s_dontsetConsoleWindowTitle = true;
+
+                    // We ignore this specific error as the console can still continue to operate
+                    return;
+                }
 
                 HostException e = CreateHostException(err, "SetConsoleWindowTitle",
                     ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
@@ -2549,42 +2551,54 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // Native WriteConsole doesn't support output buffer longer than 64K.
-            // We need to chop the output string if it is too long.
-            int cursor = 0; // This records the chopping position in output string
-            const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            // Native WriteConsole doesn't support output buffer longer than 64K, so we need to chop the output string if it is too long.
+            // This records the chopping position in output string.
+            int cursor = 0;
+            // This is 64K/4 - 1 to account for possible width of each character.
+            const int MaxBufferSize = 16383;
+            const int MaxStackAllocSize = 512;
+            ReadOnlySpan<char> outBuffer;
 
-            while (cursor < output.Length)
+            // In case that a new line is required, we try to write out the last chunk and the new-line string together,
+            // to avoid one extra call to 'WriteConsole' just for a new line string.
+            while (cursor + MaxBufferSize < output.Length)
             {
-                ReadOnlySpan<char> outBuffer;
+                outBuffer = output.Slice(cursor, MaxBufferSize);
+                cursor += MaxBufferSize;
+                WriteConsole(consoleHandle, outBuffer);
+            }
 
-                if (cursor + MaxBufferSize < output.Length)
+            outBuffer = output.Slice(cursor);
+            if (!newLine)
+            {
+                WriteConsole(consoleHandle, outBuffer);
+                return;
+            }
+
+            char[] rentedArray = null;
+            string lineEnding = Environment.NewLine;
+            int size = outBuffer.Length + lineEnding.Length;
+
+            // We expect the 'size' will often be small, and thus optimize that case with 'stackalloc'.
+            Span<char> buffer = size <= MaxStackAllocSize ? stackalloc char[size] : default;
+
+            try
+            {
+                if (buffer.IsEmpty)
                 {
-                    outBuffer = output.Slice(cursor, MaxBufferSize);
-                    cursor += MaxBufferSize;
-
-                    WriteConsole(consoleHandle, outBuffer);
+                    rentedArray = ArrayPool<char>.Shared.Rent(size);
+                    buffer = rentedArray.AsSpan().Slice(0, size);
                 }
-                else
-                {
-                    outBuffer = output.Slice(cursor);
-                    cursor = output.Length;
 
-                    if (newLine)
-                    {
-                        var endOfLine = Environment.NewLine.AsSpan();
-                        var endOfLineLength = endOfLine.Length;
-#pragma warning disable CA2014
-                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
-#pragma warning restore CA2014
-                        outBuffer.CopyTo(outBufferLine);
-                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
-                        WriteConsole(consoleHandle, outBufferLine);
-                    }
-                    else
-                    {
-                        WriteConsole(consoleHandle, outBuffer);
-                    }
+                outBuffer.CopyTo(buffer);
+                lineEnding.CopyTo(buffer.Slice(outBuffer.Length));
+                WriteConsole(consoleHandle, buffer);
+            }
+            finally
+            {
+                if (rentedArray is not null)
+                {
+                    ArrayPool<char>.Shared.Return(rentedArray);
                 }
             }
         }
@@ -3175,7 +3189,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.SendInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern UInt32 SendInput(UInt32 inputNumbers, INPUT[] inputs, Int32 sizeOfInput);
+            internal static extern UInt32 SendInput(UInt32 inputNumbers, INPUT[] inputs, int sizeOfInput);
 
             // There is no GetCurrentConsoleFontEx on Core
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

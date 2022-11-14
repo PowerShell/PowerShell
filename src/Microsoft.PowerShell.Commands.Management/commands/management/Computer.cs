@@ -275,12 +275,12 @@ namespace Microsoft.PowerShell.Commands
         /// The specific time interval (in second) to wait between network pings or service queries.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
-        [ValidateRange(1, Int16.MaxValue)]
-        public Int16 Delay
+        [ValidateRange(1, short.MaxValue)]
+        public short Delay
         {
             get
             {
-                return (Int16)_delay;
+                return (short)_delay;
             }
 
             set
@@ -306,7 +306,7 @@ foreach ($computerName in $array[1])
         ComputerName = $computerName
         ScriptBlock = { $true }
 
-        SessionOption = NewPSSessionOption -NoMachineProfile
+        SessionOption = New-PSSessionOption -NoMachineProfile
         ErrorAction = 'SilentlyContinue'
     }
 
@@ -393,17 +393,10 @@ $result
         {
             if (disposing)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                }
-
+                _timer?.Dispose();
                 _waitHandler.Dispose();
                 _cancel.Dispose();
-                if (_powershell != null)
-                {
-                    _powershell.Dispose();
-                }
+                _powershell?.Dispose();
             }
         }
 
@@ -522,7 +515,7 @@ $result
             }
         }
 
-        private class ComputerInfo
+        private sealed class ComputerInfo
         {
             internal string LastBootUpTime;
             internal bool RebootComplete;
@@ -1098,10 +1091,7 @@ $result
             _cancel.Cancel();
             _waitHandler.Set();
 
-            if (_timer != null)
-            {
-                _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-            }
+            _timer?.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 
             if (_powershell != null)
             {
@@ -1278,6 +1268,7 @@ $result
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [OutputType(typeof(RenameComputerChangeInfo))]
     public class RenameComputerCommand : PSCmdlet
     {
         #region Private Members
@@ -2230,8 +2221,7 @@ $result
                 bool isIPAddress = false;
                 try
                 {
-                    IPAddress unused;
-                    isIPAddress = IPAddress.TryParse(nameToCheck, out unused);
+                    isIPAddress = IPAddress.TryParse(nameToCheck, out _);
                 }
                 catch (Exception)
                 {

@@ -310,9 +310,11 @@ namespace System.Management.Automation
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
-            string availableProperties = GetAvailableProperties(pso);
+            string settableProperties = GetSettableProperties(pso);
 
-            string message = StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, availableProperties);
+            string message = settableProperties == string.Empty
+                ? StringUtil.Format(ExtendedTypeSystem.NoSettableProperty, property.Key.ToString(), resultType.FullName)
+                : StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, settableProperties);
 
             typeConversion.WriteLine("Issuing an error message about not being able to create an object from hashtable.");
             throw new InvalidOperationException(message);
@@ -362,7 +364,7 @@ namespace System.Management.Automation
         /// implementation of an object when we can't use it's non-generic
         /// implementation.
         /// </summary>
-        private class EnumerableTWrapper : IEnumerable
+        private sealed class EnumerableTWrapper : IEnumerable
         {
             private readonly object _enumerable;
             private readonly Type _enumerableType;
@@ -632,10 +634,7 @@ namespace System.Management.Automation
             // If second can be converted to the type of the first, it does so and returns first.Equals(secondConverted)
             // Otherwise false is returned
 
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -779,10 +778,7 @@ namespace System.Management.Automation
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
         {
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -899,10 +895,7 @@ namespace System.Management.Automation
         public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
         {
             result = 0;
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (formatProvider is not CultureInfo culture)
             {
@@ -1889,7 +1882,7 @@ namespace System.Management.Automation
 
         internal class EnumSingleTypeConverter : PSTypeConverter
         {
-            private class EnumHashEntry
+            private sealed class EnumHashEntry
             {
                 internal EnumHashEntry(string[] names, Array values, UInt64 allValues, bool hasNegativeValue, bool hasFlagsAttribute)
                 {
@@ -2153,7 +2146,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    sourceValueEntries = sourceValueString.Split(Utils.Separators.Comma);
+                    sourceValueEntries = sourceValueString.Split(',');
                     fromValuePatterns = new WildcardPattern[sourceValueEntries.Length];
                     for (int i = 0; i < sourceValueEntries.Length; i++)
                     {
@@ -3684,7 +3677,7 @@ namespace System.Management.Automation
             return ConvertStringToEnum(sbResult.ToString(), resultType, recursion, originalValueToConvert, formatProvider, backupTable);
         }
 
-        private class PSMethodToDelegateConverter
+        private sealed class PSMethodToDelegateConverter
         {
             // Index of the matching overload method.
             private readonly int _matchIndex;
@@ -3744,7 +3737,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaParseMethod
+        private sealed class ConvertViaParseMethod
         {
             // TODO - use an ETS wrapper that generates a dynamic method
             internal MethodInfo parse;
@@ -3810,7 +3803,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaConstructor
+        private sealed class ConvertViaConstructor
         {
             internal Func<object, object> TargetCtorLambda;
 
@@ -3854,7 +3847,7 @@ namespace System.Management.Automation
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
         /// </remark>
-        private class ConvertViaIEnumerableConstructor
+        private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
             internal Func<IList, object> TargetCtorLambda;
@@ -3947,7 +3940,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaNoArgumentConstructor
+        private sealed class ConvertViaNoArgumentConstructor
         {
             private readonly Func<object> _constructor;
 
@@ -4050,7 +4043,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaCast
+        private sealed class ConvertViaCast
         {
             internal MethodInfo cast;
 
@@ -4130,7 +4123,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertCheckingForCustomConverter
+        private sealed class ConvertCheckingForCustomConverter
         {
             internal PSConverter<object> tryfirstConverter;
             internal PSConverter<object> fallbackConverter;
@@ -4673,7 +4666,7 @@ namespace System.Management.Automation
                                     Type propType;
                                     if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
                                     {
-                                        if (formatProvider == null) { formatProvider = CultureInfo.InvariantCulture; }
+                                        formatProvider ??= CultureInfo.InvariantCulture;
 
                                         try
                                         {
@@ -4735,18 +4728,23 @@ namespace System.Management.Automation
             return pso;
         }
 
-        private static string GetAvailableProperties(PSObject pso)
+        private static string GetSettableProperties(PSObject pso)
         {
+            if (pso is null || pso.Properties is null)
+            {
+                return string.Empty;
+            }
+
             StringBuilder availableProperties = new StringBuilder();
             bool first = true;
 
-            if (pso != null && pso.Properties != null)
+            foreach (PSPropertyInfo p in pso.Properties)
             {
-                foreach (PSPropertyInfo p in pso.Properties)
+                if (p.IsSettable)
                 {
                     if (!first)
                     {
-                        availableProperties.Append(" , ");
+                        availableProperties.Append(", ");
                     }
 
                     availableProperties.Append("[" + p.Name + " <" + p.TypeNameOfValue + ">]");
@@ -5651,15 +5649,6 @@ namespace System.Management.Automation
                 }
             }
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types.
-            if (!TypeResolver.IsPublic(toType) && DotNetAdapter.DisallowPrivateReflection(toType))
-            {
-                // If the type is non-public and reflection execution is not allowed on it, then we return
-                // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set
-                // properties on an instance of this type through reflection.
-                return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
-            }
-
             PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
             IConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
@@ -5745,10 +5734,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (converter == null)
-            {
-                converter = FigurePropertyConversion(fromType, toType, ref rank);
-            }
+            converter ??= FigurePropertyConversion(fromType, toType, ref rank);
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
                 || (converter != null && valueDependentConversion != null))

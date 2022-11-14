@@ -25,10 +25,12 @@ dotnet_diagnostic.CA1005.severity = none
 # CA1008: Enums should have zero value
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1008
 dotnet_diagnostic.CA1008.severity = none
+dotnet_code_quality.CA1008.api_surface = public
 
 # CA1010: Generic interface should also be implemented
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1010
 dotnet_diagnostic.CA1010.severity = silent
+dotnet_code_quality.CA1010.api_surface = public
 
 # CA1012: Abstract types should not have public constructors
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1012
@@ -62,18 +64,22 @@ dotnet_diagnostic.CA1021.severity = none
 # CA1024: Use properties where appropriate
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1024
 dotnet_diagnostic.CA1024.severity = none
+dotnet_code_quality.CA1024.api_surface = public
 
 # CA1027: Mark enums with FlagsAttribute
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1027
 dotnet_diagnostic.CA1027.severity = none
+dotnet_code_quality.CA1027.api_surface = public
 
 # CA1028: Enum Storage should be Int32
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1028
 dotnet_diagnostic.CA1028.severity = none
+dotnet_code_quality.CA1028.api_surface = public
 
 # CA1030: Use events where appropriate
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1030
 dotnet_diagnostic.CA1030.severity = none
+dotnet_code_quality.CA1030.api_surface = public
 
 # CA1031: Do not catch general exception types
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1031
@@ -94,23 +100,27 @@ dotnet_diagnostic.CA1034.severity = none
 # CA1036: Override methods on comparable types
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1036
 dotnet_diagnostic.CA1036.severity = silent
+dotnet_code_quality.CA1036.api_surface = public
 
 # CA1040: Avoid empty interfaces
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1040
 dotnet_diagnostic.CA1040.severity = none
+dotnet_code_quality.CA1040.api_surface = public
 
 # CA1041: Provide ObsoleteAttribute message
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1041
 dotnet_diagnostic.CA1041.severity = warning
+dotnet_code_quality.CA1041.api_surface = public
 
 # CA1043: Use Integral Or String Argument For Indexers
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1043
 dotnet_diagnostic.CA1043.severity = warning
-dotnet_code_quality.ca1043.api_surface = all
+dotnet_code_quality.CA1043.api_surface = all
 
 # CA1044: Properties should not be write only
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1044
 dotnet_diagnostic.CA1044.severity = none
+dotnet_code_quality.CA1044.api_surface = public
 
 # CA1045: Do not pass types by reference
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1045
@@ -131,27 +141,32 @@ dotnet_diagnostic.CA1050.severity = warning
 # CA1051: Do not declare visible instance fields
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1051
 dotnet_diagnostic.CA1051.severity = silent
+dotnet_code_quality.CA1051.api_surface = public
 
 # CA1052: Static holder types should be Static or NotInheritable
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1052
 dotnet_diagnostic.CA1052.severity = warning
-dotnet_code_quality.CA1052.api_surface = private, internal
+dotnet_code_quality.CA1052.api_surface = all
 
 # CA1054: URI-like parameters should not be strings
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1054
 dotnet_diagnostic.CA1054.severity = none
+dotnet_code_quality.CA1054.api_surface = public
 
 # CA1055: URI-like return values should not be strings
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1055
 dotnet_diagnostic.CA1055.severity = none
+dotnet_code_quality.CA1055.api_surface = public
 
 # CA1056: URI-like properties should not be strings
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1056
 dotnet_diagnostic.CA1056.severity = none
+dotnet_code_quality.CA1056.api_surface = public
 
 # CA1058: Types should not extend certain base types
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1058
 dotnet_diagnostic.CA1058.severity = none
+dotnet_code_quality.CA1058.api_surface = public
 
 # CA1060: Move pinvokes to native methods class
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1060
@@ -168,6 +183,7 @@ dotnet_diagnostic.CA1062.severity = none
 # CA1063: Implement IDisposable Correctly
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1063
 dotnet_diagnostic.CA1063.severity = none
+dotnet_code_quality.CA1063.api_surface = public
 
 # CA1064: Exceptions should be public
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1064
@@ -182,8 +198,8 @@ dotnet_diagnostic.CA1065.severity = warning
 dotnet_diagnostic.CA1066.severity = none
 
 # CA1067: Override Object.Equals(object) when implementing IEquatable<T>
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1067
-dotnet_diagnostic.CA1067.severity = suggestion
+# # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1067
+dotnet_diagnostic.CA1067.severity = warning
 
 # CA1068: CancellationToken parameters must come last
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1068
@@ -284,14 +300,17 @@ dotnet_diagnostic.CA1707.severity = silent
 # CA1708: Identifiers should differ by more than case
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1708
 dotnet_diagnostic.CA1708.severity = silent
+dotnet_code_quality.CA1708.api_surface = public
 
 # CA1710: Identifiers should have correct suffix
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1710
 dotnet_diagnostic.CA1710.severity = silent
+dotnet_code_quality.CA1710.api_surface = public
 
 # CA1711: Identifiers should not have incorrect suffix
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1711
 dotnet_diagnostic.CA1711.severity = silent
+dotnet_code_quality.CA1711.api_surface = public
 
 # CA1712: Do not prefix enum values with type name
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1712
@@ -304,18 +323,22 @@ dotnet_diagnostic.CA1713.severity = none
 # CA1715: Identifiers should have correct prefix
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1715
 dotnet_diagnostic.CA1715.severity = silent
+dotnet_code_quality.CA1715.api_surface = public
 
 # CA1716: Identifiers should not match keywords
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1716
 dotnet_diagnostic.CA1716.severity = silent
+dotnet_code_quality.CA1716.api_surface = public
 
 # CA1720: Identifier contains type name
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1720
 dotnet_diagnostic.CA1720.severity = silent
+dotnet_code_quality.CA1720.api_surface = public
 
 # CA1721: Property names should not match get methods
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1721
 dotnet_diagnostic.CA1721.severity = none
+dotnet_code_quality.CA1721.api_surface = public
 
 # CA1724: Type names should not match namespaces
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1724
@@ -324,14 +347,17 @@ dotnet_diagnostic.CA1724.severity = none
 # CA1725: Parameter names should match base declaration
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1725
 dotnet_diagnostic.CA1725.severity = silent
+dotnet_code_quality.CA1725.api_surface = public
 
 # CA1801: Review unused parameters
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1801
 dotnet_diagnostic.CA1801.severity = none
+dotnet_code_quality.CA1801.api_surface = all
 
 # CA1802: Use literals where appropriate
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1802
 dotnet_diagnostic.CA1802.severity = none
+dotnet_code_quality.CA1802.api_surface = public
 
 # CA1805: Do not initialize unnecessarily
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1805
@@ -360,6 +386,7 @@ dotnet_diagnostic.CA1814.severity = none
 # CA1815: Override equals and operator equals on value types
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1815
 dotnet_diagnostic.CA1815.severity = none
+dotnet_code_quality.CA1815.api_surface = public
 
 # CA1816: Dispose methods should call SuppressFinalize
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1816
@@ -368,6 +395,7 @@ dotnet_diagnostic.CA1816.severity = warning
 # CA1819: Properties should not return arrays
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1819
 dotnet_diagnostic.CA1819.severity = none
+dotnet_code_quality.CA1819.api_surface = public
 
 # CA1820: Test for empty strings using string length
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1820
@@ -478,6 +506,10 @@ dotnet_diagnostic.CA1845.severity = warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846
 dotnet_diagnostic.CA1846.severity = warning
 
+# CA1847: Use char literal for a single character lookup
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
+dotnet_diagnostic.CA1847.severity = warning
+
 # CA2000: Dispose objects before losing scope
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000
 dotnet_diagnostic.CA2000.severity = none
@@ -582,6 +614,7 @@ dotnet_diagnostic.CA2216.severity = warning
 # CA2217: Do not mark enums with FlagsAttribute
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2217
 dotnet_diagnostic.CA2217.severity = none
+dotnet_code_quality.CA2217.api_surface = public
 
 # CA2218: Override GetHashCode on overriding Equals
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2218
@@ -598,10 +631,12 @@ dotnet_diagnostic.CA2224.severity = suggestion
 # CA2225: Operator overloads have named alternates
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2225
 dotnet_diagnostic.CA2225.severity = none
+dotnet_code_quality.CA2225.api_surface = public
 
 # CA2226: Operators should have symmetrical overloads
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2226
 dotnet_diagnostic.CA2226.severity = none
+dotnet_code_quality.CA2226.api_surface = public
 
 # CA2227: Collection properties should be read only
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2227
@@ -614,10 +649,12 @@ dotnet_diagnostic.CA2229.severity = silent
 # CA2231: Overload operator equals on overriding value type Equals
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2231
 dotnet_diagnostic.CA2231.severity = suggestion
+dotnet_code_quality.CA2231.api_surface = public
 
 # CA2234: Pass system uri objects instead of strings
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2234
 dotnet_diagnostic.CA2234.severity = none
+dotnet_code_quality.CA2234.api_surface = public
 
 # CA2235: Mark all non-serializable fields
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2235
@@ -670,6 +707,10 @@ dotnet_diagnostic.CA2250.severity = warning
 # CA2251: Use 'string.Equals'
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251
 dotnet_diagnostic.CA2251.severity = warning
+
+# CA2252: This API requires opting into preview features
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252
+dotnet_diagnostic.CA2251.severity = none
 
 # CA2300: Do not use insecure deserializer BinaryFormatter
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300
@@ -1201,11 +1242,11 @@ dotnet_diagnostic.IDE0028.severity = silent
 
 # IDE0029: UseCoalesceExpression
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0029
-dotnet_diagnostic.IDE0029.severity = silent
+dotnet_diagnostic.IDE0029.severity = warning
 
 # IDE0030: UseCoalesceExpressionForNullable
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0030
-dotnet_diagnostic.IDE0030.severity = silent
+dotnet_diagnostic.IDE0030.severity = warning
 
 # IDE0031: UseNullPropagation
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0031
@@ -1261,7 +1302,7 @@ dotnet_diagnostic.IDE0043.severity = silent
 
 # IDE0044: MakeFieldReadonly
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0044
-dotnet_diagnostic.IDE0044.severity = silent
+dotnet_diagnostic.IDE0044.severity = warning
 
 # IDE0045: UseConditionalExpressionForAssignment
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0045
@@ -1281,7 +1322,7 @@ dotnet_diagnostic.IDE0048.severity = suggestion
 
 # IDE0049: PreferBuiltInOrFrameworkType
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0049
-dotnet_diagnostic.IDE0049.severity = silent
+dotnet_diagnostic.IDE0049.severity = warning
 
 # IDE0050: ConvertAnonymousTypeToTuple
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0050
@@ -1351,21 +1392,9 @@ dotnet_diagnostic.IDE0065.severity = silent
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0066
 dotnet_diagnostic.IDE0066.severity = silent
 
-# IDE0067: DisposeObjectsBeforeLosingScope
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0067
-dotnet_diagnostic.IDE0067.severity = silent
-
-# IDE0068: UseRecommendedDisposePattern
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0068
-dotnet_diagnostic.IDE0068.severity = silent
-
-# IDE0069: DisposableFieldsShouldBeDisposed
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0069
-dotnet_diagnostic.IDE0069.severity = silent
-
 # IDE0070: UseSystemHashCode
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0070
-dotnet_diagnostic.IDE0070.severity = silent
+dotnet_diagnostic.IDE0070.severity = warning
 
 # IDE0071: SimplifyInterpolation
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0071
@@ -1441,7 +1470,7 @@ dotnet_diagnostic.IDE0120.severity = warning
 
 # IDE0130: NamespaceDoesNotMatchFolderStructure
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0130
-dotnet_diagnostic.IDE0130.severity = suggestion
+dotnet_diagnostic.IDE0130.severity = silent
 
 # IDE1001: AnalyzerChanged
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide1001

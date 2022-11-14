@@ -690,7 +690,7 @@ namespace Microsoft.Management.UI.Internal
                         {
                             parameterType = GetPropertyString(parameterTypeData, "name");
 
-                            // If there is no type for the paramter, we expect it is System.Object
+                            // If there is no type for the parameter, we expect it is System.Object
                             if (string.IsNullOrEmpty(parameterType))
                             {
                                 parameterType = "object";

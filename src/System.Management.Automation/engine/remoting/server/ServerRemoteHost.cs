@@ -352,10 +352,7 @@ namespace System.Management.Automation.Remoting
         {
             if (_pushedRunspace != null)
             {
-                if (_debugger != null)
-                {
-                    _debugger.PopDebugger();
-                }
+                _debugger?.PopDebugger();
 
                 if (_hostSupportsPSEdit)
                 {

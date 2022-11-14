@@ -161,14 +161,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CmdletInvocationException",
-                        ErrorCategory.NotSpecified,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CmdletInvocationException",
+                    ErrorCategory.NotSpecified,
+                    null);
 
                 return _errorRecord;
             }
@@ -891,14 +888,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }
@@ -999,14 +993,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }

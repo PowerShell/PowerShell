@@ -1352,7 +1352,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         public virtual char AltItemSeparator =>
 #if UNIX
-            Utils.Separators.Backslash[0];
+            '\\';
 #else
             Path.AltDirectorySeparatorChar;
 #endif
@@ -1823,7 +1823,7 @@ namespace System.Management.Automation.Provider
 #if UNIX
 
                 // Add a commonstat structure to file system objects
-                if (ExperimentalFeature.IsEnabled("PSUnixFileStat") && ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
+                if (ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
                 {
                     try
                     {

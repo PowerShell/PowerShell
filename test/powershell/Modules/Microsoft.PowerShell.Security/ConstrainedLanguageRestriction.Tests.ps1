@@ -554,22 +554,20 @@ try
         }
     }
 
-    Describe "Tab expansion in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
+    Describe "Conversion in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
-        It "Verifies that tab expansion cannot convert disallowed IntPtr type" {
+        It "Verifies that PowerShell cannot convert disallowed IntPtr type" {
 
             try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                $result = @(TabExpansion2 '(1234 -as [IntPtr]).' 20 | ForEach-Object CompletionMatches | Where-Object CompletionText -Match Pointer)
+                $result = 1234 -as [IntPtr]
+                $null -eq $result | Should -BeTrue
             }
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
-
-            $result.Count | Should -Be 0
         }
     }
 
@@ -669,6 +667,41 @@ try
             }
 
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "DataSectionAllowedCommandDisallowed,Microsoft.PowerShell.Commands.InvokeExpressionCommand"
+        }
+    }
+
+    Describe "Add-Type in no language mode on locked down system" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It "Verifies Add-Type fails in no language mode when in system lock down" {
+
+            # Create No-Language session, that allows Add-Type cmdlet
+            $entry = [System.Management.Automation.Runspaces.SessionStateCmdletEntry]::new('Add-Type', [Microsoft.PowerShell.Commands.AddTypeCommand], $null)
+            $iss = [initialsessionstate]::CreateRestricted([System.Management.Automation.SessionCapabilities]::Language)
+            $iss.Commands.Add($entry)
+            $rs = [runspacefactory]::CreateRunspace($iss)
+            $rs.Open()
+
+            # Try to use Add-Type in No-Language session
+            $ps = [powershell]::Create($rs)
+            $ps.AddCommand('Add-Type').AddParameter('TypeDefinition', 'public class C1 { }')
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ps.Invoke()
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                $rs.Dispose()
+                $ps.Dispose()
+            }
+
+            $expectedError.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'CannotDefineNewType,Microsoft.PowerShell.Commands.AddTypeCommand'
         }
     }
 

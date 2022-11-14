@@ -114,10 +114,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                if (_paramVariants == null)
-                {
-                    _paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
-                }
+                _paramVariants ??= Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
                 return _paramVariants;
             }
         }
@@ -140,10 +137,7 @@ namespace System.Management.Automation.ComInterop
             if (isByRef)
             {
                 // Null just means that null was supplied.
-                if (marshalType == null)
-                {
-                    marshalType = mo.Expression.Type;
-                }
+                marshalType ??= mo.Expression.Type;
                 marshalType = marshalType.MakeByRefType();
             }
             return marshalType;

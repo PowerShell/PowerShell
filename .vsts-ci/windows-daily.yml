@@ -48,12 +48,10 @@ stages:
 
 - stage: TestWin
   displayName: Test for Windows
-  variables:
-  - group: CLR-CAP
   jobs:
   - job: win_test
     pool:
-      vmImage: vs2017-win2016
+      vmImage: windows-2019
     displayName: Windows Test
     timeoutInMinutes: 90
 
@@ -76,26 +74,6 @@ stages:
         Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
       displayName: 'Capture Artifacts Directory'
       continueOnError: true
-
-    - pwsh: |
-        $capRootDir = Join-Path ([System.IO.Path]::GetTempPath()) "CAP"
-        $capUtilDir = Join-Path $capRootDir "Utils"
-
-        if (Test-Path $capRootDir) { Remove-Item $capRootDir -Recurse -Force }
-        New-Item $capUtilDir -ItemType Directory > $null
-
-        $capZipFile = Join-Path $capRootDir "cap.zip"
-        Invoke-WebRequest -Uri https://pscoretestdata.blob.core.windows.net/dotnet-cap/windows.zip -OutFile $capZipFile
-        Unblock-File -Path $capZipFile
-        Expand-Archive -Path $capZipFile -DestinationPath $capUtilDir -Force
-
-        Write-Host "=== Capture CAP Util Directory ==="
-        Get-ChildItem $capUtilDir -Recurse
-
-        Write-Host "##vso[task.setvariable variable=CapRootDir]$capRootDir"
-        Write-Host "##vso[task.setvariable variable=CapUtilDir]$capUtilDir"
-      displayName: 'Download CAP package'
-      condition: succeededOrFailed()
 
     # must be run frow Windows PowerShell
     - powershell: |
@@ -125,13 +103,8 @@ stages:
       condition: succeeded()
 
     - pwsh: |
-        Import-Module $(CapUtilDir)\CAPService.psm1
-        $dataDir = Start-TraceCollection -RootDir $(CapRootDir)
-        Write-Host "##vso[task.setvariable variable=CapDataDir]$dataDir"
-      displayName: 'Start CLR Trace Collection'
-      condition: succeeded()
-
-    - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet CI
@@ -139,6 +112,8 @@ stages:
       condition: succeeded()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet CI
@@ -146,6 +121,8 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
@@ -153,6 +130,8 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others
@@ -165,14 +144,3 @@ stages:
         Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
       displayName: Verify xUnit Test Results
       condition: succeededOrFailed()
-
-    - pwsh: |
-        $capDataDir = '$(CapDataDir)'
-        $capModuleFile = '$(CapUtilDir)\CAPService.psm1'
-
-        if ((Test-Path $capModuleFile) -and (Test-Path $capDataDir)) {
-            Import-Module $capModuleFile
-            Stop-TraceCollection -DataDir $capDataDir -RepoRoot $pwd -IngressToken '$(CapIngressToken)'
-        }
-      displayName: 'Upload CLR Trace'
-      condition: always()

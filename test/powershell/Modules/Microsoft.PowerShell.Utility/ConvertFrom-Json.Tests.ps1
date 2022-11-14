@@ -58,7 +58,15 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
             $json | Should -BeOfType Hashtable
         }
     }
-
+    
+	It 'Throws an ArgumentException with an incomplete array with AsHashtable switch set to <AsHashtable>' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
+        Param($AsHashtable)
+        { ConvertFrom-Json '["1",' -AsHashtable:$AsHashtable } |
+            Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
+        { ConvertFrom-Json '[' -AsHashtable:$AsHashtable } |
+            Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
+    }
+	
     It 'Can convert multi-line object with AsHashtable switch set to <AsHashtable>' -TestCases $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)
         $json = @('{"a" :', '"x"}') | ConvertFrom-Json -AsHashtable:$AsHashtable
@@ -141,6 +149,17 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         $out[0] | Should -Be 1
         $out[1] | Should -Be $null
         $out[2] | Should -Be 2
+    }
+
+    It 'Order is preserved for a hashtable' {
+        $json = '{"a":1,"b":2,"c":3}' | ConvertFrom-Json -AsHashtable
+        ($json | Out-String).Trim() | Should -BeExactly @"
+Name                           Value
+----                           -----
+a                              1
+b                              2
+c                              3
+"@
     }
 }
 

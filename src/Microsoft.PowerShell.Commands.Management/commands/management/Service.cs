@@ -1756,10 +1756,14 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
+                    var access = NativeMethods.SERVICE_CHANGE_CONFIG;
+                    if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
+                        access |= NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER;
+                    
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
-                        NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER
+                        access
                         );
 
                     if (hService == IntPtr.Zero)

@@ -83,10 +83,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_listModifier == null)
-                    {
-                        _listModifier = CreatePSListModifier();
-                    }
+                    _listModifier ??= CreatePSListModifier();
 
                     PSMemberInfo memberInfo = InputObject.Members[Property];
                     if (memberInfo != null)

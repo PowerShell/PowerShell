@@ -18,12 +18,12 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
     }
 
     $tests = @(
-            @{ inputTest = 0; expected = $false },
-            @{ inputTest = 000; expected = $false },
-            @{ inputTest = 0x00; expected = $false },
-            @{ inputTest = 0.00; expected = $false }
+            @{ inputTest = 0;    expected = $false; iteration = 1 },
+            @{ inputTest = 000;  expected = $false; iteration = 2 },
+            @{ inputTest = 0x00; expected = $false; iteration = 3 },
+            @{ inputTest = 0.00; expected = $false; iteration = 4 }
     )
-    It "Test that passing zero works as the value for a Switch parameter, inputTest:<inputTest>,expect:<expected>" -TestCases $tests {
+    It "Test <iteration> that passing zero works as the value for a Switch parameter, inputTest:<inputTest>,expect:<expected>" -TestCases $tests {
             param ( $inputTest, $expected )
             [bool]$switchTestParam = $inputTest
             $result = ParserTestSwitchCmdlet -switchParam:$switchTestParam
@@ -31,11 +31,11 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
     }
 
     $tests = @(
-            @{ inputTest = $(1 -eq 1); expected = $true },
-            @{ inputTest = $true; expected = $true },
-            @{ inputTest = $TRUE; expected = $true }
+            @{ inputTest = $(1 -eq 1); expected = $true; iteration = 1},
+            @{ inputTest = $true;      expected = $true; iteration = 2},
+            @{ inputTest = $TRUE;      expected = $true; iteration = 3}
     )
-    It "Test that $true is accepted as a true value for Switch parameters, inputTest:<inputTest>,expect:<expected>" -TestCases $tests {
+    It "Test <iteration> that $true is accepted as a true value for Switch parameters, inputTest:<inputTest>,expect:<expected>" -TestCases $tests {
             param ( $inputTest, $expected )
             [bool]$switchTestParam = $inputTest
             $result = ParserTestSwitchCmdlet -switchParam:$switchTestParam

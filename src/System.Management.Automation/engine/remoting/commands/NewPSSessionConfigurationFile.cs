@@ -15,7 +15,6 @@ using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
-#if !UNIX
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
     ///
@@ -1126,7 +1125,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
-#endif
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
@@ -1944,7 +1942,7 @@ namespace Microsoft.PowerShell.Commands
 
             sb.Append("@{");
 
-            var keys = table.Keys.Cast<string>().OrderBy(static x => x);
+            var keys = table.Keys.Cast<string>().Order();
             foreach (var key in keys)
             {
                 sb.Append(writer.NewLine);

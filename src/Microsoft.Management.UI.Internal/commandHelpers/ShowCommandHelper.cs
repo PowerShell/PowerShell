@@ -643,9 +643,7 @@ Function PSGetSerializedShowCommandInfo
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
                 new Predicate<ModuleViewModel>((module) =>
                 {
-                    #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
-                    return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase);
-                    #pragma warning restore IDE0075
+                    return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
                 }));
 
             if (moduleToSelect == null)
@@ -659,7 +657,7 @@ Function PSGetSerializedShowCommandInfo
                 new Predicate<CommandViewModel>((command) =>
                 {
                     return command.ModuleName.Equals(parentModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) &&
-                        command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase);
+                        command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
                 }));
 
             if (commandToSelect == null)
@@ -1202,7 +1200,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Sets a succesfull dialog result and then closes the window.
+        /// Sets a successful dialog result and then closes the window.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
@@ -1246,7 +1244,6 @@ Function PSGetSerializedShowCommandInfo
         /// Showing a MessageBox when user type a invalidate command name.
         /// </summary>
         /// <param name="errorString">Error message.</param>
-        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void ShowErrorString(string errorString)
         {
             if (errorString != null && errorString.Trim().Length > 0)

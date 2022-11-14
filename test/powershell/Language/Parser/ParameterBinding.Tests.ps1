@@ -168,7 +168,13 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
             }
         }
 '@
-        $asmFile = [System.IO.Path]::GetTempFileName() + ".dll"
+        if ($IsWindows) {
+            $asmFile = [System.IO.Path]::GetTempFileName() + ".dll"
+        }
+        else {
+            $asmFile = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName() + ".dll"))
+        }
+
         Add-Type -TypeDefinition $code -OutputAssembly $asmFile
 
         ## Helper function to execute script

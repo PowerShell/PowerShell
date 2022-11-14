@@ -63,14 +63,14 @@ namespace Microsoft.PowerShell.Commands
         Default = 0,
 
         /// <summary>
-        /// Specifies the TLS 1.0 security protocol. The TLS protocol is defined in IETF RFC 2246.
+        /// Specifies the TLS 1.0 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
-        Tls = SslProtocols.Tls,
+        Tls = SslProtocols.Tls12,
 
         /// <summary>
-        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
-        Tls11 = SslProtocols.Tls11,
+        Tls11 = SslProtocols.Tls12,
 
         /// <summary>
         /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
@@ -107,6 +107,18 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        #region HTTP Version
+
+        /// <summary>
+        /// Gets or sets the HTTP Version property.
+        /// </summary>
+        [Parameter]
+        [ArgumentToVersionTransformation]
+        [HttpVersionCompletions]
+        public virtual Version HttpVersion { get; set; }
+
+        #endregion
+
         #region Session
         /// <summary>
         /// Gets or sets the Session property.
@@ -132,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
 
         /// <summary>
-        /// Gets or sets the Authentication property used to determin the Authentication method for the web session.
+        /// Gets or sets the Authentication property used to determine the Authentication method for the web session.
         /// Authentication does not work with UseDefaultCredentials.
         /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
         /// Basic: Requires Credential.
@@ -206,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the TimeOut property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int TimeoutSec { get; set; }
 
         /// <summary>
@@ -224,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the RedirectMax property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRedirection
         {
             get { return _maximumRedirection; }
@@ -238,14 +250,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRetryCount { get; set; }
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
-        [ValidateRange(1, Int32.MaxValue)]
+        [ValidateRange(1, int.MaxValue)]
         public virtual int RetryIntervalSec { get; set; } = 5;
 
         #endregion
@@ -571,10 +583,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // make sure we have a valid WebRequestSession object to work with
-            if (WebSession == null)
-            {
-                WebSession = new WebRequestSession();
-            }
+            WebSession ??= new WebRequestSession();
 
             if (SessionVariable != null)
             {
@@ -940,7 +949,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum number of Rel Links to follow.
         /// </summary>
-        internal int _maximumFollowRelLink = Int32.MaxValue;
+        internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
         /// The remote endpoint returned a 206 status code indicating successful resume.
@@ -983,9 +992,9 @@ namespace Microsoft.PowerShell.Commands
         // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            // By default the HttpClientHandler will automatically decompress GZip and Deflate content
             HttpClientHandler handler = new();
             handler.CookieContainer = WebSession.Cookies;
+            handler.AutomaticDecompression = DecompressionMethods.All;
 
             // set the credentials used by this request
             if (WebSession.UseDefaultCredentials)
@@ -1080,6 +1089,11 @@ namespace Microsoft.PowerShell.Commands
 
             // create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
+
+            if (HttpVersion is not null)
+            {
+                request.Version = HttpVersion;
+            }
 
             // pull in session data
             if (WebSession.Headers.Count > 0)
@@ -1260,9 +1274,15 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Add the content headers
-            if (request.Content == null)
+            // For other methods like Put where empty content has meaning, we need to fill in the content
+            if (request.Content is null)
             {
+                // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
+                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET"))
+                {
+                    return;
+                }
+
                 request.Content = new StringContent(string.Empty);
                 request.Content.Headers.Clear();
             }
@@ -1413,8 +1433,8 @@ namespace Microsoft.PowerShell.Commands
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                            requestWithoutRange.Version,
                             requestWithoutRange.Method,
-                            requestWithoutRange.RequestUri,
                             requestContentLength);
                         WriteVerbose(reqVerboseMsg);
 
@@ -1505,10 +1525,13 @@ namespace Microsoft.PowerShell.Commands
                                 if (request.Content != null)
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
 
-                                string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
+                                string reqVerboseMsg = string.Format(
+                                    CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                                    request.Version,
                                     request.Method,
                                     requestContentLength);
+
                                 WriteVerbose(reqVerboseMsg);
 
                                 HttpResponseMessage response = GetResponse(client, request, keepAuthorization);
@@ -1555,10 +1578,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     finally
                                     {
-                                        if (reader != null)
-                                        {
-                                            reader.Dispose();
-                                        }
+                                        reader?.Dispose();
                                     }
 
                                     if (!string.IsNullOrEmpty(detailMsg))
@@ -1634,13 +1654,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implementing ^C, after start the BeginGetResponse.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_cancelToken != null)
-            {
-                _cancelToken.Cancel();
-            }
-        }
+        protected override void StopProcessing() => _cancelToken?.Cancel();
 
         #endregion Overrides
 
@@ -1830,7 +1844,7 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            const string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
+            const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {

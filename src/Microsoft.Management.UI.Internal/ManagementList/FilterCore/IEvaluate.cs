@@ -13,7 +13,7 @@ namespace Microsoft.Management.UI.Internal
     {
         /// <summary>
         /// Gets a values indicating whether the supplied item has meet the
-        /// criteria rule specificed by the rule.
+        /// criteria rule specified by the rule.
         /// </summary>
         /// <param name="item">
         /// The item to evaluate.

@@ -9,10 +9,6 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         }
         $largePsd1Builder.Append('}')
         Set-Content -Path $largePsd1Path -Value $largePsd1Builder.ToString()
-
-        if ((Get-ExperimentalFeature Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck).Enabled -ne $true) {
-            $skipTest = $true
-        }
     }
 
     It "Validates error on a missing path" {
@@ -49,7 +45,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         { Import-PowerShellDataFile $largePsd1Path } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand'
     }
 
-    It 'Succeeds if -NoLimit is used and has more than 500 keys' -Skip:$skipTest {
+    It 'Succeeds if -NoLimit is used and has more than 500 keys' {
         $result = Import-PowerShellDataFile $largePsd1Path -SkipLimitCheck
         $result.Keys.Count | Should -Be 501
     }

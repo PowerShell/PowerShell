@@ -13,14 +13,22 @@
 #
 # ------------------ PackageManagement Test  -----------------------------------
 
-$InternalGallery = "https://www.poshtestgallery.com/api/v2/"
-$InternalSource = 'OneGetTestSource'
+$gallery = "https://www.powershellgallery.com/api/v2"
+$source = 'OneGetTestSource'
 
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
  BeforeAll{
     Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
-    Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+
+    $packageSource = Get-PackageSource -Location $gallery -ErrorAction SilentlyContinue
+    if ($packageSource) {
+        $source = $packageSource.Name
+        Set-PackageSource -Name $source -Trusted
+    } else {
+        Register-PackageSource -Name $source -Location $gallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+    }
+
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
  }
@@ -41,9 +49,9 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         $fpp | Should -Contain "PowerShellGet"
     }
 
-     It "install-packageprovider, Expect succeed" {
-        $ipp = (Install-PackageProvider -Name gistprovider -Force -Source $InternalSource -Scope CurrentUser).name
-        $ipp | Should -Contain "gistprovider"
+    It "install-packageprovider, Expect succeed" {
+        $ipp = (Install-PackageProvider -Name NanoServerPackage -Force -Source $source -Scope CurrentUser).name
+        $ipp | Should -Contain "NanoServerPackage"
     }
 
     It "Find-package"  {

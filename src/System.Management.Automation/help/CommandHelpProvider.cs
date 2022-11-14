@@ -1275,7 +1275,7 @@ namespace System.Management.Automation
                     }
                     catch (CommandNotFoundException)
                     {
-                        // ignore errors for aliases pointing to non-existant commands
+                        // ignore errors for aliases pointing to non-existent commands
                     }
                 }
 

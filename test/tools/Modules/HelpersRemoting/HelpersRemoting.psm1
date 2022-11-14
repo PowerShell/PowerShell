@@ -18,7 +18,7 @@ function Get-DefaultEndPointName
 
     if ($endPoint -eq $null)
     {
-        Enable-PSRemoting -SkipNetworkProfileCheck
+        $null = Enable-PSRemoting -SkipNetworkProfileCheck
         $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
 
         if ($endPoint -eq $null)
@@ -30,7 +30,7 @@ function Get-DefaultEndPointName
 
     if ($endPoint.Permission -like "*NT AUTHORITY\NETWORK AccessDenied*")
     {
-        Enable-PSRemoting -SkipNetworkProfileCheck
+        $null = Enable-PSRemoting -SkipNetworkProfileCheck
         $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
 
         if ($endPoint.Permission -like "*NT AUTHORITY\NETWORK AccessDenied*")
@@ -556,7 +556,28 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
     Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
     $modulePath = "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psd1"
-    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force"
+    $sshdFilePath = '/etc/ssh/sshd_config'
+
+    # First create a default 'powershell' named endpoint.
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -Force"
+    Write-Verbose -Verbose "CmdLine: $cmdLine"
+    sudo pwsh -c $cmdLine
+
+    # Next create a 'pwshconfig' named configured endpoint.
+    # Configuration file:
+    $configFilePath = Join-Path -Path "$env:HOME" -ChildPath 'PSTestConfig.pssc'
+    '@{
+        GUID = "4d667b90-25f8-47d5-9c90-619b27954748"
+        Author = "Microsoft"
+        Description = "Test local PowerShell session configuration"
+        LanguageMode = "ConstrainedLanguage"
+    }' | Out-File -FilePath $configFilePath
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -ConfigFilePath $configFilePath -SubsystemName 'pwshconfig' -Force"
+    Write-Verbose -Verbose "CmdLine: $cmdLine"
+    sudo pwsh -c $cmdLine
+
+    # Finally create a 'pwshbroken' named configured endpoint.
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -ConfigFilePath '$HOME/NoSuch.pssc' -SubsystemName 'pwshbroken' -Force"
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 

@@ -14,7 +14,7 @@ From `pwsh.exe`, run `Import-Module ./build.psm1` and use `Start-PSBootstrap` to
 
 The `Start-PSBootstrap` function does the following:
 
-- Uses `brew` or `port` to install CMake, OpenSSL, and GNU WGet
+- Uses `brew` or `port` to install OpenSSL, and GNU WGet
 - Uninstalls any prior versions of .NET CLI
 - Downloads and installs .NET Core SDK to `~/.dotnet`
 
@@ -36,4 +36,4 @@ We cannot do this for you in the build module due to #[847][].
 
 Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild` from the module.
 
-After building, PowerShell will be at `./src/powershell-unix/bin/Debug/net5.0/osx-x64/publish/pwsh`.
+After building, PowerShell will be at `./src/powershell-unix/bin/Debug/net6.0/osx-x64/publish/pwsh`.

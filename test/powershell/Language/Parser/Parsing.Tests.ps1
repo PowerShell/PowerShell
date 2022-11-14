@@ -148,17 +148,21 @@ Describe 'named blocks parsing' -Tags "CI" {
     ShouldBeParseError 'begin' MissingNamedStatementBlock 5
     ShouldBeParseError 'process' MissingNamedStatementBlock 7
     ShouldBeParseError 'end' MissingNamedStatementBlock 3
+    ShouldBeParseError 'clean' MissingNamedStatementBlock 5
     ShouldBeParseError 'dynamicparam' MissingNamedStatementBlock 12
     ShouldBeParseError 'begin process {}' MissingNamedStatementBlock 6 -CheckColumnNumber
     ShouldBeParseError 'end process {}' MissingNamedStatementBlock 4 -CheckColumnNumber
+    ShouldBeParseError 'clean process {}' MissingNamedStatementBlock 6 -CheckColumnNumber
     ShouldBeParseError 'dynamicparam process {}' MissingNamedStatementBlock 13 -CheckColumnNumber
     ShouldBeParseError 'process begin {}' MissingNamedStatementBlock 8 -CheckColumnNumber
-    ShouldBeParseError 'begin process end' MissingNamedStatementBlock,MissingNamedStatementBlock,MissingNamedStatementBlock 6,14,18 -CheckColumnNumber
+    ShouldBeParseError 'begin process end clean' MissingNamedStatementBlock, MissingNamedStatementBlock, MissingNamedStatementBlock, MissingNamedStatementBlock 6, 14, 18, 24 -CheckColumnNumber
 
     Test-Ast 'begin' 'begin' 'begin'
     Test-Ast 'begin end' 'begin end' 'begin' 'end'
     Test-Ast 'begin end process' 'begin end process' 'begin' 'end' 'process'
     Test-Ast 'begin {} end' 'begin {} end' 'begin {}' 'end'
+    Test-Ast 'begin process end clean' 'begin process end clean' 'begin' 'clean' 'end' 'process'
+    Test-Ast 'begin {} process end clean {}' 'begin {} process end clean {}' 'begin {}' 'clean {}' 'end' 'process'
 }
 
 #
@@ -620,5 +624,43 @@ Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
         Invoke-Expression "function $Keyword { '$Keyword' }"
 
         . $Keyword | Should -BeExactly $Keyword
+    }
+}
+
+Describe "Parsing array that has too many dimensions" -Tag CI {
+    It "ParseError for '<Script>'" -TestCases @(
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'; ErrorId = @('ArrayHasTooManyDimensions', 'EndSquareBracketExpectedAtEndOfAttribute'); StartOffset = @(5, 37); EndOffset = @(37, 37) }
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]'; ErrorId = @('ArrayHasTooManyDimensions', 'EndSquareBracketExpectedAtEndOfAttribute'); StartOffset = @(5, 38); EndOffset = @(37, 38) }
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]]'; ErrorId = @('ArrayHasTooManyDimensions'); StartOffset = @(5); EndOffset = @(37) }
+    ) {
+        param($Script, $ErrorId, $StartOffset, $EndOffset)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be $ErrorId.Count
+        for ($i = 0; $i -lt $errs.Count; $i++) {
+            $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
+            $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
+            $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
+        }
+    }
+}
+
+Describe "Parsing using statement with alias and linebreak and comma" -Tag CI {
+    It "ParseError for '<Script>'" -TestCases @(
+        @{ Script = "using namespace x =`n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = `n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = ;"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = ,"; ErrorId = @('UnexpectedUnaryOperator'); StartOffset = @(20); EndOffset = @(21) }
+        @{ Script = "using namespace x = &"; ErrorId = @('InvalidValueForUsingItemName','MissingExpression'); StartOffset = @(20, 20); EndOffset = @(21, 21) }
+    ) {
+        param($Script, $ErrorId, $StartOffset, $EndOffset)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be $ErrorId.Count
+        for ($i = 0; $i -lt $errs.Count; $i++) {
+            $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
+            $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
+            $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
+        }
     }
 }

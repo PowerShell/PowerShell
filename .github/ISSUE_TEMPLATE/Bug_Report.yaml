@@ -54,6 +54,12 @@ body:
     required: true
 - type: textarea
   attributes:
+    label: Error details
+    description: Paste verbatim output from `Get-Error` if PowerShell return an error.
+    render: console
+    placeholder: PS> Get-Error
+- type: textarea
+  attributes:
     label: Environment data
     description: Paste verbatim output from `$PSVersionTable` below.
     render: powershell

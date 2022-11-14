@@ -53,11 +53,7 @@ namespace System.Management.Automation
                         childJob.Dispose();
                     }
 
-                    if (_jobResultsThrottlingSemaphore != null)
-                    {
-                        _jobResultsThrottlingSemaphore.Dispose();
-                    }
-
+                    _jobResultsThrottlingSemaphore?.Dispose();
                     _cancellationTokenSource.Dispose();
                 }
             }
@@ -541,10 +537,7 @@ namespace System.Management.Automation
                 } while (false);
             }
 
-            if (readyToRunChildJob != null)
-            {
-                readyToRunChildJob.StartJob();
-            }
+            readyToRunChildJob?.StartJob();
         }
 
         private void EnqueueReadyToRunChildJob(StartableJob childJob)
@@ -846,7 +839,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ForwardingHelper : IDisposable
+        private sealed class ForwardingHelper : IDisposable
         {
             // This is higher than 1000 used in
             //      RxExtensionMethods+ToEnumerableObserver<T>.BlockingCollectionCapacity
@@ -1227,10 +1220,7 @@ namespace System.Management.Automation
                             }
                             finally
                             {
-                                if (cancellationTokenRegistration != null)
-                                {
-                                    cancellationTokenRegistration.Dispose();
-                                }
+                                cancellationTokenRegistration?.Dispose();
                             }
                         }
                         finally

@@ -85,8 +85,7 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CurrentMatchIndex | Should -Be -1
         $result.ReplacementIndex | Should -Be 40
         $result.ReplacementLength | Should -Be 0
-        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Expression'
-        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Ascending'
-        $result.CompletionMatches[2].CompletionText | Should -BeExactly 'Descending'
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Ascending'
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Descending'
     }
 }

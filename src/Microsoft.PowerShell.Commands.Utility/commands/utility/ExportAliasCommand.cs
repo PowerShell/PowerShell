@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         Csv,
 
         /// <summary>
-        /// Aliases will be exported as an MSH script.
+        /// Aliases will be exported as a script.
         /// </summary>
         Script
     }
@@ -291,8 +291,7 @@ namespace Microsoft.PowerShell.Commands
                         line = GetAliasLine(alias, "set-alias -Name:\"{0}\" -Value:\"{1}\" -Description:\"{2}\" -Option:\"{3}\"");
                     }
 
-                    if (writer != null)
-                        writer.WriteLine(line);
+                    writer?.WriteLine(line);
 
                     if (PassThru)
                     {
@@ -302,8 +301,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (writer != null)
-                    writer.Dispose();
+                writer?.Dispose();
                 // reset the read-only attribute
                 if (readOnlyFileInfo != null)
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;

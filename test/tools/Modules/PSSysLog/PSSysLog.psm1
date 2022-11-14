@@ -38,7 +38,7 @@ log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.t
 Parsing Notes:
 * Sample contains 6.0.1 content (which is out of date) revise with 6.1.0 preview
 * Ensure analytic data is considered when parsing; specifically Provider_Lifecycle:ProviderStart.Method.Informational
-* Multi-line output is expected. Parsing needs to detect the timestamp at the begining
+* Multi-line output is expected. Parsing needs to detect the timestamp at the beginning
 of a line and append subsequent lines to the message until the next 'log' line is found.
 * Header lines need to be skipped.
 
@@ -302,7 +302,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content"
         }
 
         # (commitid:TID:ChannelID)
@@ -317,7 +317,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content"
         }
 
         # nameid[PID]
@@ -331,7 +331,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content"
         }
 
         return $item
@@ -497,11 +497,18 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
-            if ($item -ne $null)
+            try
             {
-                $totalWritten++
-                Write-Output $item
+                [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
+                if ($item -ne $null)
+                {
+                    $totalWritten++
+                    Write-Output $item
+                }
+            }
+            catch
+            {
+                Write-Warning -Message "Could not convert '$line' to PSLogItem"
             }
         }
     }
@@ -557,7 +564,7 @@ function ConvertFrom-SysLog
     PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -After $time
 
-    Gets log entries with the id 'powershell' that occured on or after a specific date/time
+    Gets log entries with the id 'powershell' that occurred on or after a specific date/time
 
 .NOTES
     This function reads syslog entries using Get-Content, filters based on the id, and
@@ -901,7 +908,7 @@ function Export-PSOsLog
             Write-Output $log
         }
         else {
-            throw "did not recieve at least $MinimumCount records but $($logToCount.Count) instead."
+            throw "did not receive at least $MinimumCount records but $($logToCount.Count) instead."
         }
     } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
         $log = Start-NativeExecution -command {log show --info @extraParams}

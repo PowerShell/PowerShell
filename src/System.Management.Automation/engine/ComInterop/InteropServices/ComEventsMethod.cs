@@ -83,10 +83,7 @@ namespace System.Management.Automation.InteropServices
                         && pi.ParameterType.HasElementType
                         && pi.ParameterType.GetElementType()!.IsEnum)
                     {
-                        if (targetTypes == null)
-                        {
-                            targetTypes = new Type?[_expectedParamsCount];
-                        }
+                        targetTypes ??= new Type?[_expectedParamsCount];
 
                         targetTypes[i] = pi.ParameterType.GetElementType();
                     }

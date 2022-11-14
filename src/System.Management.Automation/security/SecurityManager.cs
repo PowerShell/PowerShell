@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell
         private ExecutionPolicy _executionPolicy;
 
         // shellId supplied by runspace configuration
-        private string _shellId;
+        private readonly string _shellId;
 
         /// <summary>
         /// Initializes a new instance of the PSAuthorizationManager
@@ -328,9 +328,10 @@ namespace Microsoft.PowerShell
                 if (string.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
                 {
                     string[] trustedDirectories = new string[]
-                        { Platform.GetFolderPath(Environment.SpecialFolder.System),
-                          Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
-                        };
+                    {
+                        Environment.GetFolderPath(Environment.SpecialFolder.System),
+                        Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                    };
 
                     foreach (string trustedDirectory in trustedDirectories)
                     {

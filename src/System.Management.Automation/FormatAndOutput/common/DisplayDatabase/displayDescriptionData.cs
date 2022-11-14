@@ -361,6 +361,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FieldFormattingDirective
     {
         internal string formatString = null; // optional
+        internal bool isTable = false;
     }
 
     #endregion Elementary Tokens
@@ -886,7 +887,7 @@ namespace System.Management.Automation
                 {
                     if (tr.conditionToken != null)
                     {
-                        if (result.SelectionCondition == null) result.SelectionCondition = new List<DisplayEntry>();
+                        result.SelectionCondition ??= new List<DisplayEntry>();
 
                         result.SelectionCondition.Add(new DisplayEntry(tr.conditionToken));
                         continue;
@@ -895,7 +896,7 @@ namespace System.Management.Automation
                     if (tr is TypeGroupReference)
                         continue;
 
-                    if (result.TypeNames == null) result.TypeNames = new List<string>();
+                    result.TypeNames ??= new List<string>();
 
                     result.TypeNames.Add(tr.name);
                 }

@@ -305,7 +305,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region CompletionEventArgs
 
-        private class CompletionEventArgs : EventArgs
+        private sealed class CompletionEventArgs : EventArgs
         {
             internal CompletionEventArgs(CompletionNotification notification)
             {
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <exception cref="PSRemotingTransportException">
         /// WSManCreateShellEx failed.
         /// </exception>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             Dbg.Assert(!isClosed, "object already disposed");
             Dbg.Assert(!string.IsNullOrEmpty(ConnectionInfo.ShellUri), "shell uri cannot be null or empty.");
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Closes the pending Create,Send,Receive operations and then closes the shell and release all the resources.
         /// The caller should make sure this method is called only after calling ConnectAsync.
         /// </summary>
-        internal override void CloseAsync()
+        public override void CloseAsync()
         {
             bool shouldRaiseCloseCompleted = false;
             // let other threads release the lock before we clean up the resources.
@@ -1492,20 +1492,9 @@ namespace System.Management.Automation.Remoting.Client
             finally
             {
                 // release resources
-                if (proxyAuthCredentials != null)
-                {
-                    proxyAuthCredentials.Dispose();
-                }
-
-                if (proxyInfo != null)
-                {
-                    proxyInfo.Dispose();
-                }
-
-                if (authCredentials != null)
-                {
-                    authCredentials.Dispose();
-                }
+                proxyAuthCredentials?.Dispose();
+                proxyInfo?.Dispose();
+                authCredentials?.Dispose();
             }
 
             if (result != 0)
@@ -1640,7 +1629,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Log the error message in the Crimson logger and raise error handler.
         /// </summary>
         /// <param name="eventArgs"></param>
-        internal override void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public override void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
         {
             // Look for a valid stack trace.
             string stackTrace;
@@ -2543,7 +2532,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Dispose / Destructor pattern
 
         [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed")]
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             tracer.WriteLine("Disposing session with session context: {0} Operation Context: {1}", _sessionContextID, _wsManShellOperationHandle);
 
@@ -2833,7 +2822,7 @@ namespace System.Management.Automation.Remoting.Client
         private readonly string _cmdLine;
         private readonly WSManClientSessionTransportManager _sessnTm;
 
-        private class SendDataChunk
+        private sealed class SendDataChunk
         {
             public SendDataChunk(byte[] data, DataPriorityType type)
             {
@@ -3013,11 +3002,12 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
+        /// Begin connection creation.
         /// </summary>
         /// <exception cref="PSRemotingTransportException">
         /// WSManRunShellCommandEx failed.
         /// </exception>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             byte[] cmdPart1 = serializedPipeline.ReadOrRegisterCallback(null);
             if (cmdPart1 != null)
@@ -3146,7 +3136,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Closes the pending Create,Send,Receive operations and then closes the shell and release all the resources.
         /// </summary>
-        internal override void CloseAsync()
+        public override void CloseAsync()
         {
             tracer.WriteLine("Closing command with command context: {0} Operation Context {1}", _cmdContextId, _wsManCmdOperationHandle);
 
@@ -3213,7 +3203,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Log the error message in the Crimson logger and raise error handler.
         /// </summary>
         /// <param name="eventArgs"></param>
-        internal override void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public override void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
         {
             // Look for a valid stack trace.
             string stackTrace;
@@ -4086,7 +4076,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Dispose / Destructor pattern
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             tracer.WriteLine("Disposing command with command context: {0} Operation Context: {1}", _cmdContextId, _wsManCmdOperationHandle);
             base.Dispose(isDisposing);

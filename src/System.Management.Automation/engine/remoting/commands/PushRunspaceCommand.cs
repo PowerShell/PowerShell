@@ -58,6 +58,24 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         public new string HostName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public override Hashtable Options 
+        { 
+            get 
+            {
+                return base.Options;
+            }
+
+            set
+            {
+                base.Options = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -247,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // for the console host and Graphical PowerShell host
-            // we want to skip pushing into the the runspace if
+            // we want to skip pushing into the runspace if
             // the host is in a nested prompt
             System.Management.Automation.Internal.Host.InternalHost chost =
                 this.Host as System.Management.Automation.Internal.Host.InternalHost;
@@ -1262,7 +1280,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace GetRunspaceForSSHSession()
         {
             ParseSshHostName(HostName, out string host, out string userName, out int port);
-            var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout);
+            var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout, Options);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
             // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.

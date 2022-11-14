@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -19,7 +20,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Exception to signify an early startup failure.
         /// </summary>
-        private class StartupException : Exception
+        private sealed class StartupException : Exception
         {
             /// <summary>
             /// Construct a new startup exception instance.
@@ -58,10 +59,10 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// Starts the managed MSH.
+        /// Starts PowerShell.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to PowerShell
         /// </param>
         public static int Main(string[] args)
         {
@@ -89,7 +90,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            bool isLinux = Platform.IsLinux;
 
             // The first byte (ASCII char) of the name of this process, used to detect '-' for login
             byte procNameFirstByte;

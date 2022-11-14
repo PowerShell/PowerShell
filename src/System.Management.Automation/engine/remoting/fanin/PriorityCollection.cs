@@ -98,7 +98,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(value != null, "Fragmentor cannot be null.");
                 _fragmentor = value;
                 // create serialized streams using fragment size.
-                string[] names = Enum.GetNames(typeof(DataPriorityType));
+                string[] names = Enum.GetNames<DataPriorityType>();
                 _dataToBeSent = new SerializedDataStream[names.Length];
                 _dataSyncObjects = new object[names.Length];
                 for (int i = 0; i < names.Length; i++)
@@ -220,21 +220,29 @@ namespace System.Management.Automation.Remoting
             lock (_readSyncObject)
             {
                 priorityType = DataPriorityType.Default;
-
-                // send data from which ever stream that has data directly.
+                // Send data from which ever stream that has data directly.
                 byte[] result = null;
-                result = _dataToBeSent[(int)DataPriorityType.PromptResponse].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                priorityType = DataPriorityType.PromptResponse;
+                SerializedDataStream promptDataToBeSent = _dataToBeSent[(int)DataPriorityType.PromptResponse];
+                if (promptDataToBeSent is not null)
+                {
+                    result = promptDataToBeSent.ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                    priorityType = DataPriorityType.PromptResponse;
+                }
 
                 if (result == null)
                 {
-                    result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                    priorityType = DataPriorityType.Default;
+                    SerializedDataStream defaultDataToBeSent = _dataToBeSent[(int)DataPriorityType.Default];
+                    if (defaultDataToBeSent is not null)
+                    {
+                        result = defaultDataToBeSent.ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                        priorityType = DataPriorityType.Default;
+                    }
                 }
-                // no data to return..so register the callback.
+
+                // No data to return..so register the callback.
                 if (result == null)
                 {
-                    // register callback.
+                    // Register callback.
                     _onDataAvailableCallback = callback;
                 }
 
@@ -676,10 +684,7 @@ namespace System.Management.Automation.Remoting
         private void ResetReceiveData()
         {
             // reset resources used to store incoming data (for a single object)
-            if (_dataToProcessStream != null)
-            {
-                _dataToProcessStream.Dispose();
-            }
+            _dataToProcessStream?.Dispose();
 
             _currentObjectId = 0;
             _currentFrgId = 0;
@@ -760,7 +765,7 @@ namespace System.Management.Automation.Remoting
         internal PriorityReceiveDataCollection(Fragmentor defragmentor, bool createdByClientTM)
         {
             _defragmentor = defragmentor;
-            string[] names = Enum.GetNames(typeof(DataPriorityType));
+            string[] names = Enum.GetNames<DataPriorityType>();
             _recvdData = new ReceiveDataCollection[names.Length];
             for (int index = 0; index < names.Length; index++)
             {

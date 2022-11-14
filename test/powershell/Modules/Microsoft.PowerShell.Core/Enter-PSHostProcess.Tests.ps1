@@ -34,32 +34,26 @@ function Invoke-PSHostProcessScript {
         [int] $Retry = 5 # Default retry of 5 times
     )
 
-    $sb = {
-        # use $i as an incrementally growing pause based on the attempt number
-        # so that it's more likely to succeed.
-        $commandStr = @'
-Start-Sleep -Seconds {0}
-Enter-PSHostProcess {1} -ErrorAction Stop
+    $commandStr = @'
+Enter-PSHostProcess {0} -ErrorAction Stop
 $PID
 Exit-PSHostProcess
-'@ -f $i, $ArgumentString
-
-        ($commandStr | & $powershell -c -) -eq $Id
-    }
+'@ -f $ArgumentString
 
     $result = $false
-    $failures = 0
     foreach ($i in 1..$Retry) {
-        if ($sb.Invoke()) {
-            $result = $true
+        # use $i as an incrementally growing pause based on the attempt number
+        # so that it's more likely to succeed.
+        Start-Sleep -Seconds $i
+
+        $result = ($commandStr | & $powershell -noprofile -c -) -eq $Id
+        if ($result) {
             break
         }
-
-        $failures++
     }
 
-    if($failures) {
-        Write-Warning "Enter-PSHostProcess script failed $i out of $Retry times."
+    if ($i -gt 1) {
+        Write-Verbose -Verbose "Enter-PSHostProcess script failed $i out of $Retry times."
     }
 
     $result
@@ -67,6 +61,15 @@ Exit-PSHostProcess
 
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
+
+        BeforeAll {
+            $oldColor = $env:NO_COLOR
+            $env:NO_COLOR = 1
+        }
+
+        AfterAll {
+            $env:NO_COLOR = $oldColor
+        }
 
         BeforeEach {
             # Start a normal job where the first thing it does is return $PID. After that, spin forever.
@@ -90,7 +93,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
             # This will enter and exit another process
             Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
-                Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'."
+                Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$pwshId'"
 
             # Re-enter and exit the other process
             Invoke-PSHostProcessScript -ArgumentString "-Id $pwshId" -Id $pwshId |
@@ -100,7 +103,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
             # Start a PowerShell job where the first thing it does is return $PID. After that, spin forever.
             # We will use this job as the target process for Enter-PSHostProcess
-            $powershellJob = Start-Job {
+            $powershellJob = Start-Job -PSVersion 5.1 {
                 $PID
                 while ($true) {
                     Start-Sleep -Seconds 30 | Out-Null
@@ -180,6 +183,15 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     }
 
     Context "By CustomPipeName" {
+
+        BeforeAll {
+            $oldColor = $env:NO_COLOR
+            $env:NO_COLOR = 1
+        }
+
+        AfterAll {
+            $env:NO_COLOR = $oldColor
+        }
 
         It "Can enter, exit, and re-enter using CustomPipeName" {
             $pipeName = [System.IO.Path]::GetRandomFileName()

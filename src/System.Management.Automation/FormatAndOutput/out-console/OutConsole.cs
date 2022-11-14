@@ -65,8 +65,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, false, new TerminatingErrorContext(this));
+            var lineOutput = new ConsoleLineOutput(Host, false, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
 
@@ -206,8 +205,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, _paging, new TerminatingErrorContext(this));
+            var lineOutput = new ConsoleLineOutput(Host, _paging, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
             base.BeginProcessing();

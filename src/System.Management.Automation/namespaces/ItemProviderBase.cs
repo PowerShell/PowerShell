@@ -8,7 +8,7 @@ namespace System.Management.Automation.Provider
     #region ItemCmdletProvider
 
     /// <summary>
-    /// The base class for Cmdlet providers that expose an item as an MSH path.
+    /// The base class for Cmdlet providers that expose an item as a PowerShell path.
     /// </summary>
     /// <remarks>
     /// The ItemCmdletProvider class is a base class that a provider derives from to

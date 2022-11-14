@@ -2,18 +2,186 @@
 # Licensed under the MIT License.
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
 param()
-Describe "Will error correctly if an attempt to set variable to improper value" {
-    It "will error when setting variable incorrectly" {
-        if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-            { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
+
+Describe "Behavior is specific for each platform" -tags "CI" {
+    It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
+        $PSNativeCommandArgumentPassing | Should -Be "Windows"
+    }
+    It "PSNativeCommandArgumentPassing is set to 'Standard' on non-Windows systems" -skip:($IsWindows) {
+        $PSNativeCommandArgumentPassing | Should -Be "Standard"
+    }
+    It "Has proper behavior on Windows" -skip:(-not $IsWindows) {
+        "@echo off`nSET V1=1" > "$TESTDRIVE\script 1.cmd"
+        "@echo off`nSET V2=a`necho %V1%" > "$TESTDRIVE\script 2.cmd"
+        "@echo off`necho %V1%`necho %V2%" > "$TESTDRIVE\script 3.cmd"
+        $result = cmd /c """${TESTDRIVE}\script 1.cmd"" && ""${TESTDRIVE}\script 2.cmd"" && ""${TESTDRIVE}\script 3.cmd"""
+        $result.Count | Should -Be 3
+        $result[0] | Should -Be 1
+        $result[1] | Should -Be 1
+        $result[2] | Should Be "a"
+    }
+
+}
+
+Describe "tests for multiple languages and extensions" -tags "CI" {
+    AfterAll {
+        if (-not $IsWindows) {
+            return
+        }
+        $PSNativeCommandArgumentPassing = $passingStyle
+    }
+    BeforeAll {
+        $testCases = @(
+            @{
+                Command = "cscript.exe"
+                Filename = "test.wsf"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+<?xml version="1.0" ?>
+<job id="test">
+   <script language="VBScript">
+     <![CDATA[
+for i = 0 to wScript.arguments.count-1
+    wscript.echo "Argument " & i & " is: <" & wScript.arguments(i) & ">"
+next
+     ]]>
+   </script>
+</job>
+'@
+            }
+            @{
+                Command = "cscript.exe"
+                Filename = "test.vbs"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+for i = 0 to wScript.arguments.count - 1
+    wscript.echo "Argument " & i & " is: <" & (wScript.arguments(i)) & ">"
+next
+'@
+            }
+            @{
+                Command = "cscript"
+                Filename = "test.js"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+for(i = 0; i < WScript.Arguments.Count(); i++) {
+    WScript.echo("Argument " + i + " is: <" + WScript.Arguments(i) + ">");
+}
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.bat"
+                ExpectedResults = @(
+                    "Argument 1 is: <a""b c""d>"
+                    "Argument 2 is: <a""b c""d>"
+                    "Argument 3 is: <""ab cd"">"
+                    "Argument 4 is: <""a'b c'd"">"
+                )
+                Script = @'
+@echo off
+echo Argument 1 is: ^<%1^>
+echo Argument 2 is: ^<%2^>
+echo Argument 3 is: ^<%3^>
+echo Argument 4 is: ^<%4^>
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.cmd"
+                ExpectedResults = @(
+                    "Argument 1 is: <a""b c""d>"
+                    "Argument 2 is: <a""b c""d>"
+                    "Argument 3 is: <""ab cd"">"
+                    "Argument 4 is: <""a'b c'd"">"
+                )
+                Script = @'
+@echo off
+echo Argument 1 is: ^<%1^>
+echo Argument 2 is: ^<%2^>
+echo Argument 3 is: ^<%3^>
+echo Argument 4 is: ^<%4^>
+'@
+            }
+        )
+
+        # determine whether we should skip the tests we just defined
+        # doing it in this order ensures that the test output will show each skipped test
+        $skipTests = -not $IsWindows
+        if ($skipTests) {
+            return
+        }
+
+        # save the passing style
+        $passingStyle = $PSNativeCommandArgumentPassing
+        # explicitely set the passing style to Windows
+        $PSNativeCommandArgumentPassing = "Windows"
+    }
+
+    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$($skipTests) {
+        param ( $Command, $Arguments, $Filename, $Script, $ExpectedResults )
+        cscript  //h:cscript //nologo //s
+        $a = 'a"b c"d'
+        $scriptPath = Join-Path $TESTDRIVE $Filename
+        $Script | out-file -encoding ASCII $scriptPath
+        if ($Command) {
+            $results = & $Command $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
         }
         else {
-            Set-Test -State skipped -Because "Experimental feature 'PSNativeCommandArgumentPassing' is not enabled"
+            $results = & $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
         }
+        $errorContent = Get-Content "${TESTDRIVE}/error.txt" -ErrorAction Ignore
+        $errorContent | Should -BeNullOrEmpty
+        $results.Count | Should -Be 4
+        $results[0] | Should -Be $ExpectedResults[0]
+        $results[1] | Should -Be $ExpectedResults[1]
+        $results[2] | Should -Be $ExpectedResults[2]
+        $results[3] | Should -Be $ExpectedResults[3]
     }
 }
 
-foreach ( $argumentListValue in "Standard","Legacy" ) {
+
+Describe "Will error correctly if an attempt to set variable to improper value" -tags "CI" {
+    It "will error when setting variable incorrectly" {
+        { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
+    }
+}
+
+Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+        $PSNativeCommandArgumentPassing = "Windows"
+        $testCases = @{ pattern = "" },
+            @{ pattern = "blat" },
+            @{ pattern = "bl at" }
+    }
+    AfterAll {
+        $PSNativeCommandArgumentPassing = $currentSetting
+    }
+    It "The pattern '<pattern>' is used properly by find.exe" -skip:(! $IsWindows) -testCases $testCases {
+        param ($pattern)
+        $expr = "'foo' | find.exe --% /v ""$pattern"""
+        $result = Invoke-Expression $expr
+        $result | Should -Be 'foo'
+    }
+}
+
+foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {
         # When passing arguments to native commands, quoted segments that contain
@@ -26,7 +194,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
             $a = 'a"b c"d'
             $lines = testexe -echoargs $a 'a"b c"d' a"b c"d "a'b c'd"
             $lines.Count | Should -Be 4
-            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
+            if ($PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
             }
@@ -52,7 +220,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
         It "Should handle spaces between escaped quotes (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
             $lines.Count | Should -Be 2
-            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
+            if ($PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a\"b c\"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a\"b c\"d>'
             }
@@ -81,6 +249,14 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
             $lines[1] | Should -BeExactly "Arg 1 is <com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect>"
         }
 
+        It "Should handle when the ':' is the parameter value" {
+            $lines = testexe -echoargs awk -F: '{print $1}'
+            $lines.Count | Should -Be 3
+            $lines[0] | Should -BeExactly 'Arg 0 is <awk>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <-F:>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <{print $1}>'
+        }
+
         It "Should handle DOS style arguments" {
             $lines = testexe -echoargs /arg1 /c:"a string"
             $lines.Count | Should -Be 2
@@ -105,99 +281,33 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
                 $lines[$i] | Should -BeExactly "Arg $i is <$($expected[$i])>"
             }
         }
-    }
-}
-Describe 'PSPath to native commands' {
-    BeforeAll {
-        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        $PSDefaultParameterValues["it:skip"] = (-not $featureEnabled)
+        It "Should handle empty args correctly (ArgumentList=${PSNativeCommandArgumentPassing})" {
+            if ($PSNativeCommandArgumentPassing -eq 'Legacy') {
+                $expectedLines = 2
+            }
+            else {
+                $expectedLines = 3
+            }
 
-        if ($IsWindows) {
-            $cmd = "cmd"
-            $cmdArg1 = "/c"
-            $cmdArg2 = "type"
-            $dir = "cmd"
-            $dirArg1 = "/c"
-            $dirArg2 = "dir"
+            $lines = testexe -echoargs 1 '' 2
+            $lines.Count | Should -Be $expectedLines
+            $lines[0] | Should -BeExactly 'Arg 0 is <1>'
+
+            if ($expectedLines -eq 2) {
+                $lines[1] | Should -BeExactly 'Arg 1 is <2>'
+            }
+            else {
+                $lines[1] | Should -BeExactly 'Arg 1 is <>'
+                $lines[2] | Should -BeExactly 'Arg 2 is <2>'
+            }
+
         }
-        else {
-            $cmd = "cat"
-            $dir = "ls"
+
+        It 'Should treat a PSPath as literal' {
+            $lines = testexe -echoargs temp:/foo
+            $lines.Count | Should -Be 1
+            $lines | Should -BeExactly 'Arg 0 is <temp:/foo>'
         }
-
-        Set-Content -Path testdrive:/test.txt -Value 'Hello'
-        Set-Content -Path "testdrive:/test file.txt" -Value 'Hello'
-        Set-Content -Path "env:/test var" -Value 'Hello'
-        $filePath = Join-Path -Path ~ -ChildPath (New-Guid)
-        Set-Content -Path $filePath -Value 'Home'
-        $complexDriveName = 'My test! ;+drive'
-        New-PSDrive -Name $complexDriveName -Root $testdrive -PSProvider FileSystem
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-
-        Remove-Item -Path "env:/test var"
-        Remove-Item -Path $filePath
-        Remove-PSDrive -Name $complexDriveName
-    }
-
-    It 'PSPath with ~/path works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 $filePath
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Home'
-    }
-
-    It 'PSPath with ~ works' {
-        $out = & $dir $dirArg1 $dirArg2 ~
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -Not -BeNullOrEmpty
-    }
-
-    It 'PSPath that is file system path works with native commands: <path>' -TestCases @(
-        @{ path = "testdrive:/test.txt" }
-        @{ path = "testdrive:/test file.txt" }
-    ){
-        param($path)
-
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
-    }
-
-    It 'PSPath passed with single quotes should be treated as literal' {
-        $out = & $cmd $cmdArg1 $cmdArg2 'testdrive:/test.txt'
-        $LASTEXITCODE | Should -Not -Be 0
-        $out | Should -BeNullOrEmpty
-    }
-
-    It 'PSPath that is not a file system path fails with native commands: <path>' -TestCases @(
-        @{ path = "env:/PSModulePath" }
-        @{ path = "env:/test var" }
-    ){
-        param($path)
-
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
-        $LASTEXITCODE | Should -Not -Be 0
-        $out | Should -BeNullOrEmpty
-    }
-
-    It 'Relative PSPath works' {
-        New-Item -Path $testdrive -Name TestFolder -ItemType Directory -ErrorAction Stop
-        $cwd = Get-Location
-        Set-Content -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder' -AdditionalChildPath 'test.txt') -Value 'hello'
-        Set-Location -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder')
-        Set-Location -Path $cwd
-        $out = & $cmd $cmdArg1 $cmdArg2 "TestDrive:test.txt"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
-    }
-
-    It 'Complex PSDrive name works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 "${complexDriveName}:/test.txt"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
     }
 }

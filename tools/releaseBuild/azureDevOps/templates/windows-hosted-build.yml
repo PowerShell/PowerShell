@@ -14,7 +14,9 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
     - name: runCodesignValidationInjection
       value: false
@@ -28,6 +30,7 @@ jobs:
       value: ${{ parameters.Architecture }}
     - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
       value: 1
+    - group: DotNetPrivateBuildAccess
 
   steps:
 
@@ -44,7 +47,7 @@ jobs:
     parameters:
       repoRoot: $(PowerShellRoot)
 
-  - powershell: |
+  - pwsh: |
 
       $runtime = switch ($env:Architecture)
         {
@@ -63,8 +66,11 @@ jobs:
 
       tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - powershell: |
+  - pwsh: |
       $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName
       $vstsCommandString = "vso[artifact.upload containerfolder=results;artifactname=results]$packageName"
       Write-Host ("sending " + $vstsCommandString)
@@ -74,5 +80,7 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(PowerShellRoot)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private class MemberComparer : System.Collections.Generic.IComparer<MemberDefinition>
+        private sealed class MemberComparer : System.Collections.Generic.IComparer<MemberDefinition>
         {
             public int Compare(MemberDefinition first, MemberDefinition second)
             {

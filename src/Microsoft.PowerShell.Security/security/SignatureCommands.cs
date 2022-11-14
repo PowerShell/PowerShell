@@ -374,10 +374,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = string.Empty;
-                }
+                value ??= string.Empty;
 
                 _timestampServer = value;
             }
@@ -404,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _hashAlgorithm = null;
+        private string _hashAlgorithm = "SHA256";
 
         /// <summary>
         /// Property that sets force parameter.

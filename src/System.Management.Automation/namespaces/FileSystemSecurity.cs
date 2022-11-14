@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Transfer it to the new file / directory.
                 // We keep these two code branches so that we can have more
-                // granular information when we ouput the object type via
+                // granular information when we output the object type via
                 // WriteSecurityDescriptorObject.
                 if (Directory.Exists(path))
                 {

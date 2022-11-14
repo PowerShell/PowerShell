@@ -818,6 +818,46 @@ namespace System.Management.Automation.Language
                               NamedBlockAst processBlock,
                               NamedBlockAst endBlock,
                               NamedBlockAst dynamicParamBlock)
+            : this(
+                extent,
+                usingStatements,
+                attributes,
+                paramBlock,
+                beginBlock,
+                processBlock,
+                endBlock,
+                cleanBlock: null,
+                dynamicParamBlock)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
+        /// </summary>
+        /// <param name="extent">The extent of the script block.</param>
+        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="attributes">The set of attributes for the script block.</param>
+        /// <param name="paramBlock">The ast for the param block, may be null.</param>
+        /// <param name="beginBlock">The ast for the begin block, may be null.</param>
+        /// <param name="processBlock">The ast for the process block, may be null.</param>
+        /// <param name="endBlock">The ast for the end block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
+        /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
+        public ScriptBlockAst(
+            IScriptExtent extent,
+            IEnumerable<UsingStatementAst> usingStatements,
+            IEnumerable<AttributeAst> attributes,
+            ParamBlockAst paramBlock,
+            NamedBlockAst beginBlock,
+            NamedBlockAst processBlock,
+            NamedBlockAst endBlock,
+            NamedBlockAst cleanBlock,
+            NamedBlockAst dynamicParamBlock)
             : base(extent)
         {
             SetUsingStatements(usingStatements);
@@ -856,6 +896,12 @@ namespace System.Management.Automation.Language
                 SetParent(endBlock);
             }
 
+            if (cleanBlock != null)
+            {
+                this.CleanBlock = cleanBlock;
+                SetParent(cleanBlock);
+            }
+
             if (dynamicParamBlock != null)
             {
                 this.DynamicParamBlock = dynamicParamBlock;
@@ -889,6 +935,35 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
+        /// </summary>
+        /// <param name="extent">The extent of the script block.</param>
+        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="paramBlock">The ast for the param block, may be null.</param>
+        /// <param name="beginBlock">The ast for the begin block, may be null.</param>
+        /// <param name="processBlock">The ast for the process block, may be null.</param>
+        /// <param name="endBlock">The ast for the end block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
+        /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
+        public ScriptBlockAst(
+            IScriptExtent extent,
+            IEnumerable<UsingStatementAst> usingStatements,
+            ParamBlockAst paramBlock,
+            NamedBlockAst beginBlock,
+            NamedBlockAst processBlock,
+            NamedBlockAst endBlock,
+            NamedBlockAst cleanBlock,
+            NamedBlockAst dynamicParamBlock)
+            : this(extent, usingStatements, null, paramBlock, beginBlock, processBlock, endBlock, cleanBlock, dynamicParamBlock)
+        {
+        }
+
+        /// <summary>
         /// Construct a ScriptBlockAst that uses explicitly named begin/process/end blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
@@ -908,6 +983,33 @@ namespace System.Management.Automation.Language
                               NamedBlockAst endBlock,
                               NamedBlockAst dynamicParamBlock)
             : this(extent, null, paramBlock, beginBlock, processBlock, endBlock, dynamicParamBlock)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
+        /// </summary>
+        /// <param name="extent">The extent of the script block.</param>
+        /// <param name="paramBlock">The ast for the param block, may be null.</param>
+        /// <param name="beginBlock">The ast for the begin block, may be null.</param>
+        /// <param name="processBlock">The ast for the process block, may be null.</param>
+        /// <param name="endBlock">The ast for the end block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
+        /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
+        public ScriptBlockAst(
+            IScriptExtent extent,
+            ParamBlockAst paramBlock,
+            NamedBlockAst beginBlock,
+            NamedBlockAst processBlock,
+            NamedBlockAst endBlock,
+            NamedBlockAst cleanBlock,
+            NamedBlockAst dynamicParamBlock)
+            : this(extent, null, paramBlock, beginBlock, processBlock, endBlock, cleanBlock, dynamicParamBlock)
         {
         }
 
@@ -1116,6 +1218,11 @@ namespace System.Management.Automation.Language
         public NamedBlockAst EndBlock { get; }
 
         /// <summary>
+        /// Gets the ast representing the clean block for a script block, or null if no clean block was specified.
+        /// </summary>
+        public NamedBlockAst CleanBlock { get; }
+
+        /// <summary>
         /// The ast representing the dynamicparam block for a script block, or null if no dynamicparam block was specified.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
@@ -1194,17 +1301,25 @@ namespace System.Management.Automation.Language
             var newBeginBlock = CopyElement(this.BeginBlock);
             var newProcessBlock = CopyElement(this.ProcessBlock);
             var newEndBlock = CopyElement(this.EndBlock);
+            var newCleanBlock = CopyElement(this.CleanBlock);
             var newDynamicParamBlock = CopyElement(this.DynamicParamBlock);
             var newAttributes = CopyElements(this.Attributes);
             var newUsingStatements = CopyElements(this.UsingStatements);
 
-            var scriptBlockAst = new ScriptBlockAst(this.Extent, newUsingStatements, newAttributes, newParamBlock, newBeginBlock, newProcessBlock,
-                                                    newEndBlock, newDynamicParamBlock)
+            return new ScriptBlockAst(
+                this.Extent,
+                newUsingStatements,
+                newAttributes,
+                newParamBlock,
+                newBeginBlock,
+                newProcessBlock,
+                newEndBlock,
+                newCleanBlock,
+                newDynamicParamBlock)
             {
                 IsConfiguration = this.IsConfiguration,
                 ScriptRequirements = this.ScriptRequirements
             };
-            return scriptBlockAst;
         }
 
         internal string ToStringForSerialization()
@@ -1261,7 +1376,8 @@ namespace System.Management.Automation.Language
                 var varAst = ast as VariableExpressionAst;
                 if (varAst != null)
                 {
-                    string varName = varAst.VariablePath.UserPath;
+                    VariablePath varPath = varAst.VariablePath;
+                    string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                     string varSign = varAst.Splatted ? "@" : "$";
                     string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
 
@@ -1366,17 +1482,27 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && ParamBlock != null)
-                action = ParamBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && DynamicParamBlock != null)
-                action = DynamicParamBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && BeginBlock != null)
-                action = BeginBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && ProcessBlock != null)
-                action = ProcessBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && EndBlock != null)
-                action = EndBlock.InternalVisit(visitor);
+            if (action == AstVisitAction.Continue)
+            {
+                _ = VisitAndShallContinue(ParamBlock) &&
+                    VisitAndShallContinue(DynamicParamBlock) &&
+                    VisitAndShallContinue(BeginBlock) &&
+                    VisitAndShallContinue(ProcessBlock) &&
+                    VisitAndShallContinue(EndBlock) &&
+                    VisitAndShallContinue(CleanBlock);
+            }
+
             return visitor.CheckForPostAction(this, action);
+
+            bool VisitAndShallContinue(Ast ast)
+            {
+                if (ast is not null)
+                {
+                    action = ast.InternalVisit(visitor);
+                }
+
+                return action == AstVisitAction.Continue;
+            }
         }
 
         #endregion Visitors
@@ -1513,9 +1639,7 @@ namespace System.Management.Automation.Language
         private string GetWithInputHandlingForInvokeCommandImpl(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
             // do not add "$input |" to complex pipelines
-            string unused1;
-            string unused2;
-            var pipelineAst = GetSimplePipeline(false, out unused1, out unused2);
+            var pipelineAst = GetSimplePipeline(false, out _, out _);
             if (pipelineAst == null)
             {
                 return (usingVariablesTuple == null)
@@ -1580,9 +1704,12 @@ namespace System.Management.Automation.Language
 
         internal PipelineAst GetSimplePipeline(bool allowMultiplePipelines, out string errorId, out string errorMsg)
         {
-            if (BeginBlock != null || ProcessBlock != null || DynamicParamBlock != null)
+            if (BeginBlock != null
+                || ProcessBlock != null
+                || CleanBlock != null
+                || DynamicParamBlock != null)
             {
-                errorId = "CanConvertOneClauseOnly";
+                errorId = nameof(AutomationExceptions.CanConvertOneClauseOnly);
                 errorMsg = AutomationExceptions.CanConvertOneClauseOnly;
                 return null;
             }
@@ -1748,7 +1875,7 @@ namespace System.Management.Automation.Language
     public class NamedBlockAst : Ast
     {
         /// <summary>
-        /// Construct the ast for a begin, process, end, or dynamic param block.
+        /// Construct the ast for a begin, process, end, clean, or dynamic param block.
         /// </summary>
         /// <param name="extent">
         /// The extent of the block.  If <paramref name="unnamed"/> is false, the extent includes
@@ -1760,6 +1887,7 @@ namespace System.Management.Automation.Language
         /// <item><see cref="TokenKind.Begin"/></item>
         /// <item><see cref="TokenKind.Process"/></item>
         /// <item><see cref="TokenKind.End"/></item>
+        /// <item><see cref="TokenKind.Clean"/></item>
         /// <item><see cref="TokenKind.Dynamicparam"/></item>
         /// </list>
         /// </param>
@@ -1778,8 +1906,7 @@ namespace System.Management.Automation.Language
         {
             // Validate the block name.  If the block is unnamed, it must be an End block (for a function)
             // or Process block (for a filter).
-            if (!blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
-                || (unnamed && (blockName == TokenKind.Begin || blockName == TokenKind.Dynamicparam)))
+            if (HasInvalidBlockName(blockName, unnamed))
             {
                 throw PSTraceSource.NewArgumentException(nameof(blockName));
             }
@@ -1837,6 +1964,7 @@ namespace System.Management.Automation.Language
         /// <item><see cref="TokenKind.Begin"/></item>
         /// <item><see cref="TokenKind.Process"/></item>
         /// <item><see cref="TokenKind.End"/></item>
+        /// <item><see cref="TokenKind.Clean"/></item>
         /// <item><see cref="TokenKind.Dynamicparam"/></item>
         /// </list>
         /// </summary>
@@ -1874,6 +2002,14 @@ namespace System.Management.Automation.Language
 
             var statementBlock = new StatementBlockAst(statementBlockExtent, newStatements, newTraps);
             return new NamedBlockAst(this.Extent, this.BlockKind, statementBlock, this.Unnamed);
+        }
+
+        private static bool HasInvalidBlockName(TokenKind blockName, bool unnamed)
+        {
+            return !blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
+                || (unnamed
+                    && blockName != TokenKind.Process
+                    && blockName != TokenKind.End);
         }
 
         // Used by the debugger for command breakpoints
@@ -2329,7 +2465,8 @@ namespace System.Management.Automation.Language
                 // We are done processing the current ParameterAst
                 if (astStartOffset >= endOffset) { break; }
 
-                string varName = varAst.VariablePath.UserPath;
+                VariablePath varPath = varAst.VariablePath;
+                string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                 string varSign = varAst.Splatted ? "@" : "$";
                 string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
 
@@ -3330,6 +3467,8 @@ namespace System.Management.Automation.Language
 
         internal IScriptExtent NameExtent { get { return _functionDefinitionAst.NameExtent; } }
 
+        private string _toolTip;
+
         /// <summary>
         /// Copy a function member ast.
         /// </summary>
@@ -3344,28 +3483,56 @@ namespace System.Management.Automation.Language
 
         internal override string GetTooltip()
         {
-            var sb = new StringBuilder();
-            if (IsStatic)
+            if (!string.IsNullOrEmpty(_toolTip))
             {
-                sb.Append("static ");
+                return _toolTip;
             }
 
-            sb.Append(IsReturnTypeVoid() ? "void" : ReturnType.TypeName.FullName);
-            sb.Append(' ');
-            sb.Append(Name);
-            sb.Append('(');
-            for (int i = 0; i < Parameters.Count; i++)
+            var sb = new StringBuilder();
+            var classMembers = ((TypeDefinitionAst)Parent).Members;
+            for (int i = 0; i < classMembers.Count; i++)
             {
-                if (i > 0)
+                var methodMember = classMembers[i] as FunctionMemberAst;
+                if (methodMember is null ||
+                    !Name.Equals(methodMember.Name) ||
+                    IsStatic != methodMember.IsStatic)
                 {
-                    sb.Append(", ");
+                    continue;
                 }
 
-                sb.Append(Parameters[i].GetTooltip());
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
+
+                if (methodMember.IsStatic)
+                {
+                    sb.Append("static ");
+                }
+
+                if (!methodMember.IsConstructor)
+                {
+                    sb.Append(methodMember.IsReturnTypeVoid() ? "void" : methodMember.ReturnType.TypeName.FullName);
+                    sb.Append(' ');
+                }
+
+                sb.Append(methodMember.Name);
+                sb.Append('(');
+                for (int j = 0; j < methodMember.Parameters.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(methodMember.Parameters[j].GetTooltip());
+                }
+
+                sb.Append(')');
             }
 
-            sb.Append(')');
-            return sb.ToString();
+            _toolTip = sb.ToString();
+            return _toolTip;
         }
 
         #region Visitors
@@ -7862,7 +8029,7 @@ namespace System.Management.Automation.Language
     public class MemberExpressionAst : ExpressionAst, ISupportsAssignment
     {
         /// <summary>
-        /// Construct an ast to reference a property.
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
@@ -7938,7 +8105,13 @@ namespace System.Management.Automation.Language
         {
             var newExpression = CopyElement(this.Expression);
             var newMember = CopyElement(this.Member);
-            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static, this.NullConditional);
+
+            return new MemberExpressionAst(
+                this.Extent,
+                newExpression,
+                newMember,
+                this.Static,
+                this.NullConditional);
         }
 
         #region Visitors
@@ -7974,7 +8147,45 @@ namespace System.Management.Automation.Language
     public class InvokeMemberExpressionAst : MemberExpressionAst, ISupportsAssignment
     {
         /// <summary>
-        /// Construct an instance of a method invocation expression.
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
+        /// </param>
+        /// <param name="genericTypes">The generic type arguments passed to the method.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static,
+            IList<ITypeName> genericTypes)
+            : base(extent, expression, method, @static)
+        {
+            if (arguments != null && arguments.Any())
+            {
+                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
+                SetParents(Arguments);
+            }
+
+            if (genericTypes != null && genericTypes.Count > 0)
+            {
+                this.GenericTypeArguments = new ReadOnlyCollection<ITypeName>(genericTypes);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
@@ -7989,14 +8200,45 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static)
-            : base(extent, expression, method, @static)
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static)
+            : this(extent, expression, method, arguments, @static, genericTypes: null)
         {
-            if (arguments != null && arguments.Any())
-            {
-                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
-                SetParents(Arguments);
-            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::' or '?.').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.' or '?.'.
+        /// </param>
+        /// <param name="nullConditional">True if the operator used is '?.'.</param>
+        /// <param name="genericTypes">The generic type arguments passed to the method.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static,
+            bool nullConditional,
+            IList<ITypeName> genericTypes)
+            : this(extent, expression, method, arguments, @static, genericTypes)
+        {
+            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -8016,11 +8258,21 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditional)
-            : this(extent, expression, method, arguments, @static)
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static,
+            bool nullConditional)
+            : this(extent, expression, method, arguments, @static, nullConditional, genericTypes: null)
         {
-            this.NullConditional = nullConditional;
         }
+
+        /// <summary>
+        /// Gets a list of generic type arguments passed to this method invocation.
+        /// </summary>
+        public ReadOnlyCollection<ITypeName> GenericTypeArguments { get; }
 
         /// <summary>
         /// The non-empty collection of arguments to pass when invoking the method, or null if no arguments were specified.
@@ -8035,7 +8287,15 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Expression);
             var newMethod = CopyElement(this.Member);
             var newArguments = CopyElements(this.Arguments);
-            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static, this.NullConditional);
+
+            return new InvokeMemberExpressionAst(
+                this.Extent,
+                newExpression,
+                newMethod,
+                newArguments,
+                this.Static,
+                this.NullConditional,
+                this.GenericTypeArguments);
         }
 
         #region Visitors

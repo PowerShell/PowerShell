@@ -110,7 +110,7 @@ namespace System.Management.Automation.Remoting
                 // There is a limit of 104 characters in total including the temp path to the named pipe file
                 // on non-Windows systems, so we'll convert the starttime to hex and just take the first 8 characters.
 #if UNIX
-                .Append(proc.StartTime.ToFileTime().ToString("X8").Substring(1, 8))
+                .Append(proc.StartTime.ToFileTime().ToString("X8").AsSpan(1, 8))
 #else
                 .Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture))
 #endif
@@ -504,10 +504,7 @@ namespace System.Management.Automation.Remoting
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
-            {
-                securityDescHandle.Value.Free();
-            }
+            securityDescHandle?.Free();
 
             if (pipeHandle.IsInvalid)
             {
@@ -1009,8 +1006,6 @@ namespace System.Management.Automation.Remoting
         private NamedPipeClientStream _clientPipeStream;
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
-        protected string _pipeName;
-
         #endregion
 
         #region Properties
@@ -1030,25 +1025,30 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public string PipeName
         {
-            get { return _pipeName; }
+            get;
+            internal set;
         }
-
-        #endregion
-
-        #region Constructor
-
-        public NamedPipeClientBase()
-        { }
 
         #endregion
 
         #region IDisposable
 
         /// <summary>
-        /// Dispose.
+        /// Dispose object.
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (TextReader != null)
             {
                 try { TextReader.Dispose(); }
@@ -1093,23 +1093,23 @@ namespace System.Management.Automation.Remoting
             TextWriter.AutoFlush = true;
 
             _tracer.WriteMessage("NamedPipeClientBase", "Connect", Guid.Empty,
-                "Connection started on pipe: {0}", _pipeName);
+                "Connection started on pipe: {0}", PipeName);
         }
 
         /// <summary>
         /// Closes the named pipe.
         /// </summary>
-        public void Close()
-        {
-            if (_clientPipeStream != null)
-            {
-                _clientPipeStream.Dispose();
-            }
-        }
+        public void Close() => _clientPipeStream?.Dispose();
 
+        /// <summary>
+        /// Abort connection attempt.
+        /// </summary>
         public virtual void AbortConnect()
         { }
 
+        /// <summary>
+        /// Begin connection attempt.
+        /// </summary>
         protected virtual NamedPipeClientStream DoConnect(int timeout)
         {
             return null;
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException(nameof(pipeName));
             }
 
-            _pipeName = pipeName;
+            PipeName = pipeName;
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
             // _clientPipeStream == null.
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Remoting
 
             if (coreName == null) { throw new PSArgumentNullException(nameof(coreName)); }
 
-            _pipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
+            PipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
             // _clientPipeStream == null.
@@ -1211,6 +1211,9 @@ namespace System.Management.Automation.Remoting
 
         #region Protected Methods
 
+        /// <summary>
+        /// Begin connection attempt.
+        /// </summary>
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
             // Repeatedly attempt connection to pipe until timeout expires.
@@ -1220,11 +1223,11 @@ namespace System.Management.Automation.Remoting
 
             NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
                 serverName: ".",
-                pipeName: _pipeName,
+                pipeName: PipeName,
                 direction: PipeDirection.InOut,
                 options: PipeOptions.Asynchronous);
 
-            namedPipeClientStream.Connect();
+            namedPipeClientStream.ConnectAsync(timeout);
 
             do
             {
@@ -1275,7 +1278,7 @@ namespace System.Management.Automation.Remoting
             //
             // Named pipe inside Windows Server container is under different name space.
             //
-            _pipeName = containerObRoot + @"\Device\NamedPipe\" +
+            PipeName = containerObRoot + @"\Device\NamedPipe\" +
                 NamedPipeUtils.CreateProcessPipeName(procId, appDomainName);
         }
 
@@ -1301,7 +1304,7 @@ namespace System.Management.Automation.Remoting
             {
                 // Get handle to pipe.
                 pipeHandle = NamedPipeNative.CreateFile(
-                    lpFileName: _pipeName,
+                    lpFileName: PipeName,
                     dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
                     dwShareMode: 0,
                     SecurityAttributes: IntPtr.Zero,

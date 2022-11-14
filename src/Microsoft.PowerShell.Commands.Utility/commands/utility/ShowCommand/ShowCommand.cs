@@ -75,14 +75,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Width.
         /// </summary>
         [Parameter]
-        [ValidateRange(300, Int32.MaxValue)]
+        [ValidateRange(300, int.MaxValue)]
         public double Height { get; set; }
 
         /// <summary>
         /// Gets or sets the Width.
         /// </summary>
         [Parameter]
-        [ValidateRange(300, Int32.MaxValue)]
+        [ValidateRange(300, int.MaxValue)]
         public double Width { get; set; }
 
         /// <summary>

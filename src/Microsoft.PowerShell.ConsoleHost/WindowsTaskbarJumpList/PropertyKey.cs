@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Property identifier (PID)
         /// </summary>
-        public Int32 PropertyId { get; }
+        public int PropertyId { get; }
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="formatId">A unique GUID for the property.</param>
         /// <param name="propertyId">Property identifier (PID).</param>
-        internal PropertyKey(Guid formatId, Int32 propertyId)
+        internal PropertyKey(Guid formatId, int propertyId)
         {
             this.FormatId = formatId;
             this.PropertyId = propertyId;

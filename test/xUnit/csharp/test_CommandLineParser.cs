@@ -24,6 +24,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.Empty(cpp.Args);
             Assert.Null(cpp.ConfigurationName);
+            Assert.Null(cpp.ConfigurationFile);
             Assert.Null(cpp.CustomPipeName);
             Assert.Null(cpp.ErrorMessage);
             Assert.Null(cpp.ExecutionPolicy);
@@ -103,18 +104,27 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestDefaultParameterIsFileName_Exist()
         {
-            var fileName = System.IO.Path.GetTempFileName();
+            var tempFile = System.IO.Path.GetTempFileName();
+            var tempPs1 = tempFile + ".ps1";
+            File.Move(tempFile, tempPs1);
 
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[] { fileName });
+            cpp.Parse(new string[] { tempPs1 });
 
-            Assert.False(cpp.AbortStartup);
-            Assert.False(cpp.NoExit);
-            Assert.False(cpp.ShowShortHelp);
-            Assert.False(cpp.ShowBanner);
-            Assert.Equal(CommandLineParameterParser.NormalizeFilePath(fileName), cpp.File);
-            Assert.Null(cpp.ErrorMessage);
+            try
+            {
+                Assert.False(cpp.AbortStartup);
+                Assert.False(cpp.NoExit);
+                Assert.False(cpp.ShowShortHelp);
+                Assert.False(cpp.ShowBanner);
+                Assert.Equal(CommandLineParameterParser.NormalizeFilePath(tempPs1), cpp.File);
+                Assert.Null(cpp.ErrorMessage);
+            }
+            finally
+            {
+                File.Delete(tempPs1);
+            }
         }
 
         [Theory]
@@ -321,7 +331,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.SocketServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -338,7 +348,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.ServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -355,7 +365,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.NamedPipeServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -372,7 +382,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.SSHServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -425,6 +435,38 @@ namespace PSTests.Parallel
             Assert.False(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
             Assert.Equal("qwerty", cpp.ConfigurationName);
+            Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-configurationfile")]
+        public static void TestParameter_ConfigurationFile_No_Name(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.True(cpp.AbortStartup);
+            Assert.True(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.ShowBanner);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
+            Assert.Equal(CommandLineParameterParserStrings.MissingConfigurationFileArgument, cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-configurationfile", "qwerty")]
+        public static void TestParameter_ConfigurationFile_With_Name(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.True(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.True(cpp.ShowBanner);
+            Assert.Equal("qwerty", cpp.ConfigurationFile);
             Assert.Null(cpp.ErrorMessage);
         }
 
@@ -1212,7 +1254,16 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            private readonly string _fileName = Path.GetTempFileName();
+            private static string _fileName
+            {
+                get
+                {
+                    var tempFile = Path.GetTempFileName();
+                    var tempPs1 = tempFile + ".ps1";
+                    File.Move(tempFile, tempPs1);
+                    return tempPs1;
+                }
+            }
 
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -1230,21 +1281,28 @@ namespace PSTests.Parallel
 
             cpp.Parse(commandLine);
 
-            Assert.False(cpp.AbortStartup);
-            Assert.False(cpp.NoExit);
-            Assert.False(cpp.ShowShortHelp);
-            Assert.False(cpp.ShowBanner);
-            if (Platform.IsWindows)
+            try
             {
-                Assert.True(cpp.StaMode);
-            }
-            else
-            {
-                Assert.False(cpp.StaMode);
-            }
+                Assert.False(cpp.AbortStartup);
+                Assert.False(cpp.NoExit);
+                Assert.False(cpp.ShowShortHelp);
+                Assert.False(cpp.ShowBanner);
+                if (Platform.IsWindows)
+                {
+                    Assert.True(cpp.StaMode);
+                }
+                else
+                {
+                    Assert.False(cpp.StaMode);
+                }
 
-            Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
-            Assert.Null(cpp.ErrorMessage);
+                Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
+                Assert.Null(cpp.ErrorMessage);
+            }
+            finally
+            {
+                File.Delete(cpp.File);
+            }
         }
     }
 }

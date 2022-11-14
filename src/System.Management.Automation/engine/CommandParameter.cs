@@ -12,14 +12,14 @@ namespace System.Management.Automation
     [DebuggerDisplay("{ParameterName}")]
     internal sealed class CommandParameterInternal
     {
-        private class Parameter
+        private sealed class Parameter
         {
             internal Ast ast;
             internal string parameterName;
             internal string parameterText;
         }
 
-        private class Argument
+        private sealed class Argument
         {
             internal Ast ast;
             internal object value;
@@ -124,10 +124,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SetArgumentValue(Ast ast, object value)
         {
-            if (_argument == null)
-            {
-                _argument = new Argument();
-            }
+            _argument ??= new Argument();
 
             _argument.value = value;
             _argument.ast = ast;

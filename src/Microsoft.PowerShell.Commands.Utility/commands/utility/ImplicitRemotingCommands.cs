@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         #endregion Parameters
 
@@ -443,10 +443,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _PSSnapins = value;
                 _commandParameterSpecified = true;
@@ -1044,10 +1041,7 @@ namespace Microsoft.PowerShell.Commands
 
         private List<T> RehydrateList<T>(string commandName, object deserializedList, Func<PSObject, T> itemRehydrator)
         {
-            if (itemRehydrator == null)
-            {
-                itemRehydrator = (PSObject pso) => ConvertTo<T>(commandName, pso);
-            }
+            itemRehydrator ??= (PSObject pso) => ConvertTo<T>(commandName, pso);
 
             List<T> result = null;
 
@@ -1068,17 +1062,14 @@ namespace Microsoft.PowerShell.Commands
 
         private Dictionary<TKey, TValue> RehydrateDictionary<TKey, TValue>(
             string commandName,
-            PSObject deserializedObject, 
+            PSObject deserializedObject,
             string propertyName,
             Func<PSObject, TValue> valueRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
 
-            if (valueRehydrator == null)
-            {
-                valueRehydrator = (PSObject pso) => ConvertTo<TValue>(commandName, pso);
-            }
+            valueRehydrator ??= (PSObject pso) => ConvertTo<TValue>(commandName, pso);
 
             Dictionary<TKey, TValue> result = new();
             PSPropertyInfo deserializedDictionaryProperty = deserializedObject.Properties[propertyName];
@@ -2024,7 +2015,6 @@ namespace Microsoft.PowerShell.Commands
 
     PrivateData = @{{
         ImplicitRemoting = $true
-        ImplicitSessionId = '{4}'
     }}
 }}
         ";
@@ -2043,8 +2033,7 @@ namespace Microsoft.PowerShell.Commands
                 CodeGeneration.EscapeSingleQuotedStringContent(_moduleGuid.ToString()),
                 CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ProxyModuleDescription, this.GetConnectionString())),
                 CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(psm1fileName)),
-                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)),
-                _remoteRunspaceInfo.InstanceId);
+                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)));
         }
 
         #endregion
@@ -2111,7 +2100,9 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
 
             // In Win8, we are no longer loading all assemblies by default.
             // So we need to use the fully qualified name when accessing a type in that assembly
-            string versionOfScriptGenerator = "[" + typeof(ExportPSSessionCommand).AssemblyQualifiedName + "]" + "::VersionOfScriptGenerator";
+            Type type = typeof(ExportPSSessionCommand);
+            string asmName = type.Assembly.GetName().Name;
+            string versionOfScriptGenerator = $"[{type.FullName}, {asmName}]::VersionOfScriptGenerator";
             GenerateTopComment(writer);
             writer.Write(
                 HeaderTemplate,
@@ -2825,13 +2816,14 @@ function Get-PSImplicitRemotingClientSideParameters
 
             $clientSideParameters = Get-PSImplicitRemotingClientSideParameters $PSBoundParameters ${8}
 
-            $scriptCmd = {{ & $script:InvokeCommand `
-                            @clientSideParameters `
-                            -HideComputerName `
-                            -Session (Get-PSImplicitRemotingSession -CommandName '{0}') `
-                            -Arg ('{0}', $PSBoundParameters, $positionalArguments) `
-                            -Script {{ param($name, $boundParams, $unboundParams) & $name @boundParams @unboundParams }} `
-                         }}
+            $scriptCmd = {{
+                & $script:InvokeCommand `
+                    @clientSideParameters `
+                    -HideComputerName `
+                    -Session (Get-PSImplicitRemotingSession -CommandName '{0}') `
+                    -Arg ('{0}', $PSBoundParameters, $positionalArguments) `
+                    -Script {{ param($name, $boundParams, $unboundParams) & $name @boundParams @unboundParams }} `
+            }}
 
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
@@ -3059,10 +3051,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 FileShare.None);
             using (TextWriter writer = new StreamWriter(psm1, encoding))
             {
-                if (listOfCommandMetadata == null)
-                {
-                    listOfCommandMetadata = new List<CommandMetadata>();
-                }
+                listOfCommandMetadata ??= new List<CommandMetadata>();
 
                 GenerateModuleHeader(writer);
                 GenerateHelperFunctions(writer);
@@ -3080,10 +3069,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 FileShare.None);
             using (TextWriter writer = new StreamWriter(formatPs1xml, encoding))
             {
-                if (listOfFormatData == null)
-                {
-                    listOfFormatData = new List<ExtendedTypeDefinition>();
-                }
+                listOfFormatData ??= new List<ExtendedTypeDefinition>();
 
                 GenerateFormatFile(writer, listOfFormatData);
                 formatPs1xml.SetLength(formatPs1xml.Position);

@@ -259,10 +259,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            if (_unExpandedParametersWithWildCardPattern == null)
-                            {
-                                _unExpandedParametersWithWildCardPattern = new List<MshParameter>();
-                            }
+                            _unExpandedParametersWithWildCardPattern ??= new List<MshParameter>();
 
                             _unExpandedParametersWithWildCardPattern.Add(unexpandedParameter);
                         }

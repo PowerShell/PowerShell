@@ -33,15 +33,15 @@ namespace System.Management.Automation
             { Ascii, System.Text.Encoding.ASCII },
             { BigEndianUnicode, System.Text.Encoding.BigEndianUnicode },
             { BigEndianUtf32, new UTF32Encoding(bigEndian: true, byteOrderMark: true) },
-            { Default, ClrFacade.GetDefaultEncoding() },
+            { Default, Encoding.Default },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
 #pragma warning disable SYSLIB0001
             { Utf7, System.Text.Encoding.UTF7 },
 #pragma warning restore SYSLIB0001
-            { Utf8, ClrFacade.GetDefaultEncoding() },
+            { Utf8, Encoding.Default },
             { Utf8Bom, System.Text.Encoding.UTF8 },
-            { Utf8NoBom, ClrFacade.GetDefaultEncoding() },
+            { Utf8NoBom, Encoding.Default },
             { Utf32, System.Text.Encoding.UTF32 },
             { String, System.Text.Encoding.Unicode },
             { Unknown, System.Text.Encoding.Unicode },
@@ -57,7 +57,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(encoding))
             {
                 // no parameter passed, default to UTF8
-                return ClrFacade.GetDefaultEncoding();
+                return Encoding.Default;
             }
 
             Encoding foundEncoding;

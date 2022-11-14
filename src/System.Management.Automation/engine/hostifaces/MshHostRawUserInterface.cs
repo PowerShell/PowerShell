@@ -1150,7 +1150,7 @@ namespace System.Management.Automation.Host
     #endregion Ancillary types
 
     /// <summary>
-    /// Defines the lowest-level user interface functions that an interactive application hosting an MSH
+    /// Defines the lowest-level user interface functions that an interactive application hosting PowerShell
     /// <see cref="System.Management.Automation.Runspaces.Runspace"/> can choose to implement if it wants to
     /// support any cmdlet that does character-mode interaction with the user.
     /// </summary>
@@ -1340,9 +1340,9 @@ namespace System.Management.Automation.Host
         /// Key stroke when a key is pressed.
         /// </returns>
         /// <example>
-        ///     <MSH>
+        ///     <PowerShell>
         ///         $Host.UI.RawUI.ReadKey()
-        ///     </MSH>
+        ///     </PowerShell>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey(ReadKeyOptions)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.FlushInputBuffer"/>
@@ -1370,10 +1370,10 @@ namespace System.Management.Automation.Host
         /// Neither ReadKeyOptions.IncludeKeyDown nor ReadKeyOptions.IncludeKeyUp is specified.
         /// </exception>
         /// <example>
-        ///     <MSH>
+        ///     <PowerShell>
         ///         $option = [System.Management.Automation.Host.ReadKeyOptions]"IncludeKeyDown";
         ///         $host.UI.RawUI.ReadKey($option)
-        ///     </MSH>
+        ///     </PowerShell>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.ReadKeyOptions"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey()"/>
@@ -1458,11 +1458,11 @@ namespace System.Management.Automation.Host
         /// Provided for clearing regions -- less chatty than passing an array of cells.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         using System;
         ///         using System.Management.Automation;
         ///         using System.Management.Automation.Host;
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet("Clear","Screen")]
         ///             public class ClearScreen : PSCmdlet
@@ -1474,7 +1474,7 @@ namespace System.Management.Automation.Host
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(Size, BufferCell)"/>

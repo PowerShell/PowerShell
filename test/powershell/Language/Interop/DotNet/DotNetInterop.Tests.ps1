@@ -121,7 +121,7 @@ namespace DotNetInterop
     }
 
     It "Calling constructor of a ByRef-like type via dotnet adapter should fail gracefully - <Number>" -TestCases @(
-        @{ Number = 1; Script = { [System.Span[string]]::new.Invoke("abc") } }
+        @{ Number = 1; Script = { [System.Span[string]]::new.Invoke([ref]$null) } }
         @{ Number = 2; Script = { [DotNetInterop.MyByRefLikeType]::new.Invoke(2) } }
     ) {
         param($Script)

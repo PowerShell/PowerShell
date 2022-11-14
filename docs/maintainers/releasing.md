@@ -215,30 +215,10 @@ There are 2 homebrew formulas: main and preview.
 
 Update it on stable releases.
 
-1. Make sure that you have [homebrew cask](https://caskroom.github.io/).
-1. `brew update`
-1. `cd /usr/local/Homebrew/Library/Taps/caskroom/homebrew-cask/Casks`
-1. Edit `./powershell.rb`, reference [file history](https://github.com/vors/homebrew-cask/commits/master/Casks/powershell.rb) for the guidelines:
-    1. Update `version`
-    1. Update `sha256` to the checksum of produced `.pkg` (note lower-case string for the consistent style)
-    1. Update `checkpoint` value. To do that run `brew cask _appcast_checkpoint --calculate 'https://github.com/PowerShell/PowerShell/releases.atom'`
-1. `brew cask style --fix ./powershell.rb`, make sure there are no errors
-1. `brew cask audit --download ./powershell.rb`, make sure there are no errors
-1. `brew cask upgrade powershell`, make sure that powershell was updates successfully
-1. Commit your changes, send a PR to [homebrew-cask](https://github.com/caskroom/homebrew-cask)
+1. Wait for a PR to show up in https://github.com/powershell/homebrew-tap, review and merge it.
 
 ### Preview
 
 Update it on preview releases.
 
-1. Add [homebrew cask versions](https://github.com/Homebrew/homebrew-cask-versions): `brew tap homebrew/cask-versions`
-1. `brew update`
-1. `cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask-versions/Casks`
-1. Edit `./powershell-preview.rb`:
-    1. Update `version`
-    1. Update `sha256` to the checksum of produced `.pkg` (note lower-case string for the consistent style)
-    1. Update `checkpoint` value. To do that run `brew cask _appcast_checkpoint --calculate 'https://github.com/PowerShell/PowerShell/releases.atom'`
-1. `brew cask style --fix ./powershell-preview.rb`, make sure there are no errors
-1. `brew cask audit --download ./powershell-preview.rb`, make sure there are no errors
-1. `brew cask upgrade powershell-preview`, make sure that powershell was updates successfully
-1. Commit your changes, send a PR to [homebrew-cask-versions](https://github.com/Homebrew/homebrew-cask-versions)
+1. Wait for a PR to show up in https://github.com/powershell/homebrew-tap, review and merge it.

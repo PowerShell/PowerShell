@@ -78,6 +78,8 @@ namespace System.Management.Automation.Subsystem
 
         private protected SubsystemInfo(SubsystemKind kind, Type subsystemType)
         {
+            Requires.OneSpecificSubsystemKind(kind);
+
             _syncObj = new object();
             _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
 

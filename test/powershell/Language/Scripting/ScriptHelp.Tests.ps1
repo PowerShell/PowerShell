@@ -180,7 +180,12 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
 Describe 'get-help file' -Tags "CI" {
     BeforeAll {
         try {
-            $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            if ($IsWindows) {
+                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            }
+            else {
+                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
+            }
         } catch {
             return
         }
@@ -233,7 +238,12 @@ Describe 'get-help file' -Tags "CI" {
 Describe 'get-help other tests' -Tags "CI" {
     BeforeAll {
         try {
-            $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            if ($IsWindows) {
+                $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            }
+            else {
+                $tempFile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
+            }
         } catch {
             return
         }
@@ -541,7 +551,8 @@ Describe 'get-help other tests' -Tags "CI" {
 
         $x = Get-Help helpFunc11 -det
         $x.Parameters.parameter | ForEach-Object {
-        It '$_.description' { $_.description[0].text | Should -Match "^$($_.Name)\s+help" }
+            $dText = $_.description[0].text
+            It ('$_.description ({0})' -f $title) { $dText | Should -Match "^$($_.Name)\s+help" }
         }
     }
 
