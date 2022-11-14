@@ -247,8 +247,10 @@ namespace System.Management.Automation
         {
             "cmd",
             "cscript",
-            "wscript",
             "find",
+            "gcloud",
+            "sqlcmd",
+            "wscript",
         };
 
         #region ctor/native command properties
