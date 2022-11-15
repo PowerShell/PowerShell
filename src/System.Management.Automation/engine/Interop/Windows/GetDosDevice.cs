@@ -50,7 +50,17 @@ internal static partial class Interop
                             if (res.StartsWith("UNC"))
                             {
                                 // -> "C\\localhost\\c$\\tmp\0\0" -> "\\\\localhost\\c$\\tmp"
-                                res = res.Slice(2, retValue - 2);
+                                //
+                                // We need to take only first null-terminated string as QueryDosDevice() docs say.
+                                int i = 3;
+                                for (; i < res.Length; i++)
+                                {
+                                    if (res[i] == '\0') break;
+                                }
+
+                                Diagnostics.Assert(i < res.Length, "Broken QueryDosDevice() buffer.");
+
+                                res = res.Slice(2, i);
                                 res[0] = '\\';
 
                                 // If we want always to have terminating slash -> "\\\\localhost\\c$\\tmp\\"
@@ -60,8 +70,8 @@ internal static partial class Interop
                             }
                             else if (res[^3] == ':')
                             {
-                                // Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network
-                                //
+                                Diagnostics.Assert(false, "Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network");
+
                                 // The substed path is the root path of a drive. For example: subst Y: C:\
                                 // -> "C:\0\0" -> "C:\"
                                 res = res.Slice(0, retValue - 1);
@@ -72,8 +82,8 @@ internal static partial class Interop
                         }
                         else
                         {
-                            // Really is is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network
-                            //
+                            Diagnostics.Assert(false, "Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network");
+
                             // The drive name is not a substed path, then we return the root path of the drive
                             // "C:\0" -> "C:\\"
                             fullDeviceName[^1] = '\\';
@@ -81,9 +91,9 @@ internal static partial class Interop
                         }
                     }
 
-                    // ERROR_INSUFFICIENT_BUFFER = 122 (0x7A)
+                    const int ERROR_INSUFFICIENT_BUFFER = 122;
                     int errorCode = Marshal.GetLastPInvokeError();
-                    if (errorCode != 122)
+                    if (errorCode != ERROR_INSUFFICIENT_BUFFER)
                     {
                         throw new Win32Exception((int)errorCode);
                     }
