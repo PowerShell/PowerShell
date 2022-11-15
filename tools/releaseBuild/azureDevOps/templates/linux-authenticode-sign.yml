@@ -20,45 +20,68 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshLinuxBuild
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+      artifact: pwshLinuxBuild.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild.tar.gz
     displayName: Download deb build
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshLinuxBuildMinSize
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
+      artifact: pwshLinuxBuildMinSize.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize.tar.gz
     displayName: Download min-size build
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshLinuxBuildArm32
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
+      artifact: pwshLinuxBuildArm32.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32.tar.gz
     displayName: Download arm32 build
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshLinuxBuildArm64
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
+      artifact: pwshLinuxBuildArm64.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64.tar.gz
     displayName: Download arm64 build
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshMarinerBuildAmd64
-      path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+      artifact: pwshMarinerBuildAmd64.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64.tar.gz
     displayName: Download mariner build
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshLinuxBuildAlpine
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
+      artifact: pwshLinuxBuildAlpine.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine.tar.gz
     displayName: Download alpine build
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: pwshLinuxBuildFxdependent
-      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent
+      artifact: pwshLinuxBuildFxdependent.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent.tar.gz
     displayName: Download fxdependent build
+
+  - pwsh: |
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent"
+      tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent
+    displayName: Expand builds
 
   - template: SetVersionVariables.yml
     parameters:
@@ -116,12 +139,3 @@ jobs:
     parameters:
       binLocation: pwshLinuxBuildFxdependent
       buildPrefixName: 'PowerShell Linux Framework Dependent'
-
-  #- template: Sbom.yml@ComplianceRepo
-  #  parameters:
-  #    BuildDropPath: '$(System.ArtifactsDirectory)/$(BIN_LOCATION)'
-  #    Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #    displayName: ${{ parameters.buildName }} SBOM
-  #    PackageName: $(PACKAGE_NAME)
-  #    PackageVersion: $(Version)
-  #    sourceScanPath: '$(PowerShellRoot)/tools'
