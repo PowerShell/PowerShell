@@ -54,7 +54,7 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
         $env | Should -BeExactly 'my test = value'
     }
 
-    It 'The command can include a -w paramter' {
+    It 'The command can include a -w parameter' {
         $out = pwsh -noprofile -outputformat text -command { exec /bin/echo 1 -w 2 }
         $out | Should -BeExactly '1 -w 2'
     }
