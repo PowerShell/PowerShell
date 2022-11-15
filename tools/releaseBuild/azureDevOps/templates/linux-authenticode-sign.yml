@@ -85,13 +85,13 @@ jobs:
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64 -ItemType Directory
       tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
 
-      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine"
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine"
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine -ItemType Directory
-      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
 
-      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent"
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent"
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent -ItemType Directory
-      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent
     displayName: Expand builds
 
   - template: SetVersionVariables.yml
