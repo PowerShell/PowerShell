@@ -1043,7 +1043,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // This indicates GetResponse will handle redirects.
-            if (handleRedirect)
+            if (handleRedirect || AllowInsecureRedirect)
             {
                 handler.AllowAutoRedirect = false;
             }
@@ -1392,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                if ((keepAuthorization || AllowInsecureRedirect) && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
+                if ((keepAuthorization || (AllowInsecureRedirect && (WebSession.MaximumRedirection > 0 || WebSession.MaximumRedirection == -1))) && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
                 {
                     _cancelToken.Cancel();
                     _cancelToken = null;
@@ -1652,7 +1652,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
-                }
+                }   
             }
             catch (CryptographicException ex)
             {
