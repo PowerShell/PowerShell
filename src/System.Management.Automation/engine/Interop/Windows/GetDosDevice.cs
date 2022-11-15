@@ -55,7 +55,10 @@ internal static partial class Interop
                                 int i = 3;
                                 for (; i < res.Length; i++)
                                 {
-                                    if (res[i] == '\0') break;
+                                    if (res[i] == '\0')
+                                    {
+                                        break;
+                                    }
                                 }
 
                                 Diagnostics.Assert(i < res.Length, "Broken QueryDosDevice() buffer.");
