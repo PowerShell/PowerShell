@@ -231,8 +231,8 @@ namespace Microsoft.PowerShell.Commands
         // The following variable controls the view.
         private HelpView _viewTokenToAdd = HelpView.Default;
 
-        private readonly Stopwatch _timer = new Stopwatch();
 #if LEGACYTELEMETRY
+        private readonly Stopwatch _timer = new Stopwatch();
         private bool _updatedHelp;
 #endif
 
@@ -245,7 +245,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+#if LEGACYTELEMETRY
             _timer.Start();
+#endif
         }
 
         /// <summary>
@@ -321,9 +323,9 @@ namespace Microsoft.PowerShell.Commands
                     countOfHelpInfos++;
                 }
 
+#if LEGACYTELEMETRY
                 _timer.Stop();
 
-#if LEGACYTELEMETRY
                 if (!string.IsNullOrEmpty(Name))
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 #endif
