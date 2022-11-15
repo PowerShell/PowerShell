@@ -15,10 +15,10 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It 'Exec alias should map to Switch-Process' {
+    It 'Exec function should map to Switch-Process' {
         $alias = Get-Command exec
-        $alias | Should -BeOfType [System.Management.Automation.AliasInfo]
-        $alias.Definition | Should -BeExactly 'Switch-Process'
+        $alias | Should -BeOfType [System.Management.Automation.CommandInfo]
+        $alias.Definition | Should -Not -BeNullOrEmpty
     }
 
     It 'Exec by itself does nothing' {
@@ -59,6 +59,11 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     It 'The environment will be copied to the child process' {
         $env = pwsh -noprofile -outputformat text -command { $env:TEST_FOO='my test = value'; Switch-Process bash -c 'echo $TEST_FOO' }
         $env | Should -BeExactly 'my test = value'
+    }
+
+    It 'The command can include a -w paramter' {
+        $out = pwsh -noprofile -outputformat text -command { exec /bin/echo 1 -w 2 }
+        $out | Should -BeExactly '1 -w 2'
     }
 }
 
