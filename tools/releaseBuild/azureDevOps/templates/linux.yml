@@ -88,6 +88,10 @@ jobs:
       PackageVersion: $(Version)
       sourceScanPath: '$(PowerShellRoot)/tools'
 
+  - pwsh: |
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+    displayName: Compress pwshLinuxBuild
+
   - ${{ if eq(variables.build,'rpm') }} :
     - template: Sbom.yml@ComplianceRepo
       parameters:
@@ -97,6 +101,10 @@ jobs:
         PackageName: PowerShell Linux Framework Dependent
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - pwsh: |
+      tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+    displayName: Compress pwshMarinerBuildAmd64
 
   - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
@@ -108,6 +116,10 @@ jobs:
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
 
+  - pwsh: |
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+    displayName: Compress pwshLinuxBuildMinSize
+
   - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
       parameters:
@@ -117,6 +129,10 @@ jobs:
         PackageName: PowerShell Linux Arm32
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - pwsh: |
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+    displayName: Compress pwshLinuxBuildArm32
 
   - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
@@ -128,11 +144,15 @@ jobs:
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
 
+  - pwsh: |
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+    displayName: Compress pwshLinuxBuildArm64
+
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-        artifactName: pwshLinuxBuild
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        artifactName: pwshLinuxBuild.tar.gz
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
@@ -143,8 +163,8 @@ jobs:
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
-        artifactName: pwshLinuxBuildMinSize
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz'
+        artifactName: pwshLinuxBuildMinSize.tar.gz
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
@@ -155,8 +175,8 @@ jobs:
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
-        artifactName: pwshLinuxBuildArm32
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz'
+        artifactName: pwshLinuxBuildArm32.tar.gz
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
@@ -167,8 +187,8 @@ jobs:
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
-        artifactName: pwshLinuxBuildArm64
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz'
+        artifactName: pwshLinuxBuildArm64.tar.gz
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
@@ -179,8 +199,8 @@ jobs:
   - ${{ if eq(variables.build,'rpm') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
-        artifactName: pwshMarinerBuildAmd64
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz'
+        artifactName: pwshMarinerBuildAmd64.tar.gz
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: PublishPipelineArtifact@1
@@ -191,8 +211,8 @@ jobs:
   - ${{ if eq(variables.build,'alpine') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-        artifactName: pwshLinuxBuildAlpine
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        artifactName: pwshLinuxBuildAlpine.tar.gz
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: PublishPipelineArtifact@1
@@ -203,8 +223,8 @@ jobs:
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: PublishPipelineArtifact@1
       inputs:
-        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-        artifactName: pwshLinuxBuildFxdependent
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        artifactName: pwshLinuxBuildFxdependent.tar.gz
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: PublishPipelineArtifact@1
