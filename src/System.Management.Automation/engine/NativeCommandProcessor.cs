@@ -588,7 +588,7 @@ namespace System.Management.Automation
                         if (!Platform.IsWindowsDesktop) { throw; }
 
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
-                        string executable = FindExecutable(startInfo.FileName);
+                        string executable = Interop.Windows.FindExecutable(startInfo.FileName);
                         bool notDone = true;
                         // check to see what mode we should be in for argument passing
                         if (!string.IsNullOrEmpty(executable))
@@ -1589,55 +1589,6 @@ namespace System.Management.Automation
             return false;
 #endif
         }
-
-        #region Interop for FindExecutable...
-
-        // Constant used to determine the buffer size for a path
-        // when looking for an executable. MAX_PATH is defined as 260
-        // so this is much larger than what should be permitted
-        private const int MaxExecutablePath = 1024;
-
-        // The FindExecutable API is defined in shellapi.h as
-        // SHSTDAPI_(HINSTANCE) FindExecutableW(LPCWSTR lpFile, LPCWSTR lpDirectory, __out_ecount(MAX_PATH) LPWSTR lpResult);
-        // HINSTANCE is void* so we need to use IntPtr as API return value.
-
-        [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "0")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "1")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "2")]
-        private static extern IntPtr FindExecutableW(
-          string fileName, string directoryPath, StringBuilder pathFound);
-
-        private static string FindExecutable(string filename)
-        {
-            // Preallocate a
-            StringBuilder objResultBuffer = new StringBuilder(MaxExecutablePath);
-            IntPtr resultCode = (IntPtr)0;
-
-            try
-            {
-                resultCode = FindExecutableW(filename, string.Empty, objResultBuffer);
-            }
-            catch (System.IndexOutOfRangeException e)
-            {
-                // If we got an index-out-of-range exception here, it's because
-                // of a buffer overrun error so we fail fast instead of
-                // continuing to run in an possibly unstable environment....
-                Environment.FailFast(e.Message, e);
-            }
-
-            // If FindExecutable returns a result >= 32, then it succeeded
-            // and we return the string that was found, otherwise we
-            // return null.
-            if ((long)resultCode >= 32)
-            {
-                return objResultBuffer.ToString();
-            }
-
-            return null;
-        }
-
-        #endregion
 
         #region Minishell Interop
 
