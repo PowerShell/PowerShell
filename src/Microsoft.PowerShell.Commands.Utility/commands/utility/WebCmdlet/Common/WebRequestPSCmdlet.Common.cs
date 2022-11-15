@@ -468,12 +468,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // HTTPS to HTTP redirect
-            if (AllowInsecureRedirect  && (MaximumRedirection != -1))
+            /*if (AllowInsecureRedirect  && (MaximumRedirection != -1))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowInsecureRedirectMaximumRedirectionConflict,
                                                        "WebCmdletAllowInsecureRedirectMaximumRedirectionConflictException");
                 ThrowTerminatingError(error);
-            }
+            }*/
 
             // credentials
             if (UseDefaultCredentials && (Credential != null))
