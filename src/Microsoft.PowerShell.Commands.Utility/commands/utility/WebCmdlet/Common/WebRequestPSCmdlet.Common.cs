@@ -200,7 +200,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
-        /// AllowInsecureRedirect does not work with MaximumRedirection.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter AllowInsecureRedirect { get; set; }
