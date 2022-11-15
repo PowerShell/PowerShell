@@ -1652,7 +1652,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
-                }   
+                }
             }
             catch (CryptographicException ex)
             {
