@@ -1005,15 +1005,14 @@ namespace System.Management.Automation.Runspaces
                                             $errorColor = $PSStyle.Formatting.Error
                                         }
 
-                                        if ($myinv -and $myinv.MyCommand)
-                                        {
+                                        $commandPrefix = if ($myinv -and $myinv.MyCommand) {
                                             switch -regex ( $myinv.MyCommand.CommandType )
                                             {
                                                 ([System.Management.Automation.CommandTypes]::ExternalScript)
                                                 {
                                                     if ($myinv.MyCommand.Path)
                                                     {
-                                                        $errorColor + $myinv.MyCommand.Path + ' : '
+                                                        $myinv.MyCommand.Path + ' : '
                                                     }
 
                                                     break
@@ -1023,7 +1022,7 @@ namespace System.Management.Automation.Runspaces
                                                 {
                                                     if ($myinv.MyCommand.ScriptBlock)
                                                     {
-                                                        $errorColor + $myinv.MyCommand.ScriptBlock.ToString() + ' : '
+                                                        $myinv.MyCommand.ScriptBlock.ToString() + ' : '
                                                     }
 
                                                     break
@@ -1034,12 +1033,12 @@ namespace System.Management.Automation.Runspaces
                                                     {
                                                         if ($myinv.MyCommand.Name)
                                                         {
-                                                            $errorColor + $myinv.MyCommand.Name + ' : '
+                                                            $myinv.MyCommand.Name + ' : '
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        $errorColor + $myinv.InvocationName + ' : '
+                                                        $myinv.InvocationName + ' : '
                                                     }
 
                                                     break
@@ -1048,9 +1047,11 @@ namespace System.Management.Automation.Runspaces
                                         }
                                         elseif ($myinv -and $myinv.InvocationName)
                                         {
-                                            $errorColor + $myinv.InvocationName + ' : '
+                                            $myinv.InvocationName + ' : '
                                         }
                                     }
+
+                                    $errorColor + $commandPrefix
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
