@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _fragment;
 
         /// <summary>
-        /// Sets the _hyperlink switch, if true, then auto
+        /// Gets and sets the _hyperlink switch, if true, then auto
         /// generate hyperlinks for URI.
         /// </summary>
         [Parameter(ParameterSetName = "Hyperlink")]
@@ -461,6 +461,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)&[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             // ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
             if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
             {
@@ -672,14 +673,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Check if a string or substrings in a string is uri, if true, then change to hyperlink format.
         /// </summary>
-        /// <param name="s"> the string that needs to be altered </param>
-        /// <param name="hyper"> if true, then change to hyperlink format </param>
-        /// <returns>the midified string/unmodified string.</returns>
+        /// <param name="s"> String that needs to be altered. </param>
+        /// <param name="hyper"> If true, then change to hyperlink format. </param>
+        /// <returns>The midified string/unmodified string.</returns>
         private static string CheckUri(string s, bool hyper)
         {
             if (hyper)
             {
-                Regex regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)&[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                //Regex regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)&[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var p = "[[[replace:period]]]";
                 s = Regex.Replace(s, @"(?<=\d)\.(?=\d)", p);
                 var htmls = regHttp.Matches(s);
@@ -815,6 +816,7 @@ namespace Microsoft.PowerShell.Commands
         private List<MshParameter> _propertyMshParameterList;
         private List<MshParameter> _resolvedNameMshParameters;
         // private string ResourcesBaseName = "ConvertHTMLStrings";
+        private static Regex regHttp;
 
         #endregion private
     }
