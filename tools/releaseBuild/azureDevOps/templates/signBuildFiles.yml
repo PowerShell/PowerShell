@@ -170,7 +170,7 @@ steps:
 
       $uploadTarFilePath = '$(System.ArtifactsDirectory)/${{ parameters.binLocation }}.tar.gz'
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
-      tar -czvf $uploadTarFilePath $uploadFolder
+      tar -czvf $uploadTarFilePath -C $uploadFolder *
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
   displayName: ${{ parameters.buildPrefixName }} - Upload signed files to artifacts
