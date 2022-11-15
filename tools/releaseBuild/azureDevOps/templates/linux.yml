@@ -125,19 +125,24 @@ jobs:
         sourceScanPath: '$(PowerShellRoot)/tools'
 
   - pwsh: |
-      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz -C '$(System.ArtifactsDirectory)/pwshLinuxBuild' *
+      Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
     displayName: Compress pwshLinuxBuild
 
   - ${{ if eq(variables.build,'deb') }} :
     - pwsh: |
-        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz -C '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize' *
-        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz -C '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32' *
-        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz -C '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64' *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz *
       displayName: Compress deb
 
   - ${{ if eq(variables.build,'rpm') }} :
     - pwsh: |
-        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz -C '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64' *
+        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
       displayName: Compress pwshMarinerBuildAmd64
 
   - ${{ if eq(variables.build,'deb') }} :
