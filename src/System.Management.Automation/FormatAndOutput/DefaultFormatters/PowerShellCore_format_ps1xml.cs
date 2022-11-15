@@ -1051,7 +1051,10 @@ namespace System.Management.Automation.Runspaces
                                         }
                                     }
 
-                                    $errorColor + $commandPrefix
+                                    if ($commandPrefix)
+                                    {
+                                        $errorColor + $commandPrefix
+                                    }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
