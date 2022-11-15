@@ -134,10 +134,10 @@ jobs:
 
   - ${{ if eq(variables.build,'deb') }} :
     - pwsh: |
-      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
-      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
-      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
-    displayName: Compress deb
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+      displayName: Compress deb
 
   - ${{ if eq(variables.build,'rpm') }} :
     - pwsh: |
