@@ -51,13 +51,13 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildAlpine.tar.gz
-      path: $(Build.ArtifactStagingDirectory)/linuxTars
+      path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz
     displayName: Download alpine build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildFxdependent.tar.gz
-      path: $(Build.ArtifactStagingDirectory)/linuxTars
+      path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz
     displayName: Download fxdependent build
 
   - pwsh: |
