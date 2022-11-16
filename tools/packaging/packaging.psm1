@@ -3522,7 +3522,7 @@ function New-MsiArgsArray {
 
     $buildArguments = @()
     foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=`"$($Argument.$key)`""
+        $buildArguments += "-d$key=$($Argument.$key)"
     }
 
     return $buildArguments
