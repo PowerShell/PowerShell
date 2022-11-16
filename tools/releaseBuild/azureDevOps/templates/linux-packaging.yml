@@ -160,6 +160,7 @@ jobs:
 
       if ('$(build)' -eq 'alpine') {
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed/pwshLinuxBuildAlpine.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed/pwshLinuxBuildAlpine.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
       }
 
