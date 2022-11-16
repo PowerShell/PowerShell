@@ -5,9 +5,6 @@
 
 #if !UNIX
 using System;
-using System.Buffers;
-using System.ComponentModel;
-using System.Management.Automation;
 using System.Runtime.InteropServices;
 
 internal static partial class Interop
