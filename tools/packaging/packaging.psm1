@@ -623,7 +623,7 @@ function New-TarballPackage {
 
             try {
                 Push-Location -Path $Staging
-                tar $options $packagePath .
+                tar $options $packagePath *
             } finally {
                 Pop-Location
             }

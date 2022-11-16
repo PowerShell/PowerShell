@@ -67,6 +67,10 @@ jobs:
         Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
         Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+
+        Write-Verbose -Verbose "File permisions after building"
+        Get-ChildItem -Path $(System.ArtifactsDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+
       } catch {
         Get-Error
         throw
@@ -126,6 +130,8 @@ jobs:
 
   - pwsh: |
       Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Write-Verbose -Verbose "File permisions before compressing"
+      Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
       tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
     displayName: Compress pwshLinuxBuild
 
