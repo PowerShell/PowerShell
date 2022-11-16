@@ -134,22 +134,27 @@ jobs:
   - pwsh: |
       if ('$(build)' -eq 'deb' -or '$(build)' -eq 'deb') {
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-signed/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-signed/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
       }
 
       if ('$(build)' -eq 'deb') {
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize-signed/pwshLinuxBuildMinSize.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize-signed/pwshLinuxBuildMinSize.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
 
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32-signed/pwshLinuxBuildArm32.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32 -ItemType Directory
         tar -xf  $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32-signed/pwshLinuxBuildArm32.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
 
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64-signed/pwshLinuxBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64 -ItemType Directory
         tar -xf  $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64-signed/pwshLinuxBuildArm64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
       }
 
       if ('$(build)' -eq 'rpm') {
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-signed/pwshMarinerBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64 -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-signed/pwshMarinerBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
       }
 
