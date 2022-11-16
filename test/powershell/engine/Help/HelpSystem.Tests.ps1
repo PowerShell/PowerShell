@@ -45,6 +45,16 @@ function GetCurrentUserHelpRoot {
     return $userHelpRoot
 }
 
+Describe 'Validate HelpInfo type' -Tags @('CI') {
+
+    It 'Category should be a string' {
+        $help = Get-Help *
+        $category = $help | ForEach-Object { $_.Category.GetType().FullName } | Select-Object -Unique
+        $category.Count | Should -Be 1 -Because 'All help categories should be strings, >1 indicates a type mismatch'
+        $category | Should -BeExactly 'System.String'
+    }
+}
+
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
 
     It "Get-Help returns information about the help system" {
