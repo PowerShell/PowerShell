@@ -173,7 +173,7 @@ There are dozens of topic specific channels on our community-driven PowerShell V
 |--------------------------|----------------------------|------------------------|
 | [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-macOS] |
 
-If you have any problems building, please consult the developer [FAQ][].
+If you have any problems building, consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
@@ -211,7 +211,7 @@ See [working with the PowerShell repository](https://github.com/PowerShell/Power
 ## Developing and Contributing
 
 Please see the [Contribution Guide][] for how to develop and contribute.
-If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
+If you are developing .NET Core C# applications targeting PowerShell Core, [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
 Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
@@ -220,7 +220,7 @@ Also, make sure to check out our [PowerShell-RFC repository](https://github.com/
 
 ## Support
 
-For support, please see the [Support Section][].
+For support, see the [Support Section][].
 
 [Support Section]: https://github.com/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
 
