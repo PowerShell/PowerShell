@@ -4,14 +4,15 @@
 #nullable enable
 
 #if !UNIX
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Keep native struct names.")]
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1307:AccessibleFieldsMustBeginWithUpperCaseLetter", Justification = "Keep native struct names.")]
     internal static partial class Windows
     {
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Keep native struct names.")]
         [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct SHFILEINFO
         {
