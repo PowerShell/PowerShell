@@ -4081,7 +4081,7 @@ $RawUI.SetBufferContents(
         internal static string GetExecFunctionText()
         {
             return @"
-Switch-Process -WithCommand $args                
+Switch-Process -WithCommand $args
 ";
         }
 
