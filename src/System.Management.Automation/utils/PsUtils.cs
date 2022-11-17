@@ -105,14 +105,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.NonWindowsGetThreadId();
 #else
-            return NativeMethods.GetCurrentThreadId();
+            return Interop.Windows.GetCurrentThreadId();
 #endif
-        }
-
-        private static class NativeMethods
-        {
-            [DllImport(PinvokeDllNames.GetCurrentThreadIdDllName)]
-            internal static extern uint GetCurrentThreadId();
         }
 
         #region ASTUtils
