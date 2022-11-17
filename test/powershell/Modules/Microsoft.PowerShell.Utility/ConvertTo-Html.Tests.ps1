@@ -244,6 +244,28 @@ After the object
         $returnString | Should -Be $expectedValue
     }
 
+    It "Test ConvertTo-Html URI Auto Create HyperLink #5 - edge cases" {
+        $CustomParameters_4 = @{
+            String          = 'Special url with parenthesis http://example.com/test(1).html, and complex url https://www.amazon.com/Amazon-Gift-Card-Print-Logo/dp/B07P76HM3B/ref=sr_1_3?crid=3JKK1WLD85QJV&keywords=gift+card&qid=1668718715&sprefix=gitftcard%2Caps%2C54&sr=8-3, username-password http://userid:password@example.com:8080/'
+        }
+        $returnString = ($CustomParameters_4 | ConvertTo-Html -hyperlink) -join $newLine
+
+        $expectedValue = normalizeLineEnds @"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>HTML TABLE</title>
+</head><body>
+<table>
+<colgroup><col/></colgroup>
+<tr><th>String</th></tr>
+<tr><td>Special url with parenthesis <a href="http://example.com/test(1).html">http://example.com/test(1).html</a>, and complex url <a href="https://www.amazon.com/amazon-gift-card-print-logo/dp/b07p76hm3b/ref=sr_1_3?crid=3jkk1wld85qjv&amp;keywords=gift+card&amp;qid=1668718715&amp;sprefix=gitftcard%2caps%2c54&amp;sr=8-3">https://www.amazon.com/Amazon-Gift-Card-Print-Logo/dp/B07P76HM3B/ref=sr_1_3?crid=3JKK1WLD85QJV&amp;keywords=gift+card&amp;qid=1668718715&amp;sprefix=gitftcard%2Caps%2C54&amp;sr=8-3</a>, username-password <a href="http://userid:password@example.com:8080/">http://userid:password@example.com:8080/</a></td></tr>
+</table>
+</body></html>
+"@
+        $returnString | Should -Be $expectedValue
+    }
+
     It "Test ConvertTo-HTML transitional"{
         $returnString = $customObject | ConvertTo-Html -Transitional | Select-Object -First 1
         $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
