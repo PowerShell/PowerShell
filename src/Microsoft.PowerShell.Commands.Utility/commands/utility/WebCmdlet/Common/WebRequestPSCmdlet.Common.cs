@@ -1268,8 +1268,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    string msg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.AccessDenied,
-                                               _originalFilePath);
+                    string msg = string.Format(
+                        CultureInfo.InvariantCulture,
+                        WebCmdletStrings.AccessDenied,
+                        _originalFilePath);
+                        
                     throw new UnauthorizedAccessException(msg);
                 }
             }
@@ -1436,6 +1439,7 @@ namespace Microsoft.PowerShell.Commands
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
                             requestContentLength);
+                        
                         WriteVerbose(reqVerboseMsg);
 
                         return GetResponse(client, requestWithoutRange, keepAuthorization);
@@ -1510,9 +1514,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (followedRelLink > 0)
                         {
-                            string linkVerboseMsg = string.Format(CultureInfo.CurrentCulture,
+                            string linkVerboseMsg = string.Format(
+                                CultureInfo.CurrentCulture,
                                 WebCmdletStrings.FollowingRelLinkVerboseMsg,
                                 uri.AbsoluteUri);
+
                             WriteVerbose(linkVerboseMsg);
                         }
 
@@ -1537,10 +1543,12 @@ namespace Microsoft.PowerShell.Commands
                                 HttpResponseMessage response = GetResponse(client, request, keepAuthorization);
 
                                 string contentType = ContentHelper.GetContentType(response);
-                                string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
+                                string respVerboseMsg = string.Format(
+                                    CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebResponseVerboseMsg,
                                     response.Content.Headers.ContentLength,
                                     contentType);
+
                                 WriteVerbose(respVerboseMsg);
 
                                 bool _isSuccess = response.IsSuccessStatusCode;
@@ -1553,15 +1561,23 @@ namespace Microsoft.PowerShell.Commands
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
-                                    WriteVerbose(string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
+                                    WriteVerbose(string.Format(
+                                        CultureInfo.CurrentCulture,
+                                        WebCmdletStrings.OutFileWritingSkipped,
+                                        OutFile));
+
                                     // Disable writing to the OutFile.
                                     OutFile = null;
                                 }
 
                                 if (ShouldCheckHttpStatus && !_isSuccess)
                                 {
-                                    string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
-                                        (int)response.StatusCode, response.ReasonPhrase);
+                                    string message = string.Format(
+                                        CultureInfo.CurrentCulture,
+                                        WebCmdletStrings.ResponseStatusCodeFailure,
+                                        (int)response.StatusCode,
+                                        response.ReasonPhrase);
+
                                     HttpResponseException httpEx = new(message, response);
                                     ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                     string detailMsg = string.Empty;
