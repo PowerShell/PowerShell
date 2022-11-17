@@ -2135,9 +2135,12 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool AllocateHiddenConsole()
         {
+#if UNIX
+            return false;
+#else
             // See if there is already a console attached.
             IntPtr hwnd = Interop.Windows.GetConsoleWindow();
-            if (hwnd != IntPtr.Zero)
+            if (hwnd != nint.Zero)
             {
                 return false;
             }
@@ -2148,12 +2151,11 @@ namespace System.Management.Automation
             // Since there is no console window, allocate and then hide it...
             // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
             // get the error code.
-#pragma warning disable 56523
             Interop.Windows.AllocConsole();
             hwnd = Interop.Windows.GetConsoleWindow();
 
             bool returnValue;
-            if (hwnd == IntPtr.Zero)
+            if (hwnd == nint.Zero)
             {
                 returnValue = false;
             }
@@ -2164,48 +2166,13 @@ namespace System.Management.Automation
                 AlwaysCaptureApplicationIO = true;
             }
 
-            if (savedForeground != IntPtr.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
+            if (savedForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
             {
                 Interop.Windows.SetForegroundWindow(savedForeground);
             }
 
             return returnValue;
-        }
-
-        /// <summary>
-        /// If there is a console attached, then make it visible
-        /// and allow interactive console applications to be run.
-        /// </summary>
-        public static void Show()
-        {
-            IntPtr hwnd = Interop.Windows.GetConsoleWindow();
-            if (hwnd != IntPtr.Zero)
-            {
-                Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_SHOW);
-                AlwaysCaptureApplicationIO = false;
-            }
-            else
-            {
-                throw PSTraceSource.NewInvalidOperationException();
-            }
-        }
-
-        /// <summary>
-        /// If there is a console attached, then hide it and always capture
-        /// output from the child process.
-        /// </summary>
-        public static void Hide()
-        {
-            IntPtr hwnd = Interop.Windows.GetConsoleWindow();
-            if (hwnd != IntPtr.Zero)
-            {
-                Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
-                AlwaysCaptureApplicationIO = true;
-            }
-            else
-            {
-                throw PSTraceSource.NewInvalidOperationException();
-            }
+#endif
         }
     }
 
