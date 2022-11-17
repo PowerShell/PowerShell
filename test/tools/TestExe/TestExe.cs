@@ -19,6 +19,9 @@ namespace TestExe
                     case "-echoargs":
                         EchoArgs(args);
                         break;
+                    case "-echoraw":
+                        EchoRaw(args);
+                        break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
                         break;
@@ -28,6 +31,10 @@ namespace TestExe
                         return int.Parse(args[1]);
                     case "-stderr":
                         Console.Error.WriteLine(args[1]);
+                        break;
+                    case "--help":
+                    case "-h":
+                        PrintHelp();
                         break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
@@ -47,13 +54,6 @@ namespace TestExe
         // </Summary>
         private static void EchoArgs(string[] args)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                IntPtr cmdLinePtr = GetCommandLineW();
-                string rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
-                Console.WriteLine("Raw Command Line:\n{0}\n", rawCmdLine);
-            }
-
             for (int i = 1; i < args.Length; i++)
             {
                 Console.WriteLine("Arg {0} is <{1}>", i - 1, args[i]);
@@ -62,6 +62,38 @@ namespace TestExe
 
         [DllImport("Kernel32.dll")]
         private static extern IntPtr GetCommandLineW();
+
+        // <Summary>
+        // Echos the raw command line received by the process plus the arguments passed in.
+        // </Summary>
+        private static void EchoRaw(string[] args)
+        {
+            string rawCmdLine = Environment.CommandLine;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                IntPtr cmdLinePtr = GetCommandLineW();
+                rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
+            }
+
+            Console.WriteLine("Raw Command Line:\n{0}\n", rawCmdLine);
+            EchoArgs(args);
+        }
+
+        // <Summary>
+        // Print help content.
+        // </Summary>
+        private static void PrintHelp()
+        {
+            const string content = @"
+Options for echoing args are:
+   -echoargs     Echos back to stdout the arguments passed in.
+   -echoraw      Echos the raw command line received by the process plus the arguments passed in.
+
+Other options are for specific tests only. Read source code for details.
+";
+            Console.WriteLine(content);
+        }
 
         // <Summary>
         // First argument is the number of child processes to create which are instances of itself
