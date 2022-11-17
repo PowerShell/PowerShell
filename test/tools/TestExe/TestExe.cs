@@ -80,14 +80,14 @@ namespace TestExe
         // </Summary>
         private static void PrintHelp()
         {
-            const string content = @"
+            const string Content = @"
 Options for echoing args are:
    -echoargs     Echos back to stdout the arguments passed in.
    -echocmdline  Echos the raw command line received by the process.
 
 Other options are for specific tests only. Read source code for details.
 ";
-            Console.WriteLine(content);
+            Console.WriteLine(Content);
         }
 
         // <Summary>
