@@ -1272,7 +1272,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.InvariantCulture,
                         WebCmdletStrings.AccessDenied,
                         _originalFilePath);
-                        
+
                     throw new UnauthorizedAccessException(msg);
                 }
             }
@@ -1498,13 +1498,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorization = WebSession != null
-                                          &&
-                                          WebSession.Headers != null
-                                          &&
-                                          PreserveAuthorizationOnRedirect.IsPresent
-                                          &&
-                                          WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
+                bool keepAuthorization = WebSession != null &&
+                                         WebSession.Headers != null &&
+                                         PreserveAuthorizationOnRedirect.IsPresent &&
+                                         WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 using (HttpClient client = GetHttpClient(keepAuthorization))
                 {
