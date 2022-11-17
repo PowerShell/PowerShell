@@ -490,6 +490,7 @@ namespace System.Management.Automation
 
             if (result == null)
             {
+#if !UNIX
                 if (objectType.IsCOMObject)
                 {
                     // All WinRT types are COM types.
@@ -526,6 +527,9 @@ namespace System.Management.Automation
                 {
                     result = PSObject.s_dotNetInstanceAdapterSet;
                 }
+#else
+                result = PSObject.s_dotNetInstanceAdapterSet;
+#endif
             }
 
             var existingOrNew = s_adapterMapping.GetOrAdd(objectType, result);
