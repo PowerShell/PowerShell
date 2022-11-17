@@ -163,19 +163,16 @@ namespace System.Management.Automation
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
-            // See objbase.h
-            const int COINIT_APARTMENTTHREADED = 0x2;
-            const int E_NOTIMPL = unchecked((int)0X80004001);
-            int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+            int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
 
             // If 0 is returned the thread has been initialized for the first time
             // as an STA and thus supported and needs to be uninitialized.
             if (result > 0)
             {
-                Windows.NativeMethods.CoUninitialize();
+                Interop.Windows.CoUninitialize();
             }
 
-            return result != E_NOTIMPL;
+            return result != Interop.Windows.E_NOTIMPL;
         });
 
         private static bool? _isNanoServer = null;
@@ -451,21 +448,6 @@ namespace System.Management.Automation
         internal static int NonWindowsWaitPid(int pid, bool nohang)
         {
             return Unix.NativeMethods.WaitPid(pid, nohang);
-        }
-
-        internal static partial class Windows
-        {
-            /// <summary>The native methods class.</summary>
-            internal static partial class NativeMethods
-            {
-                private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
-
-                [LibraryImport(ole32Lib)]
-                internal static partial int CoInitializeEx(IntPtr reserve, int coinit);
-
-                [LibraryImport(ole32Lib)]
-                internal static partial void CoUninitialize();
-            }
         }
 
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
