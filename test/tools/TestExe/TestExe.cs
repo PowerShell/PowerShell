@@ -19,8 +19,8 @@ namespace TestExe
                     case "-echoargs":
                         EchoArgs(args);
                         break;
-                    case "-echoraw":
-                        EchoRaw(args);
+                    case "-echocmdline":
+                        EchoCmdLine(args);
                         break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
@@ -37,7 +37,7 @@ namespace TestExe
                         PrintHelp();
                         break;
                     default:
-                        Console.WriteLine("Unknown test {0}", args[0]);
+                        Console.WriteLine("Unknown test {0}. Run with '-h' for help.", args[0]);
                         break;
                 }
             }
@@ -60,24 +60,19 @@ namespace TestExe
             }
         }
 
-        [DllImport("Kernel32.dll")]
-        private static extern IntPtr GetCommandLineW();
-
         // <Summary>
         // Echos the raw command line received by the process plus the arguments passed in.
         // </Summary>
-        private static void EchoRaw(string[] args)
+        private static void EchoCmdLine(string[] args)
         {
-            string rawCmdLine = Environment.CommandLine;
-
+            string rawCmdLine = "N/A";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                IntPtr cmdLinePtr = GetCommandLineW();
+                nint cmdLinePtr = Interop.GetCommandLineW();
                 rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
             }
 
-            Console.WriteLine("Raw Command Line:\n{0}\n", rawCmdLine);
-            EchoArgs(args);
+            Console.WriteLine(rawCmdLine);
         }
 
         // <Summary>
@@ -88,7 +83,7 @@ namespace TestExe
             const string content = @"
 Options for echoing args are:
    -echoargs     Echos back to stdout the arguments passed in.
-   -echoraw      Echos the raw command line received by the process plus the arguments passed in.
+   -echocmdline  Echos the raw command line received by the process.
 
 Other options are for specific tests only. Read source code for details.
 ";
@@ -115,5 +110,11 @@ Other options are for specific tests only. Read source code for details.
             // sleep is needed so the process doesn't exit before the test case kill it
             Thread.Sleep(100000);
         }
+    }
+
+    internal static partial class Interop
+    {
+        [LibraryImport("Kernel32.dll")]
+        internal static partial nint GetCommandLineW();
     }
 }
