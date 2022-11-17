@@ -2127,40 +2127,6 @@ namespace System.Management.Automation
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
 
-        internal const int SW_HIDE = 0;
-        internal const int SW_SHOWNORMAL = 1;
-        internal const int SW_NORMAL = 1;
-        internal const int SW_SHOWMINIMIZED = 2;
-        internal const int SW_SHOWMAXIMIZED = 3;
-        internal const int SW_MAXIMIZE = 3;
-        internal const int SW_SHOWNOACTIVATE = 4;
-        internal const int SW_SHOW = 5;
-        internal const int SW_MINIMIZE = 6;
-        internal const int SW_SHOWMINNOACTIVE = 7;
-        internal const int SW_SHOWNA = 8;
-        internal const int SW_RESTORE = 9;
-        internal const int SW_SHOWDEFAULT = 10;
-        internal const int SW_FORCEMINIMIZE = 11;
-        internal const int SW_MAX = 11;
-
-        /// <summary>
-        /// Code to control the display properties of the a window...
-        /// </summary>
-        /// <param name="hWnd">The window to show...</param>
-        /// <param name="nCmdShow">The command to do.</param>
-        /// <returns>True if it was successful.</returns>
-        [LibraryImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        /// <summary>
-        /// Code to allocate a console...
-        /// </summary>
-        /// <returns>True if a console was created...</returns>
-        [LibraryImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool AllocConsole();
-
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window.
         /// </summary>
@@ -2199,7 +2165,7 @@ namespace System.Management.Automation
             // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
             // get the error code.
 #pragma warning disable 56523
-            ConsoleVisibility.AllocConsole();
+            Interop.Windows.AllocConsole();
             hwnd = Interop.Windows.GetConsoleWindow();
 
             bool returnValue;
@@ -2210,7 +2176,7 @@ namespace System.Management.Automation
             else
             {
                 returnValue = true;
-                ConsoleVisibility.ShowWindow(hwnd, ConsoleVisibility.SW_HIDE);
+                Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
                 AlwaysCaptureApplicationIO = true;
             }
 
@@ -2231,7 +2197,7 @@ namespace System.Management.Automation
             IntPtr hwnd = Interop.Windows.GetConsoleWindow();
             if (hwnd != IntPtr.Zero)
             {
-                ShowWindow(hwnd, SW_SHOW);
+                Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_SHOW);
                 AlwaysCaptureApplicationIO = false;
             }
             else
@@ -2249,7 +2215,7 @@ namespace System.Management.Automation
             IntPtr hwnd = Interop.Windows.GetConsoleWindow();
             if (hwnd != IntPtr.Zero)
             {
-                ShowWindow(hwnd, SW_HIDE);
+                Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
                 AlwaysCaptureApplicationIO = true;
             }
             else
