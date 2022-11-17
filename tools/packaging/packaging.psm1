@@ -4640,12 +4640,13 @@ function Export-LinuxFilePermission {
     )
 
     begin {
-        if ((Test-Path $FilePath) -and (-not $Force)) {
+        if (Test-Path $FilePath) {
+          if (-not $Force) {
             throw "File '$FilePath' already exists."
-        }
-
-        if ($Force) {
+          }
+          else {
             Remove-Item $FilePath -Force
+          }
         }
 
         $fileData = @{}
