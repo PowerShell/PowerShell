@@ -4072,12 +4072,14 @@ $RawUI.SetBufferContents(
             }
         }
 
+#if UNIX
         internal static string GetExecFunctionText()
         {
             return @"
 Switch-Process -WithCommand $args
 ";
         }
+#endif
 
         /// <summary>
         /// This is the default function to use for man/help. It uses
