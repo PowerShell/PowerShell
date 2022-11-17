@@ -1562,7 +1562,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                                 {
                                         ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection;
+                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
                                         WriteError(er);
                                 }
 
