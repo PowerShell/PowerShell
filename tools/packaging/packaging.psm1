@@ -4567,6 +4567,8 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+
         # Remove symbol files.
         Remove-Item "${buildFolder}\*.pdb" -Force
 
@@ -4587,6 +4589,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
@@ -4594,11 +4597,13 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         } elseif ($BuildType -eq 'rpm') {
             ## Build for Mariner
             $options = Get-PSOptions
@@ -4616,11 +4621,47 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         }
     }
     catch {
         Get-Error -InputObject $_
         throw
+    }
+}
+
+function Export-LinuxFilePermission {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $FilePath,
+        [Parameter(Mandatory)] [string] $RootPath,
+        [Parameter(Mandatory, ValueFromPipeline = $true)] [System.IO.FileInfo[]] $InputObject,
+        [Parameter()] [switch] $Force
+    )
+
+    begin {
+        if ((Test-Path $FilePath) -and (-not $Force)) {
+            throw "File '$FilePath' already exists."
+        }
+
+        if ($Force) {
+            Remove-Item $FilePath -Force
+        }
+
+        $fileData = @{}
+    }
+
+    process {
+        foreach ($object in $InputObject) {
+            Write-Verbose "Processing $($object.FullName)"
+            $filePerms = [convert]::ToString($object.unixstat.mode, 8).substring(3)
+            $relativePath = [System.IO.Path]::GetRelativePath($RootPath, $_.FullName)
+            $fileData.Add($relativePath, $filePerms)
+        }
+    }
+
+    end {
+        $fileData | ConvertTo-Json -Depth 10 | Out-File -FilePath $FilePath
     }
 }
 
