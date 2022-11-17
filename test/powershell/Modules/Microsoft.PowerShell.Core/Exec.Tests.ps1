@@ -16,9 +16,9 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     }
 
     It 'Exec function should map to Switch-Process' {
-        $alias = Get-Command exec
-        $alias | Should -BeOfType [System.Management.Automation.CommandInfo]
-        $alias.Definition | Should -Not -BeNullOrEmpty
+        $func = Get-Command exec
+        $func | Should -BeOfType [System.Management.Automation.CommandInfo]
+        $func.Definition | Should -Not -BeNullOrEmpty
     }
 
     It 'Exec by itself does nothing' {
