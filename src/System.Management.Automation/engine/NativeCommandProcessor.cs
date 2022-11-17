@@ -2120,28 +2120,12 @@ namespace System.Management.Automation
     /// Static class that allows you to show and hide the console window
     /// associated with this process.
     /// </summary>
-    internal static partial class ConsoleVisibility
+    internal static class ConsoleVisibility
     {
         /// <summary>
         /// If set to true, then native commands will always be run redirected...
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
-
-        /// <summary>
-        /// Called to save the foreground window before allocating a hidden console window.
-        /// </summary>
-        /// <returns>A handle to the foreground window.</returns>
-        [LibraryImport("user32.dll")]
-        private static partial IntPtr GetForegroundWindow();
-
-        /// <summary>
-        /// Called to restore the foreground window after allocating a hidden console window.
-        /// </summary>
-        /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
-        /// <returns>True if the window was brought to the foreground.</returns>
-        [LibraryImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
         /// If no console window is attached to this process, then allocate one,
@@ -2159,7 +2143,7 @@ namespace System.Management.Automation
             }
 
             // save the foreground window since allocating a console window might remove focus from it
-            IntPtr savedForeground = ConsoleVisibility.GetForegroundWindow();
+            IntPtr savedForeground = Interop.Windows.GetForegroundWindow();
 
             // Since there is no console window, allocate and then hide it...
             // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
@@ -2180,9 +2164,9 @@ namespace System.Management.Automation
                 AlwaysCaptureApplicationIO = true;
             }
 
-            if (savedForeground != IntPtr.Zero && ConsoleVisibility.GetForegroundWindow() != savedForeground)
+            if (savedForeground != IntPtr.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
             {
-                ConsoleVisibility.SetForegroundWindow(savedForeground);
+                Interop.Windows.SetForegroundWindow(savedForeground);
             }
 
             return returnValue;
