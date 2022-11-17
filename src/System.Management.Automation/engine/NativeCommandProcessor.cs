@@ -2127,9 +2127,6 @@ namespace System.Management.Automation
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
 
-        [LibraryImport("Kernel32.dll")]
-        internal static partial IntPtr GetConsoleWindow();
-
         internal const int SW_HIDE = 0;
         internal const int SW_SHOWNORMAL = 1;
         internal const int SW_NORMAL = 1;
@@ -2189,7 +2186,7 @@ namespace System.Management.Automation
         internal static bool AllocateHiddenConsole()
         {
             // See if there is already a console attached.
-            IntPtr hwnd = ConsoleVisibility.GetConsoleWindow();
+            IntPtr hwnd = Interop.Windows.GetConsoleWindow();
             if (hwnd != IntPtr.Zero)
             {
                 return false;
@@ -2203,7 +2200,7 @@ namespace System.Management.Automation
             // get the error code.
 #pragma warning disable 56523
             ConsoleVisibility.AllocConsole();
-            hwnd = ConsoleVisibility.GetConsoleWindow();
+            hwnd = Interop.Windows.GetConsoleWindow();
 
             bool returnValue;
             if (hwnd == IntPtr.Zero)
@@ -2231,7 +2228,7 @@ namespace System.Management.Automation
         /// </summary>
         public static void Show()
         {
-            IntPtr hwnd = GetConsoleWindow();
+            IntPtr hwnd = Interop.Windows.GetConsoleWindow();
             if (hwnd != IntPtr.Zero)
             {
                 ShowWindow(hwnd, SW_SHOW);
@@ -2249,7 +2246,7 @@ namespace System.Management.Automation
         /// </summary>
         public static void Hide()
         {
-            IntPtr hwnd = GetConsoleWindow();
+            IntPtr hwnd = Interop.Windows.GetConsoleWindow();
             if (hwnd != IntPtr.Zero)
             {
                 ShowWindow(hwnd, SW_HIDE);
