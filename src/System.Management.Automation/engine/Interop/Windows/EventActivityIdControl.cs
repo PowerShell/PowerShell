@@ -40,11 +40,11 @@ internal static partial class Interop
         }
 
         [LibraryImport("api-ms-win-eventing-provider-l1-1-0.dll")]
-        internal static unsafe partial int EventActivityIdControl(ActivityControl ControlCode, Guid* ActivityId);
+        internal static unsafe partial int EventActivityIdControl(ActivityControl controlCode, Guid* activityId);
 
-        internal static unsafe int GetEventActivityIdControl(ref Guid ActivityId)
+        internal static unsafe int GetEventActivityIdControl(ref Guid activityId)
         {
-            fixed (Guid* guidPtr = &ActivityId)
+            fixed (Guid* guidPtr = &activityId)
             {
                 return EventActivityIdControl(ActivityControl.Get, guidPtr);
             }
