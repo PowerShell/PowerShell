@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace TestExe
 {
@@ -46,11 +47,21 @@ namespace TestExe
         // </Summary>
         private static void EchoArgs(string[] args)
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                IntPtr cmdLinePtr = GetCommandLineW();
+                string rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
+                Console.WriteLine("Raw Command Line:\n{0}\n", rawCmdLine);
+            }
+
             for (int i = 1; i < args.Length; i++)
             {
                 Console.WriteLine("Arg {0} is <{1}>", i - 1, args[i]);
             }
         }
+
+        [DllImport("Kernel32.dll")]
+        private static extern IntPtr GetCommandLineW();
 
         // <Summary>
         // First argument is the number of child processes to create which are instances of itself
