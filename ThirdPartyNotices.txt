@@ -20,6 +20,18 @@ required to debug changes to any libraries licensed under the GNU Lesser General
 Microsoft.Extensions.ObjectPool 5.0.10 - Apache-2.0
 
 
+(c) Microsoft Corporation
+Copyright (c) Andrew Arnott
+Copyright (c) 2019 David Fowler
+Copyright (c) 2016 Richard Morris
+Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) Microsoft Corporation
+Copyright (c) 2014-2018 Michael Daines
+Copyright (c) 2013-2017, Milosz Krajewski
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2019-2020 West Wind Technologies
+Copyright (c) 2010-2019 Google LLC. http://angular.io/license
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 Apache License
 
@@ -29,43 +41,43 @@ http://www.apache.org/licenses/ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND 
 
    1. Definitions.
 
-      
+
 
       "License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.
 
-      
+
 
       "Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.
 
-      
+
 
       "Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
 
-      
+
 
       "You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.
 
-      
+
 
       "Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.
 
-      
+
 
       "Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.
 
-      
+
 
       "Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).
 
-      
+
 
       "Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.
 
-      
+
 
       "Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."
 
-      
+
 
       "Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.
 
@@ -123,10 +135,9 @@ limitations under the License.
 
 ---------------------------------------------------------
 
-Markdig.Signed 0.22.0 - BSD-2-Clause
+Markdig.Signed 0.22.1 - BSD-2-Clause
 
 
-(c) 2008 VeriSign, Inc.
 
 Copyright (c) <year> <owner> . All rights reserved.
 
@@ -142,11 +153,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ---------------------------------------------------------
 
-Microsoft.ApplicationInsights 2.18.0 - MIT
+Microsoft.ApplicationInsights 2.21.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
 
 MIT License
 
@@ -165,7 +174,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Bcl.AsyncInterfaces 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -235,7 +243,6 @@ SOFTWARE.
 Microsoft.CodeAnalysis.Common 4.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 
@@ -256,7 +263,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.CodeAnalysis.CSharp 4.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Microsoft Corporation.
 9Copyright (c) Microsoft Corporation.
@@ -282,10 +288,62 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
+Microsoft.CSharp 4.7.0 - MIT
+
+
+(c) Microsoft Corporation.
+Copyright (c) .NET Foundation.
+Copyright (c) 2011, Google Inc.
+(c) 1997-2005 Sean Eron Anderson.
+Copyright (c) 2007 James Newton-King
+Copyright (c) 1991-2017 Unicode, Inc.
+Copyright (c) 2013-2017, Alfred Klomp
+Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2005-2007, Nick Galbreath
+Portions (c) International Organization
+Copyright (c) 2015 The Chromium Authors.
+Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) .NET Foundation Contributors
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
+Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
 Microsoft.Management.Infrastructure 2.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 
 MIT License
@@ -305,7 +363,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Management.Infrastructure.Runtime.Unix 2.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 
 MIT License
@@ -325,7 +382,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.PowerShell.MarkdownRender 7.2.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 (c) Microsoft Corporation. PowerShell's Markdown Rendering project PowerShell Markdown Renderer
 
@@ -346,7 +402,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.PowerShell.Native 7.2.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) by P.J. Plauger
 
@@ -367,7 +422,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Win32.Registry 4.7.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -421,7 +475,6 @@ SOFTWARE.
 Microsoft.Win32.Registry.AccessControl 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -489,46 +542,49 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Win32.SystemEvents 6.0.0 - MIT
+Microsoft.Win32.SystemEvents 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -560,46 +616,50 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 6.0.0 - MIT
+Microsoft.Windows.Compatibility 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -631,10 +691,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Namotion.Reflection 2.0.3 - MIT
+Namotion.Reflection 2.0.10 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 
 MIT License
 
@@ -653,10 +712,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Newtonsoft.Json 13.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 Copyright James Newton-King 2008
 Copyright (c) 2007 James Newton-King
 Copyright (c) James Newton-King 2008
+Copyright James Newton-King 2008 Json.NET
 
 The MIT License (MIT)
 
@@ -688,7 +747,6 @@ NJsonSchema 10.5.2 - MIT
 
 
 Copyright Rico Suter
-(c) 2008 VeriSign, Inc.
 Copyright (c) Rico Suter
 
 MIT License
@@ -708,7 +766,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 runtime.linux-arm.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -779,7 +836,6 @@ SOFTWARE.
 runtime.linux-arm64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -850,7 +906,6 @@ SOFTWARE.
 runtime.linux-x64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -921,7 +976,6 @@ SOFTWARE.
 runtime.native.System.Data.SqlClient.sni 4.7.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -975,7 +1029,6 @@ SOFTWARE.
 runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1046,7 +1099,6 @@ SOFTWARE.
 runtime.osx-arm64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1117,7 +1169,6 @@ SOFTWARE.
 runtime.osx-x64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1188,7 +1239,6 @@ SOFTWARE.
 System.CodeDom 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1259,7 +1309,6 @@ SOFTWARE.
 System.Collections.Immutable 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1329,7 +1378,6 @@ SOFTWARE.
 System.ComponentModel.Composition 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1400,7 +1448,6 @@ SOFTWARE.
 System.ComponentModel.Composition.Registration 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1468,46 +1515,50 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Configuration.ConfigurationManager 6.0.0 - MIT
+System.Configuration.ConfigurationManager 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -1539,46 +1590,50 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.Odbc 6.0.0 - MIT
+System.Data.Odbc 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -1613,7 +1668,6 @@ SOFTWARE.
 System.Data.OleDb 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1681,31 +1735,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.SqlClient 4.8.3 - MIT
+System.Data.SqlClient 4.8.5 - MIT
 
 
-2008 SQL Server 2012
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
-Copyright (c) .NET Foundation.
-Copyright (c) 2011, Google Inc.
-(c) 1997-2005 Sean Eron Anderson.
-Copyright (c) 2007 James Newton-King
-Copyright (c) 1991-2017 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2005-2007, Nick Galbreath
-Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) .NET Foundation Contributors
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
 
 The MIT License (MIT)
 
@@ -1739,7 +1771,6 @@ SOFTWARE.
 System.Diagnostics.DiagnosticSource 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1809,7 +1840,6 @@ SOFTWARE.
 System.Diagnostics.EventLog 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1877,46 +1907,49 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.PerformanceCounter 6.0.0 - MIT
+System.Diagnostics.PerformanceCounter 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -1951,7 +1984,6 @@ SOFTWARE.
 System.DirectoryServices 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2022,7 +2054,6 @@ SOFTWARE.
 System.DirectoryServices.AccountManagement 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2090,46 +2121,49 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.Protocols 6.0.0 - MIT
+System.DirectoryServices.Protocols 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -2164,7 +2198,6 @@ SOFTWARE.
 System.Drawing.Common 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2235,7 +2268,6 @@ SOFTWARE.
 System.Formats.Asn1 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2306,7 +2338,6 @@ SOFTWARE.
 System.IO.Packaging 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2377,7 +2408,6 @@ SOFTWARE.
 System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2448,7 +2478,6 @@ SOFTWARE.
 System.Management 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2519,7 +2548,6 @@ SOFTWARE.
 System.Memory 4.5.4 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) 2011, Google Inc.
 (c) 1997-2005 Sean Eron Anderson.
@@ -2600,7 +2628,6 @@ SOFTWARE.
 System.Numerics.Vectors 4.5.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) 2011, Google Inc.
 (c) 1997-2005 Sean Eron Anderson.
@@ -2648,7 +2675,6 @@ SOFTWARE.
 System.Private.ServiceModel 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -2685,7 +2711,6 @@ SOFTWARE.
 System.Reflection.Context 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2756,7 +2781,6 @@ SOFTWARE.
 System.Reflection.DispatchProxy 4.7.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -2810,7 +2834,6 @@ SOFTWARE.
 System.Reflection.Metadata 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2880,7 +2903,6 @@ SOFTWARE.
 System.Runtime.Caching 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2951,7 +2973,6 @@ SOFTWARE.
 System.Runtime.CompilerServices.Unsafe 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3022,7 +3043,6 @@ SOFTWARE.
 System.Security.AccessControl 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3093,6 +3113,48 @@ SOFTWARE.
 System.Security.Cryptography.Pkcs 6.0.1 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
+Copyright 2018 Daniel Lemire
+Copyright (c) .NET Foundation
+Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
+Copyright (c) 1998 Microsoft. To
+Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
+Copyright (c) Microsoft Corporation
+Copyright (c) 2007 James Newton-King
+Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
+Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
+Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
+Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
+Portions (c) International Organization
+Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2013-2017, Milosz Krajewski
+Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
+Copyright (c) .NET Foundation Contributors
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2019 Microsoft Corporation, Daan Leijen
+Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
+Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
+Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -3126,7 +3188,6 @@ SOFTWARE.
 System.Security.Cryptography.ProtectedData 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3194,46 +3255,50 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Xml 6.0.0 - MIT
+System.Security.Cryptography.Xml 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
@@ -3268,7 +3333,6 @@ SOFTWARE.
 System.Security.Permissions 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3339,7 +3403,6 @@ SOFTWARE.
 System.Security.Principal.Windows 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3409,7 +3472,6 @@ SOFTWARE.
 System.ServiceModel.Duplex 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3446,7 +3508,6 @@ SOFTWARE.
 System.ServiceModel.Http 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3483,7 +3544,6 @@ SOFTWARE.
 System.ServiceModel.NetTcp 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3520,7 +3580,6 @@ SOFTWARE.
 System.ServiceModel.Primitives 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3557,7 +3616,6 @@ SOFTWARE.
 System.ServiceModel.Security 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3594,7 +3652,6 @@ SOFTWARE.
 System.ServiceModel.Syndication 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3665,7 +3722,6 @@ SOFTWARE.
 System.ServiceProcess.ServiceController 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3736,7 +3792,6 @@ SOFTWARE.
 System.Speech 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3807,7 +3862,6 @@ SOFTWARE.
 System.Text.Encoding.CodePages 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3878,7 +3932,6 @@ SOFTWARE.
 System.Text.Encodings.Web 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3949,7 +4002,6 @@ SOFTWARE.
 System.Threading.AccessControl 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -4020,7 +4072,6 @@ SOFTWARE.
 System.Threading.Tasks.Extensions 4.5.4 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) 2011, Google Inc.
 (c) 1997-2005 Sean Eron Anderson.
@@ -4068,7 +4119,6 @@ SOFTWARE.
 System.Web.Services.Description 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -4105,7 +4155,6 @@ SOFTWARE.
 System.Windows.Extensions 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -4363,4 +4412,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
