@@ -410,82 +410,82 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void ValidateParameters()
         {
             // sessions
-            if ((WebSession != null) && (SessionVariable != null))
+            if (WebSession != null && SessionVariable != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
             }
 
             // Authentication
-            if (UseDefaultCredentials && (Authentication != WebAuthenticationType.None))
+            if (UseDefaultCredentials && Authentication != WebAuthenticationType.None)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict, "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if ((Authentication != WebAuthenticationType.None) && (Token != null) && (Credential != null))
+            if (Authentication != WebAuthenticationType.None && Token != null && Credential != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict, "WebCmdletAuthenticationTokenConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if ((Authentication == WebAuthenticationType.Basic) && (Credential == null))
+            if (Authentication == WebAuthenticationType.Basic && Credential == null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied, "WebCmdletAuthenticationCredentialNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
-            if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && (Token == null))
+            if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && Token == null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied, "WebCmdletAuthenticationTokenNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
-            if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None) && (Uri.Scheme != "https"))
+            if (!AllowUnencryptedAuthentication && Authentication != WebAuthenticationType.None && Uri.Scheme != "https")
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
-            if (!AllowUnencryptedAuthentication && (Credential != null || UseDefaultCredentials) && (Uri.Scheme != "https"))
+            if (!AllowUnencryptedAuthentication && (Credential != null || UseDefaultCredentials) && Uri.Scheme != "https")
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
             // credentials
-            if (UseDefaultCredentials && (Credential != null))
+            if (UseDefaultCredentials && Credential != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
                 ThrowTerminatingError(error);
             }
 
             // Proxy server
-            if (ProxyUseDefaultCredentials && (ProxyCredential != null))
+            if (ProxyUseDefaultCredentials && ProxyCredential != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict, "WebCmdletProxyCredentialConflictException");
                 ThrowTerminatingError(error);
             }
-            else if ((Proxy == null) && ((ProxyCredential != null) || ProxyUseDefaultCredentials))
+            else if (Proxy == null && (ProxyCredential != null || ProxyUseDefaultCredentials))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied, "WebCmdletProxyUriNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
             // request body content
-            if ((Body != null) && (InFile != null))
+            if (Body != null && InFile != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict, "WebCmdletBodyConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if ((Body != null) && (Form != null))
+            if (Body != null && Form != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict, "WebCmdletBodyFormConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if ((InFile != null) && (Form != null))
+            if (InFile != null && Form != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict, "WebCmdletFormInFileConflictException");
                 ThrowTerminatingError(error);
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // output ??
-            if (PassThru && (OutFile == null))
+            if (PassThru && OutFile == null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
@@ -715,9 +715,9 @@ namespace Microsoft.PowerShell.Commands
             // preprocess Body if content is a dictionary and method is GET (set as query)
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
-            if ((bodyAsDictionary != null)
+            if (bodyAsDictionary != null
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                     || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
+                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
@@ -1330,7 +1330,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int intCode = (int)code;
 
-            if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
+            if ((intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
             {
                 return true;
             }
