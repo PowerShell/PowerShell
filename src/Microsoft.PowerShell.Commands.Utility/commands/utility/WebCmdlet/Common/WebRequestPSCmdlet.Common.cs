@@ -739,7 +739,10 @@ namespace Microsoft.PowerShell.Commands
 
         private static Uri CheckProtocol(Uri uri)
         {
-            if (uri == null) { throw new ArgumentNullException(nameof(uri)); }
+            if (uri == null) 
+            { 
+                throw new ArgumentNullException(nameof(uri)); 
+            }
 
             if (!uri.IsAbsoluteUri)
             {
@@ -1455,7 +1458,10 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void UpdateSession(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
+            if (response == null) 
+            {
+                throw new ArgumentNullException(nameof(response));
+            }
         }
 
         #endregion Virtual Methods
