@@ -4464,9 +4464,11 @@ function Set-LinuxFilePermission {
         Push-Location $RootPath
         $filePermission = Get-Content $FilePath -Raw | ConvertFrom-Json -AsHashtable
 
+        Write-Verbose -Verbose -Message "Got file permission: $filePermission.Count for $FilePath"
+
         foreach ($file in $filePermission) {
             $file = $file.Key
-            $permission = $filePermission[$file]
+            $permission = $file.Value
             $fileFullName = Join-Path -Path $RootPath -ChildPath $file
             Write-Verbose "Set permission $permission to $fileFullName" -Verbose
             chmod $permission $fileFullName
