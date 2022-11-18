@@ -495,7 +495,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
@@ -682,7 +681,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>A collection of cert eku strings.</returns>
-        [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
             Collection<string> ekus = new Collection<string>();
