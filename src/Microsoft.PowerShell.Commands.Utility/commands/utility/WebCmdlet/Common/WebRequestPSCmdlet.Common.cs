@@ -1343,9 +1343,15 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
-            if (client == null) { throw new ArgumentNullException(nameof(client)); }
+            if (client == null) 
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
 
-            if (request == null) { throw new ArgumentNullException(nameof(request)); }
+            if (request == null) 
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
@@ -1669,9 +1675,14 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             if (request == null)
+            {
                 throw new ArgumentNullException(nameof(request));
+            }
+
             if (content == null)
+            {
                 return 0;
+            }
 
             var byteArrayContent = new ByteArrayContent(content);
             request.Content = byteArrayContent;
@@ -1692,11 +1703,15 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, string content)
         {
             if (request == null)
+            {
                 throw new ArgumentNullException(nameof(request));
+            }
 
             if (content == null)
+            {
                 return 0;
-
+            }
+            
             Encoding encoding = null;
             if (ContentType != null)
             {
@@ -1818,9 +1833,14 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             if (request == null)
+            {
                 throw new ArgumentNullException(nameof(request));
+            }
+            
             if (content == null)
+            {
                 throw new ArgumentNullException(nameof(content));
+            }
 
             string body = FormatDictionary(content);
             return SetRequestContent(request, body);
