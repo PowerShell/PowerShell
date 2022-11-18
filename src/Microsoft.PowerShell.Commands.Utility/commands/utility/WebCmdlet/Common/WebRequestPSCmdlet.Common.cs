@@ -678,12 +678,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile
         {
-            get { return (QualifyFilePath(OutFile)); }
+            get { return QualifyFilePath(OutFile); }
         }
 
         internal bool ShouldSaveToOutFile
         {
-            get { return (!string.IsNullOrEmpty(OutFile)); }
+            get { return !string.IsNullOrEmpty(OutFile); }
         }
 
         internal bool ShouldWriteToPipeline
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
                 uri = new Uri("http://" + uri.OriginalString);
             }
 
-            return (uri);
+            return uri;
         }
 
         private string QualifyFilePath(string path)
@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var ex = new ValidationMetadataException(msg);
             var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
-            return (error);
+            return error;
         }
 
         private ErrorRecord GetValidationError(string msg, string errorId, params object[] args)
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
             msg = string.Format(CultureInfo.InvariantCulture, msg, args);
             var ex = new ValidationMetadataException(msg);
             var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
-            return (error);
+            return error;
         }
 
         private bool IsStandardMethodSet()
@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (request);
+            return request;
         }
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
@@ -1817,7 +1817,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(content));
 
             string body = FormatDictionary(content);
-            return (SetRequestContent(request, body));
+            return SetRequestContent(request, body);
         }
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
