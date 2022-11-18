@@ -32,12 +32,14 @@ namespace System.Management.Automation.Remoting
         internal const string DefaultAppDomainName = "None";
         // This `CoreFxPipe` prefix is defined by CoreFx
         internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
+
+        // On non-Windows, .NET named pipes are limited to up to 108 characters (107 + NULL)
+        internal const int MaxNamedPipeNameSize = 107;
 #else
         internal const string DefaultAppDomainName = "DefaultAppDomain";
         internal const string NamedPipeNamePrefixSearch = "PSHost*";
+        internal const int MaxNamedPipeNameSize = 0;
 #endif
-        // On non-Windows, .NET named pipes are limited to up to 104 characters
-        internal const int MaxNamedPipeNameSize = 104;
 
         #endregion
 
@@ -108,30 +110,43 @@ namespace System.Management.Automation.Remoting
                 // The starttime is there to prevent another process easily guessing the pipe name
                 // and squatting on it.
                 // There is a limit of 104 characters in total including the temp path to the named pipe file
-                // on non-Windows systems, so we'll convert the starttime to hex and just take the first 8 characters.
+                // on non-Windows systems, so we'll convert the starttime to hex and just take 8 characters.
 #if UNIX
                 .Append(proc.StartTime.ToFileTime().ToString("X8").AsSpan(1, 8))
 #else
                 .Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture))
 #endif
                 .Append('.')
-                .Append(proc.Id.ToString(CultureInfo.InvariantCulture))
-                .Append('.')
+                .Append(proc.Id.ToString(CultureInfo.InvariantCulture));
+
+            int uniqueLength = pipeNameBuilder.Length;
+            pipeNameBuilder.Append('.')
                 .Append(CleanAppDomainNameForPipeName(appDomainName))
                 .Append('.')
                 .Append(proc.ProcessName);
+
+            string pipeName = pipeNameBuilder.ToString();
 #if UNIX
-            int charsToTrim = pipeNameBuilder.Length - MaxNamedPipeNameSize;
+            // .NET Creates named pipes in the tmp path with a special prefix which needs to be included in the max
+            // length calculation.
+            string pipePrefix = Path.Combine(Path.GetTempPath(), "CoreFxPipe_");
+            int remainingPipeLength = Math.Max(MaxNamedPipeNameSize - pipePrefix.Length, 0);
+
+            int charsToTrim = pipeName.Length - remainingPipeLength;
             if (charsToTrim > 0)
             {
                 // TODO: In the case the pipe name is truncated, the user cannot connect to it using the cmdlet
                 // unless we add a `-Force` type switch as it attempts to validate the current process name
                 // matches the process name in the pipe name
-                pipeNameBuilder.Remove(MaxNamedPipeNameSize + 1, charsToTrim);
+                pipeName = pipeName.Substring(0, Math.Max(pipeName.Length - charsToTrim, 0));
+                if (pipeName.Length < uniqueLength)
+                {
+                    throw new PSArgumentNullException(nameof(proc));
+                }
             }
 #endif
 
-            return pipeNameBuilder.ToString();
+            return pipeName;
         }
 
         private static string CleanAppDomainNameForPipeName(string appDomainName)
