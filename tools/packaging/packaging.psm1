@@ -4280,15 +4280,21 @@ function Invoke-AzDevOpsLinuxPackageCreation {
 
         switch ($BuildType) {
             'fxdependent' {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
             }
             'alpine' {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
             }
             'rpm' {
                 Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
             }
             default {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
             }
         }
@@ -4297,6 +4303,9 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
 
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
+
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
 
             Write-Verbose -Verbose "---- Min-Size ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
@@ -4307,14 +4316,20 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             ## Create 'linux-arm' 'tar.gz' package.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
 
             ## Create 'linux-arm64' 'tar.gz' package.
             ## Note that 'linux-arm64' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
         } elseif ($BuildType -eq 'rpm') {
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
 
             Write-Verbose -Verbose "---- rpm-fxdependent ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
@@ -4427,6 +4442,38 @@ function Invoke-AzDevOpsLinuxPackageBuild {
     catch {
         Get-Error -InputObject $_
         throw
+    }
+}
+
+function Set-LinuxFilePermission {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $FilePath,
+        [Parameter(Mandatory)] [string] $RootPath
+    )
+
+    if (-not (Test-Path $FilePath)) {
+        throw "File does not exist: $FilePath"
+    }
+
+    if (-not (Test-Path $RootPath)) {
+        throw "File does not exist: $RootPath"
+    }
+
+    try {
+        Push-Location $RootPath
+        $filePermission = Get-Content $FilePath -Raw | ConvertFrom-Json -AsHashtable
+
+        foreach ($file in $filePermission) {
+            $file = $file.Key
+            $permission = $filePermission[$file]
+            $fileFullName = Join-Path -Path $RootPath -ChildPath $file
+            Write-Verbose "Set permission $permission to $fileFullName" -Verbose
+            chmod $permission $fileFullName
+        }
+    }
+    finally {
+        Pop-Location
     }
 }
 
