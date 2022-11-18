@@ -592,9 +592,7 @@ namespace Microsoft.PowerShell.Commands
                 vi.Set(SessionVariable, WebSession);
             }
 
-            //
             // handle credentials
-            //
             if (Credential != null && Authentication == WebAuthenticationType.None)
             {
                 // get the relevant NetworkCredential
@@ -637,9 +635,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.AddCertificate(Certificate);
             }
 
-            //
             // handle the user agent
-            //
             if (UserAgent != null)
             {
                 // store the UserAgent string
