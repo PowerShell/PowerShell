@@ -412,95 +412,82 @@ namespace Microsoft.PowerShell.Commands
             // sessions
             if ((WebSession != null) && (SessionVariable != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict,
-                                                       "WebCmdletSessionConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
             }
 
             // Authentication
             if (UseDefaultCredentials && (Authentication != WebAuthenticationType.None))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict,
-                                                       "WebCmdletAuthenticationConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict, "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
 
             if ((Authentication != WebAuthenticationType.None) && (Token != null) && (Credential != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict,
-                                                       "WebCmdletAuthenticationTokenConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict, "WebCmdletAuthenticationTokenConflictException");
                 ThrowTerminatingError(error);
             }
 
             if ((Authentication == WebAuthenticationType.Basic) && (Credential == null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied,
-                                                       "WebCmdletAuthenticationCredentialNotSuppliedException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied, "WebCmdletAuthenticationCredentialNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
             if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && (Token == null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied,
-                                                       "WebCmdletAuthenticationTokenNotSuppliedException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied, "WebCmdletAuthenticationTokenNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
             if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None) && (Uri.Scheme != "https"))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
-                                                       "WebCmdletAllowUnencryptedAuthenticationRequiredException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
             if (!AllowUnencryptedAuthentication && (Credential != null || UseDefaultCredentials) && (Uri.Scheme != "https"))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
-                                                       "WebCmdletAllowUnencryptedAuthenticationRequiredException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
             // credentials
             if (UseDefaultCredentials && (Credential != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict,
-                                                       "WebCmdletCredentialConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
                 ThrowTerminatingError(error);
             }
 
             // Proxy server
             if (ProxyUseDefaultCredentials && (ProxyCredential != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict,
-                                                       "WebCmdletProxyCredentialConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict, "WebCmdletProxyCredentialConflictException");
                 ThrowTerminatingError(error);
             }
             else if ((Proxy == null) && ((ProxyCredential != null) || ProxyUseDefaultCredentials))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied,
-                                                       "WebCmdletProxyUriNotSuppliedException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied, "WebCmdletProxyUriNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
             // request body content
             if ((Body != null) && (InFile != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict,
-                                                       "WebCmdletBodyConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict, "WebCmdletBodyConflictException");
                 ThrowTerminatingError(error);
             }
 
             if ((Body != null) && (Form != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict,
-                                                       "WebCmdletBodyFormConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict, "WebCmdletBodyFormConflictException");
                 ThrowTerminatingError(error);
             }
 
             if ((InFile != null) && (Form != null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict,
-                                                       "WebCmdletFormInFileConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict, "WebCmdletFormInFileConflictException");
                 ThrowTerminatingError(error);
             }
 
@@ -516,27 +503,23 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        errorRecord = GetValidationError(WebCmdletStrings.NotFilesystemPath,
-                                                         "WebCmdletInFileNotFilesystemPathException", InFile);
+                        errorRecord = GetValidationError(WebCmdletStrings.NotFilesystemPath, "WebCmdletInFileNotFilesystemPathException", InFile);
                     }
                     else
                     {
                         if (providerPaths.Count > 1)
                         {
-                            errorRecord = GetValidationError(WebCmdletStrings.MultiplePathsResolved,
-                                                             "WebCmdletInFileMultiplePathsResolvedException", InFile);
+                            errorRecord = GetValidationError(WebCmdletStrings.MultiplePathsResolved, "WebCmdletInFileMultiplePathsResolvedException", InFile);
                         }
                         else if (providerPaths.Count == 0)
                         {
-                            errorRecord = GetValidationError(WebCmdletStrings.NoPathResolved,
-                                                             "WebCmdletInFileNoPathResolvedException", InFile);
+                            errorRecord = GetValidationError(WebCmdletStrings.NoPathResolved, "WebCmdletInFileNoPathResolvedException", InFile);
                         }
                         else
                         {
                             if (Directory.Exists(providerPaths[0]))
                             {
-                                errorRecord = GetValidationError(WebCmdletStrings.DirectoryPathSpecified,
-                                                                 "WebCmdletInFileNotFilePathException", InFile);
+                                errorRecord = GetValidationError(WebCmdletStrings.DirectoryPathSpecified, "WebCmdletInFileNotFilePathException", InFile);
                             }
 
                             _originalFilePath = InFile;
@@ -566,16 +549,14 @@ namespace Microsoft.PowerShell.Commands
             // output ??
             if (PassThru && (OutFile == null))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
-                                                       "WebCmdletOutFileMissingException", nameof(PassThru));
+                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
             if (Resume.IsPresent && OutFile == null)
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
-                                                       "WebCmdletOutFileMissingException", nameof(Resume));
+                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
             }
         }
