@@ -2102,7 +2102,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the file or directory to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Specify "file" to create a file.
         /// Specify "directory" or "container" to create a directory.
         /// </param>

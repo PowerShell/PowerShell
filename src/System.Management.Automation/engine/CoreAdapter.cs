@@ -3920,11 +3920,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the .NET member based on the given member name.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// Dynamic members of an object that implements IDynamicMetaObjectProvider are not included because
         ///   1. Dynamic members cannot be invoked via reflection;
         ///   2. Access to dynamic members is handled by the DLR for free.
-        /// </remark>
+        /// </remarks>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="memberName">Name of the member to be retrieved.</param>
         /// <returns>
@@ -3957,10 +3957,10 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// Dynamic members of an object that implements IDynamicMetaObjectProvider are included because
         /// we want to view the dynamic members via 'Get-Member' and be able to auto-complete those members.
-        /// </remark>
+        /// </remarks>
         /// <param name="obj">Object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)

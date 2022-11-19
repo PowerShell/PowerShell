@@ -464,7 +464,7 @@ namespace System.Management.Automation.Security
         /// </summary>
         /// <param name="filePath">Script file path for policy check.</param>
         /// <param name="fileStream">FileStream object to script file path.</param>
-        /// <retruns>Policy check result for script file.</returns>
+        /// <returns>Policy check result for script file.</returns>
         public static SystemScriptFileEnforcement GetFilePolicyEnforcement(
             string filePath,
             System.IO.FileStream fileStream)

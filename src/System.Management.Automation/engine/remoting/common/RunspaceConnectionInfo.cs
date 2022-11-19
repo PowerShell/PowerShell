@@ -2000,6 +2000,7 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
         /// The SSH options to pass to OpenSSH.
         /// Gets or sets the SSH options to pass to OpenSSH.
         /// </summary>

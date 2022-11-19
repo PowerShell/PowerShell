@@ -43,7 +43,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint PUBLICKEYBLOB = 0x00000006;
 
-        /// <summmary>
+        /// <summary>
         /// PUBLICKEYBLOB header length.
         /// </summary>
         public const int PUBLICKEYBLOB_HEADER_LEN = 20;
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint SIMPLEBLOB = 0x00000001;
 
-        /// <summmary>
+        /// <summary>
         /// SIMPLEBLOB header length.
         /// </summary>
         public const int SIMPLEBLOB_HEADER_LEN = 12;

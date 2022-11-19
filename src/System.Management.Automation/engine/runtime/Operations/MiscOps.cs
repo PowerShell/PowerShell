@@ -1210,10 +1210,10 @@ namespace System.Management.Automation
         /// After file redirection is done, we need to call 'DoComplete' on the pipeline processor,
         /// so that 'EndProcessing' of Out-File can be called to wrap up the file write operation.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// 'StartStepping' is called after creating the pipeline processor.
         /// 'Step' is called when an object is added to the pipe created with the pipeline processor.
-        /// </remark>
+        /// </remarks>
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
