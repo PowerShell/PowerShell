@@ -1822,11 +1822,8 @@ $result
         {
             const int charMin = 32, charMax = 122;
             const int allowedCharsCount = charMax - charMin + 1;
-            byte[] randomBytes = new byte[passwordLength];
+            byte[] randomBytes = RandomNumberGenerator.GetBytes(passwordLength);
             char[] chars = new char[passwordLength];
-
-            RandomNumberGenerator rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomBytes);
 
             for (int i = 0; i < passwordLength; i++)
             {
