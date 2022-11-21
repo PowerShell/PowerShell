@@ -32,10 +32,10 @@ internal static partial class Interop
                 {
                     resultCode = FindExecutableW(filename, string.Empty, lpBuffer);
 
-                    // If FindExecutable returns a result >= 32, then it succeeded
+                    // If FindExecutable returns a result > 32, then it succeeded
                     // and we return the string that was found, otherwise we
                     // return null.
-                    if (resultCode >= 32)
+                    if (resultCode > 32)
                     {
                         result = Marshal.PtrToStringUni((IntPtr)lpBuffer);
                         return result;
