@@ -1337,6 +1337,7 @@ function Get-FpmArguments
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
+        $Arguments += @("--rpm-rpmbuild-define", "_build_id_links none")
     } else {
         $Arguments += @("--license", "MIT License")
     }
@@ -3521,7 +3522,7 @@ function New-MsiArgsArray {
 
     $buildArguments = @()
     foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=`"$($Argument.$key)`""
+        $buildArguments += "-d$key=$($Argument.$key)"
     }
 
     return $buildArguments

@@ -1340,9 +1340,9 @@ namespace System.Management.Automation.Host
         /// Key stroke when a key is pressed.
         /// </returns>
         /// <example>
-        ///     <PowerShell>
+        ///     <code>
         ///         $Host.UI.RawUI.ReadKey()
-        ///     </PowerShell>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey(ReadKeyOptions)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.FlushInputBuffer"/>
@@ -1370,10 +1370,10 @@ namespace System.Management.Automation.Host
         /// Neither ReadKeyOptions.IncludeKeyDown nor ReadKeyOptions.IncludeKeyUp is specified.
         /// </exception>
         /// <example>
-        ///     <PowerShell>
+        ///     <code>
         ///         $option = [System.Management.Automation.Host.ReadKeyOptions]"IncludeKeyDown";
         ///         $host.UI.RawUI.ReadKey($option)
-        ///     </PowerShell>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.ReadKeyOptions"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey()"/>

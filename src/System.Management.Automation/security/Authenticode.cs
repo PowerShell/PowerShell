@@ -96,7 +96,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
-        [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
                                            string fileName,
                                            X509Certificate2 certificate,
@@ -116,7 +115,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
                 if ((timeStampServerUrl.Length <= 7) || (
-                    (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0) && 
+                    (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0) &&
                     (timeStampServerUrl.IndexOf("https://", StringComparison.OrdinalIgnoreCase) != 0)))
                 {
                     throw PSTraceSource.NewArgumentException(
@@ -276,7 +275,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        [ArchitectureSensitive]
         internal static Signature GetSignature(string fileName, string fileContent)
         {
             Signature signature = null;
@@ -443,7 +441,6 @@ namespace System.Management.Automation
             return signature;
         }
 
-        [ArchitectureSensitive]
         private static uint GetWinTrustData(string fileName, string fileContent,
                                             out WinTrustMethods.WINTRUST_DATA wtData)
         {
@@ -498,7 +495,6 @@ namespace System.Management.Automation
             }
         }
 
-        [ArchitectureSensitive]
         private static X509Certificate2 GetCertFromChain(IntPtr pSigner)
         {
             try
@@ -516,7 +512,6 @@ namespace System.Management.Automation
             }
         }
 
-        [ArchitectureSensitive]
         private static Signature GetSignatureFromWintrustData(
             string filePath,
             uint error,
@@ -562,7 +557,6 @@ namespace System.Management.Automation
             return signature;
         }
 
-        [ArchitectureSensitive]
         private static bool TryGetProviderSigner(IntPtr wvtStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert)
         {
             pProvSigner = IntPtr.Zero;
@@ -596,7 +590,6 @@ namespace System.Management.Automation
             }
         }
 
-        [ArchitectureSensitive]
         private static uint GetLastWin32Error()
         {
             int error = Marshal.GetLastWin32Error();

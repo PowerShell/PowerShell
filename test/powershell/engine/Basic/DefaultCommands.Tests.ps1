@@ -58,7 +58,6 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "epsn",                             "Export-PSSession",                 $($FullCLR                               ),     "",                     "",                     ""
 "Alias",        "erase",                            "Remove-Item",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "etsn",                             "Enter-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
-"Alias",        "exec",                             "Switch-Process",                   $(                              $CoreUnix),     "",                     "",                     ""
 "Alias",        "exsn",                             "Exit-PSSession",                   $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "fc",                               "Format-Custom",                    $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "fhx",                              "Format-Hex",                       $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
