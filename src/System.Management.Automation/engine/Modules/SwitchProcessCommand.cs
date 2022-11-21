@@ -80,10 +80,12 @@ namespace Microsoft.PowerShell.Commands
 
             envBlock[envBlock.Length - 1] = null;
 
-            int exitCode = Exec(command.Source, execArgs, envBlock);
-
+            // setup termios for a child process as .NET modifies termios dynamically for use with ReadKey()
+            ConfigureTerminalForChildProcess(true);
+            int exitCode = Exec(command.Source, execArgs);
             if (exitCode < 0)
             {
+                ConfigureTerminalForChildProcess(false);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new Exception(
