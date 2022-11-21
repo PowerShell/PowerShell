@@ -49,13 +49,6 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
         } -timeout 60000 -interval 100 | Should -BeTrue
     }
 
-    It 'Error is returned if target command is not found' {
-        $invalidCommand = 'doesNotExist'
-        $e = { Switch-Process $invalidCommand } | Should -Throw -ErrorId 'CommandNotFound,Microsoft.PowerShell.Commands.SwitchProcessCommand' -PassThru
-        $e.Exception.Message | Should -BeLike "*'$invalidCommand'*"
-        $e.TargetObject | Should -BeExactly $invalidCommand
-    }
-
     It 'The environment will be copied to the child process' {
         $env = pwsh -noprofile -outputformat text -command { $env:TEST_FOO='my test = value'; Switch-Process bash -c 'echo $TEST_FOO' }
         $env | Should -BeExactly 'my test = value'
