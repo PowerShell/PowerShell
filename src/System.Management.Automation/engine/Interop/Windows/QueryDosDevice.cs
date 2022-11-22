@@ -17,7 +17,7 @@ internal static partial class Interop
         [LibraryImport(PinvokeDllNames.QueryDosDeviceDllName, EntryPoint = "QueryDosDeviceW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
         internal static partial int QueryDosDevice(Span<char> lpDeviceName, Span<char> lpTargetPath, uint ucchMax);
 
-        internal static string GetDosDevice(char deviceName)
+        internal static string GetDosDeviceForNetworkPath(char deviceName)
         {
             // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
             const int StartLength =
@@ -71,14 +71,18 @@ internal static partial class Interop
                                 // res[0] = '\\';
                                 // res[^1] = '\\';
                             }
-                            else if (res[^3] == ':')
-                            {
-                                Diagnostics.Assert(false, "Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network");
+                            // else if (res[^3] == ':')
+                            // {
+                            //     Diagnostics.Assert(false, "Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network");
 
-                                // The substed path is the root path of a drive. For example: subst Y: C:\
-                                // -> "C:\0\0" -> "C:\"
-                                res = res.Slice(0, retValue - 1);
-                                res[^1] = '\\';
+                            //     // The substed path is the root path of a drive. For example: subst Y: C:\
+                            //     // -> "C:\0\0" -> "C:\"
+                            //     res = res.Slice(0, retValue - 1);
+                            //     res[^1] = '\\';
+                            // }
+                            else
+                            {
+                                throw new Exception("GetDosDeviceForNetworkPath() can be called only if PSDrive.DriveType == DriveType.Network.");
                             }
 
                             return res.ToString();

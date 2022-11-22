@@ -889,7 +889,7 @@ namespace Microsoft.PowerShell.Commands
             string associatedPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                associatedPath = Interop.Windows.GetDosDevice(driveName[0]);
+                associatedPath = Interop.Windows.GetDosDeviceForNetworkPath(driveName[0]);
             }
 
             return associatedPath;
