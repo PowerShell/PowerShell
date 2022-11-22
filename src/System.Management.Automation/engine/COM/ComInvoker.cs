@@ -280,7 +280,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < argCount; i++)
                     {
-                        VariantClear(variantArgArray + s_variantSize * i);
+                        Interop.Windows.VariantClear(variantArgArray + s_variantSize * i);
                     }
 
                     Marshal.FreeCoTaskMem(variantArgArray);
@@ -297,20 +297,13 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < refCount; i++)
                     {
-                        VariantClear(tmpVariants + s_variantSize * i);
+                        Interop.Windows.VariantClear(tmpVariants + s_variantSize * i);
                     }
 
                     Marshal.FreeCoTaskMem(tmpVariants);
                 }
             }
         }
-
-        /// <summary>
-        /// Clear variables of type VARIANTARG (or VARIANT) before the memory containing the VARIANTARG is freed.
-        /// </summary>
-        /// <param name="pVariant"></param>
-        [DllImport("oleaut32.dll")]
-        internal static extern void VariantClear(IntPtr pVariant);
 
         /// <summary>
         /// We have to declare 'bstrSource', 'bstrDescription' and 'bstrHelpFile' as pointers because
