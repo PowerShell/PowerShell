@@ -1167,7 +1167,8 @@ namespace System.Management.Automation.Host
             // bytes of randomness (2^48 = 2.8e14) would take an attacker about 891 years to guess
             // a filename (assuming they knew the time the transcript was started).
             // (5 bytes = 3 years, 4 bytes = about a month)
-            byte[] randomBytes = System.Security.Cryptography.RandomNumberGenerator.GetBytes(6);
+            Span<byte> randomBytes = stackalloc byte[6];
+            System.Security.Cryptography.RandomNumberGenerator.Fill(randomBytes);
             string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         "PowerShell_transcript.{0}.{1}.{2:yyyyMMddHHmmss}.txt",
