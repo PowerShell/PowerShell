@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Namotion.Reflection" Version="2.1.1" />
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <PackageReference Include="Markdig.Signed" Version="0.30.4" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0" />
@@ -32,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0-4.final" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="7.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="NJsonSchema" Version="10.8.0" />
