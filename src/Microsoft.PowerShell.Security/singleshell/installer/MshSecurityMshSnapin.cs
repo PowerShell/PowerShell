@@ -17,9 +17,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// PSSecurityPSSnapIn is a class for facilitating registry
-    /// of necessary information for monad security PSSnapin.
-    ///
-    /// This class will be built with monad security dll.
+    /// of necessary information for PowerShell security PSSnapin.
     /// </summary>
     [RunInstaller(true)]
     public sealed class PSSecurityPSSnapIn : PSSnapIn

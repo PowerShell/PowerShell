@@ -64,9 +64,9 @@ namespace System.Management.Automation.Host
         /// The name identifier of the hosting application.
         /// </value>
         /// <example>
-        ///     <PowerShell>
+        ///     <code>
         ///         if ($Host.Name -ieq "ConsoleHost") { write-host "I'm running in the Console Host" }
-        ///     </PowerShell>
+        ///     </code>
         /// </example>
         public abstract string Name
         {
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>
         /// When implementing this member, it should return the product version number for the product
-        /// that is hosting the Monad engine.
+        /// that is hosting the PowerShell engine.
         /// </remarks>
         /// <value>
         /// The version number of the hosting application.

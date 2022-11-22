@@ -879,9 +879,9 @@ namespace Microsoft.PowerShell.Commands
         {
 #if UNIX
             throw new PlatformNotSupportedException();
+        }
 #else
             return WinGetSubstitutedPathForNetworkDosDevice(driveName);
-#endif
         }
 
         private static string WinGetSubstitutedPathForNetworkDosDevice(string driveName)
@@ -889,76 +889,12 @@ namespace Microsoft.PowerShell.Commands
             string associatedPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
-                int bufferSize = 300;
-                var pathInfo = new StringBuilder(bufferSize);
-                driveName += ':';
-
-                // Call the windows API
-                while (true)
-                {
-                    pathInfo.EnsureCapacity(bufferSize);
-                    int retValue = NativeMethods.QueryDosDevice(driveName, pathInfo, bufferSize);
-                    if (retValue > 0)
-                    {
-                        // If the drive letter is a substed path, the result will be in the format of
-                        //  - "\??\C:\RealPath" for local path
-                        //  - "\??\UNC\RealPath" for network path
-                        associatedPath = pathInfo.ToString();
-                        if (associatedPath.StartsWith("\\??\\", StringComparison.OrdinalIgnoreCase))
-                        {
-                            associatedPath = associatedPath.Remove(0, 4);
-                            if (associatedPath.StartsWith("UNC", StringComparison.OrdinalIgnoreCase))
-                            {
-                                associatedPath = associatedPath.Remove(0, 3);
-                                associatedPath = "\\" + associatedPath;
-                            }
-                            else if (associatedPath.EndsWith(':'))
-                            {
-                                // The substed path is the root path of a drive. For example: subst Y: C:\
-                                associatedPath += Path.DirectorySeparatorChar;
-                            }
-                        }
-                        else
-                        {
-                            // The drive name is not a substed path, then we return the root path of the drive
-                            associatedPath = driveName + "\\";
-                        }
-
-                        break;
-                    }
-
-                    // Windows API call failed
-                    int errorCode = Marshal.GetLastWin32Error();
-                    if (errorCode != 122)
-                    {
-                        // ERROR_INSUFFICIENT_BUFFER = 122
-                        // For an error other than "insufficient buffer", throw it
-                        throw new Win32Exception((int)errorCode);
-                    }
-
-                    // We got the "insufficient buffer" error. In this case we extend
-                    // the buffer size, unless it's unreasonably too large.
-                    if (bufferSize >= 32767)
-                    {
-                        // "The Windows API has many functions that also have Unicode versions to permit
-                        // an extended-length path for a maximum total path length of 32,767 characters"
-                        // See https://msdn.microsoft.com/library/aa365247.aspx#maxpath
-                        string errorMsg = StringUtil.Format(FileSystemProviderStrings.SubstitutePathTooLong, driveName);
-                        throw new InvalidOperationException(errorMsg);
-                    }
-
-                    // Extend the buffer size and try again.
-                    bufferSize *= 10;
-                    if (bufferSize > 32767)
-                    {
-                        bufferSize = 32767;
-                    }
-                }
+                associatedPath = Interop.Windows.GetDosDeviceForNetworkPath(driveName[0]);
             }
 
             return associatedPath;
         }
+#endif
 
         /// <summary>
         /// Get the root path for a network drive or MS-DOS device.
@@ -7292,26 +7228,6 @@ namespace Microsoft.PowerShell.Commands
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static partial bool PathIsNetworkPath(string path);
 #endif
-
-            /// <summary>
-            /// The function can obtain the current mapping for a particular MS-DOS device name.
-            ///
-            /// If lpDeviceName is non-NULL, the function retrieves information about the particular MS-DOS device specified by lpDeviceName.
-            /// The first null-terminated string stored into the buffer is the current mapping for the device.
-            /// The other null-terminated strings represent undeleted prior mappings for the device.
-            /// </summary>
-            /// <param name="lpDeviceName">
-            /// The particular MS-DOS device name.
-            /// </param>
-            /// <param name="lpTargetPath">
-            /// The buffer to receive the result of the query.
-            /// </param>
-            /// <param name="ucchMax">
-            /// The maximum number of characters that can be stored into the buffer
-            /// </param>
-            /// <returns></returns>
-            [DllImport(PinvokeDllNames.QueryDosDeviceDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int QueryDosDevice(string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
 
             /// <summary>
             /// Creates a symbolic link using the native API.

@@ -4078,6 +4078,15 @@ $RawUI.SetBufferContents(
             }
         }
 
+#if UNIX
+        internal static string GetExecFunctionText()
+        {
+            return @"
+Switch-Process -WithCommand $args
+";
+        }
+#endif
+
         /// <summary>
         /// This is the default function to use for man/help. It uses
         /// splatting to pass in the parameters.
@@ -4683,10 +4692,6 @@ end {
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
 
-#if UNIX
-                builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
-#endif
-
                 return builtInAliases.ToArray();
             }
         }
@@ -4715,6 +4720,10 @@ end {
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true, languageMode: systemLanguageMode),
+
+#if UNIX
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("exec", GetExecFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
+#endif
 
             // Functions that require full language mode and are trusted
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true, languageMode: PSLanguageMode.FullLanguage),

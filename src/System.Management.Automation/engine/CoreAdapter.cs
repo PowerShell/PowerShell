@@ -4765,6 +4765,7 @@ namespace System.Management.Automation
 
     #endregion
 
+#if !UNIX
     /// <summary>
     /// Used only to add a COM style type name to a COM interop .NET type.
     /// </summary>
@@ -4795,6 +4796,8 @@ namespace System.Management.Automation
             return new ConsolidatedString(GetTypeNameHierarchy(obj), interned: true);
         }
     }
+#endif
+
     /// <summary>
     /// Adapter used for GetMember and GetMembers only.
     /// All other methods will not be called.

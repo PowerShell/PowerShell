@@ -231,7 +231,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Monad version used by PSSnapin.
+        /// PowerShell version used by PSSnapin.
         /// </summary>
         public Version PSVersion { get; }
 

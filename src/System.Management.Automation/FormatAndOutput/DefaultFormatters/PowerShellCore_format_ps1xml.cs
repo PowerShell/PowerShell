@@ -1000,8 +1000,12 @@ namespace System.Management.Automation.Runspaces
                                     if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
-                                        if ($myinv -and $myinv.MyCommand)
-                                        {
+                                        $errorColor = ''
+                                        if ($Host.UI.SupportsVirtualTerminal) {
+                                            $errorColor = $PSStyle.Formatting.Error
+                                        }
+
+                                        $commandPrefix = if ($myinv -and $myinv.MyCommand) {
                                             switch -regex ( $myinv.MyCommand.CommandType )
                                             {
                                                 ([System.Management.Automation.CommandTypes]::ExternalScript)
@@ -1045,6 +1049,11 @@ namespace System.Management.Automation.Runspaces
                                         {
                                             $myinv.InvocationName + ' : '
                                         }
+                                    }
+
+                                    if ($commandPrefix)
+                                    {
+                                        $errorColor + $commandPrefix
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
