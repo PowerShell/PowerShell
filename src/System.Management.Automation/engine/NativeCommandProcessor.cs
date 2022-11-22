@@ -583,10 +583,16 @@ namespace System.Management.Automation
                     }
                     catch (Win32Exception)
                     {
-                        // On Unix platforms, nothing can be further done, so just throw
-                        // On headless Windows SKUs, there is no shell to fall back to, so just throw
-                        if (!Platform.IsWindowsDesktop) { throw; }
 #if UNIX
+                        // On Unix platforms, nothing can be further done, so just throw.
+                        throw;
+#else
+                        // On headless Windows SKUs, there is no shell to fall back to, so just throw
+                        if (!Platform.IsWindowsDesktop)
+                        {
+                            throw;
+                        }
+
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = Interop.Windows.FindExecutable(startInfo.FileName);
                         bool notDone = true;
