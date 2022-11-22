@@ -273,9 +273,6 @@
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
     <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
   </data>
-  <data name="SubstitutePathTooLong" xml:space="preserve">
-    <value>The substitute path for the DOS device '{0}' is too long. It exceeds the maximum total path length (32,767 characters) that is valid for the Windows API.</value>
-  </data>
   <data name="ItemNotDirectory" xml:space="preserve">
     <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
   </data>
