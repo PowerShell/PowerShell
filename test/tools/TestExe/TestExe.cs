@@ -12,6 +12,7 @@ namespace TestExe
     {
         private static int Main(string[] args)
         {
+            int exitCode = 0;
             if (args.Length > 0)
             {
                 switch (args[0].ToLowerInvariant())
@@ -20,7 +21,7 @@ namespace TestExe
                         EchoArgs(args);
                         break;
                     case "-echocmdline":
-                        EchoCmdLine(args);
+                        EchoCmdLine();
                         break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
@@ -37,16 +38,18 @@ namespace TestExe
                         PrintHelp();
                         break;
                     default:
-                        Console.WriteLine("Unknown test {0}. Run with '-h' for help.", args[0]);
+                        exitCode = 1;
+                        Console.Error.WriteLine("Unknown test {0}. Run with '-h' for help.", args[0]);
                         break;
                 }
             }
             else
             {
-                Console.WriteLine("Test not specified");
+                exitCode = 1;
+                Console.Error.WriteLine("Test not specified");
             }
 
-            return 0;
+            return exitCode;
         }
 
         // <Summary>
@@ -63,7 +66,7 @@ namespace TestExe
         // <Summary>
         // Echos the raw command line received by the process plus the arguments passed in.
         // </Summary>
-        private static void EchoCmdLine(string[] args)
+        private static void EchoCmdLine()
         {
             string rawCmdLine = "N/A";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
