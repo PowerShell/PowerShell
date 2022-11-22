@@ -2415,6 +2415,7 @@ namespace Microsoft.PowerShell.Commands
                             // for hardlinks we resolve the target to an absolute path
                             if (!IsAbsolutePath(strTargetPath))
                             {
+                                // there is already a check before here so that strTargetPath should only resolve to 1 path
                                 strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
                             }
 
