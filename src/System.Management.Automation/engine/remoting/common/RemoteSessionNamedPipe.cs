@@ -274,19 +274,6 @@ namespace System.Management.Automation.Remoting
               uint dwCreationDisposition,
               uint dwFlagsAndAttributes,
               IntPtr hTemplateFile);
-
-        [DllImport(PinvokeDllNames.WaitNamedPipeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool WaitNamedPipe(string lpNamedPipeName, uint nTimeOut);
-
-        [DllImport(PinvokeDllNames.ImpersonateNamedPipeClientDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ImpersonateNamedPipeClient(IntPtr hNamedPipe);
-
-        [DllImport(PinvokeDllNames.RevertToSelfDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool RevertToSelf();
-
         #endregion
     }
 
