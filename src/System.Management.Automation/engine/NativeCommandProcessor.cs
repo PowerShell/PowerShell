@@ -248,7 +248,6 @@ namespace System.Management.Automation
             "cmd",
             "cscript",
             "find",
-            "gcloud",
             "sqlcmd",
             "wscript",
         };
