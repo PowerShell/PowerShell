@@ -216,7 +216,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
-    /// that is used in the Monad components to produce trace output.
+    /// that is used in the PowerShell components to produce trace output.
     /// </summary>
     /// <!--
     /// The StructuredTraceSource class is derived from TraceSource to provide granular
@@ -448,7 +448,7 @@ namespace System.Management.Automation
 
         internal IDisposable TraceScope(string msg)
         {
-            if ((_flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Scope))
             {
                 try
                 {
@@ -462,7 +462,7 @@ namespace System.Management.Automation
 
         internal IDisposable TraceScope(string format, object arg1)
         {
-            if ((_flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Scope))
             {
                 try
                 {
@@ -476,7 +476,7 @@ namespace System.Management.Automation
 
         internal IDisposable TraceScope(string format, object arg1, object arg2)
         {
-            if ((_flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Scope))
             {
                 try
                 {
@@ -531,7 +531,7 @@ namespace System.Management.Automation
             string format,
             params object[] args)
         {
-            if ((_flags & PSTraceSourceOptions.Method) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Method))
             {
                 try
                 {
@@ -578,7 +578,7 @@ namespace System.Management.Automation
         /// </returns>
         internal IDisposable TraceEventHandlers()
         {
-            if ((_flags & PSTraceSourceOptions.Events) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Events))
             {
                 try
                 {
@@ -628,7 +628,7 @@ namespace System.Management.Automation
             string format,
             params object[] args)
         {
-            if ((_flags & PSTraceSourceOptions.Events) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Events))
             {
                 try
                 {
@@ -697,7 +697,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal IDisposable TraceLock(string lockName)
         {
-            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
                 try
                 {
@@ -729,7 +729,7 @@ namespace System.Management.Automation
         /// </param>
         internal void TraceLockAcquiring(string lockName)
         {
-            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
                 TraceLockHelper(
                     lockAcquiringFormatter,
@@ -751,7 +751,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal void TraceLockAcquired(string lockName)
         {
-            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
                 TraceLockHelper(
                     lockEnterFormatter,
@@ -769,7 +769,7 @@ namespace System.Management.Automation
         /// </param>
         internal void TraceLockReleased(string lockName)
         {
-            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
                 TraceLockHelper(
                     lockLeavingFormatter,
@@ -823,7 +823,7 @@ namespace System.Management.Automation
             string errorMessageFormat,
             params object[] args)
         {
-            if ((_flags & PSTraceSourceOptions.Error) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Error))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.Error,
@@ -847,7 +847,7 @@ namespace System.Management.Automation
             string warningMessageFormat,
             params object[] args)
         {
-            if ((_flags & PSTraceSourceOptions.Warning) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Warning))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.Warning,
@@ -871,7 +871,7 @@ namespace System.Management.Automation
             string verboseMessageFormat,
             params object[] args)
         {
-            if ((_flags & PSTraceSourceOptions.Verbose) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.Verbose))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.Verbose,
@@ -889,7 +889,7 @@ namespace System.Management.Automation
         /// </param>
         internal void WriteLine(string format)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -906,7 +906,7 @@ namespace System.Management.Automation
         /// <param name="arg1"></param>
         internal void WriteLine(string format, object arg1)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -974,7 +974,7 @@ namespace System.Management.Automation
         /// <param name="arg2"></param>
         internal void WriteLine(string format, object arg1, object arg2)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -993,7 +993,7 @@ namespace System.Management.Automation
         /// <param name="arg3"></param>
         internal void WriteLine(string format, object arg1, object arg2, object arg3)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation
         /// <param name="arg4"></param>
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -1034,7 +1034,7 @@ namespace System.Management.Automation
         /// <param name="arg5"></param>
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4, object arg5)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -1056,7 +1056,7 @@ namespace System.Management.Automation
         /// <param name="arg6"></param>
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation
         /// </param>
         internal void WriteLine(object arg)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
             {
                 WriteLine("{0}", arg == null ? "null" : arg.ToString());
             }

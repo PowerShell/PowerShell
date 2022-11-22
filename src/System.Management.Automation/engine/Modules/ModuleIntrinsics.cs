@@ -1092,7 +1092,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
 
             int pos = 0; // position of the current substring in pathToScan
-            string[] substrings = pathToScan.Split(Utils.Separators.PathSeparator, StringSplitOptions.None); // we want to process empty entries
+            string[] substrings = pathToScan.Split(Path.PathSeparator, StringSplitOptions.None); // we want to process empty entries
             string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar); // trailing backslashes and white-spaces will mess up equality comparison
             foreach (string substring in substrings)
             {
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
             {
-                foreach (string subPathToAdd in pathToAdd.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
+                foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
                 {
                     int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
                     if (position == -1) // subPathToAdd not found - add it
@@ -1273,24 +1273,23 @@ namespace System.Management.Automation
             };
 
             var modulePathList = new List<string>();
-            foreach (var path in currentModulePath.Split(';'))
+            foreach (var path in currentModulePath.Split(';', StringSplitOptions.TrimEntries))
             {
-                var trimmedPath = path.Trim();
-                if (!excludeModulePaths.Contains(trimmedPath))
+                if (!excludeModulePaths.Contains(path))
                 {
                     // make sure this module path is Not part of other PS Core installation
-                    var possiblePwshDir = Path.GetDirectoryName(trimmedPath);
+                    var possiblePwshDir = Path.GetDirectoryName(path);
 
                     if (string.IsNullOrEmpty(possiblePwshDir))
                     {
                         // i.e. module dir is in the drive root
-                        modulePathList.Add(trimmedPath);
+                        modulePathList.Add(path);
                     }
                     else
                     {
                         if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.dll")))
                         {
-                            modulePathList.Add(trimmedPath);
+                            modulePathList.Add(path);
                         }
                     }
                 }
@@ -1351,7 +1350,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrWhiteSpace(modulePathString))
             {
-                foreach (string envPath in modulePathString.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+                foreach (string envPath in modulePathString.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
                     if (processedPath != null)

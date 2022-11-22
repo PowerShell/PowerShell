@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// Helper functions for process info.
     /// </summary>
-    public static class ProcessCodeMethods
+    public static partial class ProcessCodeMethods
     {
         private const int InvalidProcessId = -1;
 
@@ -79,8 +79,8 @@ namespace Microsoft.PowerShell
             public IntPtr InheritedFromUniqueProcessId;
         }
 
-        [DllImport("ntdll.dll", SetLastError = true)]
-        private static extern int NtQueryInformationProcess(
+        [LibraryImport("ntdll.dll")]
+        private static partial int NtQueryInformationProcess(
                 IntPtr processHandle,
                 int processInformationClass,
                 out PROCESS_BASIC_INFORMATION processInformation,

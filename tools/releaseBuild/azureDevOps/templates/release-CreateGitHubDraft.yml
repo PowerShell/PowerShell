@@ -10,15 +10,27 @@ steps:
     Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
     Install-AzCopy
   displayName: Install AzCopy
+  retryCountOnTaskFailure: 2
 
 - pwsh: |
     Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
     $azcopy = Find-AzCopy
-    & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey)
+    Write-Verbose -Verbose "Found AzCopy: $azcopy"
+
+    & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
+    & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --recursive
+
+    $packagesPath = Get-ChildItem -Path $(System.ArtifactsDirectory)\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName
+    Write-Host "sending -- vso[task.setvariable variable=PackagesRoot]$packagesPath"
+    Write-Host "##vso[task.setvariable variable=PackagesRoot]$packagesPath"
+
   displayName: Download Azure Artifacts
+  retryCountOnTaskFailure: 2
+  env:
+    AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
 
 - pwsh: |
-    Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name
+    Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
   displayName: Capture downloaded artifacts
 
 - pwsh: |
@@ -26,10 +38,10 @@ steps:
   displayName: Clone Internal-Tools repository
 
 - pwsh: |
-    $Path = "$(System.ArtifactsDirectory)"
+    $Path = "$(PackagesRoot)"
     $OutputPath = Join-Path $Path ‘hashes.sha256’
     $srcPaths = @($Path)
-    $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse
+    $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse -File
     $checksums = $packages |
         ForEach-Object {
             Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
@@ -54,17 +66,17 @@ steps:
       "preview.md"
     }
     else {
-      $semanticVersion.Major + "." + $semanticVersion.Minor + ".md"
+      $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
     }
 
-    $filePath = $env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName
+    $filePath = "$env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName"
     Write-Verbose -Verbose "Selected Log file: $filePath"
 
     if (-not (Test-Path $filePath)) {
       throw "$filePath not found"
     }
 
-    $changelog = Get-Content -Raw -Path $filePath
+    $changelog = Get-Content -Path $filePath
 
     $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
     $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
@@ -73,9 +85,9 @@ steps:
         if ($_ -match $startPattern) { $outputLine = $true }
         elseif ($_ -match $endPattern) { $outputLine = $false }
         if ($outputLine) { $_}
-      }
+      } | Out-String
 
     Write-Verbose -Verbose "Selected content: `n$clContent"
 
-    Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(System.ArtifactsDirectory) -Token $(GitHubReleasePat)
+    Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
   displayName: Publish Release Draft

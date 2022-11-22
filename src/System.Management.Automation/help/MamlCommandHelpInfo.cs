@@ -441,7 +441,7 @@ namespace System.Management.Automation
         internal MamlCommandHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
-            result.FullHelp.Properties["Category"].Value = newCategoryToUse;
+            result.FullHelp.Properties["Category"].Value = newCategoryToUse.ToString();
             return result;
         }
 

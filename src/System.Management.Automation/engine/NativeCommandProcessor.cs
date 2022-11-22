@@ -247,8 +247,9 @@ namespace System.Management.Automation
         {
             "cmd",
             "cscript",
-            "wscript",
             "find",
+            "sqlcmd",
+            "wscript",
         };
 
         #region ctor/native command properties
@@ -422,7 +423,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
                 // Do cleanup in case of exception
-                CleanUp();
+                CleanUp(killBackgroundProcess: true);
                 throw;
             }
         }
@@ -444,7 +445,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
                 // Do cleanup in case of exception
-                CleanUp();
+                CleanUp(killBackgroundProcess: true);
                 throw;
             }
         }
@@ -904,7 +905,7 @@ namespace System.Management.Automation
             finally
             {
                 // Do some cleanup
-                CleanUp();
+                CleanUp(killBackgroundProcess: false);
             }
 
             // An exception was thrown while attempting to run the program
@@ -1095,7 +1096,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
 #if UNIX
@@ -1161,7 +1161,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Aggressively clean everything up...
         /// </summary>
-        private void CleanUp()
+        /// <param name="killBackgroundProcess">If set, also terminate background process.</param>
+        private void CleanUp(bool killBackgroundProcess)
         {
             // We need to call 'NotifyEndApplication' as appropriate during cleanup
             if (_hasNotifiedBeginApplication)
@@ -1171,17 +1172,20 @@ namespace System.Management.Automation
 
             try
             {
-                // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
-                // closes the redirected streams and the processs does not exit on macOS.  However,
-                // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+                // on Unix, we need to kill the process (if not running in background) to ensure it terminates,
+                // as Dispose() merely closes the redirected streams and the process does not exit.
+                // However, on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                try
+                if (killBackgroundProcess || !_isRunningInBackground)
                 {
-                    _nativeProcess?.Kill();
-                }
-                catch
-                {
-                    // Ignore all exception since it is cleanup.
+                    try
+                    {
+                        _nativeProcess?.Kill();
+                    }
+                    catch
+                    {
+                        // Ignore all exceptions since it is cleanup.
+                    }
                 }
 #endif
                 _nativeProcess?.Dispose();
@@ -1572,7 +1576,7 @@ namespace System.Management.Automation
             }
             else
             {
-                extensionList = pathext.Split(Utils.Separators.Semicolon);
+                extensionList = pathext.Split(';');
             }
 
             foreach (string extension in extensionList)
@@ -1605,7 +1609,6 @@ namespace System.Management.Automation
         private static extern IntPtr FindExecutableW(
           string fileName, string directoryPath, StringBuilder pathFound);
 
-        [ArchitectureSensitive]
         private static string FindExecutable(string filename)
         {
             // Preallocate a
@@ -2057,11 +2060,12 @@ namespace System.Management.Automation
             // Get the encoding for writing to native command. Note we get the Encoding
             // from the current scope so a script or function can use a different encoding
             // than global value.
-            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Utils.utf8NoBom;
+            Encoding outputEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as Encoding;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
-            _streamWriter.AutoFlush = true;
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, outputEncoding ?? Encoding.Default)
+            {
+                AutoFlush = true
+            };
 
             _inputFormat = inputFormat;
 
@@ -2149,15 +2153,15 @@ namespace System.Management.Automation
     /// Static class that allows you to show and hide the console window
     /// associated with this process.
     /// </summary>
-    internal static class ConsoleVisibility
+    internal static partial class ConsoleVisibility
     {
         /// <summary>
         /// If set to true, then native commands will always be run redirected...
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
 
-        [DllImport("Kernel32.dll")]
-        internal static extern IntPtr GetConsoleWindow();
+        [LibraryImport("Kernel32.dll")]
+        internal static partial IntPtr GetConsoleWindow();
 
         internal const int SW_HIDE = 0;
         internal const int SW_SHOWNORMAL = 1;
@@ -2181,32 +2185,33 @@ namespace System.Management.Automation
         /// <param name="hWnd">The window to show...</param>
         /// <param name="nCmdShow">The command to do.</param>
         /// <returns>True if it was successful.</returns>
-        [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         /// <summary>
         /// Code to allocate a console...
         /// </summary>
         /// <returns>True if a console was created...</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AllocConsole();
+        internal static partial bool AllocConsole();
 
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window.
         /// </summary>
         /// <returns>A handle to the foreground window.</returns>
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetForegroundWindow();
 
         /// <summary>
         /// Called to restore the foreground window after allocating a hidden console window.
         /// </summary>
         /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
         /// <returns>True if the window was brought to the foreground.</returns>
-        [DllImport("user32.dll")]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static partial bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
         /// If no console window is attached to this process, then allocate one,
@@ -2292,10 +2297,10 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Exception used to wrap the error coming from
-    /// remote instance of Msh.
+    /// remote instance of PowerShell.
     /// </summary>
     /// <remarks>
-    /// This remote instance of Msh can be in a separate process,
+    /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
     [Serializable]
@@ -2389,7 +2394,7 @@ namespace System.Management.Automation
         private readonly PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
-        /// Original Serialized Exception from remote msh.
+        /// Original Serialized Exception from remote PowerShell.
         /// </summary>
         /// <remarks>This is the exception which was thrown in remote.
         /// </remarks>
@@ -2405,7 +2410,7 @@ namespace System.Management.Automation
         /// InvocationInfo, if any, associated with the SerializedRemoteException.
         /// </summary>
         /// <remarks>
-        /// This is the serialized InvocationInfo from the remote msh.
+        /// This is the serialized InvocationInfo from the remote PowerShell.
         /// </remarks>
         public PSObject SerializedRemoteInvocationInfo
         {

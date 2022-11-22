@@ -29,9 +29,14 @@ jobs:
           return target_branch[1];
     - name: Post backport started comment to pull request
       uses: actions/github-script@v6
+      continue-on-error: true
       with:
         script: |
           const backport_start_body = `Started backporting to ${{ steps.target-branch-extractor.outputs.result }}: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+          console.log(`issue_number: ${context.issue.number}`);
+          console.log(`owner: ${context.repo.owner}`);
+          console.log(`repo: ${context.repo.repo}`);
+          console.log(`body: ${backport_start_body}`);
           await github.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,

@@ -4,9 +4,6 @@
 param()
 
 Describe "Behavior is specific for each platform" -tags "CI" {
-    BeforeAll {
-        $skipTests = $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
-    }
     It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Windows"
     }
@@ -28,8 +25,7 @@ Describe "Behavior is specific for each platform" -tags "CI" {
 
 Describe "tests for multiple languages and extensions" -tags "CI" {
     AfterAll {
-        if (-not $IsWindows -or
-            $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
+        if (-not $IsWindows) {
             return
         }
         $PSNativeCommandArgumentPassing = $passingStyle
@@ -126,7 +122,7 @@ echo Argument 4 is: ^<%4^>
 
         # determine whether we should skip the tests we just defined
         # doing it in this order ensures that the test output will show each skipped test
-        $skipTests = -not $IsWindows -or $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
+        $skipTests = -not $IsWindows
         if ($skipTests) {
             return
         }
@@ -162,16 +158,11 @@ echo Argument 4 is: ^<%4^>
 
 Describe "Will error correctly if an attempt to set variable to improper value" -tags "CI" {
     It "will error when setting variable incorrectly" {
-        if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-            { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
-        }
-        else {
-            Set-Test -State skipped -Because "Experimental feature 'PSNativeCommandArgumentPassing' is not enabled"
-        }
+        { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
     }
 }
 
-Describe "find.exe uses legacy behavior on Windows" {
+Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
     BeforeAll {
         $currentSetting = $PSNativeCommandArgumentPassing
         $PSNativeCommandArgumentPassing = "Windows"
@@ -203,7 +194,7 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             $a = 'a"b c"d'
             $lines = testexe -echoargs $a 'a"b c"d' a"b c"d "a'b c'd"
             $lines.Count | Should -Be 4
-            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
+            if ($PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
             }
@@ -229,7 +220,7 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
         It "Should handle spaces between escaped quotes (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
             $lines.Count | Should -Be 2
-            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
+            if ($PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a\"b c\"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a\"b c\"d>'
             }

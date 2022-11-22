@@ -193,23 +193,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
+                try
                 {
-                    try
-                    {
-                        // This will default to the new behavior if it is set to anything other than Legacy
-                        var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
-                            Context.GetVariableValue(SpecialVariables.NativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
-                        return preference;
-                    }
-                    catch
-                    {
-                        // The value is not convertable send back Legacy
-                        return NativeArgumentPassingStyle.Legacy;
-                    }
+                    var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
+                        Context.GetVariableValue(SpecialVariables.NativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
+                    return preference;
                 }
-
-                return NativeArgumentPassingStyle.Legacy;
+                catch
+                {
+                    // The value is not convertable send back Legacy
+                    return NativeArgumentPassingStyle.Legacy;
+                }
             }
         }
 

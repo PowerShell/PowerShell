@@ -743,51 +743,46 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                do
+                int error;
+                if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { return null; }
+
+                // Set the default length to be 256, so it will be sufficient for most cases.
+                int tokenInfoLength = 256;
+                tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
                 {
-                    int error;
-                    if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { break; }
-
-                    // Set the default length to be 256, so it will be sufficient for most cases.
-                    int tokenInfoLength = 256;
-                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                    error = Marshal.GetLastWin32Error();
+                    if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
                     {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            Marshal.FreeHGlobal(tokenUserInfo);
-                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                        Marshal.FreeHGlobal(tokenUserInfo);
+                        tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
 
-                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { return null; }
                     }
-
-                    var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
-
-                    // Max username is defined as UNLEN = 256 in lmcons.h
-                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                    // The buffer length must be +1, last position is for a null string terminator.
-                    int userNameLength = 257;
-                    int domainNameLength = 16;
-#pragma warning disable CA2014
-                    Span<char> userNameStr = stackalloc char[userNameLength];
-                    Span<char> domainNameStr = stackalloc char[domainNameLength];
-#pragma warning restore CA2014
-                    Win32Native.SID_NAME_USE accountType;
-
-                    // userNameLength and domainNameLength will be set to actual lengths.
-                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    else
                     {
-                        break;
+                        return null;
                     }
+                }
 
-                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
-                } while (false);
+                var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                // Max username is defined as UNLEN = 256 in lmcons.h
+                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                // The buffer length must be +1, last position is for a null string terminator.
+                int userNameLength = 257;
+                int domainNameLength = 16;
+                Span<char> userNameStr = stackalloc char[userNameLength];
+                Span<char> domainNameStr = stackalloc char[domainNameLength];
+                Win32Native.SID_NAME_USE accountType;
+
+                // userNameLength and domainNameLength will be set to actual lengths.
+                if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                {
+                    return null;
+                }
+
+                userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
             }
             catch (NotSupportedException)
             {
@@ -817,7 +812,6 @@ namespace Microsoft.PowerShell.Commands
                     Win32Native.CloseHandle(processTokenHandler);
                 }
             }
-
 #endif
             return userName;
         }

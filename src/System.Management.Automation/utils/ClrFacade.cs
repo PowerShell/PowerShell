@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// ClrFacade contains all diverging code (different implementation for FullCLR and CoreCLR using if/def).
     /// It exposes common APIs that can be used by the rest of the code base.
     /// </summary>
-    internal static class ClrFacade
+    internal static partial class ClrFacade
     {
         /// <summary>
         /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
@@ -101,23 +101,6 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting default encoding.
-        /// </summary>
-        internal static Encoding GetDefaultEncoding()
-        {
-            if (s_defaultEncoding == null)
-            {
-                // load all available encodings
-                EncodingRegisterProvider();
-                s_defaultEncoding = new UTF8Encoding(false);
-            }
-
-            return s_defaultEncoding;
-        }
-
-        private static volatile Encoding s_defaultEncoding;
-
-        /// <summary>
         /// Facade for getting OEM encoding
         /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows.
         /// </summary>
@@ -142,7 +125,7 @@ namespace System.Management.Automation
 
         private static void EncodingRegisterProvider()
         {
-            if (s_defaultEncoding == null && s_oemEncoding == null)
+            if (s_oemEncoding == null)
             {
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }
@@ -263,7 +246,7 @@ namespace System.Management.Automation
             }
 
             // If we successfully get the zone data stream, try to read the ZoneId information
-            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
+            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, Encoding.Default))
             {
                 string line = null;
                 bool zoneTransferMatched = false;
@@ -383,13 +366,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Native methods that are used by facade methods.
         /// </summary>
-        private static class NativeMethods
+        private static partial class NativeMethods
         {
             /// <summary>
             /// Pinvoke for GetOEMCP to get the OEM code page.
             /// </summary>
-            [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetOEMCP();
+            [LibraryImport(PinvokeDllNames.GetOEMCPDllName)]
+            internal static partial uint GetOEMCP();
         }
     }
 }

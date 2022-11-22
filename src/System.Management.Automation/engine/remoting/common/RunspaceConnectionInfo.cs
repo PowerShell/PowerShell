@@ -18,6 +18,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using System.Text;
 using System.Threading;
 
 using Microsoft.Win32.SafeHandles;
@@ -1943,7 +1944,7 @@ namespace System.Management.Automation.Runspaces
         /// Default value for subsystem.
         /// </summary>
         private const string DefaultSubsystem = "powershell";
-        
+
         /// <summary>
         /// Default value is infinite timeout.
         /// </summary>
@@ -2256,7 +2257,7 @@ namespace System.Management.Automation.Runspaces
             // if UserName is not set, then ssh will use User from ssh_config if defined else the environment user by default
             if (!string.IsNullOrEmpty(this.UserName))
             {
-                var parts = this.UserName.Split(Utils.Separators.Backslash);
+                var parts = this.UserName.Split('\\');
                 if (parts.Length == 2)
                 {
                     // convert DOMAIN\user to user@DOMAIN
@@ -2278,9 +2279,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             // pass "-o option=value" command line argument to ssh if options are provided
-            if (this.Options != null) 
+            if (this.Options != null)
             {
-                foreach (DictionaryEntry pair in this.Options) 
+                foreach (DictionaryEntry pair in this.Options)
                 {
                     startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-o {0}={1}", pair.Key, pair.Value));
                 }
@@ -2404,23 +2405,31 @@ namespace System.Management.Automation.Runspaces
             if (startInfo.RedirectStandardInput)
             {
                 Debug.Assert(stdinFd >= 0, "Invalid Fd");
-                standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
-                    Utils.utf8NoBom, StreamBufferSize)
+                standardInput = new StreamWriter(
+                    OpenStream(stdinFd, FileAccess.Write),
+                    Encoding.Default,
+                    StreamBufferSize)
                 { AutoFlush = true };
             }
 
             if (startInfo.RedirectStandardOutput)
             {
                 Debug.Assert(stdoutFd >= 0, "Invalid Fd");
-                standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
-                    startInfo.StandardOutputEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+                standardOutput = new StreamReader(
+                    OpenStream(stdoutFd, FileAccess.Read),
+                    startInfo.StandardOutputEncoding ?? Encoding.Default,
+                    detectEncodingFromByteOrderMarks: true,
+                    StreamBufferSize);
             }
 
             if (startInfo.RedirectStandardError)
             {
                 Debug.Assert(stderrFd >= 0, "Invalid Fd");
-                standardError = new StreamReader(OpenStream(stderrFd, FileAccess.Read),
-                    startInfo.StandardErrorEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+                standardError = new StreamReader(
+                    OpenStream(stderrFd, FileAccess.Read),
+                    startInfo.StandardErrorEncoding ?? Encoding.Default,
+                    detectEncodingFromByteOrderMarks: true,
+                    StreamBufferSize);
             }
 
             return childPid;
@@ -2461,7 +2470,7 @@ namespace System.Management.Automation.Runspaces
             var argvList = new List<string>();
             argvList.Add(psi.FileName);
 
-            var argsToParse = String.Join(" ", psi.ArgumentList).Trim();
+            var argsToParse = String.Join(' ', psi.ArgumentList).Trim();
             var argsLength = argsToParse.Length;
             for (int i = 0; i < argsLength; )
             {

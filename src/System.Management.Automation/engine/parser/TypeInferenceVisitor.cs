@@ -540,7 +540,6 @@ namespace System.Management.Automation
                 foreach (var kv in hashtableAst.KeyValuePairs)
                 {
                     string name = null;
-                    string typeName = null;
                     if (kv.Item1 is StringConstantExpressionAst stringConstantExpressionAst)
                     {
                         name = stringConstantExpressionAst.Value;
@@ -554,32 +553,46 @@ namespace System.Management.Automation
                         name = nameValue.ToString();
                     }
 
-                    if (name != null)
+                    if (name is not null)
                     {
-                        object value = null;
                         if (kv.Item2 is PipelineAst pipelineAst && pipelineAst.GetPureExpression() is ExpressionAst expression)
                         {
-                            switch (expression)
+                            object value;
+                            if (expression is ConstantExpressionAst constant)
                             {
-                                case ConstantExpressionAst constantExpression:
-                                    value = constantExpression.Value;
-                                    break;
-                                default:
-                                    typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
-                                    if (typeName == null)
-                                    {
-                                        if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
-                                        {
-                                            value = safeValue;
-                                        }
-                                    }
+                                value = constant.Value;
+                            }
+                            else
+                            {
+                                _ = SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out value);
+                            }
 
-                                    break;
+                            PSTypeName valueType;
+                            if (value is null)
+                            {
+                                valueType = new PSTypeName("System.Object");
+                            }
+                            else
+                            {
+                                valueType = new PSTypeName(value.GetType());
+                            }
+
+                            properties.Add(new PSMemberNameAndType(name, valueType, value));
+                        }
+                        else
+                        {
+                            bool foundAnyTypes = false;
+                            foreach (var item in InferTypes(kv.Item2))
+                            {
+                                foundAnyTypes = true;
+                                properties.Add(new PSMemberNameAndType(name, item));
+                            }
+
+                            if (!foundAnyTypes)
+                            {
+                                properties.Add(new PSMemberNameAndType(name, new PSTypeName("System.Object")));
                             }
                         }
-
-                        var pstypeName = value != null ? new PSTypeName(value.GetType()) : new PSTypeName(typeName ?? "System.Object");
-                        properties.Add(new PSMemberNameAndType(name, pstypeName, value));
                     }
                 }
 
@@ -941,6 +954,11 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitReturnStatement(ReturnStatementAst returnStatementAst)
         {
+            if (returnStatementAst.Pipeline is null)
+            {
+                return TypeInferenceContext.EmptyPSTypeNameArray;
+            }
+
             return returnStatementAst.Pipeline.Accept(this);
         }
 
@@ -2257,6 +2275,16 @@ namespace System.Management.Automation
             bool foundAny = false;
             foreach (var psType in targetTypes)
             {
+                if (psType is PSSyntheticTypeName syntheticType)
+                {
+                    foreach (var member in syntheticType.Members)
+                    {
+                        yield return member.PSTypeName;
+                    }
+
+                    continue;
+                }
+
                 var type = psType.Type;
                 if (type != null)
                 {

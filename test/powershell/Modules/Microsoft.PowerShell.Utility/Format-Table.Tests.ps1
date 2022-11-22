@@ -866,7 +866,7 @@ A Name                                  B
         }
     }
 
-Describe 'Table color tests' {
+Describe 'Table color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
@@ -876,10 +876,10 @@ Describe 'Table color tests' {
         $PSStyle.OutputRendering = $originalRendering
     }
 
-    It 'Table header should use FormatAccent' {
+    It 'Table header should use TableHeader' {
         ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
-$($PSStyle.Formatting.FormatAccent)foo$($PSStyle.Reset)
-$($PSStyle.Formatting.FormatAccent)---$($PSStyle.Reset)
+$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)
+$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)
   1
 "@
     }

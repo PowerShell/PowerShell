@@ -613,6 +613,32 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
+    }
+
+    it 'Should complete "Value" parameter value in "Where-Object" for Enum property with partial input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -ne Ali'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum with no input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | Where-Object -FilterScript {$_.CommandType -like '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum with partial input' {
+        $TempVar = Get-Command
+        $res = TabExpansion2 -inputScript '$tempVar[0].CommandType -notlike "Ali"'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum when cursor is on a newline' {
+        $res = TabExpansion2 -inputScript "Get-Command | Where-Object -FilterScript {`$_.CommandType -like`n"
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
     it 'Should complete provider dynamic parameters with quoted path' {
         $Script = if ($IsWindows)
         {
@@ -624,6 +650,11 @@ ConstructorTestClass(int i, bool b)
         }
         $res = TabExpansion2 -inputScript $Script
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
+    }
+
+    it 'Should complete dynamic parameters while providing values to non-string parameters' {
+        $res = TabExpansion2 -inputScript 'Get-Content -Path $HOME -Verbose:$false -'
+        $res.CompletionMatches.CompletionText | Should -Contain '-Raw'
     }
 
     It 'Should enumerate types when completing member names for Select-Object' {
@@ -819,6 +850,32 @@ ConstructorTestClass(int i, bool b)
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
         $res.CompletionMatches.CompletionText | Should -Contain "-Path"
+    }
+
+    it 'Should find the closest positional parameter match' {
+        $TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter(Position = 0)]
+        [string]
+        $Param1,
+        [Parameter(Position = 1)]
+        [System.Management.Automation.ActionPreference]
+        $Param2
+    )
+}
+Verb-Noun -Param1 Hello ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches[0].CompletionText | Should -Be "Break"
+    }
+
+    it 'Should complete command with an empty arrayexpression element' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem @()' -cursorColumn 1
+        $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
     }
 
     Context "Script name completion" {
@@ -1513,12 +1570,21 @@ ConstructorTestClass(int i, bool b)
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Position"
             $entry.CompletionText | Should -BeExactly "Position"
         }
+
         It "Test Attribute member completion multiple members" {
             $inputStr = "function bar { [parameter(Position,]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf(',') + 1)
             $res.CompletionMatches | Should -HaveCount 9
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Mandatory"
             $entry.CompletionText | Should -BeExactly "Mandatory"
+        }
+
+        It "Should complete member in attribute argument value" {
+            $inputStr = '[ValidateRange(1,[int]::Maxva^)]$a'
+            $CursorIndex = $inputStr.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $inputStr.Remove($CursorIndex, 1)
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "MaxValue"
         }
 
         It "Test Attribute scriptblock completion" {

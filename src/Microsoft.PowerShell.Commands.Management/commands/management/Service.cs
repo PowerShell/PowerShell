@@ -1680,7 +1680,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
         /// <summary>
         /// </summary>
-        [ArchitectureSensitive]
         protected override void ProcessRecord()
         {
             ServiceController service = null;
@@ -1759,7 +1758,7 @@ namespace Microsoft.PowerShell.Commands
                     var access = NativeMethods.SERVICE_CHANGE_CONFIG;
                     if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
                         access |= NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER;
-                    
+
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
@@ -2115,7 +2114,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Create the service.
         /// </summary>
-        [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
             ServiceController service = null;
@@ -2384,7 +2382,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Remove the service.
         /// </summary>
-        [ArchitectureSensitive]
         protected override void ProcessRecord()
         {
             ServiceController service = null;

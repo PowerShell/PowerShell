@@ -22,7 +22,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Every Runspace in one process contains SessionStateInternal per module (module SessionState).
     /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it:
-    /// it's ever global state or a module state.
+    /// it's either global state or a module state.
     /// In the former case, module can be imported from the different runspaces in the same process.
     /// And so runspaces will share RuntimeType. But in every runspace, Type is associated with just one SessionState.
     /// We want type methods to be able access $script: variables and module-specific methods.

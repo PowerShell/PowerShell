@@ -750,6 +750,7 @@ namespace System.Management.Automation
                     { typeof(CimConverter),                                new[] { "cimconverter" } },
                     { typeof(ModuleSpecification),                         null },
                     { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
+                    { typeof(NoRunspaceAffinityAttribute),                 new[] { "NoRunspaceAffinity" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
                     { typeof(object[]),                                    null },
