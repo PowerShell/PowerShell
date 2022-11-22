@@ -4445,6 +4445,21 @@ function Invoke-AzDevOpsLinuxPackageBuild {
     }
 }
 
+<#
+    Apply the file permissions specified in the json file $FilePath to the files under $RootPath.
+    The format of the json file is like:
+
+    {
+        "System.Net.WebClient.dll": "744",
+        "Schemas/PSMaml/developer.xsd": "644",
+        "ref/System.Security.AccessControl.dll": "744",
+        "ref/System.IO.dll": "744",
+        "cs/Microsoft.CodeAnalysis.resources.dll": "744",
+        "Schemas/PSMaml/base.xsd": "644",
+        "Schemas/PSMaml/structureProcedure.xsd": "644",
+        "ref/System.Net.Security.dll": "744"
+    }
+#>
 function Set-LinuxFilePermission {
     [CmdletBinding()]
     param (
@@ -4479,6 +4494,24 @@ function Set-LinuxFilePermission {
     }
 }
 
+<#
+    Store the linux file permissions for all the files under root path $RootPath to the json file $FilePath.
+    The json file stores them as relative paths to the root.
+
+    The format of the json file is like:
+
+    {
+        "System.Net.WebClient.dll": "744",
+        "Schemas/PSMaml/developer.xsd": "644",
+        "ref/System.Security.AccessControl.dll": "744",
+        "ref/System.IO.dll": "744",
+        "cs/Microsoft.CodeAnalysis.resources.dll": "744",
+        "Schemas/PSMaml/base.xsd": "644",
+        "Schemas/PSMaml/structureProcedure.xsd": "644",
+        "ref/System.Net.Security.dll": "744"
+    }
+
+#>
 function Export-LinuxFilePermission {
     [CmdletBinding()]
     param (
@@ -4504,6 +4537,7 @@ function Export-LinuxFilePermission {
     process {
         foreach ($object in $InputObject) {
             Write-Verbose "Processing $($object.FullName)"
+            # This gets the unix stat information for the file in the format that chmod expects, like '644'.
             $filePerms = [convert]::ToString($object.unixstat.mode, 8).substring(3)
             $relativePath = [System.IO.Path]::GetRelativePath($RootPath, $_.FullName)
             $fileData.Add($relativePath, $filePerms)
