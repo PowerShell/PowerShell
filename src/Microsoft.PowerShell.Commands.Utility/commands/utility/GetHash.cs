@@ -267,11 +267,6 @@ namespace Microsoft.PowerShell.Commands
         private string _Algorithm = HashAlgorithmNames.SHA256;
 
         /// <summary>
-        /// Hash algorithm is used.
-        /// </summary>
-        protected HashAlgorithm hasher;
-
-        /// <summary>
         /// Hash algorithm names.
         /// </summary>
         internal static class HashAlgorithmNames
