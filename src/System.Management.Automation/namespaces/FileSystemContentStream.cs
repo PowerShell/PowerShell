@@ -1444,7 +1444,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (_currentEncoding is UnicodeEncoding ||
                 _currentEncoding is UTF32Encoding ||
-                _currentEncoding is ASCIIEncoding ||
                 _currentEncoding.IsSingleByte)
             {
                 // Unicode -- two bytes per character
