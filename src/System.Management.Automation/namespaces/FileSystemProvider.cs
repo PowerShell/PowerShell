@@ -7894,12 +7894,8 @@ namespace Microsoft.PowerShell.Commands
 
             protected override bool ReleaseHandle()
             {
-                return FindClose(this.handle);
+                return Interop.Windows.FindClose(this.handle);
             }
-
-            [LibraryImport(PinvokeDllNames.FindCloseDllName)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            private static partial bool FindClose(IntPtr handle);
         }
 
         // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
