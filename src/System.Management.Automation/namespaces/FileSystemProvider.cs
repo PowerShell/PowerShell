@@ -2446,7 +2446,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
 #else
-                        success = WinCreateHardLink(path, strTargetPath);
+                        success = Interop.Windows.CreateHardLink(path, strTargetPath, IntPtr.Zero);
 #endif
                     }
 
@@ -2661,12 +2661,6 @@ namespace Microsoft.PowerShell.Commands
 
             var created = Interop.Windows.CreateSymbolicLink(path, strTargetPath, flags);
             return created;
-        }
-
-        private static bool WinCreateHardLink(string path, string strTargetPath)
-        {
-            bool success = NativeMethods.CreateHardLink(path, strTargetPath, IntPtr.Zero);
-            return success;
         }
 
         private static bool WinCreateJunction(string path, string strTargetPath)
@@ -7228,17 +7222,6 @@ namespace Microsoft.PowerShell.Commands
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static partial bool PathIsNetworkPath(string path);
 #endif
-
-            /// <summary>
-            /// Creates a hard link using the native API.
-            /// </summary>
-            /// <param name="name">Name of the hard link.</param>
-            /// <param name="existingFileName">Path to the target of the hard link.</param>
-            /// <param name="SecurityAttributes"></param>
-            /// <returns></returns>
-            [LibraryImport(PinvokeDllNames.CreateHardLinkDllName, EntryPoint = "CreateHardLinkW", StringMarshalling = StringMarshalling.Utf16)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static partial bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
 
             // OneDrive placeholder support
 #if !UNIX
