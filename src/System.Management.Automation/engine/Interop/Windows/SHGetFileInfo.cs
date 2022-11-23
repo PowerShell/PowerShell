@@ -3,7 +3,6 @@
 
 #nullable enable
 
-#if !UNIX
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -37,4 +36,3 @@ internal static partial class Interop
         }
     }
 }
-#endif

@@ -3,7 +3,6 @@
 
 #nullable enable
 
-#if !UNIX
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -54,4 +53,3 @@ internal static partial class Interop
         internal static partial SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
     }
 }
-#endif

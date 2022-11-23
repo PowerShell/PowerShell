@@ -86,10 +86,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
-    <Compile Remove="engine\ExtraAdapter.cs" />
-    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\COM\**\*.cs" />
     <Compile Remove="engine\ComInterop\**\*.cs" />
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\Interop\Windows\**\*.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
@@ -97,4 +98,7 @@
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
+    <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
 </Project>

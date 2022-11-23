@@ -3,7 +3,6 @@
 
 #nullable enable
 
-#if !UNIX
 using System.Runtime.InteropServices;
 
 internal static partial class Interop
@@ -31,4 +30,3 @@ internal static partial class Interop
         internal static partial bool ShowWindow(nint hWnd, int nCmdShow);
     }
 }
-#endif

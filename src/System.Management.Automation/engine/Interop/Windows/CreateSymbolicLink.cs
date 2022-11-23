@@ -3,7 +3,6 @@
 
 #nullable enable
 
-#if !UNIX
 using System;
 using System.Runtime.InteropServices;
 
@@ -24,4 +23,3 @@ internal static partial class Interop
         internal static partial bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
     }
 }
-#endif

@@ -3,7 +3,6 @@
 
 #nullable enable
 
-#if !UNIX
 using System.Runtime.InteropServices;
 
 internal static partial class Interop
@@ -14,4 +13,3 @@ internal static partial class Interop
         internal static partial int WNetCancelConnection2(string driveName, int flags, [MarshalAs(UnmanagedType.Bool)] bool force);
     }
 }
-#endif
