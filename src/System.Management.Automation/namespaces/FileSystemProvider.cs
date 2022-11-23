@@ -474,9 +474,9 @@ namespace Microsoft.PowerShell.Commands
             if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17134, 0))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
+                if (Interop.Windows.RtlQueryProcessPlaceholderCompatibilityMode() == Interop.Windows.PHCM_DISGUISE_PLACEHOLDER)
                 {
-                    NativeMethods.RtlSetProcessPlaceholderCompatibilityMode(NativeMethods.PHCM_EXPOSE_PLACEHOLDERS);
+                    Interop.Windows.RtlSetProcessPlaceholderCompatibilityMode(Interop.Windows.PHCM_EXPOSE_PLACEHOLDERS);
                 }
             }
 #endif
@@ -7221,31 +7221,6 @@ namespace Microsoft.PowerShell.Commands
             [LibraryImport("shlwapi.dll", EntryPoint = "PathIsNetworkPathW", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static partial bool PathIsNetworkPath(string path);
-#endif
-
-            // OneDrive placeholder support
-#if !UNIX
-            /// <summary>
-            /// Returns the placeholder compatibility mode for the current process.
-            /// </summary>
-            /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [LibraryImport("ntdll.dll")]
-            internal static partial sbyte RtlQueryProcessPlaceholderCompatibilityMode();
-
-            /// <summary>
-            /// Sets the placeholder compatibility mode for the current process.
-            /// </summary>
-            /// <param name="pcm">The placeholder compatibility mode to set.</param>
-            /// <returns>The process's previous placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [LibraryImport("ntdll.dll")]
-            internal static partial sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
-
-            internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
-            internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
-            internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
-            internal const sbyte PHCM_MAX = 2;
-            internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
-            internal const sbyte PHCM_ERROR_NO_TEB = -2;
 #endif
         }
 
