@@ -725,12 +725,6 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return drive;
 #else
-            return WinRemoveDrive(drive);
-#endif
-        }
-
-        private PSDriveInfo WinRemoveDrive(PSDriveInfo drive)
-        {
             if (IsNetworkMappedDrive(drive))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
@@ -758,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                        code = Interop.Windows.WNetCancelConnection2(driveName, flags, true);
                     }
                     catch (System.DllNotFoundException)
                     {
@@ -774,6 +768,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return drive;
+#endif
         }
 
         /// <summary>
@@ -2649,6 +2644,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+#if !UNIX
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
@@ -2662,6 +2658,7 @@ namespace Microsoft.PowerShell.Commands
             var created = Interop.Windows.CreateSymbolicLink(path, strTargetPath, flags);
             return created;
         }
+#endif
 
         private static bool WinCreateJunction(string path, string strTargetPath)
         {
@@ -7107,27 +7104,6 @@ namespace Microsoft.PowerShell.Commands
             /// the connection is returned.</returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
             internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
-
-            /// <summary>
-            /// WNetCancelConnection2 function cancels an existing network connection.
-            /// </summary>
-            /// <param name="driveName">
-            /// PSDrive Name.
-            /// </param>
-            /// <param name="flags">
-            /// Connection Type.
-            /// </param>
-            /// <param name="force">
-            /// Specifies whether the disconnection should occur if there are open files or jobs
-            /// on the connection. If this parameter is FALSE, the function fails
-            /// if there are open files or jobs.
-            /// </param>
-            /// <returns>If connection is removed then success is returned or
-            /// else the error code describing the type of failure that occurred while
-            /// trying to remove the connection is returned.
-            /// </returns>
-            [LibraryImport("mpr.dll", EntryPoint ="WNetCancelConnection2W", StringMarshalling = StringMarshalling.Utf16)]
-            internal static partial int WNetCancelConnection2(string driveName, int flags, [MarshalAs(UnmanagedType.Bool)] bool force);
 
             /// <summary>
             /// WNetGetConnection function retrieves the name of the network resource associated with a local device.
