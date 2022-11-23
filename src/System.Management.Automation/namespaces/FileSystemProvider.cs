@@ -7888,36 +7888,6 @@ namespace Microsoft.PowerShell.Commands
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal sealed partial class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
-        {
-            private SafeFindHandle() : base(true) { }
-
-            protected override bool ReleaseHandle()
-            {
-                return Interop.Windows.FindClose(this.handle);
-            }
-        }
-
-        // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
-        // See https://github.com/PowerShell/PowerShell/issues/16804
-        [LibraryImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        private static partial SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal unsafe struct WIN32_FIND_DATA
-        {
-            internal uint dwFileAttributes;
-            internal FILE_TIME ftCreationTime;
-            internal FILE_TIME ftLastAccessTime;
-            internal FILE_TIME ftLastWriteTime;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal uint dwReserved0;
-            internal uint dwReserved1;
-            internal fixed char cFileName[MAX_PATH];
-            internal fixed char cAlternateFileName[14];
-        }
-
         /// <summary>
         /// Gets the target of the specified reparse point.
         /// </summary>
@@ -8083,14 +8053,14 @@ namespace Microsoft.PowerShell.Commands
                 return !InternalTestHooks.OneDriveTestRecurseOn;
             }
 
-            WIN32_FIND_DATA data = default;
+            Interop.Windows.WIN32_FIND_DATA data = default;
             string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
             if (fullPath.Length >= MAX_PATH)
             {
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
 
-            using (SafeFindHandle handle = FindFirstFile(fullPath, ref data))
+            using (Interop.Windows.SafeFindHandle handle = Interop.Windows.FindFirstFile(fullPath, ref data))
             {
                 if (handle.IsInvalid)
                 {
