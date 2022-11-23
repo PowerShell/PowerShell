@@ -140,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
                 case HashAlgorithmNames.MD5:
                     return MD5.HashData(stream);
             }
+
             Debug.Assert(false, "invalid hash algorithm");
             return SHA256.HashData(stream);
         }
