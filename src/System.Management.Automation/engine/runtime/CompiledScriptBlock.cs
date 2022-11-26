@@ -1988,7 +1988,8 @@ namespace System.Management.Automation
                     upTo = upToMax;
                 }
 
-                for (var i = 0; i < upTo; i++)
+                // Skip all before shortest suspicious string. Today it is 'Emit' so start with i=3.
+                for (var i = MIN_LEN - 1; i < upTo; i++)
                 {
                     var result = LookupHash(runningHash[i]);
                     if (result != null)
