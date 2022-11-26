@@ -1980,7 +1980,7 @@ namespace System.Management.Automation
             /// that isn't really suspicious.
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
-            private static string CheckForMatches(uint[] runningHash, int upTo)
+            private static string CheckForMatches(Span<uint> runningHash, int upTo)
             {
                 var upToMax = runningHash.Length;
                 if (upTo == 0 || upTo > upToMax)
@@ -1988,8 +1988,10 @@ namespace System.Management.Automation
                     upTo = upToMax;
                 }
 
+                runningHash = runningHash.Slice(0, upTo);
+
                 // Skip all before shortest suspicious string. Today it is 'Emit' so start with i=3.
-                for (var i = MIN_LEN - 1; i < upTo; i++)
+                for (var i = MIN_LEN - 1; i < runningHash.Length; i++)
                 {
                     var result = LookupHash(runningHash[i]);
                     if (result != null)
@@ -2023,7 +2025,7 @@ namespace System.Management.Automation
             {
                 // The values in the array are the computed hashes of length
                 // index-1 (so runningHash[0] holds the hash for length 1).
-                var runningHash = new uint[MAX_LEN];
+                Span<uint> runningHash = stackalloc uint[MAX_LEN];
 
                 int longestPossiblePattern = 0;
                 for (int i = 0; i < text.Length; i++)
@@ -2041,7 +2043,8 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    for (int j = Math.Min(i, runningHash.Length - 1); j > 0; j--)
+                    Span<uint> rh = runningHash.Slice(0, Math.Min(i, runningHash.Length));
+                    for (int j = rh.Length - 1; j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
                         // Towards the end just before matching, we will:
@@ -2054,7 +2057,7 @@ namespace System.Management.Automation
                         // LCG comes from a trivial (bad) random number generator,
                         // but it's sufficient for us - the hashes for our patterns
                         // are unique, and processing of 2200 files found no false matches.
-                        runningHash[j] = LCG * runningHash[j - 1] + h;
+                        rh[j] = LCG * rh[j - 1] + h;
                     }
 
                     runningHash[0] = h;
