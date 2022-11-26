@@ -2026,12 +2026,10 @@ namespace System.Management.Automation
                 int longestPossiblePattern = 0;
                 for (int i = 0; i < text.Length; i++)
                 {
+                    // Notice, '-' == ('-' | 0x20)
                     uint h = text[i];
-                    if (h >= 'A' && h <= 'Z')
-                    {
-                        h |= 0x20; // ToLower
-                    }
-                    else if (!((h >= 'a' && h <= 'z') || h == '-'))
+                    h |= 0x20;
+                    if (!((uint)(h - 'a') <= 'z' - 'a' || h == '-'))
                     {
                         // If the character isn't in any of our patterns,
                         // don't bother hashing and reset the running length.
