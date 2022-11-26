@@ -1806,6 +1806,14 @@ namespace System.Management.Automation
             // for our simple needs.
             private const uint LCG = 31;
 
+            // Max length of suspicious string. Today it is 'GetDelegateForFunctionPointer'.
+            // Should be updated if new string is added/removed.
+            private const int MAX_LEN = 29;
+
+            // Min length of suspicious string. Today it is 'Emit'.
+            // Should be updated if new string is added/removed.
+            private const int MIN_LEN = 4;
+
             /// <summary>
             /// Check if a hash code matches a small set of pre-computed hashes
             /// for suspicious strings in a PowerShell script.
@@ -2012,10 +2020,9 @@ namespace System.Management.Automation
             /// <returns>The string matching the hash, or null.</returns>
             public static string Match(string text)
             {
-                // The longest pattern is 29 characters.
                 // The values in the array are the computed hashes of length
                 // index-1 (so runningHash[0] holds the hash for length 1).
-                var runningHash = new uint[29];
+                var runningHash = new uint[MAX_LEN];
 
                 int longestPossiblePattern = 0;
                 for (int i = 0; i < text.Length; i++)
@@ -2051,7 +2058,7 @@ namespace System.Management.Automation
 
                     runningHash[0] = h;
 
-                    if (++longestPossiblePattern >= 4)
+                    if (++longestPossiblePattern >= MIN_LEN)
                     {
                         var result = CheckForMatches(runningHash, longestPossiblePattern);
                         if (result != null) return result;
