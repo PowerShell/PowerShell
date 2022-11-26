@@ -1802,10 +1802,6 @@ namespace System.Management.Automation
 
         private static class SuspiciousContentChecker
         {
-            // Based on a (bad) random number generator, but good enough
-            // for our simple needs.
-            private const uint LCG = 31;
-
             // Max length of suspicious string. Today it is 'GetDelegateForFunctionPointer'.
             // Should be updated if new string is added/removed.
             private const int MAX_LEN = 29;
@@ -2054,10 +2050,14 @@ namespace System.Management.Automation
                         // iter n+1: compute hash on `mit` (len 3)
                         //    This overwrites the previous iteration, hence we go from longest to shortest.
                         //
-                        // LCG comes from a trivial (bad) random number generator,
+                        // Original code:
+                        // rh[j] = 31 * rh[j - 1] + h;
+                        // 31 comes from a trivial (bad) random number generator,
                         // but it's sufficient for us - the hashes for our patterns
                         // are unique, and processing of 2200 files found no false matches.
-                        rh[j] = LCG * rh[j - 1] + h;
+                        //
+                        // Then replace multiplication with more efficient operations.
+                        rh[j] = (rh[j - 1] << 5) - rh[j - 1] + h;
                     }
 
                     runningHash[0] = h;
