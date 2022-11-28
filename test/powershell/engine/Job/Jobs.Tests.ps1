@@ -86,6 +86,17 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $jobOutput | Should -BeExactly $path.ToString()
         }
 
+        It 'Can specify the working directory with a PSPath' {
+            try {
+                Push-Location 'Temp:\'
+                $job = Start-Job -ScriptBlock { $PWD } -WorkingDirectory $pwd.Path | Wait-Job
+                $jobOutput = Receive-Job $job
+                $jobOutput | Should -BeExactly $pwd.Path
+            } finally {
+                Pop-Location
+            }
+        }
+
         It 'Can use the user specified working directory parameter with quote' -Skip:($IsWindows) {
             $path = Join-Path -Path $TestDrive -ChildPath "My ""Dir"
             $null = New-Item -ItemType Directory -Path "$path"
