@@ -603,14 +603,21 @@ namespace Microsoft.PowerShell.Commands
 
             if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
             {
-                string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
-                var errorRecord = new ErrorRecord(
-                    new DirectoryNotFoundException(message),
-                    "DirectoryNotFoundException",
-                    ErrorCategory.InvalidOperation,
-                    targetObject: null);
+                try
+                {
+                    _ = SessionState.Path.GetResolvedPSPathFromPSPath(WorkingDirectory);
+                }
+                catch
+                {
+                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
+                    var errorRecord = new ErrorRecord(
+                        new DirectoryNotFoundException(message),
+                        "DirectoryNotFoundException",
+                        ErrorCategory.InvalidOperation,
+                        targetObject: null);
 
-                ThrowTerminatingError(errorRecord);
+                    ThrowTerminatingError(errorRecord);
+                }
             }
 
             if (WorkingDirectory == null)
