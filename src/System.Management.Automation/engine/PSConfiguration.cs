@@ -60,6 +60,7 @@ namespace System.Management.Automation.Configuration
         // When passed as a pwsh command-line option, overrides the system wide configuration file.
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
+        private readonly bool systemWideConfigFileExists = false;
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
@@ -83,7 +84,11 @@ namespace System.Management.Automation.Configuration
         {
             // Sets the system-wide configuration file.
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
-            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
+            if (!string.IsNullOrEmpty(systemWideConfigDirectory))
+            {
+                systemWideConfigFileExists = true;
+                systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
+            }
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
@@ -386,6 +391,11 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
+            if (scope == ConfigScope.AllUsers && !systemWideConfigFileExists)
+            {
+                return defaultValue;
+            }
+
             string fileName = GetConfigFilePath(scope);
             JObject configData = configRoots[(int)scope];
 
@@ -466,6 +476,11 @@ namespace System.Management.Automation.Configuration
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
         private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
         {
+            if (scope == ConfigScope.AllUsers && !systemWideConfigFileExists)
+            {
+                return;
+            }
+
             try
             {
                 string fileName = GetConfigFilePath(scope);
@@ -583,6 +598,11 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         private void RemoveValueFromFile<T>(ConfigScope scope, string key)
         {
+            if (scope == ConfigScope.AllUsers && !systemWideConfigFileExists)
+            {
+                return;
+            }
+
             string fileName = GetConfigFilePath(scope);
             // Optimization: If the file doesn't exist, there is nothing to remove
             if (File.Exists(fileName))
