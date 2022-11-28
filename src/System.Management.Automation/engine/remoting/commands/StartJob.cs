@@ -601,23 +601,16 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
-            if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
+            if (WorkingDirectory != null && !InvokeProvider.Item.IsContainer(WorkingDirectory))
             {
-                try
-                {
-                    _ = SessionState.Path.GetResolvedPSPathFromPSPath(WorkingDirectory);
-                }
-                catch
-                {
-                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
-                    var errorRecord = new ErrorRecord(
-                        new DirectoryNotFoundException(message),
-                        "DirectoryNotFoundException",
-                        ErrorCategory.InvalidOperation,
-                        targetObject: null);
+                string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
+                var errorRecord = new ErrorRecord(
+                    new DirectoryNotFoundException(message),
+                    "DirectoryNotFoundException",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
 
-                    ThrowTerminatingError(errorRecord);
-                }
+                ThrowTerminatingError(errorRecord);
             }
 
             if (WorkingDirectory == null)
