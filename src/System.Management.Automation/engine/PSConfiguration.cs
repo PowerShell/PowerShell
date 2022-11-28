@@ -58,9 +58,9 @@ namespace System.Management.Automation.Configuration
 
         // The json file containing system-wide configuration settings.
         // When passed as a pwsh command-line option, overrides the system wide configuration file.
+        private readonly bool systemWideConfigFileExists = false;
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
-        private readonly bool systemWideConfigFileExists = false;
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
