@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets an initial working directory for the powershell background job.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty]
+        [ValidateNotNullOrWhiteSpace]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
