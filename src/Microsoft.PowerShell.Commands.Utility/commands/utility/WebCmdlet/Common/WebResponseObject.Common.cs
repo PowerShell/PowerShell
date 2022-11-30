@@ -28,7 +28,6 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content { get; protected set; }
 
-        private Dictionary<string, IEnumerable<string>> _headers = null;
         /// <summary>
         /// Gets the Headers property.
         /// </summary>
@@ -41,6 +40,8 @@ namespace Microsoft.PowerShell.Commands
                 return _headers;
             }
         }
+
+        private Dictionary<string, IEnumerable<string>> _headers = null;
 
         /// <summary>
         /// Gets or protected sets the full response content.
@@ -58,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
             get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
         }
 
-        private MemoryStream _rawContentStream;
         /// <summary>
         /// Gets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
@@ -66,6 +66,8 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return (_rawContentStream); }
         }
+        
+        private MemoryStream _rawContentStream;
 
         /// <summary>
         /// Gets the RelationLink property.
