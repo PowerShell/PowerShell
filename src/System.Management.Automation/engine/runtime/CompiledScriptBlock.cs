@@ -2037,8 +2037,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    Span<uint> rh = runningHash.Slice(0, Math.Min(i, runningHash.Length));
-                    for (int j = rh.Length - 1; j > 0; j--)
+                    for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
                         // Towards the end just before matching, we will:
@@ -2048,14 +2047,14 @@ namespace System.Management.Automation
                         // iter n+1: compute hash on `mit` (len 3)
                         //    This overwrites the previous iteration, hence we go from longest to shortest.
                         //
-                        // The original code is:   rh[j] = 31 * rh[j - 1] + h;
+                        // The original code is:   runningHash[j] = 31 * runningHash[j - 1] + h;
                         // The number '31' comes from a trivial (bad) random number generator,
                         // but it's sufficient for us - the hashes for our patterns
                         // are unique, and processing of 2200 files found no false matches.
                         //
                         // Then replace multiplication with more efficient operations.
-                        uint v = rh[j - 1];
-                        rh[j] = (v << 5) - v + h;
+                        uint v = runningHash[j - 1];
+                        runningHash[j] = (v << 5) - v + h;
                     }
 
                     runningHash[0] = h;
