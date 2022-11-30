@@ -4486,7 +4486,7 @@ end {
                 builtinVariables.Add(
                     new SessionStateVariableEntry(
                         SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        value: false,
+                        value: true,
                         RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
                         ScopedItemOptions.None,
                         new ArgumentTypeConverterAttribute(typeof(bool))));
