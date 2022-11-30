@@ -210,6 +210,12 @@
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
     <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
   </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+  </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
     <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
   </data>

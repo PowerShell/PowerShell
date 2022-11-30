@@ -332,20 +332,19 @@ namespace Microsoft.PowerShell
 
                 Coordinates originalCursorPos = _rawui.CursorPosition;
 
+                //
+                // read one char at a time so that we don't
+                // end up having a immutable string holding the
+                // secret in memory.
+                //
+                const int CharactersToRead = 1;
+                Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+
                 while (true)
                 {
-                    //
-                    // read one char at a time so that we don't
-                    // end up having a immutable string holding the
-                    // secret in memory.
-                    //
 #if UNIX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
-                    const int CharactersToRead = 1;
-#pragma warning disable CA2014
-                    Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
-#pragma warning restore CA2014
                     string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 

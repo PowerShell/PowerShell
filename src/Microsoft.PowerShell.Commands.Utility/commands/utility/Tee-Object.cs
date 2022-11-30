@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding { get; set; } = Encoding.Default;
 
         /// <summary>
         /// Variable parameter.

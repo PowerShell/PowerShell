@@ -7,14 +7,15 @@
 #if !UNIX
 using Microsoft.Security.Extensions;
 #endif
+using System.ComponentModel;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
+using System.Management.Automation.Win32Native;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 using Dbg = System.Management.Automation;
-using DWORD = System.UInt32;
 
 namespace System.Management.Automation
 {
@@ -52,6 +53,8 @@ namespace System.Management.Automation
     /// </summary>
     internal static class SignatureHelper
     {
+        private static Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
+
         /// <summary>
         /// Tracer for SignatureHelper.
         /// </summary>
@@ -93,7 +96,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
-        [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
                                            string fileName,
                                            X509Certificate2 certificate,
@@ -103,7 +105,7 @@ namespace System.Management.Automation
             bool result = false;
             Signature signature = null;
             IntPtr pSignInfo = IntPtr.Zero;
-            DWORD error = 0;
+            uint error = 0;
             string hashOid = null;
 
             Utils.CheckArgForNullOrEmpty(fileName, "fileName");
@@ -113,7 +115,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
                 if ((timeStampServerUrl.Length <= 7) || (
-                    (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0) && 
+                    (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0) &&
                     (timeStampServerUrl.IndexOf("https://", StringComparison.OrdinalIgnoreCase) != 0)))
                 {
                     throw PSTraceSource.NewArgumentException(
@@ -190,7 +192,7 @@ namespace System.Management.Automation
                 // able to see that.
 #pragma warning disable 56523
                 result = NativeMethods.CryptUIWizDigitalSign(
-                    (DWORD)NativeMethods.CryptUIFlags.CRYPTUI_WIZ_NO_UI,
+                    (uint)NativeMethods.CryptUIFlags.CRYPTUI_WIZ_NO_UI,
                     IntPtr.Zero,
                     IntPtr.Zero,
                     pSignInfo,
@@ -246,7 +248,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    signature = new Signature(fileName, (DWORD)error);
+                    signature = new Signature(fileName, (uint)error);
                 }
             }
             finally
@@ -273,7 +275,6 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        [ArchitectureSensitive]
         internal static Signature GetSignature(string fileName, string fileContent)
         {
             Signature signature = null;
@@ -330,7 +331,7 @@ namespace System.Management.Automation
                 }
             }
 
-            DWORD error = GetErrorFromSignatureState(fileSigInfo.State);
+            uint error = GetErrorFromSignatureState(fileSigInfo.State);
 
             if (fileSigInfo.SigningCertificate is null)
             {
@@ -374,7 +375,7 @@ namespace System.Management.Automation
         }
 
 #if !UNIX
-        private static DWORD GetErrorFromSignatureState(SignatureState signatureState)
+        private static uint GetErrorFromSignatureState(SignatureState signatureState)
         {
             switch (signatureState)
             {
@@ -401,8 +402,8 @@ namespace System.Management.Automation
         {
             Signature signature = null;
 
-            NativeMethods.WINTRUST_DATA wtd;
-            DWORD error = Win32Errors.E_FAIL;
+            WinTrustMethods.WINTRUST_DATA wtd;
+            uint error = Win32Errors.E_FAIL;
 
             if (fileContent == null)
             {
@@ -422,7 +423,10 @@ namespace System.Management.Automation
 
                 signature = GetSignatureFromWintrustData(fileName, error, wtd);
 
-                error = NativeMethods.DestroyWintrustDataStruct(wtd);
+                wtd.dwStateAction = WinTrustAction.WTD_STATEACTION_CLOSE;
+                error = WinTrustMethods.WinVerifyTrust(IntPtr.Zero,
+                    ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
+                    ref wtd);
 
                 if (error != Win32Errors.NO_ERROR)
                 {
@@ -437,90 +441,81 @@ namespace System.Management.Automation
             return signature;
         }
 
-        [ArchitectureSensitive]
-        private static DWORD GetWinTrustData(string fileName, string fileContent,
-                                            out NativeMethods.WINTRUST_DATA wtData)
+        private static uint GetWinTrustData(string fileName, string fileContent,
+                                            out WinTrustMethods.WINTRUST_DATA wtData)
         {
-            DWORD dwResult = Win32Errors.E_FAIL;
-            IntPtr WINTRUST_ACTION_GENERIC_VERIFY_V2 = IntPtr.Zero;
-            IntPtr wtdBuffer = IntPtr.Zero;
-
-            Guid actionVerify =
-                new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
-
-            try
+            wtData = new()
             {
-                WINTRUST_ACTION_GENERIC_VERIFY_V2 =
-                    Marshal.AllocCoTaskMem(Marshal.SizeOf(actionVerify));
-                Marshal.StructureToPtr(actionVerify,
-                                       WINTRUST_ACTION_GENERIC_VERIFY_V2,
-                                       false);
+                cbStruct = (uint)Marshal.SizeOf<WinTrustMethods.WINTRUST_DATA>(),
+                dwUIChoice = WinTrustUIChoice.WTD_UI_NONE,
+                dwStateAction = WinTrustAction.WTD_STATEACTION_VERIFY,
+            };
 
-                NativeMethods.WINTRUST_DATA wtd;
-
-                if (fileContent == null)
-                {
-                    NativeMethods.WINTRUST_FILE_INFO wfi = NativeMethods.InitWintrustFileInfoStruct(fileName);
-                    wtd = NativeMethods.InitWintrustDataStructFromFile(wfi);
-                }
-                else
-                {
-                    NativeMethods.WINTRUST_BLOB_INFO wbi = NativeMethods.InitWintrustBlobInfoStruct(fileName, fileContent);
-                    wtd = NativeMethods.InitWintrustDataStructFromBlob(wbi);
-                }
-
-                wtdBuffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(wtd));
-                Marshal.StructureToPtr(wtd, wtdBuffer, false);
-
-                // The result is returned to the caller, and handled generically.
-                // Disable the PreFast check for Win32 error codes, as we don't care.
-#pragma warning disable 56523
-                dwResult = NativeMethods.WinVerifyTrust(
-                    IntPtr.Zero,
-                    WINTRUST_ACTION_GENERIC_VERIFY_V2,
-                    wtdBuffer);
-#pragma warning restore 56523
-
-                wtData = Marshal.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
-            }
-            finally
+            byte[] contentBytes = fileContent == null
+                ? Array.Empty<byte>()
+                : System.Text.Encoding.Unicode.GetBytes(fileContent);
+            unsafe
             {
-                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-                Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-                Marshal.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
-                Marshal.FreeCoTaskMem(wtdBuffer);
-            }
+                fixed (char* fileNamePtr = fileName)
+                {
+                    if (fileContent == null)
+                    {
+                        WinTrustMethods.WINTRUST_FILE_INFO wfi = new()
+                        {
+                            cbStruct = (uint)Marshal.SizeOf<WinTrustMethods.WINTRUST_FILE_INFO>(),
+                            pcwszFilePath = fileNamePtr,
+                        };
+                        wtData.dwUnionChoice = WinTrustUnionChoice.WTD_CHOICE_FILE;
+                        wtData.pChoice = &wfi;
 
-            return dwResult;
+                        return WinTrustMethods.WinVerifyTrust(IntPtr.Zero,
+                            ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
+                            ref wtData);
+                    }
+
+                    fixed (byte* contentPtr = contentBytes)
+                    {
+                        Guid pwshSIP = new("603BCC1F-4B59-4E08-B724-D2C6297EF351");
+                        WinTrustMethods.WINTRUST_BLOB_INFO wbi = new()
+                        {
+                            cbStruct = (uint)Marshal.SizeOf<WinTrustMethods.WINTRUST_BLOB_INFO>(),
+                            gSubject = pwshSIP,
+                            pcwszDisplayName = fileNamePtr,
+                            cbMemObject = (uint)contentBytes.Length,
+                            pbMemObject = contentPtr,
+                        };
+                        wtData.dwUnionChoice = WinTrustUnionChoice.WTD_CHOICE_BLOB;
+                        wtData.pChoice = &wbi;
+
+                        return WinTrustMethods.WinVerifyTrust(IntPtr.Zero,
+                            ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
+                            ref wtData);
+                    }
+                }
+            }
         }
 
-        [ArchitectureSensitive]
         private static X509Certificate2 GetCertFromChain(IntPtr pSigner)
         {
-            X509Certificate2 signerCert = null;
-
-            // We don't care about the Win32 error code here, so disable
-            // the PreFast complaint that we're not retrieving it.
-#pragma warning disable 56523
-            IntPtr pCert =
-                NativeMethods.WTHelperGetProvCertFromChain(pSigner, 0);
-#pragma warning restore 56523
-
-            if (pCert != IntPtr.Zero)
+            try
             {
+                IntPtr pCert = WinTrustMethods.WTHelperGetProvCertFromChain(pSigner, 0);
                 NativeMethods.CRYPT_PROVIDER_CERT provCert =
                     Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
-                signerCert = new X509Certificate2(provCert.pCert);
+                return new X509Certificate2(provCert.pCert);
             }
-
-            return signerCert;
+            catch (Win32Exception)
+            {
+                // We don't care about the Win32 error code here, so return
+                // null on a failure and let the caller handle it.
+                return null;
+            }
         }
 
-        [ArchitectureSensitive]
         private static Signature GetSignatureFromWintrustData(
             string filePath,
-            DWORD error,
-            NativeMethods.WINTRUST_DATA wtd)
+            uint error,
+            WinTrustMethods.WINTRUST_DATA wtd)
         {
             s_tracer.WriteLine("GetSignatureFromWintrustData: error: {0}", error);
 
@@ -562,45 +557,40 @@ namespace System.Management.Automation
             return signature;
         }
 
-        [ArchitectureSensitive]
         private static bool TryGetProviderSigner(IntPtr wvtStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert)
         {
             pProvSigner = IntPtr.Zero;
             timestamperCert = null;
 
-            // The GetLastWin32Error of this is checked, but PreSharp doesn't seem to be
-            // able to see that.
-#pragma warning disable 56523
-            IntPtr pProvData =
-                NativeMethods.WTHelperProvDataFromStateData(wvtStateData);
-#pragma warning restore 56523
-
-            if (pProvData != IntPtr.Zero)
+            try
             {
-                pProvSigner =
-                    NativeMethods.WTHelperGetProvSignerFromChain(pProvData, 0, 0, 0);
+                IntPtr pProvData = WinTrustMethods.WTHelperProvDataFromStateData(wvtStateData);
 
-                if (pProvSigner != IntPtr.Zero)
+                pProvSigner = WinTrustMethods.WTHelperGetProvSignerFromChain(
+                    pProvData,
+                    signerIdx: 0,
+                    counterSigner: false,
+                    counterSignerIdx: 0);
+
+                NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
+                    Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
+                if (provSigner.csCounterSigners == 1)
                 {
-                    NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
-                        Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
-                    if (provSigner.csCounterSigners == 1)
-                    {
-                        //
-                        // time stamper cert available
-                        //
-                        timestamperCert = GetCertFromChain(provSigner.pasCounterSigners);
-                    }
-
-                    return true;
+                    //
+                    // time stamper cert available
+                    //
+                    timestamperCert = GetCertFromChain(provSigner.pasCounterSigners);
                 }
-            }
 
-            return false;
+                return true;
+            }
+            catch (Win32Exception)
+            {
+                return false;
+            }
         }
 
-        [ArchitectureSensitive]
-        private static DWORD GetLastWin32Error()
+        private static uint GetLastWin32Error()
         {
             int error = Marshal.GetLastWin32Error();
 

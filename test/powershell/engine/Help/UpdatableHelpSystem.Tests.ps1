@@ -434,6 +434,34 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
     RunUpdateHelpTests -Tag "Feature" -useSourcePath -Scope 'CurrentUser'
 }
 
+Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -Tags @('Feature') {
+    BeforeAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowHelpCultureNotSupported', $true)
+    }
+    AfterAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowHelpCultureNotSupported', $false)
+    }
+
+    It 'Shows error if help culture does not match: <name>' -TestCases @(
+        @{ 'name' = 'implicit culture'; 'culture' = $null }
+        @{ 'name' = 'explicit culture en-GB'; 'culture' = 'en-GB' }
+        @{ 'name' = 'explicit culture de-DE'; 'culture' = 'de-DE' }
+    ) {
+        param ($name, $culture)
+        # Cannot pass null, have to splat to skip argument entirely
+        $cultureArg = $culture ? @{ 'UICulture' = $culture } : @{}
+        $cultureUsed = $culture ?? (Get-Culture)
+
+        $ErrorVariable = $null
+        $VerboseOutput = New-TemporaryFile
+        Update-Help @cultureArg -ErrorVariable ErrorVariable -ErrorAction SilentlyContinue -Verbose 4>$VerboseOutput
+        $ErrorVariable | Should -Match "No UI culture was found that matches the following pattern: ${cultureUsed}"
+        if (-not $culture) {
+            Get-Content -Raw $VerboseOutput | Should -Match 'Postponing error and trying fallback cultures'
+        }
+    }
+}
+
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell modules." -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference

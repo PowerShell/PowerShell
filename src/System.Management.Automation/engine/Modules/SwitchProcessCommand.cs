@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
@@ -17,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that allows use of execv API.
     /// </summary>
-    [Experimental(ExperimentalFeature.PSExecFeatureName, ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.Switch, "Process", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2181448")]
     public sealed class SwitchProcessCommand : PSCmdlet
     {
@@ -47,12 +47,12 @@ namespace Microsoft.PowerShell.Commands
                             string.Format(
                                 System.Globalization.CultureInfo.InvariantCulture,
                                 CommandBaseStrings.NativeCommandNotFound,
-                                command
+                                WithCommand[0]
                             )
                         ),
                         "CommandNotFound",
                         ErrorCategory.InvalidArgument,
-                        WithCommand
+                        WithCommand[0]
                     )
                 );
             }
@@ -70,10 +70,22 @@ namespace Microsoft.PowerShell.Commands
             // need null terminator at end
             execArgs[execArgs.Length - 1] = null;
 
-            int exitCode = Exec(command.Source, execArgs);
+            var env = Environment.GetEnvironmentVariables();
+            var envBlock = new string?[env.Count + 1];
+            int j = 0;
+            foreach (DictionaryEntry entry in env)
+            {
+                envBlock[j++] = entry.Key + "=" + entry.Value;
+            }
 
+            envBlock[envBlock.Length - 1] = null;
+
+            // setup termios for a child process as .NET modifies termios dynamically for use with ReadKey()
+            ConfigureTerminalForChildProcess(true);
+            int exitCode = Exec(command.Source, execArgs, envBlock);
             if (exitCode < 0)
             {
+                ConfigureTerminalForChildProcess(false);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new Exception(
@@ -81,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
                                 System.Globalization.CultureInfo.InvariantCulture,
                                 CommandBaseStrings.ExecFailed,
                                 Marshal.GetLastPInvokeError(),
-                                string.Join(" ", WithCommand)
+                                string.Join(' ', WithCommand)
                             )
                         ),
                         "ExecutionFailed",
@@ -100,15 +112,22 @@ namespace Microsoft.PowerShell.Commands
         /// The arguments to send through to the executable.
         /// Array must have its final element be null.
         /// </param>
+        /// <param name="env">
+        /// The environment variables to send through to the executable in the form of "key=value".
+        /// Array must have its final element be null.
         /// <returns>
         /// An exit code if exec failed, but if successful the calling process will be overwritten.
         /// </returns>
         [DllImport("libc",
-            EntryPoint = "execv",
+            EntryPoint = "execve",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static extern int Exec(string path, string?[] args);
+        private static extern int Exec(string path, string?[] args, string?[] env);
+
+        // leverage .NET runtime's native library which abstracts the need to handle different OS and architectures for termios api
+        [DllImport("libSystem.Native", EntryPoint = "SystemNative_ConfigureTerminalForChildProcess")]
+        private static extern void ConfigureTerminalForChildProcess([MarshalAs(UnmanagedType.Bool)] bool childUsesTerminal);
     }
 }
 

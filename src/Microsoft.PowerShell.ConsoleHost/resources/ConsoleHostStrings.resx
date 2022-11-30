@@ -123,14 +123,8 @@
   <data name="InputExitCurrentLoopOutOfSyncError" xml:space="preserve">
     <value>Cannot process input loop. ExitCurrentLoop was called when no InputLoops were running.</value>
   </data>
-  <data name="NestedPromptEntryError" xml:space="preserve">
-    <value>A nested prompt cannot be entered until the host is running at least one prompt loop.</value>
-  </data>
   <data name="DefaultPrompt" xml:space="preserve">
     <value>PS&gt;</value>
-  </data>
-  <data name="InitScriptFailed" xml:space="preserve">
-    <value>Execution of initialization script has failed. The shell cannot be started.</value>
   </data>
   <data name="ShellCannotBeStarted" xml:space="preserve">
     <value>The shell cannot be started. A failure occurred during initialization:</value>
@@ -154,9 +148,6 @@ Machine   : {3} ({4})
 PowerShell transcript end
 End time: {0:yyyyMMddHHmmss}
 **********************</value>
-  </data>
-  <data name="ConsoleHostIsSingleton" xml:space="preserve">
-    <value>An instance of the ConsoleHost class has already been created for this process.</value>
   </data>
   <data name="InitialCommandNotExecuted" xml:space="preserve">
     <value>Command '{0}' could not be run because some PowerShell Snap-Ins did not load.</value>

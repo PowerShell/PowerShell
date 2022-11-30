@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         #endregion Parameters
 
@@ -2100,7 +2100,9 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
 
             // In Win8, we are no longer loading all assemblies by default.
             // So we need to use the fully qualified name when accessing a type in that assembly
-            string versionOfScriptGenerator = "[" + typeof(ExportPSSessionCommand).AssemblyQualifiedName + "]" + "::VersionOfScriptGenerator";
+            Type type = typeof(ExportPSSessionCommand);
+            string asmName = type.Assembly.GetName().Name;
+            string versionOfScriptGenerator = $"[{type.FullName}, {asmName}]::VersionOfScriptGenerator";
             GenerateTopComment(writer);
             writer.Write(
                 HeaderTemplate,

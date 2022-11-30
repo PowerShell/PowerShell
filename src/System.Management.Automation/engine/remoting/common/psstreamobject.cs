@@ -226,7 +226,7 @@ namespace System.Management.Automation.Remoting.Internal
             computerName = string.Empty;
 
             if (message == null) return;
-            string[] parts = message.Split(Utils.Separators.Colon, 3);
+            string[] parts = message.Split(':', 3);
 
             if (parts.Length != 3) return;
 

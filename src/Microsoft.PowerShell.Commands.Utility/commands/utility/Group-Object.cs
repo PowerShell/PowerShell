@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // using OrderBy to get stable sort.
                 // fast path when we only have the same object types to group
-                foreach (var entry in _entriesToOrder.OrderBy(static e => e, _orderByPropertyComparer))
+                foreach (var entry in _entriesToOrder.Order(_orderByPropertyComparer))
                 {
                     DoOrderedGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
                     if (Stopping)

@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         Csv,
 
         /// <summary>
-        /// Aliases will be exported as an MSH script.
+        /// Aliases will be exported as a script.
         /// </summary>
         Script
     }

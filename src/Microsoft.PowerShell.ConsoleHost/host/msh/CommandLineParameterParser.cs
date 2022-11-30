@@ -914,21 +914,25 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
                 {
                     _socketServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SocketServerMode;
                 }
                 else if (MatchSwitch(switchKey, "servermode", "s"))
                 {
                     _serverMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.ServerMode;
                 }
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.NamedPipeServerMode;
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
                     _sshServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
                 }
                 else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
@@ -1196,7 +1200,7 @@ namespace Microsoft.PowerShell
         private void ParseFormat(string[] args, ref int i, ref Serialization.DataFormat format, string resourceStr)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (string s in Enum.GetNames(typeof(Serialization.DataFormat)))
+            foreach (string s in Enum.GetNames<Serialization.DataFormat>())
             {
                 sb.Append(s);
                 sb.Append(Environment.NewLine);

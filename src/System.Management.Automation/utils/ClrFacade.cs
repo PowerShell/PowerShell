@@ -7,7 +7,6 @@ using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Security;
 using System.Text;
@@ -101,23 +100,6 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting default encoding.
-        /// </summary>
-        internal static Encoding GetDefaultEncoding()
-        {
-            if (s_defaultEncoding == null)
-            {
-                // load all available encodings
-                EncodingRegisterProvider();
-                s_defaultEncoding = new UTF8Encoding(false);
-            }
-
-            return s_defaultEncoding;
-        }
-
-        private static volatile Encoding s_defaultEncoding;
-
-        /// <summary>
         /// Facade for getting OEM encoding
         /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows.
         /// </summary>
@@ -130,7 +112,7 @@ namespace System.Management.Automation
 #if UNIX
                 s_oemEncoding = new UTF8Encoding(false);
 #else
-                uint oemCp = NativeMethods.GetOEMCP();
+                uint oemCp = Interop.Windows.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
@@ -142,7 +124,7 @@ namespace System.Management.Automation
 
         private static void EncodingRegisterProvider()
         {
-            if (s_defaultEncoding == null && s_oemEncoding == null)
+            if (s_oemEncoding == null)
             {
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }
@@ -263,7 +245,7 @@ namespace System.Management.Automation
             }
 
             // If we successfully get the zone data stream, try to read the ZoneId information
-            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
+            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, Encoding.Default))
             {
                 string line = null;
                 bool zoneTransferMatched = false;
@@ -379,17 +361,5 @@ namespace System.Management.Automation
         }
 
         #endregion Misc
-
-        /// <summary>
-        /// Native methods that are used by facade methods.
-        /// </summary>
-        private static class NativeMethods
-        {
-            /// <summary>
-            /// Pinvoke for GetOEMCP to get the OEM code page.
-            /// </summary>
-            [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetOEMCP();
-        }
     }
 }
