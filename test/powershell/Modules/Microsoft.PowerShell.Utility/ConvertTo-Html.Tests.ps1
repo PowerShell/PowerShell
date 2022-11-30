@@ -171,7 +171,7 @@ After the object
     }
 
     It "Test ConvertTo-Html URI Auto Create HyperLink #1" {
-        $returnString = ([uri]"https://bing.com/" | convertto-html -Property absoluteuri,authority,host,idnhost -hyperlink) -join $newLine
+        $returnString = ([uri]"https://bing.com/" | convertto-html -Property absoluteuri,authority,host,idnhost -Autohyperlink) -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -189,7 +189,7 @@ After the object
     }
 
     It "Test ConvertTo-Html URI Auto Create HyperLink #2" {
-        $returnString = ($CustomParameters_2 | ConvertTo-Html -hyperlink) -join $newLine
+        $returnString = ($CustomParameters_2 | ConvertTo-Html -Autohyperlink) -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -207,7 +207,7 @@ After the object
     }
 
     It "Test ConvertTo-Html URI Auto Create HyperLink #3 - embedded" {
-        $returnString = ($CustomParameters_3 | ConvertTo-Html -hyperlink) -join $newLine
+        $returnString = ($CustomParameters_3 | ConvertTo-Html -Autohyperlink) -join $newLine
 
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -248,7 +248,7 @@ After the object
         $CustomParameters_4 = @{
             String          = 'Special url with parenthesis http://example.com/test(1).html, and complex url https://www.amazon.com/Amazon-Gift-Card-Print-Logo/dp/B07P76HM3B/ref=sr_1_3?crid=3JKK1WLD85QJV&keywords=gift+card&qid=1668718715&sprefix=gitftcard%2Caps%2C54&sr=8-3, username-password http://userid:password@example.com:8080/'
         }
-        $returnString = ($CustomParameters_4 | ConvertTo-Html -hyperlink) -join $newLine
+        $returnString = ($CustomParameters_4 | ConvertTo-Html -Autohyperlink) -join $newLine
 
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
