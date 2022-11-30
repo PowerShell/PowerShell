@@ -974,7 +974,7 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
-            return assignmentStatementAst.Left.Accept(this);
+            return TypeInferenceContext.EmptyPSTypeNameArray;
         }
 
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)

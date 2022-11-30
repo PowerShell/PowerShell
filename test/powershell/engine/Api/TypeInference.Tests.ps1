@@ -361,10 +361,8 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object of integer" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object {$_ * 10} }.Ast)
-        $res.Count | Should -Be 2
-        foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
-        }
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
     }
 
     It "Infers type from generic new" {
@@ -386,9 +384,9 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object with begin/end" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object -Begin {"Hi"} {$_ * 10} -End {[int]} }.Ast)
-        $res.Count | Should -Be 4
+        $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -BeTrue
+            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -598,16 +596,6 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res = [AstTypeInference]::InferTypeOf( $ast.EndBlock.Statements[0])
         $res.Name | Should -Be 'System.Int32'
-    }
-
-    It 'Infers type from attributed expession' {
-        $res = [AstTypeInference]::InferTypeOf( {
-                [ValidateRange(1, 2)]
-                [int]$i = 1
-            }.Ast)
-
-        $res.Count | Should -Be 1
-        $res.Name | Should -Be System.Int32
     }
 
     It 'Infers type from if statement' {
