@@ -416,7 +416,29 @@ namespace System.Management.Automation
                 value = PSObject.Base(value);
                 if (value != null)
                 {
-                    type = new PSTypeName(value.GetType());
+                    var typeObject = value.GetType();
+                    
+                    if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var psobjectPropertyList = new List<PSMemberNameAndType>();
+                        foreach (var property in PSObject.AsPSObject(value).Properties)
+                        {
+                            if (property.IsHidden)
+                            {
+                                continue;
+                            }
+
+                            var propertyTypeName = new PSTypeName(property.TypeNameOfValue);
+                            psobjectPropertyList.Add(new PSMemberNameAndType(property.Name, propertyTypeName, property.Value));
+                        }
+
+                        type = PSSyntheticTypeName.Create(typeObject, psobjectPropertyList);
+                    }
+                    else
+                    {
+                        type = new PSTypeName(typeObject);
+                    }
+                    
                     return true;
                 }
             }
