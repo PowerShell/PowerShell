@@ -1986,7 +1986,7 @@ namespace System.Management.Automation
 
                 runningHash = runningHash.Slice(0, upTo);
 
-                // Skip all before shortest suspicious string. Today it is 'Emit' so start with i=3.
+                // Starts from where the hash for the shortest suspicious string would be stored.
                 for (var i = MIN_LEN - 1; i < runningHash.Length; i++)
                 {
                     var result = LookupHash(runningHash[i]);
@@ -2048,14 +2048,14 @@ namespace System.Management.Automation
                         // iter n+1: compute hash on `mit` (len 3)
                         //    This overwrites the previous iteration, hence we go from longest to shortest.
                         //
-                        // Original code:
-                        // rh[j] = 31 * rh[j - 1] + h;
-                        // 31 comes from a trivial (bad) random number generator,
+                        // The original code is:   rh[j] = 31 * rh[j - 1] + h;
+                        // The number '31' comes from a trivial (bad) random number generator,
                         // but it's sufficient for us - the hashes for our patterns
                         // are unique, and processing of 2200 files found no false matches.
                         //
                         // Then replace multiplication with more efficient operations.
-                        rh[j] = (rh[j - 1] << 5) - rh[j - 1] + h;
+                        uint v = rh[j - 1];
+                        rh[j] = (v << 5) - v + h;
                     }
 
                     runningHash[0] = h;
