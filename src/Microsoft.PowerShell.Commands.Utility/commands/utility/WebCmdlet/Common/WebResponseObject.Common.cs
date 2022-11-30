@@ -66,13 +66,29 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return (_rawContentStream); }
         }
-        
+
         private MemoryStream _rawContentStream;
 
         /// <summary>
         /// Gets the RelationLink property.
         /// </summary>
         public Dictionary<string, string> RelationLink { get; internal set; }
+
+        /// <summary>
+        /// Gets the response status code.
+        /// </summary>
+        public int StatusCode
+        {
+            get { return (WebResponseHelper.GetStatusCode(BaseResponse)); }
+        }
+
+        /// <summary>
+        /// Gets the response status description.
+        /// </summary>
+        public string StatusDescription
+        {
+            get { return (WebResponseHelper.GetStatusDescription(BaseResponse)); }
+        }
 
         #endregion Properties
 
