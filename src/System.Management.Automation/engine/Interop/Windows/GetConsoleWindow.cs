@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
-    internal static partial class Windows
+    internal static unsafe partial class Windows
     {
-        [LibraryImport("oleaut32.dll")]
-        internal static partial void VariantClear(nint pVariant);
+        [LibraryImport("Kernel32.dll")]
+        internal static partial nint GetConsoleWindow();
     }
 }

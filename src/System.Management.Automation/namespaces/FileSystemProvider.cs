@@ -474,9 +474,9 @@ namespace Microsoft.PowerShell.Commands
             if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17134, 0))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
+                if (Interop.Windows.RtlQueryProcessPlaceholderCompatibilityMode() == Interop.Windows.PHCM_DISGUISE_PLACEHOLDER)
                 {
-                    NativeMethods.RtlSetProcessPlaceholderCompatibilityMode(NativeMethods.PHCM_EXPOSE_PLACEHOLDERS);
+                    Interop.Windows.RtlSetProcessPlaceholderCompatibilityMode(Interop.Windows.PHCM_EXPOSE_PLACEHOLDERS);
                 }
             }
 #endif
@@ -725,12 +725,6 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return drive;
 #else
-            return WinRemoveDrive(drive);
-#endif
-        }
-
-        private PSDriveInfo WinRemoveDrive(PSDriveInfo drive)
-        {
             if (IsNetworkMappedDrive(drive))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
@@ -758,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                        code = Interop.Windows.WNetCancelConnection2(driveName, flags, true);
                     }
                     catch (System.DllNotFoundException)
                     {
@@ -774,6 +768,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return drive;
+#endif
         }
 
         /// <summary>
@@ -2446,7 +2441,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
 #else
-                        success = WinCreateHardLink(path, strTargetPath);
+                        success = Interop.Windows.CreateHardLink(path, strTargetPath, IntPtr.Zero);
 #endif
                     }
 
@@ -2649,25 +2644,21 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+#if !UNIX
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
-            var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
+            var flags = isDirectory ? Interop.Windows.SymbolicLinkFlags.Directory : Interop.Windows.SymbolicLinkFlags.File;
 
             if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 14972, 0))
             {
-                flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
+                flags |= Interop.Windows.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
 
-            var created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
+            var created = Interop.Windows.CreateSymbolicLink(path, strTargetPath, flags);
             return created;
         }
-
-        private static bool WinCreateHardLink(string path, string strTargetPath)
-        {
-            bool success = NativeMethods.CreateHardLink(path, strTargetPath, IntPtr.Zero);
-            return success;
-        }
+#endif
 
         private static bool WinCreateJunction(string path, string strTargetPath)
         {
@@ -7115,27 +7106,6 @@ namespace Microsoft.PowerShell.Commands
             internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
 
             /// <summary>
-            /// WNetCancelConnection2 function cancels an existing network connection.
-            /// </summary>
-            /// <param name="driveName">
-            /// PSDrive Name.
-            /// </param>
-            /// <param name="flags">
-            /// Connection Type.
-            /// </param>
-            /// <param name="force">
-            /// Specifies whether the disconnection should occur if there are open files or jobs
-            /// on the connection. If this parameter is FALSE, the function fails
-            /// if there are open files or jobs.
-            /// </param>
-            /// <returns>If connection is removed then success is returned or
-            /// else the error code describing the type of failure that occurred while
-            /// trying to remove the connection is returned.
-            /// </returns>
-            [LibraryImport("mpr.dll", EntryPoint ="WNetCancelConnection2W", StringMarshalling = StringMarshalling.Utf16)]
-            internal static partial int WNetCancelConnection2(string driveName, int flags, [MarshalAs(UnmanagedType.Bool)] bool force);
-
-            /// <summary>
             /// WNetGetConnection function retrieves the name of the network resource associated with a local device.
             /// </summary>
             /// <param name="localName">
@@ -7227,75 +7197,6 @@ namespace Microsoft.PowerShell.Commands
             [LibraryImport("shlwapi.dll", EntryPoint = "PathIsNetworkPathW", StringMarshalling = StringMarshalling.Utf16)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static partial bool PathIsNetworkPath(string path);
-#endif
-
-            /// <summary>
-            /// Creates a symbolic link using the native API.
-            /// </summary>
-            /// <param name="name">Path of the symbolic link.</param>
-            /// <param name="destination">Path of the target of the symbolic link.</param>
-            /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
-            /// <returns>1 on successful creation.</returns>
-            [LibraryImport(PinvokeDllNames.CreateSymbolicLinkDllName, EntryPoint = "CreateSymbolicLinkW", StringMarshalling = StringMarshalling.Utf16)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static partial bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
-
-            /// <summary>
-            /// Flags used when creating a symbolic link.
-            /// </summary>
-            [Flags]
-            internal enum SymbolicLinkFlags
-            {
-                /// <summary>
-                /// Symbolic link is a file.
-                /// </summary>
-                File = 0,
-
-                /// <summary>
-                /// Symbolic link is a directory.
-                /// </summary>
-                Directory = 1,
-
-                /// <summary>
-                /// Allow creation of symbolic link without elevation.  Requires Developer mode.
-                /// </summary>
-                AllowUnprivilegedCreate = 2,
-            }
-
-            /// <summary>
-            /// Creates a hard link using the native API.
-            /// </summary>
-            /// <param name="name">Name of the hard link.</param>
-            /// <param name="existingFileName">Path to the target of the hard link.</param>
-            /// <param name="SecurityAttributes"></param>
-            /// <returns></returns>
-            [LibraryImport(PinvokeDllNames.CreateHardLinkDllName, EntryPoint = "CreateHardLinkW", StringMarshalling = StringMarshalling.Utf16)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static partial bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
-
-            // OneDrive placeholder support
-#if !UNIX
-            /// <summary>
-            /// Returns the placeholder compatibility mode for the current process.
-            /// </summary>
-            /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [LibraryImport("ntdll.dll")]
-            internal static partial sbyte RtlQueryProcessPlaceholderCompatibilityMode();
-
-            /// <summary>
-            /// Sets the placeholder compatibility mode for the current process.
-            /// </summary>
-            /// <param name="pcm">The placeholder compatibility mode to set.</param>
-            /// <returns>The process's previous placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [LibraryImport("ntdll.dll")]
-            internal static partial sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
-
-            internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
-            internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
-            internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
-            internal const sbyte PHCM_MAX = 2;
-            internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
-            internal const sbyte PHCM_ERROR_NO_TEB = -2;
 #endif
         }
 
@@ -7963,40 +7864,6 @@ namespace Microsoft.PowerShell.Commands
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal sealed partial class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
-        {
-            private SafeFindHandle() : base(true) { }
-
-            protected override bool ReleaseHandle()
-            {
-                return FindClose(this.handle);
-            }
-
-            [LibraryImport(PinvokeDllNames.FindCloseDllName)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            private static partial bool FindClose(IntPtr handle);
-        }
-
-        // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
-        // See https://github.com/PowerShell/PowerShell/issues/16804
-        [LibraryImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        private static partial SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal unsafe struct WIN32_FIND_DATA
-        {
-            internal uint dwFileAttributes;
-            internal FILE_TIME ftCreationTime;
-            internal FILE_TIME ftLastAccessTime;
-            internal FILE_TIME ftLastWriteTime;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal uint dwReserved0;
-            internal uint dwReserved1;
-            internal fixed char cFileName[MAX_PATH];
-            internal fixed char cAlternateFileName[14];
-        }
-
         /// <summary>
         /// Gets the target of the specified reparse point.
         /// </summary>
@@ -8162,14 +8029,14 @@ namespace Microsoft.PowerShell.Commands
                 return !InternalTestHooks.OneDriveTestRecurseOn;
             }
 
-            WIN32_FIND_DATA data = default;
+            Interop.Windows.WIN32_FIND_DATA data = default;
             string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
             if (fullPath.Length >= MAX_PATH)
             {
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
 
-            using (SafeFindHandle handle = FindFirstFile(fullPath, ref data))
+            using (Interop.Windows.SafeFindHandle handle = Interop.Windows.FindFirstFile(fullPath, ref data))
             {
                 if (handle.IsInvalid)
                 {
