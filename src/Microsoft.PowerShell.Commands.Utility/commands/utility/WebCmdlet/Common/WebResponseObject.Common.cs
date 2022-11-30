@@ -72,22 +72,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public Dictionary<string, string> RelationLink { get; internal set; }
 
-        /// <summary>
-        /// Gets the response status code.
-        /// </summary>
-        public int StatusCode
-        {
-            get { return (WebResponseHelper.GetStatusCode(BaseResponse)); }
-        }
-
-        /// <summary>
-        /// Gets the response status description.
-        /// </summary>
-        public string StatusDescription
-        {
-            get { return (WebResponseHelper.GetStatusDescription(BaseResponse)); }
-        }
-
         #endregion Properties
 
         #region Constructors
