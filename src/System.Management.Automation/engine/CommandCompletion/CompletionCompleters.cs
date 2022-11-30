@@ -4764,7 +4764,7 @@ namespace System.Management.Automation
                 ref resumeHandle);
 
             var shares = new List<string>();
-            if (result == Interop.Windows.NERR_Success || result == Interop.Windows.ERROR_MORE_DATA)
+            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
