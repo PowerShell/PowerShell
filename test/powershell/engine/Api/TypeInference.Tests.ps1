@@ -1366,6 +1366,11 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 2
         $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
     }
+
+    It 'Infers closest variable type' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
+        $res.Name | Should -Be "System.Collections.Hashtable"
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
