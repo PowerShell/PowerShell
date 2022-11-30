@@ -28,6 +28,7 @@ namespace System.Management.Automation
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
         internal const string PSExecFeatureName = "PSExec";
         internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
+        internal const string PSNativeCommandPreserveBytePipe = "PSNativeCommandPreserveBytePipe";
 
         #endregion
 
@@ -143,6 +144,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSStrictModeAssignment,
                     description: "Add support of setting Strict-Mode with Invoke-Command"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandPreserveBytePipe,
+                    description: "Byte output is retained when piping between two or more native commands"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

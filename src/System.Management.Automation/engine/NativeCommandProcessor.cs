@@ -418,7 +418,10 @@ namespace System.Management.Automation
 
             _isPreparedCalled = true;
 
-            DownStreamNativeCommand?.Prepare(psDefaultParameterValues);
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            {
+                DownStreamNativeCommand?.Prepare(psDefaultParameterValues);
+            }
 
             // Check if the application is minishell
             _isMiniShell = IsMiniShell();
@@ -451,7 +454,8 @@ namespace System.Management.Automation
             {
                 // If upstream is a native command it'll be writing directly to our stdin stream
                 // so we can skip reading here.
-                if (!UpstreamIsNativeCommand)
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && !UpstreamIsNativeCommand)
                 {
                     while (Read())
                     {
@@ -702,7 +706,9 @@ namespace System.Management.Automation
 
                         lock (_sync)
                         {
-                            if (!_stopped && !UpstreamIsNativeCommand)
+                            if (!_stopped
+                                && (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                                || !UpstreamIsNativeCommand))
                             {
                                 _inputWriter.Start(_nativeProcess, inputFormat);
                             }
@@ -765,20 +771,28 @@ namespace System.Management.Automation
                         if (CommandRuntime.ErrorMergeTo is MshCommandRuntime.MergeDataStream.Output)
                         {
                             StdOutDestination = null;
-                            if (DownStreamNativeCommand is not null)
+                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
                             {
-                                DownStreamNativeCommand.UpstreamIsNativeCommand = false;
-                                DownStreamNativeCommand = null;
+                                if (DownStreamNativeCommand is not null)
+                                {
+                                    DownStreamNativeCommand.UpstreamIsNativeCommand = false;
+                                    DownStreamNativeCommand = null;
+                                }
                             }
                         }
 
                         _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
                         // we don't assign the handler to anything, because it's used only for objects marshaling
+                        BytePipe bytePipe = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                            ? StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe()
+                            : null;
+
                         _ = new ProcessOutputHandler(
                             _nativeProcess,
                             _nativeProcessOutputQueue,
-                            StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe(),
+                            bytePipe,
                             out _stdOutByteDrainer);
+
                     }
                 }
             }
@@ -788,7 +802,8 @@ namespace System.Management.Automation
         {
             if (blocking)
             {
-                if (_stdOutByteDrainer is not null)
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && _stdOutByteDrainer is not null)
                 {
                     _stdOutByteDrainer.EOF.GetAwaiter().GetResult();
                     return null;
@@ -817,7 +832,8 @@ namespace System.Management.Automation
             }
             else
             {
-                if (_stdOutByteDrainer is not null)
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && _stdOutByteDrainer is not null)
                 {
                     return null;
                 }
@@ -860,7 +876,8 @@ namespace System.Management.Automation
                 if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
-                    if (!UpstreamIsNativeCommand)
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                        || !UpstreamIsNativeCommand)
                     {
                         _inputWriter.Done();
                     }
@@ -1199,7 +1216,8 @@ namespace System.Management.Automation
                 if (!_runStandAlone)
                 {
                     // Stop input writer
-                    if (!UpstreamIsNativeCommand)
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                        || !UpstreamIsNativeCommand)
                     {
                         _inputWriter.Stop();
                     }
@@ -1515,7 +1533,9 @@ namespace System.Management.Automation
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count it as a redirection.
-                if (StdOutDestination is null && IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && StdOutDestination is null
+                    && IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
                 {
                     redirectOutput = false;
                 }
@@ -1792,34 +1812,34 @@ namespace System.Management.Automation
 
             if (process.StartInfo.RedirectStandardError) { _refCount++; }
 
-            stdOutDrainer = null;
-
             // once we have _refCount, we can start processing
-            if (process.StartInfo.RedirectStandardOutput)
+            if (process.StartInfo.RedirectStandardError)
             {
-                if (stdOutDestination is null)
-                {
-                    _isFirstOutput = true;
-                    _isXmlCliOutput = false;
-                    process.OutputDataReceived += OutputHandler;
-                    process.BeginOutputReadLine();
-                }
-                else
-                {
-                    stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(new StdOutStreamSource(process));
-                    stdOutDrainer.BeginReadChucks();
-                }
+                _isFirstError = true;
+                _isXmlCliError = false;
+                process.ErrorDataReceived += ErrorHandler;
+                process.BeginErrorReadLine();
             }
 
-            if (!process.StartInfo.RedirectStandardError)
+            stdOutDrainer = null;
+
+            if (!process.StartInfo.RedirectStandardOutput)
             {
                 return;
             }
 
-            _isFirstError = true;
-            _isXmlCliError = false;
-            process.ErrorDataReceived += ErrorHandler;
-            process.BeginErrorReadLine();
+            if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                || stdOutDestination is null)
+            {
+                _isFirstOutput = true;
+                _isXmlCliOutput = false;
+                process.OutputDataReceived += OutputHandler;
+                process.BeginOutputReadLine();
+                return;
+            }
+
+            stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(new StdOutStreamSource(process));
+            stdOutDrainer.BeginReadChucks();
         }
 
         private void decrementRefCount()
@@ -2070,16 +2090,19 @@ namespace System.Management.Automation
                 baseObjInput = pso.BaseObject;
             }
 
-            if (baseObjInput is byte[] bytes)
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
             {
-                _streamWriter.BaseStream.Write(bytes, 0, bytes.Length);
-                return;
-            }
+                if (baseObjInput is byte[] bytes)
+                {
+                    _streamWriter.BaseStream.Write(bytes, 0, bytes.Length);
+                    return;
+                }
 
-            if (baseObjInput is byte b)
-            {
-                _streamWriter.BaseStream.WriteByte(b);
-                return;
+                if (baseObjInput is byte b)
+                {
+                    _streamWriter.BaseStream.WriteByte(b);
+                    return;
+                }
             }
 
             AddTextInput(input);

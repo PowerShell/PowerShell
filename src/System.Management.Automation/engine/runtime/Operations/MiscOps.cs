@@ -162,7 +162,8 @@ namespace System.Management.Automation
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
             bool isNativeCommand = false;
-            if (commandProcessor is NativeCommandProcessor nativeCommandProcessor)
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                && commandProcessor is NativeCommandProcessor nativeCommandProcessor)
             {
                 isNativeCommand = true;
                 nativeCommandProcessor.UpstreamIsNativeCommand = lastCommandWasNative;
@@ -214,7 +215,8 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
-                foreach (var redirection in redirections) {
+                foreach (var redirection in redirections)
+                {
                     if (redirection is MergingRedirection)
                     {
                         redirection.Bind(pipe, commandProcessor, context);
@@ -469,6 +471,11 @@ namespace System.Management.Automation
                     commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context, lastCommandWasNative);
+
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+                    {
+                        continue;
+                    }
 
                     if (commandProcessor is NativeCommandProcessor nativeCommand)
                     {
