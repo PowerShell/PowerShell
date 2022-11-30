@@ -83,11 +83,11 @@ namespace System.Management.Automation
             fileStream = null;
             streamWriter = null;
             readOnlyFileInfo = null;
-            string resolvedPath = ResolveFilePath(filePath, cmdlet);
+            string resolvedPath = ResolveFilePath(filePath, cmdlet, isLiteralPath);
             try
             {
-                MasterStreamOpen(
-                    filePath,
+                MasterStreamOpenImpl(
+                    resolvedPath,
                     resolvedEncoding,
                     defaultEncoding,
                     Append,
@@ -95,8 +95,7 @@ namespace System.Management.Automation
                     NoClobber,
                     out fileStream,
                     out streamWriter,
-                    out readOnlyFileInfo,
-                    isLiteralPath);
+                    out readOnlyFileInfo);
             }
             // These are the known exceptions for File.Load and StreamWriter.ctor
             catch (ArgumentException e)
