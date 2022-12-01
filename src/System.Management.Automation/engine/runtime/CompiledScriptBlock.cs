@@ -2037,7 +2037,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    Span<uint> rh = runningHash.Slice(0, Math.Min(i, runningHash.Length));
+                    Span<uint> rh = runningHash.Slice(0, Math.Min(i + 1, runningHash.Length));
                     for (int j = rh.Length - 1; j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
