@@ -91,6 +91,31 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Properties
 
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
+        /// </summary>
+        /// <param name="response"></param>
+        public WebResponseObject(HttpResponseMessage response)
+            : this(response, null)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="contentStream"></param>
+        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
+        {
+            SetResponse(response, contentStream);
+            InitializeContent();
+            InitializeRawContent(response);
+        }
+
+        #endregion Constructors
+
         #region Methods
 
         /// <summary>
@@ -134,31 +159,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public partial class WebResponseObject
     {
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
-        /// </summary>
-        /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response)
-            : this(response, null)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebResponseObject"/> class
-        /// with the specified <paramref name="contentStream"/>.
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="contentStream"></param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
-        {
-            SetResponse(response, contentStream);
-            InitializeContent();
-            InitializeRawContent(response);
-        }
-
-        #endregion Constructors
-
         #region Methods
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
