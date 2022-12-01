@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public long RawContentLength
         {
-            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
+            get => RawContentStream is null ? -1 : RawContentStream.Length;
         }
 
         /// <summary>
