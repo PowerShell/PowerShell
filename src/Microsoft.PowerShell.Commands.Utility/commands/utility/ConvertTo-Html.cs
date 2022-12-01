@@ -472,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
 
             _propertyMshParameterList = ProcessParameter(_property);
 
-            regHttp = new Regex(@"(?<=\()\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\))|(?<=(?<wrap>[=~|_#]))\b(https?://|www\.)&[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|](?=\k<wrap>)|\b(https?://|www\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            regHttp = new Regex(@"(\b(https?|ftp|file)://[-A-Za-z0-9()+&@#/%?=~_|$!:,.;]*[A-Za-z0-9()+&@#/%=~_|$])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             if (!string.IsNullOrEmpty(_title))
             {
