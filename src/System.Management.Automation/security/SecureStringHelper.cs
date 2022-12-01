@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
-        [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
             //

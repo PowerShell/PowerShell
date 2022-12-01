@@ -64,9 +64,9 @@ namespace System.Management.Automation.Host
         /// The name identifier of the hosting application.
         /// </value>
         /// <example>
-        ///     <PowerShell>
+        ///     <code>
         ///         if ($Host.Name -ieq "ConsoleHost") { write-host "I'm running in the Console Host" }
-        ///     </PowerShell>
+        ///     </code>
         /// </example>
         public abstract string Name
         {

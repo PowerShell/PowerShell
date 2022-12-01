@@ -1301,9 +1301,9 @@ namespace Microsoft.PowerShell.Commands
             int intCode = (int)code;
             return
             (
-                (intCode >= 300 && intCode < 304)
-                ||
-                intCode == 307
+                (intCode >= 300 && intCode < 304) ||
+                intCode == 307 ||
+                intCode == 308
             );
         }
 
@@ -1313,32 +1313,25 @@ namespace Microsoft.PowerShell.Commands
         {
             return
             (
-                code == HttpStatusCode.Found
-                ||
-                code == HttpStatusCode.Moved
-                ||
-                code == HttpStatusCode.Redirect
-                ||
-                code == HttpStatusCode.RedirectMethod
-                ||
-                code == HttpStatusCode.SeeOther
-                ||
-                code == HttpStatusCode.Ambiguous
-                ||
+                code == HttpStatusCode.Found ||
+                code == HttpStatusCode.Moved ||
+                code == HttpStatusCode.Redirect ||
+                code == HttpStatusCode.RedirectMethod ||
+                code == HttpStatusCode.SeeOther ||
+                code == HttpStatusCode.Ambiguous ||
                 code == HttpStatusCode.MultipleChoices
             );
         }
 
+        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
         private bool ShouldRetry(HttpStatusCode code)
         {
             int intCode = (int)code;
 
-            if ((intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return
+            (
+                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+            );
         }
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
@@ -1603,16 +1596,11 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
                                 {
-                                    if (response.StatusCode == HttpStatusCode.Found ||
-                                        response.StatusCode == HttpStatusCode.Moved ||
-                                        response.StatusCode == HttpStatusCode.MovedPermanently)
-                                    {
-                                        ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
-                                        WriteError(er);
-                                    }
+                                    ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                    WriteError(er);
                                 }
                             }
                             catch (HttpRequestException ex)
