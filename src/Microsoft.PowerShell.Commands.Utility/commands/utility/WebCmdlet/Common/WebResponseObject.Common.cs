@@ -54,10 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
         /// </summary>
-        public long RawContentLength
-        {
-            get => (RawContentStream is null ? -1 : RawContentStream.Length);
-        }
+        public long RawContentLength => (RawContentStream is null ? -1 : RawContentStream.Length);
 
         /// <summary>
         /// Gets the response body content as a <see cref="MemoryStream"/>.
@@ -72,18 +69,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the response status code.
         /// </summary>
-        public int StatusCode
-        {
-            get => WebResponseHelper.GetStatusCode(BaseResponse);
-        }
+        public int StatusCode => WebResponseHelper.GetStatusCode(BaseResponse);
 
         /// <summary>
         /// Gets the response status description.
         /// </summary>
-        public string StatusDescription
-        {
-            get => WebResponseHelper.GetStatusDescription(BaseResponse);
-        }
+        public string StatusDescription => WebResponseHelper.GetStatusDescription(BaseResponse);
 
         #endregion 
 
