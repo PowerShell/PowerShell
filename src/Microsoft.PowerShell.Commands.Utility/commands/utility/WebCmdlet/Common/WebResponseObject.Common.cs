@@ -64,6 +64,31 @@ namespace Microsoft.PowerShell.Commands
         /// </value>
         public string RawContent { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the BaseResponse property.
+        /// </summary>
+        public HttpResponseMessage BaseResponse { get; set; }
+
+        /// <summary>
+        /// Gets the Headers property.
+        /// </summary>
+        public Dictionary<string, IEnumerable<string>> Headers
+        {
+            get
+            {
+                _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
+
+                return _headers;
+            }
+        }
+
+        private Dictionary<string, IEnumerable<string>> _headers = null;
+
+        /// <summary>
+        /// Gets the RelationLink property.
+        /// </summary>
+        public Dictionary<string, string> RelationLink { get; internal set; }
+
         #endregion Properties
 
         #region Methods
@@ -109,35 +134,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public partial class WebResponseObject
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the BaseResponse property.
-        /// </summary>
-        public HttpResponseMessage BaseResponse { get; set; }
-
-        /// <summary>
-        /// Gets the Headers property.
-        /// </summary>
-        public Dictionary<string, IEnumerable<string>> Headers
-        {
-            get
-            {
-                _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
-
-                return _headers;
-            }
-        }
-
-        private Dictionary<string, IEnumerable<string>> _headers = null;
-
-        /// <summary>
-        /// Gets the RelationLink property.
-        /// </summary>
-        public Dictionary<string, string> RelationLink { get; internal set; }
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
