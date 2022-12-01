@@ -18,56 +18,15 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
+        /// Gets or sets the BaseResponse property.
+        /// </summary>
+        public HttpResponseMessage BaseResponse { get; set; }
+
+        /// <summary>
         /// Gets or protected sets the response body content.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content { get; protected set; }
-
-        /// <summary>
-        /// Gets the response status code.
-        /// </summary>
-        public int StatusCode
-        {
-            get { return WebResponseHelper.GetStatusCode(BaseResponse); }
-        }
-
-        /// <summary>
-        /// Gets the response status description.
-        /// </summary>
-        public string StatusDescription
-        {
-            get { return WebResponseHelper.GetStatusDescription(BaseResponse); }
-        }
-
-        private MemoryStream _rawContentStream;
-        /// <summary>
-        /// Gets the response body content as a <see cref="MemoryStream"/>.
-        /// </summary>
-        public MemoryStream RawContentStream
-        {
-            get { return (_rawContentStream); }
-        }
-
-        /// <summary>
-        /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
-        /// </summary>
-        public long RawContentLength
-        {
-            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
-        }
-
-        /// <summary>
-        /// Gets or protected sets the full response content.
-        /// </summary>
-        /// <value>
-        /// Full response content, including the HTTP status line, headers, and body.
-        /// </value>
-        public string RawContent { get; protected set; }
-
-        /// <summary>
-        /// Gets or sets the BaseResponse property.
-        /// </summary>
-        public HttpResponseMessage BaseResponse { get; set; }
 
         /// <summary>
         /// Gets the Headers property.
@@ -85,11 +44,53 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<string, IEnumerable<string>> _headers = null;
 
         /// <summary>
+        /// Gets or protected sets the full response content.
+        /// </summary>
+        /// <value>
+        /// Full response content, including the HTTP status line, headers, and body.
+        /// </value>
+        public string RawContent { get; protected set; }
+
+        /// <summary>
+        /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
+        /// </summary>
+        public long RawContentLength
+        {
+            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
+        }
+
+        /// <summary>
+        /// Gets the response body content as a <see cref="MemoryStream"/>.
+        /// </summary>
+        public MemoryStream RawContentStream
+        {
+            get { return (_rawContentStream); }
+        }
+
+        private MemoryStream _rawContentStream;
+
+        /// <summary>
         /// Gets the RelationLink property.
         /// </summary>
         public Dictionary<string, string> RelationLink { get; internal set; }
 
-        #endregion Properties
+        /// <summary>
+        /// Gets the response status code.
+        /// </summary>
+        public int StatusCode
+        {
+            get { return WebResponseHelper.GetStatusCode(BaseResponse); }
+        }
+
+        /// <summary>
+        /// Gets the response status description.
+        /// </summary>
+        public string StatusDescription
+        {
+            get { return WebResponseHelper.GetStatusDescription(BaseResponse); }
+        }
+
+        #endregion 
 
         #region Constructors
 
