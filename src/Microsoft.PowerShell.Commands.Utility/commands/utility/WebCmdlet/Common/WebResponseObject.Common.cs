@@ -127,29 +127,6 @@ namespace Microsoft.PowerShell.Commands
             this.Content = this.RawContentStream.ToArray();
         }
 
-        private static bool IsPrintable(char c)
-        {
-            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
-        }
-
-        /// <summary>
-        /// Returns the string representation of this web response.
-        /// </summary>
-        /// <returns>The string representation of this web response.</returns>
-        public sealed override string ToString()
-        {
-            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
-            for (int counter = 0; counter < stringContent.Length; counter++)
-            {
-                if (!IsPrintable(stringContent[counter]))
-                {
-                    stringContent[counter] = '.';
-                }
-            }
-
-            return new string(stringContent);
-        }
-
         private void InitializeRawContent(HttpResponseMessage baseResponse)
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
@@ -161,6 +138,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             this.RawContent = raw.ToString();
+        }
+
+        private static bool IsPrintable(char c)
+        {
+            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
         }
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
@@ -195,6 +177,24 @@ namespace Microsoft.PowerShell.Commands
             _rawContentStream.Position = 0;
         }
 
+        /// <summary>
+        /// Returns the string representation of this web response.
+        /// </summary>
+        /// <returns>The string representation of this web response.</returns>
+        public sealed override string ToString()
+        {
+            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
+            for (int counter = 0; counter < stringContent.Length; counter++)
+            {
+                if (!IsPrintable(stringContent[counter]))
+                {
+                    stringContent[counter] = '.';
+                }
+            }
+
+            return new string(stringContent);
+        }
+        
         #endregion Methods
     }
 }
