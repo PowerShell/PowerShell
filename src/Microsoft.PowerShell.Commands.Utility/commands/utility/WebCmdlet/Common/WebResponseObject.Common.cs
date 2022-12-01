@@ -62,12 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
-        public MemoryStream RawContentStream
-        {
-            get { return (_rawContentStream); }
-        }
-
-        private MemoryStream _rawContentStream;
+        public MemoryStream RawContentStream { get; protected set }
 
         /// <summary>
         /// Gets the RelationLink property.
@@ -172,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             MemoryStream ms = contentStream as MemoryStream;
             if (ms != null)
             {
-                _rawContentStream = ms;
+                RawContentStream = ms;
             }
             else
             {
@@ -189,10 +184,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
-                _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault());
+                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault());
             }
             // set the position of the content stream to the beginning
-            _rawContentStream.Position = 0;
+            RawContentStream.Position = 0;
         }
 
         #endregion Methods
