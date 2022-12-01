@@ -4534,12 +4534,36 @@ end {
             builtinVariables.Add(
                 new SessionStateVariableEntry(
                     SpecialVariables.NativeArgumentPassing,
-                    Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    GetPassingStyle(), // Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
                     RunspaceInit.NativeCommandArgumentPassingDescription,
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
 
             BuiltInVariables = builtinVariables.ToArray();
+        }
+
+        /// <summary>
+        /// Assigns the default behavior for native argument passing.
+        /// If the system is non-Windows, we will return Standard.
+        /// If the PSVersion takes the shape of a Version Type, we will return Legacy.
+        /// This is because our preview and daily builds have a PSVersion which
+        /// looks like 7.3.0-preview.3 which can't be parsed into a Version.
+        /// </summary>
+        private static NativeArgumentPassingStyle GetPassingStyle()
+        {
+            // If non-Windows, use the standard passing style
+            if (! Platform.IsWindows)
+            {
+                return NativeArgumentPassingStyle.Standard;
+            }
+
+            // If we can parse the version to an actual version, it's not a preview, so return Legacy
+            if (Version.TryParse(PSVersionInfo.PSCurrentVersion.ToString(), out var version))
+            {
+                return NativeArgumentPassingStyle.Legacy;
+            }
+
+            return NativeArgumentPassingStyle.Windows;
         }
 
         internal static readonly SessionStateVariableEntry[] BuiltInVariables;
