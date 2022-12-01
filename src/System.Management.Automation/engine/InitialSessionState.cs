@@ -4552,7 +4552,7 @@ end {
         private static NativeArgumentPassingStyle GetPassingStyle()
         {
             // If non-Windows, use the standard passing style
-            if (! Platform.IsWindows)
+            if (!Platform.IsWindows)
             {
                 return NativeArgumentPassingStyle.Standard;
             }
