@@ -816,10 +816,9 @@ namespace Microsoft.PowerShell.Commands
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                int errorCode = -1;
-                errorCode = Interop.Windows.GetUNCForNetworkDrive(driveName[0], out uncPath);
+                int errorCode = Interop.Windows.GetUNCForNetworkDrive(driveName[0], out uncPath);
 
-                if (errorCode != 0)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
                     throw new System.ComponentModel.Win32Exception(errorCode);
                 }

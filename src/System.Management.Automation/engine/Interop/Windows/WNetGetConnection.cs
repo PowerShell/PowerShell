@@ -21,12 +21,12 @@ internal static partial class Interop
             uncPath = null;
             if (s_WNetApiNotAvailable)
             {
-                return -1;
+                return ERROR_NOT_SUPPORTED;
             }
 
             uint bufferSize = MAX_PATH;
 
-    #if DEBUG
+#if DEBUG
             // In Debug mode buffer size is initially set to 3 and if additional buffer is required, the
             // required buffer size is allocated and the WNetGetConnection API is executed with the newly
             // allocated buffer size.
@@ -47,7 +47,7 @@ internal static partial class Interop
             catch (System.DllNotFoundException)
             {
                 s_WNetApiNotAvailable = true;
-                return -1;
+                return ERROR_NOT_SUPPORTED;
             }
 
             if (errorCode == ERROR_SUCCESS)
