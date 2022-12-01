@@ -6,21 +6,27 @@ Describe 'SuspiciousContentChecker verification' -Tags "CI" {
         $type = [psobject].Assembly.GetType('System.Management.Automation.ScriptBlock+SuspiciousContentChecker')
 
         $testCases = @(
-            @{ number = 1; text = "add-TyPe"; expected = "Add-Type" }
-            @{ number = 2; text = "GetDelegateForFunctionPointer"; expected = "GetDelegateForFunctionPointer" }
-            @{ number = 3; text = "ZeroFreeGlobalAllocUnicode"; expected = "ZeroFreeGlobalAllocUnicode" }
-            @{ number = 4; text = "Hello world emit new"; expected = "Emit" }
-            @{ number = 5; text = "xxxx yyyyMakeByRefTypecccc Type 'help' to get help"; expected = "MakeByRefType" }
-            @{ number = 9; text = "emjt TypeHandlebegood"; expected = "TypeHandle" }
+            @{ id = 'Should Detect (1)'; text = "add-TyPe"; expected = "Add-Type" }
+            @{ id = 'Should Detect (2)'; text = "GetDelegateForFunctionPointer"; expected = "GetDelegateForFunctionPointer" }
+            @{ id = 'Should Detect (3)'; text = "ZeroFreeGlobalAllocUnicode"; expected = "ZeroFreeGlobalAllocUnicode" }
+            @{ id = 'Should Detect (4)'; text = "Hello world emit new"; expected = "Emit" }
+            @{ id = 'Should Detect (5)'; text = "xxxx yyyyMakeByRefTypecccc Type 'help' to get help"; expected = "MakeByRefType" }
+            @{ id = 'Should Detect (6)'; text = "emjt TypeHandlebegood"; expected = "TypeHandle" }
+            @{ id = 'Should Detect (7)'; text = "emit*&)(@~>-type"; expected = "Emit" }
+            @{ id = 'Should Detect (8)'; text = "*&)(@~>-typeemit"; expected = "Emit" }
+            @{ id = 'Should Detect (9)'; text = "Type`u{48}andle`u{2122}"; expected = "TypeHandle" }
+            @{ id = 'Should Detect (10)'; text = "`u{2122}Type`u{48}andle`u{2122}"; expected = "TypeHandle" }
+            @{ id = 'Should Detect (11)'; text = "`u{D83D}`u{DE00}Type`u{48}andle`u{D83D}`u{DE00}"; expected = "TypeHandle" } ## Use surrogate pairs in the string.
 
-            @{ number = 6; text = "PowerShell Preview Extension v2022.11.2"; expected = $null }
-            @{ number = 7; text = "add-typu"; expected = $null }
-            @{ number = 8; text = "GetDelegateForFunctionPointfr"; expected = $null }
-            @{ number = 9; text = "emjt TypeHandlfe"; expected = $null }
+            @{ id = 'Should NOT Detect (1)'; text = "PowerShell Preview Extension v2022.11.2"; expected = $null }
+            @{ id = 'Should NOT Detect (2)'; text = "add-typu"; expected = $null }
+            @{ id = 'Should NOT Detect (3)'; text = "GetDelegateForFunctionPointfr"; expected = $null }
+            @{ id = 'Should NOT Detect (4)'; text = "emjt TypeHandlfe"; expected = $null }
+            @{ id = 'Should NOT Detect (5)'; text = "Get*&)(@~>-Types"; expected = $null }
         )
     }
 
-    It "Smoke testing the suspicious content detection - <number>" -TestCases $testCases {
+    It "Smoke testing the suspicious content detection - <id>" -TestCases $testCases {
         param($text, $expected)
 
         $type::Match($text) | Should -BeExactly $expected
