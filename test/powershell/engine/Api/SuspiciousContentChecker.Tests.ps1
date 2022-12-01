@@ -16,7 +16,8 @@ Describe 'SuspiciousContentChecker verification' -Tags "CI" {
             @{ id = 'Should Detect (8)'; text = "*&)(@~>-typeemit"; expected = "Emit" }
             @{ id = 'Should Detect (9)'; text = "Type`u{48}andle`u{2122}"; expected = "TypeHandle" }
             @{ id = 'Should Detect (10)'; text = "`u{2122}Type`u{48}andle`u{2122}"; expected = "TypeHandle" }
-            @{ id = 'Should Detect (11)'; text = "`u{D83D}`u{DE00}Type`u{48}andle`u{D83D}`u{DE00}"; expected = "TypeHandle" } ## Use surrogate pairs in the string.
+            @{ id = 'Should Detect (11)'; text = "`u{D83D}`u{DE00}Type`u{48}andle`u{D83D}`u{DE00}"; expected = "TypeHandle" } ## use surrogate pairs in the string.
+            @{ id = 'Should Detect (12)'; text = "xx`u{48}`u{48}xx()xxx--xx[]xx;'xpox?/xxemit"; expected = "Emit" } ## suspicious string starts at the index 29.
 
             @{ id = 'Should NOT Detect (1)'; text = "PowerShell Preview Extension v2022.11.2"; expected = $null }
             @{ id = 'Should NOT Detect (2)'; text = "add-typu"; expected = $null }
