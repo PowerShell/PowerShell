@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// WebResponseObject.
     /// </summary>
-    public partial class WebResponseObject
+    public class WebResponseObject
     {
         #region Properties
 
@@ -149,18 +149,6 @@ namespace Microsoft.PowerShell.Commands
             return new string(stringContent);
         }
 
-        #endregion Methods
-    }
-
-    // TODO: Merge Partials
-
-    /// <summary>
-    /// WebResponseObject.
-    /// </summary>
-    public partial class WebResponseObject
-    {
-        #region Methods
-
         private void InitializeRawContent(HttpResponseMessage baseResponse)
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
@@ -205,6 +193,7 @@ namespace Microsoft.PowerShell.Commands
             // set the position of the content stream to the beginning
             _rawContentStream.Position = 0;
         }
-        #endregion
+
+        #endregion Methods
     }
 }
