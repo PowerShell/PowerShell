@@ -9,8 +9,13 @@ internal static partial class Interop
 {
     internal static unsafe partial class Windows
     {
-        [LibraryImport("api-ms-win-core-file-l2-1-0.dll", EntryPoint = "CreateHardLinkW", StringMarshalling = StringMarshalling.Utf16)]
+        [LibraryImport("api-ms-win-core-file-l2-1-0.dll", StringMarshalling = StringMarshalling.Utf16)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool CreateHardLink(string name, string existingFileName, nint securityAttributes);
+        private static partial bool CreateHardLinkW(string lpFileName, string lpExistingFileName, void* lpSecurityAttributes);
+
+        internal static bool CreateHardLink(string fileName, string existingFileName)
+        {
+            return CreateHardLinkW(fileName, existingFileName, null);
+        }
     }
 }

@@ -2441,7 +2441,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
 #else
-                        success = Interop.Windows.CreateHardLink(path, strTargetPath, IntPtr.Zero);
+                        success = Interop.Windows.CreateHardLink(path, strTargetPath);
 #endif
                     }
 
