@@ -33,15 +33,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public Dictionary<string, IEnumerable<string>> Headers
         {
-            get
-            {
-                _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
-
-                return _headers;
-            }
+            get { return WebResponseHelper.GetHeadersDictionary(BaseResponse); }
         }
-
-        private Dictionary<string, IEnumerable<string>> _headers = null;
 
         /// <summary>
         /// Gets or protected sets the full response content.
