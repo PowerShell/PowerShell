@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
-        public MemoryStream RawContentStream { get; protected set }
+        public MemoryStream RawContentStream { get; protected set; }
 
         /// <summary>
         /// Gets the RelationLink property.
