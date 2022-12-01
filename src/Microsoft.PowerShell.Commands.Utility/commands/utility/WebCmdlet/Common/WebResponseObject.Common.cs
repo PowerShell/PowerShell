@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public long RawContentLength
         {
-            get { return (RawContentStream is null ? -1 : RawContentStream.Length); }
+            get => (RawContentStream is null ? -1 : RawContentStream.Length);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public int StatusCode
         {
-            get { return WebResponseHelper.GetStatusCode(BaseResponse); }
+            get => WebResponseHelper.GetStatusCode(BaseResponse);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string StatusDescription
         {
-            get { return WebResponseHelper.GetStatusDescription(BaseResponse); }
+            get => WebResponseHelper.GetStatusDescription(BaseResponse);
         }
 
         #endregion 
