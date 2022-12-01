@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public int StatusCode
         {
-            get { return (WebResponseHelper.GetStatusCode(BaseResponse)); }
+            get { return WebResponseHelper.GetStatusCode(BaseResponse); }
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string StatusDescription
         {
-            get { return (WebResponseHelper.GetStatusDescription(BaseResponse)); }
+            get { return WebResponseHelper.GetStatusDescription(BaseResponse); }
         }
 
         #endregion Properties
