@@ -25,7 +25,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or protected sets the response body content.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content { get; protected set; }
 
         /// <summary>
