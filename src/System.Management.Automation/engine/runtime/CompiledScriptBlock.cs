@@ -2033,7 +2033,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
+                    for (int j = Math.Min(i, runningHash.Length - 1); j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
                         // Towards the end just before matching, we will:
