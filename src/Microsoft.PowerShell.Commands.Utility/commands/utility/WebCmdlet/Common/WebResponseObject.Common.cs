@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
         /// </summary>
-        public long RawContentLength => (RawContentStream is null ? -1 : RawContentStream.Length);
+        public long RawContentLength => RawContentStream is null ? -1 : RawContentStream.Length;
 
         /// <summary>
         /// Gets the response body content as a <see cref="MemoryStream"/>.
