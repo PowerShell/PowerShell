@@ -414,6 +414,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             try
             {
                 encoding = Encoding.GetEncoding(characterSet);
@@ -428,6 +430,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            
             bool result = false;
             try
             {

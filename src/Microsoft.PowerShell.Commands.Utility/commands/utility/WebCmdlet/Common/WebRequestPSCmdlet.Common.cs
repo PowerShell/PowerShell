@@ -1682,6 +1682,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, string content)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
@@ -1731,6 +1733,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
