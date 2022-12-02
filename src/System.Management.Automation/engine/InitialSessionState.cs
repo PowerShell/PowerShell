@@ -4534,7 +4534,7 @@ end {
             builtinVariables.Add(
                 new SessionStateVariableEntry(
                     SpecialVariables.NativeArgumentPassing,
-                    GetPassingStyle(), // Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    GetPassingStyle(),
                     RunspaceInit.NativeCommandArgumentPassingDescription,
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
