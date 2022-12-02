@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                         Debug.Assert(helpInfoUri != null, "If we are here, helpInfoUri must not be null");
 
                         string helpContentUri = contentUri.ResolvedUri;
-                        string xsdPath = SessionState.Path.Combine(Utils.GetApplicationBase(Context.ShellID), "Schemas\\PSMaml\\maml.xsd"); // TODO: Edit the maml XSDs and change this
+                        string xsdPath = SessionState.Path.Combine(Utils.GetApplicationBase(), "Schemas\\PSMaml\\maml.xsd"); // TODO: Edit the maml XSDs and change this
 
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();

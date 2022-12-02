@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!helpModules.ContainsKey(keyTuple))
                 {
                     helpModules.Add(keyTuple, new UpdatableHelpModuleInfo(module.Name, module.Guid,
-                        Utils.GetApplicationBase(context.ShellID), s_metadataCache[module.Name]));
+                        Utils.GetApplicationBase(), s_metadataCache[module.Name]));
                 }
 
                 return;
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                                         WriteDebug(StringUtil.Format("Found engine module: {0}, {1}.", module.Name, module.Guid));
 
                                         helpModules.Add(keyTuple, new UpdatableHelpModuleInfo(module.Name,
-                                            module.Guid, Utils.GetApplicationBase(context.ShellID), s_metadataCache[module.Name]));
+                                            module.Guid, Utils.GetApplicationBase(), s_metadataCache[module.Name]));
                                     }
                                 }
                             }
@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             helpModules.Add(keyTuple2,
                                             new UpdatableHelpModuleInfo(name.Key, Guid.Empty,
-                                                                        Utils.GetApplicationBase(context.ShellID),
+                                                                        Utils.GetApplicationBase(),
                                                                         name.Value));
                         }
                     }
