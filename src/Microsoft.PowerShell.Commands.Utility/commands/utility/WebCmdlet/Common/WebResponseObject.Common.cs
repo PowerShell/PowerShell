@@ -126,10 +126,7 @@ namespace Microsoft.PowerShell.Commands
             this.RawContent = raw.ToString();
         }
 
-        private static bool IsPrintable(char c)
-        {
-            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
-        }
+        private static bool IsPrintable(char c) => char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c);
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
