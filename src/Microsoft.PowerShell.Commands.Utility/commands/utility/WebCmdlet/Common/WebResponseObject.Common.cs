@@ -31,15 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the Headers property.
         /// </summary>
-        public Dictionary<string, IEnumerable<string>> Headers
-        {
-            get
-            {
-                _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
-
-                return _headers;
-            }
-        }
+        public Dictionary<string, IEnumerable<string>> Headers => _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
 
         private Dictionary<string, IEnumerable<string>> _headers = null;
 
