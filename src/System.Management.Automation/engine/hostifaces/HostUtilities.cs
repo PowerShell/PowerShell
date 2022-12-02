@@ -237,7 +237,7 @@ namespace System.Management.Automation
             string folderPath = string.Empty;
             try
             {
-                folderPath = Utils.GetApplicationBase(shellId);
+                folderPath = Utils.GetApplicationBase();
             }
             catch (System.Security.SecurityException)
             {
