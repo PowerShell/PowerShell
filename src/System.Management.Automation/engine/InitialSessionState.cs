@@ -4557,8 +4557,7 @@ end {
                 return NativeArgumentPassingStyle.Standard;
             }
 
-            // If we can parse the version to an actual version, it's not a preview, so return Legacy
-            if (Version.TryParse(PSVersionInfo.PSCurrentVersion.ToString(), out var version))
+            if (PSVersionInfo.PSCurrentVersion.PreReleaseLabel is null)
             {
                 return NativeArgumentPassingStyle.Legacy;
             }
