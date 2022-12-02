@@ -609,6 +609,17 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitParenExpression(ParenExpressionAst parenExpressionAst)
         {
+            // AssignmentStatements normally return nothing, but when used inside a ParenExpression it returns the left side of the assignment
+            // For VariableExpressions the right side is used for simplicity, but it doesn't take variable type constraints into consideration
+            if (parenExpressionAst.Pipeline is AssignmentStatementAst assignment)
+            {
+                if (assignment.Left is VariableExpressionAst)
+                {
+                    return assignment.Right.Accept(this);
+                }
+
+                return assignment.Left.Accept(this);
+            }
             return parenExpressionAst.Pipeline.Accept(this);
         }
 
@@ -2468,7 +2479,8 @@ namespace System.Management.Automation
             if (parameterAst != null)
             {
                 return variableAstVariablePath.IsUnscopedVariable &&
-                       parameterAst.Name.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
+                       parameterAst.Name.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase) &&
+                       parameterAst.Parent.Parent.Extent.EndOffset > variableAst.Extent.StartOffset;
             }
 
             if (ast is ForEachStatementAst foreachAst)

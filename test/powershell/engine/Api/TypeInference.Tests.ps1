@@ -34,6 +34,11 @@ Describe "Type inference Tests" -tags "CI" {
                 return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
             }
         }
+
+        class TypeConstrainedTestClass
+        {
+            [string] $Property1
+        }
     }
 
     It "Infers type from integer" {
@@ -1358,6 +1363,31 @@ Describe "Type inference Tests" -tags "CI" {
     It 'Infers closest variable type' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
         $res.Name | Should -Be "System.Collections.Hashtable"
+    }
+
+    It 'Infers closest variable type and ignores unrelated param blocks' {
+        $res = [AstTypeInference]::InferTypeOf( {
+        [hashtable]$ParameterName=@{}
+        function Verb-Noun {
+            param
+            (
+                [string]$ParameterName
+            )
+        }
+        $ParameterName }.Ast)
+        $res.Name | Should -Be "System.Collections.Hashtable"
+    }
+
+    It 'Infers output from AssignmentStatement inside ParenExpression' {
+        $res = [AstTypeInference]::InferTypeOf( { ($TestVar = "Hello") }.Ast)
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers output from left side of AssignmentStatement inside ParenExpression when assigning to property' {
+        $res = [AstTypeInference]::InferTypeOf( {
+        $Object = [TypeConstrainedTestClass]@{Property1="Test"}
+        ($Object.Property1 = 2) }.Ast)
+        $res.Name | Should -Be "System.String"
     }
 }
 
