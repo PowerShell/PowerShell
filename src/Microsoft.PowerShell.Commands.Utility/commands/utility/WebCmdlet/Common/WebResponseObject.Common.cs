@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         public long RawContentLength => RawContentStream is null ? -1 : RawContentStream.Length;
 
         /// <summary>
-        /// Gets the response body content as a <see cref="MemoryStream"/>.
+        /// Gets or protected sets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
         public MemoryStream RawContentStream { get; protected set; }
 
