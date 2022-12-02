@@ -4545,9 +4545,9 @@ end {
         /// <summary>
         /// Assigns the default behavior for native argument passing.
         /// If the system is non-Windows, we will return Standard.
-        /// If the PSVersion takes the shape of a Version Type, we will return Legacy.
+        /// If the PreReleaseLabel is not set, we will return Legacy.
         /// This is because our preview and daily builds have a PSVersion which
-        /// looks like 7.3.0-preview.3 which can't be parsed into a Version.
+        /// includes a value for PreReleaseLabel, but our official releases do not.
         /// </summary>
         private static NativeArgumentPassingStyle GetPassingStyle()
         {
