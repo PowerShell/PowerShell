@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string StatusDescription => WebResponseHelper.GetStatusDescription(BaseResponse);
 
-        #endregion 
+        #endregion Properties
 
         #region Constructors
 
