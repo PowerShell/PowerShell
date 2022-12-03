@@ -810,54 +810,23 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
+#if !UNIX
         private static string WinGetUNCForNetworkDrive(string driveName)
         {
-            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
-                int bufferSize = 300;
-#if DEBUG
-                // In Debug mode buffer size is initially set to 3 and if additional buffer is required, the
-                // required buffer size is allocated and the WNetGetConnection API is executed with the newly
-                // allocated buffer size.
-                bufferSize = 3;
-#endif
+                int errorCode = Interop.Windows.GetUNCForNetworkDrive(driveName[0], out uncPath);
 
-                StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                driveName += ':';
-
-                // Call the windows API
-                int errorCode = ERROR_NO_NETWORK;
-
-                try
-                {
-                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                }
-                catch (System.DllNotFoundException)
-                {
-                    return null;
-                }
-
-                // error code 234 is returned whenever the required buffer size is greater
-                // than the specified buffer size.
-                if (errorCode == 234)
-                {
-                    uncBuffer = new StringBuilder(bufferSize);
-                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                }
-
-                if (errorCode != 0)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
                     throw new System.ComponentModel.Win32Exception(errorCode);
                 }
-
-                uncPath = uncBuffer.ToString();
             }
 
             return uncPath;
         }
+#endif
 
         /// <summary>
         /// Get the substituted path of a NetWork type MS-DOS device that is created by 'subst' command.
@@ -7072,11 +7041,6 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
-        internal static bool WinPathIsNetworkPath(string path)
-        {
-            return NativeMethods.PathIsNetworkPath(path); // call the native method
-        }
-
         private static partial class NativeMethods
         {
             /// <summary>
@@ -7104,43 +7068,16 @@ namespace Microsoft.PowerShell.Commands
             /// the connection is returned.</returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
             internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
+        }
 
-            /// <summary>
-            /// WNetGetConnection function retrieves the name of the network resource associated with a local device.
-            /// </summary>
-            /// <param name="localName">
-            /// Local name of the PSDrive.
-            /// </param>
-            /// <param name="remoteName">
-            /// The remote name to which the PSDrive is getting mapped to.
-            /// </param>
-            /// <param name="remoteNameLength">
-            /// length of the remote name of the created PSDrive.
-            /// </param>
-            /// <returns></returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetGetConnection(string localName, StringBuilder remoteName, ref int remoteNameLength);
-
-#if CORECLR // TODO:CORECLR Win32 function 'PathIsNetworkPath' is in an extension API set which is currently not on CSS.
-            /// <summary>
-            /// Searches a path for a drive letter within the range of 'A' to 'Z' and returns the corresponding drive number.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed
-            /// </param>
-            /// <returns>Returns 0 through 25 (corresponding to 'A' through 'Z') if the path has a drive letter, or -1 otherwise.</returns>
-            [LibraryImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", EntryPoint ="PathGetDriveNumberW", StringMarshalling = StringMarshalling.Utf16)]
-            internal static partial int PathGetDriveNumber(string path);
-
-            private static bool _WNetApiAvailable = true;
-
-            /// <summary>
-            /// The API 'PathIsNetworkPath' is not available in CoreSystem.
-            /// This implementation is based on the 'PathIsNetworkPath' API.
-            /// </summary>
-            /// <param name="path"></param>
-            /// <returns></returns>
-            internal static bool PathIsNetworkPath(string path)
+#if !UNIX
+        /// <summary>
+        /// The API 'PathIsNetworkPath' is not available in CoreSystem.
+        /// This implementation is based on the 'PathIsNetworkPath' API.
+        /// </summary>
+        /// <param name="path">A file system path.</param>
+        /// <returns>True if the path is a network path.</returns>
+        internal static bool WinPathIsNetworkPath(string path)
             {
                 if (string.IsNullOrEmpty(path))
                 {
@@ -7152,33 +7089,17 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
-                if (!_WNetApiAvailable)
+                if (path.Length > 1 && path[1] == ':' && char.IsAsciiLetter(path[0]))
                 {
-                    return false;
-                }
-
-                // 0 - 25 corresponding to 'A' - 'Z'
-                int driveId = PathGetDriveNumber(path);
-                if (driveId >= 0 && driveId < 26)
-                {
-                    string driveName = (char)('A' + driveId) + ":";
-
-                    int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
-                    StringBuilder uncBuffer = new StringBuilder(bufferSize);
+                    // path[0] is ASCII letter, e.g. is in 'A'-'Z' or 'a'-'z'.
                     int errorCode = -1;
-                    try
-                    {
-                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                    }
-                    catch (System.DllNotFoundException)
-                    {
-                        _WNetApiAvailable = false;
-                        return false;
-                    }
+                    errorCode = Interop.Windows.GetUNCForNetworkDrive(path[0], out string _);
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
-                    if (errorCode == 0 || errorCode == 1201 || errorCode == 31)
+                    if (errorCode == Interop.Windows.ERROR_SUCCESS ||
+                        errorCode == Interop.Windows.ERROR_CONNECTION_UNAVAIL ||
+                        errorCode == Interop.Windows.ERROR_GEN_FAILURE)
                     {
                         return true;
                     }
@@ -7186,19 +7107,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return false;
             }
-#else
-            /// <summary>
-            /// Facilitates to validate if the supplied path exists locally or on the network share.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed.
-            /// </param>
-            /// <returns>True if the path is a network path or else returns false.</returns>
-            [LibraryImport("shlwapi.dll", EntryPoint = "PathIsNetworkPathW", StringMarshalling = StringMarshalling.Utf16)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static partial bool PathIsNetworkPath(string path);
 #endif
-        }
 
         /// <summary>
         /// Managed equivalent of NETRESOURCE structure of WNet API.
