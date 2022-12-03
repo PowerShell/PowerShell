@@ -1440,14 +1440,7 @@ namespace Microsoft.PowerShell.Commands
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
                     // If the status code is 429 get the retry interval from the Headers.
-                    if ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out var retryAfter)) 
-                    {
-                        WebSession.RetryIntervalInSeconds = Convert.ToInt32(retryAfter);
-                    }
-                    else
-                    {
-                        WebSession.RetryIntervalInSeconds = RetryIntervalSec;
-                    }
+                    WebSession.RetryIntervalInSeconds = ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out var retryAfter)) ? Convert.ToInt32(retryAfter) : RetryIntervalSec;
 
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
