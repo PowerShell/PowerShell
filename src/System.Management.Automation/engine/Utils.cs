@@ -482,17 +482,9 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase()
         {
-            // Use the location of SMA.dll as the application base.
+            // Use the location of SMA.dll as the application base or fallback to process home.
             Assembly assembly = typeof(PSObject).Assembly;
-            string applicationBase = Path.GetDirectoryName(assembly.Location);
-            if (string.IsNullOrEmpty(applicationBase))
-            {
-                // This can happen if PowerShell is hosted in a native host
-                // so we fallback to using location of the host.
-                applicationBase = AppContext.BaseDirectory;
-            }
-
-            return applicationBase;
+            return Path.GetDirectoryName(assembly.Location) ?? AppContext.BaseDirectory;
         }
 
         private static string[] s_productFolderDirectories;
