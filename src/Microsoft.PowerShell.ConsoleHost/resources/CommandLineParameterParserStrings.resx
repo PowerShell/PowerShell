@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command or -EncodedCommand.</value>
+    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
     <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
