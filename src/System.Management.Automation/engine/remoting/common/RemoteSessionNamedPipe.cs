@@ -265,15 +265,6 @@ namespace System.Management.Automation.Remoting
             return securityAttributes;
         }
 
-        [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        internal static extern SafePipeHandle CreateFile(
-              string lpFileName,
-              uint dwDesiredAccess,
-              uint dwShareMode,
-              IntPtr SecurityAttributes,
-              uint dwCreationDisposition,
-              uint dwFlagsAndAttributes,
-              IntPtr hTemplateFile);
         #endregion
     }
 
@@ -1285,43 +1276,36 @@ namespace System.Management.Automation.Remoting
             //
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
-            SafePipeHandle pipeHandle = null;
+            SafeFileHandle sf = null;
 
             do
             {
-                // Get handle to pipe.
-                pipeHandle = NamedPipeNative.CreateFile(
-                    lpFileName: PipeName,
-                    dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                    dwShareMode: 0,
-                    SecurityAttributes: IntPtr.Zero,
-                    dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
-                    dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED,
-                    hTemplateFile: IntPtr.Zero);
+                try
+                {
+                    sf = File.OpenHandle(PipeName, FileMode.Open, FileAccess.ReadWrite, FileShare.None, FileOptions.Asynchronous);
+                }
+                catch (FileNotFoundException)
+                {
+                    elapsedTime = unchecked(Environment.TickCount - startTime);
+                    Thread.Sleep(100);
+                    continue;
+                }
+                catch (Exception exc)
+                {
+                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotConnectContainerNamedPipe, exc.HResult), exc);
+                }
 
-                int lastError = Marshal.GetLastWin32Error();
-                if (pipeHandle.IsInvalid)
-                {
-                    if (lastError == NamedPipeNative.ERROR_FILE_NOT_FOUND)
-                    {
-                        elapsedTime = unchecked(Environment.TickCount - startTime);
-                        Thread.Sleep(100);
-                        continue;
-                    }
-                    else
-                    {
-                        throw new PSInvalidOperationException(
-                            StringUtil.Format(RemotingErrorIdStrings.CannotConnectContainerNamedPipe, lastError));
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                break;
             } while (elapsedTime < timeout);
 
+            ArgumentNullException.ThrowIfNull(sf);
+
+            bool gotRef = false;
+            SafePipeHandle pipeHandle = null;
             try
             {
+                sf.DangerousAddRef(ref gotRef);
+                pipeHandle = new SafePipeHandle(sf.DangerousGetHandle(), ownsHandle: true);
                 return new NamedPipeClientStream(
                     PipeDirection.InOut,
                     true,
@@ -1330,8 +1314,13 @@ namespace System.Management.Automation.Remoting
             }
             catch (Exception)
             {
-                pipeHandle.Dispose();
+                sf?.DangerousRelease();
+                pipeHandle?.Dispose();
                 throw;
+            }
+            finally
+            {
+                sf?.Dispose();
             }
         }
 
