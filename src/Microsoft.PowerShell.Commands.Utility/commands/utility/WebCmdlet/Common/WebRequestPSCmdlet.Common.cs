@@ -1439,18 +1439,18 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Only set retry interval if MaximumRetryCount is specified, if
                     // the status code is 429 get the retry interval from the Headers.
-                    WebSession.RetryIntervalInSeconds = ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out IEnumerable<string> retryAfter)) ? Convert.ToInt32(retryAfter.FirstOrDefault(RetryIntervalSec.ToString())) : RetryIntervalSec;
+                    int RetryIntervalInSeconds = ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out IEnumerable<string> retryAfter)) ? Convert.ToInt32(retryAfter.FirstOrDefault(RetryIntervalSec.ToString())) : RetryIntervalSec;
 
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
-                        WebSession.RetryIntervalInSeconds,
+                        RetryIntervalInSeconds,
                         response.StatusCode);
 
                     WriteVerbose(retryMessage);
 
                     _cancelToken = new CancellationTokenSource();
-                    Task.Delay(WebSession.RetryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    Task.Delay(RetryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
