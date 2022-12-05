@@ -17,7 +17,7 @@ internal static partial class Interop
         internal const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
 
         [StructLayout(LayoutKind.Sequential)]
-        internal unsafe struct NetResource
+        internal unsafe struct NETRESOURCEW
         {
             public int Scope;
             public int Type;
@@ -30,7 +30,7 @@ internal static partial class Interop
         }
 
         [LibraryImport("mpr.dll", EntryPoint = "WNetAddConnection2W", StringMarshalling = StringMarshalling.Utf16)]
-        internal static partial int WNetAddConnection2(ref NetResource netResource, byte[] password, string userName, int flags);
+        internal static partial int WNetAddConnection2(ref NETRESOURCEW netResource, byte[] password, string userName, int flags);
 
         internal static unsafe int WNetAddConnection2(string localName, string remoteName, byte[] password, string userName, int connectType)
         {
@@ -44,7 +44,7 @@ internal static partial class Interop
             fixed (char* pinnedLocalName = localName)
             fixed (char* pinnedRemoteName = remoteName)
             {
-                NetResource resource = new NetResource()
+                NETRESOURCEW resource = new NETRESOURCEW()
                 {
                     Comment = null,
                     DisplayType = RESOURCEDISPLAYTYPE_GENERIC,
