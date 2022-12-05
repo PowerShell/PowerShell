@@ -36,7 +36,7 @@ internal static partial class Interop
         {
             if (s_WNetApiNotAvailable)
             {
-                return ERROR_NO_NETWORK;
+                return ERROR_NOT_SUPPORTED;
             }
 
             int errorCode = ERROR_NO_NETWORK;
