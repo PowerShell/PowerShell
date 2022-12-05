@@ -528,7 +528,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // MapNetworkDrive facilitates to map the newly
                 // created PS Drive to a network share.
-                this.MapNetworkDrive(drive);
+                MapNetworkDrive(drive);
             }
 
             // The drive is valid if the item exists or the
@@ -587,35 +587,18 @@ namespace Microsoft.PowerShell.Commands
         /// MapNetworkDrive facilitates to map the newly created PS Drive to a network share.
         /// </summary>
         /// <param name="drive">The PSDrive info that would be used to create a new PS drive.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Can be static on Unix but not on Windows.")]
+
         private void MapNetworkDrive(PSDriveInfo drive)
         {
+#if UNIX
+            throw new PlatformNotSupportedException();
+#else
             // Porting note: mapped network drives are only supported on Windows
-            if (Platform.IsWindows)
-            {
-                WinMapNetworkDrive(drive);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-        }
-
-        private static bool _WNetApiAvailable = true;
-
-        private void WinMapNetworkDrive(PSDriveInfo drive)
-        {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
             {
-                const int CONNECT_UPDATE_PROFILE = 0x00000001;
-                const int CONNECT_NOPERSIST = 0x00000000;
-                const int RESOURCE_GLOBALNET = 0x00000002;
-                const int RESOURCETYPE_ANY = 0x00000000;
-                const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
-                const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
-                const int ERROR_NO_NETWORK = 1222;
-
                 // By default the connection is not persisted.
-                int CONNECT_TYPE = CONNECT_NOPERSIST;
+                int connectType = Interop.Windows.CONNECT_NOPERSIST;
 
                 string driveName = null;
                 byte[] passwd = null;
@@ -625,13 +608,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (IsSupportedDriveForPersistence(drive))
                     {
-                        CONNECT_TYPE = CONNECT_UPDATE_PROFILE;
+                        connectType = Interop.Windows.CONNECT_UPDATE_PROFILE;
                         driveName = drive.Name + ":";
                         drive.DisplayRoot = drive.Root;
                     }
                     else
                     {
-                        // error.
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.InvalidDriveName), "DriveNameNotSupportedForPersistence", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
@@ -647,37 +629,15 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    NetResource resource = new NetResource();
-                    resource.Comment = null;
-                    resource.DisplayType = RESOURCEDISPLAYTYPE_GENERIC;
-                    resource.LocalName = driveName;
-                    resource.Provider = null;
-                    resource.RemoteName = drive.Root;
-                    resource.Scope = RESOURCE_GLOBALNET;
-                    resource.Type = RESOURCETYPE_ANY;
-                    resource.Usage = RESOURCEUSAGE_CONNECTABLE;
+                    int errorCode = Interop.Windows.WNetAddConnection2(driveName, drive.Root, passwd, userName, connectType);
 
-                    int code = ERROR_NO_NETWORK;
-
-                    if (_WNetApiAvailable)
+                    if (errorCode != Interop.Windows.ERROR_SUCCESS)
                     {
-                        try
-                        {
-                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
-                        }
-                        catch (System.DllNotFoundException)
-                        {
-                            _WNetApiAvailable = false;
-                        }
-                    }
-
-                    if (code != 0)
-                    {
-                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(errorCode), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
 
-                    if (CONNECT_TYPE == CONNECT_UPDATE_PROFILE)
+                    if (connectType == Interop.Windows.CONNECT_UPDATE_PROFILE)
                     {
                         // Update the current PSDrive to be a persisted drive.
                         drive.IsNetworkDrive = true;
@@ -692,10 +652,11 @@ namespace Microsoft.PowerShell.Commands
                     // Clear the password in the memory.
                     if (passwd != null)
                     {
-                        Array.Clear(passwd, 0, passwd.Length - 1);
+                        Array.Clear(passwd);
                     }
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -727,15 +688,12 @@ namespace Microsoft.PowerShell.Commands
 #else
             if (IsNetworkMappedDrive(drive))
             {
-                const int CONNECT_UPDATE_PROFILE = 0x00000001;
-                const int ERROR_NO_NETWORK = 1222;
-
-                int flags = 0;
+                int flags = Interop.Windows.CONNECT_NOPERSIST;
                 string driveName;
                 if (drive.IsNetworkDrive)
                 {
                     // Here we are removing only persisted network drives.
-                    flags = CONNECT_UPDATE_PROFILE;
+                    flags = Interop.Windows.CONNECT_UPDATE_PROFILE;
                     driveName = drive.Name + ":";
                 }
                 else
@@ -746,23 +704,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = ERROR_NO_NETWORK;
+                int errorCode = Interop.Windows.WNetCancelConnection2(driveName, flags, force: true);
 
-                if (_WNetApiAvailable)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
-                    try
-                    {
-                        code = Interop.Windows.WNetCancelConnection2(driveName, flags, true);
-                    }
-                    catch (System.DllNotFoundException)
-                    {
-                        _WNetApiAvailable = false;
-                    }
-                }
-
-                if (code != 0)
-                {
-                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(errorCode), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
                     ThrowTerminatingError(er);
                 }
             }
@@ -806,13 +752,6 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return driveName;
 #else
-            return WinGetUNCForNetworkDrive(driveName);
-#endif
-        }
-
-#if !UNIX
-        private static string WinGetUNCForNetworkDrive(string driveName)
-        {
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
@@ -825,8 +764,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return uncPath;
-        }
 #endif
+        }
 
         /// <summary>
         /// Get the substituted path of a NetWork type MS-DOS device that is created by 'subst' command.
@@ -7041,35 +6980,6 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
-        private static partial class NativeMethods
-        {
-            /// <summary>
-            /// WNetAddConnection2 API makes a connection to a network resource
-            /// and can redirect a local device to the network resource.
-            /// This API simulates the "new Use" functionality used to connect to
-            /// network resource.
-            /// </summary>
-            /// <param name="netResource">
-            /// The netResource structure contains information
-            /// about a network resource.</param>
-            /// <param name="password">
-            /// The password used to get connected to network resource.
-            /// </param>
-            /// <param name="username">
-            /// The username used to get connected to network resource.
-            /// </param>
-            /// <param name="flags">
-            /// The flags parameter is used to indicate if the created network
-            /// resource has to be persisted or not.
-            /// </param>
-            /// <returns>If connection is established to the network resource
-            /// then success is returned or else the error code describing the
-            /// type of failure that occurred while establishing
-            /// the connection is returned.</returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
-        }
-
 #if !UNIX
         /// <summary>
         /// The API 'PathIsNetworkPath' is not available in CoreSystem.
@@ -7092,8 +7002,7 @@ namespace Microsoft.PowerShell.Commands
                 if (path.Length > 1 && path[1] == ':' && char.IsAsciiLetter(path[0]))
                 {
                     // path[0] is ASCII letter, e.g. is in 'A'-'Z' or 'a'-'z'.
-                    int errorCode = -1;
-                    errorCode = Interop.Windows.GetUNCForNetworkDrive(path[0], out string _);
+                    int errorCode = Interop.Windows.GetUNCForNetworkDrive(path[0], out string _);
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
@@ -7108,30 +7017,6 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 #endif
-
-        /// <summary>
-        /// Managed equivalent of NETRESOURCE structure of WNet API.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        private struct NetResource
-        {
-            public int Scope;
-            public int Type;
-            public int DisplayType;
-            public int Usage;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string LocalName;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string RemoteName;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string Comment;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string Provider;
-        }
 
         #region InodeTracker
         /// <summary>

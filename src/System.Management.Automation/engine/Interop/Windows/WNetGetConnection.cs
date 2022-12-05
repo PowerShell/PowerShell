@@ -38,7 +38,7 @@ internal static partial class Interop
             // to the assembly.
             ReadOnlySpan<ushort> driveName = stackalloc ushort[] { drive, ':', '\0' };
             Span<ushort> uncBuffer = stackalloc ushort[(int)bufferSize];
-            int errorCode;
+            int errorCode = ERROR_NO_NETWORK;
 
             try
             {
