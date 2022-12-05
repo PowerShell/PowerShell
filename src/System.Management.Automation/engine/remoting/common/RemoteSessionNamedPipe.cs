@@ -190,26 +190,6 @@ namespace System.Management.Automation.Remoting
         internal const uint ERROR_IO_INCOMPLETE = 996;
         internal const uint ERROR_IO_PENDING = 997;
 
-        // File function constants
-        internal const uint GENERIC_READ = 0x80000000;
-        internal const uint GENERIC_WRITE = 0x40000000;
-        internal const uint GENERIC_EXECUTE = 0x20000000;
-        internal const uint GENERIC_ALL = 0x10000000;
-
-        internal const uint CREATE_NEW = 1;
-        internal const uint CREATE_ALWAYS = 2;
-        internal const uint OPEN_EXISTING = 3;
-        internal const uint OPEN_ALWAYS = 4;
-        internal const uint TRUNCATE_EXISTING = 5;
-
-        internal const uint SECURITY_IMPERSONATIONLEVEL_ANONYMOUS = 0;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFICATION = 1;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_IMPERSONATION = 2;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_DELEGATION = 3;
-
-        // Infinite timeout
-        internal const uint INFINITE = 0xFFFFFFFF;
-
         #endregion
 
         #region Data structures
