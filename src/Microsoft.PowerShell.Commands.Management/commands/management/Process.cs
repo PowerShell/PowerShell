@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                         }
                     }
-                    catch (PipelineStoppedException) 
+                    catch (PipelineStoppedException)
                     {
                         throw;
                     }
@@ -2261,12 +2261,12 @@ namespace Microsoft.PowerShell.Commands
             writer.Dispose();
         }
 #else
-        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, uint dwCreationDisposition)
+        private SafeFileHandle GetSafeFileHandleForRedirection(string redirectionPath, uint dwCreationDisposition)
         {
             System.IntPtr hFileHandle = System.IntPtr.Zero;
             ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new();
 
-            hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
+            hFileHandle = ProcessNativeMethods.CreateFileW(redirectionPath,
                 ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
                 ProcessNativeMethods.FILE_SHARE_WRITE | ProcessNativeMethods.FILE_SHARE_READ,
                 lpSecurityAttributes,
