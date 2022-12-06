@@ -8177,10 +8177,10 @@ namespace System.Management.Automation.Internal
             }
 
             var resultPath = $"{path}:{streamName}";
-            SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
-
+            SafeFileHandle handle = File.OpenHandle(resultPath, mode, access, share, (FileOptions)0);
             if (handle.IsInvalid)
             {
+                handle.Dispose();
                 stream = null;
                 return false;
             }
