@@ -237,21 +237,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int MaximumRedirection
-        {
-            get { return _maximumRedirection; }
-
-            set { _maximumRedirection = value; }
-        }
-
-        private int _maximumRedirection = -1;
+        public virtual int MaximumRedirection { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int MaximumRetryCount { get; set; }
+        public virtual int MaximumRetryCount { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
