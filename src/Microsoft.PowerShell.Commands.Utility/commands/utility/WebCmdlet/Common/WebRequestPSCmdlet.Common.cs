@@ -685,7 +685,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            //will be removed after merging #18717
+            
+            // will be removed after merging #18717
             // only set retry interval if retry count is set.
             WebSession.RetryIntervalInSeconds = RetryIntervalSec;
         }
