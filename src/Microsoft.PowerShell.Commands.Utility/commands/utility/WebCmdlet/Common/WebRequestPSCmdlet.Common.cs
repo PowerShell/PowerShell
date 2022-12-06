@@ -237,14 +237,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int MaximumRedirection
-        {
-            get { return _maximumRedirection; }
-
-            set { _maximumRedirection = value; }
-        }
-
-        private int _maximumRedirection = -1;
+        public virtual int MaximumRedirection { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
@@ -685,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            
+
             // will be removed after merging #18717
             // only set retry interval if retry count is set.
             WebSession.RetryIntervalInSeconds = RetryIntervalSec;
