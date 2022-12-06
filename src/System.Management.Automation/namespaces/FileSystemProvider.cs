@@ -62,6 +62,9 @@ namespace Microsoft.PowerShell.Commands
         // to copy an item onto itself.
         private const string SelfCopyDataKey = "SelfCopy";
 
+        private const int DIRACTIVITYID = 0;
+        private const int FILEACTIVITYID = 1;
+
         /// <summary>
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemProvider" as the category.
@@ -3732,6 +3735,17 @@ namespace Microsoft.PowerShell.Commands
                         files = directory.EnumerateFiles(Filter);
                     }
 
+                    int total = files.Count();
+                    int current = 0;
+
+                    ProgressRecord progress = new ProgressRecord(
+                        DIRACTIVITYID,
+                        string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyDirActivity, directory.Name),
+                        " "
+                    );
+                    progress.PercentComplete = 0;
+                    progress.RecordType = ProgressRecordType.Processing;
+
                     foreach (FileInfo file in files)
                     {
                         // Making sure to obey the StopProcessing.
@@ -3742,6 +3756,15 @@ namespace Microsoft.PowerShell.Commands
 
                         if (file != null)
                         {
+                            progress.StatusDescription = string.Format(
+                                CultureInfo.InvariantCulture,
+                                FileSystemProviderStrings.CopyItemStatusDescription,
+                                file.Name,
+                                destination
+                            );
+                            progress.PercentComplete = (int)(((double)current / total) * 100);
+                            WriteProgress(progress);
+
                             try
                             {
                                 // CopyFileInfoItem does the WriteItemObject for the new FileInfo
@@ -3761,7 +3784,11 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(accessException, "CopyDirectoryInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                             }
                         }
+
+                        current++;
                     }
+
+                    progress.PercentComplete = 0;
 
                     // Now copy all the directories to that directory
                     foreach (DirectoryInfo childDir in directory.EnumerateDirectories())
@@ -3774,6 +3801,9 @@ namespace Microsoft.PowerShell.Commands
 
                         if (childDir != null)
                         {
+                            progress.Activity = string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyDirActivity, childDir.Name);
+                            WriteProgress(progress);
+
                             try
                             {
                                 CopyDirectoryInfoItem(childDir, destination, recurse, force, ps);
@@ -3793,6 +3823,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
+                    progress.RecordType = ProgressRecordType.Completed;
+                    WriteProgress(progress);
                 }
             }
         }
@@ -3839,8 +3872,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ShouldProcess(resource, action))
                 {
+                    var progress = new ProgressRecord(
+                        FILEACTIVITYID,
+                        string.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyFileActivity, file.Name),
+                        " "
+                    );
+                    progress.RecordType = ProgressRecordType.Processing;
+                    progress.PercentComplete = 0;
+
                     try
                     {
+                        WriteProgress(progress);
+
                         if (ps == null)
                         {
                             // Now copy the file

@@ -336,4 +336,13 @@
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
     <value>Destination path cannot be a subdirectory of the source: {0}.</value>
   </data>
+  <data name="CopyFileActivity" xml:space="preserve">
+    <value>Copying file {0}</value>
+  </data>
+  <data name="CopyDirActivity" xml:space="preserve">
+    <value>Copying dir {0}</value>
+  </data>
+  <data name="CopyItemStatusDescription" xml:space="preserve">
+    <value>{0} to {1}</value>
+  </data>
 </root>
