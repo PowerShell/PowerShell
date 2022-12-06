@@ -657,11 +657,6 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.Proxy = webProxy;
             }
 
-            if (MaximumRedirection > -1)
-            {
-                WebSession.MaximumRedirection = MaximumRedirection;
-            }
-
             // store the other supplied headers
             if (Headers != null)
             {
@@ -1021,15 +1016,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 handler.AllowAutoRedirect = false;
             }
-            else if (WebSession.MaximumRedirection > -1)
+            else if (MaximumRedirection > -1)
             {
-                if (WebSession.MaximumRedirection == 0)
+                if (MaximumRedirection == 0)
                 {
                     handler.AllowAutoRedirect = false;
                 }
                 else
                 {
-                    handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
+                    handler.MaxAutomaticRedirections = MaximumRedirection;
                 }
             }
 
@@ -1364,9 +1359,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken = null;
 
                     // if explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
+                    if (MaximumRedirection > 0)
                     {
-                        WebSession.MaximumRedirection--;
+                        MaximumRedirection--;
                     }
                     // For selected redirects that used POST, GET must be used with the
                     // redirected Location.
@@ -1582,7 +1577,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                                if (MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
