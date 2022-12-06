@@ -1339,8 +1339,10 @@ namespace System.Management.Automation
     {
         static AmsiUtils()
         {
+#if !UNIX
             s_amsiInitFailed = !CheckAmsiInit();
             PSEtwLog.LogAmsiInitEvent("init-" + s_amsiInitFailed.ToString(), s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
+#endif
         }
 
         internal static int Init()
