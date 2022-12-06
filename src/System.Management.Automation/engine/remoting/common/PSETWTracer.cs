@@ -241,7 +241,7 @@ namespace System.Management.Automation.Internal
         ScheduledJob = 0x6E,
         NamedPipe = 0x6F,
         ISEOperation = 0x78,
-        Amsi = 82
+        Amsi = 0X82
     }
 
     /// <summary>
