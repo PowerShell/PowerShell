@@ -140,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         encodingVerboseName = encoding.EncodingName;
                     }
+
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Format
                     (
@@ -238,7 +239,8 @@ namespace Microsoft.PowerShell.Commands
                 if (isRssOrFeed)
                 {
                     XmlDocument workingDocument = new();
-                    // performing a Read() here to avoid rrechecking
+
+                    // Performing a Read() here to avoid rechecking
                     // "rss" or "feed" items
                     reader.Read();
                     while (!reader.EOF)
@@ -249,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
                              string.Equals("Entry", reader.Name, StringComparison.OrdinalIgnoreCase))
                            )
                         {
-                            // this one will do reader.Read() internally
+                            // This one will do reader.Read() internally
                             XmlNode result = workingDocument.ReadNode(reader);
                             WriteObject(result);
                         }
