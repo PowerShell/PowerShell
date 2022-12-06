@@ -124,7 +124,16 @@ namespace System.Management.Automation.Tracing
                     }
                     else
                     {
-                        payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandName, newState.ToString()));
+                        if (newState == CommandState.Stopped ||
+                            newState == CommandState.Terminated)
+                        {
+                            payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandName, newState.ToString()));
+                        }
+                        else
+                        {
+                            // log the comandline on start to get the arguments
+                            payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandLine, newState.ToString()));
+                        }
                     }
                 }
 
@@ -180,6 +189,16 @@ namespace System.Management.Automation.Tracing
             AppendAdditionalInfo(payload, additionalInfo);
 
             WriteEvent(PSEventId.Provider_Health, PSChannel.Operational, PSOpcode.Exception, PSTask.ExecutePipeline, logContext, payload.ToString());
+        }
+
+        /// <summary>
+        /// Provider interface function for logging provider health event.
+        /// </summary>
+        /// <param name="InitFailed"></param>
+        /// <param name="context"></param>
+        internal override void LogAmsiInitEvent(string InitFailed, string context)
+        {
+            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, InitFailed, context);
         }
 
         /// <summary>
