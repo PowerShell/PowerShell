@@ -83,6 +83,103 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Parameters
 
+        #region Virtual Method Overrides
+
+        /// <summary>
+        /// Process the web response and output corresponding objects.
+        /// </summary>
+        /// <param name="response"></param>
+        internal override void ProcessResponse(HttpResponseMessage response)
+        {
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
+
+            var baseResponseStream = StreamHelper.GetResponseStream(response);
+
+            if (ShouldWriteToPipeline)
+            {
+                using var responseStream = new BufferingStreamReader(baseResponseStream);
+
+                // First see if it is an RSS / ATOM feed, in which case we can
+                // stream it - unless the user has overridden it with a return type of "XML"
+                if (TryProcessFeedStream(responseStream))
+                {
+                    // Do nothing, content has been processed.
+                }
+                else
+                {
+                    // determine the response type
+                    RestReturnType returnType = CheckReturnType(response);
+
+                    // Try to get the response encoding from the ContentType header.
+                    Encoding encoding = null;
+                    string charSet = response.Content.Headers.ContentType?.CharSet;
+                    if (!string.IsNullOrEmpty(charSet))
+                    {
+                        StreamHelper.TryGetEncoding(charSet, out encoding);
+                    }
+
+                    object obj = null;
+                    Exception ex = null;
+
+                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
+
+                    string encodingVerboseName;
+                    try
+                    {
+                        encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
+                    }
+                    catch (NotSupportedException)
+                    {
+                        encodingVerboseName = encoding.EncodingName;
+                    }
+                    // NOTE: Tests use this verbose output to verify the encoding.
+                    WriteVerbose(string.Format
+                    (
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "Content encoding: {0}",
+                        encodingVerboseName)
+                    );
+                    bool convertSuccess = false;
+
+                    if (returnType == RestReturnType.Json)
+                    {
+                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                    }
+                    // default to try xml first since it's more common
+                    else
+                    {
+                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
+                    }
+
+                    if (!convertSuccess)
+                    {
+                        // fallback to string
+                        obj = str;
+                    }
+
+                    WriteObject(obj);
+                }
+            }
+            else if (ShouldSaveToOutFile)
+            {
+                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+            }
+
+            if (!string.IsNullOrEmpty(StatusCodeVariable))
+            {
+                PSVariableIntrinsics vi = SessionState.PSVariable;
+                vi.Set(StatusCodeVariable, (int)response.StatusCode);
+            }
+
+            if (!string.IsNullOrEmpty(ResponseHeadersVariable))
+            {
+                PSVariableIntrinsics vi = SessionState.PSVariable;
+                vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));
+            }
+        }
+
+        #endregion Virtual Method Overrides
+        
         #region Helper Methods
 
         private static RestReturnType CheckReturnType(HttpResponseMessage response)
@@ -380,101 +477,6 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
     public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
-        #region Virtual Method Overrides
 
-        /// <summary>
-        /// Process the web response and output corresponding objects.
-        /// </summary>
-        /// <param name="response"></param>
-        internal override void ProcessResponse(HttpResponseMessage response)
-        {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
-
-            var baseResponseStream = StreamHelper.GetResponseStream(response);
-
-            if (ShouldWriteToPipeline)
-            {
-                using var responseStream = new BufferingStreamReader(baseResponseStream);
-
-                // First see if it is an RSS / ATOM feed, in which case we can
-                // stream it - unless the user has overridden it with a return type of "XML"
-                if (TryProcessFeedStream(responseStream))
-                {
-                    // Do nothing, content has been processed.
-                }
-                else
-                {
-                    // determine the response type
-                    RestReturnType returnType = CheckReturnType(response);
-
-                    // Try to get the response encoding from the ContentType header.
-                    Encoding encoding = null;
-                    string charSet = response.Content.Headers.ContentType?.CharSet;
-                    if (!string.IsNullOrEmpty(charSet))
-                    {
-                        StreamHelper.TryGetEncoding(charSet, out encoding);
-                    }
-
-                    object obj = null;
-                    Exception ex = null;
-
-                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
-
-                    string encodingVerboseName;
-                    try
-                    {
-                        encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
-                    }
-                    catch (NotSupportedException)
-                    {
-                        encodingVerboseName = encoding.EncodingName;
-                    }
-                    // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Format
-                    (
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        "Content encoding: {0}",
-                        encodingVerboseName)
-                    );
-                    bool convertSuccess = false;
-
-                    if (returnType == RestReturnType.Json)
-                    {
-                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
-                    }
-                    // default to try xml first since it's more common
-                    else
-                    {
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
-                    }
-
-                    if (!convertSuccess)
-                    {
-                        // fallback to string
-                        obj = str;
-                    }
-
-                    WriteObject(obj);
-                }
-            }
-            else if (ShouldSaveToOutFile)
-            {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
-            }
-
-            if (!string.IsNullOrEmpty(StatusCodeVariable))
-            {
-                PSVariableIntrinsics vi = SessionState.PSVariable;
-                vi.Set(StatusCodeVariable, (int)response.StatusCode);
-            }
-
-            if (!string.IsNullOrEmpty(ResponseHeadersVariable))
-            {
-                PSVariableIntrinsics vi = SessionState.PSVariable;
-                vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));
-            }
-        }
-
-        #endregion Virtual Method Overrides
     }
 }
