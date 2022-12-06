@@ -655,33 +655,18 @@ namespace Microsoft.PowerShell.Commands
 
         #region Helper Properties
 
-        internal string QualifiedOutFile
-        {
-            get { return QualifyFilePath(OutFile); }
-        }
+        internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
-        internal bool ShouldSaveToOutFile
-        {
-            get { return !string.IsNullOrEmpty(OutFile); }
-        }
+        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
 
-        internal bool ShouldWriteToPipeline
-        {
-            get { return (!ShouldSaveToOutFile || PassThru); }
-        }
+        internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
 
-        internal bool ShouldCheckHttpStatus
-        {
-            get { return !SkipHttpErrorCheck; }
-        }
+        internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
         /// <summary>
         /// Determines whether writing to a file should Resume and append rather than overwrite.
         /// </summary>
-        internal bool ShouldResume
-        {
-            get { return (Resume.IsPresent && _resumeSuccess); }
-        }
+        internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
 
         #endregion Helper Properties
 
