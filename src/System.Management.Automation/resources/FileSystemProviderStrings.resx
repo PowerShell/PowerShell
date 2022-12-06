@@ -339,4 +339,13 @@
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
     <value>The target and path cannot be the same.</value>
   </data>
+  <data name="CopyingLocalFileActivity" xml:space="preserve">
+    <value>Copying {0} files</value>
+  </data>
+  <data name="CopyingLocalBytesStatus" xml:space="preserve">
+    <value>{0} MB of {1} MB</value>
+  </data>
+  <data name="CollectingTotalActivity" xml:space="preserve">
+    <value>Collecting total files</value>
+  </data>
 </root>

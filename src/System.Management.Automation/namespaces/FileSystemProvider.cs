@@ -58,6 +58,8 @@ namespace Microsoft.PowerShell.Commands
         // copy script will accommodate the new value.
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
+        private const int COPY_FILE_ACTIVITY_ID = 0;
+
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
         private const string SelfCopyDataKey = "SelfCopy";
@@ -3548,12 +3550,77 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else // Copy-Item local
                 {
+                    var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
+                    if (Context != null)
+                    {
+                        if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.ToString()).Value is ActionPreference progressPreference)
+                        {
+                            if (progressPreference == ActionPreference.Continue)
+                            {
+                                progress.Activity = FileSystemProviderStrings.CollectingTotalActivity;
+                                progress.PercentComplete = 0;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                                GetTotalFiles(path, recurse);
+                            }
+                        }
+                    }
+
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
+                    if (_totalFiles > 0)
+                    {
+                        progress.RecordType = ProgressRecordType.Completed;
+                        WriteProgress(progress);
+                    }
                 }
             }
 
             _excludeMatcher.Clear();
             _excludeMatcher = null;
+        }
+
+        private void GetTotalFiles(string path, bool recurse)
+        {
+            bool isContainer = IsItemContainer(path);
+
+            try
+            {
+                if (isContainer)
+                {
+                    var dir = new DirectoryInfo(path);
+                    foreach (var file in dir.EnumerateFiles())
+                    {
+                        _totalFiles++;
+                        _totalBytes += file.Length;
+                    }
+                }
+                else
+                {
+                    var file = new FileInfo(path);
+                    _totalFiles++;
+                    _totalBytes += file.Length;
+                }
+            }
+            catch
+            {
+                // ignore exception
+            }
+
+            if (recurse && isContainer)
+            {
+                try
+                {
+                    var dir = new DirectoryInfo(path);
+                    foreach (var subDir in dir.EnumerateDirectories())
+                    {
+                        GetTotalFiles(subDir.FullName, recurse);
+                    }
+                }
+                catch
+                {
+                    // ignore exception
+                }
+            }
         }
 
         private void CopyItemFromRemoteSession(string path, string destinationPath, bool recurse, bool force, PSSession fromSession)
@@ -3864,6 +3931,20 @@ namespace Microsoft.PowerShell.Commands
 
                             FileInfo result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
+
+                            if (_totalFiles > 0)
+                            {
+                                _copiedFiles++;
+                                _copiedBytes += file.Length;
+                                var progress = new ProgressRecord(
+                                    COPY_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _totalFiles - _copiedFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, _copiedBytes / 1024 / 1024, _totalBytes / 1024 / 1024)
+                                );
+                                progress.PercentComplete = (int)((_copiedBytes * 100) / _totalBytes);
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                            }
                         }
                         else
                         {
@@ -4787,6 +4868,11 @@ namespace Microsoft.PowerShell.Commands
 
             return pathIsReservedDeviceName;
         }
+
+        private long _totalFiles = 0;
+        private long _totalBytes = 0;
+        private long _copiedFiles = 0;
+        private long _copiedBytes = 0;
 
         #endregion CopyItem
 
