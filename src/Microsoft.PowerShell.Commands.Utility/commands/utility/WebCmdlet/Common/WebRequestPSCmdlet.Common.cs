@@ -262,14 +262,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "StandardMethodNoProxy")]
-        public virtual WebRequestMethod Method
-        {
-            get { return _method; }
-
-            set { _method = value; }
-        }
-
-        private WebRequestMethod _method = WebRequestMethod.Default;
+        public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Default;
 
         /// <summary>
         /// Gets or sets the CustomMethod property.
@@ -278,14 +271,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod
-        {
-            get { return _customMethod; }
-
-            set { _customMethod = value; }
-        }
-
-        private string _customMethod;
+        public virtual string CustomMethod { get; set; }
 
         #endregion
 
