@@ -7506,29 +7506,6 @@ namespace Microsoft.PowerShell.Commands
 
         private const int MAX_PATH = 260;
 
-        [Flags]
-        // dwFlagsAndAttributes
-        internal enum FileAttributes : uint
-        {
-            Readonly = 0x00000001,
-            Hidden = 0x00000002,
-            System = 0x00000004,
-            Archive = 0x00000020,
-            Encrypted = 0x00004000,
-            Write_Through = 0x80000000,
-            Overlapped = 0x40000000,
-            NoBuffering = 0x20000000,
-            RandomAccess = 0x10000000,
-            SequentialScan = 0x08000000,
-            DeleteOnClose = 0x04000000,
-            BackupSemantics = 0x02000000,
-            PosixSemantics = 0x01000000,
-            OpenReparsePoint = 0x00200000,
-            OpenNoRecall = 0x00100000,
-            SessionAware = 0x00800000,
-            Normal = 0x00000080
-        }
-
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_SYMBOLICLINK
         {
@@ -7909,12 +7886,16 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            const FileAccess access = FileAccess.Read;
-            const FileShare share = FileShare.Read;
-            const FileMode creation = FileMode.Open;
-            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+            const int FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
+            SafeFileHandle sf = File.OpenHandle(
+                path,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read,
+                (FileOptions)(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_POSIX_SEMANTICS));
 
-            using (var sf = AlternateDataStreamUtilities.NativeMethods.CreateFile(path, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (sf)
             {
                 if (!sf.IsInvalid)
                 {
