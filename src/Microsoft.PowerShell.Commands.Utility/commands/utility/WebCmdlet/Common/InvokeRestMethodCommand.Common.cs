@@ -13,7 +13,15 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
-    public partial class InvokeRestMethodCommand
+    /// <summary>
+    /// The Invoke-RestMethod command
+    /// This command makes an HTTP or HTTPS request to a web service,
+    /// and returns the response in an appropriate way.
+    /// Intended to work against the wide spectrum of "RESTful" web services
+    /// currently deployed across the web.
+    /// </summary>
+    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
+    public class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
         #region Parameters
 
@@ -179,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Virtual Method Overrides
-        
+
         #region Helper Methods
 
         private static RestReturnType CheckReturnType(HttpResponseMessage response)
@@ -463,20 +471,5 @@ namespace Microsoft.PowerShell.Commands
                 throw new NotSupportedException();
             }
         }
-    }
-
-    // TODO: Merge Partials
-
-    /// <summary>
-    /// The Invoke-RestMethod command
-    /// This command makes an HTTP or HTTPS request to a web service,
-    /// and returns the response in an appropriate way.
-    /// Intended to work against the wide spectrum of "RESTful" web services
-    /// currently deployed across the web.
-    /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
-    public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
-    {
-
     }
 }
