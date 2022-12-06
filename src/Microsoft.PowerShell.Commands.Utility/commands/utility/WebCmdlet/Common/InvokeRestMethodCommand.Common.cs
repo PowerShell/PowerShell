@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 rt = RestReturnType.Xml;
             }
 
-            return (rt);
+            return rt;
         }
 
         private bool TryProcessFeedStream(Stream responseStream)
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                 doc = null;
             }
 
-            return (doc != null);
+            return doc != null;
         }
 
         private static bool TryConvertToJson(string json, out object obj, ref Exception exRef)
