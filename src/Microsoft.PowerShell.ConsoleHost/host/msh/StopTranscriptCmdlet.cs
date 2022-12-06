@@ -21,8 +21,10 @@ namespace Microsoft.PowerShell.Commands
         void
         BeginProcessing()
         {
-            if (!ShouldProcess(String.Empty))
+            if (!ShouldProcess(string.Empty))
+            {
                 return;
+            }
             try
             {
                 string outFilename = Host.UI.StopTranscribing();
