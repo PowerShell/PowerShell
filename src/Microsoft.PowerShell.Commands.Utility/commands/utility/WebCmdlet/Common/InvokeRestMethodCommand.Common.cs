@@ -142,12 +142,8 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Format
-                    (
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        "Content encoding: {0}",
-                        encodingVerboseName)
-                    );
+                    WriteVerbose(string.Format(System.Globalization.CultureInfo.InvariantCulture, "Content encoding: {0}", encodingVerboseName));
+                    
                     bool convertSuccess = false;
 
                     if (returnType == RestReturnType.Json)
@@ -412,7 +408,12 @@ namespace Microsoft.PowerShell.Commands
 
             private long _length;
 
-            public override long Position { get; set; } = _streamBuffer.Position;
+            public override long Position
+            {
+                get { return _streamBuffer.Position; }
+
+                set { _streamBuffer.Position = value; }
+            }
 
             public override int Read(byte[] buffer, int offset, int count)
             {
