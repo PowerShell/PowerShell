@@ -85,6 +85,28 @@ namespace Microsoft.PowerShell.Commands
 
         #region Helper Methods
 
+        private static RestReturnType CheckReturnType(HttpResponseMessage response)
+        {
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
+
+            RestReturnType rt = RestReturnType.Detect;
+            string contentType = ContentHelper.GetContentType(response);
+            if (string.IsNullOrEmpty(contentType))
+            {
+                rt = RestReturnType.Detect;
+            }
+            else if (ContentHelper.IsJson(contentType))
+            {
+                rt = RestReturnType.Json;
+            }
+            else if (ContentHelper.IsXml(contentType))
+            {
+                rt = RestReturnType.Xml;
+            }
+
+            return (rt);
+        }
+
         private bool TryProcessFeedStream(Stream responseStream)
         {
             bool isRssOrFeed = false;
@@ -226,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             return converted;
         }
 
-        #endregion
+        #endregion Helper Methods
 
         /// <summary>
         /// Enum for rest return type.
@@ -454,31 +476,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Virtual Method Overrides
-
-        #region Helper Methods
-
-        private static RestReturnType CheckReturnType(HttpResponseMessage response)
-        {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
-
-            RestReturnType rt = RestReturnType.Detect;
-            string contentType = ContentHelper.GetContentType(response);
-            if (string.IsNullOrEmpty(contentType))
-            {
-                rt = RestReturnType.Detect;
-            }
-            else if (ContentHelper.IsJson(contentType))
-            {
-                rt = RestReturnType.Json;
-            }
-            else if (ContentHelper.IsXml(contentType))
-            {
-                rt = RestReturnType.Xml;
-            }
-
-            return (rt);
-        }
-
-        #endregion Helper Methods
     }
 }
