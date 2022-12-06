@@ -10,8 +10,6 @@ internal static partial class Interop
     internal static unsafe partial class Windows
     {
         internal const int MAX_PREFERRED_LENGTH = -1;
-        internal const int NERR_Success = 0;
-        internal const int ERROR_MORE_DATA = 234;
         internal const int STYPE_DISKTREE = 0;
         internal const int STYPE_MASK = 0x000000FF;
 
