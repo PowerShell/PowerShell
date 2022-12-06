@@ -689,6 +689,9 @@ namespace Microsoft.PowerShell.Commands
             if (MaximumRetryCount > 0)
             {
                 WebSession.MaximumRetryCount = MaximumRetryCount;
+
+                // Only set retry interval if retry count is set.
+                WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
 
@@ -1436,8 +1439,7 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests == 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
-                    // Only set retry interval if MaximumRetryCount is specified, if
-                    // the status code is 429 get the retry interval from the Headers.
+                    // If the status code is 429 get the retry interval from the Headers.
                     int retryIntervalInSeconds;
                     if ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out IEnumerable<string> retryAfter)) 
                     {
@@ -1449,12 +1451,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch
                         {
-                            retryIntervalInSeconds = RetryIntervalSec;
+                            retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
                         }
                     }
                     else
                     {
-                        retryIntervalInSeconds = RetryIntervalSec;
+                        retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
                     }
                     
                     string retryMessage = string.Format(
