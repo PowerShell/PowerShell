@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
@@ -1439,8 +1438,25 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Only set retry interval if MaximumRetryCount is specified, if
                     // the status code is 429 get the retry interval from the Headers.
-                    int retryIntervalInSeconds = ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out IEnumerable<string> retryAfter)) ? Convert.ToInt32(retryAfter.FirstOrDefault(RetryIntervalSec.ToString())) : RetryIntervalSec;
-
+                    int retryIntervalInSeconds;
+                    if ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out IEnumerable<string> retryAfter)) 
+                    {
+                        try 
+                        {
+                            IEnumerator<string> enumerator = retryAfter.GetEnumerator();
+                            enumerator.MoveNext();
+                            retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                        }
+                        catch
+                        {
+                            retryIntervalInSeconds = RetryIntervalSec;
+                        }
+                    }
+                    else
+                    {
+                        retryIntervalInSeconds = RetryIntervalSec;
+                    }
+                    
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
