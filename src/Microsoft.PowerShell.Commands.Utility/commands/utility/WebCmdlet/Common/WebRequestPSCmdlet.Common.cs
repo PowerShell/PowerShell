@@ -1443,7 +1443,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if ((int)response.StatusCode == HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
                     {
                         try 
                         {
