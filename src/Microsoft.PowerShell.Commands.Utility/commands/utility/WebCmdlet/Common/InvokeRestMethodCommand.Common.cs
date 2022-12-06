@@ -265,20 +265,11 @@ namespace Microsoft.PowerShell.Commands
             private readonly MemoryStream _streamBuffer;
             private readonly byte[] _copyBuffer;
 
-            public override bool CanRead
-            {
-                get { return true; }
-            }
+            public override bool CanRead => true;
 
-            public override bool CanSeek
-            {
-                get { return true; }
-            }
+            public override bool CanSeek => true;
 
-            public override bool CanWrite
-            {
-                get { return false; }
-            }
+            public override bool CanWrite => false;
 
             public override void Flush()
             {
@@ -292,12 +283,7 @@ namespace Microsoft.PowerShell.Commands
 
             private long _length;
 
-            public override long Position
-            {
-                get { return _streamBuffer.Position; }
-
-                set { _streamBuffer.Position = value; }
-            }
+            public override long Position { get; set; } = _streamBuffer.Position;
 
             public override int Read(byte[] buffer, int offset, int count)
             {
