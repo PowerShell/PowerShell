@@ -685,14 +685,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            if (MaximumRetryCount > 0)
-            {
-                WebSession.MaximumRetryCount = MaximumRetryCount;
-
-                // only set retry interval if retry count is set.
-                WebSession.RetryIntervalInSeconds = RetryIntervalSec;
-            }
+            //will be removed after merging #18717
+            // only set retry interval if retry count is set.
+            WebSession.RetryIntervalInSeconds = RetryIntervalSec;
         }
 
         #endregion Virtual Methods
@@ -1346,7 +1341,7 @@ namespace Microsoft.PowerShell.Commands
             int intCode = (int)code;
             return
             (
-                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && MaximumRetryCount > 0
             );
         }
 
@@ -1357,7 +1352,7 @@ namespace Microsoft.PowerShell.Commands
             if (request == null) { throw new ArgumentNullException(nameof(request)); }
 
             // Add 1 to account for the first request.
-            int totalRequests = WebSession.MaximumRetryCount + 1;
+            int totalRequests = MaximumRetryCount + 1;
             HttpRequestMessage req = request;
             HttpResponseMessage response = null;
 
