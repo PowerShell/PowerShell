@@ -7859,13 +7859,24 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
         {
-            const FileAccess access = FileAccess.Read;
-            const FileShare share = FileShare.Read;
-            const FileMode creation = FileMode.Open;
-            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+            const int FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
+            SafeFileHandle sfOne = File.OpenHandle(
+                pathOne,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read,
+                (FileOptions)(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_POSIX_SEMANTICS));
 
-            using (var sfOne = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathOne, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
-            using (var sfTwo = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathTwo, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            SafeFileHandle sfTwo = File.OpenHandle(
+                pathTwo,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read,
+                (FileOptions)(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_POSIX_SEMANTICS));
+
+            using (sfOne)
+            using (sfTwo)
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
