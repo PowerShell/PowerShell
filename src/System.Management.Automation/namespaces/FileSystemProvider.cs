@@ -7507,37 +7507,6 @@ namespace Microsoft.PowerShell.Commands
         private const int MAX_PATH = 260;
 
         [Flags]
-        // dwDesiredAccess of CreateFile
-        internal enum FileDesiredAccess : uint
-        {
-            GenericZero = 0,
-            GenericRead = 0x80000000,
-            GenericWrite = 0x40000000,
-            GenericExecute = 0x20000000,
-            GenericAll = 0x10000000,
-        }
-
-        [Flags]
-        // dwShareMode of CreateFile
-        internal enum FileShareMode : uint
-        {
-            None = 0x00000000,
-            Read = 0x00000001,
-            Write = 0x00000002,
-            Delete = 0x00000004,
-        }
-
-        // dwCreationDisposition of CreateFile
-        internal enum FileCreationDisposition : uint
-        {
-            New = 1,
-            CreateAlways = 2,
-            OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5,
-        }
-
-        [Flags]
         // dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
@@ -7647,16 +7616,6 @@ namespace Microsoft.PowerShell.Commands
         private static partial bool GetFileInformationByHandle(
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
-
-        [LibraryImport(PinvokeDllNames.CreateFileDllName, EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        internal static partial IntPtr CreateFile(
-            string lpFileName,
-            FileDesiredAccess dwDesiredAccess,
-            FileShareMode dwShareMode,
-            IntPtr lpSecurityAttributes,
-            FileCreationDisposition dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
 
         /// <summary>
         /// Gets the target of the specified reparse point.
@@ -7870,30 +7829,18 @@ namespace Microsoft.PowerShell.Commands
             // only check for hard link if the item is not directory
             if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
-                IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
+                const int FILE_ATTRIBUTE_NORMAL = 0x80;
+                SafeFileHandle sf = File.OpenHandle(
                     fileInfo.FullName,
-                    InternalSymbolicLinkLinkCodeMethods.FileDesiredAccess.GenericRead,
-                    InternalSymbolicLinkLinkCodeMethods.FileShareMode.Read,
-                    IntPtr.Zero,
-                    InternalSymbolicLinkLinkCodeMethods.FileCreationDisposition.OpenExisting,
-                    InternalSymbolicLinkLinkCodeMethods.FileAttributes.Normal,
-                    IntPtr.Zero);
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    (FileOptions)FILE_ATTRIBUTE_NORMAL);
 
-                using (SafeFileHandle handle = new SafeFileHandle(nativeHandle, true))
+                using (sf)
                 {
-                    bool success = false;
-
-                    try
-                    {
-                        handle.DangerousAddRef(ref success);
-                        IntPtr dangerousHandle = handle.DangerousGetHandle();
-                        isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(ref dangerousHandle);
-                    }
-                    finally
-                    {
-                        if (success)
-                            handle.DangerousRelease();
-                    }
+                    IntPtr dangerousHandle = sf.DangerousGetHandle();
+                    isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(ref dangerousHandle);
                 }
             }
 
