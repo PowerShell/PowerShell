@@ -119,13 +119,13 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Provider interface function for logging Amsi init event.
+        /// Provider interface function for logging AmsiUtil State event.
         /// </summary>
-        /// <param name="InitFailed"></param>
+        /// <param name="State"></param>
         /// <param name="context"></param>
-        internal static void LogAmsiInitEvent(string InitFailed, string context)
+        internal static void LogAmsiUtilStateEvent(string State, string context)
         {
-            provider.LogAmsiInitEvent(InitFailed, context);
+            provider.LogAmsiUtilStateEvent(State, context);
         }
 
         /// <summary>

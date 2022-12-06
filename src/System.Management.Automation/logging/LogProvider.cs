@@ -103,11 +103,11 @@ namespace System.Management.Automation
         internal abstract void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue);
 
         /// <summary>
-        /// Provider interface function for logging provider health event.
+        /// Provider interface function for logging AmsiUtil State event.
         /// </summary>
-        /// <param name="InitFailed"></param>
+        /// <param name="State"></param>
         /// <param name="context"></param>
-        internal abstract void LogAmsiInitEvent(string InitFailed, string context);
+        internal abstract void LogAmsiUtilStateEvent(string State, string context);
 
         /// <summary>
         /// True if the log provider needs to use logging variables.
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="InitFailed"></param>
         /// <param name="context"></param>
-        internal override void LogAmsiInitEvent(string InitFailed, string context)
+        internal override void LogAmsiUtilStateEvent(string InitFailed, string context)
         {
         }
 

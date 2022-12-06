@@ -1341,7 +1341,7 @@ namespace System.Management.Automation
         {
 #if !UNIX
             s_amsiInitFailed = !CheckAmsiInit();
-            PSEtwLog.LogAmsiInitEvent("init-" + s_amsiInitFailed.ToString(), s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
+            PSEtwLog.LogAmsiUtilStateEvent("init-" + s_amsiInitFailed.ToString(), s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
 #endif
         }
 
@@ -1409,7 +1409,7 @@ namespace System.Management.Automation
             // If we had a previous initialization failure, just return the neutral result.
             if (s_amsiInitFailed)
             {
-                PSEtwLog.LogAmsiInitEvent("ScanContent-InitFail", s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
+                PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
                 return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
             }
 
@@ -1417,7 +1417,7 @@ namespace System.Management.Automation
             {
                 if (s_amsiInitFailed)
                 {
-                    PSEtwLog.LogAmsiInitEvent("ScanContent-InitFail", s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
+                    PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
 
@@ -1457,6 +1457,7 @@ namespace System.Management.Automation
                     if (!Utils.Succeeded(hr))
                     {
                         // If we got a failure, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
+                        PSEtwLog.LogAmsiUtilStateEvent("AmsiScanBuffer-" + hr.ToString(), s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
@@ -1464,6 +1465,7 @@ namespace System.Management.Automation
                 }
                 catch (DllNotFoundException)
                 {
+                    PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", s_amsiContext.ToString() + "-" + s_amsiSession.ToString());
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
             }

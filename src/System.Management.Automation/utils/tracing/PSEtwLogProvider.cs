@@ -194,11 +194,11 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Provider interface function for logging provider health event.
         /// </summary>
-        /// <param name="InitFailed"></param>
+        /// <param name="State"></param>
         /// <param name="context"></param>
-        internal override void LogAmsiInitEvent(string InitFailed, string context)
+        internal override void LogAmsiUtilStateEvent(string State, string context)
         {
-            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, InitFailed, context);
+            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, State, context);
         }
 
         /// <summary>
