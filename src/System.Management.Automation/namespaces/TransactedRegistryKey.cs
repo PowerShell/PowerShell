@@ -343,9 +343,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// Utilizes Transaction.Current for its transaction.</para>
         /// </summary>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
+        /// otherwise an ArgumentException is thrown.</param>
         /// <returns>A TransactedRegistryKey object for the subkey, which is associated with Transaction.Current.
         /// returns null if the operation failed.</returns>
-        /// otherwise an ArgumentException is thrown.</param>
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
