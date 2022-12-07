@@ -1560,7 +1560,7 @@ namespace Microsoft.PowerShell
         private bool _noPrompt;
         private string? _commandLineCommand;
         private bool _wasCommandEncoded;
-        private bool _commandHasArgs = false;
+        private bool _commandHasArgs;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
