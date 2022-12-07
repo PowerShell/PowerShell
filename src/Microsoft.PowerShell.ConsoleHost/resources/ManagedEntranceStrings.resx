@@ -284,6 +284,7 @@ All parameters are case-insensitive.</value>
 
 -CommandWithArgs | -cwa
 
+    [Experimental]
     Executes a PowerShell command with arguments.  Unlike `-Command`, this
     parameter populates the `$args built-in variable which can be used by the
     command.

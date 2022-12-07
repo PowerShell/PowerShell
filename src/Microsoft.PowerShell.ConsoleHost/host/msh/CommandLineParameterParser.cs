@@ -1471,23 +1471,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // Collect the remaining parameters and combine them into a single command to be run.
-
-                    StringBuilder cmdLineCmdSB = new StringBuilder();
-
-                    while (i < args.Length)
-                    {
-                        cmdLineCmdSB.Append(args[i] + " ");
-                        ++i;
-                    }
-
-                    if (cmdLineCmdSB.Length > 0)
-                    {
-                        // remove the last blank
-                        cmdLineCmdSB.Remove(cmdLineCmdSB.Length - 1, 1);
-                    }
-
-                    _commandLineCommand = cmdLineCmdSB.ToString();
+                    _commandLineCommand = string.Join(' ', args, i, args.Length - i);                
                 }
             }
 
