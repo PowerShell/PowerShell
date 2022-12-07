@@ -7870,31 +7870,22 @@ namespace Microsoft.PowerShell.Commands
             // only check for hard link if the item is not directory
             if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
-                IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
-                    fileInfo.FullName,
-                    InternalSymbolicLinkLinkCodeMethods.FileDesiredAccess.GenericRead,
-                    InternalSymbolicLinkLinkCodeMethods.FileShareMode.Read,
-                    IntPtr.Zero,
-                    InternalSymbolicLinkLinkCodeMethods.FileCreationDisposition.OpenExisting,
-                    InternalSymbolicLinkLinkCodeMethods.FileAttributes.Normal,
-                    IntPtr.Zero);
-
-                using (SafeFileHandle handle = new SafeFileHandle(nativeHandle, true))
+                SafeFileHandle handle = null;
+                try
                 {
-                    bool success = false;
-
-                    try
-                    {
-                        handle.DangerousAddRef(ref success);
-                        IntPtr dangerousHandle = handle.DangerousGetHandle();
-                        isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(ref dangerousHandle);
-                    }
-                    finally
-                    {
-                        if (success)
-                            handle.DangerousRelease();
-                    }
+                    handle = File.OpenHandle(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.None);
+                    var dangerousHandle = handle.DangerousGetHandle();
+                    isHardLink = InternalSymbolicLinkLinkCodeMethods.WinIsHardLink(ref dangerousHandle);
                 }
+                catch
+                {
+                    // Ignore errors.
+                }
+                finally
+                {
+                    handle?.Dispose();
+                }
+
             }
 
             return isHardLink;
