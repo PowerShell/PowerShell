@@ -3563,6 +3563,7 @@ namespace Microsoft.PowerShell.Commands
                                     GetTotalFiles(path, recurse);
                                 });
                                 t.Start();
+                                _copyStartTime = DateTime.Now;
                             }
                         }
                     }
@@ -3938,13 +3939,17 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
+                                var copiedMegabytes = _copiedBytes / 1024 / 1024;
+                                double speed = (double)copiedMegabytes / (DateTime.Now - _copyStartTime).TotalSeconds;
+                                int timeRemaining = (int)((_totalBytes - _copiedBytes) / 1024 / 1024 / speed);
                                 var progress = new ProgressRecord(
                                     COPY_FILE_ACTIVITY_ID,
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _totalFiles - _copiedFiles),
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, _copiedBytes / 1024 / 1024, _totalBytes / 1024 / 1024)
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, copiedMegabytes, _totalBytes / 1024 / 1024, speed)
                                 );
                                 progress.PercentComplete = (int)((_copiedBytes * 100) / _totalBytes);
                                 progress.RecordType = ProgressRecordType.Processing;
+                                progress.SecondsRemaining = timeRemaining;
                                 WriteProgress(progress);
                             }
                         }
@@ -4875,6 +4880,7 @@ namespace Microsoft.PowerShell.Commands
         private long _totalBytes = 0;
         private long _copiedFiles = 0;
         private long _copiedBytes = 0;
+        private DateTime _copyStartTime;
 
         #endregion CopyItem
 

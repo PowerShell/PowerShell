@@ -343,6 +343,6 @@
     <value>Copying {0} files</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
-    <value>{0} MB of {1} MB</value>
+    <value>{0} MB of {1} MB ({2:0.0} MB/s)</value>
   </data>
 </root>
