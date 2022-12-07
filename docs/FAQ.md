@@ -106,7 +106,7 @@ that new packages' binaries get stomped on by old packages' binaries.
 ## How can I make my PowerShell have better looking?
 
 You can use [oh-my-posh](https://ohmyposh.dev/) and see
-its source code in [JanDeDobbeleer](https://github.com/JanDeDobbeleer/oh-my-posh).
+its source code in [JanDeDobbeleer/oh-my-posh](https://github.com/JanDeDobbeleer/oh-my-posh).
 
 An Example:
 
