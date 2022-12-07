@@ -7912,13 +7912,10 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
         {
-            const FileAccess access = FileAccess.Read;
-            const FileShare share = FileShare.Read;
-            const FileMode creation = FileMode.Open;
-            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.PosixSemantics;
 
-            using (var sfOne = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathOne, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
-            using (var sfTwo = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathTwo, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (var sfOne = Interop.Windows.CreateFile(pathOne, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
+            using (var sfTwo = Interop.Windows.CreateFile(pathTwo, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
