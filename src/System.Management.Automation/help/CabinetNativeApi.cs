@@ -386,28 +386,23 @@ namespace System.Management.Automation.Internal
                         string destPath = Marshal.PtrToStringAnsi(fdin.pv);
                         string absoluteFilePath = Path.Combine(destPath, fdin.psz1);
 
-                        IntPtr hFile = PlatformInvokes.CreateFile(
-                            absoluteFilePath,
-                            PlatformInvokes.FileDesiredAccess.GenericRead | PlatformInvokes.FileDesiredAccess.GenericWrite,
-                            PlatformInvokes.FileShareMode.Read,
-                            IntPtr.Zero,
-                            PlatformInvokes.FileCreationDisposition.OpenExisting,
-                            PlatformInvokes.FileAttributes.Normal,
-                            IntPtr.Zero);
-
-                        if (hFile != IntPtr.Zero)
+                        SafeFileHandle sf = null;
+                        try
                         {
+                            sf = File.OpenHandle(absoluteFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
                             PlatformInvokes.FILETIME ftFile = new PlatformInvokes.FILETIME();
                             if (PlatformInvokes.DosDateTimeToFileTime(fdin.date, fdin.time, ftFile))
                             {
                                 PlatformInvokes.FILETIME ftLocal = new PlatformInvokes.FILETIME();
                                 if (PlatformInvokes.LocalFileTimeToFileTime(ftFile, ftLocal))
                                 {
-                                    PlatformInvokes.SetFileTime(hFile, ftLocal, null, ftLocal);
+                                    PlatformInvokes.SetFileTime(sf.DangerousGetHandle(), ftLocal, null, ftLocal);
                                 }
                             }
-
-                            PlatformInvokes.CloseHandle(hFile);
+                        }
+                        finally
+                        {
+                            sf.Dispose();
                         }
 
                         PlatformInvokes.SetFileAttributesW(
