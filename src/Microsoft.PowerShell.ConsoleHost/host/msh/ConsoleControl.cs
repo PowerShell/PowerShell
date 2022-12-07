@@ -13,6 +13,7 @@
 
 using System;
 using System.Buffers;
+using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
@@ -549,26 +550,20 @@ namespace Microsoft.PowerShell
 
         private static readonly Lazy<ConsoleHandle> _keyboardInputHandle = new Lazy<SafeFileHandle>(() =>
             {
-                var handle = NativeMethods.CreateFile(
-                    "CONIN$",
-                    (UInt32)(NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
-                    (UInt32)NativeMethods.ShareModes.ShareRead,
-                    (IntPtr)0,
-                    (UInt32)NativeMethods.CreationDisposition.OpenExisting,
-                    0,
-                    (IntPtr)0);
-
-                if (handle == NativeMethods.INVALID_HANDLE_VALUE)
+                ConsoleHandle handle = null;
+                try
                 {
-                    int err = Marshal.GetLastWin32Error();
-
-                    HostException e = CreateHostException(err, "RetreiveInputConsoleHandle",
-                                                            ErrorCategory.ResourceUnavailable,
-                                                            ConsoleControlStrings.GetInputModeExceptionTemplate);
+                    handle = File.OpenHandle("CONIN$", FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.None);
+                }
+                catch (Exception innerException)
+                {
+                    handle.Dispose();
+                    string msg = StringUtil.Format(ConsoleControlStrings.GetInputModeExceptionTemplate, innerException.Message, innerException.HResult);
+                    HostException e = new HostException(msg, innerException, "RetreiveInputConsoleHandle", ErrorCategory.ResourceUnavailable);
                     throw e;
                 }
 
-                return new ConsoleHandle(handle, true);
+                return handle;
             }
         );
 
@@ -582,26 +577,21 @@ namespace Microsoft.PowerShell
 
         private static readonly Lazy<ConsoleHandle> _outputHandle = new Lazy<SafeFileHandle>(() =>
             {
-                // We use CreateFile here instead of GetStdWin32Handle, as GetStdWin32Handle will return redirected handles
-                var handle = NativeMethods.CreateFile(
-                    "CONOUT$",
-                    (UInt32)(NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
-                    (UInt32)NativeMethods.ShareModes.ShareWrite,
-                    (IntPtr)0,
-                    (UInt32)NativeMethods.CreationDisposition.OpenExisting,
-                    0,
-                    (IntPtr)0);
-
-                if (handle == NativeMethods.INVALID_HANDLE_VALUE)
+                // We use CreateFile (inernally in File.OpenHandle()) here instead of GetStdWin32Handle, as GetStdWin32Handle will return redirected handles
+                ConsoleHandle handle = null;
+                try
                 {
-                    int err = Marshal.GetLastWin32Error();
-
-                    HostException e = CreateHostException(err, "RetreiveActiveScreenBufferConsoleHandle",
-                        ErrorCategory.ResourceUnavailable, ConsoleControlStrings.GetActiveScreenBufferHandleExceptionTemplate);
+                    handle = File.OpenHandle("CONOUT$", FileMode.Open, FileAccess.ReadWrite, FileShare.Write, FileOptions.None);
+                }
+                catch (Exception innerException)
+                {
+                    handle.Dispose();
+                    string msg = StringUtil.Format(ConsoleControlStrings.GetActiveScreenBufferHandleExceptionTemplate, innerException.Message, innerException.HResult);
+                    HostException e = new HostException(msg, innerException, "RetreiveActiveScreenBufferConsoleHandle", ErrorCategory.ResourceUnavailable);
                     throw e;
                 }
 
-                return new ConsoleHandle(handle, true);
+                return handle;
             }
         );
 
