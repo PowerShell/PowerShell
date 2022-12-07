@@ -102,3 +102,14 @@ Additionally, if you've just unzipped their binary drops (or used their obtain
 scripts, which do essentially the same thing), you must manually delete the
 folder, as the .NET CLI team re-engineered how their binaries are setup, such
 that new packages' binaries get stomped on by old packages' binaries.
+
+## How can I make my PowerShell have better looking?
+
+You can use [oh-my-posh](https://ohmyposh.dev/) and see
+its source code in [JanDeDobbeleer](https://github.com/JanDeDobbeleer/oh-my-posh).
+
+An Example:
+
+![image](https://user-images.githubusercontent.com/50760269/206097676-58283ed0-d244-4c5c-813d-1218f8bed27f.png)
+
+
