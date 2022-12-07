@@ -482,9 +482,7 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase()
         {
-            // Use the location of SMA.dll as the application base or fallback to process home.
-            Assembly assembly = typeof(PSObject).Assembly;
-            return Path.GetDirectoryName(assembly.Location ?? AppContext.BaseDirectory ?? Environment.ProcessPath);
+            return AppContext.BaseDirectory ?? Path.GetDirectoryName(Environment.ProcessPath);
         }
 
         private static string[] s_productFolderDirectories;
