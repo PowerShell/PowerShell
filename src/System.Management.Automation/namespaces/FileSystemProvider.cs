@@ -7914,8 +7914,8 @@ namespace Microsoft.PowerShell.Commands
         {
             const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.PosixSemantics;
 
-            using (var sfOne = Interop.Windows.CreateFile(pathOne, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
-            using (var sfTwo = Interop.Windows.CreateFile(pathTwo, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
+            using (var sfOne = Interop.Windows.CreateFileWithSafeFileHandle(pathOne, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
+            using (var sfTwo = Interop.Windows.CreateFileWithSafeFileHandle(pathTwo, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
@@ -7948,12 +7948,9 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            const FileAccess access = FileAccess.Read;
-            const FileShare share = FileShare.Read;
-            const FileMode creation = FileMode.Open;
-            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.PosixSemantics;
 
-            using (var sf = AlternateDataStreamUtilities.NativeMethods.CreateFile(path, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (var sf = Interop.Windows.CreateFileWithSafeFileHandle(path, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
             {
                 if (!sf.IsInvalid)
                 {
