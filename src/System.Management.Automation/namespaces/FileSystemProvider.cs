@@ -8232,16 +8232,19 @@ namespace System.Management.Automation.Internal
             }
 
             var resultPath = $"{path}:{streamName}";
-            SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
-
-            if (handle.IsInvalid)
+            SafeFileHandle handle = null;
+            try
             {
+                handle = File.OpenHandle(resultPath, mode, access, share, FileOptions.None);
+                stream = new FileStream(handle, access);
+                return true;
+            }
+            catch
+            {
+                handle?.Dispose();
                 stream = null;
                 return false;
             }
-
-            stream = new FileStream(handle, access);
-            return true;
         }
 
         /// <summary>
