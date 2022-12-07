@@ -1471,7 +1471,8 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    _commandLineCommand = string.Join(' ', args, i, args.Length - i);                
+                    _commandLineCommand = string.Join(' ', args, i, args.Length - i);
+                    i = args.Length;
                 }
             }
 
