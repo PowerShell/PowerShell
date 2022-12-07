@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -3550,18 +3551,18 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else // Copy-Item local
                 {
-                    var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
                     if (Context != null)
                     {
                         if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.ToString()).Value is ActionPreference progressPreference)
                         {
                             if (progressPreference == ActionPreference.Continue)
                             {
-                                progress.Activity = FileSystemProviderStrings.CollectingTotalActivity;
-                                progress.PercentComplete = 0;
-                                progress.RecordType = ProgressRecordType.Processing;
-                                WriteProgress(progress);
-                                GetTotalFiles(path, recurse);
+                                // we use a thread to gather the total files so that copying can start right away
+                                Thread t = new Thread(() =>
+                                {
+                                    GetTotalFiles(path, recurse);
+                                });
+                                t.Start();
                             }
                         }
                     }
@@ -3569,6 +3570,7 @@ namespace Microsoft.PowerShell.Commands
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
                     if (_totalFiles > 0)
                     {
+                        var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
                         progress.RecordType = ProgressRecordType.Completed;
                         WriteProgress(progress);
                     }
@@ -3590,15 +3592,15 @@ namespace Microsoft.PowerShell.Commands
                     var dir = new DirectoryInfo(path);
                     foreach (var file in dir.EnumerateFiles())
                     {
-                        _totalFiles++;
-                        _totalBytes += file.Length;
+                        Interlocked.Add(ref _totalFiles, 1);
+                        Interlocked.Add(ref _totalBytes, file.Length);
                     }
                 }
                 else
                 {
                     var file = new FileInfo(path);
-                    _totalFiles++;
-                    _totalBytes += file.Length;
+                    Interlocked.Add(ref _totalFiles, 1);
+                    Interlocked.Add(ref _totalBytes, file.Length);
                 }
             }
             catch
