@@ -35,36 +35,6 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        // dwDesiredAccess of CreateFile
-        internal enum FileDesiredAccess : uint
-        {
-            GenericRead = 0x80000000,
-            GenericWrite = 0x40000000,
-            GenericExecute = 0x20000000,
-            GenericAll = 0x10000000,
-        }
-
-        [Flags]
-        // dwShareMode of CreateFile
-        internal enum FileShareMode : uint
-        {
-            None = 0x00000000,
-            Read = 0x00000001,
-            Write = 0x00000002,
-            Delete = 0x00000004,
-        }
-
-        // dwCreationDisposition of CreateFile
-        internal enum FileCreationDisposition : uint
-        {
-            New = 1,
-            CreateAlways = 2,
-            OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5,
-        }
-
-        [Flags]
         // dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
@@ -128,95 +98,6 @@ namespace System.Management.Automation
                 return (LocalFree(base.handle) == IntPtr.Zero);
             }
         }
-
-        /// <summary>
-        /// Creates or opens a file, file stream, directory, physical disk, volume, console buffer,
-        /// tape drive, communications resource, mailslot, or named pipe. The function returns a
-        /// handle that can be used to access the object.
-        /// </summary>
-        /// <param name="lpFileName">
-        /// The name of the object to be created or opened.
-        /// In the ANSI version of this function, the name is limited to MAX_PATH characters.
-        /// To extend this limit to 32,767 wide characters, call the Unicode version of the
-        /// function and prepend "\\?\" to the path. For more information, see Naming a File.
-        /// For information on special device names, see Defining an MS-DOS Device Name.
-        /// To specify a COM port number greater than 9, use the following syntax: "\\.\COM10".
-        /// This syntax works for all port numbers and hardware that allows COM port numbers to be specified.
-        /// To create a file stream, specify the name of the file, a colon, and then the name of the
-        /// stream. For more information, see File Streams.
-        /// </param>
-        /// <param name="dwDesiredAccess">
-        /// The access to the object, which can be read, write, or both.
-        /// You cannot request an access mode that conflicts with the sharing mode that is
-        /// specified in an open request that has an open handle.
-        /// If this parameter is zero (0), the application can query file and device attributes
-        /// without accessing a device. This is useful for an application to determine the size
-        /// of a floppy disk drive and the formats it supports without requiring a floppy in a drive.
-        /// It can also be used to test for the existence of a file or directory without opening
-        /// them for read or write access.
-        /// See the "CreateFile desired access" below.
-        /// </param>
-        /// <param name="dwShareMode">
-        /// The sharing mode of an object, which can be read, write, both, or none.
-        /// You cannot request a sharing mode that conflicts with the access mode that is specified
-        /// in an open request that has an open handle, because that would result in the following
-        /// sharing violation: ERROR_SHARING_VIOLATION.
-        /// If this parameter is zero (0) and CreateFile succeeds, the object cannot be shared
-        /// and cannot be opened again until the handle is closed. For more information, see the
-        /// Remarks section of this topic.
-        /// The sharing options remain in effect until you close the handle to an object.
-        /// To enable a process to share an object while another process has the object open,
-        /// use a combination of one or more of the following values to specify the access mode
-        /// they can request to open the object.
-        /// </param>
-        /// <param name="lpSecurityAttributes">
-        /// A pointer to a SECURITY_ATTRIBUTES structure that determines whether or not the returned
-        /// handle can be inherited by child processes.
-        /// If lpSecurityAttributes is NULL, the handle cannot be inherited.
-        /// The lpSecurityDescriptor member of the structure specifies a security descriptor
-        /// for an object. If lpSecurityAttributes is NULL, the object gets a default security descriptor.
-        /// The access control lists (ACL) in the default security descriptor for a file or directory
-        /// are inherited from its parent directory.
-        /// The target file system must support security on files and directories for this parameter to
-        /// have an effect on them, which is indicated when GetVolumeInformation returns FS_PERSISTENT_ACLS.
-        /// CreateFile ignores lpSecurityDescriptor when opening an existing file, but continues to
-        /// use the other structure members.
-        /// </param>
-        /// <param name="dwCreationDisposition">
-        /// An action to take on files that exist and do not exist.
-        /// See "CreateFile creation disposition" below
-        /// </param>
-        /// <param name="dwFlagsAndAttributes">
-        /// The file attributes and flags.
-        /// This parameter can include any combination of the file attributes.
-        /// All other file attributes override FILE_ATTRIBUTE_NORMAL.
-        /// When CreateFile opens a file, it combines the file flags with existing
-        /// file attributes, and ignores any supplied file attributes.
-        /// </param>
-        /// <param name="hTemplateFile">
-        /// A handle to a template file with the GENERIC_READ access right.
-        /// The template file supplies file attributes and extended attributes for the file that is
-        /// being created. This parameter can be NULL.
-        /// When opening an existing file, CreateFile ignores the template file.
-        /// When opening a new EFS-encrypted file, the file inherits the DACL from its parent directory.
-        /// </param>
-        /// <returns>
-        /// If the function succeeds, the return value is an open handle to a specified file.
-        /// If a specified file exists before the function call and dwCreationDisposition is CREATE_ALWAYS
-        /// or OPEN_ALWAYS, a call to GetLastError returns ERROR_ALREADY_EXISTS, even when the
-        /// function succeeds. If a file does not exist before the call, GetLastError returns zero (0).
-        /// If the function fails, the return value is INVALID_HANDLE_VALUE.
-        /// To get extended error information, call GetLastError.
-        /// </returns>
-        [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern IntPtr CreateFile(
-            string lpFileName,
-            FileDesiredAccess dwDesiredAccess,
-            FileShareMode dwShareMode,
-            IntPtr lpSecurityAttributes,
-            FileCreationDisposition dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
 
         /// <summary>
         /// Closes an open object handle.
