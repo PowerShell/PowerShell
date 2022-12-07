@@ -7732,7 +7732,7 @@ namespace Microsoft.PowerShell.Commands
             // If this parameter is zero, the application can query certain metadata
             // such as file, directory, or device attributes without accessing
             // that file or device, even if GENERIC_READ access would have been denied.
-            using (SafeFileHandle handle = WinOpenReparsePoint(filePath, FileDesiredAccess.GenericZero))
+            using (SafeFileHandle handle = WinOpenReparsePoint(filePath, (FileAccess)0))
             {
                 int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
 
@@ -8015,7 +8015,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(target));
             }
 
-            using (SafeHandle handle = WinOpenReparsePoint(path, FileDesiredAccess.GenericWrite))
+            using (SafeHandle handle = WinOpenReparsePoint(path, FileAccess.Write))
             {
                 byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
 
@@ -8064,20 +8064,19 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
+        private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileAccess accessMode)
         {
-            IntPtr nativeHandle = CreateFile(reparsePoint, accessMode,
-                FileShareMode.Read | FileShareMode.Write | FileShareMode.Delete,
-                IntPtr.Zero, FileCreationDisposition.OpenExisting,
-                FileAttributes.BackupSemantics | FileAttributes.OpenReparsePoint,
-                IntPtr.Zero);
+            const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.OpenReparsePoint;
 
-            int lastError = Marshal.GetLastWin32Error();
+            SafeFileHandle reparsePointHandle = Interop.Windows.CreateFileWithSafeFileHandle(reparsePoint, accessMode, FileShare.ReadWrite | FileShare.Delete, FileMode.Open, Attributes);
 
-            if (lastError != 0)
+            if (reparsePointHandle.IsInvalid)
+            {
+                // Save last error since Dispose() will do another pinvoke.
+                int lastError = Marshal.GetLastPInvokeError();
+                reparsePointHandle.Dispose();
                 throw new Win32Exception(lastError);
-
-            SafeFileHandle reparsePointHandle = new SafeFileHandle(nativeHandle, true);
+            }
 
             return reparsePointHandle;
         }
