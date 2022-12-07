@@ -102,6 +102,15 @@ Note that all bash commands should continue working on PowerShell session.
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
 - [Interactive learning with PSKoans](https://aka.ms/pskoans)
 
+### Make PowerShell Beautiful
+
+You can use [oh-my-posh](https://ohmyposh.dev/) and see
+its source code in [JanDeDobbeleer/oh-my-posh](https://github.com/JanDeDobbeleer/oh-my-posh).
+
+An Example:
+
+![image](https://user-images.githubusercontent.com/50760269/206097676-58283ed0-d244-4c5c-813d-1218f8bed27f.png)
+
 ### Commercial Resources
 
 - [Windows PowerShell in Action][in-action] by [Bruce Payette](https://github.com/brucepay)
