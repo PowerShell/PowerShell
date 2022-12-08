@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isInitialized = false;
         private readonly Cmdlet _ownerCmdlet;
 
-        #endregion
+        #endregion Data
 
         #region Constructors
         /// <summary>
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
         }
-        #endregion
+        #endregion Constructors
 
         /// <summary>
         /// </summary>
