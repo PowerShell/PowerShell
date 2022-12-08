@@ -49,43 +49,19 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        public override bool CanRead
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanRead => true;
 
         /// <summary>
         /// </summary>
-        public override bool CanSeek
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanSeek => true;
 
         /// <summary>
         /// </summary>
-        public override bool CanTimeout
-        {
-            get
-            {
-                return base.CanTimeout;
-            }
-        }
+        public override bool CanTimeout => base.CanTimeout;
 
         /// <summary>
         /// </summary>
-        public override bool CanWrite
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanWrite =>true;
 
         /// <summary>
         /// </summary>
