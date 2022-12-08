@@ -441,11 +441,16 @@ namespace Microsoft.PowerShell.Commands
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
             {
-                // check for a charset attribute on the meta element to override the default
+                // Check for a charset attribute on the meta element to override the default
                 // we only look within the first 1k characters as the meta tag is in the head
                 // tag which is at the start of the document
                 Match match = s_metaRegex.Match(content.Substring(0, Math.Min(content.Length, 1024)));
+                
+                // Check for a encoding attribute on the xml declaration to override the default
+                // we only look within the first 256 characters as the declaration is in the first
+                // line of the document
                 Match match2 = s_xmlRegex.Match(content.Substring(0, Math.Min(content.Length, 256)));
+                
                 if (match.Success || match2.Success)
                 {
                     Encoding localEncoding = null;
