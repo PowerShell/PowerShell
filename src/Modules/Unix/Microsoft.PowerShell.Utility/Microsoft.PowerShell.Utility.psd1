@@ -27,6 +27,16 @@ CmdletsToExport = @(
   'Remove-Variable', 'Set-Variable', 'Get-Verb', 'Write-Verbose', 'Write-Warning', 'Invoke-WebRequest',
   'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Update-List', 'Unblock-File'
 )
+PrivateData = @{
+    PSData = @{
+      ExperimentalFeatures = @(
+        @{
+            Name = "Microsoft.PowerShell.Utility.Autohyperlink"
+            Description = "Auto link detection and convert to hyperlink in ConvertTo-Html"
+        }
+      )
+    }
+  }
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")

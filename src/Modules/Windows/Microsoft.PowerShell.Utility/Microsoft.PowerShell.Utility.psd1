@@ -26,6 +26,16 @@ CmdletsToExport = @(
   'Write-Warning', 'Invoke-WebRequest', 'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Update-List',
   'Out-GridView', 'Show-Command', 'Out-Printer'
 )
+PrivateData = @{
+    PSData = @{
+      ExperimentalFeatures = @(
+        @{
+            Name = "Microsoft.PowerShell.Utility.Autohyperlink"
+            Description = "Auto link detection and convert to hyperlink in ConvertTo-Html"
+        }
+      )
+    }
+  }
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")

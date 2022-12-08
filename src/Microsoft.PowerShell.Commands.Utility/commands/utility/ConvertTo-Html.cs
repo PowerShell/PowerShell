@@ -203,6 +203,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the _hyperlink switch, if true, then auto
         /// generate hyperlinks for URI.
         /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.Autohyperlink", ExperimentAction.Show)]
         [Parameter(ParameterSetName = "Autohyperlink")]
         [ValidateNotNullOrEmpty]
         public SwitchParameter Autohyperlink

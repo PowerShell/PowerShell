@@ -3,6 +3,7 @@
 Describe "ConvertTo-Html Tests" -Tags "CI" {
 
     BeforeAll {
+        
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
         $CustomParameters_2 = @{
             Uri             = 'https://microsoft.com/powershell'
