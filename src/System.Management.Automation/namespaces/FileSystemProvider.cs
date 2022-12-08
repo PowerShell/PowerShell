@@ -7504,8 +7504,6 @@ namespace Microsoft.PowerShell.Commands
 
         private const string NonInterpretedPathPrefix = @"\??\";
 
-        private const int MAX_PATH = 260;
-
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_SYMBOLICLINK
         {
@@ -7773,13 +7771,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Interop.Windows.WIN32_FIND_DATA data = default;
-            string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
-            if (fullPath.Length >= MAX_PATH)
-            {
-                fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
-            }
-
-            using (Interop.Windows.SafeFindHandle handle = Interop.Windows.FindFirstFile(fullPath, ref data))
+            using (Interop.Windows.SafeFindHandle handle = Interop.Windows.FindFirstFile(fileInfo.FullName, ref data))
             {
                 if (handle.IsInvalid)
                 {
