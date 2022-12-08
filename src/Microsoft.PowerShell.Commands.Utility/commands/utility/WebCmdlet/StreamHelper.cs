@@ -418,15 +418,20 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaexp = new(
+        private static readonly Regex s_metaRegex = new(
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
             );
+        
+        private static readonly Regex s_xmlRegex = new(
+                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<encoding>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+            ); 
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
             bool isDefaultEncoding = false;
-            if (encoding == null)
+            if (encoding is null)
             {
                 // Use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
@@ -441,11 +446,12 @@ namespace Microsoft.PowerShell.Commands
                     // check for a charset attribute on the meta element to override the default
                     // we only look within the first 1k characters as the meta tag is in the head
                     // tag which is at the start of the document
-                    Match match = s_metaexp.Match(content.Substring(0, Math.Min(content.Length, 1024)));
-                    if (match.Success)
+                    Match match = s_metaRegex.Match(content.Substring(0, Math.Min(content.Length, 1024)));
+                    Match match2 = s_xmlRegex.Match(content.Substring(0, Math.Min(content.Length, 256)));
+                    if (match.Success || match2.Success)
                     {
                         Encoding localEncoding = null;
-                        string characterSet = match.Groups["charset"].Value;
+                        string characterSet = (string.IsNullOrEmpty(match.Groups["charset"].Value)) ? match2.Groups["encoding"].Value : match.Groups["charset"].Value;
 
                         if (TryGetEncoding(characterSet, out localEncoding))
                         {
