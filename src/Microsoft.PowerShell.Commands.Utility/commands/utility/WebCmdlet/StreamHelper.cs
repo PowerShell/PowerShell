@@ -441,27 +441,24 @@ namespace Microsoft.PowerShell.Commands
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
             {
-                do
+                // check for a charset attribute on the meta element to override the default
+                // we only look within the first 1k characters as the meta tag is in the head
+                // tag which is at the start of the document
+                Match match = s_metaRegex.Match(content.Substring(0, Math.Min(content.Length, 1024)));
+                Match match2 = s_xmlRegex.Match(content.Substring(0, Math.Min(content.Length, 256)));
+                if (match.Success || match2.Success)
                 {
-                    // check for a charset attribute on the meta element to override the default
-                    // we only look within the first 1k characters as the meta tag is in the head
-                    // tag which is at the start of the document
-                    Match match = s_metaRegex.Match(content.Substring(0, Math.Min(content.Length, 1024)));
-                    Match match2 = s_xmlRegex.Match(content.Substring(0, Math.Min(content.Length, 256)));
-                    if (match.Success || match2.Success)
-                    {
-                        Encoding localEncoding = null;
-                        string characterSet = (string.IsNullOrEmpty(match.Groups["charset"].Value)) ? match2.Groups["encoding"].Value : match.Groups["charset"].Value;
+                    Encoding localEncoding = null;
+                    string characterSet = (string.IsNullOrEmpty(match.Groups["charset"].Value)) ? match2.Groups["encoding"].Value : match.Groups["charset"].Value;
 
-                        if (TryGetEncoding(characterSet, out localEncoding))
-                        {
-                            stream.Seek(0, SeekOrigin.Begin);
-                            content = StreamToString(stream, localEncoding);
-                            // report the encoding used.
-                            encoding = localEncoding;
-                        }
+                    if (TryGetEncoding(characterSet, out localEncoding))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        content = StreamToString(stream, localEncoding);
+                        // report the encoding used.
+                        encoding = localEncoding;
                     }
-                } while (false);
+                }
             }
 
             return content;
