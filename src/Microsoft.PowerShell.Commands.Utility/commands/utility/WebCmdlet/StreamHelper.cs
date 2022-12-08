@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        public override bool CanWrite =>true;
+        public override bool CanWrite => true;
 
         /// <summary>
         /// </summary>
