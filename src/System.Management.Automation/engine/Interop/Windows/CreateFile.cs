@@ -59,20 +59,15 @@ internal static partial class Interop
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal static unsafe SafeFileHandle CreateFile(
+        [LibraryImport("api-ms-win-core-file-l1-1-0.dll", EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+        private static unsafe partial nint CreateFileWithSafePipeHandlePrivate(
             string lpFileName,
-            FileAccess dwDesiredAccess,
+            uint dwDesiredAccess,
             FileShare dwShareMode,
             nint lpSecurityAttributes,
             FileMode dwCreationDisposition,
             FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile)
-        {
-            lpFileName = Path.TrimEndingDirectorySeparator(lpFileName);
-            lpFileName = PathUtils.EnsureExtendedPrefixIfNeeded(lpFileName);
-
-            return CreateFilePrivate(lpFileName, (uint)dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
-        }
+            IntPtr hTemplateFile);
 
         internal static unsafe SafeFileHandle CreateFileWithSafeFileHandle(
             string lpFileName,
@@ -85,6 +80,19 @@ internal static partial class Interop
             lpFileName = PathUtils.EnsureExtendedPrefixIfNeeded(lpFileName);
 
             return CreateFilePrivate(lpFileName, (uint)dwDesiredAccess, dwShareMode, nint.Zero, dwCreationDisposition, dwFlagsAndAttributes, nint.Zero);
+        }
+
+        internal static unsafe nint CreateFileWithSafePipeHandle(
+            string lpFileName,
+            FileAccess dwDesiredAccess,
+            FileShare dwShareMode,
+            FileMode dwCreationDisposition,
+            FileAttributes dwFlagsAndAttributes)
+        {
+            lpFileName = Path.TrimEndingDirectorySeparator(lpFileName);
+            lpFileName = PathUtils.EnsureExtendedPrefixIfNeeded(lpFileName);
+
+            return CreateFileWithSafePipeHandlePrivate(lpFileName, (uint)dwDesiredAccess, dwShareMode, nint.Zero, dwCreationDisposition, dwFlagsAndAttributes, nint.Zero);
         }
     }
 }
