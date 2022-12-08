@@ -121,11 +121,11 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Provider interface function for logging AmsiUtil State event.
         /// </summary>
-        /// <param name="State"></param>
-        /// <param name="context"></param>
-        internal static void LogAmsiUtilStateEvent(string State, string context)
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc</param>
+        /// <param name="context">The amsiContext handled - Session pair</param>
+        internal static void LogAmsiUtilStateEvent(string state, string context)
         {
-            provider.LogAmsiUtilStateEvent(State, context);
+            provider.LogAmsiUtilStateEvent(state, context);
         }
 
         /// <summary>

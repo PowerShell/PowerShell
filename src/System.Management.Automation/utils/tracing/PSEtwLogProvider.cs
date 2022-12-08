@@ -127,11 +127,12 @@ namespace System.Management.Automation.Tracing
                         if (newState == CommandState.Stopped ||
                             newState == CommandState.Terminated)
                         {
-                            payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandName, newState.ToString()));
+                            // When state is stopped or termianted only log the CommandName
+                            payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext, newState.ToString()));
                         }
                         else
                         {
-                            // log the comandline on start to get the arguments
+                            // When state is Start log the CommandLine which has arguments for completeness. 
                             payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandLine, newState.ToString()));
                         }
                     }
@@ -194,11 +195,11 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Provider interface function for logging provider health event.
         /// </summary>
-        /// <param name="State"></param>
-        /// <param name="context"></param>
-        internal override void LogAmsiUtilStateEvent(string State, string context)
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc</param>
+        /// <param name="context">The amsiContext handled - Session pair</param>
+        internal override void LogAmsiUtilStateEvent(string state, string context)
         {
-            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, State, context);
+            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, state, context);
         }
 
         /// <summary>
