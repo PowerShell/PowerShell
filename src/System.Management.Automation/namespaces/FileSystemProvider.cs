@@ -7506,60 +7506,6 @@ namespace Microsoft.PowerShell.Commands
 
         private const int MAX_PATH = 260;
 
-        [Flags]
-        // dwDesiredAccess of CreateFile
-        internal enum FileDesiredAccess : uint
-        {
-            GenericZero = 0,
-            GenericRead = 0x80000000,
-            GenericWrite = 0x40000000,
-            GenericExecute = 0x20000000,
-            GenericAll = 0x10000000,
-        }
-
-        [Flags]
-        // dwShareMode of CreateFile
-        internal enum FileShareMode : uint
-        {
-            None = 0x00000000,
-            Read = 0x00000001,
-            Write = 0x00000002,
-            Delete = 0x00000004,
-        }
-
-        // dwCreationDisposition of CreateFile
-        internal enum FileCreationDisposition : uint
-        {
-            New = 1,
-            CreateAlways = 2,
-            OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5,
-        }
-
-        [Flags]
-        // dwFlagsAndAttributes
-        internal enum FileAttributes : uint
-        {
-            Readonly = 0x00000001,
-            Hidden = 0x00000002,
-            System = 0x00000004,
-            Archive = 0x00000020,
-            Encrypted = 0x00004000,
-            Write_Through = 0x80000000,
-            Overlapped = 0x40000000,
-            NoBuffering = 0x20000000,
-            RandomAccess = 0x10000000,
-            SequentialScan = 0x08000000,
-            DeleteOnClose = 0x04000000,
-            BackupSemantics = 0x02000000,
-            PosixSemantics = 0x01000000,
-            OpenReparsePoint = 0x00200000,
-            OpenNoRecall = 0x00100000,
-            SessionAware = 0x00800000,
-            Normal = 0x00000080
-        }
-
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_SYMBOLICLINK
         {
@@ -7648,16 +7594,6 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
 
-        [LibraryImport(PinvokeDllNames.CreateFileDllName, EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        internal static partial IntPtr CreateFile(
-            string lpFileName,
-            FileDesiredAccess dwDesiredAccess,
-            FileShareMode dwShareMode,
-            IntPtr lpSecurityAttributes,
-            FileCreationDisposition dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
-
         /// <summary>
         /// Gets the target of the specified reparse point.
         /// </summary>
@@ -7715,16 +7651,14 @@ namespace Microsoft.PowerShell.Commands
 
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows)
-            {
-                return WinInternalGetLinkType(fileInfo.FullName);
-            }
-            else
-            {
-                return Platform.NonWindowsInternalGetLinkType(fileInfo);
-            }
+#if UNIX
+            return Platform.NonWindowsInternalGetLinkType(fileInfo);
+#else
+            return WinInternalGetLinkType(fileInfo.FullName);
+#endif
         }
 
+#if !UNIX
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetLinkType(string filePath)
         {
@@ -7764,7 +7698,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!result)
                     {
                         // It's not a reparse point or the file system doesn't support reparse points.
-                        return IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                        return WinIsHardLink(ref dangerousHandle) ? "HardLink" : null;
                     }
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
@@ -7797,13 +7731,28 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+#endif
 
         internal static bool IsHardLink(FileSystemInfo fileInfo)
         {
 #if UNIX
             return Platform.NonWindowsIsHardLink(fileInfo);
 #else
-            return WinIsHardLink(fileInfo);
+            bool isHardLink = false;
+
+            // only check for hard link if the item is not directory
+            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
+            {
+                SafeFileHandle handle = Interop.Windows.CreateFileWithSafeFileHandle(fileInfo.FullName, FileAccess.Read, FileShare.Read, FileMode.Open, Interop.Windows.FileAttributes.Normal);
+
+                using (handle)
+                {
+                    var dangerousHandle = handle.DangerousGetHandle();
+                    isHardLink = InternalSymbolicLinkLinkCodeMethods.WinIsHardLink(ref dangerousHandle);
+                }
+            }
+
+            return isHardLink;
 #endif
         }
 
@@ -7861,43 +7810,6 @@ namespace Microsoft.PowerShell.Commands
 
             return true;
 #endif
-        }
-
-        internal static bool WinIsHardLink(FileSystemInfo fileInfo)
-        {
-            bool isHardLink = false;
-
-            // only check for hard link if the item is not directory
-            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
-            {
-                IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
-                    fileInfo.FullName,
-                    InternalSymbolicLinkLinkCodeMethods.FileDesiredAccess.GenericRead,
-                    InternalSymbolicLinkLinkCodeMethods.FileShareMode.Read,
-                    IntPtr.Zero,
-                    InternalSymbolicLinkLinkCodeMethods.FileCreationDisposition.OpenExisting,
-                    InternalSymbolicLinkLinkCodeMethods.FileAttributes.Normal,
-                    IntPtr.Zero);
-
-                using (SafeFileHandle handle = new SafeFileHandle(nativeHandle, true))
-                {
-                    bool success = false;
-
-                    try
-                    {
-                        handle.DangerousAddRef(ref success);
-                        IntPtr dangerousHandle = handle.DangerousGetHandle();
-                        isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(ref dangerousHandle);
-                    }
-                    finally
-                    {
-                        if (success)
-                            handle.DangerousRelease();
-                    }
-                }
-            }
-
-            return isHardLink;
         }
 
         internal static bool IsSameFileSystemItem(string pathOne, string pathTwo)
@@ -7974,15 +7886,6 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-        internal static bool IsHardLink(ref IntPtr handle)
-        {
-#if UNIX
-            return Platform.NonWindowsIsHardLink(ref handle);
-#else
-            return WinIsHardLink(ref handle);
-#endif
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static bool WinIsHardLink(ref IntPtr handle)
         {
@@ -7993,18 +7896,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool CreateJunction(string path, string target)
         {
-            // this is a purely Windows specific feature, no feature flag used for that reason.
-            if (Platform.IsWindows)
-            {
-                return WinCreateJunction(path, target);
-            }
-
+#if UNIX
             return false;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static bool WinCreateJunction(string path, string target)
-        {
+#else
             if (string.IsNullOrEmpty(path))
             {
                 throw new ArgumentNullException(nameof(path));
@@ -8062,8 +7956,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#endif
         }
 
+#if !UNIX
         private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileAccess accessMode)
         {
             const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.OpenReparsePoint;
@@ -8080,6 +7976,7 @@ namespace Microsoft.PowerShell.Commands
 
             return reparsePointHandle;
         }
+#endif
     }
 
     #endregion
