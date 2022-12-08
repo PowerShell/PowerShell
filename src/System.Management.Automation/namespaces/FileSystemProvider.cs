@@ -3558,11 +3558,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (progressPreference == ActionPreference.Continue)
                             {
-                                Task t = new Task(() =>
+                                Task.Run(() =>
                                 {
                                     GetTotalFiles(path, recurse);
                                 });
-                                t.Start();
                                 _copyStopwatch.Start();
                             }
                         }
