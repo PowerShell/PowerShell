@@ -340,7 +340,7 @@
     <value>The target and path cannot be the same.</value>
   </data>
   <data name="CopyingLocalFileActivity" xml:space="preserve">
-    <value>Copying {0} files</value>
+    <value>Copied {0} of {1} files</value>
   </data>
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
     <value>{0} of {1} ({2:0.0} MB/s)</value>

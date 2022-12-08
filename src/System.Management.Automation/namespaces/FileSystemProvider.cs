@@ -3559,8 +3559,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (progressPreference == ActionPreference.Continue)
                             {
-                                // we use a thread to gather the total files so that copying can start right away
-                                Thread t = new Thread(() =>
+                                Task t = new Task(() =>
                                 {
                                     GetTotalFiles(path, recurse);
                                 });
@@ -3596,22 +3595,26 @@ namespace Microsoft.PowerShell.Commands
                     var dir = new DirectoryInfo(path);
                     var enumOptions = new EnumerationOptions();
                     enumOptions.IgnoreInaccessible = true;
-                    if (recurse)
-                    {
-                        enumOptions.RecurseSubdirectories = true;
-                    }
+                    enumOptions.AttributesToSkip = 0;
+                    enumOptions.RecurseSubdirectories = recurse;
 
                     foreach (var file in dir.EnumerateFiles("*", enumOptions))
                     {
-                        _totalFiles++;
-                        _totalBytes += file.Length;
+                        if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
+                        {
+                            _totalFiles++;
+                            _totalBytes += file.Length;
+                        }
                     }
                 }
                 else
                 {
                     var file = new FileInfo(path);
-                    _totalFiles++;
-                    _totalBytes += file.Length;
+                    if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
+                    {
+                        _totalFiles++;
+                        _totalBytes += file.Length;
+                    }
                 }
             }
             catch
@@ -3936,10 +3939,15 @@ namespace Microsoft.PowerShell.Commands
                                 double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
                                 var progress = new ProgressRecord(
                                     COPY_FILE_ACTIVITY_ID,
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _totalFiles - _copiedFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
                                 );
-                                progress.PercentComplete = (int)((_copiedBytes * 100) / _totalBytes);
+                                var percentComplete = (int)((_copiedBytes * 100) / _totalBytes);
+                                if (percentComplete > 100)
+                                {
+                                    percentComplete = 100;
+                                }
+                                progress.PercentComplete = percentComplete;
                                 progress.RecordType = ProgressRecordType.Processing;
                                 WriteProgress(progress);
                             }
