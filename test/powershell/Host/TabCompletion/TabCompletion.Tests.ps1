@@ -823,6 +823,12 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
     }
 
+    it 'Should prefer the default parameterset when completing positional parameters' {
+        $ScriptInput = 'Get-ChildItem | Where-Object '
+        $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+        $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
