@@ -7483,13 +7483,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static partial class InternalSymbolicLinkLinkCodeMethods
     {
-        // This size comes from measuring the size of the header of REPARSE_GUID_DATA_BUFFER
-        private const int REPARSE_GUID_DATA_BUFFER_HEADER_SIZE = 24;
-
-        // Maximum reparse buffer info size. The max user defined reparse
-        // data is 16KB, plus there's a header.
-        private const int MAX_REPARSE_SIZE = (16 * 1024) + REPARSE_GUID_DATA_BUFFER_HEADER_SIZE;
-
         private const int FSCTL_GET_REPARSE_POINT = 0x000900A8;
 
         private const int FSCTL_SET_REPARSE_POINT = 0x000900A4;
@@ -7554,29 +7547,6 @@ namespace Microsoft.PowerShell.Commands
         {
             public uint dwLowDateTime;
             public uint dwHighDateTime;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct GUID
-        {
-            public uint Data1;
-            public ushort Data2;
-            public ushort Data3;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public char[] Data4;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct REPARSE_GUID_DATA_BUFFER
-        {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public GUID ReparseGuid;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
-            public char[] DataBuffer;
         }
 
         [LibraryImport(PinvokeDllNames.DeviceIoControlDllName, StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
