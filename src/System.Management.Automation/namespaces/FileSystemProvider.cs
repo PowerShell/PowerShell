@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -19,6 +20,7 @@ using System.Security;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -3563,7 +3565,7 @@ namespace Microsoft.PowerShell.Commands
                                     GetTotalFiles(path, recurse);
                                 });
                                 t.Start();
-                                _copyStartTime = DateTime.Now;
+                                _copyStopwatch.Start();
                             }
                         }
                     }
@@ -3571,6 +3573,7 @@ namespace Microsoft.PowerShell.Commands
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
                     if (_totalFiles > 0)
                     {
+                        _copyStopwatch.Stop();
                         var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
                         progress.RecordType = ProgressRecordType.Completed;
                         WriteProgress(progress);
@@ -3591,38 +3594,29 @@ namespace Microsoft.PowerShell.Commands
                 if (isContainer)
                 {
                     var dir = new DirectoryInfo(path);
-                    foreach (var file in dir.EnumerateFiles())
+                    var enumOptions = new EnumerationOptions();
+                    enumOptions.IgnoreInaccessible = true;
+                    if (recurse)
                     {
-                        Interlocked.Add(ref _totalFiles, 1);
-                        Interlocked.Add(ref _totalBytes, file.Length);
+                        enumOptions.RecurseSubdirectories = true;
+                    }
+
+                    foreach (var file in dir.EnumerateFiles("*", enumOptions))
+                    {
+                        _totalFiles++;
+                        _totalBytes += file.Length;
                     }
                 }
                 else
                 {
                     var file = new FileInfo(path);
-                    Interlocked.Add(ref _totalFiles, 1);
-                    Interlocked.Add(ref _totalBytes, file.Length);
+                    _totalFiles++;
+                    _totalBytes += file.Length;
                 }
             }
             catch
             {
                 // ignore exception
-            }
-
-            if (recurse && isContainer)
-            {
-                try
-                {
-                    var dir = new DirectoryInfo(path);
-                    foreach (var subDir in dir.EnumerateDirectories())
-                    {
-                        GetTotalFiles(subDir.FullName, recurse);
-                    }
-                }
-                catch
-                {
-                    // ignore exception
-                }
             }
         }
 
@@ -3939,17 +3933,14 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
-                                var copiedMegabytes = _copiedBytes / 1024 / 1024;
-                                double speed = (double)copiedMegabytes / (DateTime.Now - _copyStartTime).TotalSeconds;
-                                int timeRemaining = (int)((_totalBytes - _copiedBytes) / 1024 / 1024 / speed);
+                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
                                 var progress = new ProgressRecord(
                                     COPY_FILE_ACTIVITY_ID,
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _totalFiles - _copiedFiles),
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, copiedMegabytes, _totalBytes / 1024 / 1024, speed)
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
                                 );
                                 progress.PercentComplete = (int)((_copiedBytes * 100) / _totalBytes);
                                 progress.RecordType = ProgressRecordType.Processing;
-                                progress.SecondsRemaining = timeRemaining;
                                 WriteProgress(progress);
                             }
                         }
@@ -4876,11 +4867,11 @@ namespace Microsoft.PowerShell.Commands
             return pathIsReservedDeviceName;
         }
 
-        private long _totalFiles = 0;
-        private long _totalBytes = 0;
-        private long _copiedFiles = 0;
-        private long _copiedBytes = 0;
-        private DateTime _copyStartTime;
+        private long _totalFiles;
+        private long _totalBytes;
+        private long _copiedFiles;
+        private long _copiedBytes;
+        private readonly Stopwatch _copyStopwatch = new Stopwatch();
 
         #endregion CopyItem
 
