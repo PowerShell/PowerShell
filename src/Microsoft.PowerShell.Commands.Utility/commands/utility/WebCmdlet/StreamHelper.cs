@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                 if (match.Success || match2.Success)
                 {
                     Encoding localEncoding = null;
-                    string characterSet = (string.IsNullOrEmpty(match.Groups["charset"].Value)) ? match2.Groups["encoding"].Value : match.Groups["charset"].Value;
+                    string characterSet = string.IsNullOrEmpty(match.Groups["charset"].Value) ? match2.Groups["encoding"].Value : match.Groups["charset"].Value;
 
                     if (TryGetEncoding(characterSet, out localEncoding))
                     {
