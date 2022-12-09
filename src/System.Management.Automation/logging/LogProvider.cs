@@ -105,8 +105,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Provider interface function for logging AmsiUtil State event.
         /// </summary>
-        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc</param>
-        /// <param name="context">The amsiContext handled - Session pair</param>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
+        /// <param name="context">The amsiContext handled - Session pair.</param>
         internal abstract void LogAmsiUtilStateEvent(string state, string context);
 
         /// <summary>
@@ -380,8 +380,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Provider interface function for logging provider health event.
         /// </summary>
-        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc</param>
-        /// <param name="context">The amsiContext handled - Session pair</param>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
+        /// <param name="context">The amsiContext handled - Session pair.</param>
         internal override void LogAmsiUtilStateEvent(string state, string context)
         {
         }
