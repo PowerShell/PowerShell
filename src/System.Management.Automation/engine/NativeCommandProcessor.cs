@@ -3,7 +3,6 @@
 
 #pragma warning disable 1634, 1691
 
-using Microsoft.PowerShell.Telemetry;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,6 +19,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using Dbg = System.Management.Automation.Diagnostics;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -885,22 +885,24 @@ namespace System.Management.Automation
                     // - The variable is not present
                     // - The value is not set (variable is null)
                     // - The value is set to true or false
-                    bool UseDefaultSetting;
-                    bool NativeErrorActionPreferenceSetting = Command.Context.GetBooleanPreference(
+                    bool useDefaultSetting;
+                    bool nativeErrorActionPreferenceSetting = Command.Context.GetBooleanPreference(
                         SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
                         defaultPref: false,
-                        out UseDefaultSetting);
+                        out useDefaultSetting);
+
                     // The variable is unset
-                    if (UseDefaultSetting)
+                    if (useDefaultSetting)
                     {
                         TelemetrySendUseData("unset");
                         return;
                     }
 
                     // Send the value that was set.
-                    TelemetrySendUseData(NativeErrorActionPreferenceSetting.ToString());
-                    // if false, return
-                    if (!NativeErrorActionPreferenceSetting)
+                    TelemetrySendUseData(nativeErrorActionPreferenceSetting.ToString());
+
+                    // if it was explicitly set to false, return
+                    if (!nativeErrorActionPreferenceSetting)
                     {
                         return;
                     }
@@ -961,13 +963,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// We need to send the telemetry as to whether the user has set the variable, and if so, what the value is.
-        /// <summary>
+        /// </summary>
         private static void TelemetrySendUseData(string detail)
         {
             ApplicationInsightsTelemetry.SendTelemetryMetric(
                 TelemetryType.ExperimentalFeatureUse,
-                ApplicationInsightsTelemetry.GetExperimentalFeatureUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, detail)
-                );
+                ApplicationInsightsTelemetry.GetExperimentalFeatureUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, detail));
         }
 
         #region Process cleanup with Child Process cleanup
