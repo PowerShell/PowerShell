@@ -157,6 +157,25 @@ namespace System.Management.Automation
             EnabledExperimentalFeatureNames = ProcessEnabledFeatures(enabledFeatures);
         }
 
+        /// <summary>temp variable for debugging/summary>
+        public static int deactivationCount { get; set; } = 0;
+
+        /// <summary>
+        /// We need to notify which features were not enabled.
+        /// </summary>
+        private static void SendTelemetryForDeactivatedFeatures(List<string> enabledFeatures)
+        {
+            var features = new HashSet<string>(enabledFeatures, StringComparer.OrdinalIgnoreCase);
+            foreach (var feature in EngineExperimentalFeatures)
+            {
+                if (!features.Contains(feature.Name))
+                {
+                    deactivationCount++;
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureDeactivation, feature.Name);
+                }
+            }
+        }
+
         /// <summary>
         /// Process the array of enabled feature names retrieved from configuration.
         /// Ignore invalid feature names and unavailable engine feature names, and
@@ -186,15 +205,18 @@ namespace System.Management.Automation
                     {
                         string message = StringUtil.Format(Logging.EngineExperimentalFeatureNotFound, name);
                         LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureInvalid, name);
                     }
                 }
                 else
                 {
                     string message = StringUtil.Format(Logging.InvalidExperimentalFeatureName, name);
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureInvalid, name);
                 }
             }
 
+            SendTelemetryForDeactivatedFeatures(list);
             return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 

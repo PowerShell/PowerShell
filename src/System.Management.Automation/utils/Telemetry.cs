@@ -39,10 +39,34 @@ namespace Microsoft.PowerShell.Telemetry
         WinCompatModuleLoad,
 
         /// <summary>
+        /// Send telemetry for experimental module feature deactivation.
+        /// All experimental engine features will be have telemetry.
+        /// </summary>
+        ExperimentalEngineFeatureDeactivation,
+
+        /// <summary>
         /// Send telemetry for experimental module feature activation.
         /// All experimental engine features will be have telemetry.
         /// </summary>
         ExperimentalEngineFeatureActivation,
+
+        /// <summary>
+        /// Send telemetry for an invalid experimental name.
+        /// </summary>
+        ExperimentalFeatureInvalid,
+
+        /// <summary>
+        /// Send telemetry for an experimental feature when use.
+        /// </summary>
+        ExperimentalFeatureUse,
+
+        /// <summary>
+        /// Send telemetry for experimental module feature deactivation.
+        /// Experimental module features will send telemetry based on the module it is in.
+        /// If we send telemetry for the module, we will also do so for any experimental feature
+        /// in that module.
+        /// </summary>
+        ExperimentalModuleFeatureDeactivation,
 
         /// <summary>
         /// Send telemetry for experimental module feature activation.
@@ -146,7 +170,7 @@ namespace Microsoft.PowerShell.Telemetry
                 configuration.ConnectionString = "InstrumentationKey=" + _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                configuration.TelemetryChannel.DeveloperMode = false;
+                configuration.TelemetryChannel.DeveloperMode = true;
 
                 // Be sure to obscure any information about the client node name.
                 configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
@@ -703,9 +727,13 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.PowerShellCreate:
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
+                    case TelemetryType.ExperimentalEngineFeatureDeactivation:
+                    case TelemetryType.ExperimentalFeatureInvalid:
+                    case TelemetryType.ExperimentalFeatureUse:
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, data);
                         break;
                     case TelemetryType.ExperimentalModuleFeatureActivation:
+                    case TelemetryType.ExperimentalModuleFeatureDeactivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
                         break;
@@ -932,6 +960,19 @@ namespace Microsoft.PowerShell.Telemetry
             // something bad happened, turn off telemetry since the unique id wasn't set.
             CanSendTelemetry = false;
             return id;
+        }
+
+        /// <summary>
+        /// Construct a string which represents the experimental feature use.
+        /// This takes the feature name and the detail and joins them with a colon
+        /// so they can be deconstructed in the telemetry queries.
+        /// </summary>
+        /// <param name="feature">The name of the experimental feature.</param>
+        /// <param name="detail">The detail of the experimental feature.</param>
+        /// <returns>A string which represents the experimental feature use.</returns>
+        public static string GetExperimentalFeatureUseData(string feature, string detail)
+        {
+            return string.Join(":", feature, detail);
         }
     }
 }

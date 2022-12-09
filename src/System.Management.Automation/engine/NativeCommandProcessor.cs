@@ -3,6 +3,7 @@
 
 #pragma warning disable 1634, 1691
 
+using Microsoft.PowerShell.Telemetry;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -872,8 +873,34 @@ namespace System.Management.Automation
 
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        || !Command.Context.GetBooleanPreference(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath, defaultPref: false, out _))
+                    // Feature is not enabled, so return
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
+                    {
+                        return;
+                    }
+
+                    // We send telemetry information only if the feature is enabled.
+                    // This shouldn't be done once, because it's a run-time check we should send telemetry every time.
+                    // Report on the following conditions:
+                    // - The variable is not present
+                    // - The value is not set (variable is null)
+                    // - The value is set to true or false
+                    bool UseDefaultSetting;
+                    bool NativeErrorActionPreferenceSetting = Command.Context.GetBooleanPreference(
+                        SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
+                        defaultPref: false,
+                        out UseDefaultSetting);
+                    // The variable is unset
+                    if (UseDefaultSetting)
+                    {
+                        TelemetrySendUseData("unset");
+                        return;
+                    }
+
+                    // Send the value that was set.
+                    TelemetrySendUseData(NativeErrorActionPreferenceSetting.ToString());
+                    // if false, return
+                    if (!NativeErrorActionPreferenceSetting)
                     {
                         return;
                     }
@@ -930,6 +957,17 @@ namespace System.Management.Automation
 
                 throw appFailedException;
             }
+        }
+
+        /// <summary>
+        /// We need to send the telemetry as to whether the user has set the variable, and if so, what the value is.
+        /// <summary>
+        private static void TelemetrySendUseData(string detail)
+        {
+            ApplicationInsightsTelemetry.SendTelemetryMetric(
+                TelemetryType.ExperimentalFeatureUse,
+                ApplicationInsightsTelemetry.GetExperimentalFeatureUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, detail)
+                );
         }
 
         #region Process cleanup with Child Process cleanup
