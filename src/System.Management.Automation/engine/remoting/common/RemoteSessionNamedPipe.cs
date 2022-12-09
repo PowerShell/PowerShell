@@ -1250,6 +1250,12 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
+#if UNIX
+            // TODO: `CreateFileWithSafePipeHandle` pinvoke below clearly says
+            // that the code is only for Windows and we could exclude
+            // a lot of code from compilation on Unix.
+            throw new NotSupportedException(nameof(DoConnect));
+#else
             //
             // WaitNamedPipe API is not supported by Windows Server container now, so we need to repeatedly
             // attempt connection to pipe server until timeout expires.
@@ -1304,6 +1310,7 @@ namespace System.Management.Automation.Remoting
                 pipeHandle?.Dispose();
                 throw;
             }
+#endif
         }
 
         #endregion
