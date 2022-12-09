@@ -420,12 +420,12 @@ namespace Microsoft.PowerShell.Commands
 
         private static readonly Regex s_metaRegex = new(
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
             );
         
         private static readonly Regex s_xmlRegex = new(
-                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<encoding>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
             ); 
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
@@ -449,19 +449,20 @@ namespace Microsoft.PowerShell.Commands
                 Match match = s_metaRegex.Match(substring);
                 
                 // Check for a encoding attribute on the xml declaration to override the default
-                Match match2 = s_xmlRegex.Match(substring);
+                if (!match.Success)
+                {
+                    match = s_xmlRegex.Match(substring);
+                }
                 
-                if (match.Success || match2.Success)
+                if (match.Success)
                 {
                     Encoding localEncoding = null;
-                    string characterSet = string.IsNullOrEmpty(match.Groups["charset"].Value) ? match2.Groups["encoding"].Value : match.Groups["charset"].Value;
+                    string characterSet = match.Groups["charset"].Value;
 
                     if (TryGetEncoding(characterSet, out localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
                         content = StreamToString(stream, localEncoding);
-                        
-                        // report the encoding used.
                         encoding = localEncoding;
                     }
                 }
