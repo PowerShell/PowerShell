@@ -1071,9 +1071,14 @@ namespace System.Management.Automation
 
         internal void SetPSScriptRootAndPSCommandPath(MutableTuple locals, ExecutionContext context)
         {
-            var psScriptRoot = string.Empty;
-            var psCommandPath = string.Empty;
-            if (!string.IsNullOrEmpty(File))
+            string psScriptRoot;
+            string psCommandPath;
+            if (string.IsNullOrEmpty(File))
+            {
+                psScriptRoot = context.SessionState.Path.CurrentFileSystemLocation.ProviderPath;
+                psCommandPath = string.Empty;
+            }
+            else
             {
                 psScriptRoot = Path.GetDirectoryName(File);
                 psCommandPath = File;
