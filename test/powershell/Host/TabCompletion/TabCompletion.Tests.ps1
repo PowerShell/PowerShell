@@ -823,6 +823,11 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
     }
 
+    it 'Should not complete TabExpansion2 variables' {
+        $res = TabExpansion2 -inputScript '$' -cursorColumn 1
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '$positionOfCursor'
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
