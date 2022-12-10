@@ -18,8 +18,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Xml;
-using Dbg = System.Management.Automation.Diagnostics;
 using Microsoft.PowerShell.Telemetry;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -964,6 +964,7 @@ namespace System.Management.Automation
         /// <summary>
         /// We need to send the telemetry as to whether the user has set the variable, and if so, what the value is.
         /// </summary>
+        /// <param name="detail">The details of the ErrorActionPreference setting.</param>
         private static void TelemetrySendUseData(string detail)
         {
             ApplicationInsightsTelemetry.SendTelemetryMetric(
