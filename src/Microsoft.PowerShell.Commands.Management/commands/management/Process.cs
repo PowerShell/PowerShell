@@ -1307,12 +1307,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _yesToAll, _noToAll;
 
+#if !UNIX
         /// <summary>
         /// Current windows user name.
         /// </summary>
         private string _currentUserName;
 
-#if !UNIX
         /// <summary>
         /// Gets the owner of the process.
         /// </summary>
