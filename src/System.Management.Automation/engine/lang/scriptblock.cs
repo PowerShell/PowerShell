@@ -1075,7 +1075,22 @@ namespace System.Management.Automation
             string psCommandPath;
             if (string.IsNullOrEmpty(File))
             {
-                psScriptRoot = context.SessionState.Path.CurrentFileSystemLocation.ProviderPath;
+                if (context.SessionState.Provider.Count == 0)
+                {
+                    psScriptRoot = string.Empty;
+                }
+                else
+                {
+                    try
+                    {
+                        psScriptRoot = context.SessionState.Path.CurrentFileSystemLocation.ProviderPath;
+                    }
+                    catch
+                    {
+                        psScriptRoot = string.Empty;
+                    }
+                }
+                
                 psCommandPath = string.Empty;
             }
             else
