@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -736,48 +737,73 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             userName = Platform.NonWindowsGetUserFromPid(process.Id);
 #else
-            IntPtr tokenUserInfo = IntPtr.Zero;
-            IntPtr processTokenHandler = IntPtr.Zero;
-
-            const uint TOKEN_QUERY = 0x0008;
+            var tokenUserInfo = nint.Zero;
+            var processTokenHandler = nint.Zero;
 
             try
             {
-                int error;
-                if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { return null; }
-
-                // Set the default length to be 256, so it will be sufficient for most cases.
-                int tokenInfoLength = 256;
-                tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-                if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                if (!Interop.Windows.OpenProcessToken(process.Handle, Interop.Windows.TOKEN_QUERY, out processTokenHandler))
                 {
-                    error = Marshal.GetLastWin32Error();
-                    if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                    {
-                        Marshal.FreeHGlobal(tokenUserInfo);
-                        tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-
-                        if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { return null; }
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return null;
                 }
 
-                var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+                // Set the default length to be 256, so it will be sufficient for most cases.
+                const int StartLength =
+#if DEBUG
+                    // In debug, validate ArrayPool growth.
+                    1;
+#else
+                    256;
+#endif
+                Span<byte> tokenData = stackalloc byte[StartLength];
+                Interop.Windows.TOKEN_USER tokenUser;
+                byte[] rentedArray = null;
+
+                try
+                {
+                    while (true)
+                    {
+                        int tokenInfoLength = tokenData.Length;
+                        unsafe
+                        {
+                            fixed (byte* pinnedTokenData = &MemoryMarshal.GetReference(tokenData))
+                            {
+                                if (Interop.Windows.GetTokenInformation(processTokenHandler, Interop.Windows.TOKEN_INFORMATION_CLASS.TokenUser, (nint)pinnedTokenData, tokenInfoLength, out tokenInfoLength))
+                                {
+                                    tokenUser = Marshal.PtrToStructure<Interop.Windows.TOKEN_USER>((nint)pinnedTokenData);
+                                    break;
+                                }
+                                else if (Marshal.GetLastPInvokeError() != Interop.Windows.ERROR_INSUFFICIENT_BUFFER)
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+
+                        tokenData = rentedArray = ArrayPool<byte>.Shared.Rent(tokenInfoLength);
+                    }
+                }
+                finally
+                {
+                    if (rentedArray is not null)
+                    {
+                        ArrayPool<byte>.Shared.Return(rentedArray);
+                    }
+                }
 
                 // Max username is defined as UNLEN = 256 in lmcons.h
                 // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
                 // The buffer length must be +1, last position is for a null string terminator.
-                int userNameLength = 257;
-                int domainNameLength = 16;
-                Span<char> userNameStr = stackalloc char[userNameLength];
-                Span<char> domainNameStr = stackalloc char[domainNameLength];
-                Win32Native.SID_NAME_USE accountType;
+                const int UserNameLength = 257;
+                const int DomainNameLength = 16;
+                int userNameLength = UserNameLength;
+                int domainNameLength = DomainNameLength;
+                Span<char> userNameStr = stackalloc char[UserNameLength];
+                Span<char> domainNameStr = stackalloc char[DomainNameLength];
+                Interop.Windows.SID_NAME_USE accountType;
 
                 // userNameLength and domainNameLength will be set to actual lengths.
-                if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                if (!Interop.Windows.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
                 {
                     return null;
                 }
@@ -1291,11 +1317,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Returns the owner.</returns>
         private bool IsProcessOwnedByCurrentUser(Process process)
         {
-            const uint TOKEN_QUERY = 0x0008;
-            IntPtr ph = IntPtr.Zero;
+            var tokenHandle = nint.Zero;
             try
             {
-                if (Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out ph))
+                if (Interop.Windows.OpenProcessToken(process.Handle, Interop.Windows.TOKEN_QUERY, out tokenHandle))
                 {
                     if (_currentUserName == null)
                     {
@@ -1305,7 +1330,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    using (var processUser = new WindowsIdentity(ph))
+                    using (var processUser = new WindowsIdentity(tokenHandle))
                     {
                         return string.Equals(processUser.Name, _currentUserName, StringComparison.OrdinalIgnoreCase);
                     }
@@ -1323,7 +1348,10 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (ph != IntPtr.Zero) { Win32Native.CloseHandle(ph); }
+                if (tokenHandle != nint.Zero && tokenHandle != -1)
+                {
+                    Win32Native.CloseHandle(tokenHandle);
+                }
             }
 
             return false;
