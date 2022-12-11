@@ -1302,12 +1302,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _shouldKillCurrentProcess;
 
+#if !UNIX
         /// <summary>
         /// Boolean variables to display the warning using ShouldContinue.
         /// </summary>
         private bool _yesToAll, _noToAll;
 
-#if !UNIX
         /// <summary>
         /// Current windows user name.
         /// </summary>
