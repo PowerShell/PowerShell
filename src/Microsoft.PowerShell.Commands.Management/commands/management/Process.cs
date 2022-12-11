@@ -1229,7 +1229,8 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (Platform.IsWindows && !Force)
+#if !UNIX
+                    if (!Force)
                     {
                         if (!IsProcessOwnedByCurrentUser(process))
                         {
@@ -1243,6 +1244,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                         }
                     }
+#endif
 
                     // If the process is svchost stop all the dependent services before killing process
                     if (string.Equals(SafeGetProcessName(process), "SVCHOST", StringComparison.OrdinalIgnoreCase))
@@ -1310,6 +1312,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string _currentUserName;
 
+#if !UNIX
         /// <summary>
         /// Gets the owner of the process.
         /// </summary>
@@ -1356,6 +1359,7 @@ namespace Microsoft.PowerShell.Commands
 
             return false;
         }
+#endif
 
         /// <summary>
         /// Stop the service that depends on the process and its child services.
