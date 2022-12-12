@@ -3538,7 +3538,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                if (computerSystemHandle != nint.Zero && computerSystemHandle != (nint)(-1))
+                if (computerSystemHandle != nint.Zero)
                 {
                     Interop.Windows.HcsCloseComputeSystem(computerSystemHandle);
                 }
@@ -3592,7 +3592,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                if (computerSystemHandle != nint.Zero && computerSystemHandle != (nint)(-1))
+                if (computerSystemHandle != nint.Zero)
                 {
                     Interop.Windows.HcsCloseComputeSystem(computerSystemHandle);
                 }
@@ -3693,7 +3693,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                if (computerSystemHandle != nint.Zero && computerSystemHandle != (nint)(-1))
+                if (computerSystemHandle != nint.Zero)
                 {
                     Interop.Windows.HcsCloseComputeSystem(computerSystemHandle);
                 }
