@@ -737,7 +737,6 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             userName = Platform.NonWindowsGetUserFromPid(process.Id);
 #else
-            var tokenUserInfo = nint.Zero;
             var processTokenHandler = nint.Zero;
 
             try
@@ -768,10 +767,40 @@ namespace Microsoft.PowerShell.Commands
                         {
                             fixed (byte* pinnedTokenData = &MemoryMarshal.GetReference(tokenData))
                             {
-                                if (Interop.Windows.GetTokenInformation(processTokenHandler, Interop.Windows.TOKEN_INFORMATION_CLASS.TokenUser, (nint)pinnedTokenData, tokenInfoLength, out tokenInfoLength))
+                                if (Interop.Windows.GetTokenInformation(
+                                    processTokenHandler,
+                                    Interop.Windows.TOKEN_INFORMATION_CLASS.TokenUser,
+                                    (nint)pinnedTokenData,
+                                    tokenInfoLength,
+                                    out tokenInfoLength))
                                 {
-                                    tokenUser = Marshal.PtrToStructure<Interop.Windows.TOKEN_USER>((nint)pinnedTokenData);
-                                    break;
+                                    tokenUser = *(Interop.Windows.TOKEN_USER*)pinnedTokenData;
+
+                                    // Max username is defined as UNLEN = 256 in lmcons.h
+                                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                                    // The buffer length must be +1, last position is for a null string terminator.
+                                    const int UserNameLength = 257;
+                                    const int DomainNameLength = 16;
+                                    int userNameLength = UserNameLength;
+                                    int domainNameLength = DomainNameLength;
+                                    Span<char> userNameStr = stackalloc char[UserNameLength];
+                                    Span<char> domainNameStr = stackalloc char[DomainNameLength];
+                                    Interop.Windows.SID_NAME_USE accountType;
+
+                                    // userNameLength and domainNameLength will be set to actual lengths.
+                                    if (!Interop.Windows.LookupAccountSid(
+                                        lpSystemName: null,
+                                        tokenUser.User.Sid,
+                                        userNameStr,
+                                        ref userNameLength,
+                                        domainNameStr,
+                                        ref domainNameLength,
+                                        out accountType))
+                                    {
+                                        return null;
+                                    }
+
+                                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
                                 }
                                 else if (Marshal.GetLastPInvokeError() != Interop.Windows.ERROR_INSUFFICIENT_BUFFER)
                                 {
@@ -790,25 +819,6 @@ namespace Microsoft.PowerShell.Commands
                         ArrayPool<byte>.Shared.Return(rentedArray);
                     }
                 }
-
-                // Max username is defined as UNLEN = 256 in lmcons.h
-                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                // The buffer length must be +1, last position is for a null string terminator.
-                const int UserNameLength = 257;
-                const int DomainNameLength = 16;
-                int userNameLength = UserNameLength;
-                int domainNameLength = DomainNameLength;
-                Span<char> userNameStr = stackalloc char[UserNameLength];
-                Span<char> domainNameStr = stackalloc char[DomainNameLength];
-                Interop.Windows.SID_NAME_USE accountType;
-
-                // userNameLength and domainNameLength will be set to actual lengths.
-                if (!Interop.Windows.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
-                {
-                    return null;
-                }
-
-                userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
             }
             catch (NotSupportedException)
             {
@@ -828,11 +838,6 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (tokenUserInfo != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(tokenUserInfo);
-                }
-
                 if (processTokenHandler != IntPtr.Zero)
                 {
                     Win32Native.CloseHandle(processTokenHandler);
