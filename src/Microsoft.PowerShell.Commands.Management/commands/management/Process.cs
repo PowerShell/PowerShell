@@ -758,6 +758,16 @@ namespace Microsoft.PowerShell.Commands
                 Interop.Windows.TOKEN_USER tokenUser;
                 byte[] rentedArray = null;
 
+                // Max username is defined as UNLEN = 256 in lmcons.h
+                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                // The buffer length must be +1, last position is for a null string terminator.
+                const int UserNameLength = 257;
+                const int DomainNameLength = 16;
+                int userNameLength = UserNameLength;
+                int domainNameLength = DomainNameLength;
+                Span<char> userNameStr = stackalloc char[UserNameLength];
+                Span<char> domainNameStr = stackalloc char[DomainNameLength];
+
                 try
                 {
                     while (true)
@@ -775,16 +785,6 @@ namespace Microsoft.PowerShell.Commands
                                     out tokenInfoLength))
                                 {
                                     tokenUser = *(Interop.Windows.TOKEN_USER*)pinnedTokenData;
-
-                                    // Max username is defined as UNLEN = 256 in lmcons.h
-                                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                                    // The buffer length must be +1, last position is for a null string terminator.
-                                    const int UserNameLength = 257;
-                                    const int DomainNameLength = 16;
-                                    int userNameLength = UserNameLength;
-                                    int domainNameLength = DomainNameLength;
-                                    Span<char> userNameStr = stackalloc char[UserNameLength];
-                                    Span<char> domainNameStr = stackalloc char[DomainNameLength];
                                     Interop.Windows.SID_NAME_USE accountType;
 
                                     // userNameLength and domainNameLength will be set to actual lengths.
@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (processTokenHandler != IntPtr.Zero)
+                if (processTokenHandler != nint.Zero && processTokenHandler != (nint)(-1))
                 {
                     Win32Native.CloseHandle(processTokenHandler);
                 }
