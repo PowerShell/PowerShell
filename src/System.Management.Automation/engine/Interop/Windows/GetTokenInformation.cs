@@ -51,7 +51,7 @@ internal static partial class Interop
         internal static partial bool GetTokenInformation(
             nint TokenHandle,
             TOKEN_INFORMATION_CLASS TokenInformationClass,
-            nint TokenInformation,
+            byte* TokenInformation,
             int TokenInformationLength,
             out int ReturnLength);
     }

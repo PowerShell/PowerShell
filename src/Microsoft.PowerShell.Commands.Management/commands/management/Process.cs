@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (Interop.Windows.GetTokenInformation(
                                     processTokenHandler,
                                     Interop.Windows.TOKEN_INFORMATION_CLASS.TokenUser,
-                                    (nint)pinnedTokenData,
+                                    pinnedTokenData,
                                     tokenInfoLength,
                                     out tokenInfoLength))
                                 {
