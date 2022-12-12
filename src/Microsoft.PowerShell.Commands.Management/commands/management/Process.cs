@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
 
                                     userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
-                                    break;
+                                    return userName;
                                 }
                                 else if (Marshal.GetLastPInvokeError() != Interop.Windows.ERROR_INSUFFICIENT_BUFFER)
                                 {
