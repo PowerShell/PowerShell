@@ -3289,12 +3289,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern uint HcsOpenComputeSystem(
-            string id,
-            ref IntPtr computeSystem,
-            ref string result);
-
-        [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern uint HcsGetComputeSystemProperties(
             IntPtr computeSystem,
             string propertyQuery,
@@ -3451,6 +3445,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void CreateContainerProcessInternal()
         {
+            nint computerSystemHandle = nint.Zero;
             uint result;
             string cmd;
             int processId = 0;
@@ -3464,8 +3459,7 @@ namespace System.Management.Automation.Runspaces
                 IntPtr ComputeSystem = IntPtr.Zero;
                 string resultString = string.Empty;
 
-                result = HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString);
-                if (result != 0)
+                if (Interop.Windows.HcsOpenComputeSystem(ContainerId, Interop.Windows.GENERIC_ALL, out computerSystemHandle) != Interop.Windows.HCS_Ok)
                 {
                     processId = 0;
                     error = InvalidContainerId;
@@ -3542,6 +3536,13 @@ namespace System.Management.Automation.Runspaces
                     return;
                 }
             }
+            finally
+            {
+                if (computerSystemHandle != nint.Zero && computerSystemHandle != (nint)(-1))
+                {
+                    Interop.Windows.HcsCloseComputeSystem(computerSystemHandle);
+                }
+            }
 
             ProcessId = processId;
             ErrorCode = error;
@@ -3569,20 +3570,31 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void TerminateContainerProcessInternal()
         {
+            nint computerSystemHandle = nint.Zero;
             IntPtr ComputeSystem = IntPtr.Zero;
             string resultString = string.Empty;
             IntPtr process = IntPtr.Zero;
 
             ProcessTerminated = false;
 
-            if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
+            try
             {
-                if (HcsOpenProcess(ComputeSystem, ProcessId, ref process, ref resultString) == 0)
+                if (Interop.Windows.HcsOpenComputeSystem(ContainerId, Interop.Windows.GENERIC_ALL, out computerSystemHandle) == Interop.Windows.HCS_Ok)
                 {
-                    if (HcsTerminateProcess(process, ref resultString) == 0)
+                    if (HcsOpenProcess(ComputeSystem, ProcessId, ref process, ref resultString) == 0)
                     {
-                        ProcessTerminated = true;
+                        if (HcsTerminateProcess(process, ref resultString) == 0)
+                        {
+                            ProcessTerminated = true;
+                        }
                     }
+                }
+            }
+            finally
+            {
+                if (computerSystemHandle != nint.Zero && computerSystemHandle != (nint)(-1))
+                {
+                    Interop.Windows.HcsCloseComputeSystem(computerSystemHandle);
                 }
             }
         }
@@ -3592,12 +3604,14 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void GetContainerPropertiesInternal()
         {
+            nint computerSystemHandle = nint.Zero;
+
             try
             {
                 IntPtr ComputeSystem = IntPtr.Zero;
                 string resultString = string.Empty;
 
-                if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
+                if (Interop.Windows.HcsOpenComputeSystem(ContainerId, Interop.Windows.GENERIC_ALL, out computerSystemHandle) == Interop.Windows.HCS_Ok)
                 {
                     Type computeSystemPropertiesType;
                     Type hostComputeInteropType;
@@ -3675,6 +3689,13 @@ namespace System.Management.Automation.Runspaces
                 {
                     ErrorCode = OtherError;
                     ErrorMessage = GetErrorMessageFromException(e);
+                }
+            }
+            finally
+            {
+                if (computerSystemHandle != nint.Zero && computerSystemHandle != (nint)(-1))
+                {
+                    Interop.Windows.HcsCloseComputeSystem(computerSystemHandle);
                 }
             }
         }
