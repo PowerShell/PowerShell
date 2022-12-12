@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 internal static partial class Interop
 {
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Keep native struct names.")]
-
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1306:FieldNamesMustBeginWithLowerCaseLetter", Justification = "Keep native struct names.")]
     internal static unsafe partial class Windows
     {
