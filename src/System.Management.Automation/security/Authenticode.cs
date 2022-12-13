@@ -275,7 +275,7 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        internal static Signature GetSignature(string fileName, string fileContent)
+        internal static Signature GetSignature(string fileName, byte[] fileContent)
         {
             Signature signature = null;
 
@@ -398,7 +398,7 @@ namespace System.Management.Automation
         }
 #endif
 
-        private static Signature GetSignatureFromWinVerifyTrust(string fileName, string fileContent)
+        private static Signature GetSignatureFromWinVerifyTrust(string fileName, byte[] fileContent)
         {
             Signature signature = null;
 
@@ -409,6 +409,7 @@ namespace System.Management.Automation
             {
                 Utils.CheckArgForNullOrEmpty(fileName, "fileName");
                 SecuritySupport.CheckIfFileExists(fileName);
+
                 // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
             }
 
@@ -424,7 +425,8 @@ namespace System.Management.Automation
                 signature = GetSignatureFromWintrustData(fileName, error, wtd);
 
                 wtd.dwStateAction = WinTrustAction.WTD_STATEACTION_CLOSE;
-                error = WinTrustMethods.WinVerifyTrust(IntPtr.Zero,
+                error = WinTrustMethods.WinVerifyTrust(
+                    IntPtr.Zero,
                     ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
                     ref wtd);
 
@@ -441,8 +443,10 @@ namespace System.Management.Automation
             return signature;
         }
 
-        private static uint GetWinTrustData(string fileName, string fileContent,
-                                            out WinTrustMethods.WINTRUST_DATA wtData)
+        private static uint GetWinTrustData(
+            string fileName,
+            byte[] fileContent,
+            out WinTrustMethods.WINTRUST_DATA wtData)
         {
             wtData = new()
             {
@@ -451,9 +455,6 @@ namespace System.Management.Automation
                 dwStateAction = WinTrustAction.WTD_STATEACTION_VERIFY,
             };
 
-            byte[] contentBytes = fileContent == null
-                ? Array.Empty<byte>()
-                : System.Text.Encoding.Unicode.GetBytes(fileContent);
             unsafe
             {
                 fixed (char* fileNamePtr = fileName)
@@ -468,12 +469,13 @@ namespace System.Management.Automation
                         wtData.dwUnionChoice = WinTrustUnionChoice.WTD_CHOICE_FILE;
                         wtData.pChoice = &wfi;
 
-                        return WinTrustMethods.WinVerifyTrust(IntPtr.Zero,
+                        return WinTrustMethods.WinVerifyTrust(
+                            IntPtr.Zero,
                             ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
                             ref wtData);
                     }
 
-                    fixed (byte* contentPtr = contentBytes)
+                    fixed (byte* contentPtr = fileContent)
                     {
                         Guid pwshSIP = new("603BCC1F-4B59-4E08-B724-D2C6297EF351");
                         WinTrustMethods.WINTRUST_BLOB_INFO wbi = new()
@@ -481,13 +483,14 @@ namespace System.Management.Automation
                             cbStruct = (uint)Marshal.SizeOf<WinTrustMethods.WINTRUST_BLOB_INFO>(),
                             gSubject = pwshSIP,
                             pcwszDisplayName = fileNamePtr,
-                            cbMemObject = (uint)contentBytes.Length,
+                            cbMemObject = (uint)fileContent.Length,
                             pbMemObject = contentPtr,
                         };
                         wtData.dwUnionChoice = WinTrustUnionChoice.WTD_CHOICE_BLOB;
                         wtData.pChoice = &wbi;
 
-                        return WinTrustMethods.WinVerifyTrust(IntPtr.Zero,
+                        return WinTrustMethods.WinVerifyTrust(
+                            IntPtr.Zero,
                             ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
                             ref wtData);
                     }

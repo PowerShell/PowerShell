@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell
             // try harder to validate the signature by being explicit about encoding
             // and providing the script contents
             string verificationContents = Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
-            signature = SignatureHelper.GetSignature(path, verificationContents);
+            signature = SignatureHelper.GetSignature(path, Encoding.Unicode.GetBytes(verificationContents));
 
             // A last ditch effort -
             // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell
                 && script.OriginalEncoding != Encoding.Unicode)
             {
                 verificationContents = Encoding.Unicode.GetString(Encoding.Unicode.GetPreamble()) + script.ScriptContents;
-                Signature fallbackSignature = SignatureHelper.GetSignature(path, verificationContents);
+                Signature fallbackSignature = SignatureHelper.GetSignature(path, Encoding.Unicode.GetBytes(verificationContents));
 
                 if (fallbackSignature.Status == SignatureStatus.Valid)
                     signature = fallbackSignature;
