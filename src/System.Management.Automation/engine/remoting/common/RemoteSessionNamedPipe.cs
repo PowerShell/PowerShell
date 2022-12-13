@@ -1267,7 +1267,7 @@ namespace System.Management.Automation.Remoting
             do
             {
                 // Get handle to pipe.
-                handle = Interop.Windows.CreateFileWithSafePipeHandle(
+                handle = Interop.Windows.CreateFileWithPipeHandle(
                     lpFileName: PipeName,
                     FileAccess.ReadWrite,
                     FileShare.None,

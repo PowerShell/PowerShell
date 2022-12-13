@@ -60,7 +60,7 @@ internal static partial class Interop
             IntPtr hTemplateFile);
 
         [LibraryImport("api-ms-win-core-file-l1-1-0.dll", EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        private static unsafe partial nint CreateFileWithSafePipeHandlePrivate(
+        private static unsafe partial nint CreateFileWithPipeHandlePrivate(
             string lpFileName,
             uint dwDesiredAccess,
             FileShare dwShareMode,
@@ -82,17 +82,14 @@ internal static partial class Interop
             return CreateFilePrivate(lpFileName, (uint)dwDesiredAccess, dwShareMode, nint.Zero, dwCreationDisposition, dwFlagsAndAttributes, nint.Zero);
         }
 
-        internal static unsafe nint CreateFileWithSafePipeHandle(
+        internal static unsafe nint CreateFileWithPipeHandle(
             string lpFileName,
             FileAccess dwDesiredAccess,
             FileShare dwShareMode,
             FileMode dwCreationDisposition,
             FileAttributes dwFlagsAndAttributes)
         {
-            lpFileName = Path.TrimEndingDirectorySeparator(lpFileName);
-            lpFileName = PathUtils.EnsureExtendedPrefixIfNeeded(lpFileName);
-
-            return CreateFileWithSafePipeHandlePrivate(lpFileName, (uint)dwDesiredAccess, dwShareMode, nint.Zero, dwCreationDisposition, dwFlagsAndAttributes, nint.Zero);
+            return CreateFileWithPipeHandlePrivate(lpFileName, (uint)dwDesiredAccess, dwShareMode, nint.Zero, dwCreationDisposition, dwFlagsAndAttributes, nint.Zero);
         }
     }
 }
