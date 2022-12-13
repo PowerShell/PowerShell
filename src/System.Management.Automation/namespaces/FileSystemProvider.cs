@@ -2251,6 +2251,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
+                            // for hardlinks we resolve the target to an absolute path
+                            if (!IsAbsolutePath(strTargetPath))
+                            {
+                                // there is already a check before here so that strTargetPath should only resolve to 1 path
+                                strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                            }
+
                             exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
                         }
                     }
@@ -2293,6 +2300,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (Force)
                     {
+                        if (itemType == ItemType.HardLink && string.Equals(path, strTargetPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string message = StringUtil.Format(FileSystemProviderStrings.NewItemTargetIsSameAsLink, path);
+                            WriteError(new ErrorRecord(new InvalidOperationException(message), "TargetIsSameAsLink", ErrorCategory.InvalidOperation, path));
+                            return;
+                        }
+
                         try
                         {
                             if (!isSymLinkDirectory && symLinkExists)
