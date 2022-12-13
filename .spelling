@@ -1140,6 +1140,10 @@ mcr.microsoft.com
 global.json
 sha256
 PkgES
+TabExpansion
+PSv2
+Microsoft.CSharp
+System.Data.SqlClient
  - CHANGELOG.md
 aavdberg
 asrosent
