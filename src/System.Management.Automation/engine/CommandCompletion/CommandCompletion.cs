@@ -540,7 +540,8 @@ namespace System.Management.Automation
                     // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
                     // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
                     SessionStateScope scopeToRestore;
-                    if (context.CurrentCommandProcessor.Command.CommandInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase))
+                    if (context.CurrentCommandProcessor.Command.CommandInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)
+                        && context.EngineSessionState.CurrentScope.Parent is not null)
                     {
                         scopeToRestore = context.EngineSessionState.CurrentScope;
                         context.EngineSessionState.CurrentScope = scopeToRestore.Parent;
