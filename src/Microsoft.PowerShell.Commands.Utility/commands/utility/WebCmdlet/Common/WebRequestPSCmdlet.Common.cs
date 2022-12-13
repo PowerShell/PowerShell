@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int MaximumRetryCount { get; set; };
+        public virtual int MaximumRetryCount { get; set; }
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
@@ -389,89 +389,89 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void ValidateParameters()
         {
             // sessions
-            if (WebSession != null && SessionVariable != null)
+            if (WebSession is not null && SessionVariable is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
             }
 
             // Authentication
-            if (UseDefaultCredentials && Authentication != WebAuthenticationType.None)
+            if (UseDefaultCredentials && Authentication is not WebAuthenticationType.None)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict, "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if (Authentication != WebAuthenticationType.None && Token != null && Credential != null)
+            if (Authentication is not WebAuthenticationType.None && Token is not null && Credential is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict, "WebCmdletAuthenticationTokenConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if (Authentication == WebAuthenticationType.Basic && Credential == null)
+            if (Authentication is WebAuthenticationType.Basic && Credential is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied, "WebCmdletAuthenticationCredentialNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
-            if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && Token == null)
+            if ((Authentication is WebAuthenticationType.OAuth || Authentication is WebAuthenticationType.Bearer) && Token is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied, "WebCmdletAuthenticationTokenNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
-            if (!AllowUnencryptedAuthentication && Authentication != WebAuthenticationType.None && Uri.Scheme != "https")
+            if (!AllowUnencryptedAuthentication && Authentication is not WebAuthenticationType.None && Uri.Scheme is not "https")
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
-            if (!AllowUnencryptedAuthentication && (Credential != null || UseDefaultCredentials) && Uri.Scheme != "https")
+            if (!AllowUnencryptedAuthentication && (Credential is not null || UseDefaultCredentials) && Uri.Scheme is not "https")
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
             // credentials
-            if (UseDefaultCredentials && Credential != null)
+            if (UseDefaultCredentials && Credential is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
                 ThrowTerminatingError(error);
             }
 
             // Proxy server
-            if (ProxyUseDefaultCredentials && ProxyCredential != null)
+            if (ProxyUseDefaultCredentials && ProxyCredential is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict, "WebCmdletProxyCredentialConflictException");
                 ThrowTerminatingError(error);
             }
-            else if (Proxy == null && (ProxyCredential != null || ProxyUseDefaultCredentials))
+            else if (Proxy is null && (ProxyCredential is not null || ProxyUseDefaultCredentials))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied, "WebCmdletProxyUriNotSuppliedException");
                 ThrowTerminatingError(error);
             }
 
             // request body content
-            if (Body != null && InFile != null)
+            if (Body is not null && InFile is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict, "WebCmdletBodyConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if (Body != null && Form != null)
+            if (Body is not null && Form is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict, "WebCmdletBodyFormConflictException");
                 ThrowTerminatingError(error);
             }
 
-            if (InFile != null && Form != null)
+            if (InFile is not null && Form is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict, "WebCmdletFormInFileConflictException");
                 ThrowTerminatingError(error);
             }
 
             // validate InFile path
-            if (InFile != null)
+            if (InFile is not null)
             {
                 ProviderInfo provider = null;
                 ErrorRecord errorRecord = null;
@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             errorRecord = GetValidationError(WebCmdletStrings.MultiplePathsResolved, "WebCmdletInFileMultiplePathsResolvedException", InFile);
                         }
-                        else if (providerPaths.Count == 0)
+                        else if (providerPaths.Count is 0)
                         {
                             errorRecord = GetValidationError(WebCmdletStrings.NoPathResolved, "WebCmdletInFileNoPathResolvedException", InFile);
                         }
@@ -519,21 +519,21 @@ namespace Microsoft.PowerShell.Commands
                     errorRecord = new ErrorRecord(driveNotFound.ErrorRecord, driveNotFound);
                 }
 
-                if (errorRecord != null)
+                if (errorRecord is not null)
                 {
                     ThrowTerminatingError(errorRecord);
                 }
             }
 
             // output ??
-            if (PassThru && OutFile == null)
+            if (PassThru && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
-            if (Resume.IsPresent && OutFile == null)
+            if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
@@ -545,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
             // make sure we have a valid WebRequestSession object to work with
             WebSession ??= new WebRequestSession();
 
-            if (SessionVariable != null)
+            if (SessionVariable is not null)
             {
                 // save the session back to the PS environment if requested
                 PSVariableIntrinsics vi = SessionState.PSVariable;
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // handle credentials
-            if (Credential != null && Authentication == WebAuthenticationType.None)
+            if (Credential is not null && Authentication is WebAuthenticationType.None)
             {
                 // get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((Credential != null || Token != null) && Authentication != WebAuthenticationType.None)
+            else if ((Credential is not null || Token is not null) && Authentication is not WebAuthenticationType.None)
             {
                 ProcessAuthentication();
             }
@@ -571,13 +571,13 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.UseDefaultCredentials = true;
             }
 
-            if (CertificateThumbprint != null)
+            if (CertificateThumbprint is not null)
             {
                 X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
                 X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
                 X509Certificate2Collection tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
-                if (tbCollection.Count == 0)
+                if (tbCollection.Count is 0)
                 {
                     CryptographicException ex = new(WebCmdletStrings.ThumbprintNotFound);
                     throw ex;
@@ -590,23 +590,23 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Certificate != null)
+            if (Certificate is not null)
             {
                 WebSession.AddCertificate(Certificate);
             }
 
             // handle the user agent
-            if (UserAgent != null)
+            if (UserAgent is not null)
             {
                 // store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
 
-            if (Proxy != null)
+            if (Proxy is not null)
             {
                 WebProxy webProxy = new(Proxy);
                 webProxy.BypassProxyOnLocal = false;
-                if (ProxyCredential != null)
+                if (ProxyCredential is not null)
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
                 }
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // store the other supplied headers
-            if (Headers != null)
+            if (Headers is not null)
             {
                 foreach (string key in Headers.Keys)
                 {
@@ -679,12 +679,12 @@ namespace Microsoft.PowerShell.Commands
             // preprocess Body if content is a dictionary and method is GET (set as query)
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
-            if (bodyAsDictionary != null
-                && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
+            if (bodyAsDictionary is not null
+                && ((IsStandardMethodSet() && (Method is WebRequestMethod.Default || Method is WebRequestMethod.Get))
+                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() is "GET")))
             {
                 UriBuilder uriBuilder = new(uri);
-                if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
+                if (uriBuilder.Query is not null && uriBuilder.Query.Length > 1)
                 {
                     uriBuilder.Query = string.Concat(uriBuilder.Query.AsSpan(1), "&", FormatDictionary(bodyAsDictionary));
                 }
@@ -703,7 +703,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static Uri CheckProtocol(Uri uri)
         {
-            if (uri == null) 
+            if (uri is null) 
             { 
                 throw new ArgumentNullException(nameof(uri)); 
             }
@@ -724,7 +724,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string FormatDictionary(IDictionary content)
         {
-            if (content == null)
+            if (content is null)
                 throw new ArgumentNullException(nameof(content));
 
             StringBuilder bodyBuilder = new();
@@ -740,7 +740,7 @@ namespace Microsoft.PowerShell.Commands
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
                 string encodedValue = string.Empty;
-                if (value != null)
+                if (value is not null)
                 {
                     encodedValue = WebUtility.UrlEncode(value.ToString());
                 }
@@ -768,12 +768,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsStandardMethodSet()
         {
-            return (ParameterSetName == "StandardMethod" || ParameterSetName == "StandardMethodNoProxy");
+            return (ParameterSetName is "StandardMethod" || ParameterSetName is "StandardMethodNoProxy");
         }
 
         private bool IsCustomMethodSet()
         {
-            return (ParameterSetName == "CustomMethod" || ParameterSetName == "CustomMethodNoProxy");
+            return (ParameterSetName is "CustomMethod" || ParameterSetName is "CustomMethodNoProxy");
         }
 
         private string GetBasicAuthorizationHeader()
@@ -791,11 +791,11 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessAuthentication()
         {
-            if (Authentication == WebAuthenticationType.Basic)
+            if (Authentication is WebAuthenticationType.Basic)
             {
                 WebSession.Headers["Authorization"] = GetBasicAuthorizationHeader();
             }
-            else if (Authentication == WebAuthenticationType.Bearer || Authentication == WebAuthenticationType.OAuth)
+            else if (Authentication is WebAuthenticationType.Bearer || Authentication is WebAuthenticationType.OAuth)
             {
                 WebSession.Headers["Authorization"] = GetBearerAuthorizationHeader();
             }
@@ -946,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                 // the UseDefaultCredentials flag overrides other supplied credentials
                 handler.UseDefaultCredentials = true;
             }
-            else if (WebSession.Credentials != null)
+            else if (WebSession.Credentials is not null)
             {
                 handler.Credentials = WebSession.Credentials;
             }
@@ -955,12 +955,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 handler.UseProxy = false;
             }
-            else if (WebSession.Proxy != null)
+            else if (WebSession.Proxy is not null)
             {
                 handler.Proxy = WebSession.Proxy;
             }
 
-            if (WebSession.Certificates != null)
+            if (WebSession.Certificates is not null)
             {
                 handler.ClientCertificates.AddRange(WebSession.Certificates);
             }
@@ -978,7 +978,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (WebSession.MaximumRedirection > -1)
             {
-                if (WebSession.MaximumRedirection == 0)
+                if (WebSession.MaximumRedirection is 0)
                 {
                     handler.AllowAutoRedirect = false;
                 }
@@ -993,7 +993,7 @@ namespace Microsoft.PowerShell.Commands
             HttpClient httpClient = new(handler);
 
             // check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            if (TimeoutSec == 0)
+            if (TimeoutSec is 0)
             {
                 // A zero timeout means infinite
                 httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set 'Transfer-Encoding'
-            if (TransferEncoding != null)
+            if (TransferEncoding is not null)
             {
                 request.Headers.TransferEncodingChunked = true;
                 var headerValue = new TransferCodingHeaderValue(TransferEncoding);
@@ -1125,16 +1125,16 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
         {
-            if (request == null) { throw new ArgumentNullException(nameof(request)); }
+            if (request is null) { throw new ArgumentNullException(nameof(request)); }
 
             // set the content type
-            if (ContentType != null)
+            if (ContentType is not null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
                 // request
             }
-            // ContentType == null
-            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
+            // ContentType is null
+            else if (Method is WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() is "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
@@ -1145,7 +1145,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Form != null)
+            if (Form is not null)
             {
                 // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
                 WebSession.ContentHeaders.Clear();
@@ -1160,13 +1160,13 @@ namespace Microsoft.PowerShell.Commands
                 SetRequestContent(request, formData);
             }
             // coerce body into a usable form
-            else if (Body != null)
+            else if (Body is not null)
             {
                 object content = Body;
 
                 // make sure we're using the base object of the body, not the PSObject wrapper
                 PSObject psBody = Body as PSObject;
-                if (psBody != null)
+                if (psBody is not null)
                 {
                     content = psBody.BaseObject;
                 }
@@ -1203,7 +1203,7 @@ namespace Microsoft.PowerShell.Commands
                         (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
                 }
             }
-            else if (InFile != null) // copy InFile data
+            else if (InFile is not null) // copy InFile data
             {
                 try
                 {
@@ -1225,7 +1225,7 @@ namespace Microsoft.PowerShell.Commands
             if (request.Content is null)
             {
                 // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
-                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET"))
+                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() is "GET"))
                 {
                     return;
                 }
@@ -1266,8 +1266,8 @@ namespace Microsoft.PowerShell.Commands
             return
             (
                 (intCode >= 300 && intCode < 304) ||
-                intCode == 307 ||
-                intCode == 308
+                intCode is 307 ||
+                intCode is 308
             );
         }
 
@@ -1277,13 +1277,13 @@ namespace Microsoft.PowerShell.Commands
         {
             return
             (
-                code == HttpStatusCode.Found ||
-                code == HttpStatusCode.Moved ||
-                code == HttpStatusCode.Redirect ||
-                code == HttpStatusCode.RedirectMethod ||
-                code == HttpStatusCode.SeeOther ||
-                code == HttpStatusCode.Ambiguous ||
-                code == HttpStatusCode.MultipleChoices
+                code is HttpStatusCode.Found ||
+                code is HttpStatusCode.Moved ||
+                code is HttpStatusCode.Redirect ||
+                code is HttpStatusCode.RedirectMethod ||
+                code is HttpStatusCode.SeeOther ||
+                code is HttpStatusCode.Ambiguous ||
+                code is HttpStatusCode.MultipleChoices
             );
         }
 
@@ -1294,18 +1294,18 @@ namespace Microsoft.PowerShell.Commands
 
             return
             (
-                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+                (intCode is 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
             );
         }
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
-            if (client == null) 
+            if (client is null) 
             {
                 throw new ArgumentNullException(nameof(client));
             }
 
-            if (request == null) 
+            if (request is null) 
             {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -1323,7 +1323,7 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                if (keepAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
+                if (keepAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location is not null)
                 {
                     _cancelToken.Cancel();
                     _cancelToken = null;
@@ -1336,7 +1336,7 @@ namespace Microsoft.PowerShell.Commands
                     // For selected redirects that used POST, GET must be used with the
                     // redirected Location.
                     // Since GET is the default; POST only occurs when -Method POST is used.
-                    if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
+                    if (Method is WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
                     {
                         // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                         Method = WebRequestMethod.Get;
@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands
                 // This happens when the local file is larger than the remote file.
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
                 if (Resume.IsPresent &&
-                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
+                    response.StatusCode is HttpStatusCode.RequestedRangeNotSatisfiable &&
                     (response.Content.Headers.ContentRange.HasLength &&
                     response.Content.Headers.ContentRange.Length != _resumeFileSize))
                 {
@@ -1371,7 +1371,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         FillRequestStream(requestWithoutRange);
                         long requestContentLength = 0;
-                        if (requestWithoutRange.Content != null)
+                        if (requestWithoutRange.Content is not null)
                         {
                             requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
                         }
@@ -1389,9 +1389,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
+                _resumeSuccess = response.StatusCode is HttpStatusCode.PartialContent;
 
-                // When MaximumRetryCount is not specified, the totalRequests == 1.
+                // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
                     string retryMessage = string.Format(
@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void UpdateSession(HttpResponseMessage response)
         {
-            if (response == null) 
+            if (response is null) 
             {
                 throw new ArgumentNullException(nameof(response));
             }
@@ -1444,8 +1444,8 @@ namespace Microsoft.PowerShell.Commands
 
                 // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorization = WebSession != null &&
-                                         WebSession.Headers != null &&
+                bool keepAuthorization = WebSession is not null &&
+                                         WebSession.Headers is not null &&
                                          PreserveAuthorizationOnRedirect.IsPresent &&
                                          WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
@@ -1471,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
                             try
                             {
                                 long requestContentLength = 0;
-                                if (request.Content != null)
+                                if (request.Content is not null)
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
 
                                 string reqVerboseMsg = string.Format(
@@ -1499,7 +1499,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Check if the Resume range was not satisfiable because the file already completed downloading.
                                 // This happens when the local file is the same size as the remote file.
                                 if (Resume.IsPresent &&
-                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
+                                    response.StatusCode is HttpStatusCode.RequestedRangeNotSatisfiable &&
                                     response.Content.Headers.ContentRange.HasLength &&
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
@@ -1560,7 +1560,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                                if (WebSession.MaximumRedirection is 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect is false"
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
@@ -1570,7 +1570,7 @@ namespace Microsoft.PowerShell.Commands
                             catch (HttpRequestException ex)
                             {
                                 ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                if (ex.InnerException != null)
+                                if (ex.InnerException is not null)
                                 {
                                     er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
                                 }
@@ -1626,12 +1626,12 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (content == null)
+            if (content is null)
             {
                 return 0;
             }
@@ -1654,18 +1654,18 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, string content)
         {
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (content == null)
+            if (content is null)
             {
                 return 0;
             }
             
             Encoding encoding = null;
-            if (ContentType != null)
+            if (ContentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
@@ -1707,10 +1707,10 @@ namespace Microsoft.PowerShell.Commands
 
         internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
-            if (request == null)
+            if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            if (xmlNode == null)
+            if (xmlNode is null)
                 return 0;
 
             byte[] bytes = null;
@@ -1744,9 +1744,9 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
-            if (request == null)
+            if (request is null)
                 throw new ArgumentNullException(nameof(request));
-            if (contentStream == null)
+            if (contentStream is null)
                 throw new ArgumentNullException(nameof(contentStream));
 
             var streamContent = new StreamContent(contentStream);
@@ -1767,12 +1767,12 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (multipartContent == null)
+            if (multipartContent is null)
             {
                 throw new ArgumentNullException(nameof(multipartContent));
             }
@@ -1784,12 +1784,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
             
-            if (content == null)
+            if (content is null)
             {
                 throw new ArgumentNullException(nameof(content));
             }
@@ -1800,7 +1800,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
         {
-            if (_relationLink == null)
+            if (_relationLink is null)
             {
                 // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
                 _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -1845,7 +1845,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
         private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
-            if (formData == null)
+            if (formData is null)
             {
                 throw new ArgumentNullException(nameof(formData));
             }
