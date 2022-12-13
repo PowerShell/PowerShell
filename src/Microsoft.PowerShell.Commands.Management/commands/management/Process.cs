@@ -741,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (!Interop.Windows.OpenProcessToken(process.Handle, Interop.Windows.TOKEN_QUERY, out processTokenHandler))
+                if (!Interop.Windows.OpenProcessToken(process.Handle, TokenAccessLevels.Query, out processTokenHandler))
                 {
                     return null;
                 }
@@ -1329,7 +1329,7 @@ namespace Microsoft.PowerShell.Commands
             var tokenHandle = nint.Zero;
             try
             {
-                if (Interop.Windows.OpenProcessToken(process.Handle, Interop.Windows.TOKEN_QUERY, out tokenHandle))
+                if (Interop.Windows.OpenProcessToken(process.Handle, TokenAccessLevels.Query, out tokenHandle))
                 {
                     if (_currentUserName == null)
                     {
