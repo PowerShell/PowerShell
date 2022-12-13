@@ -70,10 +70,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Free managed objects within 'if (disposing)' if needed
-            if (fdiContext != null)
-            {
-                fdiContext.Dispose();
-            }
+            fdiContext?.Dispose();
             // Free unmanaged objects here
             this.CleanUpDelegates();
 

@@ -540,6 +540,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region set operation options
 
         /// <summary>
+        /// Gets or sets a value indicating whether to retrieve localized information for the CIM class.
+        /// </summary>
+        public bool Amended
+        {
+            get => OperationOptions.Flags.HasFlag(CimOperationFlags.LocalizedQualifiers);
+
+            set
+            {
+                if (value)
+                {
+                    OperationOptions.Flags |= CimOperationFlags.LocalizedQualifiers;
+                }
+                else
+                {
+                    OperationOptions.Flags &= ~CimOperationFlags.LocalizedQualifiers;
+                }
+            }
+        }
+
+        /// <summary>
         /// Set timeout value (seconds) of the operation.
         /// </summary>
         public uint OperationTimeout
@@ -666,9 +686,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.OperationOptions = new CimOperationOptions(operOptions);
             }
-            else if (this.OperationOptions == null)
+            else
             {
-                this.OperationOptions = new CimOperationOptions();
+                this.OperationOptions ??= new CimOperationOptions();
             }
 
             this.EnableMethodResultStreaming = true;

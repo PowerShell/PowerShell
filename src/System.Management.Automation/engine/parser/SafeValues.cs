@@ -548,10 +548,7 @@ namespace System.Management.Automation.Language
                 ofs = t_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
 
-            if (ofs == null)
-            {
-                ofs = " ";
-            }
+            ofs ??= " ";
 
             for (int offset = 0; offset < safeValues.Length; offset++)
             {

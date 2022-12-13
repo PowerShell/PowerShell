@@ -11,6 +11,7 @@ using System.Text;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
+    /// This class represents a PowerShell process that is used for an out-of-process remote Runspace.
     /// </summary>
     public sealed class PowerShellProcessInstance : IDisposable
     {
@@ -30,8 +31,6 @@ namespace System.Management.Automation.Runspaces
 
         #region Constructors
 
-        /// <summary>
-        /// </summary>
         static PowerShellProcessInstance()
         {
 #if UNIX
@@ -145,10 +144,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
-        /// <param name="powerShellVersion"></param>
-        /// <param name="credential"></param>
-        /// <param name="initializationScript"></param>
-        /// <param name="useWow64"></param>
+        /// <param name="powerShellVersion">Specifies the version of powershell.</param>
+        /// <param name="credential">Specifies a user account credentials.</param>
+        /// <param name="initializationScript">Specifies a script that will be executed when the powershell process is initialized.</param>
+        /// <param name="useWow64">Specifies if the powershell process will be 32-bit.</param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64) : this(powerShellVersion, credential, initializationScript, useWow64, workingDirectory: null)
         {
         }
@@ -178,7 +177,9 @@ namespace System.Management.Automation.Runspaces
         #endregion Constructors
 
         #region Dispose
+
         /// <summary>
+        /// Implementing the <see cref="IDisposable"/> interface.
         /// </summary>
         public void Dispose()
         {
@@ -186,9 +187,6 @@ namespace System.Management.Automation.Runspaces
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
             if (_isDisposed) return;
@@ -220,7 +218,9 @@ namespace System.Management.Automation.Runspaces
         #endregion Dispose
 
         #region Public Properties
+
         /// <summary>
+        /// Gets the process object of the remote target.
         /// </summary>
         public Process Process { get; }
 

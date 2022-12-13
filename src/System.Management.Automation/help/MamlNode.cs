@@ -209,7 +209,7 @@ namespace System.Management.Automation
             {
                 mshObject = new PSObject(GetInsidePSObject(xmlNode));
                 // Add typeNames to this MSHObject and create views so that
-                // the ouput is readable. This is done only for complex nodes.
+                // the output is readable. This is done only for complex nodes.
                 mshObject.TypeNames.Clear();
 
                 if (xmlNode.Attributes["type"] != null)
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
             // It is discouraged to use tab in preformatted text.
 
             string noTabText = text.Replace("\t", "    ");
-            string[] lines = noTabText.Split(Utils.Separators.Newline);
+            string[] lines = noTabText.Split('\n');
             string[] trimedLines = TrimLines(lines);
 
             if (trimedLines == null || trimedLines.Length == 0)
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
             if (IsEmptyLine(line))
                 return 0;
 
-            string leftTrimedLine = line.TrimStart(Utils.Separators.Space);
+            string leftTrimedLine = line.TrimStart(' ');
 
             return line.Length - leftTrimedLine.Length;
         }

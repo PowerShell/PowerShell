@@ -132,9 +132,6 @@
   <data name="NewItemAction" xml:space="preserve">
     <value>New Item</value>
   </data>
-  <data name="NewItemResourceTemplateWithType" xml:space="preserve">
-    <value>Item: {0} Type: {1}</value>
-  </data>
   <data name="NewItemResourceTemplate" xml:space="preserve">
     <value>Item: {0}</value>
   </data>
@@ -174,24 +171,6 @@
   <data name="ClearPropertyResourceTemplate" xml:space="preserve">
     <value>Item: {0} Property: {1}</value>
   </data>
-  <data name="SetPropertyValueAtAction" xml:space="preserve">
-    <value>Set Property Value At</value>
-  </data>
-  <data name="SetPropertyValueAtResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} At: {2}</value>
-  </data>
-  <data name="AddPropertyValueAtAction" xml:space="preserve">
-    <value>Add Property Value At</value>
-  </data>
-  <data name="AddPropertyValueAtResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} At: {2}</value>
-  </data>
-  <data name="RemovePropertyValueAtAction" xml:space="preserve">
-    <value>Remove Property Value At</value>
-  </data>
-  <data name="RemovePropertyValueAtResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Property: {1} At: {2}</value>
-  </data>
   <data name="NewPropertyAction" xml:space="preserve">
     <value>New Property</value>
   </data>
@@ -222,9 +201,6 @@
   <data name="MovePropertyResourceTemplate" xml:space="preserve">
     <value>Item: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
   </data>
-  <data name="DefaultValueName" xml:space="preserve">
-    <value>(default)</value>
-  </data>
   <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
     <value>The operation was not processed. The location that was provided does not allow this operation.</value>
   </data>
@@ -245,15 +221,6 @@
   </data>
   <data name="DestinationChildOfSource" xml:space="preserve">
     <value>The operation cannot be performed because the destination path is subordinate to the source path.</value>
-  </data>
-  <data name="BadAtParam" xml:space="preserve">
-    <value>The at parameter must be an integer to index a specific property value.</value>
-  </data>
-  <data name="PropertyNotMultivalued" xml:space="preserve">
-    <value>The property is not a multi-valued property. To remove this property, use Remove-ItemProperty.</value>
-  </data>
-  <data name="PropertyNotMultivaluedChange" xml:space="preserve">
-    <value>The property is not a multi-valued property and values cannot be added to it. To change the value use Set-ItemProperty.</value>
   </data>
   <data name="PropertyAlreadyExists" xml:space="preserve">
     <value>The property already exists.</value>
@@ -330,23 +297,11 @@
   <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
     <value>The specified RegistryKeyPermissionCheck value is not valid.</value>
   </data>
-  <data name="ArgumentException_TransactionAbsent" xml:space="preserve">
-    <value>A transaction argument must be specified.</value>
-  </data>
-  <data name="Argument_InvalidSafeHandle" xml:space="preserve">
-    <value>The specified SafeHandle value is not valid.</value>
-  </data>
   <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
     <value>The registry key has subkeys; recursive removals are not supported by this method.</value>
   </data>
-  <data name="InvalidOperation_RemoteNotAllowed" xml:space="preserve">
-    <value>Remote registry operations are not allowed with transactions.</value>
-  </data>
   <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
     <value>Cannot create a KTM handle without a Transaction.Current or specified transaction.</value>
-  </data>
-  <data name="InvalidOperation_NoSecurityDescriptor" xml:space="preserve">
-    <value>The object does not contain a security descriptor.</value>
   </data>
   <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
     <value>The specified transaction or Transaction.Current must match the transaction used to create or open this TransactedRegistryKey.</value>
@@ -356,21 +311,6 @@
   </data>
   <data name="Security_RegistryPermission" xml:space="preserve">
     <value>Requested registry access is not allowed.</value>
-  </data>
-  <data name="AccessControl_InvalidOwner" xml:space="preserve">
-    <value>The security identifier is not allowed to be the owner of this object.</value>
-  </data>
-  <data name="AccessControl_InvalidGroup" xml:space="preserve">
-    <value>The security identifier is not allowed to be the primary group of this object.</value>
-  </data>
-  <data name="AccessControl_UnexpectedError" xml:space="preserve">
-    <value>Method failed with unexpected error code {0}.</value>
-  </data>
-  <data name="AccessControl_NoAssociatedSecurity" xml:space="preserve">
-    <value>Unable to perform a security operation on an object that has no associated security. This can happen when trying to get an ACL of an anonymous kernel object.</value>
-  </data>
-  <data name="Transaction_Error" xml:space="preserve">
-    <value>Transaction related error {0} occurred.</value>
   </data>
   <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
     <value>Access to the registry key '{0}' is denied.</value>
@@ -386,15 +326,6 @@
   </data>
   <data name="NotSupported_KernelTransactions" xml:space="preserve">
     <value>Registry transactions are not supported on this platform.</value>
-  </data>
-  <data name="Argument_InvalidPrivilegeName" xml:space="preserve">
-    <value>The specified permission name is not valid.</value>
-  </data>
-  <data name="InvalidOperation_MustBeSameThread" xml:space="preserve">
-    <value>Incorrect thread for enabling or disabling a privilege.</value>
-  </data>
-  <data name="InvalidOperation_MustRevertPrivilege" xml:space="preserve">
-    <value>The permission must be reverted before changing its state again.</value>
   </data>
   <data name="AccessControl_InvalidHandle" xml:space="preserve">
     <value>The specified handle is not valid.</value>

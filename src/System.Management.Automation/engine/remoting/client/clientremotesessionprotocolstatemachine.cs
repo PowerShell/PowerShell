@@ -254,10 +254,7 @@ namespace System.Management.Automation.Remoting
                         if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-                            if (tmp != null)
-                            {
-                                tmp.Dispose();
-                            }
+                            tmp?.Dispose();
 
                             _keyExchanged = true;
                             SetState(RemoteSessionState.Established, eventArgs.Reason);
@@ -339,10 +336,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, "timeout should only happen when waiting for a key");
 
             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-            if (tmp != null)
-            {
-                tmp.Dispose();
-            }
+            tmp?.Dispose();
 
             PSRemotingDataStructureException exception =
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);
@@ -456,7 +450,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler;
 
             // TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
-            // should atleast put a dbg assert in this handler
+            // should at least put a dbg assert in this handler
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
                 for (int j = 0; j < _stateMachineHandle.GetLength(1); j++)

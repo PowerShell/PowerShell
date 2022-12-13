@@ -123,12 +123,6 @@
   <data name="RemoveBreakHandlerExceptionTemplate" xml:space="preserve">
     <value>The Win32 internal error "{0}" 0x{1:X} occurred while trying to remove a break handler. Contact Microsoft Customer Support Services.</value>
   </data>
-  <data name="AttachToParentConsoleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while attaching to parent console. Contact Microsoft Customer Support Services.</value>
-  </data>
-  <data name="DetachFromConsoleExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while detaching from the console. Contact Microsoft Customer Support Services.</value>
-  </data>
   <data name="GetInputModeExceptionTemplate" xml:space="preserve">
     <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting input about the console handle. Contact Microsoft Customer Support Services.</value>
   </data>
@@ -192,9 +186,6 @@
   <data name="SetConsoleTextAttributeExceptionTemplate" xml:space="preserve">
     <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting character attributes for the console output buffer. Contact Microsoft Customer Support Services.</value>
   </data>
-  <data name="SetConsoleCursorPositionExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while trying to set the cursor position. Contact Microsoft Customer Support Services.</value>
-  </data>
   <data name="GetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
     <value>The Win32 internal error "{0}" 0x{1:X} occurred while getting cursor information. Contact Microsoft Customer Support Services.</value>
   </data>
@@ -206,8 +197,5 @@
   </data>
   <data name="SendKeyPressInputExceptionTemplate" xml:space="preserve">
     <value>The Win32 internal error "{0}" 0x{1:X} occurred while sending keyboard input. Contact Microsoft Customer Support Services.</value>
-  </data>
-  <data name="SetConsoleFontInfoExceptionTemplate" xml:space="preserve">
-    <value>The Win32 internal error "{0}" 0x{1:X} occurred while setting console font information. Contact Microsoft Customer Support Services.</value>
   </data>
 </root>

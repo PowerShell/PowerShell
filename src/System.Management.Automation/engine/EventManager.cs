@@ -862,10 +862,7 @@ namespace System.Management.Automation
             }
 
             // Stop the job
-            if (subscriber.Action != null)
-            {
-                subscriber.Action.NotifyJobStopped();
-            }
+            subscriber.Action?.NotifyJobStopped();
 
             lock (_eventSubscribers)
             {
@@ -1532,10 +1529,7 @@ namespace System.Management.Automation
             {
                 lock (_eventSubscribers)
                 {
-                    if (_timer != null)
-                    {
-                        _timer.Dispose();
-                    }
+                    _timer?.Dispose();
 
                     foreach (PSEventSubscriber currentSubscriber in _eventSubscribers.Keys.ToArray())
                     {

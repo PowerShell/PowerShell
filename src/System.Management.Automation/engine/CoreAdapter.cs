@@ -833,7 +833,7 @@ namespace System.Management.Automation
                 return GetArgumentType(PSObject.Base(psref.Value), isByRefParameter: false);
             }
 
-            return argument.GetType();
+            return GetObjectType(argument, debase: false);
         }
 
         internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType, bool isByRef, bool allowCastingToByRefLikeType)
@@ -1670,18 +1670,21 @@ namespace System.Management.Automation
 
         internal static Type EffectiveArgumentType(object arg)
         {
-            if (arg != null)
+            arg = PSObject.Base(arg);
+            if (arg is null)
             {
-                arg = PSObject.Base(arg);
-                object[] argAsArray = arg as object[];
-                if (argAsArray != null && argAsArray.Length > 0 && PSObject.Base(argAsArray[0]) != null)
-                {
-                    Type firstType = PSObject.Base(argAsArray[0]).GetType();
-                    bool allSameType = true;
+                return typeof(LanguagePrimitives.Null);
+            }
 
-                    for (int j = 1; j < argAsArray.Length; ++j)
+            if (arg is object[] array && array.Length > 0)
+            {
+                Type firstType = GetObjectType(array[0], debase: true);
+                if (firstType is not null)
+                {
+                    bool allSameType = true;
+                    for (int j = 1; j < array.Length; ++j)
                     {
-                        if (argAsArray[j] == null || firstType != PSObject.Base(argAsArray[j]).GetType())
+                        if (firstType != GetObjectType(array[j], debase: true))
                         {
                             allSameType = false;
                             break;
@@ -1693,13 +1696,19 @@ namespace System.Management.Automation
                         return firstType.MakeArrayType();
                     }
                 }
+            }
 
-                return arg.GetType();
-            }
-            else
+            return GetObjectType(arg, debase: false);
+        }
+
+        internal static Type GetObjectType(object obj, bool debase)
+        {
+            if (debase)
             {
-                return typeof(LanguagePrimitives.Null);
+                obj = PSObject.Base(obj);
             }
+
+            return obj == NullString.Value ? typeof(string) : obj?.GetType();
         }
 
         internal static void SetReferences(object[] arguments, MethodInformation methodInformation, object[] originalArguments)
@@ -2258,10 +2267,7 @@ namespace System.Management.Automation
 
             if (!_useReflection)
             {
-                if (_methodInvoker == null)
-                {
-                    _methodInvoker = GetMethodInvoker(methodInfo);
-                }
+                _methodInvoker ??= GetMethodInvoker(methodInfo);
 
                 if (_methodInvoker != null)
                 {
@@ -3047,10 +3053,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
-                    {
-                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
-                    }
+                    _isHidden ??= member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
 
                     return _isHidden.Value;
                 }
@@ -3865,6 +3868,33 @@ namespace System.Management.Automation
             return entry.isStatic;
         }
 
+        /// <summary>
+        /// Get the string representation of the default value of passed-in parameter.
+        /// </summary>
+        /// <param name="parameterInfo">ParameterInfo containing the parameter's default value.</param>
+        /// <returns>String representation of the parameter's default value.</returns>
+        private static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
+        {
+            var parameterType = parameterInfo.ParameterType;
+            var parameterDefaultValue = parameterInfo.DefaultValue;
+
+            if (parameterDefaultValue == null)
+            {
+                return (parameterType.IsValueType || parameterType.IsGenericMethodParameter)
+                    ? "default"
+                    : "null";
+            }
+
+            if (parameterType.IsEnum)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterDefaultValue.ToString());
+            }
+
+            return (parameterDefaultValue is string)
+                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterDefaultValue.ToString())
+                : parameterDefaultValue.ToString();
+        }
+
         #endregion auxiliary methods and classes
 
         #region virtual
@@ -4457,6 +4487,13 @@ namespace System.Management.Automation
                     builder.Append(ToStringCodeMethods.Type(parameterType));
                     builder.Append(' ');
                     builder.Append(parameter.Name);
+
+                    if (parameter.HasDefaultValue)
+                    {
+                        builder.Append(" = ");
+                        builder.Append(GetDefaultValueStringRepresentation(parameter));
+                    }
+
                     builder.Append(", ");
                 }
 
@@ -4728,6 +4765,7 @@ namespace System.Management.Automation
 
     #endregion
 
+#if !UNIX
     /// <summary>
     /// Used only to add a COM style type name to a COM interop .NET type.
     /// </summary>
@@ -4758,6 +4796,8 @@ namespace System.Management.Automation
             return new ConsolidatedString(GetTypeNameHierarchy(obj), interned: true);
         }
     }
+#endif
+
     /// <summary>
     /// Adapter used for GetMember and GetMembers only.
     /// All other methods will not be called.
@@ -5940,7 +5980,7 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    s_tracer.WriteLine("Inference succesful: {0}", instantiatedMethod);
+                    s_tracer.WriteLine("Inference successful: {0}", instantiatedMethod);
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)

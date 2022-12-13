@@ -233,34 +233,22 @@ namespace System.Management.Automation.Internal
             switch (kind)
             {
                 case VariableStreamKind.Error:
-                    if (_errorVariableList == null)
-                    {
-                        _errorVariableList = new List<IList>();
-                    }
+                    _errorVariableList ??= new List<IList>();
 
                     _errorVariableList.Add(list);
                     break;
                 case VariableStreamKind.Warning:
-                    if (_warningVariableList == null)
-                    {
-                        _warningVariableList = new List<IList>();
-                    }
+                    _warningVariableList ??= new List<IList>();
 
                     _warningVariableList.Add(list);
                     break;
                 case VariableStreamKind.Output:
-                    if (_outVariableList == null)
-                    {
-                        _outVariableList = new List<IList>();
-                    }
+                    _outVariableList ??= new List<IList>();
 
                     _outVariableList.Add(list);
                     break;
                 case VariableStreamKind.Information:
-                    if (_informationVariableList == null)
-                    {
-                        _informationVariableList = new List<IList>();
-                    }
+                    _informationVariableList ??= new List<IList>();
 
                     _informationVariableList.Add(list);
                     break;
@@ -615,11 +603,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Removes all the objects from the Pipe.
         /// </summary>
-        internal void Clear()
-        {
-            if (ObjectQueue != null)
-                ObjectQueue.Clear();
-        }
+        internal void Clear() => ObjectQueue?.Clear();
 
         /// <summary>
         /// Returns the currently queued items in the pipe.  Note that this will

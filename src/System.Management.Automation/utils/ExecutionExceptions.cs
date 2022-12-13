@@ -161,14 +161,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CmdletInvocationException",
-                        ErrorCategory.NotSpecified,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CmdletInvocationException",
+                    ErrorCategory.NotSpecified,
+                    null);
 
                 return _errorRecord;
             }
@@ -310,13 +307,13 @@ namespace System.Management.Automation
     /// user hitting CTRL-C, or by a call to
     /// <see cref="System.Management.Automation.Runspaces.Pipeline.Stop"/>.
     ///
-    /// When a cmdlet or provider sees this exception thrown from a Monad API such as
+    /// When a cmdlet or provider sees this exception thrown from a PowerShell API such as
     ///     WriteObject(object)
     /// this means that the command was already stopped.  The cmdlet or provider
     /// should clean up and return.
     /// Catching this exception is optional; if the cmdlet or providers chooses not to
     /// handle PipelineStoppedException and instead allow it to propagate to the
-    /// Monad Engine's call to ProcessRecord, the Monad Engine will handle it properly.
+    /// PowerShell Engine's call to ProcessRecord, the PowerShell Engine will handle it properly.
     /// </remarks>
     [Serializable]
     public class PipelineStoppedException : RuntimeException
@@ -619,13 +616,13 @@ namespace System.Management.Automation
     #region ParentContainsErrorRecordException
     /// <summary>
     /// ParentContainsErrorRecordException is the exception contained by the ErrorRecord
-    /// which is associated with a Monad engine custom exception through
+    /// which is associated with a PowerShell engine custom exception through
     /// the IContainsErrorRecord interface.
     /// </summary>
     /// <remarks>
     /// We use this exception class
     /// so that there is not a recursive "containment" relationship
-    /// between the Monad engine exception and its ErrorRecord.
+    /// between the PowerShell engine exception and its ErrorRecord.
     /// </remarks>
     [Serializable]
     public class ParentContainsErrorRecordException : SystemException
@@ -811,8 +808,8 @@ namespace System.Management.Automation
     /// exceeds the configured maximum.
     /// </summary>
     /// <remarks>
-    /// When one Monad command or script calls another, this creates an additional
-    /// scope.  Some script expressions also create a scope.  Monad imposes a maximum
+    /// When one PowerShell command or script calls another, this creates an additional
+    /// scope.  Some script expressions also create a scope.  PowerShell imposes a maximum
     /// call depth to prevent stack overflows.  The maximum call depth is configurable
     /// but generally high enough that scripts which are not deeply recursive
     /// should not have a problem.
@@ -891,14 +888,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }
@@ -999,14 +993,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }

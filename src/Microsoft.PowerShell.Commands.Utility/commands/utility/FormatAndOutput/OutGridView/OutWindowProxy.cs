@@ -230,13 +230,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void BlockUntilClosed()
-        {
-            if (_closedEvent != null)
-            {
-                _closedEvent.WaitOne();
-            }
-        }
+        internal void BlockUntilClosed() => _closedEvent?.WaitOne();
 
         /// <summary>
         /// Implements IDisposable logic.

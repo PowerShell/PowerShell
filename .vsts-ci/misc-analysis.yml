@@ -5,14 +5,12 @@ trigger:
   branches:
     include:
     - master
-    - release*
     - feature*
 
 pr:
   branches:
     include:
     - master
-    - release*
     - feature*
 
 resources:
@@ -53,15 +51,3 @@ stages:
   dependsOn: []
   jobs:
   - template: ./misc-analysis/mdSpell.yml
-- stage: markdown_link
-  displayName: Markdown Link
-  dependsOn: []
-  jobs:
-  - template: ./misc-analysis/generateMarkdownMatrix.yml
-    parameters:
-      jobName: generateMatrix
-      taskName: matrixTask
-  - template: ./misc-analysis/markdown.yml
-    parameters:
-      matrix: $[ dependencies.generateMatrix.outputs['matrixTask.matrix'] ]
-      dependsOn: generateMatrix

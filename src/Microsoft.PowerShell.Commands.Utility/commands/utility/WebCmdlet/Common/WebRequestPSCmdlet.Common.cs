@@ -583,10 +583,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // make sure we have a valid WebRequestSession object to work with
-            if (WebSession == null)
-            {
-                WebSession = new WebRequestSession();
-            }
+            WebSession ??= new WebRequestSession();
 
             if (SessionVariable != null)
             {
@@ -743,7 +740,7 @@ namespace Microsoft.PowerShell.Commands
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if ((bodyAsDictionary != null)
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                     || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
+                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
@@ -995,9 +992,9 @@ namespace Microsoft.PowerShell.Commands
         // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            // By default the HttpClientHandler will automatically decompress GZip and Deflate content
             HttpClientHandler handler = new();
             handler.CookieContainer = WebSession.Cookies;
+            handler.AutomaticDecompression = DecompressionMethods.All;
 
             // set the credentials used by this request
             if (WebSession.UseDefaultCredentials)
@@ -1321,9 +1318,9 @@ namespace Microsoft.PowerShell.Commands
             int intCode = (int)code;
             return
             (
-                (intCode >= 300 && intCode < 304)
-                ||
-                intCode == 307
+                (intCode >= 300 && intCode < 304) ||
+                intCode == 307 ||
+                intCode == 308
             );
         }
 
@@ -1333,32 +1330,24 @@ namespace Microsoft.PowerShell.Commands
         {
             return
             (
-                code == HttpStatusCode.Found
-                ||
-                code == HttpStatusCode.Moved
-                ||
-                code == HttpStatusCode.Redirect
-                ||
-                code == HttpStatusCode.RedirectMethod
-                ||
-                code == HttpStatusCode.SeeOther
-                ||
-                code == HttpStatusCode.Ambiguous
-                ||
+                code == HttpStatusCode.Found ||
+                code == HttpStatusCode.Moved ||
+                code == HttpStatusCode.Redirect ||
+                code == HttpStatusCode.RedirectMethod ||
+                code == HttpStatusCode.SeeOther ||
+                code == HttpStatusCode.Ambiguous ||
                 code == HttpStatusCode.MultipleChoices
             );
         }
 
+        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
         private bool ShouldRetry(HttpStatusCode code)
         {
             int intCode = (int)code;
-
-            if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return
+            (
+                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+            );
         }
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
@@ -1438,7 +1427,6 @@ namespace Microsoft.PowerShell.Commands
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
-                            requestWithoutRange.RequestUri,
                             requestContentLength);
                         WriteVerbose(reqVerboseMsg);
 
@@ -1534,7 +1522,6 @@ namespace Microsoft.PowerShell.Commands
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Version,
                                     request.Method,
-                                    request.RequestUri,
                                     requestContentLength);
 
                                 WriteVerbose(reqVerboseMsg);
@@ -1583,10 +1570,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     finally
                                     {
-                                        if (reader != null)
-                                        {
-                                            reader.Dispose();
-                                        }
+                                        reader?.Dispose();
                                     }
 
                                     if (!string.IsNullOrEmpty(detailMsg))
@@ -1609,16 +1593,11 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
                                 {
-                                    if (response.StatusCode == HttpStatusCode.Found ||
-                                        response.StatusCode == HttpStatusCode.Moved ||
-                                        response.StatusCode == HttpStatusCode.MovedPermanently)
-                                    {
-                                        ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
-                                        WriteError(er);
-                                    }
+                                    ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                    WriteError(er);
                                 }
                             }
                             catch (HttpRequestException ex)
@@ -1662,13 +1641,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implementing ^C, after start the BeginGetResponse.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_cancelToken != null)
-            {
-                _cancelToken.Cancel();
-            }
-        }
+        protected override void StopProcessing() => _cancelToken?.Cancel();
 
         #endregion Overrides
 

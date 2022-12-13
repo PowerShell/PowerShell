@@ -37,7 +37,7 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should produce the expected output" {
-        $expected = "${nl}testName : testValue${nl}${nl}${nl}"
+        $expected = "${nl}testName : testValue${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
@@ -201,7 +201,6 @@ dbda : KM
 消息 : 千
 
 
-
 "@
         $expected = $expected -replace "`r`n", "`n"
 
@@ -209,9 +208,29 @@ dbda : KM
         $actual = $actual -replace "`r`n", "`n"
         $actual | Should -BeExactly $expected
     }
+
+    It 'Float, double, and decimal should not be truncated to number of decimals from current culture' {
+        $o = [PSCustomObject]@{
+            double = [double]1234.56789
+            float = [float]9876.543
+            decimal = [decimal]4567.123456789
+        }
+
+        $expected = @"
+
+double  : 1234.56789
+float   : 9876.543
+decimal : 4567.123456789
+
+
+"@
+
+        $actual = $o | Format-List | Out-String
+        ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+    }
 }
 
-Describe 'Format-List color tests' {
+Describe 'Format-List color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
@@ -228,5 +247,18 @@ Describe 'Format-List color tests' {
         $out.Count | Should -Be 2
         $out[0] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)Short      : $($PSStyle.Reset)1" -Because ($out[0] | Format-Hex)
         $out[1] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)LongLabelN : $($PSStyle.Reset)2"
+    }
+
+    It 'VT decorations in a property value should not be leaked in list view' {
+        $expected = @"
+`e[32;1ma : `e[0mHello
+`e[32;1mb : `e[0m`e[36mworld`e[0m
+"@
+        ## Format-List should append the 'reset' escape sequence to the value of 'b' property.
+        $obj = [pscustomobject]@{ a = "Hello"; b = $PSStyle.Foreground.Cyan + "world"; }
+        $obj | Format-List | Out-File "$TestDrive/outfile.txt"
+
+        $output = Get-Content "$TestDrive/outfile.txt" -Raw
+        $output.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 }

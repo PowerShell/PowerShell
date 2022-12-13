@@ -44,22 +44,28 @@ namespace System.Management.Automation.Runspaces
 
             // We shouldn't create too many tasks.
 #if !UNIX
-            // Amsi initialize can be a little slow
+            // Amsi initialize can be a little slow.
             Task.Run(() => AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true));
 #endif
+            // Initialize the types 'Compiler', 'CachedReflectionInfo', and 'ExpressionCache'.
+            // Their type initializers do a lot of reflection operations.
+            // We will access 'Compiler' members when creating the first session state.
+            Task.Run(() => _ = Compiler.DottedLocalsTupleType);
 
             // One other task for other stuff that's faster, but still a little slow.
             Task.Run(() =>
             {
-                // Loading the resources for System.Management.Automation can be expensive, so force that to
-                // happen early on a background thread.
+                // Loading the resources for System.Management.Automation can be expensive,
+                // so force that to happen early on a background thread.
                 _ = RunspaceInit.OutputEncodingDescription;
 
                 // This will init some tables and could load some assemblies.
-                _ = TypeAccelerators.builtinTypeAccelerators;
+                // We will access 'LanguagePrimitives' when binding built-in variables for the Runspace.
+                LanguagePrimitives.GetEnumerator(null);
 
                 // This will init some tables and could load some assemblies.
-                LanguagePrimitives.GetEnumerator(null);
+                // We will access 'TypeAccelerators' when auto-loading the PSReadLine module, which happens last.
+                _ = TypeAccelerators.builtinTypeAccelerators;
             });
         }
     }
@@ -646,7 +652,7 @@ namespace System.Management.Automation.Runspaces
         public string Description { get; } = string.Empty;
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
     }
@@ -803,7 +809,7 @@ namespace System.Management.Automation.Runspaces
         internal ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
 
@@ -1312,7 +1318,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
         /// <param name="path">The path to the PSSC session configuration file.</param>
-        /// <returns></returns>
+        /// <returns>InitialSessionState object.</returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path)
         {
             return CreateFromSessionConfigurationFile(path, null);
@@ -1327,10 +1333,48 @@ namespace System.Management.Automation.Runspaces
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
         /// checks windowsPrincipal.IsInRole().
         /// </param>
-        /// <returns></returns>
-        public static InitialSessionState CreateFromSessionConfigurationFile(string path, Func<string, bool> roleVerifier)
+        /// <returns>InitialSessionState object.</returns>
+        public static InitialSessionState CreateFromSessionConfigurationFile(
+            string path,
+            Func<string, bool> roleVerifier)
         {
-            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier);
+            return CreateFromSessionConfigurationFile(path, roleVerifier, validateFile: false);
+        }
+
+        /// <summary>
+        /// Creates an initial session state from a PSSC configuration file.
+        /// </summary>
+        /// <param name="path">The path to the PSSC session configuration file.</param>
+        /// <param name="roleVerifier">
+        /// The verifier that PowerShell should call to determine if groups in the Role entry apply to the
+        /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
+        /// checks windowsPrincipal.IsInRole().
+        /// </param>
+        /// <param name="validateFile">Validates the file contents for supported SessionState options.</param>
+        /// <returns>InitialSessionState object.</returns>
+        public static InitialSessionState CreateFromSessionConfigurationFile(
+            string path,
+            Func<string, bool> roleVerifier,
+            bool validateFile)
+        {
+            if (path is null)
+            {
+                throw new PSArgumentNullException(nameof(path));
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new PSInvalidOperationException(
+                    StringUtil.Format(ConsoleInfoErrorStrings.ConfigurationFileDoesNotExist, path));
+            }
+
+            if (!path.EndsWith(".pssc", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new PSInvalidOperationException(
+                    StringUtil.Format(ConsoleInfoErrorStrings.NotConfigurationFile, path));
+            }
+
+            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier, validateFile);
             return discConfiguration.GetInitialSessionState(null);
         }
 
@@ -2737,7 +2781,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     case "ValidatePattern":
-                        string pattern = "^(" + string.Join("|", parameterValidationValues) + ")$";
+                        string pattern = "^(" + string.Join('|', parameterValidationValues) + ")$";
                         ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
                         metadata.Parameters[parameterName].Attributes.Add(validatePattern);
                         break;
@@ -3497,8 +3541,7 @@ namespace System.Management.Automation.Runspaces
                             moduleName = sste.PSSnapIn.Name;
                         }
 
-                        bool unused;
-                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out unused);
+                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out _);
                     }
                 }
                 else if (sste.TypeTable != null)
@@ -3689,7 +3732,7 @@ namespace System.Management.Automation.Runspaces
             // implementation and should be refactored.
             PSSnapInInfo newPSSnapIn = PSSnapInReader.Read("2", name);
 
-            if (!Utils.IsPSVersionSupported(newPSSnapIn.PSVersion.ToString()))
+            if (!PSVersionInfo.IsValidPSVersion(newPSSnapIn.PSVersion))
             {
                 s_PSSnapInTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", name);
 
@@ -3813,13 +3856,6 @@ namespace System.Management.Automation.Runspaces
             var assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
             assemblyEntry.SetPSSnapIn(psSnapInInfo);
             Assemblies.Add(assemblyEntry);
-
-            // entry from types.ps1xml references a type (Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase) in this assembly
-            if (psSnapInInfo.Name.Equals(CoreSnapin, StringComparison.OrdinalIgnoreCase))
-            {
-                assemblyEntry = new SessionStateAssemblyEntry("Microsoft.PowerShell.Security", null);
-                this.Assemblies.Add(assemblyEntry);
-            }
 
             if (cmdlets != null)
             {
@@ -4042,6 +4078,15 @@ $RawUI.SetBufferContents(
             }
         }
 
+#if UNIX
+        internal static string GetExecFunctionText()
+        {
+            return @"
+Switch-Process -WithCommand $args
+";
+        }
+#endif
+
         /// <summary>
         /// This is the default function to use for man/help. It uses
         /// splatting to pass in the parameters.
@@ -4131,13 +4176,7 @@ param(
         }
         else {
             $pagerCommand = 'less'
-            # PSNativeCommandArgumentPassing arguments should be constructed differently.
-            if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-                $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
-            }
-            else {
-                $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
-            }
+            $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
         }
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
@@ -4177,16 +4216,7 @@ param(
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
-                # Start the pager arguments directly if the PSNativeCommandArgumentPassing feature is enabled.
-                # Otherwise, supply pager arguments to an application without any PowerShell parsing of the arguments.
-                # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
-                }
-                else {
-                    $env:__PSPAGER_ARGS = $pagerArgs
-                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
-                }
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
             }
             else {
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
@@ -4320,12 +4350,12 @@ end {
                     SpecialVariables.PSStyle,
                     PSStyle.Instance,
                     RunspaceInit.PSStyleDescription,
-                    ScopedItemOptions.None),
+                    ScopedItemOptions.Constant),
 
                 // Variable which controls the encoding for piping data to a NativeCommand
                 new SessionStateVariableEntry(
                     SpecialVariables.OutputEncoding,
-                    Utils.utf8NoBom,
+                    Encoding.Default,
                     RunspaceInit.OutputEncodingDescription,
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
@@ -4456,22 +4486,19 @@ end {
                 builtinVariables.Add(
                     new SessionStateVariableEntry(
                         SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        value: false,
+                        value: true,    // when this feature is changed to stable, this should default to `false`
                         RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
                         ScopedItemOptions.None,
                         new ArgumentTypeConverterAttribute(typeof(bool))));
             }
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
-            {
-                builtinVariables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.NativeArgumentPassing,
-                        Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
-                        RunspaceInit.NativeCommandArgumentPassingDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
-            }
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.NativeArgumentPassing,
+                    Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    RunspaceInit.NativeCommandArgumentPassingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
 
             BuiltInVariables = builtinVariables.ToArray();
         }
@@ -4665,13 +4692,6 @@ end {
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
 
-#if UNIX
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
-                {
-                    builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
-                }
-#endif
-
                 return builtInAliases.ToArray();
             }
         }
@@ -4694,11 +4714,16 @@ end {
            // Functions that don't require full language mode
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd~", "Set-Location ~", isProductCode: true, languageMode: systemLanguageMode),
             // Win8: 320909. Retaining the original definition to ensure backward compatability.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true, languageMode: systemLanguageMode),
+
+#if UNIX
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("exec", GetExecFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
+#endif
 
             // Functions that require full language mode and are trusted
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true, languageMode: PSLanguageMode.FullLanguage),
@@ -5241,7 +5266,6 @@ end {
                 { "Enable-PSSessionConfiguration",     new SessionStateCmdletEntry("Enable-PSSessionConfiguration", typeof(EnablePSSessionConfigurationCommand), helpFile) },
                 { "Get-PSSessionCapability",           new SessionStateCmdletEntry("Get-PSSessionCapability", typeof(GetPSSessionCapabilityCommand), helpFile) },
                 { "Get-PSSessionConfiguration",        new SessionStateCmdletEntry("Get-PSSessionConfiguration", typeof(GetPSSessionConfigurationCommand), helpFile) },
-                { "New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
                 { "Receive-PSSession",                 new SessionStateCmdletEntry("Receive-PSSession", typeof(ReceivePSSessionCommand), helpFile) },
                 { "Register-PSSessionConfiguration",   new SessionStateCmdletEntry("Register-PSSessionConfiguration", typeof(RegisterPSSessionConfigurationCommand), helpFile) },
                 { "Unregister-PSSessionConfiguration", new SessionStateCmdletEntry("Unregister-PSSessionConfiguration", typeof(UnregisterPSSessionConfigurationCommand), helpFile) },
@@ -5273,6 +5297,7 @@ end {
                 { "New-ModuleManifest",                new SessionStateCmdletEntry("New-ModuleManifest", typeof(NewModuleManifestCommand), helpFile) },
                 { "New-PSRoleCapabilityFile",          new SessionStateCmdletEntry("New-PSRoleCapabilityFile", typeof(NewPSRoleCapabilityFileCommand), helpFile) },
                 { "New-PSSession",                     new SessionStateCmdletEntry("New-PSSession", typeof(NewPSSessionCommand), helpFile) },
+                { "New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
                 { "New-PSSessionOption",               new SessionStateCmdletEntry("New-PSSessionOption", typeof(NewPSSessionOptionCommand), helpFile) },
                 { "New-PSTransportOption",             new SessionStateCmdletEntry("New-PSTransportOption", typeof(NewPSTransportOptionCommand), helpFile) },
                 { "Out-Default",                       new SessionStateCmdletEntry("Out-Default", typeof(OutDefaultCommand), helpFile) },
@@ -5311,10 +5336,7 @@ end {
             }
 
 #if UNIX
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
-            {
-                cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
-            }
+            cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
 #endif
 
             foreach (var val in cmdlets.Values)

@@ -408,10 +408,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent();
-            if (cimInvokeMethod != null)
-            {
-                cimInvokeMethod.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimInvokeMethod?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

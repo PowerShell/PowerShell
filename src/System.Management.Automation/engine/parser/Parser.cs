@@ -280,8 +280,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var tokenizer = parser._tokenizer;
             tokenizer.Initialize(null, typename, null);
-            Token unused;
-            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out unused);
+            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out _);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
             if (!ignoreErrors && parser.ErrorList.Count > 0)
@@ -444,8 +443,7 @@ namespace System.Management.Automation.Language
         private Token PeekToken()
         {
             Token token = _ungotToken ?? _tokenizer.NextToken();
-            if (_ungotToken == null)
-                _ungotToken = token;
+            _ungotToken ??= token;
             return token;
         }
 
@@ -824,10 +822,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
                     var statement = UsingStatementRule(token);
                     SkipNewlinesAndSemicolons();
-                    if (result == null)
-                    {
-                        result = new List<UsingStatementAst>();
-                    }
+                    result ??= new List<UsingStatementAst>();
 
                     var usingStatement = statement as UsingStatementAst;
                     // otherwise returned statement is ErrorStatementAst.
@@ -1791,10 +1786,7 @@ namespace System.Management.Automation.Language
                         break;
                 }
 
-                if (startExtent == null)
-                {
-                    startExtent = blockNameToken.Extent;
-                }
+                startExtent ??= blockNameToken.Extent;
 
                 endExtent = blockNameToken.Extent;
 
@@ -1935,10 +1927,7 @@ namespace System.Management.Automation.Language
                 // Track the last statement inside our loop so we don't use the EmptyPipeline
                 // as our last statement.  The last statement is used to track the extent of
                 // this statement list.
-                if (firstStatement == null)
-                {
-                    firstStatement = statement;
-                }
+                firstStatement ??= statement;
 
                 lastStatement = statement;
 
@@ -2933,7 +2922,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (configurationNameToken.Kind == TokenKind.EndOfInput)
+            if (configurationNameToken.Kind is TokenKind.EndOfInput or TokenKind.Comma)
             {
                 UngetToken(configurationNameToken);
 
@@ -3091,10 +3080,7 @@ namespace System.Management.Automation.Language
                 }
                 finally
                 {
-                    if (p != null)
-                    {
-                        p.Dispose();
-                    }
+                    p?.Dispose();
 
                     //
                     // Put the parser back...
@@ -3232,10 +3218,7 @@ namespace System.Management.Automation.Language
 
                     if (topLevel)
                     {
-                        if (_configurationKeywordsDefinedInThisFile == null)
-                        {
-                            _configurationKeywordsDefinedInThisFile = new Dictionary<string, DynamicKeyword>();
-                        }
+                        _configurationKeywordsDefinedInThisFile ??= new Dictionary<string, DynamicKeyword>();
 
                         _configurationKeywordsDefinedInThisFile[keywordToAddForThisConfigurationStatement.Keyword] = keywordToAddForThisConfigurationStatement;
                     }
@@ -3590,10 +3573,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: don't continue parsing the for statement.
 
                 UngetToken(rParen);
-                if (endErrorStatement == null)
-                {
-                    endErrorStatement = lParen.Extent;
-                }
+                endErrorStatement ??= lParen.Extent;
 
                 ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingEndParenthesisAfterStatement),
@@ -3902,10 +3882,7 @@ namespace System.Management.Automation.Language
                 // we aren't expecting a name, we still do this so that the signature of the implementing function remains
                 // the same.
                 ExpressionAst originalInstanceName = instanceName;
-                if (instanceName == null)
-                {
-                    instanceName = new StringConstantExpressionAst(nameToken.Extent, elementName, StringConstantType.BareWord);
-                }
+                instanceName ??= new StringConstantExpressionAst(nameToken.Extent, elementName, StringConstantType.BareWord);
 
                 SkipNewlines();
 
@@ -4265,11 +4242,10 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName superClass;
-                    Token unused;
                     Token commaToken = null;
                     while (true)
                     {
-                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out _);
                         if (superClass == null)
                         {
                             ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
@@ -4323,10 +4299,7 @@ namespace System.Management.Automation.Language
 
                     if (astsOnError != null && astsOnError.Count > 0)
                     {
-                        if (nestedAsts == null)
-                        {
-                            nestedAsts = new List<Ast>();
-                        }
+                        nestedAsts ??= new List<Ast>();
 
                         nestedAsts.AddRange(astsOnError);
                         lastExtent = astsOnError.Last().Extent;
@@ -4355,10 +4328,7 @@ namespace System.Management.Automation.Language
                 var classDefn = new TypeDefinitionAst(extent, name.Value, customAttributes?.OfType<AttributeAst>(), members, TypeAttributes.Class, superClassesList);
                 if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
                 {
-                    if (nestedAsts == null)
-                    {
-                        nestedAsts = new List<Ast>();
-                    }
+                    nestedAsts ??= new List<Ast>();
                     // no need to report error since the error is reported in method StatementRule
                     nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                     nestedAsts.Add(classDefn);
@@ -4422,10 +4392,7 @@ namespace System.Management.Automation.Language
                 if (attribute != null)
                 {
                     lastAttribute = attribute;
-                    if (startExtent == null)
-                    {
-                        startExtent = attribute.Extent;
-                    }
+                    startExtent ??= attribute.Extent;
 
                     var attributeAst = attribute as AttributeAst;
                     if (attributeAst != null)
@@ -4445,10 +4412,7 @@ namespace System.Management.Automation.Language
                 }
 
                 token = PeekToken();
-                if (startExtent == null)
-                {
-                    startExtent = token.Extent;
-                }
+                startExtent ??= token.Extent;
 
                 switch (token.Kind)
                 {
@@ -4663,10 +4627,7 @@ namespace System.Management.Automation.Language
                 return;
             }
 
-            if (astsOnError == null)
-            {
-                astsOnError = new List<Ast>();
-            }
+            astsOnError ??= new List<Ast>();
 
             astsOnError.Add(errAst);
         }
@@ -4678,10 +4639,7 @@ namespace System.Management.Automation.Language
                 return;
             }
 
-            if (astsOnError == null)
-            {
-                astsOnError = new List<Ast>();
-            }
+            astsOnError ??= new List<Ast>();
 
             astsOnError.AddRange(errAsts);
         }
@@ -4750,8 +4708,7 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName underlyingType;
-                    Token unused;
-                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out _);
                     if (underlyingType == null)
                     {
                         ReportIncompleteInput(
@@ -5020,13 +4977,19 @@ namespace System.Management.Automation.Language
                     SkipToken();
 
                     var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput)
+                    if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
                     {
                         UngetToken(aliasToken);
                         ReportIncompleteInput(After(equalsToken),
                             nameof(ParserStrings.MissingNamespaceAlias),
                             ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                    }
+
+                    if (aliasToken.Kind == TokenKind.Comma)
+                    {
+                        ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                     }
 
                     var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
@@ -5036,7 +4999,19 @@ namespace System.Management.Automation.Language
                     }
                     else if (aliasAst is not StringConstantExpressionAst)
                     {
-                        return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
+                        var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
+                        Ast[] nestedAsts;
+                        if (aliasAst is null)
+                        {
+                            nestedAsts = new Ast[] { itemAst };
+                        }
+                        else
+                        {
+                            nestedAsts = new Ast[] { itemAst, aliasAst };
+                        }
+
+                        ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
                     }
 
                     RequireStatementTerminator();
@@ -5140,13 +5115,6 @@ namespace System.Management.Automation.Language
 
                         assemblyFileName = workingDirectory + @"\" + assemblyFileName;
                     }
-
-#if !CORECLR
-                    if (!File.Exists(assemblyFileName))
-                    {
-                        GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                    }
-#endif
                 }
                 catch
                 {
@@ -5226,7 +5194,7 @@ namespace System.Management.Automation.Language
                                 SkipToken();
                                 // we don't allow syntax
                                 // : base{ script }
-                                // as a short for for
+                                // as a short for
                                 // : base( { script } )
                                 baseCtorCallParams = InvokeParamParenListRule(lParen, out baseCallLastExtent);
                                 this.SkipNewlines();
@@ -5253,11 +5221,9 @@ namespace System.Management.Automation.Language
                     SetTokenizerMode(oldTokenizerMode);
                 }
 
-                if (baseCtorCallParams == null)
-                {
+                baseCtorCallParams ??=
                     // Assuming implicit default ctor
-                    baseCtorCallParams = new List<ExpressionAst>();
-                }
+                    new List<ExpressionAst>();
             }
 
             Token lCurly = NextToken();
@@ -5546,10 +5512,7 @@ namespace System.Management.Automation.Language
                     break;
                 }
 
-                if (exceptionTypes == null)
-                {
-                    exceptionTypes = new List<TypeConstraintAst>();
-                }
+                exceptionTypes ??= new List<TypeConstraintAst>();
 
                 exceptionTypes.Add(typeConstraintAst);
 
@@ -6052,10 +6015,7 @@ namespace System.Management.Automation.Language
                     {
                         SkipToken();
 
-                        if (redirections == null)
-                        {
-                            redirections = new RedirectionAst[CommandBaseAst.MaxRedirections];
-                        }
+                        redirections ??= new RedirectionAst[CommandBaseAst.MaxRedirections];
 
                         IScriptExtent unused = null;
                         lastRedirection = RedirectionRule(redirectionToken, redirections, ref unused);
@@ -6076,10 +6036,7 @@ namespace System.Management.Automation.Language
 
                 if (commandAst != null)
                 {
-                    if (startExtent == null)
-                    {
-                        startExtent = commandAst.Extent;
-                    }
+                    startExtent ??= commandAst.Extent;
 
                     pipelineElements.Add(commandAst);
                 }
@@ -6432,10 +6389,7 @@ namespace System.Management.Automation.Language
                 }
 
                 commaToken = token;
-                if (commandArgs == null)
-                {
-                    commandArgs = new List<ExpressionAst>();
-                }
+                commandArgs ??= new List<ExpressionAst>();
 
                 commandArgs.Add(exprAst);
 
@@ -6603,10 +6557,7 @@ namespace System.Management.Automation.Language
                         case TokenKind.RedirectInStd:
                             if ((context & CommandArgumentContext.CommandName) == 0)
                             {
-                                if (redirections == null)
-                                {
-                                    redirections = new RedirectionAst[CommandBaseAst.MaxRedirections];
-                                }
+                                redirections ??= new RedirectionAst[CommandBaseAst.MaxRedirections];
 
                                 RedirectionRule((RedirectionToken)token, redirections, ref endExtent);
                             }
@@ -7208,10 +7159,7 @@ namespace System.Management.Automation.Language
                         }
                     }
 
-                    if (expr == null)
-                    {
-                        expr = new TypeExpressionAst(lastAttribute.Extent, lastAttribute.TypeName);
-                    }
+                    expr ??= new TypeExpressionAst(lastAttribute.Extent, lastAttribute.TypeName);
                 }
 
                 for (int i = attributes.Count - 2; i >= 0; --i)

@@ -166,10 +166,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             outputstream.Close();
             errorstream.Close();
-            if (inputstream != null)
-            {
-                inputstream.Close();
-            }
+            inputstream?.Close();
         }
 
         /// <summary>

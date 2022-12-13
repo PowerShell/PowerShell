@@ -136,12 +136,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            JObject parsedJson = null;
             bool result = true;
 
             try
             {
-                parsedJson = JObject.Parse(Json);
+                var parsedJson = JToken.Parse(Json);
 
                 if (_jschema != null)
                 {

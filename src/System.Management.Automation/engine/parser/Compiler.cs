@@ -642,7 +642,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
             typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), InstancePublicFlags);
-        
+
         internal static readonly MethodInfo MemberInvocationLoggingOps_LogMemberInvocation =
             typeof(MemberInvocationLoggingOps).GetMethod(nameof(MemberInvocationLoggingOps.LogMemberInvocation), StaticFlags);
     }
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation.Language
 
         internal Expression GetAutomaticVariable(VariableExpressionAst varAst)
         {
-            // Generate, in psuedo code:
+            // Generate, in pseudo code:
             //
             //     return (localsTuple.IsValueSet(tupleIndex)
             //          ? localsTuple.ItemXXX
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation.Language
             //
             //     * $PSCmdlet - always set if the script uses cmdletbinding.
             //     * $_ - always set in process and end block, otherwise need dynamic checks.
-            //     * $this - can never know if it's set, always need above psuedo code.
+            //     * $this - can never know if it's set, always need above pseudo code.
             //     * $input - also can never know - it's always set from a command process, but not necessarily set from ScriptBlock.Invoke.
             //
             // These optimizations are not yet performed.
@@ -1110,10 +1110,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression IsStrictMode(int version, Expression executionContext = null)
         {
-            if (executionContext == null)
-            {
-                executionContext = ExpressionCache.NullExecutionContext;
-            }
+            executionContext ??= ExpressionCache.NullExecutionContext;
 
             return Expression.Call(
                 CachedReflectionInfo.ExecutionContext_IsStrictVersion,
@@ -1758,18 +1755,15 @@ namespace System.Management.Automation.Language
                 // Unwrap the wrapped exception
                 var innerException = tie.InnerException;
                 var rte = innerException as RuntimeException;
-                if (rte == null)
-                {
-                    rte = InterpreterError.NewInterpreterExceptionWithInnerException(
-                        null,
-                        typeof(RuntimeException),
-                        attributeAst.Extent,
-                        "ExceptionConstructingAttribute",
-                        ExtendedTypeSystem.ExceptionConstructingAttribute,
-                        innerException,
-                        innerException.Message,
-                        attributeAst.TypeName.FullName);
-                }
+                rte ??= InterpreterError.NewInterpreterExceptionWithInnerException(
+                    null,
+                    typeof(RuntimeException),
+                    attributeAst.Extent,
+                    "ExceptionConstructingAttribute",
+                    ExtendedTypeSystem.ExceptionConstructingAttribute,
+                    innerException,
+                    innerException.Message,
+                    attributeAst.TypeName.FullName);
 
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, attributeAst.Extent);
                 throw rte;
@@ -2054,10 +2048,7 @@ namespace System.Management.Automation.Language
 
             // The sequence points are identical optimized or not.  Regardless, we want to ensure
             // that the list is unique no matter when the property is accessed, so make sure it is set just once.
-            if (scriptBlock.SequencePoints == null)
-            {
-                scriptBlock.SequencePoints = _sequencePoints.ToArray();
-            }
+            scriptBlock.SequencePoints ??= _sequencePoints.ToArray();
         }
 
         private static Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
@@ -2126,10 +2117,7 @@ namespace System.Management.Automation.Language
 
             // Can't be exposed to untrusted input - invoking arbitrary code could result in remote code
             // execution.
-            if (lambda == null)
-            {
-                lambda = (new Compiler()).CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
-            }
+            lambda ??= (new Compiler()).CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
 
             SessionStateInternal oldSessionState = context.EngineSessionState;
             try
@@ -2290,26 +2278,25 @@ namespace System.Management.Automation.Language
             switch (context)
             {
                 case CaptureAstContext.AssignmentWithResultPreservation:
+                    result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
+
+                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out, in which case
+                    // we write to the oldPipe. This can happen in cases like:
+                    //     $(1;2;return 3)
+                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
+                    break;
                 case CaptureAstContext.AssignmentWithoutResultPreservation:
                     result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
                     // Clear the temporary pipe in case of exception, if we are not required to preserve the results
-                    if (context == CaptureAstContext.AssignmentWithoutResultPreservation)
+                    var catchExprs = new List<Expression>
                     {
-                        var catchExprs = new List<Expression>
-                                         {
-                                             Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
-                                             Expression.Rethrow(),
-                                             Expression.Constant(null, typeof(object))
-                                         };
+                        Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
+                        Expression.Rethrow(),
+                        Expression.Constant(null, typeof(object))
+                    };
 
-                        catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
-                    }
-
-                    // PipelineResult might get skipped in some circumstances due to a FlowControlException thrown out, in which case
-                    // we write to the oldPipe. This can happen in cases like:
-                    //     $(1;2;return 3)
-                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
+                    catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
                     break;
                 case CaptureAstContext.Condition:
                     result = DynamicExpression.Dynamic(PSPipelineResultToBoolBinder.Get(), typeof(bool), resultList);
@@ -2817,12 +2804,6 @@ namespace System.Management.Automation.Language
                     assemblyFileName = Path.GetDirectoryName(scriptFileName) + "\\" + assemblyFileName;
                 }
 
-#if !CORECLR
-                if (!File.Exists(assemblyFileName))
-                {
-                    Microsoft.CodeAnalysis.GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                }
-#endif
                 if (File.Exists(assemblyFileName))
                 {
                     assembly = Assembly.LoadFrom(assemblyFileName);
@@ -3907,7 +3888,7 @@ namespace System.Management.Automation.Language
             //       funcContext.OutputPipe = oldPipe;
             //   }
             //
-            // In the above psuedo-code, any of {outputFileRedirection, nonOutputFileRedirection, mergingRedirection} may
+            // In the above pseudo-code, any of {outputFileRedirection, nonOutputFileRedirection, mergingRedirection} may
             // not exist, but the order is preserved, so that file redirections go before merging redirections (so that
             // funcContext.OutputPipe has the correct value when setting up merging.)
             //
@@ -3946,10 +3927,7 @@ namespace System.Management.Automation.Language
                 // This will simply return a Linq.Expression representing the redirection.
                 var compiledRedirection = VisitFileRedirection(fileRedirectionAst);
 
-                if (extraFileRedirectExprs == null)
-                {
-                    extraFileRedirectExprs = new List<Expression>(commandExpr.Redirections.Count);
-                }
+                extraFileRedirectExprs ??= new List<Expression>(commandExpr.Redirections.Count);
 
                 // Hold the current 'FileRedirection' instance for later use
                 var redirectionExpr = NewTemp(typeof(FileRedirection), "fileRedirection");
@@ -5178,7 +5156,7 @@ namespace System.Management.Automation.Language
         // If the automatic var has no value in the current frame, then we set the variable's value to $null
         // after leaving the stmt.
         //
-        // The psuedo-code:
+        // The pseudo-code:
         //
         //    try {
         //        oldValue = (localSet.Get(automaticVar)) ? locals.ItemNNN : null;
@@ -5617,7 +5595,9 @@ namespace System.Management.Automation.Language
                 return Expression.Block(returnValue, returnExpr);
             }
 
-            return returnExpr;
+            return Expression.Block(
+                UpdatePosition(returnStatementAst),
+                returnExpr);
         }
 
         public object VisitExitStatement(ExitStatementAst exitStatementAst)
@@ -6133,9 +6113,7 @@ namespace System.Management.Automation.Language
                 {
                     // We'll wrap the variable in a PSReference, but not the constant variables ($true, $false, $null) because those
                     // can't be changed.
-                    IEnumerable<PropertyInfo> unused1;
-                    bool unused2;
-                    var varType = varExpr.GetVariableType(this, out unused1, out unused2);
+                    var varType = varExpr.GetVariableType(this, out _, out _);
                     return Expression.Call(
                         CachedReflectionInfo.VariableOps_GetVariableAsRef,
                         Expression.Constant(varExpr.VariablePath),
@@ -6146,10 +6124,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (childExpr == null)
-            {
-                childExpr = Compile(convertExpressionAst.Child);
-            }
+            childExpr ??= Compile(convertExpressionAst.Child);
 
             if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase))
             {
@@ -6983,10 +6958,7 @@ namespace System.Management.Automation.Language
             compiler.PopLabelBlock(LabelScopeKind.Statement);
 
             // If enterLoop is null, we will never JIT compile the loop.
-            if (enterLoop != null)
-            {
-                enterLoop.FinishLoop(compiler.Instructions.Count);
-            }
+            enterLoop?.FinishLoop(compiler.Instructions.Count);
         }
     }
 

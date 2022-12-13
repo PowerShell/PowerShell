@@ -206,10 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             lock (cimSessionProxyCacheLock)
             {
-                if (this.cimSessionProxyCache == null)
-                {
-                    this.cimSessionProxyCache = new List<CimSessionProxy>();
-                }
+                this.cimSessionProxyCache ??= new List<CimSessionProxy>();
 
                 if (!this.cimSessionProxyCache.Contains(sessionproxy))
                 {
@@ -531,10 +528,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             this.moreActionEvent.Dispose();
-            if (this.ackedEvent != null)
-            {
-                this.ackedEvent.Dispose();
-            }
+            this.ackedEvent?.Dispose();
 
             DebugHelper.WriteLog("Cleanup complete.", 2);
         }

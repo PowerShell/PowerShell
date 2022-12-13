@@ -211,7 +211,7 @@ namespace System.Management.Automation.ComInterop
                     if (TypeUtils.IsImplicitlyConvertible(argumentType, candidateManagedType, true))
                     {
                         compatibleComTypes.Add(candidateType);
-                        // Move on to the next type family. We need atmost one type from each family
+                        // Move on to the next type family. We need at most one type from each family
                         break;
                     }
                 }

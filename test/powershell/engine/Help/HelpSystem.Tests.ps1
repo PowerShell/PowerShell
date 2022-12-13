@@ -30,7 +30,8 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Scope $Scope
+    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
 function GetCurrentUserHelpRoot {
@@ -42,6 +43,16 @@ function GetCurrentUserHelpRoot {
     }
 
     return $userHelpRoot
+}
+
+Describe 'Validate HelpInfo type' -Tags @('CI') {
+
+    It 'Category should be a string' {
+        $help = Get-Help *
+        $category = $help | ForEach-Object { $_.Category.GetType().FullName } | Select-Object -Unique
+        $category.Count | Should -Be 1 -Because 'All help categories should be strings, >1 indicates a type mismatch'
+        $category | Should -BeExactly 'System.String'
+    }
 }
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
@@ -578,7 +589,7 @@ Describe "Help failure cases" -Tags Feature {
 
         # under some conditions this does not throw, so include what we actually got
         $helpTopic = [guid]::NewGuid().ToString("N")
-        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "$(& $command $helpTopic -ea Ignore)"
+        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectantly found for $helpTopic"
     }
 }
 

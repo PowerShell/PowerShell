@@ -326,19 +326,16 @@ function Test-CanWriteToPsHome
         return $script:CanWriteToPsHome
     }
 
-    $script:CanWriteToPsHome = $true
+    $script:CanWriteToPsHome = $false
 
     try {
         $testFileName = Join-Path $PSHOME (New-Guid).Guid
         $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+        $script:CanWriteToPsHome = $true
+        Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
     }
-    catch [System.UnauthorizedAccessException] {
-        $script:CanWriteToPsHome = $false
-    }
-    finally {
-        if ($script:CanWriteToPsHome) {
-            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
-        }
+    catch {
+        ; # do nothing
     }
 
     $script:CanWriteToPsHome
@@ -387,4 +384,15 @@ function Get-PlatformInfo {
         }
         return "unknown"
     }
+}
+
+# return true if WsMan is supported on the current platform
+function Get-WsManSupport {
+    $platformInfo = Get-PlatformInfo
+    if (
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '7')
+    ) {
+        return $true
+    }
+    return $false
 }

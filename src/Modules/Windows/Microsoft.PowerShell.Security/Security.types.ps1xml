@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- *******************************************************************
+These sample files contain type information used by the PowerShell engine.
+Do not edit or change the contents of this file directly.
+Please see the PowerShell documentation or type "Get-Help Update-TypeData"
+for more information.
+
+Copyright (c) Microsoft Corporation.
+
+THIS SAMPLE CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+OF ANY KIND,WHETHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+PURPOSE. IF THIS CODE AND INFORMATION IS MODIFIED, THE ENTIRE RISK OF USE
+OR RESULTS IN CONNECTION WITH THE USE OF THIS CODE AND INFORMATION
+REMAINS WITH THE USER.
+******************************************************************** -->
+
+<Types>
+  <Type>
+    <Name>System.Security.AccessControl.ObjectSecurity</Name>
+    <Members>
+      <CodeProperty>
+        <Name>Path</Name>
+        <GetCodeReference>
+          <TypeName>Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase</TypeName>
+          <MethodName>GetPath</MethodName>
+        </GetCodeReference>
+      </CodeProperty>
+      <CodeProperty>
+        <Name>Owner</Name>
+        <GetCodeReference>
+          <TypeName>Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase</TypeName>
+          <MethodName>GetOwner</MethodName>
+        </GetCodeReference>
+      </CodeProperty>
+      <CodeProperty>
+        <Name>Group</Name>
+        <GetCodeReference>
+          <TypeName>Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase</TypeName>
+          <MethodName>GetGroup</MethodName>
+        </GetCodeReference>
+      </CodeProperty>
+      <CodeProperty>
+        <Name>Access</Name>
+        <GetCodeReference>
+          <TypeName>Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase</TypeName>
+          <MethodName>GetAccess</MethodName>
+        </GetCodeReference>
+      </CodeProperty>
+      <CodeProperty>
+        <Name>Sddl</Name>
+        <GetCodeReference>
+          <TypeName>Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase</TypeName>
+          <MethodName>GetSddl</MethodName>
+        </GetCodeReference>
+      </CodeProperty>
+      <ScriptProperty>
+        <Name>AccessToString</Name>
+        <GetScriptBlock>
+          $toString = "";
+          $first = $true;
+          if ( ! $this.Access ) { return "" }
+          foreach($ace in $this.Access)
+          {
+          if($first)
+          {
+          $first = $false;
+          }
+          else
+          {
+          $tostring += "`n";
+          }
+          $toString += $ace.IdentityReference.ToString();
+          $toString += " ";
+          $toString += $ace.AccessControlType.ToString();
+          $toString += "  ";
+          if($ace -is [System.Security.AccessControl.FileSystemAccessRule])
+          {
+          $toString += $ace.FileSystemRights.ToString();
+          }
+          elseif($ace -is  [System.Security.AccessControl.RegistryAccessRule])
+          {
+          $toString += $ace.RegistryRights.ToString();
+          }
+          }
+          return $toString;
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>AuditToString</Name>
+        <GetScriptBlock>
+          $toString = "";
+          $first = $true;
+          if ( ! (&amp; { Set-StrictMode -Version 1; $this.audit }) ) { return "" }
+          foreach($ace in (&amp; { Set-StrictMode -Version 1; $this.audit }))
+          {
+          if($first)
+          {
+          $first = $false;
+          }
+          else
+          {
+          $tostring += "`n";
+          }
+          $toString += $ace.IdentityReference.ToString();
+          $toString += " ";
+          $toString += $ace.AuditFlags.ToString();
+          $toString += "  ";
+          if($ace -is [System.Security.AccessControl.FileSystemAuditRule])
+          {
+          $toString += $ace.FileSystemRights.ToString();
+          }
+          elseif($ace -is [System.Security.AccessControl.RegistryAuditRule])
+          {
+          $toString += $ace.RegistryRights.ToString();
+          }
+          }
+          return $toString;
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+
+</Types>

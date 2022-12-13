@@ -128,10 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // instantiate the cache if not done yet
-            if (_cache == null)
-            {
-                _cache = new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
-            }
+            _cache ??= new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
 
             // no need for formatting, just process the object
             FormatStartData formatStart = o as FormatStartData;
@@ -459,9 +456,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="c">Current context, with Fs in it.</param>
         private void ProcessFormatEnd(FormatEndData fe, FormatMessagesContextManager.OutputContext c)
         {
-            // Console.WriteLine("ProcessFormatEnd");
-            // we just add an empty line to the display
-            this.LineOutput.WriteLine(string.Empty);
+            if (c is FormatOutputContext foContext
+                && foContext.Data.shapeInfo is ListViewHeaderInfo)
+            {
+                // Skip writing out a new line for List view, because we already wrote out
+                // an extra new line after displaying the last list entry.
+                return;
+            }
+
+            // We just add an empty line to the display.
+            LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -552,7 +556,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    _lo.WriteLine(rte.text);
+                    // Write out raw text without any changes to it.
+                    _lo.WriteRawText(rte.text);
                 }
 
                 return;
@@ -998,16 +1003,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // create arrays for widths and alignment
                 Span<int> columnWidths = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
                 Span<int> alignment = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
+                Span<bool> headerMatchesProperty = columns <= StackAllocThreshold ? stackalloc bool[columns] : new bool[columns];
 
                 int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
                 {
                     columnWidths[k] = (columnWidthsHint != null) ? columnWidthsHint[k] : tci.width;
                     alignment[k] = tci.alignment;
+                    headerMatchesProperty[k] = tci.HeaderMatchesProperty;
                     k++;
                 }
 
-                this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
+                this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, headerMatchesProperty, this.CurrentTableHeaderInfo.hideHeader);
             }
 
             /// <summary>
@@ -1236,7 +1243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false, GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber));
+                this.Writer.Initialize(leftMarginIndent: 0, columnsOnTheScreen, columnWidths, alignment, headerMatchesProperty: null, suppressHeader: false, screenRows: GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber));
             }
 
             /// <summary>

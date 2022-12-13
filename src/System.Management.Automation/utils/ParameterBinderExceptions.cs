@@ -212,10 +212,7 @@ namespace System.Management.Automation
             _parameterType = parameterType;
             _typeSpecified = typeSpecified;
 
-            if (errorPosition == null)
-            {
-                errorPosition = invocationInfo.ScriptPosition;
-            }
+            errorPosition ??= invocationInfo.ScriptPosition;
 
             if (errorPosition != null)
             {

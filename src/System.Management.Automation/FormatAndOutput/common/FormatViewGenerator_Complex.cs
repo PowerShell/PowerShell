@@ -283,10 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // Since it is a leaf node we just consider it an empty string and go
                         // on with formatting
-                        if (val == null)
-                        {
-                            val = string.Empty;
-                        }
+                        val ??= string.Empty;
 
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
@@ -717,7 +714,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
             {
                 // get the last token in the full name
-                string[] arr = typeNames[0].Split(Utils.Separators.Dot);
+                string[] arr = typeNames[0].Split('.');
                 if (arr.Length > 0)
                     return arr[arr.Length - 1];
             }

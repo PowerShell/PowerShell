@@ -32,23 +32,23 @@ namespace Microsoft.PowerShell
     public enum ExecutionPolicy
     {
         /// Unrestricted - No files must be signed.  If a file originates from the
-        ///    internet, Monad provides a warning prompt to alert the user.  To
+        ///    internet, PowerShell provides a warning prompt to alert the user.  To
         ///    suppress this warning message, right-click on the file in File Explorer,
         ///    select "Properties," and then "Unblock."
         Unrestricted = 0,
 
-        /// RemoteSigned - Only .msh and .mshxml files originating from the internet
-        ///    must be digitally signed.  If remote, signed, and executed, Monad
+        /// RemoteSigned - Only .ps1 and .ps1xml files originating from the internet
+        ///    must be digitally signed.  If remote, signed, and executed, PowerShell
         ///    prompts to determine if files from the signing publisher should be
         ///    run or not.  This is the default setting.
         RemoteSigned = 1,
 
-        /// AllSigned - All .msh and .mshxml files must be digitally signed.  If
-        ///    signed and executed, Monad prompts to determine if files from the
+        /// AllSigned - All .ps1 and .ps1xml files must be digitally signed.  If
+        ///    signed and executed, PowerShell prompts to determine if files from the
         ///    signing publisher should be run or not.
         AllSigned = 2,
 
-        /// Restricted - All .msh files are blocked.  Mshxml files must be digitally
+        /// Restricted - All .ps1 files are blocked.  Ps1xml files must be digitally
         ///    signed, and by a trusted publisher.  If you haven't made a trust decision
         ///    on the publisher yet, prompting is done as in AllSigned mode.
         Restricted = 3,
@@ -412,7 +412,7 @@ namespace System.Management.Automation.Internal
                 return true;
             }
 
-            // WTGetSignatureInfo is used to verify catalog signature.
+            // WTGetSignatureInfo, via Microsoft.Security.Extensions, is used to verify catalog signature.
             // On Win7, catalog API is not available.
             // On OneCore SKUs like NanoServer/IoT, the API has a bug that makes it not able to find the
             // corresponding catalog file for a given product file, so it doesn't work properly.
@@ -495,7 +495,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
@@ -682,7 +681,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>A collection of cert eku strings.</returns>
-        [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
             Collection<string> ekus = new Collection<string>();

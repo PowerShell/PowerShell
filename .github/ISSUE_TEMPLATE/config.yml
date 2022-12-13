@@ -7,5 +7,5 @@ contact_links:
     url: https://github.com/PowerShell/PowerShell/blob/master/.github/SUPPORT.md
     about: PowerShell Support Questions/Help
   - name: Documentation Issue
-    url: https://github.com/MicrosoftDocs/PowerShell-Docs
+    url: https://github.com/MicrosoftDocs/PowerShell-Docs/issues/new/choose
     about: Please open issues on documentation for PowerShell here.

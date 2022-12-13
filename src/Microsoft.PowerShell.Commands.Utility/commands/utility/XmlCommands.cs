@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         #endregion Command Line Parameters
 
@@ -453,8 +453,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CreateMemoryStream();
 
-                if (_serializer != null)
-                    _serializer.SerializeAsStream(InputObject);
+                _serializer?.SerializeAsStream(InputObject);
 
                 if (_serializer != null)
                 {
@@ -472,8 +471,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (_serializer != null)
-                    _serializer.Serialize(InputObject);
+                _serializer?.Serialize(InputObject);
             }
         }
 
@@ -801,13 +799,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void Stop()
-        {
-            if (_deserializer != null)
-            {
-                _deserializer.Stop();
-            }
-        }
+        internal void Stop() => _deserializer?.Stop();
     }
 
     #region Select-Xml

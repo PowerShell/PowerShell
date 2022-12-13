@@ -1,3 +1,12 @@
+parameters:
+  - name: ContainerPattern
+    displayName: |
+      Pattern to match JobName of the container.
+      Update this to force a container.
+      `.` will match everything
+    type: string
+    default: .
+
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
 trigger:
   # Batch merge builds together while a merge build is running
@@ -47,11 +56,15 @@ variables:
   __SuppressAnsiEscapeSequences: 1
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+    - repository: Docker
+      type: github
+      endpoint: PowerShell
+      name: PowerShell/PowerShell-Docker
+      ref: master
 
 stages:
-- stage: BuildLinux
+- stage: BuildLinuxStage
   displayName: Build for Linux
   jobs:
   - template: templates/ci-build.yml
@@ -60,33 +73,34 @@ stages:
       jobName: linux_build
       displayName: linux Build
 
-- stage: TestLinux
-  displayName: Test for Linux
+- stage: TestUbuntu
+  displayName: Test for Ubuntu
+  dependsOn: [BuildLinuxStage]
   jobs:
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: Others
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: Others
@@ -95,24 +109,61 @@ stages:
     parameters:
       pool: ubuntu-20.04
 
+- stage: TestContainer
+  displayName: Test in a container
+  dependsOn: [BuildLinuxStage]
+  jobs:
+  - job: getContainerJob
+    displayName: Choose a container
+    pool:
+      vmImage: ubuntu-20.04
+    steps:
+    - checkout: self
+      clean: true
+
+    - checkout: Docker
+      clean: true
+
+    - pwsh: |
+        # Initialize container test stage
+        Import-Module ./PowerShell/tools/ci.psm1
+        Invoke-InitializeContainerStage -ContainerPattern '${{ parameters.ContainerPattern }}'
+      name: getContainerTask
+      displayName: Initialize Container Stage
+      continueOnError: true
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: CI
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: CI
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: Others
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: Others
+
 - stage: PackageLinux
   displayName: Package Linux
-  dependsOn: ["BuildLinux"]
+  dependsOn: ["BuildLinuxStage"]
   jobs:
   - template: linux/templates/packaging.yml
     parameters:
       pool: ubuntu-20.04
-
-- stage: CodeCovTestPackage
-  displayName: CodeCoverage and Test Packages
-  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
-  jobs:
-  - job: CodeCovTestPackage
-    displayName: CodeCoverage and Test Packages
-    pool:
-      vmImage: ubuntu-20.04
-    steps:
-    - pwsh: |
-        Import-Module .\tools\ci.psm1
-        New-CodeCoverageAndTestPackage
-      displayName: CodeCoverage and Test Package

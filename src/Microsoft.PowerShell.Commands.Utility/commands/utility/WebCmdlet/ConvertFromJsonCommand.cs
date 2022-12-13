@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (ArgumentException)
                     {
                         // The first input string does not represent a complete Json Syntax.
-                        // Hence consider the the entire input as a single Json content.
+                        // Hence consider the entire input as a single Json content.
                     }
 
                     if (successfullyConverted)

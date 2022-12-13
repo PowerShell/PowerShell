@@ -165,6 +165,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             GetCimClassCommand cmdlet)
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
+            proxy.Amended = cmdlet.Amended;
         }
 
         /// <summary>

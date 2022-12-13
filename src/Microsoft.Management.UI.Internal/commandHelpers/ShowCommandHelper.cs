@@ -1200,7 +1200,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Sets a succesfull dialog result and then closes the window.
+        /// Sets a successful dialog result and then closes the window.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>

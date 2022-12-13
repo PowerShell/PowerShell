@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
             // in which they were created.
             foreach (object item in _usingValuesMap.Values)
             {
-                if (item is ScriptBlock)
+                if (item is ScriptBlock or PSObject { BaseObject: ScriptBlock })
                 {
                     ThrowTerminatingError(
                         new ErrorRecord(
@@ -919,17 +919,14 @@ namespace Microsoft.PowerShell.Commands
                 // because it allows you to parameterize a command - for example you might allow
                 // for actions before and after the main processing script. They could be null
                 // by default and therefore ignored then filled in later...
-                if (_scripts[i] != null)
-                {
-                    _scripts[i].InvokeUsingCmdlet(
-                        contextCmdlet: this,
-                        useLocalScope: false,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: InputObject,
-                        input: new object[] { InputObject },
-                        scriptThis: AutomationNull.Value,
-                        args: Array.Empty<object>());
-                }
+                _scripts[i]?.InvokeUsingCmdlet(
+                    contextCmdlet: this,
+                    useLocalScope: false,
+                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                    dollarUnder: InputObject,
+                    input: new object[] { InputObject },
+                    scriptThis: AutomationNull.Value,
+                    args: Array.Empty<object>());
             }
         }
 
@@ -1539,7 +1536,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets -sets case sensitive binary operator -clt.
+        /// Gets or sets case sensitive binary operator -clt.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CaseSensitiveLessThanSet")]
         public SwitchParameter CLT
@@ -2657,7 +2654,7 @@ namespace Microsoft.PowerShell.Commands
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                if (!PSVersionInfo.IsValidPSVersion(version))
                 {
                     // No conversion succeeded so throw and exception...
                     throw new ValidationMetadataException(

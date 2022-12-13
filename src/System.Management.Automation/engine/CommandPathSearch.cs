@@ -37,17 +37,17 @@ namespace System.Management.Automation
         /// <param name="acceptableCommandNames">
         /// The patterns to search for in the paths.
         /// </param>
-        /// <param name="useFuzzyMatch">
-        /// Use likely relevant search.
+        /// <param name="fuzzyMatcher">
+        /// The fuzzy matcher to use for fuzzy searching.
         /// </param>
         internal CommandPathSearch(
             string commandName,
             LookupPathCollection lookupPaths,
             ExecutionContext context,
             Collection<string>? acceptableCommandNames,
-            bool useFuzzyMatch)
+            FuzzyMatcher? fuzzyMatcher)
         {
-            _useFuzzyMatch = useFuzzyMatch;
+            _fuzzyMatcher = fuzzyMatcher;
             string[] commandPatterns;
             if (acceptableCommandNames != null)
             {
@@ -110,7 +110,17 @@ namespace System.Management.Automation
                 sessionState.CurrentDrive.Provider.NameEquals(fileSystemProviderName) &&
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
-            string environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            string? environmentCurrentDirectory = null;
+            
+            try
+            {
+                environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            }
+            catch (FileNotFoundException)
+            {
+                // This can happen if the current working directory is deleted by another process on non-Windows
+                // In this case, we'll just ignore it and continue on with the current directory as null
+            }
 
             LocationGlobber pathResolver = _context.LocationGlobber;
 
@@ -424,13 +434,13 @@ namespace System.Management.Automation
                     // to forcefully use null if pattern is "."
                     if (pattern.Length != 1 || pattern[0] != '.')
                     {
-                        if (_useFuzzyMatch)
+                        if (_fuzzyMatcher is not null)
                         {
                             var files = new List<string>();
                             var matchingFiles = Directory.EnumerateFiles(directory);
                             foreach (string file in matchingFiles)
                             {
-                                if (FuzzyMatcher.IsFuzzyMatch(Path.GetFileName(file), pattern))
+                                if (_fuzzyMatcher.IsFuzzyMatch(Path.GetFileName(file), pattern))
                                 {
                                     files.Add(file);
                                 }
@@ -493,8 +503,7 @@ namespace System.Management.Automation
                         if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
                             || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
                         {
-                            if (result == null)
-                                result = new Collection<string>();
+                            result ??= new Collection<string>();
                             result.Add(fileNames[i]);
                             break;
                         }
@@ -520,8 +529,7 @@ namespace System.Management.Automation
                     if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
                         || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
                     {
-                        if (result == null)
-                            result = new Collection<string>();
+                        result ??= new Collection<string>();
                         result.Add(fileName);
                     }
                 }
@@ -581,7 +589,7 @@ namespace System.Management.Automation
         private readonly string[] _orderedPathExt;
         private readonly Collection<string>? _acceptableCommandNames;
 
-        private readonly bool _useFuzzyMatch = false;
+        private readonly FuzzyMatcher? _fuzzyMatcher;
 
         #endregion private members
     }

@@ -49,11 +49,8 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (t_payloadBuilder == null)
-                {
-                    // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    t_payloadBuilder = new StringBuilder(200);
-                }
+                // NOTE: Thread static fields must be explicitly initialized for each thread.
+                t_payloadBuilder ??= new StringBuilder(200);
 
                 return t_payloadBuilder;
             }

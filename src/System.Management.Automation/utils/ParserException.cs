@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the exception thrown when a syntax error occurs while parsing msh script text.
+    /// Defines the exception thrown when a syntax error occurs while parsing PowerShell script text.
     /// </summary>
     [Serializable]
     public class ParseException : RuntimeException
@@ -170,7 +170,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the exception thrown when a incomplete parse error occurs while parsing msh script text.
+    /// Defines the exception thrown when a incomplete parse error occurs while parsing PowerShell script text.
     /// </summary>
     /// <remarks>
     /// This is a variation on a parsing error that indicates that the parse was incomplete

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
@@ -496,6 +497,16 @@ namespace Microsoft.Management.UI.Internal
                     {
                         try
                         {
+                            // Remove any potential ANSI decoration
+                            foreach (var property in value.Properties)
+                            {
+                                if (property.Value is string str)
+                                {
+                                    StringDecorated decoratedString = new StringDecorated(str);
+                                    property.Value = decoratedString.ToString(OutputRendering.PlainText);
+                                }
+                            }
+
                             this.listItems.Add(value);
                         }
                         catch (Exception e)

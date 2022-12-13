@@ -1458,7 +1458,6 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        PSDriveInfo unusedPSDriveInfo = null;
                         ProviderInfo destinationProvider = null;
 
                         CmdletProviderContext destinationContext = new CmdletProviderContext(this.ExecutionContext);
@@ -1472,7 +1471,7 @@ namespace System.Management.Automation
                                     providerDestinationPaths[0].Path,
                                     destinationContext,
                                     out destinationProvider,
-                                    out unusedPSDriveInfo);
+                                    out _);
                         }
                         else
                         {
@@ -1484,7 +1483,7 @@ namespace System.Management.Automation
                                     destination,
                                     destinationContext,
                                     out destinationProvider,
-                                    out unusedPSDriveInfo);
+                                    out _);
                         }
 
                         // Now verify the providers are the same.

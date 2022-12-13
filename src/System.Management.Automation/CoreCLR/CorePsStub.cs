@@ -457,6 +457,20 @@ namespace System.Management.Automation.Security
         {
             throw new NotImplementedException("SystemPolicy.IsClassInApprovedList not implemented");
         }
+
+        /// <summary>
+        /// Gets the system wide script file policy enforcement for an open file.
+        /// Based on system WDAC (Windows Defender Application Control) or AppLocker policies.
+        /// </summary>
+        /// <param name="filePath">Script file path for policy check.</param>
+        /// <param name="fileStream">FileStream object to script file path.</param>
+        /// <retruns>Policy check result for script file.</returns>
+        public static SystemScriptFileEnforcement GetFilePolicyEnforcement(
+            string filePath,
+            System.IO.FileStream fileStream)
+        {
+            return SystemScriptFileEnforcement.None;
+        }
     }
 
     /// <summary>
@@ -472,6 +486,32 @@ namespace System.Management.Automation.Security
 
         /// Enabled, enforce restrictions
         Enforce = 2
+    }
+
+    /// <summary>
+    /// System wide policy enforcement for a specific script file.
+    /// </summary>
+    public enum SystemScriptFileEnforcement
+    {
+        /// <summary>
+        /// No policy enforcement.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Script file is blocked from running.
+        /// </summary>
+        Block = 1,
+
+        /// <summary>
+        /// Script file is allowed to run without restrictions (FullLanguage mode).
+        /// </summary>
+        Allow = 2,
+
+        /// <summary>
+        /// Script file is allowed to run in ConstrainedLanguage mode only.
+        /// </summary>
+        AllowConstrained = 3
     }
 }
 

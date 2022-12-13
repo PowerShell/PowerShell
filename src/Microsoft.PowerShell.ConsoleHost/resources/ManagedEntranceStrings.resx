@@ -145,12 +145,14 @@
     <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
-                  [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
-                  [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-ConfigurationName &lt;string&gt;] [-ConfigurationFile &lt;filePath&gt;]
+                  [-CustomPipeName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
-                  [-Version] [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
+                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}] 
+                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA] 
+                  [-Version] [-WindowStyle &lt;style&gt;] 
+                  [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -288,6 +290,14 @@ All parameters are case-insensitive.</value>
 
     Example: "pwsh -ConfigurationName AdminRoles"
 
+-ConfigurationFile
+
+    Specifies a session configuration (.pssc) file path. The configuration
+    contained in the configuration file will be applied to the PowerShell
+    session.
+
+    Example: "pwsh -ConfigurationFile "C:\ProgramData\PowerShell\MyConfig.pssc"
+
 -CustomPipeName
 
     Specifies the name to use for an additional IPC server (named pipe) used
@@ -383,13 +393,19 @@ All parameters are case-insensitive.</value>
 
 -NonInteractive | -noni
 
-    Does not present an interactive prompt to the user. Any attempts to use
-    interactive features, like Read-Host or confirmation prompts, result in
-    statement-terminating errors.
+    This switch is used to create sessions that shouldn't require user input.
+    This is useful for scripts that run in scheduled tasks or CI/CD pipelines.
+    Any attempts to use interactive features, like 'Read-Host' or confirmation
+    prompts, result in statement terminating errors rather than hanging.
 
 -NoProfile | -nop
 
     Does not load the PowerShell profiles.
+
+-NoProfileLoadTime
+
+    Hides the PowerShell profile load time text shown at startup when the load
+    time exceeds 500 milliseconds.
 
 -OutputFormat | -o | -of
 

@@ -384,10 +384,7 @@ namespace System.Management.Automation.Runspaces
                 _transportName = transportName
             };
 
-            if (psCmdlet != null)
-            {
-                psCmdlet.RunspaceRepository.Add(psSession);
-            }
+            psCmdlet?.RunspaceRepository.Add(psSession);
 
             return psSession;
         }

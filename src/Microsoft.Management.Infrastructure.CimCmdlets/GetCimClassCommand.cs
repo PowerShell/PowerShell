@@ -44,6 +44,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
+        /// Gets or sets flag to retrieve a localized data for WMI class.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Amended { get; set; }
+
+        /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "ClassName".
         /// </para>
@@ -196,10 +202,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetCimClass cimGetCimClass = this.GetOperationAgent();
-            if (cimGetCimClass != null)
-            {
-                cimGetCimClass.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimGetCimClass?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

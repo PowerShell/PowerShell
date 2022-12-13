@@ -143,9 +143,8 @@ namespace System.Management.Automation
                     if (parameter.IsDashQuestion())
                     {
                         Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
-                        string unused;
                         HelpInfo helpInfo = _scriptBlock.GetHelpInfo(context: Context, commandInfo: CommandInfo,
-                            dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out unused, helpUriFromDotLink: out unused);
+                            dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out _, helpUriFromDotLink: out _);
                         if (helpInfo == null)
                         {
                             break;

@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" version="4.5.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <Reference Include="System.Management.Automation">
       <HintPath>.\Ref\System.Management.Automation.dll</HintPath>
     </Reference>

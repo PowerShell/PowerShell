@@ -72,11 +72,8 @@ namespace Microsoft.PowerShell.Commands
                         FieldPropertyToken fpt = token as FieldPropertyToken;
                         if (fpt != null)
                         {
-                            if (displayName == null)
-                            {
-                                // Database does not provide a label(DisplayName) for the current property, use the expression value instead.
-                                displayName = fpt.expression.expressionValue;
-                            }
+                            // If Database does not provide a label(DisplayName) for the current property, use the expression value instead.
+                            displayName ??= fpt.expression.expressionValue;
 
                             if (fpt.expression.isScriptBlock)
                             {
@@ -170,10 +167,7 @@ namespace Microsoft.PowerShell.Commands
                         propertyName = (string)key;
                 }
 
-                if (propertyName == null)
-                {
-                    propertyName = association.ResolvedExpression.ToString();
-                }
+                propertyName ??= association.ResolvedExpression.ToString();
 
                 ColumnInfo columnInfo = new OriginalColumnInfo(propertyName, propertyName, propertyName, parentCmdlet);
 
@@ -233,10 +227,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (matchingRowDefinition == null)
-            {
-                matchingRowDefinition = match.BestMatch as TableRowDefinition;
-            }
+            matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
 
             if (matchingRowDefinition == null)
             {
@@ -254,10 +245,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (matchingRowDefinition == null)
-                    {
-                        matchingRowDefinition = match.BestMatch as TableRowDefinition;
-                    }
+                    matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
                 }
             }
 

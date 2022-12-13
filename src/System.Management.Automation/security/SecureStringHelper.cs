@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
-        [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
             //
@@ -258,10 +257,7 @@ namespace Microsoft.PowerShell
             //
             using (Aes aes = Aes.Create())
             {
-                if (iv is null)
-                {
-                    iv = aes.IV;
-                }
+                iv ??= aes.IV;
 
                 //
                 // get clear text data from the input SecureString

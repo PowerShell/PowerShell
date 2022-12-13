@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// INSTALLATION:
     ///
-    /// Type the following at an msh prompt:
+    /// Type the following at a PowerShell prompt:
     ///
     /// new-PSProvider -Path "REG.cmdletprovider" -description "My registry navigation provider"
     ///
@@ -2996,10 +2996,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If properties were not specified, get all the values
 
-            if (propertyNames == null)
-            {
-                propertyNames = new Collection<string>();
-            }
+            propertyNames ??= new Collection<string>();
 
             if (propertyNames.Count == 0 && getAll)
             {

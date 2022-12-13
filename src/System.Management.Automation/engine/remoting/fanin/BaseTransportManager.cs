@@ -1359,10 +1359,7 @@ namespace System.Management.Automation.Remoting.Server
                                                                             data.Data);
                 if (_isSerializing)
                 {
-                    if (_dataToBeSentQueue == null)
-                    {
-                        _dataToBeSentQueue = new Queue<Tuple<RemoteDataObject, bool, bool>>();
-                    }
+                    _dataToBeSentQueue ??= new Queue<Tuple<RemoteDataObject, bool, bool>>();
 
                     _dataToBeSentQueue.Enqueue(new Tuple<RemoteDataObject, bool, bool>(dataToBeSent, flush, reportPending));
                     return;

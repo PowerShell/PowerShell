@@ -24,6 +24,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
         }
 
         It 'gets the error stream from minishell' {
+            $PSNativeCommandUseErrorActionPreference = $false
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
             ($output | Measure-Object).Count | Should -Be 1
             $output | Should -BeOfType System.Management.Automation.ErrorRecord
@@ -420,14 +421,15 @@ export $envVarName='$guid'
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
             $p = [Diagnostics.Process]::new()
             $p.StartInfo.FileName = "pwsh"
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('$ErrorView="NormalView";throw "boom"'))
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('throw "boom"'))
             $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
             $p.StartInfo.UseShellExecute = $false
             $p.StartInfo.RedirectStandardError = $true
             $p.Start() | Out-Null
             $out = $p.StandardError.ReadToEnd()
             $out | Should -Not -BeNullOrEmpty
-            $out.Split([Environment]::NewLine)[0] | Should -BeExactly "boom"
+            $out = $out.Split([Environment]::NewLine)[0]
+            [System.Management.Automation.Internal.StringDecorated]::new($out).ToString("PlainText") | Should -BeExactly "Exception: boom"
         }
     }
 
@@ -1106,8 +1108,7 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 }
 
 Describe 'Console host name' -Tag CI {
-    It 'Name is pwsh' -Pending {
-        # waiting on https://github.com/dotnet/runtime/issues/33673
+    It 'Name is pwsh' {
         (Get-Process -Id $PID).Name | Should -BeExactly 'pwsh'
     }
 }

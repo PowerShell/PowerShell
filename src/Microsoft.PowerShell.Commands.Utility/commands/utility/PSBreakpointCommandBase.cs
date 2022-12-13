@@ -30,10 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Runspace == null)
-            {
-                Runspace = Context.CurrentRunspace;
-            }
+            Runspace ??= Context.CurrentRunspace;
         }
 
         #endregion overrides

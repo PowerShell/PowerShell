@@ -1492,20 +1492,9 @@ namespace System.Management.Automation.Remoting.Client
             finally
             {
                 // release resources
-                if (proxyAuthCredentials != null)
-                {
-                    proxyAuthCredentials.Dispose();
-                }
-
-                if (proxyInfo != null)
-                {
-                    proxyInfo.Dispose();
-                }
-
-                if (authCredentials != null)
-                {
-                    authCredentials.Dispose();
-                }
+                proxyAuthCredentials?.Dispose();
+                proxyInfo?.Dispose();
+                authCredentials?.Dispose();
             }
 
             if (result != 0)

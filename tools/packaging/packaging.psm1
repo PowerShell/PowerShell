@@ -7,7 +7,11 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
-$RedhatDistributions = @("rh","cm1")
+$RedhatFullDistributions = @("rh")
+$RedhatFddDistributions = @("cm")
+$RedhatDistributions = @()
+$RedhatDistributions += $RedhatFullDistributions
+$RedhatDistributions += $RedhatFddDistributions
 $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
@@ -33,7 +37,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -91,6 +95,8 @@ function Start-PSPackage {
             } else {
                 New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -524,7 +530,25 @@ function Start-PSPackage {
                     NoSudo = $NoSudo
                     LTS = $LTS
                 }
-                foreach ($Distro in $Script:RedhatDistributions) {
+                foreach ($Distro in $Script:RedhatFullDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
+                        Write-Verbose -Verbose "Creating RPM Package for $Distro"
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
+            'rpm-fxdependent' {
+                $Arguments = @{
+                    Type = 'rpm'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                }
+                foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
                         Write-Verbose -Verbose "Creating RPM Package for $Distro"
@@ -645,7 +669,7 @@ function New-TarballPackage {
 
             try {
                 Push-Location -Path $Staging
-                tar $options $packagePath .
+                tar $options $packagePath *
             } finally {
                 Pop-Location
             }
@@ -834,7 +858,7 @@ function New-UnixPackage {
     )
 
     DynamicParam {
-        if ($Type -eq "deb" -or $Type -eq 'rpm') {
+        if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
             # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -1309,9 +1333,11 @@ function Get-FpmArguments
         "-s", "dir"
     )
     if ($Distribution -in $script:RedHatDistributions) {
+        $Arguments += @("--rpm-digest", "sha256")
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
+        $Arguments += @("--rpm-rpmbuild-define", "_build_id_links none")
     } else {
         $Arguments += @("--license", "MIT License")
     }
@@ -1386,7 +1412,7 @@ function Get-PackageDependencies
                 "libstdc++6",
                 "zlib1g",
                 "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
-                "libssl1.1|libssl1.0.2|libssl1.0.0"
+                "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
         } elseif ($Distribution -eq 'rh') {
@@ -1394,7 +1420,7 @@ function Get-PackageDependencies
                 "openssl-libs",
                 "libicu"
             )
-        } elseif ($Distribution -eq 'cm1') {
+        } elseif ($Distribution -eq 'cm') {
             # Taken from the list here:
             # https://github.com/dotnet/dotnet-docker/blob/d451d6e9427f58c8508f1297c862663a27eb609f/src/runtime-deps/6.0/cbl-mariner1.0/amd64/Dockerfile#L6
             $Dependencies = @(
@@ -1406,6 +1432,11 @@ function Get-PackageDependencies
                 "icu"
                 "openssl-libs"
             )
+            if($Script:Options.Runtime -like 'fx*') {
+                $Dependencies += @(
+                    "dotnet-runtime-7.0"
+                )
+            }
         } elseif ($Distribution -eq 'macOS') {
             # do nothing
         } else {
@@ -2078,7 +2109,7 @@ function New-ILNugetPackageSource
 
     #region ref
     $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
-    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
+    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
     #endregion ref
 
     $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -2227,7 +2258,8 @@ function CopyReferenceAssemblies
         [string] $assemblyName,
         [string] $refBinPath,
         [string] $refNugetPath,
-        [string[]] $assemblyFileList
+        [string[]] $assemblyFileList,
+        [string] $winBinPath
     )
 
     $supportedRefList = @(
@@ -2256,7 +2288,8 @@ function CopyReferenceAssemblies
         default {
             $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
             $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
-            Copy-Item $ref_SMA, $ref_doc -Destination $refNugetPath -Force
+            $self_ref_doc = Join-Path -Path $winBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $ref_SMA, $ref_doc, $self_ref_doc -Destination $refNugetPath -Force
             Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
         }
     }
@@ -3489,7 +3522,7 @@ function New-MsiArgsArray {
 
     $buildArguments = @()
     foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=`"$($Argument.$key)`""
+        $buildArguments += "-d$key=$($Argument.$key)"
     }
 
     return $buildArguments
@@ -4414,6 +4447,7 @@ ${mainLinuxBuildFolder} = 'pwshLinuxBuild'
 ${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
 ${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
 ${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
+${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
 
 <#
     Used in Azure DevOps Yaml to package all the linux packages for a channel.
@@ -4446,15 +4480,21 @@ function Invoke-AzDevOpsLinuxPackageCreation {
 
         switch ($BuildType) {
             'fxdependent' {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
             }
             'alpine' {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
             }
             'rpm' {
                 Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
             }
             default {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
             }
         }
@@ -4463,6 +4503,9 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
 
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
+
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
 
             Write-Verbose -Verbose "---- Min-Size ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
@@ -4473,12 +4516,26 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             ## Create 'linux-arm' 'tar.gz' package.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
 
             ## Create 'linux-arm64' 'tar.gz' package.
             ## Note that 'linux-arm64' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
+        } elseif ($BuildType -eq 'rpm') {
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
+
+            Write-Verbose -Verbose "---- rpm-fxdependent ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
         }
     }
     catch {
@@ -4525,6 +4582,8 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+
         # Remove symbol files.
         Remove-Item "${buildFolder}\*.pdb" -Force
 
@@ -4545,7 +4604,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
@@ -4553,16 +4612,140 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+        } elseif ($BuildType -eq 'rpm') {
+            ## Build for Mariner
+            $options = Get-PSOptions
+            Write-Verbose -Verbose "---- Mariner ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
+
+            $buildParams['Runtime'] = 'fxdependent-linux-x64'
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files, xml document files.
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         }
     }
     catch {
         Get-Error -InputObject $_
         throw
+    }
+}
+
+<#
+    Apply the file permissions specified in the json file $FilePath to the files under $RootPath.
+    The format of the json file is like:
+
+    {
+        "System.Net.WebClient.dll": "744",
+        "Schemas/PSMaml/developer.xsd": "644",
+        "ref/System.Security.AccessControl.dll": "744",
+        "ref/System.IO.dll": "744",
+        "cs/Microsoft.CodeAnalysis.resources.dll": "744",
+        "Schemas/PSMaml/base.xsd": "644",
+        "Schemas/PSMaml/structureProcedure.xsd": "644",
+        "ref/System.Net.Security.dll": "744"
+    }
+#>
+function Set-LinuxFilePermission {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $FilePath,
+        [Parameter(Mandatory)] [string] $RootPath
+    )
+
+    if (-not (Test-Path $FilePath)) {
+        throw "File does not exist: $FilePath"
+    }
+
+    if (-not (Test-Path $RootPath)) {
+        throw "File does not exist: $RootPath"
+    }
+
+    try {
+        Push-Location $RootPath
+        $filePermission = Get-Content $FilePath -Raw | ConvertFrom-Json -AsHashtable
+
+        Write-Verbose -Verbose -Message "Got file permission: $($filePermission.Count) for $FilePath"
+
+        $filePermission.GetEnumerator() | ForEach-Object {
+            $file = $_.Name
+            $permission = $_.Value
+            $fileFullName = Join-Path -Path $RootPath -ChildPath $file
+            Write-Verbose "Set permission $permission to $fileFullName" -Verbose
+            chmod $permission $fileFullName
+        }
+    }
+    finally {
+        Pop-Location
+    }
+}
+
+<#
+    Store the linux file permissions for all the files under root path $RootPath to the json file $FilePath.
+    The json file stores them as relative paths to the root.
+
+    The format of the json file is like:
+
+    {
+        "System.Net.WebClient.dll": "744",
+        "Schemas/PSMaml/developer.xsd": "644",
+        "ref/System.Security.AccessControl.dll": "744",
+        "ref/System.IO.dll": "744",
+        "cs/Microsoft.CodeAnalysis.resources.dll": "744",
+        "Schemas/PSMaml/base.xsd": "644",
+        "Schemas/PSMaml/structureProcedure.xsd": "644",
+        "ref/System.Net.Security.dll": "744"
+    }
+
+#>
+function Export-LinuxFilePermission {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $FilePath,
+        [Parameter(Mandatory)] [string] $RootPath,
+        [Parameter(Mandatory, ValueFromPipeline = $true)] [System.IO.FileInfo[]] $InputObject,
+        [Parameter()] [switch] $Force
+    )
+
+    begin {
+        if (Test-Path $FilePath) {
+          if (-not $Force) {
+            throw "File '$FilePath' already exists."
+          }
+          else {
+            Remove-Item $FilePath -Force
+          }
+        }
+
+        $fileData = @{}
+    }
+
+    process {
+        foreach ($object in $InputObject) {
+            Write-Verbose "Processing $($object.FullName)"
+            # This gets the unix stat information for the file in the format that chmod expects, like '644'.
+            $filePerms = [convert]::ToString($object.unixstat.mode, 8).substring(3)
+            $relativePath = [System.IO.Path]::GetRelativePath($RootPath, $_.FullName)
+            $fileData.Add($relativePath, $filePerms)
+        }
+    }
+
+    end {
+        $fileData | ConvertTo-Json -Depth 10 | Out-File -FilePath $FilePath
     }
 }
 

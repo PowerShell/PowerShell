@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#pragma warning disable 1634, 1691
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime;
@@ -73,6 +72,9 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
+        /// <param name="issProvidedExternally">
+        /// True when an external caller provides an InitialSessionState object, which can conflict with '-ConfigurationFile' argument.
+        /// </param>
         /// <returns>
         /// The exit code for the shell.
         ///
@@ -99,7 +101,10 @@ namespace Microsoft.PowerShell
         /// Anyone checking the exit code of the shell or monitor can mask off the high word to determine the exit code passed
         /// by the script that the shell last executed.
         /// </returns>
-        internal static int Start(string bannerText, string helpText)
+        internal static int Start(
+            string bannerText,
+            string helpText,
+            bool issProvidedExternally)
         {
 #if DEBUG
             if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
@@ -110,6 +115,12 @@ namespace Microsoft.PowerShell
                 }
             }
 #endif
+
+            // Check for external InitialSessionState configuration conflict with '-ConfigurationFile' argument.
+            if (issProvidedExternally && !string.IsNullOrEmpty(s_cpp.ConfigurationFile))
+            {
+                throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStartedWithConfigConflict);
+            }
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
             string path = Environment.GetEnvironmentVariable("PATH");
@@ -177,10 +188,7 @@ namespace Microsoft.PowerShell
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
-                    if (s_theConsoleHost != null)
-                    {
-                        s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
-                    }
+                    s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
 
                     return ExitCodeBadCommandLineParameter;
                 }
@@ -188,31 +196,34 @@ namespace Microsoft.PowerShell
 #if !UNIX
                 TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
-
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
                     StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: s_cpp.WorkingDirectory,
-                        configurationName: null);
+                        configurationName: null,
+                        configurationFile: s_cpp.ConfigurationFile,
+                        combineErrOutStream: false);
                     exitCode = 0;
                 }
                 else if (s_cpp.SSHServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: null,
-                        configurationName: null);
+                        configurationName: null,
+                        configurationFile: s_cpp.ConfigurationFile,
+                        combineErrOutStream: true);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     RemoteSessionNamedPipeServer.RunServerMode(
                         configurationName: s_cpp.ConfigurationName);
@@ -220,7 +231,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SocketServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     HyperVSocketMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
@@ -255,13 +266,14 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
             }
             finally
             {
+#pragma warning disable IDE0031
                 if (s_theConsoleHost != null)
                 {
 #if LEGACYTELEMETRY
@@ -277,6 +289,7 @@ namespace Microsoft.PowerShell
 #endif
                     s_theConsoleHost.Dispose();
                 }
+#pragma warning restore IDE0031
             }
 
             unchecked
@@ -301,8 +314,8 @@ namespace Microsoft.PowerShell
                 PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
             }
 
-            // Check registry setting for a Group Policy ConfigurationName entry and
-            // use it to override anything set by the user.
+            // Check registry setting for a Group Policy ConfigurationName entry,
+            // and use it to override anything set by the user on the command line.
             // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
             s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
         }
@@ -484,10 +497,7 @@ namespace Microsoft.PowerShell
                     if (runspaceRef != null)
                     {
                         var runspace = runspaceRef.Runspace;
-                        if (runspace != null)
-                        {
-                            runspace.Close();
-                        }
+                        runspace?.Close();
                     }
                 }
             }
@@ -1249,15 +1259,8 @@ namespace Microsoft.PowerShell
                         StopTranscribing();
                     }
 
-                    if (_outputSerializer != null)
-                    {
-                        _outputSerializer.End();
-                    }
-
-                    if (_errorSerializer != null)
-                    {
-                        _errorSerializer.End();
-                    }
+                    _outputSerializer?.End();
+                    _errorSerializer?.End();
 
                     if (_runspaceRef != null)
                     {
@@ -1373,14 +1376,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_outputSerializer == null)
-                {
-                    _outputSerializer =
-                        new WrappedSerializer(
-                            OutputFormat,
-                            "Output",
-                            Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
-                }
+                _outputSerializer ??=
+                    new WrappedSerializer(
+                        OutputFormat,
+                        "Output",
+                        Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
 
                 return _outputSerializer;
             }
@@ -1390,14 +1390,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_errorSerializer == null)
-                {
-                    _errorSerializer =
-                        new WrappedSerializer(
-                            ErrorFormat,
-                            "Error",
-                            Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
-                }
+                _errorSerializer ??=
+                    new WrappedSerializer(
+                        ErrorFormat,
+                        "Error",
+                        Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
 
                 return _errorSerializer;
             }
@@ -1489,7 +1486,7 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName, cpp.ConfigurationFile);
             }
             while (false);
 
@@ -1502,13 +1499,19 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The process exit code to be returned by Main.
         /// </returns>
-        private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName)
+        private uint DoRunspaceLoop(
+            string initialCommand,
+            bool skipProfiles,
+            Collection<CommandParameter> initialCommandArgs,
+            bool staMode,
+            string configurationName,
+            string configurationFilePath)
         {
             ExitCode = ExitCodeSuccess;
 
             while (!ShouldEndSession)
             {
-                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
+                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, configurationFilePath, initialCommandArgs);
                 CreateRunspace(args);
 
                 if (ExitCode == ExitCodeInitFailure) { break; }
@@ -1584,14 +1587,12 @@ namespace Microsoft.PowerShell
             return e;
         }
 
-        private void CreateRunspace(object runspaceCreationArgs)
+        private void CreateRunspace(RunspaceCreationEventArgs runspaceCreationArgs)
         {
-            RunspaceCreationEventArgs args = null;
             try
             {
-                args = runspaceCreationArgs as RunspaceCreationEventArgs;
-                Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
+                Dbg.Assert(runspaceCreationArgs != null, "Arguments to CreateRunspace should not be null.");
+                DoCreateRunspace(runspaceCreationArgs);
             }
             catch (ConsoleHostStartupException startupException)
             {
@@ -1603,7 +1604,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Check if a screen reviewer utility is running.
         /// When a screen reader is running, we don't auto-load the PSReadLine module at startup,
-        /// since PSReadLine is not accessibility-firendly enough as of today.
+        /// since PSReadLine is not accessibility-friendly enough as of today.
         /// </summary>
         private bool IsScreenReaderActive()
         {
@@ -1646,11 +1647,32 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-        private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
+        /// <param name="args">Runspace creation event arguments.</param>
+        private void DoCreateRunspace(RunspaceCreationEventArgs args)
         {
-            Dbg.Assert(_runspaceRef == null, "runspace should be null");
+            Dbg.Assert(_runspaceRef == null, "_runspaceRef field should be null");
             Dbg.Assert(DefaultInitialSessionState != null, "DefaultInitialSessionState should not be null");
             s_runspaceInitTracer.WriteLine("Calling RunspaceFactory.CreateRunspace");
+
+            // Use session configuration file if provided.
+            bool customConfigurationProvided = false;
+            if (!string.IsNullOrEmpty(args.ConfigurationFilePath))
+            {
+                try
+                {
+                    // Replace DefaultInitialSessionState with the initial state configuration defined by the file.
+                    DefaultInitialSessionState = InitialSessionState.CreateFromSessionConfigurationFile(
+                        path: args.ConfigurationFilePath,
+                        roleVerifier: null,
+                        validateFile: true);
+                }
+                catch (Exception ex)
+                {
+                    throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStarted, ex);
+                }
+
+                customConfigurationProvided = true;
+            }
 
             try
             {
@@ -1667,7 +1689,7 @@ namespace Microsoft.PowerShell
                 //    powershell -command "Update-Module PSReadline"
                 // This should work just fine as long as no other instances of PowerShell are running.
                 ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
-                if (LoadPSReadline())
+                if (!customConfigurationProvided && LoadPSReadline())
                 {
                     if (IsScreenReaderActive())
                     {
@@ -1682,7 +1704,7 @@ namespace Microsoft.PowerShell
                         consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
                         try
                         {
-                            OpenConsoleRunspace(consoleRunspace, staMode);
+                            OpenConsoleRunspace(consoleRunspace, args.StaMode);
                         }
                         catch (Exception)
                         {
@@ -1702,7 +1724,7 @@ namespace Microsoft.PowerShell
                     }
 
                     consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
-                    OpenConsoleRunspace(consoleRunspace, staMode);
+                    OpenConsoleRunspace(consoleRunspace, args.StaMode);
                 }
 
                 Runspace.PrimaryRunspace = consoleRunspace;
@@ -1734,7 +1756,7 @@ namespace Microsoft.PowerShell
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
 #endif
 
-            DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
+            DoRunspaceInitialization(args);
         }
 
         private static void OpenConsoleRunspace(Runspace runspace, bool staMode)
@@ -1751,7 +1773,7 @@ namespace Microsoft.PowerShell
             runspace.Open();
         }
 
-        private void DoRunspaceInitialization(bool skipProfiles, string initialCommand, string configurationName, Collection<CommandParameter> initialCommandArgs)
+        private void DoRunspaceInitialization(RunspaceCreationEventArgs args)
         {
             if (_runspaceRef.Runspace.Debugger != null)
             {
@@ -1786,13 +1808,13 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (!string.IsNullOrEmpty(configurationName))
+            if (!string.IsNullOrEmpty(args.ConfigurationName))
             {
                 // If an endpoint configuration is specified then create a loop-back remote runspace targeting
                 // the endpoint and push onto runspace ref stack.  Ignore profile and configuration scripts.
                 try
                 {
-                    RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(configurationName, this);
+                    RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(args.ConfigurationName, this);
                     remoteRunspace.ShouldCloseOnPop = true;
                     PushRunspace(remoteRunspace);
 
@@ -1827,7 +1849,7 @@ namespace Microsoft.PowerShell
                         currentUserProfile,
                         currentUserHostSpecificProfile));
 
-                if (!skipProfiles)
+                if (!args.SkipProfiles)
                 {
                     // Run the profiles.
                     // Profiles are run in the following order:
@@ -1845,7 +1867,7 @@ namespace Microsoft.PowerShell
                     sw.Stop();
 
                     var profileLoadTimeInMs = sw.ElapsedMilliseconds;
-                    if (profileLoadTimeInMs > 500 && s_cpp.ShowBanner)
+                    if (s_cpp.ShowBanner && !s_cpp.NoProfileLoadTime && profileLoadTimeInMs > 500)
                     {
                         Console.Error.WriteLine(ConsoleHostStrings.SlowProfileLoadingMessage, profileLoadTimeInMs);
                     }
@@ -1887,11 +1909,11 @@ namespace Microsoft.PowerShell
 
                 tempPipeline.Commands.Add(c);
 
-                if (initialCommandArgs != null)
+                if (args.InitialCommandArgs != null)
                 {
                     // add the args passed to the command.
 
-                    foreach (CommandParameter p in initialCommandArgs)
+                    foreach (CommandParameter p in args.InitialCommandArgs)
                     {
                         c.Parameters.Add(p);
                     }
@@ -1948,19 +1970,19 @@ namespace Microsoft.PowerShell
                     ReportException(e1, exec);
                 }
             }
-            else if (!string.IsNullOrEmpty(initialCommand))
+            else if (!string.IsNullOrEmpty(args.InitialCommand))
             {
                 // Run the command passed on the command line
 
                 s_tracer.WriteLine("running initial command");
 
-                Pipeline tempPipeline = exec.CreatePipeline(initialCommand, true);
+                Pipeline tempPipeline = exec.CreatePipeline(args.InitialCommand, true);
 
-                if (initialCommandArgs != null)
+                if (args.InitialCommandArgs != null)
                 {
                     // add the args passed to the command.
 
-                    foreach (CommandParameter p in initialCommandArgs)
+                    foreach (CommandParameter p in args.InitialCommandArgs)
                     {
                         tempPipeline.Commands[0].Parameters.Add(p);
                     }
@@ -1976,7 +1998,7 @@ namespace Microsoft.PowerShell
                     ParseError[] errors;
 
                     // Detect if they're using input. If so, read from it.
-                    Ast parsedInput = Parser.ParseInput(initialCommand, out tokens, out errors);
+                    Ast parsedInput = Parser.ParseInput(args.InitialCommand, out tokens, out errors);
                     if (AstSearcher.IsUsingDollarInput(parsedInput))
                     {
                         executionOptions |= Executor.ExecutionOptions.ReadInputObjects;
@@ -2197,10 +2219,7 @@ namespace Microsoft.PowerShell
                     // For remote debugging block data coming from the main (not-nested)
                     // running command.
                     baseLoop = InputLoop.GetNonNestedLoop();
-                    if (baseLoop != null)
-                    {
-                        baseLoop.BlockCommandOutput();
-                    }
+                    baseLoop?.BlockCommandOutput();
                 }
 
                 //
@@ -2245,10 +2264,7 @@ namespace Microsoft.PowerShell
             finally
             {
                 _debuggerStopEventArgs = null;
-                if (baseLoop != null)
-                {
-                    baseLoop.ResumeCommandOutput();
-                }
+                baseLoop?.ResumeCommandOutput();
             }
         }
 
@@ -2448,14 +2464,15 @@ namespace Microsoft.PowerShell
             /// </summary>
             internal void Run(bool inputLoopIsNested)
             {
-                System.Management.Automation.Host.PSHostUserInterface c = _parent.UI;
+                PSHostUserInterface c = _parent.UI;
                 ConsoleHostUserInterface ui = c as ConsoleHostUserInterface;
 
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
-                bool previousResponseWasEmpty = false;
-                StringBuilder inputBlock = new StringBuilder();
+                // Use nullable so that we don't evaluate suggestions at startup.
+                bool? previousResponseWasEmpty = null;
+                var inputBlock = new StringBuilder();
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
@@ -2471,7 +2488,6 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 // use a special prompt that denotes block mode
-
                                 prompt = ">> ";
                             }
                             else
@@ -2482,9 +2498,16 @@ namespace Microsoft.PowerShell
                                     ui.WriteLine();
 
                                 // Evaluate any suggestions
-                                if (!previousResponseWasEmpty)
+                                if (previousResponseWasEmpty == false)
                                 {
-                                    EvaluateSuggestions(ui);
+                                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
+                                    {
+                                        EvaluateFeedbacks(ui);
+                                    }
+                                    else
+                                    {
+                                        EvaluateSuggestions(ui);
+                                    }
                                 }
 
                                 // Then output the prompt
@@ -2493,10 +2516,7 @@ namespace Microsoft.PowerShell
                                     prompt = EvaluateDebugPrompt();
                                 }
 
-                                if (prompt == null)
-                                {
-                                    prompt = EvaluatePrompt();
-                                }
+                                prompt ??= EvaluatePrompt();
                             }
 
                             ui.Write(prompt);
@@ -2637,10 +2657,7 @@ namespace Microsoft.PowerShell
                                 bht = _parent._breakHandlerThread;
                             }
 
-                            if (bht != null)
-                            {
-                                bht.Join();
-                            }
+                            bht?.Join();
 
                             // Once the pipeline has been executed, we toss any outstanding progress data and
                             // take down the display.
@@ -2793,6 +2810,77 @@ namespace Microsoft.PowerShell
                 return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
             }
 
+            private void EvaluateFeedbacks(ConsoleHostUserInterface ui)
+            {
+                // Output any training suggestions
+                try
+                {
+                    List<FeedbackEntry> feedbacks = FeedbackHub.GetFeedback(_parent.Runspace);
+                    if (feedbacks is null || feedbacks.Count == 0)
+                    {
+                        return;
+                    }
+
+                    // Feedback section starts with a new line.
+                    ui.WriteLine();
+
+                    const string Indentation = "  ";
+                    string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
+                    string textStyle = PSStyle.Instance.Formatting.FeedbackText;
+                    string ansiReset = PSStyle.Instance.Reset;
+
+                    if (!ui.SupportsVirtualTerminal)
+                    {
+                        nameStyle = string.Empty;
+                        textStyle = string.Empty;
+                        ansiReset = string.Empty;
+                    }
+
+                    int count = 0;
+                    var output = new StringBuilder();
+
+                    foreach (FeedbackEntry entry in feedbacks)
+                    {
+                        if (count > 0)
+                        {
+                            output.AppendLine();
+                        }
+
+                        output.Append("Suggestion [")
+                            .Append(nameStyle)
+                            .Append(entry.Name)
+                            .Append(ansiReset)
+                            .AppendLine("]:")
+                            .Append(textStyle);
+
+                        string[] lines = entry.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string line in lines)
+                        {
+                            output.Append(Indentation)
+                                .Append(line.AsSpan().TrimEnd())
+                                .AppendLine();
+                        }
+
+                        output.Append(ansiReset);
+                        ui.Write(output.ToString());
+
+                        count++;
+                        output.Clear();
+                    }
+
+                    // Feedback section ends with a new line.
+                    ui.WriteLine();
+                }
+                catch (Exception e)
+                {
+                    // Catch-all OK. This is a third-party call-out.
+                    ui.WriteErrorLine(e.Message);
+
+                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
+                    localRunspace.GetExecutionContext.AppendDollarError(e);
+                }
+            }
+
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)
             {
                 // Output any training suggestions
@@ -2833,8 +2921,7 @@ namespace Microsoft.PowerShell
 
             private string EvaluatePrompt()
             {
-                Exception unused = null;
-                string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out unused);
+                string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out _);
 
                 if (string.IsNullOrEmpty(promptString))
                 {
@@ -3021,12 +3108,14 @@ namespace Microsoft.PowerShell
             bool skipProfiles,
             bool staMode,
             string configurationName,
+            string configurationFilePath,
             Collection<CommandParameter> initialCommandArgs)
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;
             StaMode = staMode;
             ConfigurationName = configurationName;
+            ConfigurationFilePath = configurationFilePath;
             InitialCommandArgs = initialCommandArgs;
         }
 
@@ -3037,6 +3126,8 @@ namespace Microsoft.PowerShell
         internal bool StaMode { get; set; }
 
         internal string ConfigurationName { get; set; }
+
+        internal string ConfigurationFilePath { get; set; }
 
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }

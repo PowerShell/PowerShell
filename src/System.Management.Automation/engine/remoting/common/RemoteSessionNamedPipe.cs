@@ -274,19 +274,6 @@ namespace System.Management.Automation.Remoting
               uint dwCreationDisposition,
               uint dwFlagsAndAttributes,
               IntPtr hTemplateFile);
-
-        [DllImport(PinvokeDllNames.WaitNamedPipeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool WaitNamedPipe(string lpNamedPipeName, uint nTimeOut);
-
-        [DllImport(PinvokeDllNames.ImpersonateNamedPipeClientDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ImpersonateNamedPipeClient(IntPtr hNamedPipe);
-
-        [DllImport(PinvokeDllNames.RevertToSelfDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool RevertToSelf();
-
         #endregion
     }
 
@@ -504,10 +491,7 @@ namespace System.Management.Automation.Remoting
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
-            {
-                securityDescHandle.Value.Free();
-            }
+            securityDescHandle?.Free();
 
             if (pipeHandle.IsInvalid)
             {
@@ -1102,13 +1086,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Closes the named pipe.
         /// </summary>
-        public void Close()
-        {
-            if (_clientPipeStream != null)
-            {
-                _clientPipeStream.Dispose();
-            }
-        }
+        public void Close() => _clientPipeStream?.Dispose();
 
         /// <summary>
         /// Abort connection attempt.

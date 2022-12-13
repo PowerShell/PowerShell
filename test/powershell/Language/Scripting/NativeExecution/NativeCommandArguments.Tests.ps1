@@ -4,9 +4,6 @@
 param()
 
 Describe "Behavior is specific for each platform" -tags "CI" {
-    BeforeAll {
-        $skipTests = $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
-    }
     It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Windows"
     }
@@ -28,8 +25,7 @@ Describe "Behavior is specific for each platform" -tags "CI" {
 
 Describe "tests for multiple languages and extensions" -tags "CI" {
     AfterAll {
-        if (-not $IsWindows -or
-            $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
+        if (-not $IsWindows) {
             return
         }
         $PSNativeCommandArgumentPassing = $passingStyle
@@ -126,7 +122,7 @@ echo Argument 4 is: ^<%4^>
 
         # determine whether we should skip the tests we just defined
         # doing it in this order ensures that the test output will show each skipped test
-        $skipTests = -not $IsWindows -or $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
+        $skipTests = -not $IsWindows
         if ($skipTests) {
             return
         }
@@ -162,12 +158,26 @@ echo Argument 4 is: ^<%4^>
 
 Describe "Will error correctly if an attempt to set variable to improper value" -tags "CI" {
     It "will error when setting variable incorrectly" {
-        if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-            { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
-        }
-        else {
-            Set-Test -State skipped -Because "Experimental feature 'PSNativeCommandArgumentPassing' is not enabled"
-        }
+        { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
+    }
+}
+
+Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+        $PSNativeCommandArgumentPassing = "Windows"
+        $testCases = @{ pattern = "" },
+            @{ pattern = "blat" },
+            @{ pattern = "bl at" }
+    }
+    AfterAll {
+        $PSNativeCommandArgumentPassing = $currentSetting
+    }
+    It "The pattern '<pattern>' is used properly by find.exe" -skip:(! $IsWindows) -testCases $testCases {
+        param ($pattern)
+        $expr = "'foo' | find.exe --% /v ""$pattern"""
+        $result = Invoke-Expression $expr
+        $result | Should -Be 'foo'
     }
 }
 
@@ -184,7 +194,7 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             $a = 'a"b c"d'
             $lines = testexe -echoargs $a 'a"b c"d' a"b c"d "a'b c'd"
             $lines.Count | Should -Be 4
-            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
+            if ($PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
             }
@@ -210,7 +220,7 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
         It "Should handle spaces between escaped quotes (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
             $lines.Count | Should -Be 2
-            if (($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') -and $PSNativeCommandArgumentPassing -ne "Legacy") {
+            if ($PSNativeCommandArgumentPassing -ne "Legacy") {
                 $lines[0] | Should -BeExactly 'Arg 0 is <a\"b c\"d>'
                 $lines[1] | Should -BeExactly 'Arg 1 is <a\"b c\"d>'
             }
@@ -237,6 +247,14 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             $lines.Count | Should -Be 2
             $lines[0] | Should -BeExactly "Arg 0 is <-k>"
             $lines[1] | Should -BeExactly "Arg 1 is <com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect>"
+        }
+
+        It "Should handle when the ':' is the parameter value" {
+            $lines = testexe -echoargs awk -F: '{print $1}'
+            $lines.Count | Should -Be 3
+            $lines[0] | Should -BeExactly 'Arg 0 is <awk>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <-F:>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <{print $1}>'
         }
 
         It "Should handle DOS style arguments" {
@@ -285,99 +303,11 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             }
 
         }
-    }
-}
-Describe 'PSPath to native commands' -tags "CI" {
-    BeforeAll {
-        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        $PSDefaultParameterValues["it:skip"] = (-not $featureEnabled)
-
-        if ($IsWindows) {
-            $cmd = "cmd"
-            $cmdArg1 = "/c"
-            $cmdArg2 = "type"
-            $dir = "cmd"
-            $dirArg1 = "/c"
-            $dirArg2 = "dir"
+        It 'Should treat a PSPath as literal' {
+            $lines = testexe -echoargs temp:/foo
+            $lines.Count | Should -Be 1
+            $lines | Should -BeExactly 'Arg 0 is <temp:/foo>'
         }
-        else {
-            $cmd = "cat"
-            $dir = "ls"
-        }
-
-        Set-Content -Path testdrive:/test.txt -Value 'Hello'
-        Set-Content -Path "testdrive:/test file.txt" -Value 'Hello'
-        Set-Content -Path "env:/test var" -Value 'Hello'
-        $filePath = Join-Path -Path ~ -ChildPath (New-Guid)
-        Set-Content -Path $filePath -Value 'Home'
-        $complexDriveName = 'My test! ;+drive'
-        New-PSDrive -Name $complexDriveName -Root $testdrive -PSProvider FileSystem
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-
-        Remove-Item -Path "env:/test var"
-        Remove-Item -Path $filePath
-        Remove-PSDrive -Name $complexDriveName
-    }
-
-    It 'PSPath with ~/path works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 $filePath
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Home'
-    }
-
-    It 'PSPath with ~ works' {
-        $out = & $dir $dirArg1 $dirArg2 ~
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -Not -BeNullOrEmpty
-    }
-
-    It 'PSPath that is file system path works with native commands: <path>' -TestCases @(
-        @{ path = "testdrive:/test.txt" }
-        @{ path = "testdrive:/test file.txt" }
-    ){
-        param($path)
-
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
-    }
-
-    It 'PSPath passed with single quotes should be treated as literal' {
-        $out = & $cmd $cmdArg1 $cmdArg2 'testdrive:/test.txt'
-        $LASTEXITCODE | Should -Not -Be 0
-        $out | Should -BeNullOrEmpty
-    }
-
-    It 'PSPath that is not a file system path fails with native commands: <path>' -TestCases @(
-        @{ path = "env:/PSModulePath" }
-        @{ path = "env:/test var" }
-    ){
-        param($path)
-
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
-        $LASTEXITCODE | Should -Not -Be 0
-        $out | Should -BeNullOrEmpty
-    }
-
-    It 'Relative PSPath works' {
-        New-Item -Path $testdrive -Name TestFolder -ItemType Directory -ErrorAction Stop
-        $cwd = Get-Location
-        Set-Content -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder' -AdditionalChildPath 'test.txt') -Value 'hello'
-        Set-Location -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder')
-        Set-Location -Path $cwd
-        $out = & $cmd $cmdArg1 $cmdArg2 "TestDrive:test.txt"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
-    }
-
-    It 'Complex PSDrive name works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 "${complexDriveName}:/test.txt"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
     }
 }

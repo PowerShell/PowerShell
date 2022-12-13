@@ -183,10 +183,7 @@ namespace System.Management.Automation
                 _properties[strName] = prop;
             }
 
-            if (prop != null)
-            {
-                prop.UpdateFuncDesc(funcdesc, index);
-            }
+            prop?.UpdateFuncDesc(funcdesc, index);
         }
 
         private void AddMethod(string strName, int index)
@@ -198,10 +195,7 @@ namespace System.Management.Automation
                 _methods[strName] = method;
             }
 
-            if (method != null)
-            {
-                method.AddFuncDesc(index);
-            }
+            method?.AddFuncDesc(index);
         }
 
         /// <summary>
@@ -209,7 +203,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
         {
             IntPtr pTypeAttr;
@@ -224,7 +217,6 @@ namespace System.Management.Automation
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
         {
             IntPtr pFuncDesc;

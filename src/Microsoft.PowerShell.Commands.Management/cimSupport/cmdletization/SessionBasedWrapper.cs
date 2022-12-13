@@ -683,10 +683,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public override void StopProcessing()
         {
             Job jobToStop = _parentJob;
-            if (jobToStop != null)
-            {
-                jobToStop.StopJob();
-            }
+            jobToStop?.StopJob();
 
             base.StopProcessing();
         }

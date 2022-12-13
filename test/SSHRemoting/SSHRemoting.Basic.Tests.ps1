@@ -230,6 +230,25 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             VerifySession $script:sessions[1]
             Write-Verbose -Verbose "It Complete"
         }
+
+        It "Verifies the 'pwshconfig' configured endpoint." {
+            Write-Verbose -Verbose "It Starting: Verifies the 'pwshconfig' configured endpoint."
+            $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshconfig'
+            $script:session | Should -Not -BeNullOrEmpty
+            # Configured session should be in ConstrainedLanguage mode.
+            $sessionLangMode = Invoke-Command -Session $script:session -ScriptBlock { "$($ExecutionContext.SessionState.LanguageMode)" }
+            $sessionLangMode | Should -BeExactly "ConstrainedLanguage"
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        <#
+        It "Verifes that 'pwshbroken' throws expected error for missing config file." {
+            Write-Verbose -Verbose "It Starting: Verifes that 'pwshbroken' throws expected error for missing config file."
+            { $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshbroken' } | Should -Throw
+            $script:session = $null
+            Write-Verbose -Verbose "It Complete"
+        }
+        #>
     }
 
     function TryCreateRunspace
@@ -270,7 +289,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             }
         }
 
-        if ($null -eq $rs)
+        if (($null -eq $rs) -or !($rs -is [runspace]))
         {
             $message = "Runspace open unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Message)"
             throw [System.Management.Automation.PSInvalidOperationException]::new($message)
@@ -319,7 +338,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
         AfterEach {
             Write-Verbose -Verbose "Starting Runspace close AfterEach"
-            if ($script:rs -ne $null) { $script:rs.Dispose() }
+            if (($script:rs -ne $null) -and ($script:rs -is [runspace])) { $script:rs.Dispose() }
             Write-Verbose -Verbose "AfterEach complete"
         }
 

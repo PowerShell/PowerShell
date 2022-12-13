@@ -32,6 +32,7 @@ jobs:
       value: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
     - name: linuxFxdPath
       value: '$(System.ArtifactsDirectory)/linuxFxd'
+    - group: DotNetPrivateBuildAccess
 
   steps:
   - checkout: self
@@ -56,6 +57,9 @@ jobs:
       # We just need .NET but we fixed this in an urgent situation.
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts - finalResults'
@@ -205,7 +209,7 @@ jobs:
       $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
       Write-Verbose -Verbose $packagePathList
 
-      $checksums = Get-ChildItem -Path $packagePath |
+      $checksums = Get-ChildItem -Path $packagePath -Exclude "SHA512SUMS" |
           ForEach-Object {
               Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
               $packageName = $_.Name
@@ -234,7 +238,7 @@ jobs:
       $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
       Write-Verbose -Verbose $packagePathList
 
-      $checksums = Get-ChildItem -Path $packagePath |
+      $checksums = Get-ChildItem -Path $packagePath -Exclude "SHA512SUMS" |
           ForEach-Object {
               Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
               $packageName = $_.Name

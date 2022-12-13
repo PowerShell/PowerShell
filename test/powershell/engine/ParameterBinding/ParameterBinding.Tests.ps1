@@ -130,7 +130,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         $e = { test-singleintparameter -Parameter1 'exampleInvalidParam' } |
             Should -Throw -ErrorId "ParameterArgumentTransformationError,test-singleintparameter" -PassThru
         $e.CategoryInfo | Should -Match "ParameterBindingArgumentTransformationException"
-        $e.Exception.Message | Should -Match "Input string was not in a correct format"
+        $e.Exception.Message | Should -Match "The input string 'exampleInvalidParam' was not in a correct format"
         $e.Exception.Message | Should -Match "Parameter1"
     }
 

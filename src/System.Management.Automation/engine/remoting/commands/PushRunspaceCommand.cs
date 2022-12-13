@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // for the console host and Graphical PowerShell host
-            // we want to skip pushing into the the runspace if
+            // we want to skip pushing into the runspace if
             // the host is in a nested prompt
             System.Management.Automation.Internal.Host.InternalHost chost =
                 this.Host as System.Management.Automation.Internal.Host.InternalHost;

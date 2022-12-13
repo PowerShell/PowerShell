@@ -18,17 +18,9 @@ pr:
   branches:
     include:
     - master
-    - release*
-    - feature*
   paths:
     include:
-    - '*'
-    exclude:
-    - tools/releaseBuild/*
-    - tools/releaseBuild/azureDevOps/templates/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .vsts-ci/linux-daily.yml
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -55,6 +47,7 @@ stages:
   displayName: Test for Linux
   jobs:
   - job: linux_test
+    timeoutInMinutes: 90
     pool:
       vmImage: ubuntu-20.04
     displayName: Linux Test

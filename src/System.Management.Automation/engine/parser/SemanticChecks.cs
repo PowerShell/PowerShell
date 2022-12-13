@@ -920,6 +920,13 @@ namespace System.Management.Automation.Language
                         ParserStrings.OrderedAttributeOnlyOnHashLiteralNode,
                         convertExpressionAst.Type.TypeName.FullName);
                 }
+
+                // Currently, the type name '[ordered]' is handled specially in PowerShell.
+                // When used in a conversion expression, it's only allowed on a hashliteral node, and it's
+                // always interpreted as an initializer for a case-insensitive
+                // 'System.Collections.Specialized.OrderedDictionary' by the compiler.
+                // So, we can return early from here.
+                return AstVisitAction.Continue;
             }
 
             if (typeof(PSReference) == convertExpressionAst.Type.TypeName.GetReflectionType())
@@ -1389,7 +1396,7 @@ namespace System.Management.Automation.Language
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
                         IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
-                            .OrderBy(static key => key, StringComparer.OrdinalIgnoreCase);
+                            .Order(StringComparer.OrdinalIgnoreCase);
 
                         _parser.ReportError(propName.Extent,
                             nameof(ParserStrings.InvalidInstanceProperty),

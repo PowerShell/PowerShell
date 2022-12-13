@@ -107,23 +107,15 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error adds ExceptionType for Exceptions' {
+
         try {
-            [System.Net.DNS]::GetHostByName((New-Guid))
+            throw [ArgumentException] 'myexception'
         }
         catch {
         }
 
         $out = Get-Error | Out-String
-        $out | Should -BeLikeExactly '*Type*'
-
-        if ($IsWindows) {
-            $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
-        }
-        else {
-            $expectedExceptionType = "System.Net.Internals.SocketExceptionFactory+ExtendedSocketException"
-        }
-
-        $out | Should -BeLikeExactly "*$expectedExceptionType*"
+        $out | Should -Match "Type\s+:\s(.\[\d+m)?System.ArgumentException"
     }
 
     It 'Get-Error uses Error color for Message and PositionMessage members' {

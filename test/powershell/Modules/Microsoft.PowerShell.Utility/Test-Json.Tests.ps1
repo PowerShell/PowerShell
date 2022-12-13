@@ -65,7 +65,7 @@ Describe "Test-Json" -Tags "CI" {
                 errorNode
             }
 "@
-}
+    }
 
     It "Missing JSON schema file doesn't exist" {
         Test-Path -LiteralPath $missingSchemaJsonPath | Should -BeFalse
@@ -151,5 +151,29 @@ Describe "Test-Json" -Tags "CI" {
         $errorVar.Count | Should -Be 2
         $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
         $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It 'Test-Json recognizes non-object types: <name>' -TestCases @(
+        @{ name = 'number'; value = 1; expected = 'number' }
+        @{ name = '"true"'; value = '"true"'; expected = 'string' }
+        @{ name = 'true'; value = 'true'; expected = 'boolean' }
+        @{ name = '"false"'; value = '"false"'; expected = 'string' }
+        @{ name = 'false'; value = 'false'; expected = 'boolean' }
+        @{ name = '"null"'; value = '"null"'; expected = 'string' }
+        @{ name = 'null'; value = 'null'; expected = 'null' }
+        @{ name = 'string'; value = '"abc"'; expected = 'string' }
+        @{ name = 'array'; value = '[ 1, 2 ]'; expected = 'array' }
+    ) {
+        param ($name, $value, $expected)
+
+        # All JSON valid
+        Test-Json -Json $value | Should -BeTrue
+
+        # Exactly one type should match
+        $types = 'string', 'number', 'boolean', 'null', 'array', 'object'
+        $types | Where-Object {
+            $schema = "{ 'type': '$_' }"
+            Test-Json -Json $value -Schema $schema -ErrorAction SilentlyContinue
+        } | Should -Be $expected
     }
 }

@@ -207,9 +207,8 @@ namespace Microsoft.PowerShell
             HandleThrowOnReadAndPrompt();
 
             // call our internal version such that it does not end input on a tab
-            ReadLineResult unused;
 
-            return ReadLine(false, string.Empty, out unused, true, true);
+            return ReadLine(false, string.Empty, out _, true, true);
         }
 
         /// <summary>
@@ -333,20 +332,19 @@ namespace Microsoft.PowerShell
 
                 Coordinates originalCursorPos = _rawui.CursorPosition;
 
+                //
+                // read one char at a time so that we don't
+                // end up having a immutable string holding the
+                // secret in memory.
+                //
+                const int CharactersToRead = 1;
+                Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
+
                 while (true)
                 {
-                    //
-                    // read one char at a time so that we don't
-                    // end up having a immutable string holding the
-                    // secret in memory.
-                    //
 #if UNIX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 #else
-                    const int CharactersToRead = 1;
-#pragma warning disable CA2014
-                    Span<char> inputBuffer = stackalloc char[CharactersToRead + 1];
-#pragma warning restore CA2014
                     string key = ConsoleControl.ReadConsole(handle, initialContentLength: 0, inputBuffer, charactersToRead: CharactersToRead, endOnTab: false, out _);
 #endif
 
@@ -1209,8 +1207,7 @@ namespace Microsoft.PowerShell
         public override void WriteDebugLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1270,8 +1267,7 @@ namespace Microsoft.PowerShell
         public override void WriteVerboseLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1314,8 +1310,7 @@ namespace Microsoft.PowerShell
         public override void WriteWarningLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)

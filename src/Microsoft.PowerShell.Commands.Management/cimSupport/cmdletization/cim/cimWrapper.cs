@@ -107,15 +107,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                if (_cmdletDefinitionContext == null)
-                {
-                    _cmdletDefinitionContext = new CimCmdletDefinitionContext(
-                            this.ClassName,
-                            this.ClassVersion,
-                            this.ModuleVersion,
-                            this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
-                            this.PrivateData);
-                }
+                _cmdletDefinitionContext ??= new CimCmdletDefinitionContext(
+                    this.ClassName,
+                    this.ClassVersion,
+                    this.ModuleVersion,
+                    this.Cmdlet.CommandInfo.CommandMetadata.SupportsShouldProcess,
+                    this.PrivateData);
 
                 return _cmdletDefinitionContext;
             }

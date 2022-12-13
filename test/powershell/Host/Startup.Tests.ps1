@@ -7,7 +7,6 @@ Describe "Validate start of console host" -Tag CI {
             'Microsoft.ApplicationInsights.dll'
             'Microsoft.Management.Infrastructure.dll'
             'Microsoft.PowerShell.ConsoleHost.dll'
-            'Microsoft.PowerShell.Security.dll'
             'Microsoft.Win32.Primitives.dll'
             'Microsoft.Win32.Registry.dll'
             'netstandard.dll'
@@ -15,7 +14,6 @@ Describe "Validate start of console host" -Tag CI {
             'pwsh.dll'
             'System.Collections.Concurrent.dll'
             'System.Collections.dll'
-            'System.Collections.NonGeneric.dll'
             'System.Collections.Specialized.dll'
             'System.ComponentModel.dll'
             'System.ComponentModel.Primitives.dll'
@@ -51,6 +49,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.dll'
             'System.Security.Principal.Windows.dll'
+            'System.Text.Encoding.CodePages.dll'
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
             'System.Threading.dll'
@@ -72,7 +71,6 @@ Describe "Validate start of console host" -Tag CI {
         else {
             $allowedAssemblies += @(
                 'System.Net.Sockets.dll'
-                'System.Reflection.Emit.dll'
             )
         }
 

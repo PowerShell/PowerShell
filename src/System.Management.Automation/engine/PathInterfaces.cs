@@ -379,7 +379,7 @@ namespace System.Management.Automation
         /// characters which will get resolved.
         /// </param>
         /// <returns>
-        /// An array of Msh paths that resolved from the given path.
+        /// An array of PowerShell paths that resolved from the given path.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -728,7 +728,7 @@ namespace System.Management.Automation
         /// The information for the provider for which the returned path should be used.
         /// </param>
         /// <param name="drive">
-        /// The drive of the Msh path that was used to convert the path. Note, this may be null
+        /// The drive of the PowerShell path that was used to convert the path. Note, this may be null
         /// if the <paramref name="path"/> was a provider-qualified path.
         /// </param>
         /// <returns>
@@ -834,7 +834,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines if the give path is an Msh provider-qualified path.
+        /// Determines if the give path is a PowerShell provider-qualified path.
         /// </summary>
         /// <param name="path">
         /// The path to check.
@@ -863,11 +863,11 @@ namespace System.Management.Automation
         /// The path to check.
         /// </param>
         /// <param name="driveName">
-        /// If the path is an Msh absolute path then the returned value is
+        /// If the path is an absolute path then the returned value is
         /// the name of the drive that the path is absolute to.
         /// </param>
         /// <returns>
-        /// True if the specified path is an Msh absolute drive-qualified path.
+        /// True if the specified path is an absolute drive-qualified path.
         /// False otherwise.
         /// </returns>
         /// <remarks>
@@ -1232,7 +1232,7 @@ namespace System.Management.Automation
         /// as a relative path to the basePath that was passed.
         /// </summary>
         /// <param name="path">
-        /// An MSH path to an item. The item should exist
+        /// A PowerShell path to an item. The item should exist
         /// or the provider should write out an error.
         /// </param>
         /// <param name="basePath">
@@ -1312,7 +1312,7 @@ namespace System.Management.Automation
         #region IsValid
 
         /// <summary>
-        /// Determines if the MSH path is a syntactically and semantically valid path for the provider.
+        /// Determines if the path is a syntactically and semantically valid path for the provider.
         /// </summary>
         /// <param name="path">
         /// The path to validate.

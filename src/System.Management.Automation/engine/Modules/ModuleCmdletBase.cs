@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
                 if (!found)
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    if (name.AsSpan().IndexOfAny('\\', '/') == -1)
                     {
                         qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                     }
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool containsWildCards = false;
 
-                string modulePath = mp.TrimEnd(Utils.Separators.Backslash);
+                string modulePath = mp.TrimEnd('\\');
 
                 // If the given path contains wildcards, we won't throw error if no match module path is found.
                 if (WildcardPattern.ContainsWildcardCharacters(modulePath))
@@ -2564,30 +2564,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // without ModuleToProcess a manifest will export everything by default
                 // (otherwise we want to honour exports from ModuleToProcess)
-                if (exportedFunctions == null)
-                {
-                    exportedFunctions = MatchAll;
-                }
-
-                if (exportedCmdlets == null)
-                {
-                    exportedCmdlets = MatchAll;
-                }
-
-                if (exportedVariables == null)
-                {
-                    exportedVariables = MatchAll;
-                }
-
-                if (exportedAliases == null)
-                {
-                    exportedAliases = MatchAll;
-                }
-
-                if (exportedDscResources == null)
-                {
-                    exportedDscResources = MatchAll;
-                }
+                exportedAliases ??= MatchAll;
+                exportedCmdlets ??= MatchAll;
+                exportedDscResources ??= MatchAll;
+                exportedFunctions ??= MatchAll;
+                exportedVariables ??= MatchAll;
             }
 
             manifestInfo.Description = description;
@@ -3218,16 +3199,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.RootModule == null)
-                {
-                    newManifestInfo.RootModule = manifestInfo.RootModule;
-                }
+                newManifestInfo.RootModule ??= manifestInfo.RootModule;
                 // If may be the case that a script has already set the PrivateData field in the module
                 // info object, in which case we won't overwrite it.
-                if (newManifestInfo.PrivateData == null)
-                {
-                    newManifestInfo.PrivateData = manifestInfo.PrivateData;
-                }
+                newManifestInfo.PrivateData ??= manifestInfo.PrivateData;
 
                 // Assign the PowerShellGet related properties from the module manifest
                 foreach (var tag in manifestInfo.Tags)
@@ -3352,10 +3327,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.RootModuleForManifest == null)
-                {
-                    newManifestInfo.RootModuleForManifest = manifestInfo.RootModuleForManifest;
-                }
+                newManifestInfo.RootModuleForManifest ??= manifestInfo.RootModuleForManifest;
 
                 if (newManifestInfo.DeclaredCmdletExports == null || newManifestInfo.DeclaredCmdletExports.Count == 0)
                 {
@@ -5041,17 +5013,14 @@ namespace Microsoft.PowerShell.Commands
                 if (Context.Modules.ModuleTable.ContainsKey(module.Path))
                 {
                     // We should try to run OnRemove as the very first thing
-                    if (module.OnRemove != null)
-                    {
-                        module.OnRemove.InvokeUsingCmdlet(
-                            contextCmdlet: this,
-                            useLocalScope: true,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: new object[] { module });
-                    }
+                    module.OnRemove?.InvokeUsingCmdlet(
+                        contextCmdlet: this,
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: AutomationNull.Value,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { module });
 
                     if (module.ImplementingAssembly != null && !module.ImplementingAssembly.IsDynamic)
                     {
@@ -6591,10 +6560,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string binaryPath = fileName;
                 modulePath = fileName;
-                if (binaryPath == null)
-                {
-                    binaryPath = System.IO.Path.Combine(moduleBase, moduleName);
-                }
+                binaryPath ??= System.IO.Path.Combine(moduleBase, moduleName);
 
                 BinaryAnalysisResult analysisResult = GetCmdletsFromBinaryModuleImplementation(binaryPath, manifestProcessingFlags, out assemblyVersion);
                 detectedCmdlets = analysisResult.DetectedCmdlets;
@@ -6924,10 +6890,7 @@ namespace Microsoft.PowerShell.Commands
                 targetSessionState.ModuleTableKeys.Add(moduleTableKey);
             }
 
-            if (targetSessionState.Module != null)
-            {
-                targetSessionState.Module.AddNestedModule(module);
-            }
+            targetSessionState.Module?.AddNestedModule(module);
         }
 
         /// <summary>
@@ -7390,7 +7353,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// Note that module loading order is important with this check when the system is *locked down with DeviceGuard*.
         /// If a submodule that does not explicitly export any functions is imported from the command line, its useless
-        /// because no functions are exported (default fn export is explictly disallowed on locked down systems).
+        /// because no functions are exported (default fn export is explicitly disallowed on locked down systems).
         /// But if a parentmodule that imports the submodule is then imported, it will get the useless version of the
         /// module from the ModuleTable and the parent module will not work.
         ///   $mSub = import-module SubModule  # No functions exported, useless
@@ -7398,7 +7361,7 @@ namespace Microsoft.PowerShell.Commands
         ///   $mParent.DoSomething  # This will likely be broken because SubModule functions are not accessible
         /// But this is not a realistic scenario because SubModule is useless with DeviceGuard lock down and must explicitly
         /// export its functions to become useful, at which point this check is no longer in effect and there is no issue.
-        ///   $mSub = import-module SubModule  # Explictly exports functions, useful
+        ///   $mSub = import-module SubModule  # Explicitly exports functions, useful
         ///   $mParent = import-module ParentModule  # This internally imports SubModule
         ///   $mParent.DoSomething  # This works because SubModule functions are exported and accessible.
         /// </summary>

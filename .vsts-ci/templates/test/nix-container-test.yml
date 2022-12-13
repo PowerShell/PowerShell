@@ -1,0 +1,30 @@
+parameters:
+  pool: 'macOS-latest'
+  purpose: ''
+  tagSet: 'CI'
+  name: 'mac'
+
+jobs:
+- job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
+
+  dependsOn:
+    - getContainerJob
+
+  variables:
+    __INCONTAINER: 1
+    getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
+    containerBuildName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ]
+
+  container: $[ variables.getContainerJob ]
+
+  pool:
+    vmImage: ${{ parameters.pool }}
+
+  displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
+
+  steps:
+    - template: ./nix-test-steps.yml
+      parameters:
+        purpose: ${{ parameters.purpose }}
+        tagSet: ${{ parameters.tagSet }}
+        buildName: $(containerBuildName)

@@ -366,10 +366,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProductCode == null)
-                {
-                    _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
-                }
+                _isProductCode ??= SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
 
                 return _isProductCode.Value;
             }
@@ -1015,10 +1012,7 @@ namespace System.Management.Automation
                 createLocalScope || variablesToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' != null then 'createLocalScope' must be true");
 
-            if (args == null)
-            {
-                args = Array.Empty<object>();
-            }
+            args ??= Array.Empty<object>();
 
             bool runOptimized = context._debuggingMode <= 0 && createLocalScope;
             var codeToInvoke = GetCodeToInvoke(ref runOptimized, clauseToInvoke);
@@ -1027,11 +1021,8 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (outputPipe == null)
-            {
-                // If we don't have a pipe to write to, we need to discard all results.
-                outputPipe = new Pipe { NullPipe = true };
-            }
+            // If we don't have a pipe to write to, we need to discard all results.
+            outputPipe ??= new Pipe { NullPipe = true };
 
             var locals = MakeLocalsTuple(runOptimized);
 
@@ -2042,7 +2033,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
+                    for (int j = Math.Min(i, runningHash.Length - 1); j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
                         // Towards the end just before matching, we will:

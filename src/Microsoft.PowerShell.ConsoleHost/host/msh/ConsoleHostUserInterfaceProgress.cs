@@ -3,6 +3,7 @@
 
 using System;
 using System.Management.Automation;
+using System.Management.Automation.Host;
 using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -10,7 +11,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     internal partial
-    class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
+    class ConsoleHostUserInterface : PSHostUserInterface
     {
         /// <summary>
         /// Called at the end of a prompt loop to take down any progress display that might have appeared and purge any
@@ -48,7 +49,7 @@ namespace Microsoft.PowerShell
 
                 _pendingProgress = null;
 
-                if (SupportsVirtualTerminal && PSStyle.Instance.Progress.UseOSCIndicator)
+                if (SupportsVirtualTerminal && !PSHost.IsStdOutputRedirected && PSStyle.Instance.Progress.UseOSCIndicator)
                 {
                     // OSC sequence to turn off progress indicator
                     // https://github.com/microsoft/terminal/issues/6700
@@ -99,7 +100,7 @@ namespace Microsoft.PowerShell
             {
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
-                if (SupportsVirtualTerminal && PSStyle.Instance.Progress.UseOSCIndicator)
+                if (SupportsVirtualTerminal && !PSHost.IsStdOutputRedirected && PSStyle.Instance.Progress.UseOSCIndicator)
                 {
                     int percentComplete = record.PercentComplete;
                     if (percentComplete < 0)
@@ -138,20 +139,14 @@ namespace Microsoft.PowerShell
         void
         PreWrite()
         {
-            if (_progPane != null)
-            {
-                _progPane.Hide();
-            }
+            _progPane?.Hide();
         }
 
         private
         void
         PostWrite()
         {
-            if (_progPane != null)
-            {
-                _progPane.Show();
-            }
+            _progPane?.Show();
         }
 
         private
@@ -177,20 +172,14 @@ namespace Microsoft.PowerShell
         void
         PreRead()
         {
-            if (_progPane != null)
-            {
-                _progPane.Hide();
-            }
+            _progPane?.Hide();
         }
 
         private
         void
         PostRead()
         {
-            if (_progPane != null)
-            {
-                _progPane.Show();
-            }
+            _progPane?.Show();
         }
 
         private

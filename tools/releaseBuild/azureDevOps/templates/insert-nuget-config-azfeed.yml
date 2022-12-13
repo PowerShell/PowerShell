@@ -23,3 +23,7 @@ steps:
       }
   displayName: 'Add nuget.config for Azure DevOps feed for packages'
   condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+
+- task: nuget-security-analysis@0
+  displayName: 'Run Secure Supply Chain analysis'
+  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''), ne(variables['AzDevOpsFeed'], ''))

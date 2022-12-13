@@ -19,7 +19,7 @@
 - **[Breaking changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#making-breaking-changes)**
     - [ ] None
     - **OR**
-    - [ ] [Experimental feature(s) needed](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/reference/6/Microsoft.PowerShell.Core/About/about_Experimental_Features.md)
+    - [ ] [Experimental feature(s) needed](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/7.3/Microsoft.PowerShell.Core/About/about_Experimental_Features.md)
         - [ ] Experimental feature name(s): <!-- Experimental feature name(s) here -->
 - **User-facing changes**
     - [ ] Not Applicable

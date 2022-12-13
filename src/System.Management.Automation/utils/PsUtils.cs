@@ -105,14 +105,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.NonWindowsGetThreadId();
 #else
-            return NativeMethods.GetCurrentThreadId();
+            return Interop.Windows.GetCurrentThreadId();
 #endif
-        }
-
-        private static class NativeMethods
-        {
-            [DllImport(PinvokeDllNames.GetCurrentThreadIdDllName)]
-            internal static extern uint GetCurrentThreadId();
         }
 
         #region ASTUtils
@@ -350,9 +344,7 @@ namespace System.Management.Automation
                     pe.Message);
             }
 
-            string unused1;
-            string unused2;
-            var pipeline = ast.GetSimplePipeline(false, out unused1, out unused2);
+            var pipeline = ast.GetSimplePipeline(false, out _, out _);
             if (pipeline != null)
             {
                 var hashtableAst = pipeline.GetPureExpression() as HashtableAst;

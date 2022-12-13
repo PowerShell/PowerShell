@@ -11,7 +11,7 @@
 # If no parameter is specified, it means that this instance of PowerShell is registering itself.
 #
 # Assumptions:
-#     1. The CoreCLR and the the PowerShell assemblies are side-by-side in $PSHOME
+#     1. The CoreCLR and the PowerShell assemblies are side-by-side in $PSHOME
 #     2. Plugins are registered by version number. Only one plugin can be automatically registered
 #        per PowerShell version. However, multiple endpoints may be manually registered for a given
 #        plugin.
@@ -188,7 +188,7 @@ function Install-PluginEndpoint {
 
     $pluginPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
 
-    # This is forced to ensure the the file is placed correctly
+    # This is forced to ensure the file is placed correctly
     Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose -ErrorAction Stop
 
     $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"

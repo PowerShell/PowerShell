@@ -93,14 +93,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "UnauthorizedAccess",
-                        ErrorCategory.SecurityError,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "UnauthorizedAccess",
+                    ErrorCategory.SecurityError,
+                    null);
 
                 return _errorRecord;
             }

@@ -2276,10 +2276,7 @@ namespace System.Management.Automation
                 newArguments[i + 1] = arguments[i];
             }
 
-            if (_codeReferenceMethodInformation == null)
-            {
-                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
-            }
+            _codeReferenceMethodInformation ??= DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
 
             Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out object[] convertedArguments);
 
@@ -2632,10 +2629,7 @@ namespace System.Management.Automation
                 return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
 
-            if (method.PSMethodCtor == null)
-            {
-                method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
-            }
+            method.PSMethodCtor ??= CreatePSMethodConstructor(method.methodInformationStructures);
 
             return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
@@ -2691,7 +2685,7 @@ namespace System.Management.Automation
 
                 return DelegateHelpers.MakeDelegate(methodTypes);
             }
-            catch (TypeLoadException)
+            catch (Exception)
             {
                 return typeof(Func<PSNonBindableType>);
             }

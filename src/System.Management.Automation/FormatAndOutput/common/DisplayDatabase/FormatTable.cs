@@ -19,7 +19,7 @@ namespace System.Management.Automation.Runspaces
 {
     /// <summary>
     /// This exception is used by Formattable constructor to indicate errors
-    /// occured during construction time.
+    /// occurred during construction time.
     /// </summary>
     [Serializable]
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occurred.
         /// </param>
         internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
             : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))

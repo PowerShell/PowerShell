@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// The user can specify how command output data is returned by using the public
     /// OutTarget enumeration (Host, Job).
-    /// The default actions of this cmdlet is to always direct ouput to host unless
+    /// The default actions of this cmdlet is to always direct output to host unless
     /// a job object already exists on the client that is associated with the running
     /// command.  In this case the existing job object is connected to the running
     /// command and returned.
@@ -404,15 +404,8 @@ namespace Microsoft.PowerShell.Commands
                 tmpJob = _job;
             }
 
-            if (tmpPipeline != null)
-            {
-                tmpPipeline.StopAsync();
-            }
-
-            if (tmpJob != null)
-            {
-                tmpJob.StopJob();
-            }
+            tmpPipeline?.StopAsync();
+            tmpJob?.StopJob();
         }
 
         #endregion
@@ -818,19 +811,13 @@ namespace Microsoft.PowerShell.Commands
 
                 remoteRunspace.Disconnect();
 
-                if (stopPipelineReceive != null)
+                try
                 {
-                    try
-                    {
-                        stopPipelineReceive.Set();
-                    }
-                    catch (ObjectDisposedException) { }
+                    stopPipelineReceive?.Set();
                 }
+                catch (ObjectDisposedException) { }
 
-                if (job != null)
-                {
-                    job.StopJob();
-                }
+                job?.StopJob();
             }
         }
 
@@ -876,10 +863,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (var result in childJob.ReadAll())
                         {
-                            if (result != null)
-                            {
-                                result.WriteStreamObject(this);
-                            }
+                            result?.WriteStreamObject(this);
                         }
 
                         if (index == 0)
@@ -1340,7 +1324,7 @@ namespace Microsoft.PowerShell.Commands
         Host = 1,
 
         /// <summary>
-        /// Asynchronous mode.  Receive-PSSession ouput data goes to returned job object.
+        /// Asynchronous mode.  Receive-PSSession output data goes to returned job object.
         /// </summary>
         Job = 2
     }

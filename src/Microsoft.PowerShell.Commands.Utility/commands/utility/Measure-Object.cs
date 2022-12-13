@@ -561,8 +561,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="objValue">The value to analyze.</param>
         private void AnalyzeValue(string propertyName, object objValue)
         {
-            if (propertyName == null)
-                propertyName = thisObject;
+            propertyName ??= thisObject;
 
             Statistics stat = _statistics.EnsureEntry(propertyName);
 
