@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int MaximumRetryCount { get; set; } = 0;
+        public virtual int MaximumRetryCount { get; set; };
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
