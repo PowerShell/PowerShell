@@ -541,6 +541,7 @@ namespace System.Management.Automation
                     // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
                     SessionStateScope scopeToRestore;
                     if (context.CurrentCommandProcessor.Command.CommandInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)
+                        && context.CurrentCommandProcessor.UseLocalScope
                         && context.EngineSessionState.CurrentScope.Parent is not null)
                     {
                         scopeToRestore = context.EngineSessionState.CurrentScope;
