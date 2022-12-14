@@ -84,7 +84,7 @@ namespace PSTests.Parallel
             }
             else
             {
-                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
+                Assert.Throws<System.ArgumentException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
             }
         }
 
