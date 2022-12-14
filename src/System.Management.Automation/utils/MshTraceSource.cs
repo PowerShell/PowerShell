@@ -468,10 +468,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(string paramName, object actualValue)
         {
-            if (string.IsNullOrEmpty(paramName))
-            {
-                throw new ArgumentNullException(nameof(paramName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(paramName);
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);

@@ -76,10 +76,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation failed.</returns>
         public bool RefreshCurrentConfiguration(string responseOfGet)
         {
-            if (string.IsNullOrEmpty(responseOfGet))
-            {
-                throw new ArgumentNullException(nameof(responseOfGet));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(responseOfGet);
 
             this.rootDocument.LoadXml(responseOfGet);
             this.documentElement = this.rootDocument.DocumentElement;

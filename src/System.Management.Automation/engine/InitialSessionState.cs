@@ -3738,11 +3738,7 @@ namespace System.Management.Automation.Runspaces
 
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
-            if (psSnapInInfo == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
-                throw e;
-            }
+            ArgumentException.ThrowIfNull(psSnapInInfo);
 
             // See if the snapin is already loaded. If has been then there will be an entry in the
             // Assemblies list for it already...
