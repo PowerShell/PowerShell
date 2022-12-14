@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void InitializeContent()
         {
-            this.Content = this.RawContentStream.ToArray();
+            Content = RawContentStream.ToArray();
         }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
                 raw.Append(this.ToString());
             }
 
-            this.RawContent = raw.ToString();
+            RawContent = raw.ToString();
         }
 
         private static bool IsPrintable(char c) => char.IsLetterOrDigit(c) 
