@@ -238,7 +238,7 @@ namespace System.Management.Automation.PerformanceData
             PSCounterSetRegistrar srcPSCounterSetRegistrar)
             : base(srcPSCounterSetRegistrar)
         {
-            ArgumentNullException.ThrowIfNull(srcCounterSetRegistrar);
+            ArgumentNullException.ThrowIfNull(srcPSCounterSetRegistrar);
         }
 
         #endregion
