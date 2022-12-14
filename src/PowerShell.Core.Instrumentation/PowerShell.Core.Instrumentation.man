@@ -2220,6 +2220,18 @@
                 value="0x4001"
                 version="1"
               />
+            <event
+                channel="C_ANALYTIC"
+                keywords="WDACQuery"
+                level="win:Verbose"
+                message="$(string.PS_PROVIDER.event.E_A_WDACQuery.message)"
+                opcode="Method"
+                symbol="WDACQuery"
+                task="WDAC"
+                template="T_WDACQuery"
+                value="0x4002"
+                version="1"
+              />
         </events>
         <channels>
           <!--There are three channels defined for PowerShell instrumentation
@@ -2427,11 +2439,17 @@
               symbol="T_ISEOperation"
               value="120"
               />
-            <task
-                message="$(string.PS_PROVIDER.task.T_AmsiState.message)"
-                name="Amsi"
-                symbol="T_Amsi"
-                value="130"
+          <task
+              message="$(string.PS_PROVIDER.task.T_AmsiState.message)"
+              name="Amsi"
+              symbol="T_Amsi"
+              value="130"
+              />
+          <task
+              message="$(string.PS_PROVIDER.task.T_WDACQuery.message)"
+              name="WDAC"
+              symbol="T_WDAC"
+              value="140"
               />
         </tasks>
         <opcodes>
@@ -2593,11 +2611,17 @@
               name="PSWorkflow"
               symbol="K_PSWORKFLOW"
               />
-            <keyword
-                mask="0x400"
-                message="$(string.PS_PROVIDER.keyword.K_AmsiState.message)"
-                name="AmsiState"
-                symbol="K_AmsiState"
+          <keyword
+              mask="0x400"
+              message="$(string.PS_PROVIDER.keyword.K_AmsiState.message)"
+              name="AmsiState"
+              symbol="K_AmsiState"
+              />
+          <keyword
+              mask="0x800"
+              message="$(string.PS_PROVIDER.keyword.K_WDACQuery.message)"
+              name="WDACQuery"
+              symbol="K_WDACQuery"
               />
         </keywords>
         <maps>
@@ -4080,14 +4104,32 @@
                 name="FileName"
                 />
           </template>
-            <template tid="T_AmsiState">
-                <data
-                    inType="win:UnicodeString"
-                    name="Action"
+          <template tid="T_AmsiState">
+            <data
+                inType="win:UnicodeString"
+                name="Action"
                 />
-                <data
-                    inType="win:UnicodeString"
-                    name="AmsiContext"
+            <data
+                inType="win:UnicodeString"
+                name="AmsiContext"
+                />
+            </template>
+            <template tid="T_WDACQuery">
+              <data
+                inType="win:UnicodeString"
+                name="QueryName"
+                />
+              <data
+                inType="win:UnicodeString"
+                name="FileName"
+                />
+              <data
+                inType="win:Int32"
+                name="QuerySuccess"
+                />
+              <data
+                inType="win:Int32"
+                name="QuerySResult"
                 />
             </template>
         </templates>
@@ -4983,11 +5025,15 @@
             id="PS_PROVIDER.event.E_O_M3PWorkflowExecutionStarted.message"
             value="Workflow execution started. %n %t WorkflowId: %1 %n %t ManagedNodes: %2"
             />
-          <string
-              id="PS_PROVIDER.event.E_A_AmsiState.message"
-              value="AmsiUtil state. %n %t state: %1 %n %t Context: %2"
+        <string
+            id="PS_PROVIDER.event.E_A_AmsiState.message"
+            value="AmsiUtil state. %n %t state: %1 %n %t Context: %2"
             />
-          <string
+        <string
+            id="PS_PROVIDER.event.E_A_WDACQuery.message"
+            value="WDAC Query. %n %t Query: %1 %n %t File: %2 %n %t SuccessCode: %3 %n %t ResultCode: %4"
+            />
+        <string
             id="PS_PROVIDER.event.E_O_M3PEndpointRegistered.message"
             value="A new PowerShell endpoint was registered. %n %t EndpointName: %1 %n %t EndpointType: %2 %n %t RegisteredBy: %3"
             />
@@ -5455,11 +5501,15 @@
             id="PS_PROVIDER.keyword.K_PSWORKFLOW.message"
             value="PSWorkflow Hosting And Execution Layer"
             />
-          <string
-              id="PS_PROVIDER.keyword.K_AmsiState.message"
-              value="Amsi state"
+        <string
+            id="PS_PROVIDER.keyword.K_AmsiState.message"
+            value="Amsi state"
             />
-          <string
+        <string
+            id="PS_PROVIDER.keyword.K_WDACQuery.message"
+            value="WDAC Query"
+            />
+        <string
             id="PS_PROVIDER.keyword.K_SESSION.message"
             value="All session layer"
             />
@@ -5632,8 +5682,12 @@
             value="PowerShell ISE Operation"
             />
           <string
-              id="PS_PROVIDER.task.T_AmsiState.message"
-              value="Amsi State"
+            id="PS_PROVIDER.task.T_AmsiState.message"
+            value="Amsi State"
+            />
+          <string
+            id="PS_PROVIDER.task.T_WDACQuery.message"
+            value="WDAC Query"
             />
           <string
             id="PS_PROVIDER.event.E_O_ISEExecuteScript.message"

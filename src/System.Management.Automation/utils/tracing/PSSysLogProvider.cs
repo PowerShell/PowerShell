@@ -103,6 +103,22 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal override void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult)
+        {
+            WriteEvent(PSEventId.WDAC_Query, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.WDAC, (PSKeyword)0x0, queryName, fileName, querySuccess, queryResult);
+        }
+
+        /// <summary>
         /// Provider interface function for logging engine lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>
