@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ArgumentNullException.ThrowIfNull(value);
 
-                _parameterNames = value ;
+                _parameterNames = value;
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
