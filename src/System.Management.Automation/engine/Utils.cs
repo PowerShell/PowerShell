@@ -1702,10 +1702,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal ReadOnlyBag(HashSet<T> hashset)
         {
-            if (hashset == null)
-            {
-                throw new ArgumentNullException(nameof(hashset));
-            }
+            ArgumentNullException.ThrowIfNull(hashset);
 
             _hashset = hashset;
         }
