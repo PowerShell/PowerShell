@@ -133,10 +133,7 @@ namespace System.Management.Automation
         {
             ArgumentException.ThrowIfNull(errors);
             
-            if (errors.Length == 0)
-            {
-                throw new ArgumentNullException(nameof(errors));
-            }
+            ArgumentOutOfRangeException.ThrowIfZero(errors.Length);
 
             _errors = errors;
             // Arbitrarily choose the first error message for the ErrorId.

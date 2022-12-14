@@ -214,10 +214,7 @@ namespace Microsoft.Management.UI.Internal
         {
             ArgumentNullException.ThrowIfNull(element);
 
-            if (parent == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(parent, "element");
 
             ContentControl parentContentControl = parent as ContentControl;
 

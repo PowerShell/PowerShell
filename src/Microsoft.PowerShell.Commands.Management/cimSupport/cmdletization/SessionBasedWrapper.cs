@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             set
             {
-                _session = value ?? throw new ArgumentNullException(nameof(value));
+                _session = value ?? ArgumentException.ThrowIfNull(value);
                 _sessionWasSpecified = true;
             }
         }

@@ -95,10 +95,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation is not successful.</returns>
         public void PutConfigurationOnServer(string resourceUri)
         {
-            if (string.IsNullOrEmpty(resourceUri))
-            {
-                throw new ArgumentNullException(nameof(resourceUri));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(resourceUri);
 
             this.serverSession.Put(resourceUri, this.rootDocument.InnerXml, 0);
         }
