@@ -951,10 +951,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Converted string.</returns>
         internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            if (propertyNames == null)
-            {
-                throw new ArgumentNullException(nameof(propertyNames));
-            }
+            ArgumentNullException.ThrowIfNull(propertyNames); 
 
             _outputString.Clear();
             bool first = true;
@@ -1018,10 +1015,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            if (propertyNames == null)
-            {
-                throw new ArgumentNullException(nameof(propertyNames));
-            }
+            ArgumentNullException.ThrowIfNull(propertyNames); 
 
             _outputString.Clear();
             bool first = true;
@@ -1107,10 +1101,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ToString() value.</returns>
         internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
+            ArgumentNullException.ThrowIfNull(property); 
 
             string value = null;
             try
@@ -1272,15 +1263,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet); 
 
-            if (streamReader == null)
-            {
-                throw new ArgumentNullException(nameof(streamReader));
-            }
+            ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;
             _delimiter = delimiter;
