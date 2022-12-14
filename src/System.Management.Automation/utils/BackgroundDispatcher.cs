@@ -70,7 +70,7 @@ namespace System.Management.Automation
         // internal for unit testing only.  Otherwise, would be private.
         internal BackgroundDispatcher(IMethodInvoker etwActivityMethodInvoker)
         {
-            _etwActivityMethodInvoker = etwActivityMethodInvoker ?? throw new ArgumentNullException(nameof(etwActivityMethodInvoker));
+            _etwActivityMethodInvoker = etwActivityMethodInvoker ?? ArgumentNullException.ThrowIfNull(etwActivityMethodInvoker);
             _invokerWaitCallback = DoInvoker;
         }
 

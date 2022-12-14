@@ -1140,10 +1140,7 @@ namespace System.Management.Automation
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            if (command.MyInvocation == null)
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
+            ArgumentNullException.ThrowIfNull(command.MyInvocation, nameof(command));
 
             Begin(command.MyInvocation.ExpectingInput, command.commandRuntime);
         }
