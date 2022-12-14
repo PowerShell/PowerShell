@@ -83,10 +83,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                if (string.IsNullOrEmpty(columnName))
-                {
-                    throw new ArgumentNullException("columnName");
-                }
+                ArgumentException.ThrowIfNullOrEmpty(columnName);
 
                 this.UpdateValidationResult(columnName);
                 return this.GetValidationResult().ErrorMessage;

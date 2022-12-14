@@ -107,11 +107,14 @@ namespace System.Management.Automation.PerformanceData
             CounterSetId = counterSetId;
             CounterSetInstType = counterSetInstType;
             CounterSetName = counterSetName;
-            if ((counterInfoArray == null)
-                || (counterInfoArray.Length == 0))
+
+            ArgumentException.ThrowIfNull(counterInfoArray);
+
+            if (counterInfoArray.Length == 0)
             {
                 throw new ArgumentNullException(nameof(counterInfoArray));
             }
+            
 
             CounterInfoArray = new CounterInfo[counterInfoArray.Length];
 

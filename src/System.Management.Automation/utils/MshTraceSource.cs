@@ -98,13 +98,10 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                // 2005/04/13-JonN In theory this should be ArgumentException,
-                // but I don't want to deal with loading the string in this
-                // low-level code.
-                throw new ArgumentNullException(nameof(name));
-            }
+            // 2005/04/13-JonN In theory this should be ArgumentException,
+            // but I don't want to deal with loading the string in this
+            // low-level code.
+            ArgumentException.ThrowIfNullOrEmpty(name);
 
             lock (PSTraceSource.s_getTracerLock)
             {
@@ -228,10 +225,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(string paramName)
         {
-            if (string.IsNullOrEmpty(paramName))
-            {
-                throw new ArgumentNullException(nameof(paramName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(paramName);
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentNull, paramName);
             var e = new PSArgumentNullException(paramName, message);
@@ -287,10 +281,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(string paramName)
         {
-            if (string.IsNullOrEmpty(paramName))
-            {
-                throw new ArgumentNullException(nameof(paramName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(paramName);
 
             string message = StringUtil.Format(AutomationExceptions.Argument, paramName);
             // Note that the message param comes first

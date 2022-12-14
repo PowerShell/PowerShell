@@ -81,10 +81,7 @@ namespace Microsoft.Management.UI.Internal
         {
             ArgumentNullException.ThrowIfNull(rule);
 
-            if (string.IsNullOrEmpty(groupId))
-            {
-                throw new ArgumentNullException("groupId");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(groupId);
 
             this.Rule = rule;
             this.GroupId = groupId;
