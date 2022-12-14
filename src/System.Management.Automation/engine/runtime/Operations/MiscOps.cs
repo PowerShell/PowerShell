@@ -2777,10 +2777,8 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(enumerator != null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+
+            ArgumentNullException.ThrowIfNull(expression);
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
 

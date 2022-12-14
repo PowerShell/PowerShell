@@ -2178,10 +2178,7 @@ namespace System.Management.Automation
 
         private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
             if (_scriptText == null)
