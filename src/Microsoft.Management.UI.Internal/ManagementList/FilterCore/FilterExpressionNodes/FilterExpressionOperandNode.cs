@@ -38,10 +38,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterExpressionOperandNode(FilterRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.Rule = rule;
         }

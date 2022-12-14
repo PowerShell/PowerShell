@@ -88,10 +88,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 this.parser = value;
             }
@@ -120,10 +117,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         protected static FilterExpressionNode ConvertToFilterExpression(ICollection<SearchTextParseResult> searchBoxItems)
         {
-            if (searchBoxItems == null)
-            {
-                throw new ArgumentNullException("searchBoxItems");
-            }
+            ArgumentNullException.ThrowIfNull(searchBoxItems);
 
             if (searchBoxItems.Count == 0)
             {

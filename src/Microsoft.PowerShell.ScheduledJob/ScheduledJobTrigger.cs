@@ -709,10 +709,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>True if the converter can convert the <paramref name="sourceValue"/> parameter to the <paramref name="destinationType"/> parameter, otherwise false.</returns>
         public override bool CanConvertFrom(object sourceValue, Type destinationType)
         {
-            if (destinationType == null)
-            {
-                throw new ArgumentNullException("destinationType");
-            }
+            ArgumentNullException.ThrowIfNull(destinationType);
 
             return (sourceValue is ScheduledJobTrigger) && (destinationType.Equals(typeof(CimInstance)));
         }
@@ -728,15 +725,9 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <exception cref="InvalidCastException">If no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
-            if (destinationType == null)
-            {
-                throw new ArgumentNullException("destinationType");
-            }
+            ArgumentNullException.ThrowIfNull(destinationType);
 
-            if (sourceValue == null)
-            {
-                throw new ArgumentNullException("sourceValue");
-            }
+            ArgumentNullException.ThrowIfNull(sourceValue);
 
             ScheduledJobTrigger originalTrigger = (ScheduledJobTrigger) sourceValue;
             using (CimSession cimSession = CimSession.Create(null))

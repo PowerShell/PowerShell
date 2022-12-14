@@ -1,7 +1,7 @@
 # ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
+[PowerShell](https://learn.microsoft.com/powershell/scripting/overview) is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
@@ -64,33 +64,33 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | Windows (Arm)  | [64-bit][rl-winarm64] (preview)                     | [64-bit][pv-winarm64]                           | [Instructions][in-arm]                         |
 | Raspbian (Arm) | [32-bit][rl-arm32]/[64-bit][rl-arm64]               | [32-bit][pv-arm32]/[64-bit][pv-arm64]           | [Instructions][in-raspbian]                    |
 
-[lts-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/PowerShell-7.2.7-win-x86.msi
-[lts-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/PowerShell-7.2.7-win-x64.msi
-[lts-deb]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/powershell-lts_7.2.7-1.deb_amd64.deb
-[lts-rh]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/powershell-lts-7.2.7-1.rh.x86_64.rpm
-[lts-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/powershell-lts-7.2.7-osx-x64.pkg
-[lts-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.7/powershell-lts-7.2.7-osx-arm64.pkg
+[lts-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.8/PowerShell-7.2.8-win-x86.msi
+[lts-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.8/PowerShell-7.2.8-win-x64.msi
+[lts-deb]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.8/powershell-lts_7.2.8-1.deb_amd64.deb
+[lts-rh]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.8/powershell-lts-7.2.8-1.rh.x86_64.rpm
+[lts-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.8/powershell-lts-7.2.8-osx-x64.pkg
+[lts-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.8/powershell-lts-7.2.8-osx-arm64.pkg
 
-[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x64.msi
-[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x86.msi
-[rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-1.rh.x86_64.rpm
-[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-1.rh.x86_64.rpm
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-osx-x64.pkg
-[rl-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-osx-arm64.pkg
-[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-arm64.zip
-[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x86.zip
-[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x64.zip
-[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-osx-x64.tar.gz
-[rl-macos-tar-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-osx-arm64.tar.gz
-[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-linux-x64.tar.gz
-[rl-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-linux-arm32.tar.gz
-[rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-linux-arm64.tar.gz
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/PowerShell-7.3.1-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/PowerShell-7.3.1-win-x86.msi
+[rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell_7.3.1-1.deb_amd64.deb
+[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell_7.3.1-1.deb_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell_7.3.1-1.deb_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell_7.3.1-1.deb_amd64.deb
+[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell_7.3.1-1.deb_amd64.deb
+[rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell_7.3.1-1.deb_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-1.rh.x86_64.rpm
+[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-1.rh.x86_64.rpm
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-osx-x64.pkg
+[rl-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-osx-arm64.pkg
+[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/PowerShell-7.3.1-win-arm64.zip
+[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/PowerShell-7.3.1-win-x86.zip
+[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/PowerShell-7.3.1-win-x64.zip
+[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-osx-x64.tar.gz
+[rl-macos-tar-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-osx-arm64.tar.gz
+[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-linux-x64.tar.gz
+[rl-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-linux-arm32.tar.gz
+[rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.1/powershell-7.3.1-linux-arm64.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
 [pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-rc.1/PowerShell-7.3.0-rc.1-win-x64.msi
@@ -173,7 +173,7 @@ There are dozens of topic specific channels on our community-driven PowerShell V
 |--------------------------|----------------------------|------------------------|
 | [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-macOS] |
 
-If you have any problems building, please consult the developer [FAQ][].
+If you have any problems building, consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
@@ -211,7 +211,7 @@ See [working with the PowerShell repository](https://github.com/PowerShell/Power
 ## Developing and Contributing
 
 Please see the [Contribution Guide][] for how to develop and contribute.
-If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
+If you are developing .NET Core C# applications targeting PowerShell Core, [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
 Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
@@ -220,7 +220,7 @@ Also, make sure to check out our [PowerShell-RFC repository](https://github.com/
 
 ## Support
 
-For support, please see the [Support Section][].
+For support, see the [Support Section][].
 
 [Support Section]: https://github.com/PowerShell/PowerShell/tree/master/.github/SUPPORT.md
 

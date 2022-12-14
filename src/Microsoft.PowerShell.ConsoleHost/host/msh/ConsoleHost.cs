@@ -771,7 +771,7 @@ namespace Microsoft.PowerShell
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
-                if (ui == null) throw new ArgumentNullException(nameof(ui));
+                ArgumentNullException.ThrowIfNull(ui);
                 _ui = ui;
             }
 

@@ -88,10 +88,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterRulePanelItem(FilterRulePanelItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             int insertionIndex = this.GetInsertionIndex(item);
             this.filterRulePanelItems.Insert(insertionIndex, item);
@@ -116,10 +113,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterRulePanelItem(FilterRulePanelItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             item.Rule.EvaluationResultInvalidated -= this.Rule_EvaluationResultInvalidated;
 
