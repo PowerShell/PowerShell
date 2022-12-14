@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             {
                 throw new ArgumentNullException("commands");
             }
-            
+
             this.Initialization(importedModules, commands, true);
         }
 
