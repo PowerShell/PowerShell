@@ -3416,7 +3416,7 @@ namespace Microsoft.WSMan.Management
             ArgumentException.ThrowIfNullOrEmpty(path);
 
             // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(path.Length);
-            (path.Length == 0)
+            if (path.Length == 0)
             {
                 throw new ArgumentNullException(path);
             }
