@@ -108,7 +108,7 @@ namespace System.Management.Automation.PerformanceData
             CounterSetInstType = counterSetInstType;
             CounterSetName = counterSetName;
 
-            ArgumentException.ThrowIfNull(counterInfoArray);
+            ArgumentNullException.ThrowIfNull(counterInfoArray);
 
             ArgumentOutOfRangeException.ThrowIfZero(counterInfoArray.Length);
             
