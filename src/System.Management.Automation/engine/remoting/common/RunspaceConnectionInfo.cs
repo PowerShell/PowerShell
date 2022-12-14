@@ -168,10 +168,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 _culture = value;
             }
@@ -191,10 +188,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 _uiCulture = value;
             }
