@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(new PingMtuStatus(
                     Source,
                     resolvedTargetName,
-                    replyResult ?? ArgumentNullException.ThrowIfNull(replyResult),
+                    replyResult ?? throw new ArgumentNullException(nameof(replyResult)),
                     CurrentMTUSize));
             }
         }
