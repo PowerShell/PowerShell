@@ -290,10 +290,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet);
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 

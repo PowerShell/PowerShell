@@ -437,10 +437,7 @@ namespace System.Diagnostics.Eventing
         {
             int status = 0;
 
-            if (eventMessage == null)
-            {
-                throw new ArgumentNullException(nameof(eventMessage));
-            }
+            ArgumentNullException.ThrowIfNull(eventMessage);
 
             if (IsEnabled(eventLevel, eventKeywords))
             {
@@ -508,10 +505,7 @@ namespace System.Diagnostics.Eventing
         {
             uint status = 0;
 
-            if (data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
+            ArgumentNullException.ThrowIfNull(data);
 
             if (IsEnabled(eventDescriptor.Level, eventDescriptor.Keywords))
             {

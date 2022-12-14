@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
+            ArgumentNullException.ThrowIfNull(response);
 
             var baseResponseStream = StreamHelper.GetResponseStream(response);
 
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static RestReturnType CheckReturnType(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
+            ArgumentNullException.ThrowIfNull(response);
 
             RestReturnType rt = RestReturnType.Detect;
             string contentType = ContentHelper.GetContentType(response);
