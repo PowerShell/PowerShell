@@ -423,6 +423,12 @@ namespace System.Management.Automation
                     case TokenKind.Identifier:
                         if (!tokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
                         {
+                            result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+                            if (result is not null)
+                            {
+                                return result;
+                            }
+
                             result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         }
 
@@ -1967,12 +1973,7 @@ namespace System.Management.Automation
 
         private static List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
         {
-            List<CompletionResult> result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
-            if (result is not null)
-            {
-                return result;
-            }
-
+            List<CompletionResult> result = null;
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
 
