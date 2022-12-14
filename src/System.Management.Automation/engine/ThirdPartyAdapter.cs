@@ -296,10 +296,7 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public virtual Collection<string> GetTypeNameHierarchy(object baseObject)
         {
-            if (baseObject == null)
-            {
-                throw new ArgumentNullException(nameof(baseObject));
-            }
+            ArgumentNullException.ThrowIfNull(baseObject);
 
             Collection<string> types = new Collection<string>();
 

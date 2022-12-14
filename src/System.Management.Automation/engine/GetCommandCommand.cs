@@ -303,10 +303,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
                 List<PSTypeName> filteredParameterTypes = new List<PSTypeName>(value.Length);
