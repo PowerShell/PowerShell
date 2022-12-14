@@ -134,10 +134,7 @@ namespace System.Management.Automation.PerformanceData
         protected CounterSetRegistrarBase(
             CounterSetRegistrarBase srcCounterSetRegistrarBase)
         {
-            if (srcCounterSetRegistrarBase == null)
-            {
-                throw new ArgumentNullException(nameof(srcCounterSetRegistrarBase));
-            }
+            ArgumentNullException.ThrowIfNull(srcCounterSetRegistrarBase);
 
             ProviderId = srcCounterSetRegistrarBase.ProviderId;
             CounterSetId = srcCounterSetRegistrarBase.CounterSetId;
@@ -241,10 +238,7 @@ namespace System.Management.Automation.PerformanceData
             PSCounterSetRegistrar srcPSCounterSetRegistrar)
             : base(srcPSCounterSetRegistrar)
         {
-            if (srcPSCounterSetRegistrar == null)
-            {
-                throw new ArgumentNullException(nameof(srcPSCounterSetRegistrar));
-            }
+            ArgumentNullException.ThrowIfNull(srcCounterSetRegistrar);
         }
 
         #endregion
