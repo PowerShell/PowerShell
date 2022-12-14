@@ -532,10 +532,7 @@ namespace Microsoft.PowerShell.Commands
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                if (array == null)
-                {
-                    throw new ArgumentNullException(nameof(array));
-                }
+                ArgumentNullException.ThrowIfNull(array); 
 
                 if (arrayIndex < 0)
                 {
