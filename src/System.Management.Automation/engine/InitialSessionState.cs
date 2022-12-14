@@ -3914,11 +3914,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void ImportCmdletsFromAssembly(Assembly assembly, PSModuleInfo module)
         {
-            if (assembly == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(assembly);
 
             string assemblyPath = assembly.Location;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(

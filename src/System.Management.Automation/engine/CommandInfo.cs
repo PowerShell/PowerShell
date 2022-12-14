@@ -285,10 +285,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Rename(string newName)
         {
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(newName);
 
             Name = newName;
         }

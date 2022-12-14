@@ -19,10 +19,7 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             ArgumentNullException.ThrowIfNull(cmdlet);
 
-            if (string.IsNullOrEmpty(className))
-            {
-                throw new ArgumentNullException(nameof(className));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(className);
 
             // possible and ok to have classVersion==string.Empty
             ArgumentNullException.ThrowIfNull(classVersion);

@@ -140,10 +140,7 @@ namespace Microsoft.WSMan.Management
         {
             ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
 
-            if (string.IsNullOrEmpty(configurationName))
-            {
-                throw new ArgumentNullException(nameof(configurationName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(configurationName);
 
             ArgumentNullException.ThrowIfNull(configurationValue);
 

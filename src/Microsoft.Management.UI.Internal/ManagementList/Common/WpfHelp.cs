@@ -367,10 +367,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static T FindVisualAncestor<T>(this DependencyObject @object) where T : class
         {
-            if (@object == null)
-            {
-                throw new ArgumentNullException("object");
-            }
+            ArgumentNullException.ThrowIfNull(@object, "object");
 
             DependencyObject parent = VisualTreeHelper.GetParent(@object);
 

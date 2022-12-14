@@ -3415,10 +3415,7 @@ namespace Microsoft.WSMan.Management
         {
             ArgumentException.ThrowIfNullOrEmpty(path );
             
-            if (path.Length == 0)
-            {
-                throw new ArgumentNullException(path);
-            }
+            ArgumentOutOfRangeException.ThrowIfZero(path.Length);
 
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))

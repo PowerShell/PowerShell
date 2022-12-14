@@ -1740,26 +1740,19 @@ namespace System.Management.Automation.Internal
     {
         internal static void NotNull(object value, string paramName)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            ArgumentNullException.ThrowIfNull(value, paramName);
         }
 
         internal static void NotNullOrEmpty(string value, string paramName)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            ArgumentException.ThrowIfNullOrEmpty(value, paramName);
         }
 
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            if (value == null || value.Count == 0)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            ArgumentNullException.ThrowIfNull(value, paramName);
+
+            ArgumentOutOfRangeException.ThrowIfZero(value.Count, paramName);
         }
 
         internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
