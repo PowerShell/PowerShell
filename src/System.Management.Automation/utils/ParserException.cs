@@ -132,8 +132,12 @@ namespace System.Management.Automation
         public ParseException(Language.ParseError[] errors)
         {
             ArgumentNullException.ThrowIfNull(errors);
-            
-            ArgumentOutOfRangeException.ThrowIfZero(errors.Length);
+
+            // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(errors.Length);
+            if (errors.Length == 0)
+            {
+                throw new ArgumentNullException(nameof(errors));
+            }
 
             _errors = errors;
             // Arbitrarily choose the first error message for the ErrorId.

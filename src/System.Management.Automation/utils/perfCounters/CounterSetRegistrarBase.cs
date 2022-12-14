@@ -110,8 +110,12 @@ namespace System.Management.Automation.PerformanceData
 
             ArgumentNullException.ThrowIfNull(counterInfoArray);
 
-            ArgumentOutOfRangeException.ThrowIfZero(counterInfoArray.Length);
-            
+            // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(counterInfoArray.Length);
+            if (counterInfoArray.Length == 0)
+            {
+                throw new ArgumentNullException(nameof(counterInfoArray));
+            }
+
             CounterInfoArray = new CounterInfo[counterInfoArray.Length];
 
             for (int i = 0; i < counterInfoArray.Length; i++)
