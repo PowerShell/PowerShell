@@ -75,8 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response)
-            : this(response, null)
+        public WebResponseObject(HttpResponseMessage response) : this(response, null)
         { }
 
         /// <summary>
@@ -125,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
-            if (response is null) { throw new ArgumentNullException(nameof(response)); }
+            ArgumentNullException.ThrowIfNull(response);
 
             BaseResponse = response;
 
