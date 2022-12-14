@@ -61,10 +61,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="serverSession">Current server session.</param>
         public CurrentConfigurations(IWSManSession serverSession)
         {
-            if (serverSession == null)
-            {
-                throw new ArgumentNullException(nameof(serverSession));
-            }
+            ArgumentNullException.ThrowIfNull(serverSession);
 
             this.rootDocument = new XmlDocument();
             this.serverSession = serverSession;
@@ -117,10 +114,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
         public void RemoveOneConfiguration(string pathToNodeFromRoot)
         {
-            if (pathToNodeFromRoot == null)
-            {
-                throw new ArgumentNullException(nameof(pathToNodeFromRoot));
-            }
+            ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
 
             XmlNode nodeToRemove =
                 this.documentElement.SelectSingleNode(
@@ -150,20 +144,14 @@ namespace Microsoft.WSMan.Management
         /// <param name="configurationValue">Value of the configurations.</param>
         public void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
         {
-            if (pathToNodeFromRoot == null)
-            {
-                throw new ArgumentNullException(nameof(pathToNodeFromRoot));
-            }
+            ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
 
             if (string.IsNullOrEmpty(configurationName))
             {
                 throw new ArgumentNullException(nameof(configurationName));
             }
 
-            if (configurationValue == null)
-            {
-                throw new ArgumentNullException(nameof(configurationValue));
-            }
+            ArgumentNullException.ThrowIfNull(configurationValue);
 
             XmlNode nodeToUpdate =
                 this.documentElement.SelectSingleNode(
@@ -195,10 +183,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>Value of the Node, or Null if no node present.</returns>
         public string GetOneConfiguration(string pathFromRoot)
         {
-            if (pathFromRoot == null)
-            {
-                throw new ArgumentNullException(nameof(pathFromRoot));
-            }
+            ArgumentNullException.ThrowIfNull(pathFromRoot);
 
             XmlNode requiredNode =
                 this.documentElement.SelectSingleNode(
