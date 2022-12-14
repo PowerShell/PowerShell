@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (!commands.GetEnumerator().MoveNext())
             {
-                throw new ArgumentNullException("commands");
+                throw new ArgumentOutOfRangeException("commands");
             }
 
             this.Initialization(importedModules, commands, true);

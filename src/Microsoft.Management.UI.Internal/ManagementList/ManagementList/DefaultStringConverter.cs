@@ -66,7 +66,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (values.Length != 1)
             {
-                throw new ArgumentNullException("values");
+                throw new ArgumentOutOfRangeException("values");
             }
 
             string val = values[0] as string;
