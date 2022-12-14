@@ -856,6 +856,7 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
+    using System.Management.Automation.Tracing;
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
@@ -1336,6 +1337,14 @@ namespace System.Management.Automation
 
     internal static class AmsiUtils
     {
+        static AmsiUtils()
+        {
+#if !UNIX
+            s_amsiInitFailed = !CheckAmsiInit();
+            PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
+#endif
+        }
+
         internal static int Init()
         {
             Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
@@ -1357,11 +1366,6 @@ namespace System.Management.Automation
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
                 var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
-                if (!Utils.Succeeded(hr))
-                {
-                    s_amsiInitFailed = true;
-                }
-
                 return hr;
             }
         }
@@ -1405,6 +1409,7 @@ namespace System.Management.Automation
             // If we had a previous initialization failure, just return the neutral result.
             if (s_amsiInitFailed)
             {
+                PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", $"{s_amsiContext}-{s_amsiSession}");
                 return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
             }
 
@@ -1412,6 +1417,7 @@ namespace System.Management.Automation
             {
                 if (s_amsiInitFailed)
                 {
+                    PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", $"{s_amsiContext}-{s_amsiSession}");
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
 
@@ -1451,6 +1457,7 @@ namespace System.Management.Automation
                     if (!Utils.Succeeded(hr))
                     {
                         // If we got a failure, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
+                        PSEtwLog.LogAmsiUtilStateEvent($"AmsiScanBuffer-{hr}", $"{s_amsiContext}-{s_amsiSession}");
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
@@ -1458,7 +1465,7 @@ namespace System.Management.Automation
                 }
                 catch (DllNotFoundException)
                 {
-                    s_amsiInitFailed = true;
+                    PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
             }
@@ -1559,7 +1566,6 @@ namespace System.Management.Automation
 
                 if (!Utils.Succeeded(hr))
                 {
-                    s_amsiInitFailed = true;
                     return false;
                 }
             }
@@ -1573,7 +1579,6 @@ namespace System.Management.Automation
 
                 if (!Utils.Succeeded(hr))
                 {
-                    s_amsiInitFailed = true;
                     return false;
                 }
             }
@@ -1595,7 +1600,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
-        private static bool s_amsiInitFailed = false;
+        private static readonly bool s_amsiInitFailed = false;
         private static bool s_amsiNotifyFailed = false;
         private static readonly object s_amsiLockObject = new object();
 
