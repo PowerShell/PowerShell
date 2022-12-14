@@ -22,10 +22,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandCommandInfo(CommandInfo other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.Name = other.Name;
             this.ModuleName = other.ModuleName;
@@ -71,10 +68,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandCommandInfo(PSObject other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.Name = other.Members["Name"].Value as string;
             this.ModuleName = other.Members["ModuleName"].Value as string;

@@ -72,8 +72,7 @@ namespace System.Diagnostics.Eventing
         public EventProviderTraceListener(string providerId, string name, string delimiter)
             : base(name)
         {
-            if (delimiter == null)
-                throw new ArgumentNullException(nameof(delimiter));
+            ArgumentNullException.ThrowIfNull(delimiter);
 
             if (delimiter.Length == 0)
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);

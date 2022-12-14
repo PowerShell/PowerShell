@@ -8146,7 +8146,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The list of streams (and their size) in the file.</returns>
         internal static List<AlternateStreamData> GetStreams(string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
 
@@ -8239,15 +8239,9 @@ namespace System.Management.Automation.Internal
         /// <returns>True if the stream was successfully created, otherwise false.</returns>
         internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
         {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+            ArgumentNullException.ThrowIfNull(path);
 
-            if (streamName == null)
-            {
-                throw new ArgumentNullException(nameof(streamName));
-            }
+            ArgumentNullException.ThrowIfNull(streamName);
 
             if (mode == FileMode.Append)
             {
@@ -8274,8 +8268,9 @@ namespace System.Management.Automation.Internal
         /// <param name="streamName">The name of the alternate data stream to delete.</param>
         internal static void DeleteFileStream(string path, string streamName)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            if (streamName == null) throw new ArgumentNullException(nameof(streamName));
+            ArgumentNullException.ThrowIfNull(path);
+
+            ArgumentNullException.ThrowIfNull(streamName);
 
             string adjustedStreamName = streamName.Trim();
             if (adjustedStreamName.IndexOf(':') != 0)

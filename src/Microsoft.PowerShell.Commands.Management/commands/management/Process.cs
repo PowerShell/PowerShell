@@ -2962,9 +2962,8 @@ namespace Microsoft.PowerShell.Commands
         {
             base.GetObjectData(info, context);
 
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
-
+            ArgumentNullException.ThrowIfNull(info);
+            
             info.AddValue("ProcessName", _processName);
         }
         #endregion Serialization
