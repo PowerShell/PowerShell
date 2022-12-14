@@ -690,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.MaximumRetryCount = MaximumRetryCount;
 
-                // only set retry interval if retry count is set.
+                // Only set retry interval if retry count is set.
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
@@ -1439,16 +1439,36 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests == 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
+                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+
+                    // If the status code is 429 get the retry interval from the Headers.
+                    // Ignore broken header and its value.
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    {
+                        try 
+                        {
+                            IEnumerator<string> enumerator = retryAfter.GetEnumerator();
+                            if (enumerator.MoveNext())
+                            {
+                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                            }
+                        }
+                        catch
+                        {
+                            // Ignore broken header.
+                        }
+                    }
+                    
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
-                        RetryIntervalSec,
+                        retryIntervalInSeconds,
                         response.StatusCode);
 
                     WriteVerbose(retryMessage);
 
                     _cancelToken = new CancellationTokenSource();
-                    Task.Delay(WebSession.RetryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
