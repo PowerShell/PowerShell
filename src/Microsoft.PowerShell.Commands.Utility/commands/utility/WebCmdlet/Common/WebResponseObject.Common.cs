@@ -75,8 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response)
-            : this(response, null)
+        public WebResponseObject(HttpResponseMessage response) : this(response, null)
         { }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void InitializeContent()
         {
-            this.Content = this.RawContentStream.ToArray();
+            Content = RawContentStream.ToArray();
         }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
@@ -114,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
                 raw.Append(this.ToString());
             }
 
-            this.RawContent = raw.ToString();
+            RawContent = raw.ToString();
         }
 
         private static bool IsPrintable(char c) => char.IsLetterOrDigit(c) 
@@ -125,12 +124,12 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
-            if (response is null) { throw new ArgumentNullException(nameof(response)); }
+            ArgumentNullException.ThrowIfNull(response);
 
             BaseResponse = response;
 
             MemoryStream ms = contentStream as MemoryStream;
-            if (ms != null)
+            if (ms is not null)
             {
                 RawContentStream = ms;
             }
