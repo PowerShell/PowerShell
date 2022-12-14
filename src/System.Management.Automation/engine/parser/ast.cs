@@ -3884,10 +3884,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public CommentHelpInfo GetHelpContent(Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
-            if (scriptBlockTokenCache == null)
-            {
-                throw new ArgumentNullException(nameof(scriptBlockTokenCache));
-            }
+            ArgumentNullException.ThrowIfNull(scriptBlockTokenCache);
 
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
@@ -5577,15 +5574,9 @@ namespace System.Management.Automation.Language
             bool background = false)
             : base(extent)
         {
-            if (lhsChain == null)
-            {
-                throw new ArgumentNullException(nameof(lhsChain));
-            }
+            ArgumentNullException.ThrowIfNull(lhsChain);
 
-            if (rhsPipeline == null)
-            {
-                throw new ArgumentNullException(nameof(rhsPipeline));
-            }
+            ArgumentNullException.ThrowIfNull(rhsPipeline);
 
             if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
             {
@@ -10462,10 +10453,7 @@ namespace System.Management.Automation.Language
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "We want to get the underlying variable only for the UsingExpressionAst.")]
         public static VariableExpressionAst ExtractUsingVariable(UsingExpressionAst usingExpressionAst)
         {
-            if (usingExpressionAst == null)
-            {
-                throw new ArgumentNullException(nameof(usingExpressionAst));
-            }
+            ArgumentNullException.ThrowIfNull(usingExpressionAst);
 
             return ExtractUsingVariableImpl(usingExpressionAst);
         }
