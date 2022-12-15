@@ -327,7 +327,9 @@ namespace System.Management.Automation.Language
                     {
                         stopScanning = true;
                         if (functionDefinition.IsWorkflow)
-                        { return true; }
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -3304,7 +3306,9 @@ namespace System.Management.Automation.Language
                         var attributeAst = Attributes[index];
                         action = attributeAst.InternalVisit(visitor);
                         if (action != AstVisitAction.Continue)
+                        {
                             break;
+                        }
                     }
                 }
 
@@ -3550,7 +3554,9 @@ namespace System.Management.Automation.Language
                         var attributeAst = Attributes[index];
                         action = attributeAst.InternalVisit(visitor);
                         if (action != AstVisitAction.Continue)
+                        {
                             break;
+                        }
                     }
                 }
 
