@@ -2030,7 +2030,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private static void ValidateKeyName(string name)
         {
-            ArgumentException.ThrowIfNullOrEmpty(name, RegistryProviderStrings.Arg_Name);
+            ArgumentNullException.ThrowIfNull(name, RegistryProviderStrings.Arg_Name);
 
             int nextSlash = name.IndexOf('\\');
             int current = 0;

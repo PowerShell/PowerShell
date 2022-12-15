@@ -3413,7 +3413,10 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private PSObject GetItemValue(string path)
         {
-            ArgumentException.ThrowIfNullOrEmpty(path);
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentNullException(path);
+            }
 
             // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(path.Length);
             if (path.Length == 0)

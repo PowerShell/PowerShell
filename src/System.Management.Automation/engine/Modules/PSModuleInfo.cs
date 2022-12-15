@@ -1302,7 +1302,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         public PSVariable GetVariableFromCallersModule(string variableName)
         {
-            ArgumentException.ThrowIfNullOrEmpty(variableName);
+            if (string.IsNullOrEmpty(variableName))
+            {
+                throw new ArgumentNullException(nameof(variableName));
+            }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
             SessionState callersSessionState = null;

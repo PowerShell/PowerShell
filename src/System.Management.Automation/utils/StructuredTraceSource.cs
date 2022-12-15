@@ -269,10 +269,13 @@ namespace System.Management.Automation
         /// </param>
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
-            // 2005/04/13-JonN In theory this should be ArgumentException,
-            // but I don't want to deal with loading the string in this
-            // low-level code.
-            ArgumentException.ThrowIfNullOrEmpty(fullName);
+            if (string.IsNullOrEmpty(fullName))
+            {
+                // 2005/04/13-JonN In theory this should be ArgumentException,
+                // but I don't want to deal with loading the string in this
+                // low-level code.
+                throw new ArgumentNullException(nameof(fullName));
+            }
 
             try
             {

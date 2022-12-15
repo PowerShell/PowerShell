@@ -1745,7 +1745,10 @@ namespace System.Management.Automation.Internal
 
         internal static void NotNullOrEmpty(string value, string paramName)
         {
-            ArgumentException.ThrowIfNullOrEmpty(value, paramName);
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentNullException(paramName);
+            }
         }
 
         internal static void NotNullOrEmpty(ICollection value, string paramName)

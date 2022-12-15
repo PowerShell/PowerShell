@@ -180,7 +180,10 @@ namespace Microsoft.WSMan.Management
         {
             ArgumentNullException.ThrowIfNull(resourceManager);
 
-            ArgumentException.ThrowIfNullOrEmpty(resourceName);
+            if (string.IsNullOrEmpty(resourceName))
+            {
+                throw new ArgumentNullException(nameof(resourceName));
+            }
 
             string template = resourceManager.GetString(resourceName);
 

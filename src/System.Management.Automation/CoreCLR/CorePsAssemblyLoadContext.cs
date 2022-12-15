@@ -579,7 +579,10 @@ namespace System.Management.Automation
         /// </param>
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)] string basePaths)
         {
-            ArgumentException.ThrowIfNullOrEmpty(basePaths);
+            if (string.IsNullOrEmpty(basePaths))
+            {
+                throw new ArgumentNullException(nameof(basePaths));
+            }
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }

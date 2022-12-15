@@ -98,10 +98,13 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            // 2005/04/13-JonN In theory this should be ArgumentException,
-            // but I don't want to deal with loading the string in this
-            // low-level code.
-            ArgumentException.ThrowIfNullOrEmpty(name);
+            if (string.IsNullOrEmpty(name))
+            {
+                // 2005/04/13-JonN In theory this should be ArgumentException,
+                // but I don't want to deal with loading the string in this
+                // low-level code.
+                throw new ArgumentNullException(nameof(name));
+            }
 
             lock (PSTraceSource.s_getTracerLock)
             {
@@ -225,7 +228,10 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(string paramName)
         {
-            ArgumentException.ThrowIfNullOrEmpty(paramName);
+            if (string.IsNullOrEmpty(paramName))
+            {
+                throw new ArgumentNullException(nameof(paramName));
+            }
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentNull, paramName);
             var e = new PSArgumentNullException(paramName, message);
@@ -281,7 +287,10 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(string paramName)
         {
-            ArgumentException.ThrowIfNullOrEmpty(paramName);
+            if (string.IsNullOrEmpty(paramName))
+            {
+                throw new ArgumentNullException(nameof(paramName));
+            }
 
             string message = StringUtil.Format(AutomationExceptions.Argument, paramName);
             // Note that the message param comes first
@@ -468,7 +477,10 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(string paramName, object actualValue)
         {
-            ArgumentException.ThrowIfNullOrEmpty(paramName);
+            if (string.IsNullOrEmpty(paramName))
+            {
+                throw new ArgumentNullException(nameof(paramName));
+            }
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);

@@ -44,7 +44,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleName">The module name.</param>
         public ModuleSpecification(string moduleName)
         {
-            ArgumentException.ThrowIfNullOrEmpty(moduleName);
+            if (string.IsNullOrEmpty(moduleName))
+            {
+                throw new ArgumentNullException(nameof(moduleName));
+            }
 
             this.Name = moduleName;
             // Alias name of miniumVersion
