@@ -7874,15 +7874,17 @@ namespace Microsoft.PowerShell.Commands
         {
 #if UNIX
             return false;
-        }
+#else
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static bool WinCreateJunction(string path, string target)
-        {
-            ArgumentException.ThrowIfNullOrEmpty(path);
-
-            ArgumentException.ThrowIfNullOrEmpty(target);
-
+            if (string.IsNullOrEmpty(target))
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+            
             using (SafeHandle handle = WinOpenReparsePoint(path, FileAccess.Write))
             {
                 byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
