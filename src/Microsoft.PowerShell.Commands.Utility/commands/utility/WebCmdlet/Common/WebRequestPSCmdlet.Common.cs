@@ -1711,7 +1711,9 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(request);
 
             if (xmlNode is null)
+            {
                 return 0;
+            }
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
