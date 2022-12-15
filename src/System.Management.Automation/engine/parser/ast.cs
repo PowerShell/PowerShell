@@ -7382,7 +7382,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal virtual bool ShouldPreserveOutputInCaseOfException()
         {
-            if (this is not ParenExpressionAst or SubExpressionAst)
+            if (this is not ParenExpressionAst and not SubExpressionAst)
             {
                 PSTraceSource.NewInvalidOperationException();
             }
