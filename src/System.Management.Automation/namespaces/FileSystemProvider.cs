@@ -3594,7 +3594,8 @@ namespace Microsoft.PowerShell.Commands
                         RecurseSubdirectories = recurse
                     };
 
-                    foreach (var file in Directory.EnumerateFiles(path, "*", enumOptions))
+                    var directory = new DirectoryInfo(path);
+                    foreach (var file in directory.EnumerateFiles("*", enumOptions))
                     {
                         if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
                         {
