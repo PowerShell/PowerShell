@@ -3590,13 +3590,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (isContainer)
                 {
-                    var dir = new DirectoryInfo(path);
-                    var enumOptions = new EnumerationOptions();
-                    enumOptions.IgnoreInaccessible = true;
-                    enumOptions.AttributesToSkip = 0;
-                    enumOptions.RecurseSubdirectories = recurse;
+                    var enumOptions = new EnumerationOptions()
+                    {
+                        IgnoreInaccessible = true,
+                        AttributesToSkip = 0,
+                        RecurseSubdirectories = recurse
+                    };
 
-                    foreach (var file in dir.EnumerateFiles("*", enumOptions))
+                    foreach (var file in Directory.EnumerateFiles(path, "*", enumOptions))
                     {
                         if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
                         {
