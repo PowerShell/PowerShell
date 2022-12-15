@@ -723,7 +723,6 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(content);
 
-
             StringBuilder bodyBuilder = new();
             foreach (string key in content.Keys)
             {
@@ -1300,7 +1299,6 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(client);
 
             ArgumentNullException.ThrowIfNull(request);
-
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
