@@ -2449,7 +2449,7 @@
               message="$(string.PS_PROVIDER.task.T_WDACQuery.message)"
               name="WDAC"
               symbol="T_WDAC"
-              value="140"
+              value="131"
               />
         </tasks>
         <opcodes>
