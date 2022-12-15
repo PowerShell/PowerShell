@@ -40,10 +40,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException("value");
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
             Type inputType = null;
             if (this.IsOfTypeValidatingValue(value))

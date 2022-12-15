@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.MaximumRetryCount = MaximumRetryCount;
 
-                // only set retry interval if retry count is set.
+                // Only set retry interval if retry count is set.
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
@@ -703,10 +703,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static Uri CheckProtocol(Uri uri)
         {
-            if (uri is null) 
-            { 
-                throw new ArgumentNullException(nameof(uri)); 
-            }
+            ArgumentNullException.ThrowIfNull(uri);
 
             if (!uri.IsAbsoluteUri)
             {
@@ -724,8 +721,8 @@ namespace Microsoft.PowerShell.Commands
 
         private static string FormatDictionary(IDictionary content)
         {
-            if (content is null)
-                throw new ArgumentNullException(nameof(content));
+            ArgumentNullException.ThrowIfNull(content);
+
 
             StringBuilder bodyBuilder = new();
             foreach (string key in content.Keys)
@@ -1125,7 +1122,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
         {
-            if (request is null) { throw new ArgumentNullException(nameof(request)); }
+            ArgumentNullException.ThrowIfNull(request);
 
             // set the content type
             if (ContentType is not null)
@@ -1300,15 +1297,10 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
-            if (client is null) 
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
+            ArgumentNullException.ThrowIfNull(client);
 
-            if (request is null) 
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
+
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
@@ -1394,16 +1386,36 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
+                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+
+                    // If the status code is 429 get the retry interval from the Headers.
+                    // Ignore broken header and its value.
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    {
+                        try 
+                        {
+                            IEnumerator<string> enumerator = retryAfter.GetEnumerator();
+                            if (enumerator.MoveNext())
+                            {
+                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                            }
+                        }
+                        catch
+                        {
+                            // Ignore broken header.
+                        }
+                    }
+                    
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
-                        RetryIntervalSec,
+                        retryIntervalInSeconds,
                         response.StatusCode);
 
                     WriteVerbose(retryMessage);
 
                     _cancelToken = new CancellationTokenSource();
-                    Task.Delay(WebSession.RetryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
@@ -1421,10 +1433,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void UpdateSession(HttpResponseMessage response)
         {
-            if (response is null) 
-            {
-                throw new ArgumentNullException(nameof(response));
-            }
+            ArgumentNullException.ThrowIfNull(response);
         }
 
         #endregion Virtual Methods
@@ -1626,10 +1635,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             if (content is null)
             {
@@ -1654,10 +1660,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, string content)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             if (content is null)
             {
@@ -1707,8 +1710,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
+            ArgumentNullException.ThrowIfNull(request);
 
             if (xmlNode is null)
                 return 0;
@@ -1744,10 +1746,9 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
-            if (contentStream is null)
-                throw new ArgumentNullException(nameof(contentStream));
+            ArgumentNullException.ThrowIfNull(request);
+
+            ArgumentNullException.ThrowIfNull(contentStream);
 
             var streamContent = new StreamContent(contentStream);
             request.Content = streamContent;
@@ -1767,15 +1768,9 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
-            if (multipartContent is null)
-            {
-                throw new ArgumentNullException(nameof(multipartContent));
-            }
+            ArgumentNullException.ThrowIfNull(multipartContent);
 
             request.Content = multipartContent;
 
@@ -1784,15 +1779,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-            
-            if (content is null)
-            {
-                throw new ArgumentNullException(nameof(content));
-            }
+            ArgumentNullException.ThrowIfNull(request);
+
+            ArgumentNullException.ThrowIfNull(content);
 
             string body = FormatDictionary(content);
             return SetRequestContent(request, body);
@@ -1845,10 +1834,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
         private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
-            if (formData is null)
-            {
-                throw new ArgumentNullException(nameof(formData));
-            }
+            ArgumentNullException.ThrowIfNull(formData);
 
             // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.
             // Before processing the field name and value we need to ensure we are working with the base objects and not the PSObject wrappers.

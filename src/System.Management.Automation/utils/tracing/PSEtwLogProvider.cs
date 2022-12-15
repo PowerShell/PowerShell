@@ -124,7 +124,17 @@ namespace System.Management.Automation.Tracing
                     }
                     else
                     {
-                        payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandName, newState.ToString()));
+                        if (newState == CommandState.Stopped ||
+                            newState == CommandState.Terminated)
+                        {
+                            // When state is stopped or termianted only log the CommandName
+                            payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext, newState.ToString()));
+                        }
+                        else
+                        {
+                            // When state is Start log the CommandLine which has arguments for completeness. 
+                            payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext.CommandLine, newState.ToString()));
+                        }
                     }
                 }
 
@@ -180,6 +190,16 @@ namespace System.Management.Automation.Tracing
             AppendAdditionalInfo(payload, additionalInfo);
 
             WriteEvent(PSEventId.Provider_Health, PSChannel.Operational, PSOpcode.Exception, PSTask.ExecutePipeline, logContext, payload.ToString());
+        }
+
+        /// <summary>
+        /// Provider interface function for logging provider health event.
+        /// </summary>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
+        /// <param name="context">The amsiContext handled - Session pair.</param>
+        internal override void LogAmsiUtilStateEvent(string state, string context)
+        {
+            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, state, context);
         }
 
         /// <summary>

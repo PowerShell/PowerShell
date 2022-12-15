@@ -801,8 +801,7 @@ namespace System.Management.Automation
             IList input,
             params object[] args)
         {
-            if (script == null)
-                throw new ArgumentNullException(nameof(script));
+            ArgumentNullException.ThrowIfNull(script);
 
             // Compile the script text into an executable script block.
             ScriptBlock sb = ScriptBlock.Create(_context, script);

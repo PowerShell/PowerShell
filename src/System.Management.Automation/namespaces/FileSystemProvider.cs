@@ -528,7 +528,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // MapNetworkDrive facilitates to map the newly
                 // created PS Drive to a network share.
-                this.MapNetworkDrive(drive);
+                MapNetworkDrive(drive);
             }
 
             // The drive is valid if the item exists or the
@@ -587,35 +587,18 @@ namespace Microsoft.PowerShell.Commands
         /// MapNetworkDrive facilitates to map the newly created PS Drive to a network share.
         /// </summary>
         /// <param name="drive">The PSDrive info that would be used to create a new PS drive.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Can be static on Unix but not on Windows.")]
+
         private void MapNetworkDrive(PSDriveInfo drive)
         {
+#if UNIX
+            throw new PlatformNotSupportedException();
+#else
             // Porting note: mapped network drives are only supported on Windows
-            if (Platform.IsWindows)
-            {
-                WinMapNetworkDrive(drive);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-        }
-
-        private static bool _WNetApiAvailable = true;
-
-        private void WinMapNetworkDrive(PSDriveInfo drive)
-        {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
             {
-                const int CONNECT_UPDATE_PROFILE = 0x00000001;
-                const int CONNECT_NOPERSIST = 0x00000000;
-                const int RESOURCE_GLOBALNET = 0x00000002;
-                const int RESOURCETYPE_ANY = 0x00000000;
-                const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
-                const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
-                const int ERROR_NO_NETWORK = 1222;
-
                 // By default the connection is not persisted.
-                int CONNECT_TYPE = CONNECT_NOPERSIST;
+                int connectType = Interop.Windows.CONNECT_NOPERSIST;
 
                 string driveName = null;
                 byte[] passwd = null;
@@ -625,13 +608,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (IsSupportedDriveForPersistence(drive))
                     {
-                        CONNECT_TYPE = CONNECT_UPDATE_PROFILE;
+                        connectType = Interop.Windows.CONNECT_UPDATE_PROFILE;
                         driveName = drive.Name + ":";
                         drive.DisplayRoot = drive.Root;
                     }
                     else
                     {
-                        // error.
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.InvalidDriveName), "DriveNameNotSupportedForPersistence", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
@@ -647,37 +629,15 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    NetResource resource = new NetResource();
-                    resource.Comment = null;
-                    resource.DisplayType = RESOURCEDISPLAYTYPE_GENERIC;
-                    resource.LocalName = driveName;
-                    resource.Provider = null;
-                    resource.RemoteName = drive.Root;
-                    resource.Scope = RESOURCE_GLOBALNET;
-                    resource.Type = RESOURCETYPE_ANY;
-                    resource.Usage = RESOURCEUSAGE_CONNECTABLE;
+                    int errorCode = Interop.Windows.WNetAddConnection2(driveName, drive.Root, passwd, userName, connectType);
 
-                    int code = ERROR_NO_NETWORK;
-
-                    if (_WNetApiAvailable)
+                    if (errorCode != Interop.Windows.ERROR_SUCCESS)
                     {
-                        try
-                        {
-                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
-                        }
-                        catch (System.DllNotFoundException)
-                        {
-                            _WNetApiAvailable = false;
-                        }
-                    }
-
-                    if (code != 0)
-                    {
-                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(errorCode), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
 
-                    if (CONNECT_TYPE == CONNECT_UPDATE_PROFILE)
+                    if (connectType == Interop.Windows.CONNECT_UPDATE_PROFILE)
                     {
                         // Update the current PSDrive to be a persisted drive.
                         drive.IsNetworkDrive = true;
@@ -692,10 +652,11 @@ namespace Microsoft.PowerShell.Commands
                     // Clear the password in the memory.
                     if (passwd != null)
                     {
-                        Array.Clear(passwd, 0, passwd.Length - 1);
+                        Array.Clear(passwd);
                     }
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -727,15 +688,12 @@ namespace Microsoft.PowerShell.Commands
 #else
             if (IsNetworkMappedDrive(drive))
             {
-                const int CONNECT_UPDATE_PROFILE = 0x00000001;
-                const int ERROR_NO_NETWORK = 1222;
-
-                int flags = 0;
+                int flags = Interop.Windows.CONNECT_NOPERSIST;
                 string driveName;
                 if (drive.IsNetworkDrive)
                 {
                     // Here we are removing only persisted network drives.
-                    flags = CONNECT_UPDATE_PROFILE;
+                    flags = Interop.Windows.CONNECT_UPDATE_PROFILE;
                     driveName = drive.Name + ":";
                 }
                 else
@@ -746,23 +704,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = ERROR_NO_NETWORK;
+                int errorCode = Interop.Windows.WNetCancelConnection2(driveName, flags, force: true);
 
-                if (_WNetApiAvailable)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
-                    try
-                    {
-                        code = Interop.Windows.WNetCancelConnection2(driveName, flags, true);
-                    }
-                    catch (System.DllNotFoundException)
-                    {
-                        _WNetApiAvailable = false;
-                    }
-                }
-
-                if (code != 0)
-                {
-                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(errorCode), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
                     ThrowTerminatingError(er);
                 }
             }
@@ -806,57 +752,19 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return driveName;
 #else
-            return WinGetUNCForNetworkDrive(driveName);
-#endif
-        }
-
-        private static string WinGetUNCForNetworkDrive(string driveName)
-        {
-            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
-                int bufferSize = 300;
-#if DEBUG
-                // In Debug mode buffer size is initially set to 3 and if additional buffer is required, the
-                // required buffer size is allocated and the WNetGetConnection API is executed with the newly
-                // allocated buffer size.
-                bufferSize = 3;
-#endif
+                int errorCode = Interop.Windows.GetUNCForNetworkDrive(driveName[0], out uncPath);
 
-                StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                driveName += ':';
-
-                // Call the windows API
-                int errorCode = ERROR_NO_NETWORK;
-
-                try
-                {
-                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                }
-                catch (System.DllNotFoundException)
-                {
-                    return null;
-                }
-
-                // error code 234 is returned whenever the required buffer size is greater
-                // than the specified buffer size.
-                if (errorCode == 234)
-                {
-                    uncBuffer = new StringBuilder(bufferSize);
-                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                }
-
-                if (errorCode != 0)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
                     throw new System.ComponentModel.Win32Exception(errorCode);
                 }
-
-                uncPath = uncBuffer.ToString();
             }
 
             return uncPath;
+#endif
         }
 
         /// <summary>
@@ -2343,6 +2251,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
+                            // for hardlinks we resolve the target to an absolute path
+                            if (!IsAbsolutePath(strTargetPath))
+                            {
+                                // there is already a check before here so that strTargetPath should only resolve to 1 path
+                                strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                            }
+
                             exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
                         }
                     }
@@ -2385,6 +2300,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (Force)
                     {
+                        if (itemType == ItemType.HardLink && string.Equals(path, strTargetPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string message = StringUtil.Format(FileSystemProviderStrings.NewItemTargetIsSameAsLink, path);
+                            WriteError(new ErrorRecord(new InvalidOperationException(message), "TargetIsSameAsLink", ErrorCategory.InvalidOperation, path));
+                            return;
+                        }
+
                         try
                         {
                             if (!isSymLinkDirectory && symLinkExists)
@@ -7072,75 +6994,14 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
+#if !UNIX
+        /// <summary>
+        /// The API 'PathIsNetworkPath' is not available in CoreSystem.
+        /// This implementation is based on the 'PathIsNetworkPath' API.
+        /// </summary>
+        /// <param name="path">A file system path.</param>
+        /// <returns>True if the path is a network path.</returns>
         internal static bool WinPathIsNetworkPath(string path)
-        {
-            return NativeMethods.PathIsNetworkPath(path); // call the native method
-        }
-
-        private static partial class NativeMethods
-        {
-            /// <summary>
-            /// WNetAddConnection2 API makes a connection to a network resource
-            /// and can redirect a local device to the network resource.
-            /// This API simulates the "new Use" functionality used to connect to
-            /// network resource.
-            /// </summary>
-            /// <param name="netResource">
-            /// The netResource structure contains information
-            /// about a network resource.</param>
-            /// <param name="password">
-            /// The password used to get connected to network resource.
-            /// </param>
-            /// <param name="username">
-            /// The username used to get connected to network resource.
-            /// </param>
-            /// <param name="flags">
-            /// The flags parameter is used to indicate if the created network
-            /// resource has to be persisted or not.
-            /// </param>
-            /// <returns>If connection is established to the network resource
-            /// then success is returned or else the error code describing the
-            /// type of failure that occurred while establishing
-            /// the connection is returned.</returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
-
-            /// <summary>
-            /// WNetGetConnection function retrieves the name of the network resource associated with a local device.
-            /// </summary>
-            /// <param name="localName">
-            /// Local name of the PSDrive.
-            /// </param>
-            /// <param name="remoteName">
-            /// The remote name to which the PSDrive is getting mapped to.
-            /// </param>
-            /// <param name="remoteNameLength">
-            /// length of the remote name of the created PSDrive.
-            /// </param>
-            /// <returns></returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetGetConnection(string localName, StringBuilder remoteName, ref int remoteNameLength);
-
-#if CORECLR // TODO:CORECLR Win32 function 'PathIsNetworkPath' is in an extension API set which is currently not on CSS.
-            /// <summary>
-            /// Searches a path for a drive letter within the range of 'A' to 'Z' and returns the corresponding drive number.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed
-            /// </param>
-            /// <returns>Returns 0 through 25 (corresponding to 'A' through 'Z') if the path has a drive letter, or -1 otherwise.</returns>
-            [LibraryImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", EntryPoint ="PathGetDriveNumberW", StringMarshalling = StringMarshalling.Utf16)]
-            internal static partial int PathGetDriveNumber(string path);
-
-            private static bool _WNetApiAvailable = true;
-
-            /// <summary>
-            /// The API 'PathIsNetworkPath' is not available in CoreSystem.
-            /// This implementation is based on the 'PathIsNetworkPath' API.
-            /// </summary>
-            /// <param name="path"></param>
-            /// <returns></returns>
-            internal static bool PathIsNetworkPath(string path)
             {
                 if (string.IsNullOrEmpty(path))
                 {
@@ -7152,33 +7013,16 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
-                if (!_WNetApiAvailable)
+                if (path.Length > 1 && path[1] == ':' && char.IsAsciiLetter(path[0]))
                 {
-                    return false;
-                }
-
-                // 0 - 25 corresponding to 'A' - 'Z'
-                int driveId = PathGetDriveNumber(path);
-                if (driveId >= 0 && driveId < 26)
-                {
-                    string driveName = (char)('A' + driveId) + ":";
-
-                    int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
-                    StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                    int errorCode = -1;
-                    try
-                    {
-                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                    }
-                    catch (System.DllNotFoundException)
-                    {
-                        _WNetApiAvailable = false;
-                        return false;
-                    }
+                    // path[0] is ASCII letter, e.g. is in 'A'-'Z' or 'a'-'z'.
+                    int errorCode = Interop.Windows.GetUNCForNetworkDrive(path[0], out string _);
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
-                    if (errorCode == 0 || errorCode == 1201 || errorCode == 31)
+                    if (errorCode == Interop.Windows.ERROR_SUCCESS ||
+                        errorCode == Interop.Windows.ERROR_CONNECTION_UNAVAIL ||
+                        errorCode == Interop.Windows.ERROR_GEN_FAILURE)
                     {
                         return true;
                     }
@@ -7186,43 +7030,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return false;
             }
-#else
-            /// <summary>
-            /// Facilitates to validate if the supplied path exists locally or on the network share.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed.
-            /// </param>
-            /// <returns>True if the path is a network path or else returns false.</returns>
-            [LibraryImport("shlwapi.dll", EntryPoint = "PathIsNetworkPathW", StringMarshalling = StringMarshalling.Utf16)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static partial bool PathIsNetworkPath(string path);
 #endif
-        }
-
-        /// <summary>
-        /// Managed equivalent of NETRESOURCE structure of WNet API.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        private struct NetResource
-        {
-            public int Scope;
-            public int Type;
-            public int DisplayType;
-            public int Usage;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string LocalName;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string RemoteName;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string Comment;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string Provider;
-        }
 
         #region InodeTracker
         /// <summary>
@@ -8338,7 +8146,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The list of streams (and their size) in the file.</returns>
         internal static List<AlternateStreamData> GetStreams(string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
 
@@ -8431,15 +8239,9 @@ namespace System.Management.Automation.Internal
         /// <returns>True if the stream was successfully created, otherwise false.</returns>
         internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
         {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+            ArgumentNullException.ThrowIfNull(path);
 
-            if (streamName == null)
-            {
-                throw new ArgumentNullException(nameof(streamName));
-            }
+            ArgumentNullException.ThrowIfNull(streamName);
 
             if (mode == FileMode.Append)
             {
@@ -8466,8 +8268,9 @@ namespace System.Management.Automation.Internal
         /// <param name="streamName">The name of the alternate data stream to delete.</param>
         internal static void DeleteFileStream(string path, string streamName)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            if (streamName == null) throw new ArgumentNullException(nameof(streamName));
+            ArgumentNullException.ThrowIfNull(path);
+
+            ArgumentNullException.ThrowIfNull(streamName);
 
             string adjustedStreamName = streamName.Trim();
             if (adjustedStreamName.IndexOf(':') != 0)

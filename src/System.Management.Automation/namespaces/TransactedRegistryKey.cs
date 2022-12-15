@@ -1640,8 +1640,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         public void SetAccessControl(TransactedRegistrySecurity registrySecurity)
         {
             EnsureWriteable();
-            if (registrySecurity == null)
-                throw new ArgumentNullException("registrySecurity");
+            ArgumentNullException.ThrowIfNull(registrySecurity);
             // Require a transaction. This will throw for "Base" keys because they aren't associated with a transaction.
             VerifyTransaction();
 

@@ -2569,10 +2569,7 @@ namespace Microsoft.PowerShell.Commands
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             _serviceName = info.GetString("ServiceName");
         }
@@ -2583,10 +2580,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">Streaming context.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             base.GetObjectData(info, context);
             info.AddValue("ServiceName", _serviceName);

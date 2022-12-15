@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace System.Management.Automation
 {
@@ -14,8 +14,15 @@ namespace System.Management.Automation
     /// </summary>
     internal class AutomationEngine
     {
+        static AutomationEngine()
+        {
+            // Register the encoding provider to load encodings that are not supported by default,
+            // so as to allow them to be used in user's script/code.
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
+
         // Holds the parser to use for this instance of the engine...
-        internal Language.Parser EngineParser;
+        internal Parser EngineParser;
 
         /// <summary>
         /// Returns the handle to the execution context
