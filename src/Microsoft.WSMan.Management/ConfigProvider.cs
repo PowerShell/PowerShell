@@ -3418,12 +3418,6 @@ namespace Microsoft.WSMan.Management
                 throw new ArgumentNullException(path);
             }
 
-            // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(path.Length);
-            if (path.Length == 0)
-            {
-                throw new ArgumentNullException(path);
-            }
-
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
             {
