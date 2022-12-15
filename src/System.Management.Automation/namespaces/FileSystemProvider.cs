@@ -3554,16 +3554,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (Context != null)
                     {
-                        if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.ToString()).Value is ActionPreference progressPreference)
+                        if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.ToString()).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
                         {
-                            if (progressPreference == ActionPreference.Continue)
+                            Task.Run(() =>
                             {
-                                Task.Run(() =>
-                                {
-                                    GetTotalFiles(path, recurse);
-                                });
-                                _copyStopwatch.Start();
-                            }
+                                GetTotalFiles(path, recurse);
+                            });
+                            _copyStopwatch.Start();
                         }
                     }
 
