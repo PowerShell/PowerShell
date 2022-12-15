@@ -1167,27 +1167,27 @@ namespace Microsoft.PowerShell.Commands
                     content = psBody.BaseObject;
                 }
 
-                if (content == FormObject form)
+                if (content is FormObject form)
                 {
                     SetRequestContent(request, form.Fields);
                 }
-                else if (content == IDictionary dictionary && request.Method != HttpMethod.Get)
+                else if (content is IDictionary dictionary && request.Method != HttpMethod.Get)
                 {
                     SetRequestContent(request, dictionary);
                 }
-                else if (content == XmlNode xmlNode)
+                else if (content is XmlNode xmlNode)
                 {
                     SetRequestContent(request, xmlNode);
                 }
-                else if (content == Stream stream)
+                else if (content is Stream stream)
                 {
                     SetRequestContent(request, stream);
                 }
-                else if (content == byte[] bytes)
+                else if (content is byte[] bytes)
                 {
                     SetRequestContent(request, bytes);
                 }
-                else if (content == MultipartFormDataContent multipartFormDataContent)
+                else if (content is MultipartFormDataContent multipartFormDataContent)
                 {
                     WebSession.ContentHeaders.Clear();
                     SetRequestContent(request, multipartFormDataContent);
@@ -1379,7 +1379,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                _resumeSuccess = response.StatusCode is HttpStatusCode.PartialContent;
+                _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
 
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
@@ -1388,7 +1388,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode == HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
                     {
                         try 
                         {
@@ -1715,7 +1715,7 @@ namespace Microsoft.PowerShell.Commands
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
-            if (doc?.FirstChild == XmlDeclaration)
+            if (doc?.FirstChild is XmlDeclaration)
             {
                 XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);
@@ -1838,19 +1838,19 @@ namespace Microsoft.PowerShell.Commands
             // Before processing the field name and value we need to ensure we are working with the base objects and not the PSObject wrappers.
 
             // Unwrap fieldName PSObjects
-            if (fieldName == PSObject namePSObject)
+            if (fieldName is PSObject namePSObject)
             {
                 fieldName = namePSObject.BaseObject;
             }
 
             // Unwrap fieldValue PSObjects
-            if (fieldValue == PSObject valuePSObject)
+            if (fieldValue is PSObject valuePSObject)
             {
                 fieldValue = valuePSObject.BaseObject;
             }
 
             // Treat a single FileInfo as a FileContent
-            if (fieldValue == FileInfo file)
+            if (fieldValue is FileInfo file)
             {
                 formData.Add(GetMultipartFileContent(fieldName: fieldName, file: file));
                 return;
@@ -1859,14 +1859,14 @@ namespace Microsoft.PowerShell.Commands
             // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
-            if (!enumerate || fieldValue == string || fieldValue != IEnumerable)
+            if (!enumerate || fieldValue is string || fieldValue is not IEnumerable)
             {
                 formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
                 return;
             }
 
             // Treat the value as a collection and enumerate it if enumeration is true
-            if (enumerate && fieldValue == IEnumerable items)
+            if (enumerate && fieldValue is IEnumerable items)
             {
                 foreach (var item in items)
                 {
