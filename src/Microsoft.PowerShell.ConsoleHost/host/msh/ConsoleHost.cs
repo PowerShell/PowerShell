@@ -1832,11 +1832,11 @@ namespace Microsoft.PowerShell
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                var langaugeMode = Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                var languageMode = Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
                 // When displaying banner, also display the language mode if running in any restricted mode.
                 if (s_cpp.ShowBanner)
                 {
-                    switch (langaugeMode)
+                    switch (languageMode)
                     {
                         case PSLanguageMode.ConstrainedLanguage:
                             s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
