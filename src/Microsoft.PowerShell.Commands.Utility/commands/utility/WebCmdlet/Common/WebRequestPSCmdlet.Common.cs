@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // handle credentials
-            if (Credential is not null && Authentication is WebAuthenticationType.None)
+            if (Credential is not null && Authentication == WebAuthenticationType.None)
             {
                 // get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
