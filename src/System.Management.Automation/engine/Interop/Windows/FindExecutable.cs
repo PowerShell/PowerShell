@@ -24,7 +24,6 @@ internal static partial class Interop
             // HINSTANCE == PVOID == nint
             nint resultCode = 0;
 
-            const int MAX_PATH = 260;
             Span<char> buffer = stackalloc char[MAX_PATH];
             unsafe
             {
