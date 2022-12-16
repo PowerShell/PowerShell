@@ -133,7 +133,6 @@ namespace System.Management.Automation
         {
             ArgumentNullException.ThrowIfNull(errors);
 
-            // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(errors.Length);
             if (errors.Length == 0)
             {
                 throw new ArgumentNullException(nameof(errors));
