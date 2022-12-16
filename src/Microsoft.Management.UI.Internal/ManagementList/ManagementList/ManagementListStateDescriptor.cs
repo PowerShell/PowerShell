@@ -63,10 +63,7 @@ namespace Microsoft.Management.UI.Internal
         /// </exception>
         public override void SaveState(ManagementList subject)
         {
-            if (subject == null)
-            {
-                throw new ArgumentNullException("subject");
-            }
+            ArgumentNullException.ThrowIfNull(subject);
 
             this.SaveColumns(subject);
             this.SaveSortOrder(subject);
@@ -100,10 +97,7 @@ namespace Microsoft.Management.UI.Internal
         /// </exception>
         public void RestoreState(ManagementList subject, bool applyRestoredFilter)
         {
-            if (subject == null)
-            {
-                throw new ArgumentNullException("subject");
-            }
+            ArgumentNullException.ThrowIfNull(subject);
 
             // Clear the sort, otherwise restoring columns and filters may trigger extra sorting \\
             subject.List.ClearSort();

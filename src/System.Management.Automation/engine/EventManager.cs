@@ -817,10 +817,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UnsubscribeEvent(PSEventSubscriber subscriber, bool skipDraining)
         {
-            if (subscriber == null)
-            {
-                throw new ArgumentNullException(nameof(subscriber));
-            }
+            ArgumentNullException.ThrowIfNull(subscriber);
 
             Delegate existingSubscriber = null;
             lock (_eventSubscribers)
@@ -2368,10 +2365,7 @@ namespace System.Management.Automation
         /// <remarks>Don't add events to the collection directly; use the EventManager instead</remarks>
         internal void Add(PSEventArgs eventToAdd)
         {
-            if (eventToAdd == null)
-            {
-                throw new ArgumentNullException(nameof(eventToAdd));
-            }
+            ArgumentNullException.ThrowIfNull(eventToAdd);
 
             _eventCollection.Add(eventToAdd);
 
@@ -2486,10 +2480,9 @@ namespace System.Management.Automation
             string name)
             : base(action?.ToString(), name)
         {
-            if (eventManager == null)
-                throw new ArgumentNullException(nameof(eventManager));
-            if (subscriber == null)
-                throw new ArgumentNullException(nameof(subscriber));
+            ArgumentNullException.ThrowIfNull(eventManager);
+
+            ArgumentNullException.ThrowIfNull(subscriber);
 
             UsesResultsCollection = true;
             ScriptBlock = action;

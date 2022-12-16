@@ -276,9 +276,6 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        [DllImport("oleaut32.dll")]
-        internal static extern void VariantClear(IntPtr variant);
-
         /// <summary>
         /// Release any unmanaged memory associated with the Variant
         /// </summary>
@@ -306,7 +303,7 @@ namespace System.Management.Automation.InteropServices
                 {
                     fixed (void* pThis = &this)
                     {
-                        VariantClear((IntPtr)pThis);
+                        Interop.Windows.VariantClear((nint)pThis);
                     }
                 }
 

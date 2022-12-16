@@ -67,10 +67,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecification">The module specification as a hashtable.</param>
         public ModuleSpecification(Hashtable moduleSpecification)
         {
-            if (moduleSpecification == null)
-            {
-                throw new ArgumentNullException(nameof(moduleSpecification));
-            }
+            ArgumentNullException.ThrowIfNull(moduleSpecification);
 
             var exception = ModuleSpecificationInitHelper(this, moduleSpecification);
             if (exception != null)
@@ -172,10 +169,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ModuleSpecification(PSModuleInfo moduleInfo)
         {
-            if (moduleInfo == null)
-            {
-                throw new ArgumentNullException(nameof(moduleInfo));
-            }
+            ArgumentNullException.ThrowIfNull(moduleInfo);
 
             this.Name = moduleInfo.Name;
             this.Version = moduleInfo.Version;

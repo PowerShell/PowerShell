@@ -24,6 +24,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
         }
 
         It 'gets the error stream from minishell' {
+            $PSNativeCommandUseErrorActionPreference = $false
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
             ($output | Measure-Object).Count | Should -Be 1
             $output | Should -BeOfType System.Management.Automation.ErrorRecord

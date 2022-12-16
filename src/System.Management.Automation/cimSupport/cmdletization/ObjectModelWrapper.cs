@@ -17,25 +17,17 @@ namespace Microsoft.PowerShell.Cmdletization
     {
         internal void Initialize(PSCmdlet cmdlet, string className, string classVersion, IDictionary<string, string> privateData)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet);
 
             if (string.IsNullOrEmpty(className))
             {
                 throw new ArgumentNullException(nameof(className));
             }
 
-            if (classVersion == null) // possible and ok to have classVersion==string.Empty
-            {
-                throw new ArgumentNullException(nameof(classVersion));
-            }
+            // possible and ok to have classVersion==string.Empty
+            ArgumentNullException.ThrowIfNull(classVersion);
 
-            if (privateData == null)
-            {
-                throw new ArgumentNullException(nameof(privateData));
-            }
+            ArgumentNullException.ThrowIfNull(privateData);
 
             _cmdlet = cmdlet;
             _className = className;

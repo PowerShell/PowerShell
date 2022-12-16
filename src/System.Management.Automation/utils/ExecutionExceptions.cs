@@ -30,10 +30,7 @@ namespace System.Management.Automation
         internal CmdletInvocationException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
             if (errorRecord.Exception != null)
@@ -55,10 +52,7 @@ namespace System.Management.Automation
                                            InvocationInfo invocationInfo)
             : base(RetrieveMessage(innerException), innerException)
         {
-            if (innerException == null)
-            {
-                throw new ArgumentNullException(nameof(innerException));
-            }
+            ArgumentNullException.ThrowIfNull(innerException);
             // invocationInfo may be null
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
@@ -201,10 +195,7 @@ namespace System.Management.Automation
                     InvocationInfo myInvocation)
             : base(GetInnerException(innerException), myInvocation)
         {
-            if (innerException == null)
-            {
-                throw new ArgumentNullException(nameof(innerException));
-            }
+            ArgumentNullException.ThrowIfNull(innerException);
 
             _providerInvocationException = innerException;
         }
@@ -464,10 +455,7 @@ namespace System.Management.Automation
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
-            if (error == null)
-            {
-                throw new ArgumentNullException(nameof(error));
-            }
+            ArgumentNullException.ThrowIfNull(error);
 
             _errorRecord = error;
         }
@@ -492,10 +480,7 @@ namespace System.Management.Automation
                                                string message)
             : this(invocationInfo, message)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }

@@ -48,15 +48,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="parameterSetName">The name of the parameter set this parameter is in.</param>
         public ParameterViewModel(ShowCommandParameterInfo parameter, string parameterSetName)
         {
-            if (parameter == null)
-            {
-                throw new ArgumentNullException("parameter");
-            }
+            ArgumentNullException.ThrowIfNull(parameter);
 
-            if (parameterSetName == null)
-            {
-                throw new ArgumentNullException("parameterSetName");
-            }
+            ArgumentNullException.ThrowIfNull(parameterSetName);
 
             this.parameter = parameter;
             this.parameterSetName = parameterSetName;

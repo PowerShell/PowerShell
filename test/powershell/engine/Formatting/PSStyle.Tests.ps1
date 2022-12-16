@@ -9,6 +9,8 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
             Blink = "`e[5m"
             BoldOff = "`e[22m"
             Bold = "`e[1m"
+            DimOff = "`e[22m"
+            Dim = "`e[2m"
             HiddenOff = "`e[28m"
             Hidden = "`e[8m"
             ReverseOff = "`e[27m"
@@ -225,6 +227,8 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
         @{ Submember = 'Blink' }
         @{ Submember = 'BoldOff' }
         @{ Submember = 'Bold' }
+        @{ Submember = 'DimOff' }
+        @{ Submember = 'Dim' }
         @{ Submember = 'HiddenOff' }
         @{ Submember = 'Hidden' }
         @{ Submember = 'ItalicOff' }

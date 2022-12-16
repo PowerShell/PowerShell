@@ -328,12 +328,15 @@
     <value>Maximum size for drive has been exceeded: {0}.</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create symbolic link because the path {0} already exists.</value>
+    <value>Cannot create link because the path already exists: {0}.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
     <value>Skip already-visited directory {0}.</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
     <value>Destination path cannot be a subdirectory of the source: {0}.</value>
+  </data>
+  <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
+    <value>The target and path cannot be the same.</value>
   </data>
 </root>

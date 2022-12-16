@@ -1702,10 +1702,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal ReadOnlyBag(HashSet<T> hashset)
         {
-            if (hashset == null)
-            {
-                throw new ArgumentNullException(nameof(hashset));
-            }
+            ArgumentNullException.ThrowIfNull(hashset);
 
             _hashset = hashset;
         }
@@ -1743,10 +1740,7 @@ namespace System.Management.Automation.Internal
     {
         internal static void NotNull(object value, string paramName)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            ArgumentNullException.ThrowIfNull(value, paramName);
         }
 
         internal static void NotNullOrEmpty(string value, string paramName)
@@ -1759,7 +1753,9 @@ namespace System.Management.Automation.Internal
 
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            if (value == null || value.Count == 0)
+            ArgumentNullException.ThrowIfNull(value, paramName);
+
+            if (value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
             }

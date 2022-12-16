@@ -107,8 +107,10 @@ namespace System.Management.Automation.PerformanceData
             CounterSetId = counterSetId;
             CounterSetInstType = counterSetInstType;
             CounterSetName = counterSetName;
-            if ((counterInfoArray == null)
-                || (counterInfoArray.Length == 0))
+
+            ArgumentNullException.ThrowIfNull(counterInfoArray);
+
+            if (counterInfoArray.Length == 0)
             {
                 throw new ArgumentNullException(nameof(counterInfoArray));
             }
@@ -134,10 +136,7 @@ namespace System.Management.Automation.PerformanceData
         protected CounterSetRegistrarBase(
             CounterSetRegistrarBase srcCounterSetRegistrarBase)
         {
-            if (srcCounterSetRegistrarBase == null)
-            {
-                throw new ArgumentNullException(nameof(srcCounterSetRegistrarBase));
-            }
+            ArgumentNullException.ThrowIfNull(srcCounterSetRegistrarBase);
 
             ProviderId = srcCounterSetRegistrarBase.ProviderId;
             CounterSetId = srcCounterSetRegistrarBase.CounterSetId;
@@ -241,10 +240,7 @@ namespace System.Management.Automation.PerformanceData
             PSCounterSetRegistrar srcPSCounterSetRegistrar)
             : base(srcPSCounterSetRegistrar)
         {
-            if (srcPSCounterSetRegistrar == null)
-            {
-                throw new ArgumentNullException(nameof(srcPSCounterSetRegistrar));
-            }
+            ArgumentNullException.ThrowIfNull(srcPSCounterSetRegistrar);
         }
 
         #endregion

@@ -2460,10 +2460,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A list of UsingExpressionAsts ordered by the StartOffset.</returns>
         private static List<VariableExpressionAst> GetUsingVariables(ScriptBlock localScriptBlock)
         {
-            if (localScriptBlock == null)
-            {
-                throw new ArgumentNullException(nameof(localScriptBlock), "Caller needs to make sure the parameter value is not null");
-            }
+            ArgumentNullException.ThrowIfNull(localScriptBlock, "Caller needs to make sure the parameter value is not null");
 
             var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressions(localScriptBlock.Ast);
             return allUsingExprs.Select(static usingExpr => UsingExpressionAst.ExtractUsingVariable((UsingExpressionAst)usingExpr)).ToList();

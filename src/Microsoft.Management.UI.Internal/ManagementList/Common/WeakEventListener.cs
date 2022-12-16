@@ -20,10 +20,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="handler">The handler for the event.</param>
         public WeakEventListener(EventHandler<TEventArgs> handler)
         {
-            if (handler == null)
-            {
-                throw new ArgumentNullException("handler");
-            }
+            ArgumentNullException.ThrowIfNull(handler);
 
             this.realHander = handler;
         }

@@ -76,10 +76,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("propertyDisplayName");
             }
 
-            if (rules == null)
-            {
-                throw new ArgumentNullException("rules");
-            }
+            ArgumentNullException.ThrowIfNull(rules);
 
             this.PropertyName = propertyName;
             this.DisplayName = propertyDisplayName;
