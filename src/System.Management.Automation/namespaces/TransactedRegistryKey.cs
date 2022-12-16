@@ -1388,8 +1388,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ComVisible(false)]
         public unsafe void SetValue(string name, object value, RegistryValueKind valueKind)
         {
-            if (value == null)
-                throw new ArgumentNullException(RegistryProviderStrings.Arg_Value);
+            ArgumentNullException.ThrowIfNull(value, RegistryProviderStrings.Arg_Value);
 
             if (name != null && name.Length > MaxValueNameLength)
             {
@@ -2031,10 +2030,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         private static void ValidateKeyName(string name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(RegistryProviderStrings.Arg_Name);
-            }
+            ArgumentNullException.ThrowIfNull(name, RegistryProviderStrings.Arg_Name);
 
             int nextSlash = name.IndexOf('\\');
             int current = 0;

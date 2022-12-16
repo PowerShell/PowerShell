@@ -3738,11 +3738,7 @@ namespace System.Management.Automation.Runspaces
 
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
-            if (psSnapInInfo == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(psSnapInInfo);
 
             // See if the snapin is already loaded. If has been then there will be an entry in the
             // Assemblies list for it already...
@@ -3918,11 +3914,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void ImportCmdletsFromAssembly(Assembly assembly, PSModuleInfo module)
         {
-            if (assembly == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(assembly);
 
             string assemblyPath = assembly.Location;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(
