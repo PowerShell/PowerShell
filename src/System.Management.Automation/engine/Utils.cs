@@ -1755,7 +1755,6 @@ namespace System.Management.Automation.Internal
         {
             ArgumentNullException.ThrowIfNull(value, paramName);
 
-            // in .NET8.0 -> ArgumentOutOfRangeException.ThrowIfZero(value.Count, paramName);
             if (value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
