@@ -1990,7 +1990,10 @@ namespace System.Management.Automation
                 for (var i = MIN_LEN - 1; i < runningHash.Length; i++)
                 {
                     var result = LookupHash(runningHash[i]);
-                    if (result != null)
+
+                    // Length of string we found must be the same one we evaluated the hash for.
+                    // The check reduces false positives.
+                    if (result != null && result.Length == i)
                     {
                         return result;
                     }
@@ -2001,7 +2004,9 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Scan a string for suspicious content.
-            ///
+            /// </summary>
+            /// <returns>The string matching one of suspicious strings, or null.</returns>
+            /// <remark>
             /// This is based on the Rubin-Karp algorithm, but heavily
             /// modified to support searching for multiple patterns at
             /// the same time.
@@ -2015,8 +2020,7 @@ namespace System.Management.Automation
             /// computing the hash for the longer patterns. This lets us
             /// use a much simpler hash as well - we can avoid the use of
             /// mod.
-            /// </summary>
-            /// <returns>The string matching the hash, or null.</returns>
+            /// </remark>
             public static string Match(string text)
             {
                 // The values in the array are the computed hashes of length
@@ -2031,34 +2035,42 @@ namespace System.Management.Automation
                     h |= 0x20;
                     if (!((uint)(h - 'a') <= 'z' - 'a' || h == '-'))
                     {
-                        // If the character isn't in any of our patterns,
-                        // don't bother hashing and reset the running length.
+                        // The character isn't in 'A'-'Z', 'a'-'z', '-'.
+                        // so we don't bother hashing and reset the running length.
                         longestPossiblePattern = 0;
                         continue;
                     }
 
+                    // The first 'h' character will fill only the first cell of the hash array.
+                    // The second will fill only the first and second, and so on.
+                    // As long as we haven't filled the whole array, we don't need the unused tail.
                     Span<uint> rh = runningHash.Slice(0, Math.Min(i + 1, runningHash.Length));
-                    for (int j = rh.Length - 1; j > 0; j--)
-                    {
-                        // Say our input is: `Emit` (our shortest pattern, len 4).
-                        // Towards the end just before matching, we will:
-                        //
-                        // iter n: compute hash on `Emi` (len 3)
-                        // iter n+1: compute hash on `Emit` (len 4) using hash from previous iteration (j-1)
-                        // iter n+1: compute hash on `mit` (len 3)
-                        //    This overwrites the previous iteration, hence we go from longest to shortest.
-                        //
-                        // The original code is:   rh[j] = 31 * rh[j - 1] + h;
-                        // The number '31' comes from a trivial (bad) random number generator,
-                        // but it's sufficient for us - the hashes for our patterns
-                        // are unique, and processing of 2200 files found no false matches.
-                        //
-                        // Then replace multiplication with more efficient operations.
-                        uint v = rh[j - 1];
-                        rh[j] = (v << 5) - v + h;
-                    }
 
-                    runningHash[0] = h;
+                    // 'v' keeps a hash from a previous cell of the array.
+                    // The original algorithm is:   rh[j] = 31 * rh[j - 1] + h;
+                    // and we have: v = 31 * v + h;
+                    // Then replace multiplication with more efficient operations.
+                    // and we have: v = (v << 5) - v + h;
+                    // The number '31' comes from a trivial (bad) random number generator,
+                    // but it's sufficient for us - the hashes for our patterns
+                    // are unique, and processing of 2200 files found no false matches.
+                    uint v = 0;
+                    for (int j = 0; j < rh.Length; j++)
+                    {
+                        // Say our input is: `EmitQ` (our shortest pattern, len 4):
+                        // h='E',v=0 -> slice to 0           -> in loop
+                        //                                       v=0, rh[0]=E
+                        // h='m',v=0 -> slice to E,0         -> in loop
+                        //                                       v=E, rh[0]=m,rh[1]=0
+                        //                                       v=., rh[0]=m,rh[1]=E+m
+                        // h='i',v=0 -> slice to m,E+m,0     -> in loop
+                        //                                       v=m+i,   rh[0]=i,rh[1]=E+m,  rh[1]=0
+                        //                                       v=E+m,   rh[0]=i,rh[1]=E+m+i,rh[1]=0
+                        //                                       v=.,     rh[0]=i,rh[1]=E+m+i,rh[1]=E+m+i
+                        // and so on.
+                        v = (v << 5) - v + h;
+                        (rh[j], v) = (v, rh[j]);
+                    }
 
                     if (++longestPossiblePattern >= MIN_LEN)
                     {
