@@ -1993,7 +1993,7 @@ namespace System.Management.Automation
 
                     // Length of string we found must be the same one we evaluated the hash for.
                     // The check reduces false positives.
-                    if (result != null && result.Length == i)
+                    if (result != null && result.Length == (i + 1))
                     {
                         return result;
                     }
