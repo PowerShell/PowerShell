@@ -1253,7 +1253,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!hidden || Force || showHidden || filterHidden || switchFilterHidden)
                 {
-                    s_tracer.WriteLine($"Got file info: {result}");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Got file info: {result}");
                     return result;
                 }
             }
@@ -1272,7 +1272,7 @@ namespace Microsoft.PowerShell.Commands
                 // also return the object
                 if (isRootPath || !hidden || Force || showHidden || filterHidden || switchFilterHidden)
                 {
-                    s_tracer.WriteLine($"Got directory info: {result}");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Got directory info: {result}");
                     return new DirectoryInfo(path);
                 }
             }

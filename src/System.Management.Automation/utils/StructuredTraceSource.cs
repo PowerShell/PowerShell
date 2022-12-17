@@ -919,9 +919,10 @@ namespace System.Management.Automation
 
         /// <summary> Traces the formatted output when <see cref="PSTraceSourceOptions.WriteLine"/> is enabled.</summary>
         /// <param name="handler">The interpolated string handler.</param>
-        internal void WriteLine([InterpolatedStringHandlerArgument("")] WriteLineIfInterpolatedStringHandler handler)
+        /// <param name="option">Helper parameter to hold <see cref="PSTraceSourceOptions.WriteLine"/>.</param>
+        internal void Write(PSTraceSourceOptions option, [InterpolatedStringHandlerArgument("", "option")] WriteLineIfInterpolatedStringHandler handler)
         {
-            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & option) != PSTraceSourceOptions.None)
             {
                 this.TraceSource.TraceInformation(handler.ToStringAndClear());
             }
@@ -1149,18 +1150,19 @@ namespace System.Management.Automation
         /// Add trace prefix to the interpolated string handler buffer.
         /// </summary>
         /// <param name="handler">Buffer to add the prefix to.</param>
-        /// <param name="traceOptionName">Name of <see cref="PSTraceSourceOptions"/> flag that traced.</param>
+        /// <param name="traceOption">Name of <see cref="PSTraceSourceOptions"/> flag that traced.</param>
         /// <param name="classPrefix">This is the trace class prefix. For instance, TraceError has a prefix like "ERROR: ".</param>
         internal void AppendFormatOutputLinePrefix(
             ref DefaultInterpolatedStringHandler handler,
-            string traceOptionName,
+            PSTraceSourceOptions traceOption,
             string classPrefix)
         {
             try
             {
                 if (ShowHeaders)
                 {
-                    handler.AppendFormatted(traceOptionName, -11);
+                    // -12 is length+1 of largest element from PSTraceSourceOptions, i.e. 'Constructor'.
+                    handler.AppendFormatted(Enum.GetName<PSTraceSourceOptions>(traceOption), -12);
                 }
 
                 // Add the spaces for the indent.
@@ -1176,7 +1178,7 @@ namespace System.Management.Automation
             }
             catch
             {
-                // Eat all exceptions
+                // Eat all exceptions.
                 //
                 // Do not assert here because exceptions can be
                 // raised while a thread is shutting down during
@@ -1919,7 +1921,7 @@ namespace System.Management.Automation
     [InterpolatedStringHandler]
     internal ref struct WriteLineIfInterpolatedStringHandler
     {
-        /// <summary>The handler we use to perform the conditional formatting in <see cref="PSTraceSource.WriteLine(WriteLineIfInterpolatedStringHandler)"/>.</summary>
+        /// <summary>The handler we use to perform the conditional formatting in <see cref="PSTraceSource.Write(PSTraceSourceOptions, WriteLineIfInterpolatedStringHandler)"/>.</summary>
         private DefaultInterpolatedStringHandler _handler;
 
         /// <summary>Creates an instance of the handler.</summary>
@@ -1927,10 +1929,11 @@ namespace System.Management.Automation
         /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
         /// <param name="trace">Instance of current <see cref="PSTraceSource"/>.</param>
         /// <param name="shouldAppend">A value indicating whether formatting should proceed.</param>
+        /// <param name="option">A flag of <see cref="PSTraceSource"/>.</param>
         /// <remarks>This is intended to be called only by compiler-generated code. Arguments are not validated as they'd otherwise be for members intended to be used directly.</remarks>
-        public WriteLineIfInterpolatedStringHandler(int literalLength, int formattedCount, PSTraceSource trace, out bool shouldAppend)
+        public WriteLineIfInterpolatedStringHandler(int literalLength, int formattedCount, PSTraceSource trace, PSTraceSourceOptions option, out bool shouldAppend)
         {
-            if ((trace.Options & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((trace.Options & option) != PSTraceSourceOptions.None)
             {
                 _handler = new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.CurrentCulture);
 
@@ -1938,7 +1941,7 @@ namespace System.Management.Automation
 
                 trace.AppendFormatOutputLinePrefix(
                     ref _handler,
-                    nameof(PSTraceSourceOptions.WriteLine),
+                    option,
                     PSTraceSource.writeLineFormatter);
 
             }
