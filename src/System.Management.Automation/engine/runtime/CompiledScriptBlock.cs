@@ -2105,7 +2105,7 @@ namespace System.Management.Automation
                 uint h = 0;
                 foreach (var c in pattern)
                 {
-                    h = LCG * h + ToLower(c);
+                    h = 31 * h + ToLower(c);
                 }
 
                 return h;
