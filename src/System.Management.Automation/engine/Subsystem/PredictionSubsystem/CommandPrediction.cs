@@ -142,7 +142,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="history">History command lines provided as references for prediction.</param>
         public static void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history)
         {
-            Requires.NotNull(history, nameof(history));
+            ArgumentNullException.ThrowIfNull(history, nameof(history));
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -250,6 +250,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         public static void OnSuggestionAccepted(PredictionClient client, Guid predictorId, uint session, string suggestionText)
         {
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
+            
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
