@@ -250,7 +250,6 @@ namespace System.Management.Automation.Subsystem.Prediction
         public static void OnSuggestionAccepted(PredictionClient client, Guid predictorId, uint session, string suggestionText)
         {
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
-            
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
