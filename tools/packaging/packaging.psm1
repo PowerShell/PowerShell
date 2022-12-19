@@ -2832,6 +2832,9 @@ function New-NugetContentPackage
         $Force
     )
 
+    Write-Log "Setting dotnet root"
+    Find-Dotnet -SetDotnetRoot
+
     Write-Log "PackageVersion: $PackageVersion"
     $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
     Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
