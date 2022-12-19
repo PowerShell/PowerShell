@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// </summary>
         internal SearchMode SearchMode { get; } = SearchMode.Unique;
 
-        private static EnumerationOptions _enumerationOptions = new()
+        private static readonly EnumerationOptions _enumerationOptions = new()
         {
             IgnoreInaccessible = false,
             AttributesToSkip = 0,
