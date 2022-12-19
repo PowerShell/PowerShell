@@ -2832,11 +2832,6 @@ function New-NugetContentPackage
         $Force
     )
 
-    Write-Log "Performing start PS boot strap"
-    Start-PSBootstrap
-
-    Start-NativeExecution -sb { dotnet --info }
-
     Write-Log "PackageVersion: $PackageVersion"
     $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
     Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
