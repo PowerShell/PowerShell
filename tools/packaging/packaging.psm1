@@ -2832,8 +2832,8 @@ function New-NugetContentPackage
         $Force
     )
 
-    Write-Log "Setting dotnet root"
-    Find-Dotnet -SetDotnetRoot
+    Write-Log "Performing start PS boot strap"
+    Start-PSBootstrap
 
     Start-NativeExecution -sb { dotnet --info }
 
