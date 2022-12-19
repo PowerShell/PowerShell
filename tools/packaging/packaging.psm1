@@ -2835,6 +2835,8 @@ function New-NugetContentPackage
     Write-Log "Setting dotnet root"
     Find-Dotnet -SetDotnetRoot
 
+    Start-NativeExecution -sb { dotnet --info }
+
     Write-Log "PackageVersion: $PackageVersion"
     $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
     Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
