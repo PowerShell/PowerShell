@@ -74,6 +74,7 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
+      Find-Dotnet -SetDotnetRoot
       Invoke-CIFinish -Runtime ${{ parameters.runtimePrefix }}-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Package
     displayName: Package and Test
     workingDirectory: $(repoPath)
