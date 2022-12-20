@@ -421,7 +421,7 @@ namespace System.Management.Automation
                     if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.OrdinalIgnoreCase))
                     {
                         var psobjectPropertyList = new List<PSMemberNameAndType>();
-                        foreach (var property in PSObject.AsPSObject(value).Properties)
+                        foreach (var property in ((PSObject)value).Properties)
                         {
                             if (property.IsHidden)
                             {
