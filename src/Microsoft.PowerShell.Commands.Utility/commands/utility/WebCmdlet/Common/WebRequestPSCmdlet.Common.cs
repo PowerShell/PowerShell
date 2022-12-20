@@ -1807,14 +1807,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string linkHeader in links)
                 {
-                    MatchCollection matchCollection = Regex.Matches(link, pattern);
+                    MatchCollection matchCollection = Regex.Matches(linkHeader, pattern);
                     foreach (Match match in matchCollection)
                     {
                         if (match.Success)
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url is not string.Empty && rel is not string.Empty && !_relationLink.ContainsKey(rel))
+                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri);
