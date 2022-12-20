@@ -1807,7 +1807,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string linkHeader in links)
                 {
-                    MatchCollection matchCollection = Regex.Matches(link, pattern)
+                    MatchCollection matchCollection = Regex.Matches(link, pattern);
                     foreach (Match match in matchCollection)
                     {
                         if (match.Success)
