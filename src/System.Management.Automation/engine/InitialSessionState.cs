@@ -4445,6 +4445,12 @@ end {
                     ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
                 new SessionStateVariableEntry(
+                    SpecialVariables.IsFreeBSD,
+                    Platform.IsFreeBSD,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+                new SessionStateVariableEntry(
                     SpecialVariables.IsCoreCLR,
                     Platform.IsCoreCLR,
                     string.Empty,

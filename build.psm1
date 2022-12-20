@@ -128,10 +128,12 @@ function Get-EnvironmentInformation
         $environment += @{'IsCoreCLR' = [System.Management.Automation.Platform]::IsCoreCLR}
         $environment += @{'IsLinux' = [System.Management.Automation.Platform]::IsLinux}
         $environment += @{'IsMacOS' = [System.Management.Automation.Platform]::IsMacOS}
+        $environment += @{'IsFreeBSD' = [System.Management.Automation.Platform]::IsFreeBSD}
     } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
+        $environment += @{'IsFreeBSD' = $false}
     }
 
     if ($environment.IsWindows)
@@ -312,6 +314,7 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -914,7 +917,7 @@ function New-PSOptions {
 
     $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
-    } elseif ($environment.IsLinux -or $environment.IsMacOS) {
+    } elseif ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         "pwsh"
     } elseif ($environment.IsWindows) {
         "pwsh.exe"

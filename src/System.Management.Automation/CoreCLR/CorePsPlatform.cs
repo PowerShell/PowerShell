@@ -60,6 +60,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// True if the current platform is FreeBSD.
+        /// </summary>
+        public static bool IsFreeBSD
+        {
+            get
+            {
+                return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD);
+            }
+        }
+
+        /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
         public static bool IsNanoServer

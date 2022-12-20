@@ -553,6 +553,11 @@ namespace System.Management.Automation
                 folderName = "osx-" + processArch;
                 ext = ".dylib";
             }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                folderName = "freebsd-x64";
+                ext = ".so";
+            }
 
             return folderName;
         }

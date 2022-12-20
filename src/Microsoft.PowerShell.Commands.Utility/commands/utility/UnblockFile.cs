@@ -145,6 +145,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                string errorMessage = UnblockFileStrings.FreeBSDNotSupported;
+                Exception e = new PlatformNotSupportedException(errorMessage);
+                ThrowTerminatingError(new ErrorRecord(exception: e, errorId: "FreeBSDNotSupported", ErrorCategory.NotImplemented, targetObject: null));
+                return;
+            }
+
             foreach (string path in pathsToProcess)
             {
                 if (IsBlocked(path))

@@ -147,6 +147,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return "Linux";
                 }
+                else if (Platform.IsFreeBSD)
+                {
+                    return "FreeBSD";
+                }
                 else
                 {
                     // unknown/unsupported platform
