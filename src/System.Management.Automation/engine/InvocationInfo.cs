@@ -294,7 +294,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    return MyCommand.Context.SessionState.Path.CurrentFileSystemLocation.ProviderPath;
+                    return string.Empty;
                 }
             }
         }
