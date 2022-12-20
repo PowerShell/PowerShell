@@ -42,6 +42,6 @@ if ($Harvest) {
         $needHarvest | Format-List | Out-String -Width 9999 | Write-Verbose -Verbose
         throw "There are $($needHarvest.Count) packages that need to be harvested"
     } else {
-        Write-Host "All packages have been harvested"
+        Write-Verbose "All packages have been harvested" -Verbose
     }
 }
