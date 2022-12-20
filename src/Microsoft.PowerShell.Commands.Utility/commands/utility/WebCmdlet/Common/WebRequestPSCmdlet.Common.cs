@@ -1799,7 +1799,7 @@ namespace Microsoft.PowerShell.Commands
                 _relationLink.Clear();
             }
 
-            // we only support the URL in angle brackets and `rel`, other attributes are ignored
+            // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
             const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
             IEnumerable<string> links;
@@ -1807,14 +1807,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string linkHeader in links)
                 {
-                    foreach (string link in linkHeader.Split(','))
+                    MatchCollection matchCollection = Regex.Matches(link, pattern)
+                    foreach (Match match in matchCollection)
                     {
-                        Match match = Regex.Match(link, pattern);
                         if (match.Success)
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
+                            if (url is not string.Empty && rel is not string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri);
