@@ -1533,7 +1533,7 @@ namespace Microsoft.PowerShell.Commands
                                     string detailMsg = string.Empty;
                                     StreamReader reader = null;
                                     try
-                                    { 
+                                    {
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
                                         if (ContentHelper.IsXml(contentType))
                                         {
