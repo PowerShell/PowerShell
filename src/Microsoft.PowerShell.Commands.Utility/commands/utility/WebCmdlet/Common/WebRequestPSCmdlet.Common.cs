@@ -1945,11 +1945,11 @@ namespace Microsoft.PowerShell.Commands
 
             XmlWriterSettings settings = new XmlWriterSettings();
 
-            settings.encoding = ContentHelper.GetDefaultEncoding(); 
+            settings.Encoding = ContentHelper.GetDefaultEncoding(); 
             if (doc.FirstChild is XmlDeclaration)
             {
                 XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
-                settings.encoding = Encoding.GetEncoding(decl.Encoding);
+                settings.Encoding = Encoding.GetEncoding(decl.Encoding);
             }
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
