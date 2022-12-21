@@ -1967,7 +1967,6 @@ namespace Microsoft.PowerShell.Commands
                 // remove HTML tags making it easier to read
                 return System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
             }
-
         }
     }
 }
