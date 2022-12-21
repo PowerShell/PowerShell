@@ -1537,7 +1537,7 @@ namespace Microsoft.PowerShell.Commands
                                     try
                                     {
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        detailMsg = new FormatErrorMessage(reader.ReadToEnd(), contentType);
+                                        detailMsg = FormatErrorMessage(reader.ReadToEnd(), contentType);
                                     }
                                     catch (Exception)
                                     {
@@ -1964,7 +1964,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // remove HTML tags making it easier to read
-                return System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
+                return System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
             }
         }
     }
