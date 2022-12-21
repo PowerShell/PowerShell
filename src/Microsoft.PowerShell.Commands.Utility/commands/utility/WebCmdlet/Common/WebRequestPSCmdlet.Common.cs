@@ -1944,7 +1944,13 @@ namespace Microsoft.PowerShell.Commands
             doc.LoadXml(xml);
 
             XmlWriterSettings settings = new XmlWriterSettings();
-            //settings.Encoding = ;
+
+            settings.encoding = ContentHelper.GetDefaultEncoding(); 
+            if (doc.FirstChild is XmlDeclaration)
+            {
+                settings.encoding = Encoding.GetEncoding(doc.FirstChild.Encoding);
+            }
+            settings.Encoding = doc.FirstChild is XmlDeclaration ? Encoding.GetEncoding(doc.FirstChild.Encoding) : ContentHelper.GetDefaultEncoding();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
             settings.OmitXmlDeclaration = true;
