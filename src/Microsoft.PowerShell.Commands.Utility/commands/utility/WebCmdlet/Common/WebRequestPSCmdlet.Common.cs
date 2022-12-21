@@ -1953,13 +1953,12 @@ namespace Microsoft.PowerShell.Commands
 
                 string xmlError = System.Text.RegularExpressions.Regex.Replace(stringBuilder.ToString(), "</.*>", string.Empty);
                 return System.Text.RegularExpressions.Regex.Replace(xmlError, "<(.*)>", "$1: ");
-
             }
             else if (ContentHelper.IsJson(contentType))
             {
 	            JsonNode jsonNode = JsonNode.Parse(error);
-    	        JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-                
+                JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+
                 return jsonNode.ToJsonString(options);
             }
             else
