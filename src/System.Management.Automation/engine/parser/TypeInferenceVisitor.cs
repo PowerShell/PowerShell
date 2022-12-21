@@ -418,7 +418,7 @@ namespace System.Management.Automation
                 {
                     var typeObject = value.GetType();
                     
-                    if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.OrdinalIgnoreCase))
+                    if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.Ordinal))
                     {
                         var psobjectPropertyList = new List<PSMemberNameAndType>();
                         foreach (var property in ((PSObject)value).Properties)
