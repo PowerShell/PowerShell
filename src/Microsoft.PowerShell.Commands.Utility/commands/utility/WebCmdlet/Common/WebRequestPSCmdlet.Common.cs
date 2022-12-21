@@ -1948,9 +1948,9 @@ namespace Microsoft.PowerShell.Commands
             settings.encoding = ContentHelper.GetDefaultEncoding(); 
             if (doc.FirstChild is XmlDeclaration)
             {
-                settings.encoding = Encoding.GetEncoding(doc.FirstChild.Encoding);
+                XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                settings.encoding = Encoding.GetEncoding(decl.Encoding);
             }
-            settings.Encoding = doc.FirstChild is XmlDeclaration ? Encoding.GetEncoding(doc.FirstChild.Encoding) : ContentHelper.GetDefaultEncoding();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
             settings.OmitXmlDeclaration = true;
