@@ -1533,11 +1533,13 @@ namespace Microsoft.PowerShell.Commands
                                     string detailMsg = string.Empty;
                                     StreamReader reader = null;
                                     try
-                                    {
+                                    { 
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        if (ContentHelper.IsXml())
+                                        if (ContentHelper.IsXml(contentType))
                                         {
-
+                                            string Error = XmlError(reader.ReadToEnd());
+                                            Error = System.Text.RegularExpressions.Regex.Replace(Error, "</.*>", string.Empty);
+                                            detailMsg = System.Text.RegularExpressions.Regex.Replace(Error, "<(.*)>", "$1: ");
                                         }
                                         else
                                         {
@@ -1934,5 +1936,23 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
         #endregion Helper Methods
+
+        private static String XmlError(string xml)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            //settings.Encoding = ;
+            settings.Indent = true;
+            settings.NewLineOnAttributes = true;
+            settings.OmitXmlDeclaration = true;
+
+            XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+            doc.Save(xmlWriter);
+
+            return stringBuilder.ToString();
+        }
     }
 }
