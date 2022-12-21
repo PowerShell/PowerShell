@@ -16,6 +16,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1535,17 +1537,7 @@ namespace Microsoft.PowerShell.Commands
                                     try
                                     {
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        if (ContentHelper.IsXml(contentType))
-                                        {
-                                            string Error = XmlError(reader.ReadToEnd());
-                                            Error = System.Text.RegularExpressions.Regex.Replace(Error, "</.*>", string.Empty);
-                                            detailMsg = System.Text.RegularExpressions.Regex.Replace(Error, "<(.*)>", "$1: ");
-                                        }
-                                        else
-                                        {
-                                            // remove HTML tags making it easier to read
-                                            detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
-                                        }
+                                        detailMsg = new FormatErrorMessage(reader.ReadToEnd(), contentType);
                                     }
                                     catch (Exception)
                                     {
@@ -1937,28 +1929,45 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Helper Methods
 
-        private static String XmlError(string xml)
+        private static string FormatErrorMessage(string error, string contentType)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-
-            XmlWriterSettings settings = new XmlWriterSettings();
-
-            settings.Encoding = ContentHelper.GetDefaultEncoding(); 
-            if (doc.FirstChild is XmlDeclaration)
+            if (ContentHelper.IsXml(contentType))
             {
-                XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
-                settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                StringBuilder stringBuilder = new StringBuilder();
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(error);
+
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.NewLineOnAttributes = true;
+                settings.OmitXmlDeclaration = true;
+                settings.Encoding = ContentHelper.GetDefaultEncoding();
+                if (doc.FirstChild is XmlDeclaration)
+                {
+                    XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                    settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                }
+
+                XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+                doc.Save(xmlWriter);
+
+                string xmlError = System.Text.RegularExpressions.Regex.Replace(stringBuilder.ToString(), "</.*>", string.Empty);
+                return System.Text.RegularExpressions.Regex.Replace(xmlError, "<(.*)>", "$1: ");
+
             }
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
-            settings.OmitXmlDeclaration = true;
+            else if (ContentHelper.IsJson(contentType))
+            {
+	            JsonNode jsonNode = JsonNode.Parse(error);
+    	        JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+                
+                return jsonNode.ToJsonString(options);
+            }
+            else
+            {
+                // remove HTML tags making it easier to read
+                return System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
+            }
 
-            XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
-            doc.Save(xmlWriter);
-
-            return stringBuilder.ToString();
         }
     }
 }
