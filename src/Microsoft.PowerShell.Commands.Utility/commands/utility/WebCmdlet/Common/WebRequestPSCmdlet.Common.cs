@@ -815,8 +815,9 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
         /// </summary>
         /// <param name="message">Message for the exception.</param>
+        /// <param name="statusCode">Status Code from the HTTP server</param>
         /// <param name="response">Response from the HTTP server.</param>
-        public HttpResponseException(string message, HttpResponseMessage response) : base(message)
+        public HttpResponseException(string message, HttpStatusCode statusCode, HttpResponseMessage response) : base(message, null, statusCode)
         {
             Response = response;
         }
@@ -1528,7 +1529,7 @@ namespace Microsoft.PowerShell.Commands
                                         (int)response.StatusCode,
                                         response.ReasonPhrase);
 
-                                    HttpResponseException httpEx = new(message, response);
+                                    HttpResponseException httpEx = new(message, response.StatusCode, response);
                                     ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                     string detailMsg = string.Empty;
                                     StreamReader reader = null;
