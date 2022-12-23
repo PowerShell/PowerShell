@@ -913,22 +913,8 @@ namespace Microsoft.PowerShell.Commands
             switch (Method)
             {
                 case WebRequestMethod.Default:
-                case WebRequestMethod.Get:
                     return HttpMethod.Get;
-                case WebRequestMethod.Head:
-                    return HttpMethod.Head;
-                case WebRequestMethod.Post:
-                    return HttpMethod.Post;
-                case WebRequestMethod.Put:
-                    return HttpMethod.Put;
-                case WebRequestMethod.Delete:
-                    return HttpMethod.Delete;
-                case WebRequestMethod.Trace:
-                    return HttpMethod.Trace;
-                case WebRequestMethod.Options:
-                    return HttpMethod.Options;
                 default:
-                    // Merge and Patch
                     return new HttpMethod(Method.ToString().ToUpperInvariant());
             }
         }
