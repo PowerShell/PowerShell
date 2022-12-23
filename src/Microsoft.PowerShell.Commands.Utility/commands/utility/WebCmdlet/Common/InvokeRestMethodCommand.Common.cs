@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// Intended to work against the wide spectrum of "RESTful" web services
     /// currently deployed across the web.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
+    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706")]
     public class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
         #region Parameters
@@ -28,8 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the parameter Method.
         /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
+        [Parameter]
         public override WebRequestMethod Method
         {
             get { return base.Method; }
@@ -40,15 +39,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the parameter CustomMethod.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public override string CustomMethod
         {
             get { return base.CustomMethod; }
 
-            set { base.CustomMethod = value; }
+            set { base.CustomMethod = value.ToUpperInvariant(); }
         }
 
         /// <summary>
