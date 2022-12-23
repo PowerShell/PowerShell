@@ -815,7 +815,6 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
         /// </summary>
         /// <param name="message">Message for the exception.</param>
-        /// <param name="statusCode">Status Code from the HTTP server.</param>
         /// <param name="response">Response from the HTTP server.</param>
         public HttpResponseException(string message, HttpResponseMessage response) : base(message)
         {
