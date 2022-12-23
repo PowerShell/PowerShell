@@ -264,6 +264,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "StandardMethodNoProxy")]
         public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Default;
 
+        private string _custommethod;
+
         /// <summary>
         /// Gets or sets the CustomMethod property.
         /// </summary>
@@ -271,7 +273,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod { get; set; }
+        public virtual string CustomMethod
+        {
+            get => _custommethod;
+
+            set => _custommethod = value.ToUpperInvariant();
+        }
 
         #endregion
 
@@ -681,7 +688,7 @@ namespace Microsoft.PowerShell.Commands
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if (bodyAsDictionary is not null
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
+                    || (IsCustomMethodSet() && CustomMethod == "GET")))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query is not null && uriBuilder.Query.Length > 1)
@@ -1017,7 +1024,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!string.IsNullOrEmpty(CustomMethod))
                     {
                         // set the method if the parameter was provided
-                        httpMethod = new HttpMethod(CustomMethod.ToUpperInvariant());
+                        httpMethod = new HttpMethod(CustomMethod);
                     }
 
                     break;
@@ -1126,7 +1133,7 @@ namespace Microsoft.PowerShell.Commands
                 // request
             }
             // ContentType is null
-            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
+            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod == "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
@@ -1217,7 +1224,7 @@ namespace Microsoft.PowerShell.Commands
             if (request.Content is null)
             {
                 // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
-                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET"))
+                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod == "GET"))
                 {
                     return;
                 }
