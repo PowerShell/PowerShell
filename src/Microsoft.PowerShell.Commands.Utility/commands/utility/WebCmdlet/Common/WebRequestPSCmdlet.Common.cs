@@ -1951,8 +1951,7 @@ namespace Microsoft.PowerShell.Commands
                 XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
                 doc.Save(xmlWriter);
 
-                string xmlError = System.Text.RegularExpressions.Regex.Replace(stringBuilder.ToString(), "</.*>", string.Empty);
-                return Environment.NewLine + System.Text.RegularExpressions.Regex.Replace(xmlError, "<(.*)>", "$1: ");
+                return Environment.NewLine + stringBuilder.ToString()
             }
             else if (ContentHelper.IsJson(contentType))
             {
@@ -1963,8 +1962,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // remove HTML tags making it easier to read
-                return System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
+                return Environment.NewLine + error;
             }
         }
     }
