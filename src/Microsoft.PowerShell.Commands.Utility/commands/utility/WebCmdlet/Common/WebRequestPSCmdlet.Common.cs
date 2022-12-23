@@ -260,8 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Method property.
         /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
+        [Parameter]
         public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Get;
 
         private string _custommethod;
@@ -269,8 +268,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the CustomMethod property.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public virtual string CustomMethod
@@ -287,8 +285,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the NoProxy property.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
-        [Parameter(Mandatory = true, ParameterSetName = "StandardMethodNoProxy")]
+        [Parameter]
         public virtual SwitchParameter NoProxy { get; set; }
 
         #endregion
@@ -298,23 +295,20 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Proxy property.
         /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "CustomMethod")]
+        [Parameter]
         public virtual Uri Proxy { get; set; }
 
         /// <summary>
         /// Gets or sets the ProxyCredential property.
         /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "CustomMethod")]
+        [Parameter]
         [Credential]
         public virtual PSCredential ProxyCredential { get; set; }
 
         /// <summary>
         /// Gets or sets the ProxyUseDefaultCredentials property.
         /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "CustomMethod")]
+        [Parameter]
         public virtual SwitchParameter ProxyUseDefaultCredentials { get; set; }
 
         #endregion
@@ -687,8 +681,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if (bodyAsDictionary is not null
-                && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                    || (IsCustomMethodSet() && CustomMethod == "GET")))
+                && ((Method == WebRequestMethod.Default || Method == WebRequestMethod.Get) || CustomMethod == "GET"))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query is not null && uriBuilder.Query.Length > 1)
@@ -767,16 +760,6 @@ namespace Microsoft.PowerShell.Commands
             var ex = new ValidationMetadataException(msg);
             var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
             return error;
-        }
-
-        private bool IsStandardMethodSet()
-        {
-            return (ParameterSetName == "StandardMethod" || ParameterSetName == "StandardMethodNoProxy");
-        }
-
-        private bool IsCustomMethodSet()
-        {
-            return (ParameterSetName == "CustomMethod" || ParameterSetName == "CustomMethodNoProxy");
         }
 
         private string GetBasicAuthorizationHeader()
@@ -1103,7 +1086,7 @@ namespace Microsoft.PowerShell.Commands
                 // request
             }
             // ContentType is null
-            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod == "POST"))
+            else if (Method == WebRequestMethod.Post || CustomMethod == "POST")
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
@@ -1194,7 +1177,7 @@ namespace Microsoft.PowerShell.Commands
             if (request.Content is null)
             {
                 // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
-                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod == "GET"))
+                if ((request.Method == HttpMethod.Get && ContentType is null) || CustomMethod == "GET")
                 {
                     return;
                 }
