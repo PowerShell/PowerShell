@@ -1009,15 +1009,11 @@ namespace Microsoft.PowerShell.Commands
 
             switch (ParameterSetName)
             {
-                case "StandardMethodNoProxy":
-                    goto case "StandardMethod";
-                case "StandardMethod":
+                case "StandardMethod" or "StandardMethodNoProxy":
                     // set the method if the parameter was provided
                     httpMethod = GetHttpMethod(Method);
                     break;
-                case "CustomMethodNoProxy":
-                    goto case "CustomMethod";
-                case "CustomMethod":
+                case "CustomMethod" or "CustomMethodNoProxy":
                     if (!string.IsNullOrEmpty(CustomMethod))
                     {
                         // set the method if the parameter was provided
