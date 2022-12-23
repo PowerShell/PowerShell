@@ -998,23 +998,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpRequestMessage GetRequest(Uri uri)
         {
             Uri requestUri = PrepareUri(uri);
-            HttpMethod httpMethod = null;
-
-            switch (ParameterSetName)
-            {
-                case "StandardMethod" or "StandardMethodNoProxy":
-                    // set the method if the parameter was provided
-                    httpMethod = GetHttpMethod(Method);
-                    break;
-                case "CustomMethod" or "CustomMethodNoProxy":
-                    if (!string.IsNullOrEmpty(CustomMethod))
-                    {
-                        // set the method if the parameter was provided
-                        httpMethod = new HttpMethod(CustomMethod);
-                    }
-
-                    break;
-            }
+            HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
             // create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
