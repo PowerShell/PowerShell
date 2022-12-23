@@ -1951,7 +1951,7 @@ namespace Microsoft.PowerShell.Commands
                 XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
                 doc.Save(xmlWriter);
 
-                return Environment.NewLine + stringBuilder.ToString()
+                return Environment.NewLine + stringBuilder.ToString();
             }
             else if (ContentHelper.IsJson(contentType))
             {
