@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "StandardMethodNoProxy")]
-        public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Default;
+        public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Get;
 
         private string _custommethod;
 
