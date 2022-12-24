@@ -263,8 +263,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Get;
 
-        private string _custommethod;
-
         /// <summary>
         /// Gets or sets the CustomMethod property.
         /// </summary>
@@ -277,6 +275,8 @@ namespace Microsoft.PowerShell.Commands
 
             set => _custommethod = value.ToUpperInvariant();
         }
+
+        private string _custommethod;
 
         #endregion
 
