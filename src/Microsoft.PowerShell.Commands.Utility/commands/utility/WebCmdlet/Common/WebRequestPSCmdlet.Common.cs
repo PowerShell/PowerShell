@@ -1962,7 +1962,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return Environment.NewLine + error;
+                return error;
             }
         }
     }
