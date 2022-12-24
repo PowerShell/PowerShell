@@ -443,7 +443,7 @@ namespace System.Management.Automation
 
         internal static int NonWindowsGetProcessParentPid(int pid)
         {
-            return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+            return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : IsFreeBSD ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
         internal static bool NonWindowsKillProcess(int pid)

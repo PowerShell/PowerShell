@@ -2061,7 +2061,7 @@ function Start-PSBootstrap {
     }
 
     try {
-        if ($environment.IsLinux -or $environment.IsMacOS) {
+        if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }

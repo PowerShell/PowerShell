@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "New-Object" -Tags "CI" {
     It "Support 'ComObject' parameter on platforms" {
-        if ($IsLinux -or $IsMacOS ) {
+        if ($IsLinux -or $IsMacOS -or $IsFreeBSD) {
             { New-Object -ComObject "Shell.Application" } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         } else {
             # It works on NanoServer and IoT too

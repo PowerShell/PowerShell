@@ -72,7 +72,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
-    It "should throw 'NotSupportedException' when you add-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
+    It "should throw 'NotSupportedException' when you add-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS -Or $IsFreeBSD) {
       { Add-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 

@@ -9,10 +9,12 @@ function Get-EnvInformation
         $environment += @{'IsCoreCLR' = [System.Management.Automation.Platform]::IsCoreCLR}
         $environment += @{'IsLinux' = [System.Management.Automation.Platform]::IsLinux}
         $environment += @{'IsMacOS' = [System.Management.Automation.Platform]::IsMacOS}
+        $environment += @{'IsFreeBSD' = [System.Management.Automation.Platform]::IsFreeBSD}
     } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
+        $environment += @{'IsFreeBSD' = $false}
     }
 
     if ($environment.IsWindows)
@@ -592,7 +594,7 @@ function New-PSOptions {
 
     $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
-    } elseif ($environment.IsLinux -or $environment.IsMacOS) {
+    } elseif ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         "pwsh"
     } elseif ($environment.IsWindows) {
         "pwsh.exe"
@@ -1905,6 +1907,10 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsMacOS})]
         [string] $MacOSRuntime,
 
+        [ValidateSet('freebsd-x64', 'freebsd-arm64')]
+        [ValidateScript({$Environment.IsFreeBSD})]
+        [string] $FreeBSDRuntime,
+
         [Switch] $Force,
 
         [Switch] $SkipReleaseChecks,
@@ -1941,6 +1947,8 @@ function Start-PSPackage {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
+        }  elseif ($FreeBSDRuntime) {
+           $FreeBSDRuntime, "Release"
         } elseif ($Type -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm") {
@@ -1973,6 +1981,8 @@ function Start-PSPackage {
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
         } elseif ($MacOSRuntime) {
             $NameSuffix = $MacOSRuntime
+        } elseif ($FreeBSDRuntime) {
+            $NameSuffix = $FreeBSDRuntime
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
@@ -2547,10 +2557,12 @@ function New-UnixPackage {
             New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
         }
 
-        # Follow the Filesystem Hierarchy Standard for Linux and macOS
+        # Follow the Filesystem Hierarchy Standard for Linux, macOS, and FreeBSD
         $Destination = if ($Environment.IsLinux) {
             "/opt/microsoft/powershell/$Suffix"
         } elseif ($Environment.IsMacOS) {
+            "/usr/local/microsoft/powershell/$Suffix"
+        } elseif ($Environment.IsFreeBSD) {
             "/usr/local/microsoft/powershell/$Suffix"
         }
 

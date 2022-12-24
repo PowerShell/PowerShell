@@ -555,7 +555,7 @@ namespace System.Management.Automation
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
             {
-                folderName = "freebsd-x64";
+                folderName = "freebsd-" + processArch;
                 ext = ".so";
             }
 
