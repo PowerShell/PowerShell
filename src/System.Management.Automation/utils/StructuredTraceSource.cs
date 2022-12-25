@@ -917,12 +917,12 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary> Traces the formatted output when <see cref="PSTraceSourceOptions.WriteLine"/> is enabled.</summary>
+        /// <summary>Traces the formatted output.</summary>
         /// <param name="handler">The interpolated string handler.</param>
-        /// <param name="option">Helper parameter to hold <see cref="PSTraceSourceOptions.WriteLine"/>.</param>
-        internal void Write(PSTraceSourceOptions option, [InterpolatedStringHandlerArgument("", "option")] OutputLineIfInterpolatedStringHandler handler)
+        /// <param name="traceType">Trace type based on <see cref="PSTraceSourceOptions"/>.</param>
+        internal void Write(PSTraceSourceOptions traceType, [InterpolatedStringHandlerArgument("", "traceType")] OutputLineIfInterpolatedStringHandler handler)
         {
-            if ((_flags & option) != PSTraceSourceOptions.None)
+            if ((_flags & traceType) != PSTraceSourceOptions.None)
             {
                 this.TraceSource.TraceInformation(handler.ToStringAndClear());
             }
