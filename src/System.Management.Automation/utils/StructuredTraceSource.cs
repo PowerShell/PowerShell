@@ -928,56 +928,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal void WriteLine(string format, bool arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, byte arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, char arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, decimal arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, double arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, float arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, int arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, long arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, uint arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
-        internal void WriteLine(string format, ulong arg1)
-        {
-            WriteLine(format, (object)arg1.ToString());
-        }
-
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
         /// </summary>
