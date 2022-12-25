@@ -1172,17 +1172,6 @@ namespace System.Management.Automation
                 int threadIndentLevel = ThreadIndentLevel;
 
                 handler.AppendLiteral(System.Management.Automation.Internal.StringUtil.Padding(indentSize * threadIndentLevel));
-
-                string classPrefix = traceOption switch
-                {
-                    PSTraceSourceOptions.Error => errorFormatter,
-                    PSTraceSourceOptions.Verbose => verboseFormatter,
-                    PSTraceSourceOptions.Warning => warningFormatter,
-                    PSTraceSourceOptions.WriteLine => writeLineFormatter,
-                    _ => string.Empty
-                };
-
-                handler.AppendLiteral(classPrefix);
             }
             catch
             {
