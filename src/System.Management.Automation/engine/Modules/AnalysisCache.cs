@@ -84,7 +84,7 @@ namespace System.Management.Automation
             if (result != null)
             {
                 s_cacheData.QueueSerialization();
-                ModuleIntrinsics.Tracer.WriteLine("Returning {0} exported commands.", result.Count);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Returning {result.Count} exported commands.");
             }
             else
             {
@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 {
                     if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
-                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
+                        ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
                         return null;
                     }
 
@@ -495,7 +495,7 @@ namespace System.Management.Automation
             // -SkipEditionCheck, since it will break subsequent sessions
             if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && !module.IsConsideredEditionCompatible)
             {
-                ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module '{module.Name}' not edition compatible and not cached.");
                 return;
             }
 

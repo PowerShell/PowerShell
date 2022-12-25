@@ -421,9 +421,7 @@ namespace System.Management.Automation
                                     }
                                 }
 
-                                bindingTracer.WriteLine(
-                                    "result returned from DATA GENERATION: {0}",
-                                    parameterValue);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"result returned from DATA GENERATION: {parameterValue}");
                             }
                             catch (Exception e) // Catch-all OK, 3rd party callout
                             {
@@ -1046,9 +1044,7 @@ namespace System.Management.Automation
                                 currentValue = _command.CurrentPipelineObject;
                             }
 
-                            bindingTracer.WriteLine(
-                                "The parameter is of type [{0}] and the argument is an PSObject, so the parameter value is the argument value wrapped into an PSObject.",
-                                toType);
+                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"The parameter is of type [{toType}] and the argument is an PSObject, so the parameter value is the argument value wrapped into an PSObject.");
                             result = LanguagePrimitives.AsPSObjectOrNull(currentValue);
                             break;
                         }
@@ -1265,9 +1261,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        bindingTracer.WriteLine(
-                            "CONVERT SUCCESSFUL using LanguagePrimitives.ConvertTo: [{0}]",
-                            (result == null) ? "null" : result.ToString());
+                        bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"CONVERT SUCCESSFUL using LanguagePrimitives.ConvertTo: [{result?.ToString() ?? "null"}]");
                     } while (false);
                 }
                 catch (NotSupportedException notSupported)
@@ -1463,14 +1457,9 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                bindingTracer.WriteLine(
-                    "Binding collection parameter {0}: argument type [{1}], parameter type [{2}], collection type {3}, element type [{4}], {5}",
-                    parameterName,
-                    (currentValue == null) ? "null" : currentValue.GetType().Name,
-                    toType,
-                    collectionTypeInformation.ParameterCollectionType,
-                    collectionTypeInformation.ElementType,
-                    coerceElementTypeIfNeeded ? "coerceElementType" : "no coerceElementType");
+                bindingTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Binding collection parameter {parameterName}: argument type [{currentValue?.GetType().Name ?? "null"}], parameter type [{toType}], collection type {collectionTypeInformation.ParameterCollectionType}, element type [{collectionTypeInformation.ElementType}], {(coerceElementTypeIfNeeded ? "coerceElementType" : "no coerceElementType")}");
 
                 if (currentValue == null)
                 {
@@ -1489,10 +1478,8 @@ namespace System.Management.Automation
                 {
                     numberOfElements = currentValueAsIList.Count;
 
-                    s_tracer.WriteLine("current value is an IList with {0} elements", numberOfElements);
-                    bindingTracer.WriteLine(
-                        "Arg is IList with {0} elements",
-                        numberOfElements);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"current value is an IList with {numberOfElements} elements");
+                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Arg is IList with {numberOfElements} elements");
                 }
 
                 object resultCollection = null;
@@ -1530,9 +1517,7 @@ namespace System.Management.Automation
                 else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList ||
                          collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.ICollectionGeneric)
                 {
-                    bindingTracer.WriteLine(
-                        "Creating collection [{0}]",
-                        toType);
+                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Creating collection [{toType}]");
 
                     // Create an instance of the parameter type
 
@@ -1685,9 +1670,7 @@ namespace System.Management.Automation
                     // to set the value.
                     int arrayIndex = 0;
 
-                    bindingTracer.WriteLine(
-                        "Argument type {0} is IList",
-                        currentValue.GetType());
+                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Argument type {currentValue.GetType()} is IList");
 
                     foreach (object valueElement in currentValueAsIList)
                     {
@@ -1745,16 +1728,12 @@ namespace System.Management.Automation
                             }
                             else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                             {
-                                bindingTracer.WriteLine(
-                                    "Adding element of type {0} via IList.Add",
-                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding element of type {currentValueElement?.GetType().Name ?? "null"} via IList.Add");
                                 resultAsIList.Add(currentValueElement);
                             }
                             else
                             {
-                                bindingTracer.WriteLine(
-                                    "Adding element of type {0} via ICollection<T>::Add()",
-                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding element of type {currentValueElement?.GetType().Name ?? "null"} via ICollection<T>::Add()");
                                 addMethod.Invoke(resultCollection, new object[1] { currentValueElement });
                             }
                         }
@@ -1787,17 +1766,13 @@ namespace System.Management.Automation
                 }
                 else // (currentValueAsIList == null)
                 {
-                    bindingTracer.WriteLine(
-                        "Argument type {0} is not IList, treating this as scalar",
-                        currentValue.GetType().Name);
+                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Argument type {currentValue.GetType().Name} is not IList, treating this as scalar");
 
                     if (collectionElementType != null)
                     {
                         if (coerceElementTypeIfNeeded)
                         {
-                            bindingTracer.WriteLine(
-                                "Coercing scalar arg value to type {0}",
-                                collectionElementType);
+                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Coercing scalar arg value to type {collectionElementType}");
 
                             // Coerce the scalar type into the collection
 
@@ -1817,9 +1792,7 @@ namespace System.Management.Automation
                             if (currentValueElementType != desiredElementType &&
                                 !currentValueElementType.IsSubclassOf(desiredElementType))
                             {
-                                bindingTracer.WriteLine(
-                                    "COERCION REQUIRED: Did not coerce scalar arg value to type {1}",
-                                    collectionElementType);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"COERCION REQUIRED: Did not coerce scalar arg value to type {collectionElementType}");
 
                                 coercionRequired = true;
                                 break;
@@ -1834,24 +1807,19 @@ namespace System.Management.Automation
                         if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array ||
                             isSystemDotArray)
                         {
-                            bindingTracer.WriteLine(
-                                "Adding scalar element of type {0} to array position {1}",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name,
-                                0);
+                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding scalar element of type {currentValue.GetType().Name ?? "null"} to array position {0}");
                             resultAsIList[0] = currentValue;
                         }
                         else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                         {
-                            bindingTracer.WriteLine(
-                                "Adding scalar element of type {0} via IList.Add",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name);
+                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding scalar element of type {currentValue?.GetType().Name ?? "null"} via IList.Add");
                             resultAsIList.Add(currentValue);
                         }
                         else
                         {
-                            bindingTracer.WriteLine(
-                                "Adding scalar element of type {0} via ICollection<T>::Add()",
-                                (currentValue == null) ? "null" : currentValue.GetType().Name);
+                            bindingTracer.Write(
+                                PSTraceSourceOptions.WriteLine,
+                                $"Adding scalar element of type {currentValue?.GetType().Name ?? "null"} via ICollection<T>::Add()");
                             addMethod.Invoke(resultCollection, new object[1] { currentValue });
                         }
                     }

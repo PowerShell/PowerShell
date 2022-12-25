@@ -4987,7 +4987,7 @@ namespace System.Management.Automation
                 WildcardPattern nameMatch = MemberMatch.GetNamePattern(name);
                 PSMemberInfoInternalCollection<T> allMembers = GetIntegratedMembers(matchOptions);
                 ReadOnlyPSMemberInfoCollection<T> returnValue = new ReadOnlyPSMemberInfoCollection<T>(MemberMatch.Match(allMembers, name, nameMatch, memberTypes));
-                PSObject.MemberResolution.WriteLine("{0} total matches.", returnValue.Count);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"{returnValue.Count} total matches.");
                 return returnValue;
             }
         }
@@ -5074,13 +5074,13 @@ namespace System.Management.Automation
                     if (integratingCollection._mshOwner != null)
                     {
                         integratingCollection.GenerateAllReservedMembers();
-                        PSObject.MemberResolution.WriteLine("Enumerating PSObject with type \"{0}\".", integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName);
-                        PSObject.MemberResolution.WriteLine("PSObject instance members: {0}", _allMembers.VisibleCount);
+                        PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Enumerating PSObject with type \"{integratingCollection._mshOwner.ImmediateBaseObject.GetType().FullName}\".");
+                        PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"PSObject instance members: {_allMembers.VisibleCount}");
                     }
                     else
                     {
-                        PSObject.MemberResolution.WriteLine("Enumerating PSMemberSet \"{0}\".", integratingCollection._memberSetOwner.Name);
-                        PSObject.MemberResolution.WriteLine("MemberSet instance members: {0}", _allMembers.VisibleCount);
+                        PSObject.MemberResolution.WriteLine("Enumerating PSMemberSet \"{integratingCollection._memberSetOwner.Name}\".");
+                        PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"MemberSet instance members: {_allMembers.VisibleCount}");
                     }
                 }
             }

@@ -170,7 +170,7 @@ namespace System.Management.Automation
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
-            tracer.WriteLine("Getting member with name {0}", memberName);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Getting member with name {memberName}");
 
             if (!(obj is ManagementBaseObject mgmtObject))
             {
@@ -600,7 +600,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(pData != null,
                 "Input PropertyData should not be null");
 
-            tracer.WriteLine("Getting DotNet Type for CimType : {0}", pData.Type);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Getting DotNet Type for CimType : {pData.Type}");
 
             string retValue;
             switch (pData.Type)
@@ -864,7 +864,7 @@ namespace System.Management.Automation
                 inParameterString.Remove(inParameterString.Length - 2, 2);
             }
 
-            tracer.WriteLine("Constructing method definition for method {0}", mData.Name);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Constructing method definition for method {mData.Name}");
             StringBuilder builder = new StringBuilder();
 
             builder.Append("System.Management.ManagementBaseObject ");
@@ -874,7 +874,7 @@ namespace System.Management.Automation
             builder.Append(')');
 
             string returnValue = builder.ToString();
-            tracer.WriteLine("Definition constructed: {0}", returnValue);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Definition constructed: {returnValue}");
 
             return returnValue;
         }
@@ -993,7 +993,7 @@ namespace System.Management.Automation
         protected override object InvokeManagementMethod(ManagementObject wmiObject,
             string methodName, ManagementBaseObject inParams)
         {
-            tracer.WriteLine("Invoking class method: {0}", methodName);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Invoking class method: {methodName}");
 
             ManagementClass mClass = wmiObject as ManagementClass;
 
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
             {
                 if (members[methodEntry.Name] == null)
                 {
-                    tracer.WriteLine("Adding method {0}", methodEntry.Name);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Adding method {methodEntry.Name}");
                     members.Add(new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T);
                 }
             }
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected override object InvokeManagementMethod(ManagementObject obj, string methodName, ManagementBaseObject inParams)
         {
-            tracer.WriteLine("Invoking class method: {0}", methodName);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Invoking class method: {methodName}");
 
             try
             {
@@ -1224,7 +1224,7 @@ namespace System.Management.Automation
             {
                 if (members[methodEntry.Name] == null)
                 {
-                    tracer.WriteLine("Adding method {0}", methodEntry.Name);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Adding method {methodEntry.Name}");
                     members.Add(new PSMethod(methodEntry.Name, this, wmiObject, methodEntry) as T);
                 }
             }

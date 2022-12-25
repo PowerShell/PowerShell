@@ -454,7 +454,7 @@ namespace System.Management.Automation
 
             s_pathResolutionTracer.WriteLine("DRIVE-RELATIVE path: {0}", relativePath);
             s_pathResolutionTracer.WriteLine("Drive: {0}", drive.Name);
-            s_pathResolutionTracer.WriteLine("Provider: {0}", drive.Provider);
+            s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Provider: {drive.Provider}");
 
             // Associate the drive with the context
 
@@ -764,7 +764,7 @@ namespace System.Management.Automation
                     providerInstance = null;
                     s_tracer.WriteLine("provider returned a null path so return an empty array");
 
-                    s_pathResolutionTracer.WriteLine("Provider '{0}' returned null", provider);
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Provider '{provider}' returned null");
                     return new Collection<string>();
                 }
 
@@ -1250,7 +1250,7 @@ namespace System.Management.Automation
                 provider = _sessionState.Path.CurrentLocation.Provider;
 
                 s_pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", result);
-                s_pathResolutionTracer.WriteLine("Provider: {0}", provider);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Provider: {provider}");
             }
             else if (IsProviderQualifiedPath(path))
             {
@@ -1264,7 +1264,7 @@ namespace System.Management.Automation
                 provider = _sessionState.Internal.GetSingleProvider(providerId);
 
                 s_pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", result);
-                s_pathResolutionTracer.WriteLine("Provider: {0}", provider);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Provider: {provider}");
             }
             else
             {
@@ -1284,7 +1284,7 @@ namespace System.Management.Automation
 
                 s_pathResolutionTracer.WriteLine("DRIVE-RELATIVE path: {0}", relativePath);
                 s_pathResolutionTracer.WriteLine("Drive: {0}", drive.Name);
-                s_pathResolutionTracer.WriteLine("Provider: {0}", drive.Provider);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Provider: {drive.Provider}");
 
                 // Associate the drive with the context
 
@@ -2532,18 +2532,18 @@ namespace System.Management.Automation
             if (context != null)
             {
                 bool includePresent = context.Include != null && context.Include.Count > 0;
-                s_pathResolutionTracer.WriteLine("INCLUDE filter present: {0}", includePresent);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"INCLUDE filter present: {includePresent}");
 
                 bool excludePresent = context.Exclude != null && context.Exclude.Count > 0;
-                s_pathResolutionTracer.WriteLine("EXCLUDE filter present: {0}", excludePresent);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"EXCLUDE filter present: {excludePresent}");
 
                 contextContainsIncludeExclude = includePresent || excludePresent;
 
                 contextContainsNoGlob = context.SuppressWildcardExpansion;
-                s_pathResolutionTracer.WriteLine("NOGLOB parameter present: {0}", contextContainsNoGlob);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"NOGLOB parameter present: {contextContainsNoGlob}");
             }
 
-            s_pathResolutionTracer.WriteLine("Path contains wildcard characters: {0}", pathContainsGlobCharacters);
+            s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path contains wildcard characters: {pathContainsGlobCharacters}");
 
             return (pathContainsGlobCharacters || contextContainsIncludeExclude) && (!contextContainsNoGlob);
         }
@@ -2842,11 +2842,9 @@ namespace System.Management.Automation
                                     {
                                         // If not, remove it from the collection
 
-                                        s_tracer.WriteLine(
-                                            "Removing {0} because it is not a container",
-                                            dirs[index]);
+                                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Removing {dirs[index]} because it is not a container");
 
-                                        s_pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
+                                        s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"{dirs[index]} is not a container");
                                         dirs.RemoveAt(index);
                                     }
                                     else if (navigationProvider == null)
@@ -2860,7 +2858,7 @@ namespace System.Management.Automation
                                     }
                                     else
                                     {
-                                        s_pathResolutionTracer.WriteLine("{0} is a container", dirs[index]);
+                                        s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"{dirs[index]} is a container");
 
                                         // If so, leave it and move on to the next one
 
@@ -3807,11 +3805,9 @@ namespace System.Management.Automation
                                     {
                                         // If not, remove it from the collection
 
-                                        s_tracer.WriteLine(
-                                            "Removing {0} because it is not a container",
-                                            dirs[index]);
+                                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Removing {dirs[index]} because it is not a container");
 
-                                        s_pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
+                                        s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"{dirs[index]} is not a container");
                                         dirs.RemoveAt(index);
                                     }
                                     else if (navigationProvider == null)
@@ -3825,7 +3821,7 @@ namespace System.Management.Automation
                                     }
                                     else
                                     {
-                                        s_pathResolutionTracer.WriteLine("{0} is a container", dirs[index]);
+                                        s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"{dirs[index]} is a container");
 
                                         // If so, leave it and move on to the next one
 
@@ -4360,7 +4356,7 @@ namespace System.Management.Automation
                 // First see if the child matches the glob expression
                 bool isGlobbed = WildcardPattern.ContainsWildcardCharacters(stringMatcher.Pattern);
                 bool isChildMatch = stringMatcher.IsMatch(childName);
-                s_tracer.WriteLine("isChildMatch = {0}", isChildMatch);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"isChildMatch = {isChildMatch}");
 
                 bool isIncludeSpecified = (includeMatcher.Count > 0);
                 bool isExcludeSpecified = (excludeMatcher.Count > 0);
@@ -4370,12 +4366,12 @@ namespace System.Management.Automation
                         includeMatcher,
                         true);
 
-                s_tracer.WriteLine("isIncludeMatch = {0}", isIncludeMatch);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"isIncludeMatch = {isIncludeMatch}");
 
                 // Check if the child name matches, or the include matches
                 if (isChildMatch || (isGlobbed && isIncludeSpecified && isIncludeMatch))
                 {
-                    s_pathResolutionTracer.WriteLine("Path wildcard match: {0}", childName);
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path wildcard match: {childName}");
                     result = true;
 
                     // See if it should not be included
@@ -4707,7 +4703,7 @@ namespace System.Management.Automation
                         includeString.AppendFormat("{0} ", includeFilter);
                     }
 
-                    s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Include: {includeString}");
                 }
 
                 if (context.Exclude != null)
@@ -4719,7 +4715,7 @@ namespace System.Management.Automation
                         excludeString.AppendFormat("{0} ", excludeFilter);
                     }
 
-                    s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Exclude: {excludeString}");
                 }
             }
         }

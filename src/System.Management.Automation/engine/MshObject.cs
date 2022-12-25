@@ -108,7 +108,7 @@ namespace System.Management.Automation
             }
 
             PSMemberInfoInternalCollection<T> members = typeTableToUse.GetMembers<T>(msjObj.InternalTypeNames);
-            PSObject.MemberResolution.WriteLine("Type table members: {0}.", members.Count);
+            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Type table members: {members.Count}.");
             return members;
         }
 
@@ -194,12 +194,12 @@ namespace System.Management.Automation
                     return new PSMemberInfoInternalCollection<T>();
                 }
 
-                PSObject.MemberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.AdaptedMembers.Count);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Serialized adapted members: {msjObj.AdaptedMembers.Count}.");
                 return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.AdaptedMembers);
             }
 
             PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
-            PSObject.MemberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
+            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Adapted members: {retValue.VisibleCount}.");
             return retValue;
         }
 
@@ -209,7 +209,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
-                PSObject.MemberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"DotNet members: {retValue.VisibleCount}.");
                 return retValue;
             }
 

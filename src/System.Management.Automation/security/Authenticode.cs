@@ -418,7 +418,7 @@ namespace System.Management.Automation
 
                 if (error != Win32Errors.NO_ERROR)
                 {
-                    s_tracer.WriteLine("GetWinTrustData failed: {0:x}", error);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"GetWinTrustData failed: {error:x}");
                 }
 
                 signature = GetSignatureFromWintrustData(fileName, error, wtd);
@@ -430,7 +430,7 @@ namespace System.Management.Automation
 
                 if (error != Win32Errors.NO_ERROR)
                 {
-                    s_tracer.WriteLine("DestroyWinTrustDataStruct failed: {0:x}", error);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DestroyWinTrustDataStruct failed: {error:x}");
                 }
             }
             catch (AccessViolationException)
@@ -517,7 +517,7 @@ namespace System.Management.Automation
             uint error,
             WinTrustMethods.WINTRUST_DATA wtd)
         {
-            s_tracer.WriteLine("GetSignatureFromWintrustData: error: {0}", error);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"GetSignatureFromWintrustData: error: {error}");
 
             Signature signature = null;
             if (TryGetProviderSigner(wtd.hWVTStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert))

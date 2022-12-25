@@ -711,8 +711,8 @@ namespace System.Management.Automation.Remoting
                     {
                         // The runspace pool may have been removed on the client side,
                         // so, we should just ignore the message.
-                        s_trace.WriteLine(@"Client received data for Runspace (id: {0}),
-                            but the Runspace cannot be found", clientRunspacePoolId);
+                        s_trace.Write(PSTraceSourceOptions.WriteLine, $@"Client received data for Runspace (id: {clientRunspacePoolId}),
+                            but the Runspace cannot be found");
                     }
 
                     break;

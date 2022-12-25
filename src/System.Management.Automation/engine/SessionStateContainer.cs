@@ -4298,7 +4298,7 @@ namespace System.Management.Automation
                         providerDestinationPath,
                         context);
 
-                    s_tracer.WriteLine("destinationIsContainer = {0}", destinationIsContainer);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destinationIsContainer = {destinationIsContainer}");
                 }
 
                 foreach (string providerPath in providerPaths)
@@ -4326,7 +4326,7 @@ namespace System.Management.Automation
                             providerPath,
                             context);
 
-                    s_tracer.WriteLine("sourceIsContainer = {0}", sourceIsContainer);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"sourceIsContainer = {sourceIsContainer}");
 
                     if (sourceIsContainer)
                     {

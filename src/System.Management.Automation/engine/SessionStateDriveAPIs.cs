@@ -446,7 +446,7 @@ namespace System.Management.Automation
 
                     if (result != null)
                     {
-                        s_tracer.WriteLine("Drive found in scope {0}", scopeID);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Drive found in scope {scopeID}");
                         break;
                     }
                 }

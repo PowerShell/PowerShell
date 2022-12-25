@@ -1853,7 +1853,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -1976,7 +1976,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -2027,7 +2027,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -2081,7 +2081,7 @@ namespace System.Management.Automation.Remoting.Client
                 sessionTM.EnqueueAndStartProcessingThread(null, null,
                     new CompletionEventArgs(CompletionNotification.DisconnectCompleted));
 
-                // Log ETW traces                
+                // Log ETW traces
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManCloseShellCallbackReceived,
                     PSOpcode.Disconnect,
@@ -2109,7 +2109,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -2228,7 +2228,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -2311,7 +2311,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -2391,7 +2391,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for context {sessionTMHandle}.");
                 return;
             }
 
@@ -2440,7 +2440,7 @@ namespace System.Management.Automation.Remoting.Client
             WSManNativeApi.WSManReceiveDataResult dataReceived = WSManNativeApi.WSManReceiveDataResult.UnMarshal(data);
             if (dataReceived.data != null)
             {
-                tracer.WriteLine("Session Received Data : {0}", dataReceived.data.Length);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Session Received Data : {dataReceived.data.Length}");
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManReceiveShellOutputExCallbackReceived, PSOpcode.Receive, PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
@@ -2477,7 +2477,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void SendData(byte[] data, DataPriorityType priorityType)
         {
-            tracer.WriteLine("Session sending data of size : {0}", data.Length);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Session sending data of size : {data.Length}");
             byte[] package = data;
 
             #region SHIM: Redirection code for session data send.
@@ -3354,7 +3354,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("OnCreateCmdCompleted: Unable to find a transport manager for the command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"OnCreateCmdCompleted: Unable to find a transport manager for the command context {cmdContextId}.");
                 return;
             }
 
@@ -3466,7 +3466,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("OnConnectCmdCompleted: Unable to find a transport manager for the command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"OnConnectCmdCompleted: Unable to find a transport manager for the command context {cmdContextId}.");
                 return;
             }
 
@@ -3548,7 +3548,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("OnCloseCmdCompleted callback received for operation context {0}", commandOperationHandle);
+            tracer.WriteLine($"OnCloseCmdCompleted callback received for operation context {commandOperationHandle}");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManCloseCommandCallbackReceived,
@@ -3562,11 +3562,11 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("OnCloseCmdCompleted: Unable to find a transport manager for the command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"OnCloseCmdCompleted: Unable to find a transport manager for the command context {cmdContextId}.");
                 return;
             }
 
-            tracer.WriteLine("Close completed callback received for command: {0}", cmdTM._cmdContextId);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Close completed callback received for command: {cmdTM._cmdContextId}");
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManCloseCommandCallbackReceived,
                 PSOpcode.Disconnect,
@@ -3605,7 +3605,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for the command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for the command context {cmdContextId}.");
                 return;
             }
 
@@ -3699,7 +3699,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for the given command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for the given command context {cmdContextId}.");
                 return;
             }
 
@@ -3757,7 +3757,7 @@ namespace System.Management.Automation.Remoting.Client
             WSManNativeApi.WSManReceiveDataResult dataReceived = WSManNativeApi.WSManReceiveDataResult.UnMarshal(data);
             if (dataReceived.data != null)
             {
-                tracer.WriteLine("Cmd Received Data : {0}", dataReceived.data.Length);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Cmd Received Data : {dataReceived.data.Length}");
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManReceiveShellOutputExCallbackReceived, PSOpcode.Receive, PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
@@ -3789,7 +3789,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for the given command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for the given command context {cmdContextId}.");
                 return;
             }
 
@@ -3852,7 +3852,7 @@ namespace System.Management.Automation.Remoting.Client
             if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
             {
                 // We dont have the command TM handle..just return.
-                tracer.WriteLine("Unable to find a transport manager for the given command context {0}.", cmdContextId);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find a transport manager for the given command context {cmdContextId}.");
                 return;
             }
 
@@ -3988,7 +3988,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void SendData(byte[] data, DataPriorityType priorityType)
         {
-            tracer.WriteLine("Command sending data of size : {0}", data.Length);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Command sending data of size : {data.Length}");
             byte[] package = data;
 
             #region SHIM: Redirection code for command data send.

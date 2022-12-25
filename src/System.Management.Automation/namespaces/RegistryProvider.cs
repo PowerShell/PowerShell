@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            s_tracer.WriteLine("recurse = {0}", recurse);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}");
 
             // Get the parent and child portions of the path
 
@@ -1310,8 +1310,8 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
-            s_tracer.WriteLine("destination = {0}", destination);
-            s_tracer.WriteLine("recurse = {0}", recurse);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}");
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, false);
 
@@ -3517,7 +3517,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            s_tracer.WriteLine("writeAccess = {0}", writeAccess);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"writeAccess = {writeAccess}");
 
             IRegistryWrapper result = null;
 

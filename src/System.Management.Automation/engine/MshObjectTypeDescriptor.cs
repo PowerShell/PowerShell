@@ -315,9 +315,9 @@ namespace System.Management.Automation
             if (SettingValueException != null)
             {
                 SettingValueException.SafeInvoke(this, eventArgs);
-                PSObjectTypeDescriptor.typeDescriptor.WriteLine(
-                    "SettingValueException event has been triggered resulting in ShouldThrow:\"{0}\".",
-                    eventArgs.ShouldThrow);
+                PSObjectTypeDescriptor.typeDescriptor.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"SettingValueException event has been triggered resulting in ShouldThrow:\"{eventArgs.ShouldThrow}\".");
             }
 
             shouldThrow = eventArgs.ShouldThrow;

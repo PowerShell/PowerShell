@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool waitChanges = _waitForChanges;
 
-            s_tracer.WriteLine("blocks requested = {0}", readCount);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks requested = {readCount}");
 
             var blocks = new List<object>();
             bool readToEnd = (readCount <= 0);
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                s_tracer.WriteLine("blocks read = {0}", blocks.Count);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks read = {blocks.Count}");
             }
             catch (Exception e)
             {
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewInvalidOperationException(FileSystemProviderStrings.RawAndWaitCannotCoexist);
             }
 
-            s_tracer.WriteLine("blocks seek backwards = {0}", backCount);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks seek backwards = {backCount}");
 
             var blocks = new List<object>();
             if (_reader != null)
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
                     Seek(curStreamPosition, SeekOrigin.Begin);
                 }
 
-                s_tracer.WriteLine("blocks seek position = {0}", _stream.Position);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks seek position = {_stream.Position}");
             }
             catch (Exception e)
             {

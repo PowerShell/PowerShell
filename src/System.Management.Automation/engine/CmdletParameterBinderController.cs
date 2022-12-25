@@ -103,7 +103,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void BindCommandLineParameters(Collection<CommandParameterInternal> arguments)
         {
-            s_tracer.WriteLine("Argument count: {0}", arguments.Count);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Argument count: {arguments.Count}");
 
             BindCommandLineParametersNoValidation(arguments);
 
@@ -1163,7 +1163,7 @@ namespace System.Management.Automation
                 }
             } while (false);
 
-            s_tracer.WriteLine("IsParameterScriptBlockBindable: result = {0}", result);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"IsParameterScriptBlockBindable: result = {result}");
             return result;
         }
 
@@ -3380,7 +3380,7 @@ namespace System.Management.Automation
                         validParameterSets);
             }
 
-            s_tracer.WriteLine("aParameterWasBound = {0}", aParameterWasBound);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"aParameterWasBound = {aParameterWasBound}");
             return aParameterWasBound;
         }
 

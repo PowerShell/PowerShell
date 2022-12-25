@@ -2506,7 +2506,7 @@ namespace Microsoft.PowerShell
                 // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
                 if (err == 0x1f)
                 {
-                    tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Call to SetConsoleTitle failed: {err}");
                     s_dontsetConsoleWindowTitle = true;
 
                     // We ignore this specific error as the console can still continue to operate

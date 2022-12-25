@@ -492,11 +492,11 @@ namespace System.Management.Automation.Remoting
 
                     if ((s_baseTracer.Options & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
                     {
-                        s_baseTracer.WriteLine("Object Id: {0}", objectId);
-                        s_baseTracer.WriteLine("Fragment Id: {0}", fragmentId);
-                        s_baseTracer.WriteLine("Start Flag: {0}", sFlag);
-                        s_baseTracer.WriteLine("End Flag: {0}", eFlag);
-                        s_baseTracer.WriteLine("Blob Length: {0}", blobLength);
+                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Object Id: {objectId}");
+                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Fragment Id: {fragmentId}");
+                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Start Flag: {sFlag}");
+                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"End Flag: {eFlag}");
+                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Blob Length: {blobLength}");
                     }
 
                     int totalLengthOfFragment = 0;
@@ -646,8 +646,8 @@ namespace System.Management.Automation.Remoting
                             // since we are going to read from now..i am resetting position to 0.
                             _dataToProcessStream.Seek(0, SeekOrigin.Begin);
                             RemoteDataObject<PSObject> remoteObject = RemoteDataObject<PSObject>.CreateFrom(_dataToProcessStream, _defragmentor);
-                            s_baseTracer.WriteLine("Runspace Id: {0}", remoteObject.RunspacePoolId);
-                            s_baseTracer.WriteLine("PowerShell Id: {0}", remoteObject.PowerShellId);
+                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Runspace Id: {remoteObject.RunspacePoolId}");
+                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"PowerShell Id: {remoteObject.PowerShellId}");
                             // notify the caller that a deserialized object is available.
                             callback(remoteObject);
                         }
