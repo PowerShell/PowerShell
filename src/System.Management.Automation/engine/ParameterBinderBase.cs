@@ -601,11 +601,9 @@ namespace System.Management.Automation
                 }
                 while (false);
 
-                bindingTracer.WriteLine(
-                    "BIND arg [{0}] to param [{1}] {2}",
-                    parameterValue,
-                    parameter.ParameterName,
-                    (result) ? "SUCCESSFUL" : "SKIPPED");
+                bindingTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    @$"BIND arg [{parameterValue}] to param [{parameter.ParameterName}] {(result ? "SUCCESSFUL" : "SKIPPED")}");
 
                 if (result)
                 {

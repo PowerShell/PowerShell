@@ -104,11 +104,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
             {
-                s_formatFileLoadingtracer.WriteLine("ERROR:\r\n FilePath: {0}\r\n XPath: {1}\r\n Message = {2}", entry.filePath, entry.xPath, entry.message);
+                s_formatFileLoadingtracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"ERROR:\r\n FilePath: {entry.filePath}\r\n XPath: {entry.xPath}\r\n Message = {entry.message}");
             }
             else if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Trace)
             {
-                s_formatFileLoadingtracer.WriteLine("TRACE:\r\n FilePath: {0}\r\n XPath: {1}\r\n Message = {2}", entry.filePath, entry.xPath, entry.message);
+                s_formatFileLoadingtracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"TRACE:\r\n FilePath: {entry.filePath}\r\n XPath: {entry.xPath}\r\n Message = {entry.message}");
             }
         }
 

@@ -819,8 +819,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.MandatoryValueNotInCorrectFormat, name, mshsnapinKey.Name);
             }
 
-            s_mshsnapinTracer.WriteLine("Successfully read value {0} for property {1} from {2}",
-                s, name, mshsnapinKey.Name);
+            s_mshsnapinTracer.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"Successfully read value {s} for property {name} from {mshsnapinKey.Name}");
             return s;
         }
 

@@ -89,8 +89,9 @@ namespace System.Management.Automation
                 return memberAsT;
             }
 
-            PSObject.MemberResolution.WriteLine("\"{0}\" from types table ignored because it has type {1} instead of {2}.",
-                name, member.GetType(), typeof(T));
+            PSObject.MemberResolution.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"\"{name}\" from types table ignored because it has type {member.GetType()} instead of {typeof(T)}.");
             return null;
         }
 

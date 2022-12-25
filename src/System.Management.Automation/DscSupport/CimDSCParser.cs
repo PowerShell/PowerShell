@@ -905,9 +905,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             catch (PSInvalidOperationException ex)
             {
-                s_tracer.WriteLine(
-                    "DSC GetModuleVersion: Error evaluating module manifest file '{0}', with error '{1}'. Skip the module '{2}'.",
-                    manifestPath, ex, moduleName);
+                s_tracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"DSC GetModuleVersion: Error evaluating module manifest file '{manifestPath}', with error '{ex}'. Skip the module '{moduleName}'.");
             }
 
             return null;
@@ -1507,9 +1507,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (valueMap.Length != keyProp.Values.Count)
                     {
-                        s_tracer.WriteLine(
-                            "DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {0}, count of 'ValueMap': {1}. Skip the keyword '{2}'.",
-                            keyProp.Values.Count, valueMap.Length, keyword.Keyword);
+                        s_tracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {keyProp.Values.Count}, count of 'ValueMap': {valueMap.Length}. Skip the keyword '{keyword.Keyword}'.");
                         return null;
                     }
 
@@ -3256,7 +3256,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         string tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
                         Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
-                        
+
                         if (tempSchemaFilepath is not null)
                         {
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);

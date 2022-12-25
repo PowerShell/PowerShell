@@ -631,8 +631,9 @@ namespace System.Management.Automation
                     return true;
                 }
 
-                ModuleIntrinsics.Tracer.WriteLine("{0}: cache entry out of date, cached on {1}, last updated on {2}",
-                    modulePath, moduleCacheEntry.LastWriteTime, lastWriteTime);
+                ModuleIntrinsics.Tracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"{modulePath}: cache entry out of date, cached on {moduleCacheEntry.LastWriteTime}, last updated on {lastWriteTime}");
 
                 s_cacheData.Entries.TryRemove(modulePath, out moduleCacheEntry);
             }

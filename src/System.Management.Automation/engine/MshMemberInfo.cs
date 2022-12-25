@@ -4909,8 +4909,9 @@ namespace System.Management.Automation
                         PSMemberInfo previousMember = returnValue[member.Name];
                         if (previousMember != null)
                         {
-                            PSObject.MemberResolution.WriteLine("Member \"{0}\" of type \"{1}\" has been ignored because a member with the same name and type \"{2}\" is already present.",
-                                member.Name, member.MemberType, previousMember.MemberType);
+                            PSObject.MemberResolution.Write(
+                                PSTraceSourceOptions.WriteLine,
+                                $"Member \"{member.Name}\" of type \"{member.MemberType}\" has been ignored because a member with the same name and type \"{previousMember.MemberType}\" is already present.");
                             continue;
                         }
 

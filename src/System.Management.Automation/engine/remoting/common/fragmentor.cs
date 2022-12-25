@@ -829,8 +829,9 @@ namespace System.Management.Automation.Remoting
 
         private void EnqueueWriteStream()
         {
-            s_trace.WriteLine("Queuing write stream: {0} Length: {1} Capacity: {2}",
-                _writeStream.GetHashCode(), _writeStream.Length, _writeStream.Capacity);
+            s_trace.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"Queuing write stream: {_writeStream.GetHashCode()} Length: {_writeStream.Length} Capacity: {_writeStream.Capacity}");
             _queuedStreams.Enqueue(_writeStream);
 
             _writeStream = new MemoryStream(_fragmentSize);

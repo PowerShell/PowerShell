@@ -1807,8 +1807,9 @@ namespace System.Management.Automation.Remoting.Client
                 ++_connectionRetryCount;
 
                 // Write trace output
-                tracer.WriteLine("Attempting session creation retry {0} for error code {1} on session Id {2}",
-                    _connectionRetryCount, sessionCreateErrorCode, RunspacePoolInstanceId);
+                tracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Attempting session creation retry {_connectionRetryCount} for error code {sessionCreateErrorCode} on session Id {RunspacePoolInstanceId}");
 
                 // Create ETW log entry
                 PSEtwLog.LogOperationalInformation(

@@ -555,11 +555,15 @@ namespace System.Management.Automation.Remoting
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];
             if (handler != null)
             {
-                s_trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, _id);
+                s_trace.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Before calling state machine event handler: state = {State}, event = {arg.StateEvent}, id = {_id}");
 
                 handler(this, arg);
 
-                s_trace.WriteLine("After calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, _id);
+                s_trace.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"After calling state machine event handler: state = {State}, event = {arg.StateEvent}, id = {_id}");
             }
         }
 

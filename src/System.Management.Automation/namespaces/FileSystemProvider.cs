@@ -4919,7 +4919,9 @@ namespace Microsoft.PowerShell.Commands
             bool isDriveRoot = string.Equals(path, Path.GetPathRoot(path), StringComparison.OrdinalIgnoreCase);
             bool isUNCRoot = IsUNCRoot(path);
             bool result = isDriveRoot || isUNCRoot;
-            s_tracer.WriteLine("result = {0}; isDriveRoot = {1}; isUNCRoot = {2}", result, isDriveRoot, isUNCRoot);
+            s_tracer.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"result = {result}; isDriveRoot = {isDriveRoot}; isUNCRoot = {isUNCRoot}");
             return result;
         }
 
