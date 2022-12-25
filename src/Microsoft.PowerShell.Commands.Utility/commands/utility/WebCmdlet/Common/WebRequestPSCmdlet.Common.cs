@@ -1927,7 +1927,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-        #endregion Helper Methods
 
         private static string FormatErrorMessage(string error, string contentType)
         {
@@ -1965,5 +1964,6 @@ namespace Microsoft.PowerShell.Commands
                 return error;
             }
         }
+        #endregion Helper Methods
     }
 }
