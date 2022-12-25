@@ -124,12 +124,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                 db,
                                                 view,
                                                 parameters);
-                        s_formatViewBindingTracer.WriteLine(viewFound);
+                        s_formatViewBindingTracer.Write(PSTraceSourceOptions.WriteLine, $"{viewFound}");
                         PrepareViewForRemoteObjects(ViewGenerator, so);
                         return;
                     }
 
-                    s_formatViewBindingTracer.WriteLine(viewNotFound);
+                    s_formatViewBindingTracer.Write(PSTraceSourceOptions.WriteLine, $"{viewNotFound}");
                     // we did not get any default view (and shape), we need to force one
                     // we just select properties out of the object itself, since they were not
                     // specified on the command line
@@ -163,11 +163,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                     db,
                                                     view,
                                                     parameters);
-                        s_formatViewBindingTracer.WriteLine(viewFound);
+                        s_formatViewBindingTracer.Write(PSTraceSourceOptions.WriteLine, $"{viewFound}");
                         return;
                     }
 
-                    s_formatViewBindingTracer.WriteLine(viewNotFound);
+                    s_formatViewBindingTracer.Write(PSTraceSourceOptions.WriteLine, $"{viewNotFound}");
                     // illegal input, we have to terminate
                     ProcessUnknownViewName(errorContext, parameters.viewName, so, db, shape);
                 }
@@ -186,13 +186,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                 db,
                                                 view,
                                                 parameters);
-                    s_formatViewBindingTracer.WriteLine(viewFound);
+                    s_formatViewBindingTracer.Write(PSTraceSourceOptions.WriteLine, $"{viewFound}");
                     PrepareViewForRemoteObjects(ViewGenerator, so);
 
                     return;
                 }
 
-                s_formatViewBindingTracer.WriteLine(viewNotFound);
+                s_formatViewBindingTracer.Write(PSTraceSourceOptions.WriteLine, $"{viewNotFound}");
                 // we just select properties out of the object itself
                 _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
                 PrepareViewForRemoteObjects(ViewGenerator, so);

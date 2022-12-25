@@ -269,7 +269,7 @@ namespace System.Management.Automation
                         ProviderCapabilities.ExpandWildcards,
                         providerInstance.ProviderInfo))
                 {
-                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the provider.");
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Wildcard matching is being performed by the provider.");
 
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
@@ -285,7 +285,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Wildcard matching is being performed by the engine.");
 
                     if (containerCmdletProvider != null)
                     {
@@ -364,13 +364,13 @@ namespace System.Management.Automation
 
             if (isProviderDirectPath)
             {
-                s_pathResolutionTracer.WriteLine("Path is PROVIDER-DIRECT");
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path is PROVIDER-DIRECT");
                 providerPath = path;
                 providerId = _sessionState.Path.CurrentLocation.Provider.Name;
             }
             else if (isProviderQualifiedPath)
             {
-                s_pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path is PROVIDER-QUALIFIED");
                 providerPath = ParseProviderPath(path, out providerId);
             }
 
@@ -433,7 +433,7 @@ namespace System.Management.Automation
 
             Collection<PathInfo> result = new Collection<PathInfo>();
 
-            s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
+            s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path is DRIVE-QUALIFIED");
 
             string relativePath =
                 GetDriveRootRelativePathFromPSPath(
@@ -490,7 +490,7 @@ namespace System.Management.Automation
                         ProviderCapabilities.ExpandWildcards,
                         provider))
                 {
-                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the provider.");
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Wildcard matching is being performed by the provider.");
 
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
@@ -510,7 +510,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Wildcard matching is being performed by the engine.");
 
                     // Now perform the globbing
                     stringResult =
@@ -762,7 +762,7 @@ namespace System.Management.Automation
                 if (providerPath == null)
                 {
                     providerInstance = null;
-                    s_tracer.WriteLine("provider returned a null path so return an empty array");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"provider returned a null path so return an empty array");
 
                     s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Provider '{provider}' returned null");
                     return new Collection<string>();
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation
             // Now check to see if it is a provider-direct path (starts with // or \\)
             if (IsProviderDirectPath(path))
             {
-                s_pathResolutionTracer.WriteLine("Path is PROVIDER-DIRECT");
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path is PROVIDER-DIRECT");
 
                 // just return the path directly using the current provider
 
@@ -1254,7 +1254,7 @@ namespace System.Management.Automation
             }
             else if (IsProviderQualifiedPath(path))
             {
-                s_pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path is PROVIDER-QUALIFIED");
 
                 string providerId = null;
                 result = ParseProviderPath(path, out providerId);
@@ -1268,7 +1268,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"Path is DRIVE-QUALIFIED");
 
                 CmdletProvider providerInstance = null;
                 string relativePath = GetDriveRootRelativePathFromPSPath(path, context, false, out drive, out providerInstance);
@@ -3459,8 +3459,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s_tracer.WriteLine(
-                    "LeafElement does not contain any glob characters so do a MakePath");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"LeafElement does not contain any glob characters so do a MakePath");
 
                 // Loop through the current dirs and add the leafElement to each of
                 // the dirs
@@ -3592,7 +3591,7 @@ namespace System.Management.Automation
             {
                 if (s_tracer.IsEnabled)
                 {
-                    s_tracer.WriteLine("Provider converted path and filter.");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Provider converted path and filter.");
                     s_tracer.WriteLine("Original path: {0}", path);
                     s_tracer.WriteLine("Converted path: {0}", convertedPath);
                     s_tracer.WriteLine("Original filter: {0}", context.Filter);
@@ -4040,8 +4039,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s_tracer.WriteLine(
-                    "LeafElement does not contain any glob characters so do a MakePath");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"LeafElement does not contain any glob characters so do a MakePath");
 
                 // Loop through the current dirs and add the leafElement to each of
                 // the dirs
@@ -4177,7 +4175,7 @@ namespace System.Management.Automation
             {
                 if (s_tracer.IsEnabled)
                 {
-                    s_tracer.WriteLine("Provider converted path and filter.");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Provider converted path and filter.");
                     s_tracer.WriteLine("Original path: {0}", leafElement);
                     s_tracer.WriteLine("Converted path: {0}", convertedPath);
                     s_tracer.WriteLine("Original filter: {0}", context.Filter);

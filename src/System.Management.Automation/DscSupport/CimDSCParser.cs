@@ -673,7 +673,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
-            s_tracer.WriteLine("Initializing DSC class cache force={0}");
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Initializing DSC class cache force={0}");
 
             if (Platform.IsLinux || Platform.IsMacOS)
             {
@@ -1037,7 +1037,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else
             {
-                s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added no classes to the cache.");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{0}' added no classes to the cache.");
             }
 
             ByFileClassCache[path] = classes;
@@ -1068,7 +1068,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         public static void ClearCache()
         {
-            s_tracer.WriteLine("DSC class: clearing the cache and associated keywords.");
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC class: clearing the cache and associated keywords.");
             ClassCache.Clear();
             ByClassModuleCache.Clear();
             ByFileClassCache.Clear();

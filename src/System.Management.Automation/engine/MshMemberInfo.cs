@@ -5080,7 +5080,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        PSObject.MemberResolution.WriteLine("Enumerating PSMemberSet \"{integratingCollection._memberSetOwner.Name}\".");
+                        PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Enumerating PSMemberSet \"{integratingCollection._memberSetOwner.Name}\".");
                         PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"MemberSet instance members: {_allMembers.VisibleCount}");
                     }
                 }

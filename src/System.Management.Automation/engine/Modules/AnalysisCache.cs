@@ -88,7 +88,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ModuleIntrinsics.Tracer.WriteLine("Returning NULL for exported commands.");
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Returning NULL for exported commands.");
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStop(modulePath);
@@ -547,7 +547,7 @@ namespace System.Management.Automation
 
                 if (!needToUpdate)
                 {
-                    ModuleIntrinsics.Tracer.WriteLine("Existing cached info up-to-date. Skipping.");
+                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Existing cached info up-to-date. Skipping.");
                     return;
                 }
 
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    ModuleIntrinsics.Tracer.WriteLine("Exception checking module analysis cache: " + e.Message);
+                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception checking module analysis cache: {e.Message}");
                     if ((object)e.Message == (object)TruncatedErrorMessage
                         || (object)e.Message == (object)InvalidSignatureErrorMessage
                         || (object)e.Message == (object)PossibleCorruptionErrorMessage)

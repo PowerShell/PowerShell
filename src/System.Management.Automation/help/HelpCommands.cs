@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_viewTokenToAdd == HelpView.Default)
             {
-                s_tracer.WriteLine("Detailed, Full, Examples are not selected. Constructing default view.");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Detailed, Full, Examples are not selected. Constructing default view.");
                 return originalHelpObject;
             }
 
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool onlineUriFound = false;
                     // show online help
-                    s_tracer.WriteLine("Preparing to show help online.");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Preparing to show help online.");
                     Uri onlineUri = helpInfo.GetUriForOnlineHelp();
                     if (onlineUri != null)
                     {

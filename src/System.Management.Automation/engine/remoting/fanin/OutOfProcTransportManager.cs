@@ -832,7 +832,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
-            tracer.WriteLine("Received data to be sent from the callback.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Received data to be sent from the callback.");
             SendData(data, priorityType);
         }
 
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         #endregion
-    
+
         #region Protected Methods
 
         /// <summary>
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation.Remoting.Client
             // Start connection timeout timer if requested.
             // Timer callback occurs only once after timeout time.
             _connectionTimer = new Timer(
-                callback: (_) => 
+                callback: (_) =>
                 {
                     if (_connectionEstablished)
                     {
@@ -2303,7 +2303,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
@@ -2324,7 +2324,7 @@ namespace System.Management.Automation.Remoting.Client
                 // if the transport manager is already closed..return immediately
                 if (isClosed)
                 {
-                    tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
                     return;
                 }
             }
@@ -2344,7 +2344,7 @@ namespace System.Management.Automation.Remoting.Client
             // if the transport manager is already closed..return immediately
             if (isClosed)
             {
-                tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
                 return;
             }
 
@@ -2471,7 +2471,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
-            tracer.WriteLine("Received data from dataToBeSent store.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Received data from dataToBeSent store.");
             SendData(data, priorityType);
         }
 
@@ -2503,7 +2503,7 @@ namespace System.Management.Automation.Remoting.Server
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
 
-            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) =>
             {
                 string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
                 _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));

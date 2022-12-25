@@ -111,7 +111,7 @@ namespace System.Management.Automation
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
             string? environmentCurrentDirectory = null;
-            
+
             try
             {
                 environmentCurrentDirectory = Directory.GetCurrentDirectory();
@@ -296,7 +296,7 @@ namespace System.Management.Automation
 
                     if (!_currentDirectoryResultsEnumerator.MoveNext())
                     {
-                        s_tracer.WriteLine("Current directory results are invalid");
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Current directory results are invalid");
 
                         // Since a path was not found in the current result,
                         // advance the pattern and try again
@@ -331,7 +331,7 @@ namespace System.Management.Automation
 
                 if (!_lookupPathsEnumerator.MoveNext())
                 {
-                    s_tracer.WriteLine("All lookup paths exhausted, no more matches can be found");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"All lookup paths exhausted, no more matches can be found");
                     break;
                 }
 
@@ -341,7 +341,7 @@ namespace System.Management.Automation
 
                 if (!_patternEnumerator.MoveNext())
                 {
-                    s_tracer.WriteLine("All patterns exhausted, no more matches can be found");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"All patterns exhausted, no more matches can be found");
                     break;
                 }
 

@@ -581,7 +581,7 @@ namespace System.Management.Automation
             {
                 var eventArgs = new LocationChangedEventArgs(PublicSessionState, current, CurrentLocation);
                 PublicSessionState.InvokeCommand.LocationChangedAction.Invoke(ExecutionContext.CurrentRunspace, eventArgs);
-                s_tracer.WriteLine("Invoked LocationChangedAction");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Invoked LocationChangedAction");
             }
 
             return this.CurrentLocation;
@@ -648,7 +648,7 @@ namespace System.Management.Automation
 
             if (drive != null)
             {
-                s_tracer.WriteLine("Tracing drive");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Tracing drive");
                 drive.Trace();
             }
 
@@ -734,7 +734,7 @@ namespace System.Management.Automation
                 {
                     // The path is the current working directory so
                     // return true
-                    s_tracer.WriteLine("The path is the current working directory");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The path is the current working directory");
 
                     result = true;
                 }
@@ -778,7 +778,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s_tracer.WriteLine("Drives are not the same");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Drives are not the same");
             }
 
             return result;

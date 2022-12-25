@@ -449,8 +449,7 @@ namespace System.Management.Automation
                     "The name appears to be a qualified path: {0}",
                     _commandName);
 
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "Trying to resolve the path as an PSPath");
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Trying to resolve the path as an PSPath");
 
                 // Find the match if it is.
                 // Try literal path resolution if it is set to run first

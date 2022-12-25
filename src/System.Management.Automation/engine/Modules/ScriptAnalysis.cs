@@ -242,7 +242,7 @@ namespace System.Management.Automation
             if (string.Equals("$env:PATH", assignmentStatementAst.Left.ToString(), StringComparison.OrdinalIgnoreCase) &&
                 Regex.IsMatch(assignmentStatementAst.Right.ToString(), "\\$psScriptRoot", RegexOptions.IgnoreCase))
             {
-                ModuleIntrinsics.Tracer.WriteLine("Module adds itself to the path.");
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module adds itself to the path.");
                 AddsSelfToPath = true;
             }
 

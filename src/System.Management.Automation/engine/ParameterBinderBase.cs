@@ -692,7 +692,7 @@ namespace System.Management.Automation
             {
                 if (!parameterMetadata.AllowsNullArgument)
                 {
-                    bindingTracer.WriteLine("ERROR: Argument cannot be null");
+                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be null");
 
                     ParameterBindingValidationException bindingException =
                         new ParameterBindingValidationException(
@@ -721,7 +721,7 @@ namespace System.Management.Automation
 
                 if (stringParamValue.Length == 0 && !parameterMetadata.AllowsEmptyStringArgument)
                 {
-                    bindingTracer.WriteLine("ERROR: Argument cannot be an empty string");
+                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be an empty string");
 
                     ParameterBindingValidationException bindingException =
                         new ParameterBindingValidationException(
@@ -786,7 +786,7 @@ namespace System.Management.Automation
 
             if (isEmpty && !parameterMetadata.AllowsEmptyCollectionArgument)
             {
-                bindingTracer.WriteLine("ERROR: Argument cannot be an empty collection");
+                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be an empty collection");
 
                 string errorId, resourceString;
                 if (parameterMetadata.CollectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array)
@@ -1019,8 +1019,7 @@ namespace System.Management.Automation
                         // needs to be done
                         if (toType.IsAssignableFrom(argumentType))
                         {
-                            bindingTracer.WriteLine(
-                                "Parameter and arg types the same, no coercion is needed.");
+                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Parameter and arg types the same, no coercion is needed.");
 
                             result = currentValue;
                             break;
@@ -1060,8 +1059,7 @@ namespace System.Management.Automation
 
                             if (currentValueAsPSObject == AutomationNull.Value)
                             {
-                                bindingTracer.WriteLine(
-                                    "CONVERT a null PSObject to a null string.");
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"CONVERT a null PSObject to a null string.");
                                 result = null;
                                 break;
                             }
@@ -1192,8 +1190,7 @@ namespace System.Management.Automation
 
                         if (collectionTypeInfo.ParameterCollectionType != ParameterCollectionType.NotCollection)
                         {
-                            bindingTracer.WriteLine(
-                                "ENCODING arg into collection");
+                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ENCODING arg into collection");
 
                             bool ignored = false;
                             result =
@@ -1226,8 +1223,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        bindingTracer.WriteLine(
-                            "CONVERT arg type to param type using LanguagePrimitives.ConvertTo");
+                        bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"CONVERT arg type to param type using LanguagePrimitives.ConvertTo");
 
                         // If we are in constrained language mode and the target command is trusted, which is often
                         // the case for C# cmdlets, then we allow type conversion to the target parameter type.
@@ -1345,8 +1341,7 @@ namespace System.Management.Automation
 
             if (toType == typeof(bool))
             {
-                bindingTracer.WriteLine(
-                        "ERROR: No argument is specified for parameter and parameter type is BOOL");
+                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: No argument is specified for parameter and parameter type is BOOL");
 
                 ParameterBindingException exception =
                     new ParameterBindingException(
@@ -1365,8 +1360,7 @@ namespace System.Management.Automation
             else
                 if (toType == typeof(SwitchParameter))
             {
-                bindingTracer.WriteLine(
-                    "Arg is null or not present, parameter type is SWITCHPARAMTER, value is true.");
+                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Arg is null or not present, parameter type is SWITCHPARAMTER, value is true.");
                 result = SwitchParameter.Present;
             }
             else if (currentValue == UnboundParameter.Value)
@@ -1389,8 +1383,7 @@ namespace System.Management.Automation
             }
             else
             {
-                bindingTracer.WriteLine(
-                    "Arg is null, parameter type not bool or SwitchParameter, value is null.");
+                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Arg is null, parameter type not bool or SwitchParameter, value is null.");
                 result = null;
             }
 
@@ -1867,9 +1860,11 @@ namespace System.Management.Automation
             if (result != null)
             {
                 // Reference comparison to determine if 'value' is a PSObject
-                s_tracer.WriteLine(baseObj == value
-                                     ? "argument is IList"
-                                     : "argument is PSObject with BaseObject as IList");
+                s_tracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    @$"{(baseObj == value
+                        ? "argument is IList"
+                        : "argument is PSObject with BaseObject as IList")}");
             }
 
             return result;

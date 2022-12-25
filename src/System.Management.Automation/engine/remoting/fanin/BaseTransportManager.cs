@@ -82,7 +82,7 @@ namespace System.Management.Automation.Remoting
         /// ReconnectShellEx
         /// </summary>
         ReconnectShellEx = 8,
-        
+
         /// <summary>
         /// ConnectShellEx
         /// </summary>
@@ -857,7 +857,7 @@ namespace System.Management.Automation.Remoting.Client
 
         internal void ServicePendingCallbacks(object objectToProcess)
         {
-            tracer.WriteLine("ServicePendingCallbacks thread is starting");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"ServicePendingCallbacks thread is starting");
             PSEtwLog.ReplaceActivityIdForCurrentThread(RunspacePoolInstanceId,
                 PSEventId.OperationalTransferEventRunspacePool,
                 PSEventId.AnalyticTransferEventRunspacePool,
@@ -923,7 +923,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 lock (_callbackNotificationQueue)
                 {
-                    tracer.WriteLine("ServicePendingCallbacks thread is exiting");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"ServicePendingCallbacks thread is exiting");
                     _isServicingCallbacks = false;
                     // check if any new runspace request has arrived..
                     EnqueueAndStartProcessingThread(null, null, null);

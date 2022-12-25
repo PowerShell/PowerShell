@@ -459,11 +459,11 @@ namespace System.Management.Automation
                 typeTable = (CacheTable)s_instanceMethodCacheTable[key];
                 if (typeTable != null)
                 {
-                    tracer.WriteLine("Returning method information from internal cache");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Returning method information from internal cache");
                     return typeTable;
                 }
 
-                tracer.WriteLine("Method information not found in internal cache. Constructing one");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Method information not found in internal cache. Constructing one");
 
                 try
                 {

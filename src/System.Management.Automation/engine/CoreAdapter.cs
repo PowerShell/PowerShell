@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
             PSReference reference = obj as PSReference;
             if (reference != null)
             {
-                PSObject.MemberResolution.WriteLine("Parameter was a reference.");
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Parameter was a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
@@ -1960,7 +1960,7 @@ namespace System.Management.Automation
 
             if (reference != null)
             {
-                PSObject.MemberResolution.WriteLine("Parameter was an PSObject containing a reference.");
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Parameter was an PSObject containing a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
@@ -1983,7 +1983,7 @@ namespace System.Management.Automation
                 {
                     if (resultType == typeof(object))
                     {
-                        PSObject.MemberResolution.WriteLine("Parameter was an PSObject and will be converted to System.Object.");
+                        PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Parameter was an PSObject and will be converted to System.Object.");
                         // we use PSObject.Base so we don't return
                         // PSCustomObject
                         return PSObject.Base(mshObj);
@@ -6102,7 +6102,7 @@ namespace System.Management.Automation
 
             if (leftList.Count != rightList.Count)
             {
-                s_tracer.WriteLine("Mismatch in number of parameters and arguments");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Mismatch in number of parameters and arguments");
                 return false;
             }
 

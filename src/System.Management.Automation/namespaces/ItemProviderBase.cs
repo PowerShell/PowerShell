@@ -92,7 +92,7 @@ namespace System.Management.Automation.Provider
             object value,
             CmdletProviderContext context)
         {
-            providerBaseTracer.WriteLine("ItemCmdletProvider.SetItem");
+            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"ItemCmdletProvider.SetItem");
 
             Context = context;
 
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Provider
             string path,
             CmdletProviderContext context)
         {
-            providerBaseTracer.WriteLine("ItemCmdletProvider.ClearItem");
+            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"ItemCmdletProvider.ClearItem");
 
             Context = context;
 
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Provider
             string path,
             CmdletProviderContext context)
         {
-            providerBaseTracer.WriteLine("ItemCmdletProvider.InvokeDefaultAction");
+            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"ItemCmdletProvider.InvokeDefaultAction");
 
             Context = context;
 

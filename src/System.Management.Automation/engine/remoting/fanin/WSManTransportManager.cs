@@ -1001,18 +1001,18 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed.
                 if (isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
                 if (receiveDataInitiated)
                 {
-                    tracer.WriteLine("Client Session TM: ReceiveData has already been called.");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: ReceiveData has already been called.");
                     return;
                 }
 
                 receiveDataInitiated = true;
-                tracer.WriteLine("Client Session TM: Placing Receive request using WSManReceiveShellOutputEx");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Placing Receive request using WSManReceiveShellOutputEx");
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManReceiveShellOutputEx,
                     PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
@@ -1847,7 +1847,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: CreateShell callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: CreateShell callback received");
 
             long sessionTMHandle = 0;
             WSManClientSessionTransportManager sessionTM = null;
@@ -1945,7 +1945,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (sessionTM.isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
@@ -1970,7 +1970,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: CloseShell callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: CloseShell callback received");
 
             long sessionTMHandle = 0;
             WSManClientSessionTransportManager sessionTM = null;
@@ -2021,7 +2021,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: CreateShell callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: CreateShell callback received");
 
             long sessionTMHandle = 0;
             WSManClientSessionTransportManager sessionTM = null;
@@ -2074,7 +2074,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (sessionTM.isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
@@ -2103,7 +2103,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: CreateShell callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: CreateShell callback received");
 
             long sessionTMHandle = 0;
             WSManClientSessionTransportManager sessionTM = null;
@@ -2156,7 +2156,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (sessionTM.isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
@@ -2215,7 +2215,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: Connect callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Connect callback received");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManSendShellInputExCallbackReceived,
@@ -2273,7 +2273,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (sessionTM.isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
             }
@@ -2305,7 +2305,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: SendComplete callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: SendComplete callback received");
 
             long sessionTMHandle = 0;
             WSManClientSessionTransportManager sessionTM = null;
@@ -2343,7 +2343,7 @@ namespace System.Management.Automation.Remoting.Client
             // if the session is already closed ignore the errors and return.
             if (sessionTM.isClosed)
             {
-                tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                 return;
             }
 
@@ -2385,7 +2385,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Client Session TM: OnRemoteDataReceived callback.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: OnRemoteDataReceived callback.");
 
             long sessionTMHandle = 0;
             WSManClientSessionTransportManager sessionTM = null;
@@ -2400,7 +2400,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (sessionTM.isClosed)
             {
-                tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                 return;
             }
 
@@ -2472,7 +2472,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
-            tracer.WriteLine("Received data to be sent from the callback.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Received data to be sent from the callback.");
             SendData(data, priorityType);
         }
 
@@ -2512,7 +2512,7 @@ namespace System.Management.Automation.Remoting.Client
                     // make sure the transport is not closed.
                     if (isClosed)
                     {
-                        tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                        tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                         return;
                     }
 
@@ -3348,7 +3348,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("OnCreateCmdCompleted callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"OnCreateCmdCompleted callback received");
 
             long cmdContextId = 0;
             WSManClientCommandTransportManager cmdTM = null;
@@ -3410,7 +3410,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (cmdTM.isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
 
                     if (cmdTM._isDisconnectPending)
                     {
@@ -3453,7 +3453,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("OnConnectCmdCompleted callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"OnConnectCmdCompleted callback received");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManCreateCommandCallbackReceived,
@@ -3505,7 +3505,7 @@ namespace System.Management.Automation.Remoting.Client
                 // If the transport is already closed then we are done.
                 if (cmdTM.isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
 
                     // Release disconnect pending, if any.
                     if (cmdTM._isDisconnectPending)
@@ -3549,7 +3549,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine($"OnCloseCmdCompleted callback received for operation context {commandOperationHandle}");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"OnCloseCmdCompleted callback received for operation context {commandOperationHandle}");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManCloseCommandCallbackReceived,
@@ -3592,7 +3592,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("SendComplete callback received");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"SendComplete callback received");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManSendShellInputExCallbackReceived,
@@ -3624,7 +3624,7 @@ namespace System.Management.Automation.Remoting.Client
             if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
                 (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
             {
-                tracer.WriteLine("SendShellInputEx callback: ShellOperationHandles are not the same as the Send is initiated with");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"SendShellInputEx callback: ShellOperationHandles are not the same as the Send is initiated with");
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
@@ -3641,7 +3641,7 @@ namespace System.Management.Automation.Remoting.Client
             // if the transport manager is already closed..ignore the errors and return
             if (cmdTM.isClosed)
             {
-                tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
 
                 if (cmdTM._isDisconnectPending)
                 {
@@ -3686,7 +3686,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Remote Command DataReceived callback.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Remote Command DataReceived callback.");
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.WSManReceiveShellOutputExCallbackReceived,
@@ -3709,7 +3709,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
-                tracer.WriteLine("CmdReceive callback: ShellOperationHandles are not the same as the Receive is initiated with");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"CmdReceive callback: ShellOperationHandles are not the same as the Receive is initiated with");
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandReceiveExFailed);
                 TransportErrorOccuredEventArgs eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveCommandOutputEx);
@@ -3724,7 +3724,7 @@ namespace System.Management.Automation.Remoting.Client
             // if the transport manager is already closed..ignore the errors and return
             if (cmdTM.isClosed)
             {
-                tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
                 return;
             }
 
@@ -3799,7 +3799,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
-                tracer.WriteLine("Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ReconnectShellCommandExCallBackError);
                 TransportErrorOccuredEventArgs eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReconnectShellCommandEx);
@@ -3844,7 +3844,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            tracer.WriteLine("Signal Completed callback received.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Signal Completed callback received.");
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManSignalCallbackReceived, PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic, "OnRemoteCmdSignalCompleted");
 
@@ -3871,7 +3871,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
-                tracer.WriteLine("Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
                 TransportErrorOccuredEventArgs eventargs =
                     new TransportErrorOccuredEventArgs(e, TransportMethodEnum.CommandInputEx);
@@ -3896,7 +3896,7 @@ namespace System.Management.Automation.Remoting.Client
             // if the transport manager is already closed..ignore the errors and return
             if (cmdTM.isClosed)
             {
-                tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
                 return;
             }
 
@@ -3975,7 +3975,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
-            tracer.WriteLine("Received data from dataToBeSent store.");
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Received data from dataToBeSent store.");
             Dbg.Assert(_chunkToSend == null, "data callback received while a chunk is pending to be sent");
             _chunkToSend = new SendDataChunk(data, priorityType);
             SendOneItem();
@@ -4023,7 +4023,7 @@ namespace System.Management.Automation.Remoting.Client
                     // make sure the transport is not closed.
                     if (isClosed)
                     {
-                        tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                        tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                         return;
                     }
 
@@ -4053,13 +4053,13 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed.
                 if (isClosed)
                 {
-                    tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
                 if (receiveDataInitiated)
                 {
-                    tracer.WriteLine("Client Session TM: ReceiveData has already been called.");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: ReceiveData has already been called.");
                     return;
                 }
 

@@ -545,8 +545,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void Trace()
         {
-            s_tracer.WriteLine(
-                "A drive was found:");
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"A drive was found:");
 
             if (Name != null)
             {

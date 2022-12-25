@@ -954,7 +954,7 @@ namespace Microsoft.PowerShell
             if (region.Left >= bufferWidth || region.Top >= bufferHeight || region.Right < 0 || region.Bottom < 0)
             {
                 // region is entirely outside the buffer boundaries
-                tracer.WriteLine("region outside boundaries");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"region outside boundaries");
                 return;
             }
 
@@ -1088,7 +1088,7 @@ namespace Microsoft.PowerShell
             if (region.Left >= bufferWidth || region.Top >= bufferHeight || region.Right < 0 || region.Bottom < 0)
             {
                 // region is entirely outside the buffer boundaries
-                tracer.WriteLine("region outside boundaries");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"region outside boundaries");
                 return new BufferCell[0, 0];
             }
 

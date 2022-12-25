@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell
 
                     if (cancelInput)
                     {
-                        s_tracer.WriteLine("Prompt canceled");
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Prompt canceled");
                         WriteLineToConsole();
                         results.Clear();
                         break;

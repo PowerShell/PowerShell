@@ -885,24 +885,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
         /// </summary>
-        /// <param name="format">
-        /// The format string
-        /// </param>
-        internal void WriteLine(string format)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.WriteLine,
-                    writeLineFormatter,
-                    format,
-                    Array.Empty<object>());
-            }
-        }
-
-        /// <summary>
-        /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
-        /// </summary>
         /// <param name="format">The format string.</param>
         /// <param name="arg1"></param>
         internal void WriteLine(string format, object arg1)
@@ -943,20 +925,6 @@ namespace System.Management.Automation
                     writeLineFormatter,
                     format,
                     new object[] { arg1, arg2 });
-            }
-        }
-
-        /// <summary>
-        /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
-        /// </summary>
-        /// <param name="arg">
-        /// The object to be output
-        /// </param>
-        internal void WriteLine(object arg)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
-            {
-                WriteLine("{0}", arg == null ? "null" : arg.ToString());
             }
         }
 

@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (paging)
             {
-                tracer.WriteLine("paging is needed");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"paging is needed");
 
                 // If we need to do paging, instantiate a prompt handler that will take care of the screen interaction
                 string promptString = StringUtil.Format(FormatAndOut_out_xxx.ConsoleLineOutput_PagingPrompt);
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (!s_psHost.Contains(host.Name) && _console.RawUI is not null)
             {
                 // set only if we have a valid raw interface
-                tracer.WriteLine("there is a valid raw interface");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"there is a valid raw interface");
                 _displayCellsHost = new DisplayCellsHost(_console.RawUI);
             }
 
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (availableLines <= 0)
                 {
-                    tracer.WriteLine("No available Lines; suppress prompting");
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"No available Lines; suppress prompting");
                     // something is wrong, there is no real estate, we suppress prompting
                     return false;
                 }

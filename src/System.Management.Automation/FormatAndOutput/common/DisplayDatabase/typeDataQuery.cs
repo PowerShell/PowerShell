@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ControlBase.GetControlShapeName(vd.mainControl), vd.name, tgr.name);
                     }
 
-                    ActiveTracer.WriteLine(sb.ToString());
+                    ActiveTracer.Write(PSTraceSourceOptions.WriteLine, $"{sb}");
                 }
             }
         }

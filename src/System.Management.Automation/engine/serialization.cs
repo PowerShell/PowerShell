@@ -3159,7 +3159,7 @@ namespace System.Management.Automation
             // Handle PSObject
             if (IsNextElement(SerializationStrings.PSObjectTag))
             {
-                s_trace.WriteLine("PSObject Element");
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"PSObject Element");
                 return ReadPSObject();
             }
 
@@ -3673,7 +3673,7 @@ namespace System.Management.Automation
                     }
                     else if (IsNextElement(SerializationStrings.PSObjectTag))
                     {
-                        s_trace.WriteLine("Found PSObject node");
+                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Found PSObject node");
                         baseObject = ReadOneObject();
                     }
                     else

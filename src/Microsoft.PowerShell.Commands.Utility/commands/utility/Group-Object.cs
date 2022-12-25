@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            s_tracer.WriteLine(_groups.Count);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"{_groups.Count}");
             if (_groups.Count > 0)
             {
                 if (AsHashTable.IsPresent)

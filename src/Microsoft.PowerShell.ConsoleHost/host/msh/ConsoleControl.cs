@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell
 
             if ((rows <= 0) || cols <= 0)
             {
-                tracer.WriteLine("contents passed in has 0 rows and columns");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"contents passed in has 0 rows and columns");
                 return;
             }
 
@@ -1885,7 +1885,7 @@ namespace Microsoft.PowerShell
 
             if ((rows <= 0) || cols <= 0)
             {
-                tracer.WriteLine("invalid contents region");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"invalid contents region");
                 return;
             }
 
@@ -2058,7 +2058,7 @@ namespace Microsoft.PowerShell
 
             if ((rows <= 0) || cols <= 0)
             {
-                tracer.WriteLine("invalid contents region");
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"invalid contents region");
                 return;
             }
 

@@ -1601,7 +1601,7 @@ namespace System.Management.Automation
                 using (ParameterBinderBase.bindingTracer.TraceScope(
                     "BIND cmd line args to DYNAMIC parameters."))
                 {
-                    s_tracer.WriteLine("The Cmdlet supports the dynamic parameter interface");
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The Cmdlet supports the dynamic parameter interface");
 
                     IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
 
@@ -1609,7 +1609,7 @@ namespace System.Management.Automation
                     {
                         if (_dynamicParameterBinder == null)
                         {
-                            s_tracer.WriteLine("Getting the bindable object from the Cmdlet");
+                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Getting the bindable object from the Cmdlet");
 
                             // Now get the dynamic parameter bindable object.
                             object dynamicParamBindableObject;
@@ -1646,7 +1646,7 @@ namespace System.Management.Automation
                                     "DYNAMIC parameter object: [{0}]",
                                     dynamicParamBindableObject.GetType());
 
-                                s_tracer.WriteLine("Creating a new parameter binder for the dynamic parameter object");
+                                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Creating a new parameter binder for the dynamic parameter object");
 
                                 InternalParameterMetadata dynamicParameterMetadata;
 
@@ -1697,7 +1697,7 @@ namespace System.Management.Automation
 
                         if (_dynamicParameterBinder == null)
                         {
-                            s_tracer.WriteLine("No dynamic parameter object was returned from the Cmdlet");
+                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"No dynamic parameter object was returned from the Cmdlet");
                             return;
                         }
 
@@ -2836,8 +2836,9 @@ namespace System.Management.Automation
                             Context.EngineHostInterface != null,
                             "The EngineHostInterface should never be null");
 
-                        ParameterBinderBase.bindingTracer.WriteLine(
-                            "ERROR: host does not support prompting for missing mandatory parameters");
+                        ParameterBinderBase.bindingTracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"ERROR: host does not support prompting for missing mandatory parameters");
 
                         string missingParameters = BuildMissingParamsString(missingMandatoryParameters);
 
@@ -2909,8 +2910,9 @@ namespace System.Management.Automation
             // Prompt
             try
             {
-                ParameterBinderBase.bindingTracer.WriteLine(
-                    "PROMPTING for missing mandatory parameters using the host");
+                ParameterBinderBase.bindingTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"PROMPTING for missing mandatory parameters using the host");
                 string msg = ParameterBinderStrings.PromptMessage;
                 InvocationInfo invoInfo = Command.MyInvocation;
                 string caption = StringUtil.Format(ParameterBinderStrings.PromptCaption,
@@ -2934,8 +2936,9 @@ namespace System.Management.Automation
 
             if (error != null)
             {
-                ParameterBinderBase.bindingTracer.WriteLine(
-                    "ERROR: host does not support prompting for missing mandatory parameters");
+                ParameterBinderBase.bindingTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"ERROR: host does not support prompting for missing mandatory parameters");
 
                 string missingParameters = BuildMissingParamsString(missingMandatoryParameters);
 
@@ -2955,8 +2958,9 @@ namespace System.Management.Automation
 
             if ((parameters == null) || (parameters.Count == 0))
             {
-                ParameterBinderBase.bindingTracer.WriteLine(
-                    "ERROR: still missing mandatory parameters after PROMPTING");
+                ParameterBinderBase.bindingTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"ERROR: still missing mandatory parameters after PROMPTING");
 
                 string missingParameters = BuildMissingParamsString(missingMandatoryParameters);
 
@@ -3262,7 +3266,7 @@ namespace System.Management.Automation
                               ? dontuseInternalTypeNames[0]
                               : inputToOperateOn.BaseObject.GetType().FullName);
 
-                ParameterBinderBase.bindingTracer.WriteLine("RESTORING pipeline parameter's original values");
+                ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"RESTORING pipeline parameter's original values");
             }
 
             bool result = false;

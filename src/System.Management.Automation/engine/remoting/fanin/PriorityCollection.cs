@@ -507,7 +507,7 @@ namespace System.Management.Automation.Remoting
                     }
                     catch (System.OverflowException)
                     {
-                        s_baseTracer.WriteLine("Fragment too big.");
+                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Fragment too big.");
                         ResetReceiveData();
                         PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;
@@ -600,7 +600,7 @@ namespace System.Management.Automation.Remoting
                         // check if the data belongs to the same object as the start fragment
                         if (objectId != _currentObjectId)
                         {
-                            s_baseTracer.WriteLine("ObjectId != CurrentObjectId");
+                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"ObjectId != CurrentObjectId");
                             // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
@@ -610,14 +610,14 @@ namespace System.Management.Automation.Remoting
                             }
                             else
                             {
-                                s_baseTracer.WriteLine("Ignoring ObjectId != CurrentObjectId");
+                                s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Ignoring ObjectId != CurrentObjectId");
                                 continue;
                             }
                         }
 
                         if (fragmentId != (_currentFrgId + 1))
                         {
-                            s_baseTracer.WriteLine("Fragment Id is not in sequence.");
+                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Fragment Id is not in sequence.");
                             // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Remoting
                             }
                             else
                             {
-                                s_baseTracer.WriteLine("Ignoring Fragment Id is not in sequence.");
+                                s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Ignoring Fragment Id is not in sequence.");
                                 continue;
                             }
                         }
