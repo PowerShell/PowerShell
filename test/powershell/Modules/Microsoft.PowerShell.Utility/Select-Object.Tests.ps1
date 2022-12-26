@@ -231,6 +231,19 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
         $results[1] | Should -Be 3
     }
 
+    It "Select-Object with SkipLast should work" {
+        $results = "1", "2", "3" | Select-Object -SkipLast 1
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 1
+        $results[1] | Should -Be 2
+    }
+
+    It "Select-Object with Skip and SkipLast should work" {
+        $results = "1", "2", "3" | Select-Object -Skip 1 -SkipLast 1
+        $results.Count | Should -Be 1
+        $results[0] | Should -Be 2
+    }
+
     It "Select-Object with Index should work" {
         $results = "1", "2", "3" | Select-Object -Index 2
         $results.Count | Should -Be 1
