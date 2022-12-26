@@ -213,7 +213,7 @@ namespace System.Management.Automation
                                 string alias = aliasExpression.Value;
 
                                 DiscoveredAliases[alias] = functionName;
-                                ModuleIntrinsics.Tracer.WriteLine("Function defines alias: {0} = {1}", alias, functionName);
+                                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Function defines alias: {alias} = {functionName}");
                             }
                         }
                     }
@@ -322,7 +322,7 @@ namespace System.Management.Automation
                         // These aren't stored in DiscoveredExports, as they are only
                         // exported after the user calls Export-ModuleMember.
                         DiscoveredAliases[name] = value;
-                        ModuleIntrinsics.Tracer.WriteLine("Module defines alias: {0} = {1}", name, value);
+                        ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module defines alias: {name} = {value}");
                     }
                 }
 

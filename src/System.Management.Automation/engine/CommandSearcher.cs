@@ -631,10 +631,9 @@ namespace System.Management.Automation
                     {
                         string scriptName = Path.GetFileName(path);
 
-                        CommandDiscovery.discoveryTracer.WriteLine(
-                            "Command Found: path ({0}) is a script with name: {1}",
-                            path,
-                            scriptName);
+                        CommandDiscovery.discoveryTracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"Command Found: path ({path}) is a script with name: {scriptName}");
 
                         // The path is to a PowerShell script
 
@@ -651,10 +650,9 @@ namespace System.Management.Automation
 
                     string appName = Path.GetFileName(path);
 
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Command Found: path ({0}) is an application with name: {1}",
-                        path,
-                        appName);
+                    CommandDiscovery.discoveryTracer.Write(
+                        PSTraceSourceOptions.WriteLine,
+                        $"Command Found: path ({path}) is an application with name: {appName}");
 
                     result = new ApplicationInfo(appName, path, _context);
                     break;
@@ -741,10 +739,9 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "Alias found: {0}  {1}",
-                    result.Name,
-                    result.Definition);
+                CommandDiscovery.discoveryTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Alias found: {result.Name}  {result.Definition}");
             }
 
             return result;
@@ -1057,10 +1054,9 @@ namespace System.Management.Automation
         {
             if (result != null)
             {
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "Cmdlet found: {0}  {1}",
-                    result.Name,
-                    result.ImplementingType);
+                CommandDiscovery.discoveryTracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Cmdlet found: {result.Name}  {result.ImplementingType}");
             }
 
             return result;

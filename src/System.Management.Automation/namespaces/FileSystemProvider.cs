@@ -5670,7 +5670,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 bool isContainer = IsItemContainer(path);
-                s_tracer.WriteLine("Moving {0} to {1}", path, destination);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Moving {path} to {destination}");
 
                 if (isContainer)
                 {

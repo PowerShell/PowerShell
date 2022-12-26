@@ -714,8 +714,7 @@ namespace System.Management.Automation
 
             // GetBestMethodAndArguments should fill verifiedArguments with
             // correct values (even if some values are not specified)
-            tracer.WriteLine("Parameters found {0}. Arguments supplied {0}",
-                parameterList.Length, verifiedArguments.Length);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Parameters found {parameterList.Length}. Arguments supplied {verifiedArguments.Length}");
 
             Diagnostics.Assert(parameterList.Length == verifiedArguments.Length,
                 "The number of parameters and arguments should match");

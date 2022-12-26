@@ -200,7 +200,7 @@ namespace System.Management.Automation
             }
             catch (ExtendedTypeSystemException e)
             {
-                PSObjectTypeDescriptor.typeDescriptor.WriteLine("Exception getting the value of the property \"{0}\": \"{1}\".", this.Name, e.Message);
+                PSObjectTypeDescriptor.typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Exception getting the value of the property \"{this.Name}\": \"{e.Message}\".");
                 bool shouldThrow;
                 object returnValue = DealWithGetValueException(e, out shouldThrow);
                 if (shouldThrow)
@@ -297,7 +297,7 @@ namespace System.Management.Automation
             }
             catch (ExtendedTypeSystemException e)
             {
-                PSObjectTypeDescriptor.typeDescriptor.WriteLine("Exception setting the value of the property \"{0}\": \"{1}\".", this.Name, e.Message);
+                PSObjectTypeDescriptor.typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Exception setting the value of the property \"{this.Name}\": \"{e.Message}\".");
                 bool shouldThrow;
                 DealWithSetValueException(e, out shouldThrow);
                 if (shouldThrow)
@@ -402,7 +402,7 @@ namespace System.Management.Automation
                             {
                                 if (!propertyAttributes.Contains(attribute))
                                 {
-                                    typeDescriptor.WriteLine("Property \"{0}\" does not contain attribute \"{1}\" so it has been skipped.", property.Name, attribute);
+                                    typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Property \"{property.Name}\" does not contain attribute \"{attribute}\" so it has been skipped.");
                                     return;
                                 }
                             }

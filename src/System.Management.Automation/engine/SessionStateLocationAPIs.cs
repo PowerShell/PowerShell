@@ -725,10 +725,9 @@ namespace System.Management.Automation
 
                 // See if the path is the current working directory or a parent
                 // of the current working directory
-                s_tracer.WriteLine(
-                    "Comparing {0} to {1}",
-                    providerSpecificPath,
-                    currentWorkingPath);
+                s_tracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Comparing {providerSpecificPath} to {currentWorkingPath}");
 
                 if (string.Equals(providerSpecificPath, currentWorkingPath, StringComparison.OrdinalIgnoreCase))
                 {
@@ -757,10 +756,9 @@ namespace System.Management.Automation
                                 string.Empty,
                                 context);
 
-                        s_tracer.WriteLine(
-                            "Comparing {0} to {1}",
-                            lockedDirectory,
-                            providerSpecificPath);
+                        s_tracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"Comparing {lockedDirectory} to {providerSpecificPath}");
 
                         if (string.Equals(lockedDirectory, providerSpecificPath, StringComparison.OrdinalIgnoreCase))
                         {
@@ -847,10 +845,9 @@ namespace System.Management.Automation
                     mshQualifiedPath,
                     new SessionState(this));
 
-            s_tracer.WriteLine(
-                "Pushing drive: {0} directory: {1}",
-                CurrentDrive.Name,
-                mshQualifiedPath);
+            s_tracer.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"Pushing drive: {CurrentDrive.Name} directory: {mshQualifiedPath}");
 
             return newPushLocation;
         }

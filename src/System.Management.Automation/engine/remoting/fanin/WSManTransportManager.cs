@@ -1894,7 +1894,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     // Test error code for possible session connection retry.
                     if (sessionTM.RetrySessionCreation(errorStruct.errorCode))
@@ -1995,7 +1995,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2054,7 +2054,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2136,7 +2136,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2246,7 +2246,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2356,7 +2356,7 @@ namespace System.Management.Automation.Remoting.Client
                 // way of notifying the same using state change events.
                 if ((errorStruct.errorCode != 0) && (errorStruct.errorCode != 995))
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2423,7 +2423,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Got error with error code {errorStruct.errorCode}. Message {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
@@ -2535,7 +2535,7 @@ namespace System.Management.Automation.Remoting.Client
         [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed")]
         protected override void Dispose(bool isDisposing)
         {
-            tracer.WriteLine("Disposing session with session context: {0} Operation Context: {1}", _sessionContextID, _wsManShellOperationHandle);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Disposing session with session context: {_sessionContextID} Operation Context: {_wsManShellOperationHandle}");
 
             CloseSessionAndClearResources();
 
@@ -2559,7 +2559,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         private void CloseSessionAndClearResources()
         {
-            tracer.WriteLine("Clearing session with session context: {0} Operation Context: {1}", _sessionContextID, _wsManShellOperationHandle);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Clearing session with session context: {_sessionContextID} Operation Context: {_wsManShellOperationHandle}");
 
             // Taking a copy of session handle as we should call WSManCloseSession only once and
             // clear the original value. This will protect us if Dispose() is called twice.
@@ -3063,7 +3063,7 @@ namespace System.Management.Automation.Remoting.Client
                                 _createCmdCompleted,
                                 ref _wsManCmdOperationHandle);
 
-                            tracer.WriteLine("Started cmd with command context : {0} Operation context: {1}", _cmdContextId, _wsManCmdOperationHandle);
+                            tracer.Write(PSTraceSourceOptions.WriteLine, $"Started cmd with command context : {_cmdContextId} Operation context: {_wsManCmdOperationHandle}");
                         }
                     }
                 }
@@ -3118,7 +3118,7 @@ namespace System.Management.Automation.Remoting.Client
                 // we are about to send a signal..so clear pending bit.
                 _isStopSignalPending = false;
 
-                tracer.WriteLine("Sending stop signal with command context: {0} Operation Context {1}", _cmdContextId, _wsManCmdOperationHandle);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Sending stop signal with command context: {_cmdContextId} Operation Context {_wsManCmdOperationHandle}");
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManSignal,
                     PSOpcode.Disconnect,
@@ -3139,7 +3139,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         public override void CloseAsync()
         {
-            tracer.WriteLine("Closing command with command context: {0} Operation Context {1}", _cmdContextId, _wsManCmdOperationHandle);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Closing command with command context: {_cmdContextId} Operation Context {_wsManCmdOperationHandle}");
 
             bool shouldRaiseCloseCompleted = false;
             // then let other threads release the lock before we cleaning up the resources.
@@ -4079,7 +4079,7 @@ namespace System.Management.Automation.Remoting.Client
 
         protected override void Dispose(bool isDisposing)
         {
-            tracer.WriteLine("Disposing command with command context: {0} Operation Context: {1}", _cmdContextId, _wsManCmdOperationHandle);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Disposing command with command context: {_cmdContextId} Operation Context: {_wsManCmdOperationHandle}");
             base.Dispose(isDisposing);
 
             // remove command context from cmd handles dictionary

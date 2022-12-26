@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
             bool recurse,
             uint depth)
         {
-            s_tracer.WriteLine("recurse = {0}, depth = {1}", recurse, depth);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}, depth = {depth}");
 
             if (path == null)
             {

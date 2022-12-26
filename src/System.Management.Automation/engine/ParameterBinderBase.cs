@@ -527,7 +527,7 @@ namespace System.Management.Automation
                                     throw bindingException;
                                 }
 
-                                s_tracer.WriteLine("Validation attribute on {0} returned {1}.", parameterMetadata.Name, result);
+                                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Validation attribute on {parameterMetadata.Name} returned {result}.");
                             }
                         }
 
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        bindingTracer.WriteLine("Trying to convert argument value from {0} to {1}", argumentType, toType);
+                        bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Trying to convert argument value from {argumentType} to {toType}");
 
                         // Likewise shortcircuit the case were the user has asked for a shell object.
                         // He always gets a shell object regardless of the actual type of the object.
@@ -1492,10 +1492,9 @@ namespace System.Management.Automation
                         collectionElementType = typeof(object);
                     }
 
-                    bindingTracer.WriteLine(
-                        "Creating array with element type [{0}] and {1} elements",
-                        collectionElementType,
-                        numberOfElements);
+                    bindingTracer.Write(
+                        PSTraceSourceOptions.WriteLine,
+                        $"Creating array with element type [{collectionElementType}] and {numberOfElements} elements");
 
                     // Since the destination is an array we will have to create an array
                     // of the element type with the correct length
@@ -1551,13 +1550,13 @@ namespace System.Management.Automation
                             }
                             catch (AmbiguousMatchException e)
                             {
-                                bindingTracer.WriteLine("Ambiguous match to Add(T) for type {0}: {1}", toType.FullName, e.Message);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Ambiguous match to Add(T) for type {toType.FullName}: {e.Message}");
                                 getMethodError = e;
                             }
                             catch (ArgumentException e)
                             {
-                                bindingTracer.WriteLine(
-                                    "ArgumentException matching Add(T) for type {0}: {1}", toType.FullName, e.Message);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine,
+                                    $"ArgumentException matching Add(T) for type {toType.FullName}: {e.Message}");
                                 getMethodError = e;
                             }
 
@@ -1669,10 +1668,9 @@ namespace System.Management.Automation
 
                         if (coerceElementTypeIfNeeded)
                         {
-                            bindingTracer.WriteLine(
-                                "COERCE collection element from type {0} to type {1}",
-                                (valueElement == null) ? "null" : valueElement.GetType().Name,
-                                collectionElementType);
+                            bindingTracer.Write(
+                                PSTraceSourceOptions.WriteLine,
+                                $"COERCE collection element from type {(valueElement == null ? "null" : valueElement.GetType().Name)} to type {collectionElementType}");
 
                             // Coerce the element to the appropriate type.
                             // Note, this may be recursive if the element is a
@@ -1694,10 +1692,9 @@ namespace System.Management.Automation
                             if (currentValueElementType != desiredElementType &&
                                 !currentValueElementType.IsSubclassOf(desiredElementType))
                             {
-                                bindingTracer.WriteLine(
-                                    "COERCION REQUIRED: Did not attempt to coerce collection element from type {0} to type {1}",
-                                    (valueElement == null) ? "null" : valueElement.GetType().Name,
-                                    collectionElementType);
+                                bindingTracer.Write(
+                                    PSTraceSourceOptions.WriteLine,
+                                    $"COERCION REQUIRED: Did not attempt to coerce collection element from type {(valueElement == null ? "null" : valueElement.GetType().Name)} to type {collectionElementType}");
 
                                 coercionRequired = true;
                                 break;
@@ -1711,10 +1708,9 @@ namespace System.Management.Automation
                             if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array ||
                                 isSystemDotArray)
                             {
-                                bindingTracer.WriteLine(
-                                    "Adding element of type {0} to array position {1}",
-                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name,
-                                    arrayIndex);
+                                bindingTracer.Write(
+                                    PSTraceSourceOptions.WriteLine,
+                                    $"Adding element of type {(currentValueElement == null ? "null" : currentValueElement.GetType().Name)} to array position {arrayIndex}");
                                 resultAsIList[arrayIndex++] = currentValueElement;
                             }
                             else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)

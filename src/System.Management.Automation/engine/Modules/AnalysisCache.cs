@@ -620,7 +620,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTime on module {0}: {1}", modulePath, e.Message);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception checking LastWriteTime on module {modulePath}: {e.Message}");
                 lastWriteTime = DateTime.MinValue;
             }
 
@@ -772,7 +772,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Exception checking module analysis cache {0}: {1} ", filename, e.Message);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception checking module analysis cache {filename}: {e.Message} ");
             }
 
             if (fromOtherProcess != null)
@@ -870,7 +870,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Exception writing module analysis cache {0}: {1} ", filename, e.Message);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception writing module analysis cache {filename}: {e.Message} ");
             }
 
             // Reset our counter so we can write again if asked.

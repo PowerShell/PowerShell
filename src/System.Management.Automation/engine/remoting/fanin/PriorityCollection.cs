@@ -471,8 +471,9 @@ namespace System.Management.Automation.Remoting
                     if (_pendingDataStream.Length <= FragmentedRemoteObject.HeaderLength)
                     {
                         // there is not enough data to be processed.
-                        s_baseTracer.WriteLine("Not enough data to process. Data is less than header length. Data length is {0}. Header Length {1}.",
-                            _pendingDataStream.Length, FragmentedRemoteObject.HeaderLength);
+                        s_baseTracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"Not enough data to process. Data is less than header length. Data length is {_pendingDataStream.Length}. Header Length {FragmentedRemoteObject.HeaderLength}.");
                         return;
                     }
 
@@ -515,8 +516,9 @@ namespace System.Management.Automation.Remoting
 
                     if (_pendingDataStream.Length < totalLengthOfFragment)
                     {
-                        s_baseTracer.WriteLine("Not enough data to process packet. Data is less than expected blob length. Data length {0}. Expected Length {1}.",
-                            _pendingDataStream.Length, totalLengthOfFragment);
+                        s_baseTracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"Not enough data to process packet. Data is less than expected blob length. Data length {_pendingDataStream.Length}. Expected Length {totalLengthOfFragment}.");
                         return;
                     }
 
@@ -526,8 +528,9 @@ namespace System.Management.Automation.Remoting
                         _totalReceivedObjectSizeSoFar = unchecked(_totalReceivedObjectSizeSoFar + totalLengthOfFragment);
                         if ((_totalReceivedObjectSizeSoFar < 0) || (_totalReceivedObjectSizeSoFar > _maxReceivedObjectSize.Value))
                         {
-                            s_baseTracer.WriteLine("ObjectSize > MaxReceivedObjectSize. ObjectSize is {0}. MaxReceivedObjectSize is {1}",
-                                _totalReceivedObjectSizeSoFar, _maxReceivedObjectSize);
+                            s_baseTracer.Write(
+                                PSTraceSourceOptions.WriteLine,
+                                $"ObjectSize > MaxReceivedObjectSize. ObjectSize is {_totalReceivedObjectSizeSoFar}. MaxReceivedObjectSize is {_maxReceivedObjectSize}");
                             PSRemotingTransportException e = null;
 
                             if (_isCreateByClientTM)

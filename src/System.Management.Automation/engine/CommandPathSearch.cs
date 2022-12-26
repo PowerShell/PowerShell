@@ -147,10 +147,9 @@ namespace System.Management.Automation
                     }
                     catch (ProviderInvocationException providerInvocationException)
                     {
-                        CommandDiscovery.discoveryTracer.WriteLine(
-                            "The relative path '{0}', could not be resolved because the provider threw an exception: '{1}'",
-                            _lookupPaths[index],
-                            providerInvocationException.Message);
+                        CommandDiscovery.discoveryTracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"The relative path '{_lookupPaths[index]}', could not be resolved because the provider threw an exception: '{providerInvocationException.Message}'");
                     }
                     catch (InvalidOperationException)
                     {
@@ -421,7 +420,7 @@ namespace System.Management.Automation
             IEnumerable<string>? result = null;
             try
             {
-                CommandDiscovery.discoveryTracer.WriteLine("Looking for {0} in {1}", pattern, directory);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Looking for {pattern} in {directory}");
 
                 // Get the matching files in the directory
                 if (Directory.Exists(directory))

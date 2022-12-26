@@ -1484,7 +1484,7 @@ namespace System.Management.Automation
             {
                 var attr = (TypeConverterAttribute)typeConverter;
                 string assemblyQualifiedtypeName = attr.ConverterTypeName;
-                typeConversion.WriteLine("{0}'s TypeConverterAttribute points to {1}.", type, assemblyQualifiedtypeName);
+                typeConversion.Write(PSTraceSourceOptions.WriteLine, $"{type}'s TypeConverterAttribute points to {assemblyQualifiedtypeName}.");
 
                 // The return statement makes sure we only process the first TypeConverterAttribute
                 return NewConverterInstance(assemblyQualifiedtypeName);
@@ -1512,7 +1512,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                typeConversion.WriteLine("Threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyQualifiedTypeName, e.Message);
+                typeConversion.Write(PSTraceSourceOptions.WriteLine, $"Threw an exception when retrieving the type \"{assemblyQualifiedTypeName}\": \"{e.Message}\".");
                 return null;
             }
 
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation
             {
                 TargetInvocationException inner = e as TargetInvocationException;
                 string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
-                typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
+                typeConversion.Write(PSTraceSourceOptions.WriteLine, $"Creating an instance of type \"{assemblyQualifiedTypeName}\" caused an exception to be thrown: \"{message}\"");
                 return null;
             }
         }
@@ -2063,7 +2063,7 @@ namespace System.Management.Automation
             {
                 if (!IsDefinedEnum(enumValue, enumType))
                 {
-                    typeConversion.WriteLine("Value {0} is not defined in the Enum {1}.", valueToUseToThrow, enumType);
+                    typeConversion.Write(PSTraceSourceOptions.WriteLine, $"Value {valueToUseToThrow} is not defined in the Enum {enumType}.");
                     throw new PSInvalidCastException(errorId, null,
                         ExtendedTypeSystem.InvalidCastExceptionEnumerationNoValue,
                         valueToUseToThrow, enumType, EnumSingleTypeConverter.EnumValues(enumType));
@@ -2260,7 +2260,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    typeConversion.WriteLine("Found \"{0}\" cast operator in type {1}.", methodName, targetType.FullName);
+                    typeConversion.Write(PSTraceSourceOptions.WriteLine, $"Found \"{methodName}\" cast operator in type {targetType.FullName}.");
                     return method;
                 }
 
@@ -5381,8 +5381,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    typeConversion.WriteLine("Fail to figure out the conversion from \"{0}\" to \"{1}\"",
-                                             fromType.FullName, toType.FullName);
+                    typeConversion.Write(PSTraceSourceOptions.WriteLine, $"Fail to figure out the conversion from \"{fromType.FullName}\" to \"{toType.FullName}\"");
                     return null;
                 }
             }

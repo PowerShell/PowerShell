@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
                     }
 
                     object argument = arguments[i];
-                    PSObject.MemberResolution.WriteLine("Argument '{0}' was a reference so it will be set to \"{1}\".", i + 1, argument);
+                    PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Argument '{i + 1}' was a reference so it will be set to \"{argument}\".");
                     originalArgumentReference.Value = argument;
                 }
             }
@@ -6110,7 +6110,7 @@ namespace System.Management.Automation
             {
                 if (!this.Unify(leftList[i], rightList[i]))
                 {
-                    s_tracer.WriteLine("Couldn't unify {0} with {1}", leftList[i], rightList[i]);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't unify {leftList[i]} with {rightList[i]}");
                     return false;
                 }
             }
@@ -6141,7 +6141,7 @@ namespace System.Management.Automation
                 }
 
                 inferenceCandidates.Add(argumentType);
-                s_tracer.WriteLine("Inferred {0} => {1}", parameterType, argumentType);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Inferred {parameterType} => {argumentType}");
                 return true;
             }
 
@@ -6157,7 +6157,7 @@ namespace System.Management.Automation
                     return this.Unify(parameterType.GetElementType(), argumentType.GetElementType());
                 }
 
-                s_tracer.WriteLine("Couldn't unify array {0} with {1}", parameterType, argumentType);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't unify array {parameterType} with {argumentType}");
                 return false;
             }
 
@@ -6179,7 +6179,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    s_tracer.WriteLine("Couldn't unify reference type {0} with {1}", parameterType, argumentType);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't unify reference type {parameterType} with {argumentType}");
                     return false;
                 }
             }
@@ -6240,7 +6240,7 @@ namespace System.Management.Automation
                 baseType = baseType.BaseType;
             }
 
-            s_tracer.WriteLine("Attempt to unify different constructed types: {0} and {1}", parameterType, argumentType);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Attempt to unify different constructed types: {parameterType} and {argumentType}");
             return false;
         }
 

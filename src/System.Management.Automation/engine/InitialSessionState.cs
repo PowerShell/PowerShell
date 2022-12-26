@@ -5177,7 +5177,7 @@ end {
                         aliases.Add(cmdletName, aliasList);
                     }
 
-                    s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a cmdlet. ", cmdletName, type.FullName);
+                    s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"{cmdletName} from type {type.FullName} is added as a cmdlet. ");
                 }
                 // Check for providers
                 else if (IsProviderClass(type) && TryGetCustomAttribute(type, out CmdletProviderAttribute providerAttribute))
@@ -5211,7 +5211,7 @@ end {
                     providers ??= new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
                     providers.Add(providerName, provider);
 
-                    s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a provider. ", providerName, type.FullName);
+                    s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"{providerName} from type {type.FullName} is added as a provider. ");
                 }
             }
         }

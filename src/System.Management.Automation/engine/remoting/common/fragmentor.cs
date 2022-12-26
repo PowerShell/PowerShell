@@ -724,7 +724,7 @@ namespace System.Management.Automation.Remoting
 
                     _readStream.Position = _readOffSet;
                     int result = _readStream.Read(buffer, offSetToWriteTo, count - dataWritten);
-                    s_trace.WriteLine("Read {0} data from readstream: {1}", result, _readStream.GetHashCode());
+                    s_trace.Write(PSTraceSourceOptions.WriteLine, $"Read {result} data from readstream: {_readStream.GetHashCode()}");
                     dataWritten += result;
                     offSetToWriteTo += result;
                     _readOffSet += result;

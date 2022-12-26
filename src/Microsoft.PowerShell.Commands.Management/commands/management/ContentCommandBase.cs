@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                 string psPath = pathInfo.Path;
                 note = new PSNoteProperty("PSPath", psPath);
                 result.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSPath", psPath);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSPath = {psPath}");
                 _currentContentItem.PSPath = psPath;
 
                 try
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
 
                     note = new PSNoteProperty("PSParentPath", parentPath);
                     result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSParentPath = {parentPath}");
                     _currentContentItem.ParentPath = parentPath;
 
                     // Get the child name
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                     string childName = SessionState.Path.ParseChildName(pathInfo.Path, context);
                     note = new PSNoteProperty("PSChildName", childName);
                     result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSChildName = {childName}");
                     _currentContentItem.ChildName = childName;
                 }
                 catch (NotSupportedException)
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
                     PSDriveInfo drive = pathInfo.Drive;
                     note = new PSNoteProperty("PSDrive", drive);
                     result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSDrive", drive);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSDrive = {drive}");
                     _currentContentItem.Drive = drive;
                 }
 
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
                 ProviderInfo provider = pathInfo.Provider;
                 note = new PSNoteProperty("PSProvider", provider);
                 result.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSProvider", provider);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSProvider = {provider}");
                 _currentContentItem.Provider = provider;
             }
 
@@ -302,19 +302,19 @@ namespace Microsoft.PowerShell.Commands
 
                 PSNoteProperty note = new("PSPath", PSPath);
                 content.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSPath", PSPath);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSPath = {PSPath}");
 
                 // Now attach the parent path and child name
 
                 note = new PSNoteProperty("PSParentPath", ParentPath);
                 content.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", ParentPath);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSParentPath = {ParentPath}");
 
                 // Attach the child name
 
                 note = new PSNoteProperty("PSChildName", ChildName);
                 content.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSChildName", ChildName);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSChildName = {ChildName}");
 
                 // PSDriveInfo
 
@@ -322,14 +322,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     note = new PSNoteProperty("PSDrive", Drive);
                     content.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSDrive", Drive);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSDrive = {Drive}");
                 }
 
                 // ProviderInfo
 
                 note = new PSNoteProperty("PSProvider", Provider);
                 content.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSProvider", Provider);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSProvider = {Provider}");
 
                 return content;
             }

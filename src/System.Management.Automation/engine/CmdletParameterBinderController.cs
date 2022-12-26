@@ -372,7 +372,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                s_tracer.WriteLine("BIND DEFAULT after [{0}] result [{1}]", bindingStage, isSuccess);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"BIND DEFAULT after [{bindingStage}] result [{isSuccess}]");
             }
 
             return;
@@ -967,10 +967,9 @@ namespace System.Management.Automation
                          _commandMetadata.DefaultParameterSetFlag) != 0 &&
                          _commandMetadata.DefaultParameterSetFlag != uint.MaxValue)
                     {
-                        ParameterBinderBase.bindingTracer.WriteLine(
-                            "{0} valid parameter sets, using the DEFAULT PARAMETER SET: [{0}]",
-                            this.BindableParameters.ParameterSetCount.ToString(),
-                            _commandMetadata.DefaultParameterSetName);
+                        ParameterBinderBase.bindingTracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"{this.BindableParameters.ParameterSetCount} valid parameter sets, using the DEFAULT PARAMETER SET: [{_commandMetadata.DefaultParameterSetName}]");
 
                         _currentParameterSetFlag =
                             _commandMetadata.DefaultParameterSetFlag;
@@ -4101,8 +4100,7 @@ namespace System.Management.Automation
 
             if (parameterValue != AutomationNull.Value)
             {
-                s_tracer.WriteLine("Adding PipelineParameter name={0}; value={1}",
-                                 parameter.Parameter.Name, parameterValue ?? "null");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, @$"Adding PipelineParameter name={parameter.Parameter.Name}; value={parameterValue ?? "null"}");
 
                 // Backup the default value
                 BackupDefaultParameter(parameter);

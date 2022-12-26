@@ -783,8 +783,7 @@ namespace System.Management.Automation
                 }
             }
 
-            s_mshsnapinTracer.WriteLine("Successfully read property {0} from {1}",
-                name, mshsnapinKey.Name);
+            s_mshsnapinTracer.Write(PSTraceSourceOptions.WriteLine, $"Successfully read property {name} from {mshsnapinKey.Name}");
             return new Collection<string>(msv);
         }
 

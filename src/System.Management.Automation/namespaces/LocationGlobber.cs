@@ -4393,7 +4393,7 @@ namespace System.Management.Automation
                 }
             } while (false);
 
-            s_tracer.WriteLine("result = {0}; childName = {1}", result.ToString(), childName);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"result = {result}; childName = {childName}");
             return result;
         }
 
@@ -4487,10 +4487,7 @@ namespace System.Management.Automation
                 }
             }
 
-            s_tracer.WriteLine(
-                "Original path: {0} Converted to: {1}",
-                path,
-                result.ToString());
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Original path: {path} Converted to: {result}");
 
             return result.ToString();
         }

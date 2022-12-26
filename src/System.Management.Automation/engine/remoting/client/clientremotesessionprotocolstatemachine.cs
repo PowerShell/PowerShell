@@ -512,7 +512,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                s_trace.WriteLine("Event received : {0} for {1}", arg.StateEvent, _id);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Event received : {arg.StateEvent} for {_id}");
                 if (clearQueuedEvents)
                 {
                     _processPendingEventsQueue.Clear();
@@ -793,7 +793,7 @@ namespace System.Management.Automation.Remoting
             if (newState != oldState)
             {
                 _state = newState;
-                s_trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"state machine state transition: from state {oldState} to state {_state}");
 
                 RemoteSessionStateInfo stateInfo = new RemoteSessionStateInfo(_state, reason);
                 RemoteSessionStateEventArgs sessionStateEventArg = new RemoteSessionStateEventArgs(stateInfo);

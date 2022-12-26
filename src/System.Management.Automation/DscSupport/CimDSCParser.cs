@@ -891,16 +891,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                     else
                     {
-                        s_tracer.WriteLine(
-                            "DSC GetModuleVersion: ModuleVersion value '{0}' cannot be converted to System.Version. Skip the module '{1}'.",
-                            versionValue, moduleName);
+                        s_tracer.Write(
+                            PSTraceSourceOptions.WriteLine,
+                            $"DSC GetModuleVersion: ModuleVersion value '{versionValue}' cannot be converted to System.Version. Skip the module '{moduleName}'.");
                     }
                 }
                 else
                 {
-                    s_tracer.WriteLine(
-                        "DSC GetModuleVersion: Manifest file '{0}' does not contain ModuleVersion. Skip the module '{1}'.",
-                        manifestPath, moduleName);
+                    s_tracer.Write(
+                        PSTraceSourceOptions.WriteLine,
+                        $"DSC GetModuleVersion: Manifest file '{manifestPath}' does not contain ModuleVersion. Skip the module '{moduleName}'.");
                 }
             }
             catch (PSInvalidOperationException ex)
@@ -969,7 +969,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             catch (PSInvalidOperationException e)
             {
                 // Ignore modules with invalid schemas.
-                s_tracer.WriteLine("DSC ClassCache: Error importing file '{0}', with error '{1}'.  Skipping file.", path, e);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: Error importing file '{path}', with error '{e}'.  Skipping file.");
                 errors?.Add(e);
             }
 
@@ -1033,11 +1033,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     sb.Append(',');
                 }
 
-                s_tracer.WriteLine("DSC ClassCache: loading file '{0}' added the following classes to the cache: {1}", path, sb.ToString());
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{path}' added the following classes to the cache: {sb}");
             }
             else
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{0}' added no classes to the cache.");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{path}' added no classes to the cache.");
             }
 
             ByFileClassCache[path] = classes;
@@ -1520,9 +1520,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                         if (keyProp.ValueMap.ContainsKey(key))
                         {
-                            s_tracer.WriteLine(
-                                "DSC CreateDynamicKeywordFromClass: same string value '{0}' appears more than once in qualifier 'Values'. Skip the keyword '{1}'.",
-                                key, keyword.Keyword);
+                            s_tracer.Write(
+                                PSTraceSourceOptions.WriteLine,
+                                $"DSC CreateDynamicKeywordFromClass: same string value '{key}' appears more than once in qualifier 'Values'. Skip the keyword '{keyword.Keyword}'.");
                             return null;
                         }
 

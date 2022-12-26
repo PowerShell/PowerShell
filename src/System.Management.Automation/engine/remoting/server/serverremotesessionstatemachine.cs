@@ -265,11 +265,11 @@ namespace System.Management.Automation.Remoting
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)_state, (int)fsmEventArg.StateEvent];
             if (handler != null)
             {
-                s_trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Before calling state machine event handler: state = {_state}, event = {fsmEventArg.StateEvent}");
 
                 handler(this, fsmEventArg);
 
-                s_trace.WriteLine("After calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"After calling state machine event handler: state = {_state}, event = {fsmEventArg.StateEvent}");
             }
         }
 
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation.Remoting
             if (newState != oldState)
             {
                 _state = newState;
-                s_trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"state machine state transition: from state {oldState} to state {_state}");
             }
             // TODO: else should we close the session here?
         }

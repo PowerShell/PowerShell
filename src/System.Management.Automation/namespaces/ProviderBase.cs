@@ -1704,7 +1704,7 @@ namespace System.Management.Automation.Provider
             // Now add the IsContainer
 
             result.AddOrSetProperty("PSIsContainer", isContainer ? Boxed.True : Boxed.False);
-            providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer);
+            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSIsContainer = {isContainer}");
 
             Diagnostics.Assert(
                 Context != null,
@@ -1783,7 +1783,7 @@ namespace System.Management.Automation.Provider
                 LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
 
             result.AddOrSetProperty("PSPath", providerQualifiedPath);
-            providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSPath", providerQualifiedPath);
+            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSPath = {providerQualifiedPath}");
 
             // Now get the parent path and child name
 
@@ -1812,14 +1812,14 @@ namespace System.Management.Automation.Provider
                 }
 
                 result.AddOrSetProperty("PSParentPath", providerQualifiedParentPath);
-                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSParentPath", providerQualifiedParentPath);
+                providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSParentPath = {providerQualifiedParentPath}");
 
                 // Get the child name
 
                 string childName = navProvider.GetChildName(path, Context);
 
                 result.AddOrSetProperty("PSChildName", childName);
-                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
+                providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSChildName = {childName}");
 #if UNIX
 
                 // Add a commonstat structure to file system objects
@@ -1848,13 +1848,13 @@ namespace System.Management.Automation.Provider
             if (PSDriveInfo != null)
             {
                 result.AddOrSetProperty(this.PSDriveInfo.GetNotePropertyForProviderCmdlets("PSDrive"));
-                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSDrive", this.PSDriveInfo);
+                providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSDrive = {this.PSDriveInfo}");
             }
 
             // ProviderInfo
 
             result.AddOrSetProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
-            providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSProvider", this.ProviderInfo);
+            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"Attaching PSProvider = {this.ProviderInfo}");
 
             return result;
         }

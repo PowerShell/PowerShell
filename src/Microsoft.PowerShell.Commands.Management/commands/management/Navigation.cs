@@ -3112,7 +3112,7 @@ namespace Microsoft.PowerShell.Commands
 
             currentContext.PassThru = PassThru;
 
-            tracer.WriteLine("Moving {0} to {1}", path, Destination);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Moving {path} to {Destination}");
 
             try
             {
@@ -3451,7 +3451,7 @@ namespace Microsoft.PowerShell.Commands
             // the pipeline.
             currentContext.PassThru = PassThru;
 
-            tracer.WriteLine("Rename {0} to {1}", path, NewName);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Rename {path} to {NewName}");
 
             try
             {
@@ -3707,7 +3707,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _paths)
             {
-                tracer.WriteLine("Copy {0} to {1}", path, Destination);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Copy {path} to {Destination}");
 
                 try
                 {
