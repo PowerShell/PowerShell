@@ -2526,9 +2526,7 @@ namespace System.Management.Automation.Runspaces
                 Exception moduleImportException = ProcessModulesToImport(initializedRunspace, ModuleSpecificationsToImport, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
                 if (moduleImportException != null)
                 {
-                    runspaceInitTracer.WriteLine(
-                        "Runspace open failed while loading module: First error {1}",
-                        moduleImportException);
+                    runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Runspace open failed while loading module: First error {moduleImportException}");
                     return moduleImportException;
                 }
             }
@@ -2562,9 +2560,7 @@ namespace System.Management.Automation.Runspaces
                 Exception userDriveException = ProcessUserDrive(initializedRunspace);
                 if (userDriveException != null)
                 {
-                    runspaceInitTracer.WriteLine(
-                        "Runspace open failed while processing user drive with error {1}",
-                        userDriveException);
+                    runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Runspace open failed while processing user drive with error {userDriveException}");
 
                     Exception result = PSTraceSource.NewInvalidOperationException(userDriveException, RemotingErrorIdStrings.UserDriveProcessingThrewTerminatingError, userDriveException.Message);
                     return result;
@@ -2577,9 +2573,7 @@ namespace System.Management.Automation.Runspaces
                 Exception startupScriptException = ProcessStartupScripts(initializedRunspace);
                 if (startupScriptException != null)
                 {
-                    runspaceInitTracer.WriteLine(
-                        "Runspace open failed while running startup script: First error {1}",
-                        startupScriptException);
+                    runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Runspace open failed while running startup script: First error {startupScriptException}");
 
                     Exception result = PSTraceSource.NewInvalidOperationException(startupScriptException, RemotingErrorIdStrings.StartupScriptThrewTerminatingError, startupScriptException.Message);
                     return result;
@@ -3777,7 +3771,7 @@ namespace System.Management.Automation.Runspaces
 
             if (reload)
             {
-                s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0}", psSnapInInfo.Name);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly for psSnapIn {psSnapInInfo.Name}");
 
                 assembly = PSSnapInHelpers.LoadPSSnapInAssembly(psSnapInInfo);
 
@@ -3788,7 +3782,7 @@ namespace System.Management.Automation.Runspaces
                     return null; // BUGBUG - should add something to the warnings list here instead of quitting...
                 }
 
-                s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0} succeeded", psSnapInInfo.Name);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly for psSnapIn {psSnapInInfo.Name} succeeded");
 
                 PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, psSnapInInfo.Name, psSnapInInfo, moduleInfo: null, out cmdlets, out aliases, out providers, out helpFile);
             }
@@ -3898,7 +3892,7 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         internal static Assembly LoadAssemblyFromFile(string fileName)
         {
-            s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0}", fileName);
+            s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly for psSnapIn {fileName}");
 
             Assembly assembly = Assembly.LoadFrom(fileName);
             if (assembly == null)
@@ -3907,7 +3901,7 @@ namespace System.Management.Automation.Runspaces
                 return null;
             }
 
-            s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0} succeeded", fileName);
+            s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly for psSnapIn {fileName} succeeded");
 
             return assembly;
         }
@@ -4826,7 +4820,7 @@ end {
         internal static Assembly LoadPSSnapInAssembly(PSSnapInInfo psSnapInInfo)
         {
             Assembly assembly = null;
-            s_PSSnapInTracer.WriteLine("Loading assembly from GAC. Assembly Name: {0}", psSnapInInfo.AssemblyName);
+            s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly from GAC. Assembly Name: {psSnapInInfo.AssemblyName}");
 
             try
             {
@@ -4850,7 +4844,7 @@ end {
                 return assembly;
             }
 
-            s_PSSnapInTracer.WriteLine("Loading assembly from path: {0}", psSnapInInfo.AssemblyName);
+            s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly from path: {psSnapInInfo.AssemblyName}");
 
             try
             {
@@ -4986,19 +4980,19 @@ end {
             {
                 if (!s_assembliesWithModuleInitializerCache.Value.ContainsKey(assembly))
                 {
-                    s_PSSnapInTracer.WriteLine("Returning cached cmdlet and provider entries for {0}", assemblyPath);
+                    s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Returning cached cmdlet and provider entries for {assemblyPath}");
                     return;
                 }
                 else
                 {
-                    s_PSSnapInTracer.WriteLine("Executing IModuleAssemblyInitializer.Import for {0}", assemblyPath);
+                    s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Executing IModuleAssemblyInitializer.Import for {assemblyPath}");
                     var assemblyTypes = GetAssemblyTypes(assembly, name);
                     ExecuteModuleInitializer(assembly, assemblyTypes);
                     return;
                 }
             }
 
-            s_PSSnapInTracer.WriteLine("Analyzing assembly {0} for cmdlet and providers", assemblyPath);
+            s_PSSnapInTracer.Write(PSTraceSourceOptions.WriteLine, $"Analyzing assembly {assemblyPath} for cmdlet and providers");
             helpFile = GetHelpFile(assemblyPath);
 
             if (psSnapInInfo != null && psSnapInInfo.Name.Equals(InitialSessionState.CoreSnapin, StringComparison.OrdinalIgnoreCase))

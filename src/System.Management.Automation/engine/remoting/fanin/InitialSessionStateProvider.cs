@@ -669,7 +669,7 @@ namespace System.Management.Automation.Remoting
                     return result;
                 }
 
-                s_tracer.WriteLine("Loading assembly from path {0}", applicationBase);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Loading assembly from path {applicationBase}");
                 try
                 {
                     string assemblyPath;

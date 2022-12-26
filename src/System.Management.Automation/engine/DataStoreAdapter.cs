@@ -549,37 +549,27 @@ namespace System.Management.Automation
 
             if (Name != null)
             {
-                s_tracer.WriteLine(
-                    "\tName: {0}",
-                    Name);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tName: {Name}");
             }
 
             if (Provider != null)
             {
-                s_tracer.WriteLine(
-                    "\tProvider: {0}",
-                    Provider);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tProvider: {Provider}");
             }
 
             if (Root != null)
             {
-                s_tracer.WriteLine(
-                    "\tRoot: {0}",
-                    Root);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tRoot: {Root}");
             }
 
             if (CurrentLocation != null)
             {
-                s_tracer.WriteLine(
-                    "\tCWD: {0}",
-                    CurrentLocation);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tCWD: {CurrentLocation}");
             }
 
             if (Description != null)
             {
-                s_tracer.WriteLine(
-                    "\tDescription: {0}",
-                    Description);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tDescription: {Description}");
             }
         }
 

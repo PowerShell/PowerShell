@@ -207,7 +207,7 @@ namespace System.Management.Automation.Remoting
                 (senderInfo != null) && (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
 
-            s_trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);
+            s_trace.Write(PSTraceSourceOptions.WriteLine, $"Finding InitialSessionState provider for id : {configurationProviderId}");
 
             if (string.IsNullOrEmpty(configurationProviderId))
             {
@@ -775,7 +775,7 @@ namespace System.Management.Automation.Remoting
                 // This parameter is only used by Out-Of-Proc transports (not WinRM transports).
                 var discConfiguration = new Remoting.DISCPowerShellConfiguration(
                     configFile: _configurationFile,
-                    roleVerifier: null, 
+                    roleVerifier: null,
                     validateFile: true);
                 rsSessionStateToUse = discConfiguration.GetInitialSessionState(_senderInfo);
             }

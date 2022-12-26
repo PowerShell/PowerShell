@@ -179,9 +179,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_tracer.IsEnabled)
             {
-                s_tracer.WriteLine("path = {0}", path);
-                s_tracer.WriteLine("mode = {0}", mode);
-                s_tracer.WriteLine("access = {0}", access);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"path = {path}");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"mode = {mode}");
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"access = {access}");
             }
 
             _path = path;

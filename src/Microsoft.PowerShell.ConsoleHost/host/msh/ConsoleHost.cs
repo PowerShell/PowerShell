@@ -1566,7 +1566,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
             Dbg.Assert(exec != null, "non-null Executor instance needed");
 
-            s_runspaceInitTracer.WriteLine("running command {0}", command);
+            s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"running command {command}");
 
             Exception e = null;
 
@@ -1890,7 +1890,7 @@ namespace Microsoft.PowerShell
             {
                 string filePath = s_cpp.File;
 
-                s_tracer.WriteLine("running -file '{0}'", filePath);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"running -file '{filePath}'");
 
                 Pipeline tempPipeline = exec.CreatePipeline();
                 Command c;

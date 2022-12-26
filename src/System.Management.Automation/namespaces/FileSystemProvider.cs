@@ -456,12 +456,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (Directory.Exists(homeDirectory))
                     {
-                        s_tracer.WriteLine("Home = {0}", homeDirectory);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Home = {homeDirectory}");
                         providerInfo.Home = homeDirectory;
                     }
                     else
                     {
-                        s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Not setting home directory {homeDirectory} - does not exist");
                     }
                 }
             }
@@ -3698,7 +3698,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            s_tracer.WriteLine("destination = {0}", destination);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
 
             // Confirm the copy with the user
             string action = FileSystemProviderStrings.CopyItemActionDirectory;
@@ -3940,7 +3940,7 @@ namespace Microsoft.PowerShell.Commands
                 destination = MakePath(destination, sourceDirectoryName);
             }
 
-            s_tracer.WriteLine("destination = {0}", destination);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
 
             // Confirm the copy with the user
             string action = FileSystemProviderStrings.CopyItemActionDirectory;
@@ -4953,7 +4953,7 @@ namespace Microsoft.PowerShell.Commands
 
             basePath ??= string.Empty;
 
-            s_tracer.WriteLine("basePath = {0}", basePath);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"basePath = {basePath}");
 
             string result = path;
 
@@ -5142,7 +5142,7 @@ namespace Microsoft.PowerShell.Commands
 
             basePath ??= string.Empty;
 
-            s_tracer.WriteLine("basePath = {0}", basePath);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"basePath = {basePath}");
 
 #if !UNIX
             // Remove alternate data stream references
@@ -5370,12 +5370,12 @@ namespace Microsoft.PowerShell.Commands
                 if (string.IsNullOrEmpty(childName))
                 {
                     // Push the parent on and then stop
-                    s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"tokenizedPathStack.Push({tempPath})");
                     tokenizedPathStack.Push(tempPath);
                     break;
                 }
 
-                s_tracer.WriteLine("tokenizedPathStack.Push({0})", childName);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"tokenizedPathStack.Push({childName})");
                 tokenizedPathStack.Push(childName);
 
                 // Get the parent path and verify if we have to continue
@@ -5391,7 +5391,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (string.IsNullOrEmpty(basePath))
                     {
-                        s_tracer.WriteLine("tokenizedPathStack.Push({0})", tempPath);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"tokenizedPathStack.Push({tempPath})");
                         tokenizedPathStack.Push(tempPath);
                     }
 
@@ -5428,7 +5428,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string childName = tokenizedPathStack.Pop();
 
-                s_tracer.WriteLine("childName = {0}", childName);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"childName = {childName}");
 
                 // Ignore the current directory token
                 if (childName.Equals(".", StringComparison.OrdinalIgnoreCase))
@@ -5452,7 +5452,7 @@ namespace Microsoft.PowerShell.Commands
                             currentPath = string.Empty;
                         }
 
-                        s_tracer.WriteLine("normalizedPathStack.Pop() : {0}", poppedName);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"normalizedPathStack.Pop() : {poppedName}");
                         continue;
                     }
                     else
@@ -5494,7 +5494,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                s_tracer.WriteLine("normalizedPathStack.Push({0})", childName);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"normalizedPathStack.Push({childName})");
                 normalizedPathStack.Push(childName);
             }
 

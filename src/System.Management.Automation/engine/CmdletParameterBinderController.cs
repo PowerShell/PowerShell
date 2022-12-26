@@ -1241,9 +1241,7 @@ namespace System.Management.Automation
                         throw bindingException;
                     }
 
-                    ParameterBinderBase.bindingTracer.WriteLine(
-                        "Adding ScriptBlock to delay-bind list for parameter '{0}'",
-                        parameter.Parameter.Name);
+                    ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding ScriptBlock to delay-bind list for parameter '{parameter.Parameter.Name}'");
 
                     // We need to delay binding of this argument to the parameter
 
@@ -1641,9 +1639,7 @@ namespace System.Management.Automation
 
                             if (dynamicParamBindableObject != null)
                             {
-                                ParameterBinderBase.bindingTracer.WriteLine(
-                                    "DYNAMIC parameter object: [{0}]",
-                                    dynamicParamBindableObject.GetType());
+                                ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"DYNAMIC parameter object: [{dynamicParamBindableObject.GetType()}]");
 
                                 s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Creating a new parameter binder for the dynamic parameter object");
 
@@ -2715,7 +2711,7 @@ namespace System.Management.Automation
                     string parameterSetName = bindableParameters.GetParameterSetName(currentParameterSet);
                     if (!string.IsNullOrEmpty(parameterSetName))
                     {
-                        ParameterBinderBase.bindingTracer.WriteLine("Remaining valid parameter set: {0}", parameterSetName);
+                        ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Remaining valid parameter set: {parameterSetName}");
                     }
                 }
 
@@ -3128,7 +3124,7 @@ namespace System.Management.Automation
             get
             {
                 string currentParameterSetName = BindableParameters.GetParameterSetName(_currentParameterSetFlag);
-                s_tracer.WriteLine("CurrentParameterSetName = {0}", currentParameterSetName);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"CurrentParameterSetName = {currentParameterSetName}");
                 return currentParameterSetName;
             }
         }
@@ -3257,13 +3253,11 @@ namespace System.Management.Automation
             if (ParameterBinderBase.bindingTracer.IsEnabled)
             {
                 ConsolidatedString dontuseInternalTypeNames;
-                ParameterBinderBase.bindingTracer.WriteLine(
-                    "PIPELINE object TYPE = [{0}]",
-                    inputToOperateOn == null || inputToOperateOn == AutomationNull.Value
+                ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, @$"PIPELINE object TYPE = [{(inputToOperateOn == null || inputToOperateOn == AutomationNull.Value
                         ? "null"
                         : ((dontuseInternalTypeNames = inputToOperateOn.InternalTypeNames).Count > 0 && dontuseInternalTypeNames[0] != null)
                               ? dontuseInternalTypeNames[0]
-                              : inputToOperateOn.BaseObject.GetType().FullName);
+                              : inputToOperateOn.BaseObject.GetType().FullName)}]");
 
                 ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"RESTORING pipeline parameter's original values");
             }
@@ -3486,11 +3480,9 @@ namespace System.Management.Automation
             // Attempt binding the value from the pipeline
             // without type coercion
 
-            ParameterBinderBase.bindingTracer.WriteLine(
-                ((flags & ParameterBindingFlags.ShouldCoerceType) != 0) ?
-                    "Parameter [{0}] PIPELINE INPUT ValueFromPipeline WITH COERCION" :
-                    "Parameter [{0}] PIPELINE INPUT ValueFromPipeline NO COERCION",
-                parameter.Parameter.Name);
+            ParameterBinderBase.bindingTracer.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"Parameter [{parameter.Parameter.Name}] PIPELINE INPUT ValueFromPipeline {((flags & ParameterBindingFlags.ShouldCoerceType) != 0 ? "WITH" : "NO")} COERCION");
 
             ParameterBindingException parameterBindingException = null;
             try
@@ -3552,11 +3544,9 @@ namespace System.Management.Automation
         {
             bool bindResult = false;
 
-            ParameterBinderBase.bindingTracer.WriteLine(
-                ((flags & ParameterBindingFlags.ShouldCoerceType) != 0) ?
-                    "Parameter [{0}] PIPELINE INPUT ValueFromPipelineByPropertyName WITH COERCION" :
-                    "Parameter [{0}] PIPELINE INPUT ValueFromPipelineByPropertyName NO COERCION",
-                parameter.Parameter.Name);
+            ParameterBinderBase.bindingTracer.Write(
+                PSTraceSourceOptions.WriteLine,
+                $"Parameter [{parameter.Parameter.Name}] PIPELINE INPUT ValueFromPipelineByPropertyName {((flags & ParameterBindingFlags.ShouldCoerceType) != 0 ? "WITH" : "NO")} COERCION");
 
             PSMemberInfo member = inputToOperateOn.Properties[parameter.Parameter.Name];
 

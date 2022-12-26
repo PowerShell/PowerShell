@@ -197,7 +197,7 @@ namespace System.Management.Automation.Remoting
             // make sure only one thread is processing events.
             lock (_syncObject)
             {
-                s_trace.WriteLine("Event received : {0}", fsmEventArg.StateEvent);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Event received : {fsmEventArg.StateEvent}");
                 _processPendingEventsQueue.Enqueue(fsmEventArg);
 
                 if (_eventsInProcess)
@@ -539,8 +539,8 @@ namespace System.Management.Automation.Remoting
                         }
                         else
                         {
-                            s_trace.WriteLine(@"Server received data for Runspace (id: {0}),
-                                but the Runspace cannot be found", clientRunspacePoolId);
+                            s_trace.Write(PSTraceSourceOptions.WriteLine, $@"Server received data for Runspace (id: {clientRunspacePoolId}),
+                                but the Runspace cannot be found");
 
                             PSRemotingDataStructureException reasonOfFailure = new
                                 PSRemotingDataStructureException(RemotingErrorIdStrings.RunspaceCannotBeFound,
@@ -559,7 +559,7 @@ namespace System.Management.Automation.Remoting
                         break;
 
                     default:
-                        s_trace.WriteLine("Server received data unknown targetInterface: {0}", targetInterface);
+                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Server received data unknown targetInterface: {targetInterface}");
 
                         PSRemotingDataStructureException reasonOfFailure2 = new PSRemotingDataStructureException(RemotingErrorIdStrings.ReceivedUnsupportedRemotingTargetInterfaceType, targetInterface);
                         RemoteSessionStateMachineEventArgs unknownTargetArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure2);

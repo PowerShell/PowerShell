@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             string manifestPath = Path.Combine(moduleFolderPath, moduleName + ".psd1");
-            s_tracer.WriteLine("DSC GetModuleVersion: Try retrieving module version information from file: {0}.", manifestPath);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC GetModuleVersion: Try retrieving module version information from file: {manifestPath}.");
 
             if (!File.Exists(manifestPath))
             {
@@ -869,7 +869,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
                 else
                 {
-                    s_tracer.WriteLine("DSC GetModuleVersion: Manifest file '{0}' not exist.", manifestPath);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC GetModuleVersion: Manifest file '{manifestPath}' not exist.");
                     return null;
                 }
             }
@@ -957,7 +957,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            s_tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: importing file: {path}");
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 

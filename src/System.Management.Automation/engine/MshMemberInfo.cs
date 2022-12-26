@@ -4822,7 +4822,7 @@ namespace System.Management.Automation
                             member = instanceMembers[name];
                             if (member is T memberAsT)
                             {
-                                PSObject.MemberResolution.WriteLine("Found PSObject instance member: {0}.", name);
+                                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Found PSObject instance member: {name}.");
                                 return memberAsT;
                             }
                         }
@@ -4836,7 +4836,7 @@ namespace System.Management.Automation
                             // In membersets we cannot replicate the instance when adding
                             // since the memberset might not yet have an associated PSObject.
                             // We replicate the instance when returning the members of the memberset.
-                            PSObject.MemberResolution.WriteLine("Found PSMemberSet member: {0}.", name);
+                            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Found PSMemberSet member: {name}.");
                             member.ReplicateInstance(delegateOwner);
                             return memberAsT;
                         }
@@ -4917,7 +4917,7 @@ namespace System.Management.Automation
 
                         if (!member.MatchesOptions(matchOptions))
                         {
-                            PSObject.MemberResolution.WriteLine("Skipping hidden member \"{0}\".", member.Name);
+                            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Skipping hidden member \"{member.Name}\".");
                             continue;
                         }
 

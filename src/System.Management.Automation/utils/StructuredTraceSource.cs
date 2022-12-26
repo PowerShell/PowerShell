@@ -882,23 +882,6 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
-        /// </summary>
-        /// <param name="format">The format string.</param>
-        /// <param name="arg1"></param>
-        internal void WriteLine(string format, object arg1)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.WriteLine))
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.WriteLine,
-                    writeLineFormatter,
-                    format,
-                    new object[] { arg1 });
-            }
-        }
-
         /// <summary>Traces the formatted output.</summary>
         /// <param name="handler">The interpolated string handler.</param>
         /// <param name="traceType">Trace type based on <see cref="PSTraceSourceOptions"/>.</param>

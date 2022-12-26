@@ -131,9 +131,7 @@ namespace System.Management.Automation
                 string? resolvedDirectory = null;
                 string? resolvedPath = null;
 
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "Lookup directory \"{0}\" appears to be a relative path. Attempting resolution...",
-                    _lookupPaths[index]);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Lookup directory \"{_lookupPaths[index]}\" appears to be a relative path. Attempting resolution...");
 
                 if (isCurrentDriveValid)
                 {
@@ -153,9 +151,7 @@ namespace System.Management.Automation
                     }
                     catch (InvalidOperationException)
                     {
-                        CommandDiscovery.discoveryTracer.WriteLine(
-                            "The relative path '{0}', could not resolve a home directory for the provider",
-                            _lookupPaths[index]);
+                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The relative path '{_lookupPaths[index]}', could not resolve a home directory for the provider");
                     }
 
                     // Note, if the directory resolves to multiple paths, only the first is used.
@@ -170,9 +166,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        CommandDiscovery.discoveryTracer.WriteLine(
-                            "The relative path was not a file system path. {0}",
-                            _lookupPaths[index]);
+                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The relative path was not a file system path. {_lookupPaths[index]}");
                     }
                 }
                 else
@@ -302,7 +296,7 @@ namespace System.Management.Automation
 
                         if (!_patternEnumerator.MoveNext())
                         {
-                            s_tracer.WriteLine("Current patterns exhausted in current directory: {0}", _lookupPathsEnumerator.Current);
+                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Current patterns exhausted in current directory: {_lookupPathsEnumerator.Current}");
                             break;
                         }
 
@@ -312,7 +306,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        s_tracer.WriteLine("Next path found: {0}", _currentDirectoryResultsEnumerator.Current);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Next path found: {_currentDirectoryResultsEnumerator.Current}");
                         result = true;
                         break;
                     }

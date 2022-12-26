@@ -4331,7 +4331,7 @@ namespace System.Management.Automation
 
             string methodDefinition = bestMethod.methodDefinition;
             ScriptTrace.Trace(1, "TraceMethodCall", ParserStrings.TraceMethodCall, methodDefinition);
-            PSObject.MemberResolution.WriteLine("Calling Method: {0}", methodDefinition);
+            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Calling Method: {methodDefinition}");
             return AuxiliaryMethodInvoke(target, newArguments, bestMethod, arguments);
         }
 
@@ -4356,8 +4356,7 @@ namespace System.Management.Automation
         {
             if ((PSObject.MemberResolution.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
-                PSObject.MemberResolution.WriteLine("Calling Constructor: {0}", DotNetAdapter.GetMethodInfoOverloadDefinition(null,
-                    bestMethod.method, 0));
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Calling Constructor: {DotNetAdapter.GetMethodInfoOverloadDefinition(null, bestMethod.method, 0)}");
             }
 
             return AuxiliaryConstructorInvoke(bestMethod, newArguments, arguments);
@@ -4377,7 +4376,7 @@ namespace System.Management.Automation
             // of all parameters but the last one
             object[] newArguments;
             MethodInformation bestMethod = GetBestMethodAndArguments(propertyName, methodInformation, arguments, out newArguments);
-            PSObject.MemberResolution.WriteLine("Calling Set Method: {0}", bestMethod.methodDefinition);
+            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Calling Set Method: {bestMethod.methodDefinition}");
             ParameterInfo[] bestMethodParameters = bestMethod.method.GetParameters();
             Type propertyType = bestMethodParameters[bestMethodParameters.Length - 1].ParameterType;
 
@@ -5960,9 +5959,9 @@ namespace System.Management.Automation
             {
                 if ((s_tracer.Options & PSTraceSourceOptions.WriteLine) == PSTraceSourceOptions.WriteLine)
                 {
-                    s_tracer.WriteLine(
-                        "Types of method arguments: {0}",
-                        string.Join(", ", typesOfMethodArguments.Select(static t => t.ToString()).ToArray()));
+                    s_tracer.Write(
+                        PSTraceSourceOptions.WriteLine,
+                        $"Types of method arguments: {string.Join(", ", typesOfMethodArguments.Select(static t => t.ToString()).ToArray())}");
                 }
 
                 var typeInference = new TypeInference(typeParameters);
@@ -5980,13 +5979,13 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    s_tracer.WriteLine("Inference successful: {0}", instantiatedMethod);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Inference successful: {instantiatedMethod}");
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)
                 {
                     // Inference failure - most likely due to generic constraints being violated (i.e. where T: IEnumerable)
-                    s_tracer.WriteLine("Inference failure: {0}", e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Inference failure: {e.Message}");
                     return null;
                 }
             }
@@ -6045,7 +6044,7 @@ namespace System.Management.Automation
                 Type firstValueType = inferenceCandidates.FirstOrDefault(static t => t.IsValueType);
                 if (firstValueType != null)
                 {
-                    s_tracer.WriteLine("Cannot reconcile null and {0} (a value type)", firstValueType);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Cannot reconcile null and {firstValueType} (a value type)");
                     inferenceCandidates = null;
                     _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                 }
@@ -6077,7 +6076,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    s_tracer.WriteLine("Multiple unreconcilable inferences for type parameter {0}", typeParameter);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Multiple unreconcilable inferences for type parameter {typeParameter}");
                     inferenceCandidates = null;
                     _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                 }
@@ -6085,7 +6084,7 @@ namespace System.Management.Automation
 
             if (inferenceCandidates == null)
             {
-                s_tracer.WriteLine("Couldn't infer type parameter {0}", typeParameter);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't infer type parameter {typeParameter}");
                 return null;
             }
             else
@@ -6205,7 +6204,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized kind of type");
-            s_tracer.WriteLine("Unrecognized kind of type: {0}", parameterType);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Unrecognized kind of type: {parameterType}");
             return false;
         }
 

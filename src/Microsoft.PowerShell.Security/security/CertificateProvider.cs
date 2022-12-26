@@ -1345,7 +1345,7 @@ namespace Microsoft.PowerShell.Commands
                      typeof(Microsoft.PowerShell.Commands.ImportModuleCommand));
             Runspaces.Command importModuleCommand = new(commandInfo);
 
-            s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
 
             try
             {
@@ -1440,7 +1440,7 @@ namespace Microsoft.PowerShell.Commands
                 result = StringLiterals.DefaultPathSeparator + path;
             }
 
-            s_tracer.WriteLine("result = {0}", result);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"result = {result}");
             return result;
         }
 

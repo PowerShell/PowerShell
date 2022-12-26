@@ -313,7 +313,7 @@ namespace System.Management.Automation.Remoting
                 // This will get executed on a thread pool thread..
                 // so we need to protect that thread, hence catching
                 // all exceptions
-                s_baseTracer.WriteLine("Exception processing data. {0}", exception.Message);
+                s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Exception processing data. {exception.Message}");
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
                 TransportErrorOccuredEventArgs eventargs =
@@ -344,7 +344,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(data != null, "Cannot process null data");
 
-            s_baseTracer.WriteLine("Processing incoming data for stream {0}.", stream);
+            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Processing incoming data for stream {stream}.");
 
             bool shouldProcess = false;
 
@@ -368,7 +368,7 @@ namespace System.Management.Automation.Remoting
                     WSManNativeApi.WSMAN_STREAM_ID_STDIN,
                     WSManNativeApi.WSMAN_STREAM_ID_STDOUT,
                     WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE));
-                s_baseTracer.WriteLine("{0} is not a valid stream", stream);
+                s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"{stream} is not a valid stream");
             }
             // process data
             ReceivedDataCollection.ProcessRawData(data, dataPriority, dataAvailableCallback);
@@ -706,7 +706,7 @@ namespace System.Management.Automation.Remoting.Client
             catch (PSRemotingTransportException pte)
             {
                 // PSRemotingTransportException need not be wrapped in another PSRemotingTransportException.
-                tracer.WriteLine("Exception processing data. {0}", pte.Message);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception processing data. {pte.Message}");
                 TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(pte,
                                     TransportMethodEnum.ReceiveShellOutputEx);
                 EnqueueAndStartProcessingThread(null, eventargs, null);
@@ -718,7 +718,7 @@ namespace System.Management.Automation.Remoting.Client
                 // Enqueue an Exception to process in a thread-pool thread. Processing
                 // Exception in a thread pool thread is important as calling
                 // WSManCloseShell/Command from a Receive callback results in a deadlock.
-                tracer.WriteLine("Exception processing data. {0}", exception.Message);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception processing data. {exception.Message}");
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message);
                 TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(e,
@@ -911,7 +911,7 @@ namespace System.Management.Automation.Remoting.Client
                 // This will get executed on a thread pool thread..
                 // so we need to protect that thread, hence catching
                 // all exceptions
-                tracer.WriteLine("Exception processing data. {0}", exception.Message);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception processing data. {exception.Message}");
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
                 TransportErrorOccuredEventArgs eventargs =

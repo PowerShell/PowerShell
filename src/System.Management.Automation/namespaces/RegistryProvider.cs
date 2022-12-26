@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(newName));
             }
 
-            s_tracer.WriteLine("newName = {0}", newName);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"newName = {newName}");
 
             string parentPath = GetParentPath(path, null);
             string newPath = MakePath(parentPath, newName);
@@ -1382,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(destination),
                 "The destination should have been validated by the caller");
 
-            s_tracer.WriteLine("destination = {0}", destination);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
 
             // Get the parent key of the destination
             // If the destination already exists and is a key, then it becomes
@@ -1514,7 +1514,7 @@ namespace Microsoft.PowerShell.Commands
             string sourcePath,
             string destinationPath)
         {
-            s_tracer.WriteLine("destinationPath = {0}", destinationPath);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destinationPath = {destinationPath}");
 
             // Note the paths have already been normalized so case-insensitive
             // comparisons should be sufficient
@@ -1654,7 +1654,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
-            s_tracer.WriteLine("destination = {0}", destination);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
 
             // Confirm the rename item with the user
 

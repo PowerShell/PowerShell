@@ -698,14 +698,14 @@ namespace System.Management.Automation
             string description = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_Description, false);
             if (description == null)
             {
-                s_mshsnapinTracer.WriteLine("No description is specified for mshsnapin {0}. Using empty string for description.", mshsnapinId);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.WriteLine, $"No description is specified for mshsnapin {mshsnapinId}. Using empty string for description.");
                 description = string.Empty;
             }
 
             string vendor = ReadStringValue(mshsnapinKey, RegistryStrings.MshSnapin_Vendor, false);
             if (vendor == null)
             {
-                s_mshsnapinTracer.WriteLine("No vendor is specified for mshsnapin {0}. Using empty string for description.", mshsnapinId);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.WriteLine, $"No vendor is specified for mshsnapin {mshsnapinId}. Using empty string for description.");
                 vendor = string.Empty;
             }
 
@@ -720,7 +720,7 @@ namespace System.Management.Automation
             Collection<string> types = ReadMultiStringValue(mshsnapinKey, RegistryStrings.MshSnapin_BuiltInTypes, false);
             Collection<string> formats = ReadMultiStringValue(mshsnapinKey, RegistryStrings.MshSnapin_BuiltInFormats, false);
 
-            s_mshsnapinTracer.WriteLine("Successfully read registry values for mshsnapin {0}. Constructing PSSnapInInfo object.", mshsnapinId);
+            s_mshsnapinTracer.Write(PSTraceSourceOptions.WriteLine, $"Successfully read registry values for mshsnapin {mshsnapinId}. Constructing PSSnapInInfo object.");
             PSSnapInInfo mshSnapinInfo = new PSSnapInInfo(mshsnapinId, false, applicationBase, assemblyName, moduleName, monadVersion, version, types, formats, description, vendor);
             mshSnapinInfo.LogPipelineExecutionDetails = logPipelineExecutionDetails;
 
@@ -861,7 +861,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.VersionValueInCorrect, name, mshsnapinKey.Name);
             }
 
-            s_mshsnapinTracer.WriteLine("Successfully converted string {0} to version format.", v);
+            s_mshsnapinTracer.Write(PSTraceSourceOptions.WriteLine, $"Successfully converted string {v} to version format.");
             return v;
         }
 

@@ -3115,7 +3115,7 @@ namespace System.Management.Automation
                                        _reader.NodeType.ToString(), nameof(XmlNodeType.Element));
             }
 
-            s_trace.WriteLine("Processing start node {0}", _reader.LocalName);
+            s_trace.Write(PSTraceSourceOptions.WriteLine, $"Processing start node {_reader.LocalName}");
 
             streamName = _reader.GetAttribute(SerializationStrings.StreamNameAttribute);
             isKnownPrimitiveType = false;
@@ -3151,7 +3151,7 @@ namespace System.Management.Automation
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
             if (pktInfo != null)
             {
-                s_trace.WriteLine("Primitive Knowntype Element {0}", pktInfo.ItemTag);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Primitive Knowntype Element {pktInfo.ItemTag}");
                 isKnownPrimitiveType = true;
                 return ReadPrimaryKnownType(pktInfo);
             }
@@ -3663,12 +3663,12 @@ namespace System.Management.Automation
                     TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
                     if (pktInfo != null)
                     {
-                        s_trace.WriteLine("Primitive Knowntype Element {0}", pktInfo.ItemTag);
+                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Primitive Knowntype Element {pktInfo.ItemTag}");
                         baseObject = ReadPrimaryKnownType(pktInfo);
                     }
                     else if (IsKnownContainerTag(out ct))
                     {
-                        s_trace.WriteLine("Found container node {0}", ct);
+                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Found container node {ct}");
                         baseObject = ReadKnownContainer(ct, dso.InternalTypeNames);
                     }
                     else if (IsNextElement(SerializationStrings.PSObjectTag))
@@ -3679,7 +3679,7 @@ namespace System.Management.Automation
                     else
                     {
                         // We have an unknown tag
-                        s_trace.WriteLine("Unknown tag {0} encountered", _reader.LocalName);
+                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Unknown tag {_reader.LocalName} encountered");
                         if (UnknownTagsAllowed)
                         {
                             Skip();
@@ -3721,7 +3721,7 @@ namespace System.Management.Automation
             // RefId is not mandatory attribute
             if (refId != null)
             {
-                s_trace.WriteLine("Read PSObject with refId: {0}", refId);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Read PSObject with refId: {refId}");
                 _objectRefIdHandler.SetRefId(sh, refId, this.DuplicateRefIdsAllowed);
             }
 
@@ -3746,7 +3746,7 @@ namespace System.Management.Automation
                 // Read refId attribute if available
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
 
-                s_trace.WriteLine("Processing TypeNamesTag with refId {0}", refId);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Processing TypeNamesTag with refId {refId}");
 
                 if (ReadStartElementAndHandleEmpty(SerializationStrings.TypeNamesTag))
                 {
@@ -3780,7 +3780,7 @@ namespace System.Management.Automation
             else if (IsNextElement(SerializationStrings.TypeNamesReferenceTag))
             {
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
-                s_trace.WriteLine("Processing TypeNamesReferenceTag with refId {0}", refId);
+                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Processing TypeNamesReferenceTag with refId {refId}");
                 if (refId == null)
                 {
                     throw NewXmlException(Serialization.AttributeExpected, null, SerializationStrings.ReferenceIdAttribute);

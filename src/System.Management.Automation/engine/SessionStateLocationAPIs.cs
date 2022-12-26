@@ -549,9 +549,7 @@ namespace System.Management.Automation
                     path = path.Substring(1);
                 }
 
-                s_tracer.WriteLine(
-                    "New working path = {0}",
-                    path);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"New working path = {path}");
 
                 CurrentDrive.CurrentLocation = path;
             }
@@ -702,7 +700,7 @@ namespace System.Management.Automation
                     normalizePathContext.ThrowFirstErrorOrDoNothing();
                 }
 
-                s_tracer.WriteLine("Provider path = {0}", providerSpecificPath);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Provider path = {providerSpecificPath}");
 
                 // Get the current working directory provider specific path
                 PSDriveInfo currentWorkingDrive = null;
@@ -719,9 +717,7 @@ namespace System.Management.Automation
                     currentWorkingDrive == CurrentDrive,
                     "The current working drive should be the CurrentDrive.");
 
-                s_tracer.WriteLine(
-                    "Current working path = {0}",
-                    currentWorkingPath);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Current working path = {currentWorkingPath}");
 
                 // See if the path is the current working directory or a parent
                 // of the current working directory
@@ -764,9 +760,7 @@ namespace System.Management.Automation
                         {
                             // The path is a parent of the current working
                             // directory
-                            s_tracer.WriteLine(
-                                "The path is a parent of the current working directory: {0}",
-                                lockedDirectory);
+                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The path is a parent of the current working directory: {lockedDirectory}");
 
                             result = true;
                             break;

@@ -1317,7 +1317,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void Redirect(Uri newUri, RunspaceConnectionInfo connectionInfo)
         {
             CloseSessionAndClearResources();
-            tracer.WriteLine("Redirecting to URI: {0}", newUri);
+            tracer.Write(PSTraceSourceOptions.WriteLine, $"Redirecting to URI: {newUri}");
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.URIRedirection,
                 PSOpcode.Connect,
@@ -3387,7 +3387,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("OnCreateCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"OnCreateCmdCompleted callback: WSMan reported an error: {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
@@ -3485,7 +3485,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("OnConnectCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"OnConnectCmdCompleted callback: WSMan reported an error: {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
@@ -3659,7 +3659,7 @@ namespace System.Management.Automation.Remoting.Client
                 // way of notifying the same using state change events.
                 if ((errorStruct.errorCode != 0) && (errorStruct.errorCode != 995))
                 {
-                    tracer.WriteLine("CmdSend callback: WSMan reported an error: {0}", errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"CmdSend callback: WSMan reported an error: {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
@@ -3733,7 +3733,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("CmdReceive callback: WSMan reported an error: {0}", errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"CmdReceive callback: WSMan reported an error: {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
@@ -3813,7 +3813,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("OnReconnectCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"OnReconnectCmdCompleted callback: WSMan reported an error: {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
@@ -3905,7 +3905,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
                 if (errorStruct.errorCode != 0)
                 {
-                    tracer.WriteLine("Cmd Signal callback: WSMan reported an error: {0}", errorStruct.errorDetail);
+                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Cmd Signal callback: WSMan reported an error: {errorStruct.errorDetail}");
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,

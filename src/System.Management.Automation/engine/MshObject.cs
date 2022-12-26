@@ -79,13 +79,13 @@ namespace System.Management.Automation
             PSMemberInfo member = allMembers[name];
             if (member == null)
             {
-                PSObject.MemberResolution.WriteLine("\"{0}\" NOT present in type table.", name);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"\"{name}\" NOT present in type table.");
                 return null;
             }
 
             if (member is T memberAsT)
             {
-                PSObject.MemberResolution.WriteLine("\"{0}\" present in type table.", name);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"\"{name}\" present in type table.");
                 return memberAsT;
             }
 
@@ -134,12 +134,12 @@ namespace System.Management.Automation
                 }
 
                 T adaptedMember = msjObj.AdaptedMembers[name] as T;
-                PSObject.MemberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Serialized adapted member: {(adaptedMember == null ? "not found" : adaptedMember.Name)}.");
                 return adaptedMember;
             }
 
             T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj.ImmediateBaseObject, name);
-            PSObject.MemberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
+            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Adapted member: {(retValue == null ? "not found" : retValue.Name)}.");
             return retValue;
         }
 
@@ -223,7 +223,7 @@ namespace System.Management.Automation
             if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
-                PSObject.MemberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
+                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"DotNet member: {(retValue == null ? "not found" : retValue.Name)}.");
                 return retValue;
             }
 

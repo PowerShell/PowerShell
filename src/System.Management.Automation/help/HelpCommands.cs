@@ -441,14 +441,14 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     string typeToAdd = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", typeName, tokenToAdd);
-                    s_tracer.WriteLine("Adding type {0}", typeToAdd);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Adding type {typeToAdd}");
                     objectToReturn.TypeNames.Add(typeToAdd);
                 }
 
                 // Existing typenames at the bottom..
                 foreach (string typeName in originalHelpObject.TypeNames)
                 {
-                    s_tracer.WriteLine("Adding type {0}", typeName);
+                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Adding type {typeName}");
                     objectToReturn.TypeNames.Add(typeName);
                 }
             }
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="helpInfo">HelpInfo Object to look for the parameter.</param>
         private void GetAndWriteParameterInfo(HelpInfo helpInfo)
         {
-            s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Searching parameters for {helpInfo.Name}");
 
             PSObject[] pInfos = GetParameterInfo(helpInfo);
 

@@ -445,9 +445,7 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "The name appears to be a qualified path: {0}",
-                    _commandName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The name appears to be a qualified path: {_commandName}");
 
                 CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Trying to resolve the path as an PSPath");
 
@@ -494,9 +492,7 @@ namespace System.Management.Automation
                 {
                     string path = resolvedPaths[0];
 
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Path resolved to: {0}",
-                        path);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Path resolved to: {path}");
 
                     result = GetInfoFromPath(path);
                 }
@@ -938,21 +934,15 @@ namespace System.Management.Automation
             {
                 if (result is FilterInfo)
                 {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Filter found: {0}",
-                        function);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Filter found: {function}");
                 }
                 else if (result is ConfigurationInfo)
                 {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Configuration found: {0}",
-                        function);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Configuration found: {function}");
                 }
                 else
                 {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Function found: {0}  {1}",
-                        function);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Function found: {function}");
                 }
             }
             else
@@ -1164,9 +1154,7 @@ namespace System.Management.Automation
                 {
                     result = resolvedPath;
 
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "The relative path was resolved to: {0}",
-                        result);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The relative path was resolved to: {result}");
                 }
                 else
                 {
@@ -1541,9 +1529,7 @@ namespace System.Management.Automation
                     string? directory = Path.GetDirectoryName(_commandName);
                     var directoryCollection = new LookupPathCollection { directory };
 
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "The path is rooted, so only doing the lookup in the specified directory: {0}",
-                        directory);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The path is rooted, so only doing the lookup in the specified directory: {directory}");
 
                     string fileName = Path.GetFileName(_commandName);
 
@@ -1573,9 +1559,7 @@ namespace System.Management.Automation
                     string? directory = Path.GetDirectoryName(_commandName);
                     directory = ResolvePSPath(directory);
 
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "The path is relative, so only doing the lookup in the specified directory: {0}",
-                        directory);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The path is relative, so only doing the lookup in the specified directory: {directory}");
 
                     if (directory == null)
                     {

@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.WriteLine("Create a new group: {0}", currentObjectOrderValues);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Create a new group: {currentObjectOrderValues}");
                         GroupInfo newObjGrp = noElement ? new GroupInfoNoElement(currentObjectEntry) : new GroupInfo(currentObjectEntry);
                         groups.Add(newObjGrp);
 
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.WriteLine("Create a new group: {0}", currentObjectOrderValues);
+                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Create a new group: {currentObjectOrderValues}");
                         GroupInfo newObjGrp = noElement
                             ? new GroupInfoNoElement(currentObjectEntry)
                             : new GroupInfo(currentObjectEntry);

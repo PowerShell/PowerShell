@@ -624,7 +624,7 @@ namespace System.Management.Automation
 
             if (!IsProviderLoaded(this.ExecutionContext.ProviderNames.FileSystem))
             {
-                s_tracer.WriteLine("The {0} provider is not loaded", this.ExecutionContext.ProviderNames.FileSystem);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The {this.ExecutionContext.ProviderNames.FileSystem} provider is not loaded");
                 return null;
             }
 
@@ -773,10 +773,10 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(moduleName))
             {
-                s_tracer.WriteLine("Auto-mounting built-in drive: {0}", name);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Auto-mounting built-in drive: {name}");
                 CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand), null, null, context);
                 Exception exception = null;
-                s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
                 CommandDiscovery.AutoloadSpecifiedModule(moduleName, context, commandInfo.Visibility, out exception);
                 if (exception != null)
                 {
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
-            s_tracer.WriteLine("Drive name = {0}", drive.Name);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Drive name = {drive.Name}");
 
             // First set the drive data
 

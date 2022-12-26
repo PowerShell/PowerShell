@@ -1377,7 +1377,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string providerName in providerNames)
             {
-                tracer.WriteLine("ProviderName: {0}", providerName);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"ProviderName: {providerName}");
 
                 bool providerNameEmpty = string.IsNullOrEmpty(providerName);
                 bool providerNameContainsWildcardCharacters =
@@ -3898,7 +3898,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _paths)
             {
-                tracer.WriteLine("Clearing {0}", path);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Clearing {path}");
 
                 try
                 {
@@ -4062,7 +4062,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string path in _paths)
             {
-                tracer.WriteLine("Invoking {0}", path);
+                tracer.Write(PSTraceSourceOptions.WriteLine, $"Invoking {path}");
 
                 try
                 {

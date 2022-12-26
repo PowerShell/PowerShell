@@ -425,9 +425,7 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, 3rd party callout
                             {
-                                bindingTracer.WriteLine(
-                                    "ERROR: DATA GENERATION: {0}",
-                                    e.Message);
+                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: DATA GENERATION: {e.Message}");
 
                                 ParameterBindingException bindingException =
                                         new ParameterBindingArgumentTransformationException(
@@ -508,9 +506,7 @@ namespace System.Management.Automation
                                 }
                                 catch (Exception e) // Catch-all OK, 3rd party callout
                                 {
-                                    bindingTracer.WriteLine(
-                                        "ERROR: VALIDATION FAILED: {0}",
-                                        e.Message);
+                                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: VALIDATION FAILED: {e.Message}");
 
                                     ParameterBindingValidationException bindingException =
                                         new ParameterBindingValidationException(

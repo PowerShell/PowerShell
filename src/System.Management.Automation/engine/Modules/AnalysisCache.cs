@@ -115,7 +115,7 @@ namespace System.Management.Automation
                         var versionInManifest = LanguagePrimitives.ConvertTo<Version>(moduleManifestProperties["ModuleVersion"]);
                         if (version != versionInManifest)
                         {
-                            ModuleIntrinsics.Tracer.WriteLine("ModuleVersion in manifest does not match versioned module directory, skipping module: {0}", modulePath);
+                            ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"ModuleVersion in manifest does not match versioned module directory, skipping module: {modulePath}");
                             return null;
                         }
                     }
@@ -159,7 +159,7 @@ namespace System.Management.Automation
             {
                 if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisException(modulePath, e.Message);
                 // Ignore the errors, proceed with the usual module analysis
-                ModuleIntrinsics.Tracer.WriteLine("Exception on fast-path analysis of module {0}", modulePath);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception on fast-path analysis of module {modulePath}");
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result != null);
@@ -423,12 +423,12 @@ namespace System.Management.Automation
                 // If we're already analyzing this module, let the recursion bottom out.
                 if (!s_modulesBeingAnalyzed.TryAdd(modulePath, modulePath))
                 {
-                    ModuleIntrinsics.Tracer.WriteLine("{0} is already being analyzed. Exiting.", modulePath);
+                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"{modulePath} is already being analyzed. Exiting.");
                     return null;
                 }
 
                 // Record that we're analyzing this specific module so that we don't get stuck in recursion
-                ModuleIntrinsics.Tracer.WriteLine("Started analysis: {0}", modulePath);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Started analysis: {modulePath}");
                 CallGetModuleDashList(context, modulePath);
 
                 ModuleCacheEntry moduleCacheEntry;
@@ -439,13 +439,13 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Module analysis generated an exception: {0}", e);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
 
                 // Catch-all OK, third-party call-out.
             }
             finally
             {
-                ModuleIntrinsics.Tracer.WriteLine("Finished analysis: {0}", modulePath);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Finished analysis: {modulePath}");
                 s_modulesBeingAnalyzed.TryRemove(modulePath, out modulePath);
             }
 
@@ -479,7 +479,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Module analysis generated an exception: {0}", e);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
 
                 // Catch-all OK, third-party call-out.
             }
@@ -489,7 +489,7 @@ namespace System.Management.Automation
 
         internal static void CacheModuleExports(PSModuleInfo module, ExecutionContext context)
         {
-            ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
+            ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Requested caching for {module.Name}");
 
             // Don't cache incompatible modules on the system32 module path even if loaded with
             // -SkipEditionCheck, since it will break subsequent sessions
@@ -572,14 +572,14 @@ namespace System.Management.Automation
             // We need to update the cache
             foreach (var exportedCommand in realExportedCommands.Values)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Caching command: {0}", exportedCommand.Name);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Caching command: {exportedCommand.Name}");
                 exportedCommands.GetOrAdd(exportedCommand.Name, exportedCommand.CommandType);
             }
 
             foreach (var pair in realExportedClasses)
             {
                 var className = pair.Key;
-                ModuleIntrinsics.Tracer.WriteLine("Caching command: {0}", className);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Caching command: {className}");
                 moduleCacheEntry.Types.AddOrUpdate(className, pair.Value.TypeAttributes, (k, t) => t);
             }
 
@@ -606,7 +606,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.WriteLine("Module analysis generated an exception: {0}", e);
+                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
 
                 // Catch-all OK, third-party call-out.
             }

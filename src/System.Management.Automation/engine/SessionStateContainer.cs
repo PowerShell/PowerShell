@@ -4231,7 +4231,7 @@ namespace System.Management.Automation
                 }
             }
 
-            s_tracer.WriteLine("providerDestinationPath = {0}", providerDestinationPath);
+            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"providerDestinationPath = {providerDestinationPath}");
 
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;

@@ -544,7 +544,7 @@ namespace System.Management.Automation
             // like "get-command -syntax"
             if (string.IsNullOrEmpty(location))
             {
-                s_tracer.WriteLine("Unable to load file {0}", helpFileToLoad);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to load file {helpFileToLoad}");
             }
 
             return location;
@@ -706,7 +706,7 @@ namespace System.Management.Automation
 
             if (helpItemsNode == null)
             {
-                s_tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
+                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find 'helpItems' element in file {helpFile}");
                 return;
             }
 
