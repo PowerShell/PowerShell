@@ -322,28 +322,16 @@ namespace System.Management.Automation
             }
 
             // AppDomain
-            OutputLine(
-                PSTraceSourceOptions.All,
-                "Initializing tracing for AppDomain: {0}",
-                AppDomain.CurrentDomain.FriendlyName);
+            Write(PSTraceSourceOptions.All, $"Initializing tracing for AppDomain: {AppDomain.CurrentDomain.FriendlyName}");
 
             // Current time
-            OutputLine(
-                PSTraceSourceOptions.All,
-                "\tCurrent time: {0}",
-                DateTime.Now.ToString());
+            Write(PSTraceSourceOptions.All, $"\tCurrent time: {DateTime.Now}");
 
             // OS build
-            OutputLine(
-                PSTraceSourceOptions.All,
-                "\tOS Build: {0}",
-                Environment.OSVersion.ToString());
+            Write(PSTraceSourceOptions.All, $"\tOS Build: {Environment.OSVersion}");
 
             // .NET Framework version
-            OutputLine(
-                PSTraceSourceOptions.All,
-                "\tFramework Build: {0}\n",
-                Environment.Version.ToString());
+            Write(PSTraceSourceOptions.All, $"\tFramework Build: {Environment.Version}\n");
 
             // Mark that we have traced the global header
             globalTraceInitialized = true;
@@ -370,52 +358,31 @@ namespace System.Management.Automation
             }
 
             // Write the header for the new trace object
-            OutputLine(PSTraceSourceOptions.All, "Creating tracer:");
+            Write(PSTraceSourceOptions.All, $"Creating tracer:");
 
             // Category
-            OutputLine(
-                PSTraceSourceOptions.All,
-                "\tCategory: {0}",
-                this.Name);
+            Write(PSTraceSourceOptions.All, $"\tCategory: {Name}");
 
             // Description
-            OutputLine(
-                PSTraceSourceOptions.All,
-                "\tDescription: {0}",
-                Description);
+            Write(PSTraceSourceOptions.All, $"\tDescription: {Description}");
 
             if (callingAssembly != null)
             {
                 // Assembly name
-                OutputLine(
-                    PSTraceSourceOptions.All,
-                    "\tAssembly: {0}",
-                    callingAssembly.FullName);
+                Write(PSTraceSourceOptions.All, $"\tAssembly: {callingAssembly.FullName}");
 
                 // Assembly location
-                OutputLine(
-                    PSTraceSourceOptions.All,
-                    "\tAssembly Location: {0}",
-                    callingAssembly.Location);
+                Write(PSTraceSourceOptions.All, $"\tAssembly Location: {callingAssembly.Location}");
 
                 // Assembly File timestamp
                 FileInfo assemblyFileInfo =
                     new FileInfo(callingAssembly.Location);
 
-                OutputLine(
-                    PSTraceSourceOptions.All,
-                    "\tAssembly File Timestamp: {0}",
-                    assemblyFileInfo.CreationTime.ToString());
+                Write(PSTraceSourceOptions.All, $"\tAssembly File Timestamp: {assemblyFileInfo.CreationTime}");
             }
 
-            StringBuilder flagBuilder = new StringBuilder();
-
             // Label
-            flagBuilder.Append("\tFlags: ");
-            flagBuilder.Append(_flags.ToString());
-
-            // Write out the flags
-            OutputLine(PSTraceSourceOptions.All, flagBuilder.ToString());
+            Write(PSTraceSourceOptions.All, $"\tFlags: {_flags}");
         }
         #endregion StructuredTraceSource constructor methods
 
@@ -427,7 +394,13 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, msg);
+                    return new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Scope,
+                        scopeOutputFormatter: null,
+                        leavingScopeFormatter: null,
+                        scopeName: string.Empty,
+                        format: msg);
                 }
                 catch { }
             }
@@ -441,7 +414,14 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1);
+                    return new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Scope,
+                        scopeOutputFormatter: null,
+                        leavingScopeFormatter: null,
+                        scopeName: string.Empty,
+                        format,
+                        args: arg1);
                 }
                 catch { }
             }
@@ -455,7 +435,15 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, string.Empty, format, arg1, arg2);
+                    return new ScopeTracer(
+                        this,
+                        PSTraceSourceOptions.Scope,
+                        scopeOutputFormatter: null,
+                        leavingScopeFormatter: null,
+                        scopeName: string.Empty,
+                        format,
+                        arg1,
+                        arg2);
                 }
                 catch { }
             }
