@@ -687,13 +687,7 @@ namespace System.Management.Automation
         /// <param name="lockName">
         /// User defined name given to the lock
         /// </param>
-        internal void TraceLockAcquiring(string lockName)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
-            {
-                Write(PSTraceSourceOptions.Lock, $"Acquiring: {lockName}");
-            }
-        }
+        internal void TraceLockAcquiring(string lockName) => Write(PSTraceSourceOptions.Lock, $"Acquiring: {lockName}");
 
         /// <summary>
         /// Call this after acquiring a lock.
@@ -707,13 +701,7 @@ namespace System.Management.Automation
         /// You will not get automatic indentation or
         /// release tracing of the lock.
         /// </remarks>
-        internal void TraceLockAcquired(string lockName)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
-            {
-                Write(PSTraceSourceOptions.Lock, $"Enter: {lockName}");
-            }
-        }
+        internal void TraceLockAcquired(string lockName) => Write(PSTraceSourceOptions.Lock, $"Enter: {lockName}");
 
         /// <summary>
         /// Call this after releasing the lock, but only
@@ -723,13 +711,7 @@ namespace System.Management.Automation
         /// <param name="lockName">
         /// User defined name given to the lock
         /// </param>
-        internal void TraceLockReleased(string lockName)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Lock))
-            {
-                Write(PSTraceSourceOptions.Lock, $"Leave: {lockName}");
-            }
-        }
+        internal void TraceLockReleased(string lockName) => Write(PSTraceSourceOptions.Lock, $"Leave: {lockName}");
 
         #endregion PSTraceSourceOptions.Lock methods/helpers
 
@@ -1514,5 +1496,64 @@ namespace System.Management.Automation
         /// <param name="alignment">Minimum number of characters that should be written for this value. If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
         /// <param name="format">The format string.</param>
         public void AppendFormatted(object? value, int alignment = 0, string? format = null) => _handler.AppendFormatted(value, alignment, format);
+    }
+
+    /// <summary>
+    /// Allocation free scope trace.
+    /// </summary>
+    internal ref struct TraceScope
+    {
+        private readonly PSTraceSource _traceSource;
+        private readonly PSTraceSourceOptions _traceType;
+        private readonly string _scopeName;
+
+        public TraceScope(PSTraceSource traceSource, PSTraceSourceOptions traceType, string scopeName, [InterpolatedStringHandlerArgument("traceSource", "traceType")] OutputLineIfInterpolatedStringHandler handler)
+        {
+            _traceSource = traceSource;
+            _traceType = traceType;
+            _scopeName = scopeName;
+
+            if (_traceSource.Options.HasFlag(_traceType))
+            {
+                try
+                {
+                    _traceSource.Write(_traceType, $"Enter {Enum.GetName<PSTraceSourceOptions>(_traceType),-11}: {_scopeName}");
+                    _traceSource.TraceSource.TraceInformation(handler.ToStringAndClear());
+
+                    // Increment the current thread indent level
+                    PSTraceSource.ThreadIndentLevel++;
+                }
+                catch
+                {
+                    // Eat all exceptions.
+                    //
+                    // Do not assert here because exceptions can be
+                    // raised while a thread is shutting down during
+                    // normal operation.
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_traceSource.Options.HasFlag(_traceType))
+            {
+                try
+                {
+                    _traceSource.Write(_traceType, $"Leave {Enum.GetName<PSTraceSourceOptions>(_traceType),-11}: {_scopeName}");
+
+                    // Decrement the indent level in thread local storage
+                    PSTraceSource.ThreadIndentLevel--;
+                }
+                catch
+                {
+                    // Eat all exceptions.
+                    //
+                    // Do not assert here because exceptions can be
+                    // raised while a thread is shutting down during
+                    // normal operation.
+                }
+            }
+        }
     }
 }
