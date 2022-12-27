@@ -296,14 +296,12 @@ namespace System.Management.Automation
             {
                 // This exception occurs when the config
                 // file is malformed. Just default to Off.
-
                 _flags = PSTraceSourceOptions.None;
             }
             catch (System.Configuration.ConfigurationException)
             {
                 // This exception occurs when the config
                 // file is malformed. Just default to Off.
-
                 _flags = PSTraceSourceOptions.None;
             }
         }
@@ -318,42 +316,36 @@ namespace System.Management.Automation
         {
             // Only trace the global header if it hasn't
             // already been traced
-
             if (globalTraceInitialized)
             {
                 return;
             }
 
             // AppDomain
-
             OutputLine(
                 PSTraceSourceOptions.All,
                 "Initializing tracing for AppDomain: {0}",
                 AppDomain.CurrentDomain.FriendlyName);
 
             // Current time
-
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tCurrent time: {0}",
                 DateTime.Now.ToString());
 
             // OS build
-
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tOS Build: {0}",
                 Environment.OSVersion.ToString());
 
             // .NET Framework version
-
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tFramework Build: {0}\n",
                 Environment.Version.ToString());
 
             // Mark that we have traced the global header
-
             globalTraceInitialized = true;
         }
 
@@ -378,18 +370,15 @@ namespace System.Management.Automation
             }
 
             // Write the header for the new trace object
-
             OutputLine(PSTraceSourceOptions.All, "Creating tracer:");
 
             // Category
-
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tCategory: {0}",
                 this.Name);
 
             // Description
-
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tDescription: {0}",
@@ -398,21 +387,18 @@ namespace System.Management.Automation
             if (callingAssembly != null)
             {
                 // Assembly name
-
                 OutputLine(
                     PSTraceSourceOptions.All,
                     "\tAssembly: {0}",
                     callingAssembly.FullName);
 
                 // Assembly location
-
                 OutputLine(
                     PSTraceSourceOptions.All,
                     "\tAssembly Location: {0}",
                     callingAssembly.Location);
 
                 // Assembly File timestamp
-
                 FileInfo assemblyFileInfo =
                     new FileInfo(callingAssembly.Location);
 
@@ -423,13 +409,12 @@ namespace System.Management.Automation
             }
 
             StringBuilder flagBuilder = new StringBuilder();
-            // Label
 
+            // Label
             flagBuilder.Append("\tFlags: ");
             flagBuilder.Append(_flags.ToString());
 
             // Write out the flags
-
             OutputLine(PSTraceSourceOptions.All, flagBuilder.ToString());
         }
         #endregion StructuredTraceSource constructor methods
@@ -528,7 +513,6 @@ namespace System.Management.Automation
                     // Get the name of the method that called this method
                     // 1, signifies the caller of this method, whereas 2
                     // would signify the caller of that method.
-
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the method tracer object
@@ -575,7 +559,6 @@ namespace System.Management.Automation
                     // Get the name of the method that called this method
                     // 1, signifies the caller of this method, whereas 2
                     // would signify the caller of that method.
-
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the scope tracer object
@@ -625,7 +608,6 @@ namespace System.Management.Automation
                     // Get the name of the method that called this method
                     // 1, signifies the caller of this method, whereas 2
                     // would signify the caller of that method.
-
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the scope tracer object
