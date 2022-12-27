@@ -691,9 +691,7 @@ namespace System.Management.Automation
         {
             if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
-                TraceLockHelper(
-                    lockAcquiringFormatter,
-                    lockName);
+                Write(PSTraceSourceOptions.Lock, $"Acquiring: {lockName}");
             }
         }
 
@@ -713,9 +711,7 @@ namespace System.Management.Automation
         {
             if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
-                TraceLockHelper(
-                    lockEnterFormatter,
-                    lockName);
+                Write(PSTraceSourceOptions.Lock, $"Enter: {lockName}");
             }
         }
 
@@ -731,41 +727,10 @@ namespace System.Management.Automation
         {
             if (_flags.HasFlag(PSTraceSourceOptions.Lock))
             {
-                TraceLockHelper(
-                    lockLeavingFormatter,
-                    lockName);
+                Write(PSTraceSourceOptions.Lock, $"Leave: {lockName}");
             }
         }
 
-        /// <summary>
-        /// A helper to simplify tracing of the lock flags.
-        /// </summary>
-        /// <param name="formatter">
-        /// A format string for the output.
-        /// </param>
-        /// <param name="lockName">
-        /// User defined name for the lock
-        /// </param>
-        private void TraceLockHelper(
-            string formatter,
-            string lockName)
-        {
-            try
-            {
-                OutputLine(
-                    PSTraceSourceOptions.Lock,
-                    formatter,
-                    lockName);
-            }
-            catch
-            {
-                // Eat all exceptions
-
-                // Do not assert here because exceptions can be
-                // raised while a thread is shutting down during
-                // normal operation.
-            }
-        }
         #endregion PSTraceSourceOptions.Lock methods/helpers
 
         #region PSTraceSourceOptions.Error,Warning,Normal methods/helpers
@@ -777,7 +742,18 @@ namespace System.Management.Automation
         {
             if (_flags.HasFlag(traceType))
             {
-                this.TraceSource.TraceInformation(handler.ToStringAndClear());
+                try
+                {
+                    this.TraceSource.TraceInformation(handler.ToStringAndClear());
+                }
+                catch
+                {
+                    // Eat all exceptions.
+                    //
+                    // Do not assert here because exceptions can be
+                    // raised while a thread is shutting down during
+                    // normal operation.
+                }
             }
         }
 
