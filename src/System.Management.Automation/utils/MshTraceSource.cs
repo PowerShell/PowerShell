@@ -71,7 +71,7 @@ namespace System.Management.Automation
             string name,
             string description)
         {
-            return PSTraceSource.GetTracer(name, description, true);
+            return PSTraceSource.GetTracer(name, description, traceHeaders: true);
         }
 
         /// <summary>

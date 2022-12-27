@@ -121,8 +121,7 @@ namespace System.Management.Automation
         internal static readonly PSTraceSource discoveryTracer =
             PSTraceSource.GetTracer(
                 "CommandDiscovery",
-                "Traces the discovery of cmdlets, scripts, functions, applications, etc.",
-                false);
+                "Traces the discovery of cmdlets, scripts, functions, applications, etc.");
 
         #region ctor
 
@@ -140,7 +139,6 @@ namespace System.Management.Automation
             }
 
             Context = context;
-            discoveryTracer.ShowHeaders = false;
         }
 
         /// <summary>

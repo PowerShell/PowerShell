@@ -38,8 +38,7 @@ namespace System.Management.Automation
         private static readonly Dbg.PSTraceSource s_pathResolutionTracer =
             Dbg.PSTraceSource.GetTracer(
                 "PathResolution",
-                "Traces the path resolution algorithm.",
-                false);
+                "Traces the path resolution algorithm.");
 
         #endregion Trace object
 

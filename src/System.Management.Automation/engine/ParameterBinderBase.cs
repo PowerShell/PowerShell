@@ -64,8 +64,7 @@ namespace System.Management.Automation
         internal static readonly PSTraceSource bindingTracer =
             PSTraceSource.GetTracer(
                 "ParameterBinding",
-                "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.",
-                false);
+                "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.");
 
         #endregion tracer
 
@@ -97,8 +96,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(invocationInfo != null, "caller to verify invocationInfo is not null.");
             Diagnostics.Assert(context != null, "caller to verify context is not null.");
 
-            bindingTracer.ShowHeaders = false;
-
             _command = command;
             _target = target;
             _invocationInfo = invocationInfo;
@@ -127,8 +124,6 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(invocationInfo != null, "caller to verify invocationInfo is not null.");
             Diagnostics.Assert(context != null, "caller to verify context is not null.");
-
-            bindingTracer.ShowHeaders = false;
 
             _command = command;
             _invocationInfo = invocationInfo;

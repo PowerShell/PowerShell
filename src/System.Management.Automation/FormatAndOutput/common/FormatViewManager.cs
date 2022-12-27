@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("FormatViewBinding", "Format view binding")]
-        private static readonly PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
+        private static readonly PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding");
         #endregion tracer
 
         private static string PSObjectTypeName(PSObject so)

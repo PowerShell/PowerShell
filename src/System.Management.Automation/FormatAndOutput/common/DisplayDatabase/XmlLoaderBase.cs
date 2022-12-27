@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region tracer
         // PSS/end-user tracer
         [TraceSource("FormatFileLoading", "Loading format files")]
-        private static readonly PSTraceSource s_formatFileLoadingtracer = PSTraceSource.GetTracer("FormatFileLoading", "Loading format files", false);
+        private static readonly PSTraceSource s_formatFileLoadingtracer = PSTraceSource.GetTracer("FormatFileLoading", "Loading format files");
 
         #endregion tracer
         /// <summary>

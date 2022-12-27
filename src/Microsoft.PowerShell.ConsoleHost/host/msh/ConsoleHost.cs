@@ -3092,7 +3092,7 @@ namespace Microsoft.PowerShell
 
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
         private static readonly PSTraceSource s_runspaceInitTracer =
-            PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
+            PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace");
     }
 
     /// <summary>

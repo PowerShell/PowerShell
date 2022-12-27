@@ -1289,7 +1289,7 @@ namespace System.Management.Automation.Runspaces
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
         private static readonly PSTraceSource s_runspaceInitTracer =
-            PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
+            PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace");
 
         /// <summary>
         /// This ensures all processes have a server/listener.
