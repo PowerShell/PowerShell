@@ -1501,13 +1501,13 @@ namespace System.Management.Automation
     /// <summary>
     /// Allocation free scope trace.
     /// </summary>
-    internal ref struct TraceScope
+    internal ref struct PSTraceScope
     {
         private readonly PSTraceSource _traceSource;
         private readonly PSTraceSourceOptions _traceType;
         private readonly string _scopeName;
 
-        public TraceScope(PSTraceSource traceSource, PSTraceSourceOptions traceType, string scopeName, [InterpolatedStringHandlerArgument("traceSource", "traceType")] OutputLineIfInterpolatedStringHandler handler)
+        public PSTraceScope(PSTraceSource traceSource, PSTraceSourceOptions traceType, string scopeName, [InterpolatedStringHandlerArgument("traceSource", "traceType")] OutputLineIfInterpolatedStringHandler handler)
         {
             _traceSource = traceSource;
             _traceType = traceType;
@@ -1517,7 +1517,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    _traceSource.Write(_traceType, $"Enter {Enum.GetName<PSTraceSourceOptions>(_traceType),-11}: {_scopeName}");
+                    _traceSource.Write(_traceType, $"Enter: {_scopeName}");
                     _traceSource.TraceSource.TraceInformation(handler.ToStringAndClear());
 
                     // Increment the current thread indent level
@@ -1540,10 +1540,9 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    _traceSource.Write(_traceType, $"Leave {Enum.GetName<PSTraceSourceOptions>(_traceType),-11}: {_scopeName}");
-
                     // Decrement the indent level in thread local storage
                     PSTraceSource.ThreadIndentLevel--;
+                    _traceSource.Write(_traceType, $"Leave: {_scopeName}");
                 }
                 catch
                 {
