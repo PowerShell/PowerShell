@@ -481,8 +481,7 @@ namespace System.Management.Automation
 
                 if (resolvedPaths.Count > 1)
                 {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path resolved to more than one result so this path cannot be used.");
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path resolved to more than one result so this path cannot be used.");
                     break;
                 }
 
@@ -519,40 +518,27 @@ namespace System.Management.Automation
             }
             catch (ItemNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The path could not be found: {0}",
-                    command);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path could not be found: {command}");
             }
             catch (DriveNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "A drive could not be found for the path: {0}",
-                    command);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A drive could not be found for the path: {command}");
             }
             catch (ProviderNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "A provider could not be found for the path: {0}",
-                    command);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A provider could not be found for the path: {command}");
             }
             catch (InvalidOperationException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The path specified a home directory, but the provider home directory was not set. {0}",
-                    command);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path specified a home directory, but the provider home directory was not set. {command}");
             }
             catch (ProviderInvocationException providerException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The provider associated with the path '{0}' encountered an error: {1}",
-                    command,
-                    providerException.Message);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{command}' encountered an error: {providerException.Message}");
             }
             catch (PSNotSupportedException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                    command);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{command}' does not implement ContainerCmdletProvider");
             }
 
             provider = null;
@@ -593,7 +579,7 @@ namespace System.Management.Automation
             {
                 if (!File.Exists(path))
                 {
-                    CommandDiscovery.discoveryTracer.TraceError("The path does not exist: {0}", path);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path does not exist: {path}");
                     break;
                 }
 
@@ -1124,17 +1110,13 @@ namespace System.Management.Automation
                     {
                         resolvedPath = null;
 
-                        CommandDiscovery.discoveryTracer.TraceError(
-                           "The relative path with wildcard did not resolve to valid path. {0}",
-                           path);
+                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path with wildcard did not resolve to valid path. {path}");
                     }
                     else if (resolvedPaths.Count > 1)
                     {
                         resolvedPath = null;
 
-                        CommandDiscovery.discoveryTracer.TraceError(
-                        "The relative path with wildcard resolved to multiple paths. {0}",
-                        path);
+                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path with wildcard resolved to multiple paths. {path}");
                     }
                     else
                     {
@@ -1159,35 +1141,24 @@ namespace System.Management.Automation
                 else
                 {
                     // The path was not to the file system
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The relative path was not a file system path. {0}",
-                        path);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path was not a file system path. {path}");
                 }
             }
             catch (InvalidOperationException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The home path was not specified for the provider. {0}",
-                    path);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The home path was not specified for the provider. {path}");
             }
             catch (ProviderInvocationException providerInvocationException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "While resolving the path, \"{0}\", an error was encountered by the provider: {1}",
-                    path,
-                    providerInvocationException.Message);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"While resolving the path, \"{path}\", an error was encountered by the provider: {providerInvocationException.Message}");
             }
             catch (ItemNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The path does not exist: {0}",
-                    path);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path does not exist: {path}");
             }
             catch (DriveNotFoundException driveNotFound)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The drive does not exist: {0}",
-                    driveNotFound.ItemName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The drive does not exist: {driveNotFound.ItemName}");
             }
 
             return result;
@@ -1212,43 +1183,30 @@ namespace System.Management.Automation
             }
             catch (ItemNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The path could not be found: {0}",
-                    _commandName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path could not be found: {_commandName}");
             }
             catch (DriveNotFoundException)
             {
                 // This can be because we think a scope or a url is a drive
                 // and need to continue searching.
                 // Although, scope does not work through get-command
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "A drive could not be found for the path: {0}",
-                    _commandName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A drive could not be found for the path: {_commandName}");
             }
             catch (ProviderNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "A provider could not be found for the path: {0}",
-                    _commandName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A provider could not be found for the path: {_commandName}");
             }
             catch (InvalidOperationException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The path specified a home directory, but the provider home directory was not set. {0}",
-                    _commandName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path specified a home directory, but the provider home directory was not set. {_commandName}");
             }
             catch (ProviderInvocationException providerException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The provider associated with the path '{0}' encountered an error: {1}",
-                    _commandName,
-                    providerException.Message);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{_commandName}' encountered an error: {providerException.Message}");
             }
             catch (PSNotSupportedException)
             {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                    _commandName);
+                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{_commandName}' does not implement ContainerCmdletProvider");
             }
 
             provider = null;

@@ -685,7 +685,7 @@ namespace System.Management.Automation
             mshsnapinKey = mshSnapInRoot.OpenSubKey(mshsnapinId);
             if (mshsnapinKey == null)
             {
-                s_mshsnapinTracer.TraceError("Error opening registry key {0}\\{1}.", mshSnapInRoot.Name, mshsnapinId);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Error opening registry key {mshSnapInRoot.Name}\\{mshsnapinId}.");
                 throw PSTraceSource.NewArgumentException(nameof(mshsnapinId), MshSnapinInfo.MshSnapinDoesNotExist, mshsnapinId);
             }
 
@@ -745,8 +745,7 @@ namespace System.Management.Automation
                 // If this key should be present..throw error
                 if (mandatory)
                 {
-                    s_mshsnapinTracer.TraceError("Mandatory property {0} not specified for registry key {1}",
-                        name, mshsnapinKey.Name);
+                    s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Mandatory property {name} not specified for registry key {mshsnapinKey.Name}");
                     throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.MandatoryValueNotPresent, name, mshsnapinKey.Name);
                 }
                 else
@@ -773,8 +772,7 @@ namespace System.Management.Automation
             {
                 if (mandatory)
                 {
-                    s_mshsnapinTracer.TraceError("Cannot get string/multi-string value for mandatory property {0} in registry key {1}",
-                        name, mshsnapinKey.Name);
+                    s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Cannot get string/multi-string value for mandatory property {name} in registry key {mshsnapinKey.Name}");
                     throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.MandatoryValueNotInCorrectFormatMultiString, name, mshsnapinKey.Name);
                 }
                 else
@@ -805,16 +803,14 @@ namespace System.Management.Automation
             object value = mshsnapinKey.GetValue(name);
             if (value == null && mandatory)
             {
-                s_mshsnapinTracer.TraceError("Mandatory property {0} not specified for registry key {1}",
-                        name, mshsnapinKey.Name);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Mandatory property {name} not specified for registry key {mshsnapinKey.Name}");
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.MandatoryValueNotPresent, name, mshsnapinKey.Name);
             }
 
             string s = value as string;
             if (string.IsNullOrEmpty(s) && mandatory)
             {
-                s_mshsnapinTracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
-                        name, mshsnapinKey.Name);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Value is null or empty for mandatory property {name} in {mshsnapinKey.Name}");
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.MandatoryValueNotInCorrectFormat, name, mshsnapinKey.Name);
             }
 
@@ -829,8 +825,7 @@ namespace System.Management.Automation
             string temp = ReadStringValue(mshsnapinKey, name, mandatory);
             if (temp == null)
             {
-                s_mshsnapinTracer.TraceError("Cannot read value for property {0} in registry key {1}",
-                    name, mshsnapinKey.ToString());
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Cannot read value for property {name} in registry key {mshsnapinKey}");
                 Dbg.Assert(!mandatory, "mandatory is true, ReadStringValue should have thrown exception");
                 return null;
             }
@@ -842,22 +837,22 @@ namespace System.Management.Automation
             }
             catch (ArgumentOutOfRangeException)
             {
-                s_mshsnapinTracer.TraceError("Cannot convert value {0} to version format", temp);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Cannot convert value {temp} to version format");
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.VersionValueInCorrect, name, mshsnapinKey.Name);
             }
             catch (ArgumentException)
             {
-                s_mshsnapinTracer.TraceError("Cannot convert value {0} to version format", temp);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Cannot convert value {temp} to version format");
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.VersionValueInCorrect, name, mshsnapinKey.Name);
             }
             catch (OverflowException)
             {
-                s_mshsnapinTracer.TraceError("Cannot convert value {0} to version format", temp);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Cannot convert value {temp} to version format");
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.VersionValueInCorrect, name, mshsnapinKey.Name);
             }
             catch (FormatException)
             {
-                s_mshsnapinTracer.TraceError("Cannot convert value {0} to version format", temp);
+                s_mshsnapinTracer.Write(PSTraceSourceOptions.Error, $"Cannot convert value {temp} to version format");
                 throw PSTraceSource.NewArgumentException(nameof(name), MshSnapinInfo.VersionValueInCorrect, name, mshsnapinKey.Name);
             }
 

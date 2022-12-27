@@ -3707,7 +3707,7 @@ namespace System.Management.Automation.Runspaces
 
             if (!PSVersionInfo.IsValidPSVersion(newPSSnapIn.PSVersion))
             {
-                s_PSSnapInTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", name);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"MshSnapin {name} and current monad engine's versions don't match.");
 
                 throw PSTraceSource.NewArgumentException(
                     "mshSnapInID",
@@ -3777,7 +3777,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (assembly == null)
                 {
-                    s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", psSnapInInfo.Name);
+                    s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"Loading assembly for psSnapIn {psSnapInInfo.Name} failed");
                     warning = null;
                     return null; // BUGBUG - should add something to the warnings list here instead of quitting...
                 }
@@ -3897,7 +3897,7 @@ namespace System.Management.Automation.Runspaces
             Assembly assembly = Assembly.LoadFrom(fileName);
             if (assembly == null)
             {
-                s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", fileName);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"Loading assembly for psSnapIn {fileName} failed");
                 return null;
             }
 
@@ -4828,15 +4828,15 @@ end {
             }
             catch (BadImageFormatException e)
             {
-                s_PSSnapInTracer.TraceWarning("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {psSnapInInfo.AssemblyName}: {e.Message}");
             }
             catch (FileNotFoundException e)
             {
-                s_PSSnapInTracer.TraceWarning("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {psSnapInInfo.AssemblyName}: {e.Message}");
             }
             catch (FileLoadException e)
             {
-                s_PSSnapInTracer.TraceWarning("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {psSnapInInfo.AssemblyName}: {e.Message}");
             }
 
             if (assembly != null)
@@ -4853,7 +4853,7 @@ end {
                 if (!string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, psSnapInInfo.AbsoluteModulePath, psSnapInInfo.AssemblyName);
-                    s_PSSnapInTracer.TraceError(message);
+                    s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"{message}");
                     throw new PSSnapInException(psSnapInInfo.Name, message);
                 }
 
@@ -4861,17 +4861,17 @@ end {
             }
             catch (FileLoadException e)
             {
-                s_PSSnapInTracer.TraceError("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"Not able to load assembly {psSnapInInfo.AssemblyName}: {e.Message}");
                 throw new PSSnapInException(psSnapInInfo.Name, e.Message);
             }
             catch (BadImageFormatException e)
             {
-                s_PSSnapInTracer.TraceError("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"Not able to load assembly {psSnapInInfo.AssemblyName}: {e.Message}");
                 throw new PSSnapInException(psSnapInInfo.Name, e.Message);
             }
             catch (FileNotFoundException e)
             {
-                s_PSSnapInTracer.TraceError("Not able to load assembly {0}: {1}", psSnapInInfo.AssemblyName, e.Message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"Not able to load assembly {psSnapInInfo.AssemblyName}: {e.Message}");
                 throw new PSSnapInException(psSnapInInfo.Name, e.Message);
             }
 
@@ -5129,7 +5129,7 @@ end {
                     if (cmdlets != null && cmdlets.ContainsKey(cmdletName))
                     {
                         string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInDuplicateCmdlets, cmdletName, name);
-                        s_PSSnapInTracer.TraceError(message);
+                        s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"{message}");
                         throw new PSSnapInException(name, message);
                     }
 
@@ -5187,7 +5187,7 @@ end {
                     if (providers != null && providers.ContainsKey(providerName))
                     {
                         string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInDuplicateProviders, providerName, psSnapInInfo.Name);
-                        s_PSSnapInTracer.TraceError(message);
+                        s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"{message}");
                         throw new PSSnapInException(psSnapInInfo.Name, message);
                     }
 
@@ -5356,7 +5356,7 @@ end {
                     }
                 }
 
-                s_PSSnapInTracer.TraceError(message);
+                s_PSSnapInTracer.Write(PSTraceSourceOptions.Error, $"{message}");
                 throw new PSSnapInException(name, message);
             }
         }

@@ -976,9 +976,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        ParameterBinderBase.bindingTracer.TraceError(
-                            "ERROR: {0} valid parameter sets, but NOT DEFAULT PARAMETER SET.",
-                            this.BindableParameters.ParameterSetCount);
+                        ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.Error, $"{this.BindableParameters.ParameterSetCount} valid parameter sets, but NOT DEFAULT PARAMETER SET.");
 
                         // Throw an exception for ambiguous parameter set
                         ThrowAmbiguousParameterSetException(_currentParameterSetFlag, BindableParameters);

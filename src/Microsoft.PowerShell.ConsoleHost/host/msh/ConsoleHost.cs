@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell
                 // Servermode parameter validation check.
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
-                    s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
+                    s_tracer.Write(PSTraceSourceOptions.Error, $"Conflicting server mode parameters, parameters must be used exclusively.");
                     s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
 
                     return ExitCodeBadCommandLineParameter;
@@ -1444,7 +1444,7 @@ namespace Microsoft.PowerShell
                 exitCode = ExitCodeSuccess;
                 if (!string.IsNullOrEmpty(cpp.InitialCommand) && isPrestartWarned)
                 {
-                    s_tracer.TraceError("Start up warnings made command \"{0}\" not executed", cpp.InitialCommand);
+                    s_tracer.Write(PSTraceSourceOptions.Error, $"Start up warnings made command \"{cpp.InitialCommand}\" not executed");
                     string msg = StringUtil.Format(ConsoleHostStrings.InitialCommandNotExecuted, cpp.InitialCommand);
                     ui.WriteErrorLine(msg);
                     exitCode = ExitCodeInitFailure;

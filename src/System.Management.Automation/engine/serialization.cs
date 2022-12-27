@@ -3166,7 +3166,7 @@ namespace System.Management.Automation
             // If we are here, we have an unknown node. Unknown nodes may
             // be allowed inside PSObject. We do not allow them at top level.
 
-            s_trace.TraceError("Invalid element {0} tag found", _reader.LocalName);
+            s_trace.Write(PSTraceSourceOptions.Error, $"Invalid element {_reader.LocalName} tag found");
             throw NewXmlException(Serialization.InvalidElementTag, null, _reader.LocalName);
         }
 

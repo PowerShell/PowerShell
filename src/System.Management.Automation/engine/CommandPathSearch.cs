@@ -158,9 +158,7 @@ namespace System.Management.Automation
 
                     if (!string.IsNullOrEmpty(resolvedPath))
                     {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                            "The relative path resolved to: {0}",
-                            resolvedPath);
+                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path resolved to: {resolvedPath}");
 
                         resolvedDirectory = resolvedPath;
                     }
@@ -171,9 +169,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    CommandDiscovery.discoveryTracer.TraceWarning(
-                        "The current drive is not set, using the process current directory: {0}",
-                        environmentCurrentDirectory);
+                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Warning, $"The current drive is not set, using the process current directory: {environmentCurrentDirectory}");
 
                     resolvedDirectory = environmentCurrentDirectory;
                 }
@@ -268,13 +264,13 @@ namespace System.Management.Automation
 
                 if (!_patternEnumerator.MoveNext())
                 {
-                    s_tracer.TraceError("No patterns were specified");
+                    s_tracer.Write(PSTraceSourceOptions.Error, $"No patterns were specified");
                     return false;
                 }
 
                 if (!_lookupPathsEnumerator.MoveNext())
                 {
-                    s_tracer.TraceError("No lookup paths were specified");
+                    s_tracer.Write(PSTraceSourceOptions.Error, $"No lookup paths were specified");
                     return false;
                 }
 

@@ -237,8 +237,7 @@ namespace System.Management.Automation
                                 Authenticode.InvalidHashAlgorithm);
                         }
 
-                        s_tracer.TraceError("CryptUIWizDigitalSign: failed: {0:x}",
-                                          error);
+                        s_tracer.Write(PSTraceSourceOptions.Error, $"CryptUIWizDigitalSign: failed: {error:x}");
                     }
                 }
 

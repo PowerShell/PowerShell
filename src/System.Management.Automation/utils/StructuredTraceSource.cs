@@ -810,77 +810,6 @@ namespace System.Management.Automation
         #endregion PSTraceSourceOptions.Lock methods/helpers
 
         #region PSTraceSourceOptions.Error,Warning,Normal methods/helpers
-        /// <summary>
-        /// Traces the specified formatted output when PSTraceSourceOptions.Error
-        /// is enabled.
-        /// </summary>
-        /// <param name="errorMessageFormat">
-        /// The format string containing the error message
-        /// </param>
-        /// <param name="args">
-        /// The arguments for the format string
-        /// </param>
-        internal void TraceError(
-            string errorMessageFormat,
-            params object[] args)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Error))
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Error,
-                    errorFormatter,
-                    errorMessageFormat,
-                    args);
-            }
-        }
-
-        /// <summary>
-        /// Traces the specified formatted output when PSTraceSourceOptions.Warning
-        /// is enabled.
-        /// </summary>
-        /// <param name="warningMessageFormat">
-        /// The format string containing the error message
-        /// </param>
-        /// <param name="args">
-        /// The arguments for the format string
-        /// </param>
-        internal void TraceWarning(
-            string warningMessageFormat,
-            params object[] args)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Warning))
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Warning,
-                    warningFormatter,
-                    warningMessageFormat,
-                    args);
-            }
-        }
-
-        /// <summary>
-        /// Traces the specified formatted output when PSTraceSourceOptions.Verbose
-        /// is enabled.
-        /// </summary>
-        /// <param name="verboseMessageFormat">
-        /// The format string containing the error message
-        /// </param>
-        /// <param name="args">
-        /// The arguments for the format string
-        /// </param>
-        internal void TraceVerbose(
-            string verboseMessageFormat,
-            params object[] args)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Verbose))
-            {
-                FormatOutputLine(
-                    PSTraceSourceOptions.Verbose,
-                    verboseFormatter,
-                    verboseMessageFormat,
-                    args);
-            }
-        }
 
         /// <summary>Traces the formatted output.</summary>
         /// <param name="handler">The interpolated string handler.</param>
@@ -890,60 +819,6 @@ namespace System.Management.Automation
             if ((_flags & traceType) != PSTraceSourceOptions.None)
             {
                 this.TraceSource.TraceInformation(handler.ToStringAndClear());
-            }
-        }
-
-        /// <summary>
-        /// Formats the specified text and then traces it.
-        /// </summary>
-        /// <param name="flag">
-        /// The flag that met the criteria to have this line traced.
-        /// </param>
-        /// <param name="classFormatter">
-        /// This is the trace class formatter. For instance,
-        /// TraceError has a formatter like "ERROR: {0}".
-        /// </param>
-        /// <param name="format">
-        /// Additional format string.
-        /// </param>
-        /// <param name="args">
-        /// Arguments for the additional format string
-        /// </param>
-        private void FormatOutputLine(
-            PSTraceSourceOptions flag,
-            string classFormatter,
-            string format,
-            params object[] args)
-        {
-            try
-            {
-                // First format the class format string and the
-                // user provided format string together
-                StringBuilder output = new StringBuilder();
-
-                if (classFormatter != null)
-                {
-                    output.Append(classFormatter);
-                }
-
-                if (format != null)
-                {
-                    output.AppendFormat(
-                        CultureInfo.CurrentCulture,
-                        format,
-                        args);
-                }
-
-                // finally trace the output
-                OutputLine(flag, output.ToString());
-            }
-            catch
-            {
-                // Eat all exceptions
-                //
-                // Do not assert here because exceptions can be
-                // raised while a thread is shutting down during
-                // normal operation.
             }
         }
 

@@ -1251,10 +1251,7 @@ namespace System.Management.Automation
                 }
                 catch (NotSupportedException notSupported)
                 {
-                    bindingTracer.TraceError(
-                        "ERROR: COERCE FAILED: arg [{0}] could not be converted to the parameter type [{1}]",
-                        result ?? "null",
-                        toType);
+                    bindingTracer.Write(PSTraceSourceOptions.Error, $"COERCE FAILED: arg [{result ?? "null"}] could not be converted to the parameter type [{toType}]");
 
                     ParameterBindingException pbe =
                         new ParameterBindingException(
@@ -1274,10 +1271,7 @@ namespace System.Management.Automation
                 }
                 catch (PSInvalidCastException invalidCast)
                 {
-                    bindingTracer.TraceError(
-                      "ERROR: COERCE FAILED: arg [{0}] could not be converted to the parameter type [{1}]",
-                      result ?? "null",
-                      toType);
+                    bindingTracer.Write(PSTraceSourceOptions.Error, $"COERCE FAILED: arg [{result ?? "null"}] could not be converted to the parameter type [{toType}]");
 
                     ParameterBindingException pbe =
                         new ParameterBindingException(
@@ -1356,8 +1350,7 @@ namespace System.Management.Automation
             }
             else if (currentValue == UnboundParameter.Value)
             {
-                bindingTracer.TraceError(
-                    "ERROR: No argument was specified for the parameter and the parameter is not of type bool");
+                bindingTracer.Write(PSTraceSourceOptions.Error, $"No argument was specified for the parameter and the parameter is not of type bool");
 
                 ParameterBindingException exception =
                     new ParameterBindingException(

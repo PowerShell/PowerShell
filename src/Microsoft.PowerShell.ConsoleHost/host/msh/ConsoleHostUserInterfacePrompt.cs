@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell
                     {
                         string noHelpErrMsg =
                             StringUtil.Format(ConsoleHostUserInterfaceStrings.PromptNoHelpAvailableErrorTemplate, desc.Name);
-                        s_tracer.TraceWarning(noHelpErrMsg);
+                        s_tracer.Write(PSTraceSourceOptions.Warning, $"{noHelpErrMsg}");
                         WriteLineToConsole(WrapToCurrentWindowWidth(noHelpErrMsg));
                     }
                     else

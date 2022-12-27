@@ -852,9 +852,7 @@ namespace System.Management.Automation
             // After all command lookup is done, throw a CommandNotFound if we have no result.
             if (result == null)
             {
-                discoveryTracer.TraceError(
-                    "'{0}' is not recognized as a cmdlet, function, executable program or script file.",
-                    commandName);
+                discoveryTracer.Write(PSTraceSourceOptions.Error, $"'{commandName}' is not recognized as a cmdlet, function, executable program or script file.");
 
                 CommandNotFoundException e =
                     new CommandNotFoundException(

@@ -237,7 +237,7 @@ namespace System.Management.Automation
                             "PathNotFound",
                             SessionStateStrings.PathNotFound);
 
-                    s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                    s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"Item does not exist: {path}");
 
                     throw pathNotFound;
                 }
@@ -335,7 +335,7 @@ namespace System.Management.Automation
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                s_pathResolutionTracer.TraceError("Item does not exist: {0}", providerPath);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"Item does not exist: {providerPath}");
                 throw pathNotFound;
             }
 
@@ -550,7 +550,7 @@ namespace System.Management.Automation
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"Item does not exist: {path}");
                 throw pathNotFound;
             }
 
@@ -1908,7 +1908,7 @@ namespace System.Management.Automation
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"Item does not exist: {path}");
 
                 throw pathNotFound;
             }
@@ -2920,7 +2920,7 @@ namespace System.Management.Automation
                                 "PathNotFound",
                                 SessionStateStrings.PathNotFound);
 
-                        s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                        s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"Item does not exist: {path}");
 
                         throw pathNotFound;
                     }
@@ -3390,7 +3390,7 @@ namespace System.Management.Automation
 
                         if (childNamesObjectArray == null)
                         {
-                            s_tracer.TraceError("GetChildNames returned a null array");
+                            s_tracer.Write(PSTraceSourceOptions.Error, $"GetChildNames returned a null array");
                             s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"No child names returned for '{dir}'");
                             continue;
                         }
@@ -3846,7 +3846,7 @@ namespace System.Management.Automation
                                 "PathNotFound",
                                 SessionStateStrings.PathNotFound);
 
-                        s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                        s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"Item does not exist: {path}");
 
                         throw pathNotFound;
                     }
@@ -3984,7 +3984,7 @@ namespace System.Management.Automation
 
                         if (childNamesObjectArray == null)
                         {
-                            s_tracer.TraceError("GetChildNames returned a null array");
+                            s_tracer.Write(PSTraceSourceOptions.Error, $"GetChildNames returned a null array");
 
                             s_pathResolutionTracer.Write(PSTraceSourceOptions.WriteLine, $"No child names returned for '{dir}'");
                             continue;
@@ -4316,7 +4316,7 @@ namespace System.Management.Automation
                 object baseObject = childObject.BaseObject;
                 if (baseObject is PSCustomObject)
                 {
-                    s_tracer.TraceError("GetChildNames returned a null object");
+                    s_tracer.Write(PSTraceSourceOptions.Error, $"GetChildNames returned a null object");
                     break;
                 }
 
@@ -4324,7 +4324,7 @@ namespace System.Management.Automation
 
                 if (childName == null)
                 {
-                    s_tracer.TraceError("GetChildNames returned an object that wasn't a string");
+                    s_tracer.Write(PSTraceSourceOptions.Error, $"GetChildNames returned an object that wasn't a string");
                     break;
                 }
 
@@ -4652,7 +4652,7 @@ namespace System.Management.Automation
                                 SessionStateStrings.HomePathNotSet,
                                 provider.Name);
 
-                        s_pathResolutionTracer.TraceError("HOME path not set for provider: {provider.Name}");
+                        s_pathResolutionTracer.Write(PSTraceSourceOptions.Error, $"HOME path not set for provider: {provider.Name}");
                         throw e;
                     }
                 }

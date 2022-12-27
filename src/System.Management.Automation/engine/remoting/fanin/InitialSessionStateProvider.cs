@@ -612,33 +612,27 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (ArgumentException e)
                 {
-                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
-                        applicationBase, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to change current working directory to {applicationBase}: {e.Message}");
                 }
                 catch (PathTooLongException e)
                 {
-                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
-                           applicationBase, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to change current working directory to {applicationBase}: {e.Message}");
                 }
                 catch (FileNotFoundException e)
                 {
-                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
-                        applicationBase, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to change current working directory to {applicationBase}: {e.Message}");
                 }
                 catch (IOException e)
                 {
-                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
-                        applicationBase, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to change current working directory to {applicationBase}: {e.Message}");
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
-                           applicationBase, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to change current working directory to {applicationBase}: {e.Message}");
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
-                        applicationBase, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to change current working directory to {applicationBase}: {e.Message}");
                 }
             }
 
@@ -653,15 +647,15 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (FileLoadException e)
                 {
-                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {assemblyName}: {e.Message}");
                 }
                 catch (BadImageFormatException e)
                 {
-                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {assemblyName}: {e.Message}");
                 }
                 catch (FileNotFoundException e)
                 {
-                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {assemblyName}: {e.Message}");
                 }
 
                 if (result != null)
@@ -694,15 +688,15 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (FileLoadException e)
                 {
-                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {assemblyName}: {e.Message}");
                 }
                 catch (BadImageFormatException e)
                 {
-                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {assemblyName}: {e.Message}");
                 }
                 catch (FileNotFoundException e)
                 {
-                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.Write(PSTraceSourceOptions.Warning, $"Not able to load assembly {assemblyName}: {e.Message}");
                 }
             }
             finally
@@ -770,16 +764,14 @@ namespace System.Management.Automation.Remoting
             object value = registryKey.GetValue(name);
             if (value == null && mandatory)
             {
-                s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
-                        name, registryKey.Name);
+                s_tracer.Write(PSTraceSourceOptions.Error, $"Mandatory property {name} not specified for registry key {registryKey.Name}");
                 throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
             }
 
             string s = value as string;
             if (string.IsNullOrEmpty(s) && mandatory)
             {
-                s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
-                        name, registryKey.Name);
+                s_tracer.Write(PSTraceSourceOptions.Error, $"Value is null or empty for mandatory property {name} in {registryKey.Name}");
                 throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
             }
 

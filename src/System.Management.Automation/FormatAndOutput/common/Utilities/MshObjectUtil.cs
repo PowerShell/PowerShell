@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // These exceptions are being caught and handled by returning an empty string when
                 // the object cannot be stringified due to ETS or an instance in the collection has been modified
-                s_tracer.TraceWarning($"SmartToString method: Exception during conversion to string, emitting empty string: {e.Message}");
+                s_tracer.Write(PSTraceSourceOptions.Warning, $"SmartToString method: Exception during conversion to string, emitting empty string: {e.Message}");
 
                 if (formatErrorObject != null)
                 {
