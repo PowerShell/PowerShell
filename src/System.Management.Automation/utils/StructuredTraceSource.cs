@@ -920,38 +920,6 @@ namespace System.Management.Automation
             return methodAndParameters.ToString();
         }
 
-        // The default formatter for TraceError
-        private const string errorFormatter =
-            "ERROR: ";
-
-        // The default formatter for TraceWarning
-        private const string warningFormatter =
-            "Warning: ";
-
-        // The default formatter for TraceVerbose
-        private const string verboseFormatter =
-            "Verbose: ";
-
-        // The default formatter for WriteLine
-        internal const string writeLineFormatter =
-            "";
-
-        // The default formatter for TraceConstructor
-
-        private const string constructorOutputFormatter =
-            "Enter Ctor {0}";
-
-        private const string constructorLeavingFormatter =
-            "Leave Ctor {0}";
-
-        // The default formatter for TraceDispose
-
-        private const string disposeOutputFormatter =
-            "Enter Disposer {0}";
-
-        private const string disposeLeavingFormatter =
-            "Leave Disposer {0}";
-
         // The default formatter for TraceMethod
 
         private const string methodOutputFormatter =
@@ -960,22 +928,6 @@ namespace System.Management.Automation
         private const string methodLeavingFormatter =
             "Leave {0}";
 
-        // The default formatter for TraceProperty
-
-        private const string propertyOutputFormatter =
-            "Enter property {0}:";
-
-        private const string propertyLeavingFormatter =
-            "Leave property {0}";
-
-        // The default formatter for TraceDelegateHandler
-
-        private const string delegateHandlerOutputFormatter =
-            "Enter delegate handler: {0}:";
-
-        private const string delegateHandlerLeavingFormatter =
-            "Leave delegate handler: {0}";
-
         // The default formatter for TraceEventHandlers
 
         private const string eventHandlerOutputFormatter =
@@ -983,14 +935,6 @@ namespace System.Management.Automation
 
         private const string eventHandlerLeavingFormatter =
             "Leave event handler: {0}";
-
-        // The default formatters for TraceException
-
-        private const string exceptionOutputFormatter =
-            "{0}: {1}\n{2}";
-
-        private const string innermostExceptionOutputFormatter =
-            "Inner-most {0}: {1}\n{2}";
 
         // The default formatters for TraceLock
 
