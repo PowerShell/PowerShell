@@ -356,7 +356,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleErrorReceived(object sender, RemoteDataEventArgs<ErrorRecord> eventArgs)
         {
-            using (s_tracer.TraceEventHandlers())
+            using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 shell.SetHadErrors(true);
                 errorstream.Write(eventArgs.Data);
@@ -372,7 +372,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs">Arguments describing this event.</param>
         private void HandleOutputReceived(object sender, RemoteDataEventArgs<object> eventArgs)
         {
-            using (s_tracer.TraceEventHandlers())
+            using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 object data = eventArgs.Data;
 
@@ -396,7 +396,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleInvocationStateInfoReceived(object sender,
             RemoteDataEventArgs<PSInvocationStateInfo> eventArgs)
         {
-            using (s_tracer.TraceEventHandlers())
+            using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 PSInvocationStateInfo stateInfo = eventArgs.Data;
 
@@ -509,7 +509,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleInformationalMessageReceived(object sender,
             RemoteDataEventArgs<InformationalMessage> eventArgs)
         {
-            using (s_tracer.TraceEventHandlers())
+            using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 InformationalMessage infoMessage = eventArgs.Data;
 
@@ -561,7 +561,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs"></param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
-            using (s_tracer.TraceEventHandlers())
+            using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 Collection<RemoteHostCall> prerequisiteCalls =
                     eventArgs.Data.PerformSecurityChecksOnHostMessage(computerName);

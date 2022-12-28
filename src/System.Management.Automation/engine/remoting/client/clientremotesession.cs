@@ -293,7 +293,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         private void HandleConnectionStateChanged(object sender, RemoteSessionStateEventArgs arg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (arg == null)
                 {
@@ -448,7 +448,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg"></param>
         private void HandleNegotiationReceived(object sender, RemoteSessionNegotiationEventArgs arg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (arg == null)
                 {

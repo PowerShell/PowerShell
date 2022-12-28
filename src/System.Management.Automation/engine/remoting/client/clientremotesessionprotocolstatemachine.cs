@@ -600,7 +600,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCreateSession(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 Dbg.Assert(_state == RemoteSessionState.Idle,
                     "State needs to be idle to start connection");
@@ -633,7 +633,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoConnectSession(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 Dbg.Assert(_state == RemoteSessionState.Idle,
                     "State needs to be idle to start connection");
@@ -716,7 +716,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoClose(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 RemoteSessionState oldState = _state;
 

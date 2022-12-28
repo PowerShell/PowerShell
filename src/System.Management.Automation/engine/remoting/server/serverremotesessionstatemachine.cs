@@ -289,7 +289,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCreateSession(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -318,7 +318,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationPending(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationCompleted(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -441,7 +441,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoEstablished(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal void DoMessageReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -586,7 +586,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoConnectFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoFatalError(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -668,7 +668,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoClose(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -722,7 +722,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCloseFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCloseCompleted(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -782,7 +782,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationTimeout(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -846,7 +846,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoSendFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
@@ -875,7 +875,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoReceiveFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (s_trace.TraceEventHandlers())
+            using (new PSTraceScope(s_trace, PSTraceSourceOptions.Events, string.Empty, $""))
             {
                 if (fsmEventArg == null)
                 {
