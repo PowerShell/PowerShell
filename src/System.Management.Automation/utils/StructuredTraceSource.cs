@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 #define TRACE
 
 using System.Collections.Generic;
@@ -271,18 +273,19 @@ namespace System.Management.Automation
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(fullName);
+            ArgumentNullException.ThrowIfNullOrEmpty(name);
+
+            FullName = fullName;
+            _name = name;
 
             try
             {
-                FullName = fullName;
-                _name = name;
-
                 // TODO: move this to startup json file instead of using env var
-                string tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
+                string? tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
 
                 if (string.Equals(tracingEnvVar, "True", StringComparison.OrdinalIgnoreCase))
                 {
-                    string options = this.TraceSource.Attributes["Options"];
+                    string? options = this.TraceSource.Attributes["Options"];
                     if (options is not null)
                     {
                         _flags = Enum.Parse<PSTraceSourceOptions>(options, true);
@@ -504,21 +507,25 @@ namespace System.Management.Automation
         /// </returns>
         internal static string GetCallingMethodNameAndParameters(int skipFrames)
         {
-            string result = null;
+            string result = string.Empty;
 
             try
             {
                 // Use the stack to get the method and type information
                 // for the calling method
                 StackFrame stackFrame = new StackFrame(++skipFrames);
-                MethodBase callingMethod = stackFrame.GetMethod();
+                MethodBase? callingMethod = stackFrame.GetMethod();
 
-                Type declaringType = callingMethod.DeclaringType;
+                if (callingMethod is not null && callingMethod.DeclaringType is not null)
+                {
 
-                // Note: don't use the FullName for the declaringType
-                // as it is usually way too long and makes the trace
-                // output hard to read.
-                result = string.Create(CultureInfo.CurrentCulture, $"{declaringType.Name}.{callingMethod.Name}()");
+                    Type? declaringType = callingMethod.DeclaringType;
+
+                    // Note: don't use the FullName for the declaringType
+                    // as it is usually way too long and makes the trace
+                    // output hard to read.
+                    result = string.Create(CultureInfo.CurrentCulture, $"{declaringType.Name}.{callingMethod.Name}()");
+                }
             }
             catch
             {
@@ -594,7 +601,7 @@ namespace System.Management.Automation
         internal void OutputLine(
             PSTraceSourceOptions flag,
             string format,
-            string arg = null)
+            string? arg = null)
         {
             // if already tracing something for this current TraceSource,
             // dont trace again. This will block cyclic-loops from happening.
@@ -706,7 +713,7 @@ namespace System.Management.Automation
             get { return _traceSource ??= new MonadTraceSource(_name); }
         }
 
-        private TraceSource _traceSource;
+        private TraceSource? _traceSource;
 
         #endregion Class helper methods and properties
 
@@ -833,8 +840,8 @@ namespace System.Management.Automation
         internal ScopeTracer(
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
-            string scopeOutputFormatter,
-            string leavingScopeFormatter,
+            string? scopeOutputFormatter,
+            string? leavingScopeFormatter,
             string scopeName)
         {
             _tracer = tracer;
@@ -883,8 +890,8 @@ namespace System.Management.Automation
         internal ScopeTracer(
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
-            string scopeOutputFormatter,
-            string leavingScopeFormatter,
+            string? scopeOutputFormatter,
+            string? leavingScopeFormatter,
             string scopeName,
             string format,
             params object[] args)
@@ -941,8 +948,8 @@ namespace System.Management.Automation
         /// </param>
         internal void ScopeTracerHelper(
             PSTraceSourceOptions flag,
-            string scopeOutputFormatter,
-            string leavingScopeFormatter,
+            string? scopeOutputFormatter,
+            string? leavingScopeFormatter,
             string scopeName,
             string format,
             params object[] args)
@@ -1011,13 +1018,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Stores the scope name that is passed to the constructor.
         /// </summary>
-        private string _scopeName;
+        private string? _scopeName;
 
         /// <summary>
         /// Stores the format string used when formatting output when
         /// leaving the scope.
         /// </summary>
-        private string _leavingScopeFormatter;
+        private string? _leavingScopeFormatter;
     }
     #endregion ScopeTracer object/helpers
 
@@ -1058,8 +1065,10 @@ namespace System.Management.Automation
         /// </param>
         internal TraceSourceAttribute(
             string category,
-            string description)
+            string? description)
         {
+            ArgumentNullException.ThrowIfNullOrEmpty(category);
+
             Category = category;
             Description = description;
         }
@@ -1072,7 +1081,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The description for the category to be used for the TraceSource.
         /// </summary>
-        internal string Description { get; set; }
+        internal string? Description { get; set; }
     }
     #endregion TraceSourceAttribute
 
