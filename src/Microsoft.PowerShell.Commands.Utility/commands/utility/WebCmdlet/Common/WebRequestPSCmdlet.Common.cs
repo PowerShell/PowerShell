@@ -389,10 +389,17 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void ValidateParameters()
         {
-            // sessions
+            // Sessions
             if (WebSession is not null && SessionVariable is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
+                ThrowTerminatingError(error);
+            }
+
+            // Methods
+            if (Method is not null && CustomMethod is not null)
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletMethodConflictException");
                 ThrowTerminatingError(error);
             }
 
@@ -433,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // credentials
+            // Credentials
             if (UseDefaultCredentials && Credential is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
@@ -452,7 +459,13 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // request body content
+            if (Proxy is not null && NoProxy)
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyConflict, "WebCmdletProxyConflictException");
+                ThrowTerminatingError(error);
+            }
+
+            // Request body content
             if (Body is not null && InFile is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict, "WebCmdletBodyConflictException");
@@ -471,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // validate InFile path
+            // Validate InFile path
             if (InFile is not null)
             {
                 ProviderInfo provider = null;
@@ -526,7 +539,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // output ??
+            // Output ??
             if (PassThru && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));

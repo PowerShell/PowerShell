@@ -168,6 +168,9 @@
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
     <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
   </data>
+  <data name="MethodConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Method and CustomMethod. Specify either Method or CustomMethod, then retry.</value>
+  </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
     <value>Path '{0}' can be resolved to multiple paths.</value>
   </data>
@@ -185,6 +188,9 @@
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
     <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+  </data>
+  <data name="ProxyConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Proxy and NoProxy. Specify either Proxy or NoProxy, then retry.</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
