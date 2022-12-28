@@ -150,9 +150,7 @@ namespace System.Management.Automation
                 }
             }
 
-            using (ParameterBinderBase.bindingTracer.TraceScope(
-                "MANDATORY PARAMETER CHECK on cmdlet [{0}]",
-                _commandMetadata.Name))
+            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"MANDATORY PARAMETER CHECK on cmdlet [{_commandMetadata.Name}]"))
             {
                 try
                 {
@@ -218,9 +216,7 @@ namespace System.Management.Automation
             // Reparse the arguments based on the merged metadata
             ReparseUnboundArguments();
 
-            using (ParameterBinderBase.bindingTracer.TraceScope(
-                "BIND NAMED cmd line args [{0}]",
-                _commandMetadata.Name))
+            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND NAMED cmd line args [{_commandMetadata.Name}]"))
             {
                 // Bind the actual arguments
                 UnboundArguments = BindNamedParameters(_currentParameterSetFlag, this.UnboundArguments);
@@ -229,9 +225,7 @@ namespace System.Management.Automation
             ParameterBindingException reportedBindingException;
             ParameterBindingException currentBindingException;
 
-            using (ParameterBinderBase.bindingTracer.TraceScope(
-                "BIND POSITIONAL cmd line args [{0}]",
-                _commandMetadata.Name))
+            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND POSITIONAL cmd line args [{_commandMetadata.Name}]"))
             {
                 // Now that we know the parameter set, bind the positional parameters
                 UnboundArguments =
@@ -1507,9 +1501,7 @@ namespace System.Management.Automation
 
                 if (varargsParameter != null)
                 {
-                    using (ParameterBinderBase.bindingTracer.TraceScope(
-                        "BIND REMAININGARGUMENTS cmd line args to param: [{0}]",
-                        varargsParameter.Parameter.Name))
+                    using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND REMAININGARGUMENTS cmd line args to param: [{varargsParameter.Parameter.Name}]"))
                     {
                         // Accumulate the unbound arguments in to an list and then bind it to the parameter
 
@@ -3140,9 +3132,7 @@ namespace System.Management.Automation
 
             try
             {
-                using (ParameterBinderBase.bindingTracer.TraceScope(
-                    "BIND PIPELINE object to parameters: [{0}]",
-                    _commandMetadata.Name))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND PIPELINE object to parameters: [{_commandMetadata.Name}]"))
                 {
                     // First run any of the delay bind ScriptBlocks and bind the
                     // result to the appropriate parameter.

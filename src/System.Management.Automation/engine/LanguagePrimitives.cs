@@ -2242,7 +2242,7 @@ namespace System.Management.Automation
         /// <returns>A cast operator method, or null if not found.</returns>
         private static MethodInfo FindCastOperator(string methodName, Type targetType, Type originalType, Type resultType)
         {
-            using (typeConversion.TraceScope("Looking for \"{0}\" cast operator.", methodName))
+            using (new PSTraceScope(typeConversion, PSTraceSourceOptions.Scope, "<>", $"Looking for '{methodName}' cast operator."))
             {
                 // Get multiple matched Public & Static methods
                 const BindingFlags flagsToUse = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
@@ -2264,7 +2264,8 @@ namespace System.Management.Automation
                     return method;
                 }
 
-                typeConversion.TraceScope("Cast operator for \"{0}\" not found.", methodName);
+                typeConversion.Write(PSTraceSourceOptions.Scope, $"Cast operator for '{methodName}' not found.");
+
                 return null;
             }
         }

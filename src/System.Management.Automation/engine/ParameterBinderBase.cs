@@ -379,9 +379,7 @@ namespace System.Management.Automation
                     //
                     foreach (ArgumentTransformationAttribute dma in parameterMetadata.ArgumentTransformationAttributes)
                     {
-                        using (bindingTracer.TraceScope(
-                            "Executing DATA GENERATION metadata: [{0}]",
-                            dma.GetType()))
+                        using (new PSTraceScope(bindingTracer, PSTraceSourceOptions.Scope, "<>", $"Executing DATA GENERATION metadata: [{dma.GetType()}]"))
                         {
                             try
                             {
@@ -491,9 +489,7 @@ namespace System.Management.Automation
                         {
                             var validationAttribute = parameterMetadata.ValidationAttributes[i];
 
-                            using (bindingTracer.TraceScope(
-                                "Executing VALIDATION metadata: [{0}]",
-                                validationAttribute.GetType()))
+                            using (new PSTraceScope(bindingTracer, PSTraceSourceOptions.Scope, "<>", $"Executing VALIDATION metadata: [{validationAttribute.GetType()}]"))
                             {
                                 try
                                 {
@@ -989,8 +985,7 @@ namespace System.Management.Automation
             object originalValue = currentValue;
             object result = currentValue;
 
-            using (bindingTracer.TraceScope(
-                "COERCE arg to [{0}]", toType))
+            using (new PSTraceScope(bindingTracer, PSTraceSourceOptions.Scope, "<>", $"COERCE arg to [{toType}]"))
             {
                 Type argumentType = null;
                 try

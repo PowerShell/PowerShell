@@ -1357,12 +1357,12 @@ namespace System.Management.Automation
             ExecutionContext context = this.Command.Context;
 
             // We provide the user a way to select the new behavior via a new preference variable
-            using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
+            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND NAMED native application line args [{this.Path}]"))
             {
                 // We need to check if we're using legacy argument passing or it's a special case.
                 if (UseSpecialArgumentPassing(startInfo.FileName))
                 {
-                    using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
+                    using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND argument [{NativeParameterBinderController.Arguments}]"))
                     {
                         startInfo.Arguments = NativeParameterBinderController.Arguments;
                     }

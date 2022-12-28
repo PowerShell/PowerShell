@@ -96,7 +96,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     FormattingCommandLineParameters parameters)
         {
             ViewDefinition view = null;
-            const string findViewType = "FINDING VIEW TYPE: {0}";
             const string findViewShapeType = "FINDING VIEW {0} TYPE: {1}";
             const string findViewNameType = "FINDING VIEW NAME: {0} TYPE: {1}";
             const string viewFound = "An applicable view has been found";
@@ -109,7 +108,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 var typeNames = so.InternalTypeNames;
                 if (shape == FormatShape.Undefined)
                 {
-                    using (s_formatViewBindingTracer.TraceScope(findViewType, PSObjectTypeName(so)))
+                    using (new PSTraceScope(s_formatViewBindingTracer, PSTraceSourceOptions.Scope, "<>", $"FINDING VIEW TYPE: {PSObjectTypeName(so)}"))
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                     }

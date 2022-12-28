@@ -388,47 +388,6 @@ namespace System.Management.Automation
 
         #region PSTraceSourceOptions.Scope
 
-        internal IDisposable TraceScope(string msg)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Scope))
-            {
-                try
-                {
-                    return new ScopeTracer(
-                        this,
-                        PSTraceSourceOptions.Scope,
-                        scopeOutputFormatter: null,
-                        leavingScopeFormatter: null,
-                        scopeName: string.Empty,
-                        format: msg);
-                }
-                catch { }
-            }
-
-            return null;
-        }
-
-        internal IDisposable TraceScope(string format, object arg1)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Scope))
-            {
-                try
-                {
-                    return new ScopeTracer(
-                        this,
-                        PSTraceSourceOptions.Scope,
-                        scopeOutputFormatter: null,
-                        leavingScopeFormatter: null,
-                        scopeName: string.Empty,
-                        format,
-                        args: arg1);
-                }
-                catch { }
-            }
-
-            return null;
-        }
-
         internal IDisposable TraceScope(string format, object arg1, object arg2)
         {
             if (_flags.HasFlag(PSTraceSourceOptions.Scope))

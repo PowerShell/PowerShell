@@ -4973,7 +4973,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
         {
-            using (PSObject.MemberResolution.TraceScope("Matching \"{0}\"", name))
+            using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Matching '{name}'"))
             {
                 if (string.IsNullOrEmpty(name))
                 {

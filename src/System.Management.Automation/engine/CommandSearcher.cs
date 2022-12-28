@@ -1059,9 +1059,7 @@ namespace System.Management.Automation
                 char firstChar = _commandName[0];
                 if (firstChar == '.' || firstChar == '~' || firstChar == '\\')
                 {
-                    using (CommandDiscovery.discoveryTracer.TraceScope(
-                        "{0} appears to be a relative path. Trying to resolve relative path",
-                        _commandName))
+                    using (new PSTraceScope(CommandDiscovery.discoveryTracer, PSTraceSourceOptions.Scope, "<>", $"{_commandName} appears to be a relative path. Trying to resolve relative path"))
                     {
                         result = ResolvePSPath(_commandName);
                     }

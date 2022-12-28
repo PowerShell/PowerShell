@@ -550,9 +550,7 @@ namespace System.Management.Automation
 
                 Collection<MergedCompiledCommandParameter> missingMandatoryParameters;
 
-                using (ParameterBinderBase.bindingTracer.TraceScope(
-                    "MANDATORY PARAMETER CHECK on cmdlet [{0}]",
-                    this.CommandInfo.Name))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"MANDATORY PARAMETER CHECK on cmdlet [{this.CommandInfo.Name}]"))
                 {
                     // Check for unbound mandatory parameters but don't prompt
                     mandatoryParametersSpecified =

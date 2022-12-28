@@ -367,7 +367,7 @@ namespace System.Management.Automation
 
         private void CheckAndAddProperty(PSPropertyInfo propertyInfo, Attribute[] attributes, ref PropertyDescriptorCollection returnValue)
         {
-            using (typeDescriptor.TraceScope("Checking property \"{0}\".", propertyInfo.Name))
+            using (new PSTraceScope(typeDescriptor, PSTraceSourceOptions.Scope, "<>", $"Checking property '{propertyInfo.Name}'."))
             {
                 // WriteOnly properties are not returned in TypeDescriptor.GetProperties, so we do the same.
                 if (!propertyInfo.IsGettable)

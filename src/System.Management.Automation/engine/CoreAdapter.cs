@@ -5955,14 +5955,11 @@ namespace System.Management.Automation
             Dbg.Assert(typesOfMethodParameters != null, "Caller should verify that typesOfMethodParameters != null");
             Dbg.Assert(typesOfMethodArguments != null, "Caller should verify that typesOfMethodArguments != null");
 
-            using (s_tracer.TraceScope("Inferring type parameters for the following method: {0}", genericMethod))
+            using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Scope, "<>", $"Inferring type parameters for the following method: {genericMethod}"))
             {
-                if ((s_tracer.Options & PSTraceSourceOptions.WriteLine) == PSTraceSourceOptions.WriteLine)
-                {
-                    s_tracer.Write(
-                        PSTraceSourceOptions.WriteLine,
-                        $"Types of method arguments: {string.Join(", ", typesOfMethodArguments.Select(static t => t.ToString()).ToArray())}");
-                }
+                s_tracer.Write(
+                    PSTraceSourceOptions.WriteLine,
+                    $"Types of method arguments: {string.Join(", ", typesOfMethodArguments.Select(static t => t.ToString()).ToArray())}");
 
                 var typeInference = new TypeInference(typeParameters);
                 if (!typeInference.UnifyMultipleTerms(typesOfMethodParameters, typesOfMethodArguments))

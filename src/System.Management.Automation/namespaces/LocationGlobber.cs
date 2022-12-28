@@ -745,7 +745,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
-            using (s_pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to PROVIDER-INTERNAL path", path))
+            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Resolving MSH path '{path}' to PROVIDER-INTERNAL path"))
             {
                 TraceFilters(context);
 
@@ -947,7 +947,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
-            using (s_pathResolutionTracer.TraceScope("Resolving PROVIDER-INTERNAL path \"{0}\" to PROVIDER-INTERNAL path", path))
+            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Resolving PROVIDER-INTERNAL path '{path}' to PROVIDER-INTERNAL path"))
             {
                 TraceFilters(context);
 
@@ -3366,7 +3366,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (s_pathResolutionTracer.TraceScope("Expanding wildcards for items under '{0}'", dir))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Expanding wildcards for items under '{dir}'"))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
@@ -3447,7 +3447,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (s_pathResolutionTracer.TraceScope("Expanding intermediate containers under '{0}'", dir))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Expanding intermediate containers under '{dir}'"))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
@@ -3969,7 +3969,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (s_pathResolutionTracer.TraceScope("Expanding wildcards for items under '{0}'", dir))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Expanding wildcards for items under '{dir}'"))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
