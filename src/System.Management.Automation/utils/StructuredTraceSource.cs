@@ -12,8 +12,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Threading;
 
 namespace System.Management.Automation
@@ -172,8 +170,7 @@ namespace System.Management.Automation
         /// proper formatting of the output.
         /// </param>
         /// <param name="description">
-        /// The description to describe what the category
-        /// is used for.
+        /// The description to describe what the category is used for.
         /// </param>
         /// <param name="traceHeaders">
         /// If true, the line headers will be traced, if false, only the trace message will be traced.
@@ -447,7 +444,7 @@ namespace System.Management.Automation
 
 
         /// <summary>Gets the full name of the trace source category.</summary>
-        internal string FullName => string.Empty;
+        internal string FullName { get; } = string.Empty;
 
         internal bool IsEnabled => _flags != PSTraceSourceOptions.None;
 
@@ -536,9 +533,7 @@ namespace System.Management.Automation
     /// For instance, trace output for one category may actually be
     /// considered part of another category.
     /// </remarks>
-    [AttributeUsage(
-         AttributeTargets.Field,
-         AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     internal class TraceSourceAttribute : Attribute
     {
         /// <summary>
@@ -551,9 +546,7 @@ namespace System.Management.Automation
         /// <param name="description">
         /// A description for the category.
         /// </param>
-        internal TraceSourceAttribute(
-            string category,
-            string? description)
+        internal TraceSourceAttribute(string category, string? description)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(category);
 
@@ -595,7 +588,7 @@ namespace System.Management.Automation
     [InterpolatedStringHandler]
     internal ref struct OutputLineIfInterpolatedStringHandler
     {
-        /// <summary>The handler we use to perform the conditional formatting in <see cref="PSTraceSource.Write(PSTraceSourceOptions, OutputLineIfInterpolatedStringHandler)"/>.</summary>
+        /// <summary>The handler to perform the conditional formatting in <see cref="PSTraceSource.Write(PSTraceSourceOptions, OutputLineIfInterpolatedStringHandler)"/>.</summary>
         private DefaultInterpolatedStringHandler _handler;
 
         /// <summary>Creates an instance of the handler.</summary>
