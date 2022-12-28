@@ -417,8 +417,7 @@ namespace Microsoft.PowerShell.Commands
                 long previousPosition = Position;
                 bool consumedStream = false;
                 int totalCount = count;
-                while ((!consumedStream) &&
-                    ((Position + totalCount) > _streamBuffer.Length))
+                while (!consumedStream && (Position + totalCount) > _streamBuffer.Length)
                 {
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we
