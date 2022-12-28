@@ -114,7 +114,6 @@ namespace System.Management.Automation
 
                 // If it's not already in the catalog, see if we can find it in the
                 // pre-configured trace source list
-
                 if (result is null)
                 {
                     string? keyName = name;
@@ -156,7 +155,6 @@ namespace System.Management.Automation
                 // it with an PSTraceSource to get the added functionality. Anyone using
                 // a StructuredTraceSource should be able to do so even with the PSTraceSource
                 // instance.
-
                 if (result is null)
                 {
                     result = PSTraceSource.GetNewTraceSource(name, description, traceHeaders);
@@ -187,7 +185,6 @@ namespace System.Management.Automation
             // Keep the fullName as it was passed, but truncate or pad
             // the category name to 16 characters.  This allows for
             // uniform output
-
             string fullName = name;
             /*
                             // This is here to ensure all the trace category names are 16 characters,
@@ -352,18 +349,19 @@ namespace System.Management.Automation
         /// specify alternate template text, but only in assembly S.M.A.Core.
         /// </summary>
         /// <param name="innerException">
-        /// This is the InnerException for the InvalidOperationException
+        /// This is the InnerException for the InvalidOperationException.
         /// </param>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException(
             Exception? innerException,
-            string resourceString, params object[] args)
+            string resourceString,
+            params object[] args)
         {
             ArgumentException.ThrowIfNullOrEmpty(resourceString);
 
