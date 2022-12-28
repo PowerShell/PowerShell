@@ -562,7 +562,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-WebRequest -Uri '$uri' -Proxy 'http://127.0.0.1:8080' -NoProxy -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletProxyConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     $testCase = @(
@@ -2206,7 +2206,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -Proxy 'http://127.0.0.1:8080' -NoProxy -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletProxyConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     $testCase = @(
