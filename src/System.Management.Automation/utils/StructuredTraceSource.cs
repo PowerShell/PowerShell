@@ -216,10 +216,7 @@ namespace System.Management.Automation
 
         private static bool globalTraceInitialized;
 
-        /// <summary>
-        /// Traces the app domain header with information about the execution
-        /// time, the platform, etc.
-        /// </summary>
+        /// <summary>Traces the app domain header with information about the execution time, the platform, etc.</summary>
         internal void TraceGlobalAppDomainHeader()
         {
             // Only trace the global header if it hasn't
@@ -245,20 +242,15 @@ namespace System.Management.Automation
             globalTraceInitialized = true;
         }
 
-        /// <summary>
-        /// Outputs a header when a new StructuredTraceSource object is created.
-        /// </summary>
-        /// <param name="callingAssembly">
-        /// The assembly that created the instance of the StructuredTraceSource.
-        /// </param>
+        /// <summary>Outputs a header when a new StructuredTraceSource object is created.</summary>
+        /// <param name="callingAssembly">The assembly that created the instance of the StructuredTraceSource.</param>
         /// <remarks>
         /// A header will be output that contains information such as;
         /// the category and description of the new trace object,
         /// the assembly in which the new trace object
         /// will be stored.
         /// </remarks>
-        internal void TracerObjectHeader(
-            Assembly callingAssembly)
+        internal void TracerObjectHeader(Assembly callingAssembly)
         {
             if (_flags == PSTraceSourceOptions.None)
             {
@@ -318,9 +310,7 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// Add trace prefix to the interpolated string handler buffer.
-        /// </summary>
+        /// <summary>Add trace prefix to the interpolated string handler buffer.</summary>
         /// <param name="handler">Buffer to add the prefix to.</param>
         /// <param name="traceOption">Name of <see cref="PSTraceSourceOptions"/> flag that traced.</param>
         internal void AppendOutputLinePrefix(
@@ -359,10 +349,7 @@ namespace System.Management.Automation
 
         #region Class helper methods and properties
 
-        /// <summary>
-        /// Gets the method name of the method that called this one
-        /// plus the skipFrames.
-        /// </summary>
+        /// <summary>Gets the method name of the method that called this one plus the skipFrames.</summary>
         /// <remarks>
         /// For instance, GetCallingMethodNameAndParameters(1)
         /// will return the method that called the method that is calling
@@ -408,9 +395,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        /// <summary>
-        /// Property to access the indent level in thread local storage.
-        /// </summary>
+        /// <summary>Property to access the indent level in thread local storage.</summary>
         internal static int ThreadIndentLevel
         {
             get
@@ -442,7 +427,6 @@ namespace System.Management.Automation
         private readonly string _name;
         private TraceSource? _traceSource;
 
-
         /// <summary>Gets the full name of the trace source category.</summary>
         internal string FullName { get; } = string.Empty;
 
@@ -453,7 +437,6 @@ namespace System.Management.Automation
 
         /// <summary>Creates an instance of the TraceSource on demand.</summary>
         internal TraceSource TraceSource => _traceSource ??= new MonadTraceSource(_name);
-
         #endregion Class helper methods and properties
 
         #region Public members
@@ -466,7 +449,6 @@ namespace System.Management.Automation
 
         /// <summary>Gets the listeners for the TraceSource.</summary>
         public TraceListenerCollection Listeners => TraceSource.Listeners;
-
 
         /// <summary>Gets the TraceSource name (also known as category).</summary>
         /// <remarks>
