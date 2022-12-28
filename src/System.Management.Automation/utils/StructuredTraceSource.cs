@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 
@@ -27,129 +28,55 @@ namespace System.Management.Automation
     [Flags]
     public enum PSTraceSourceOptions
     {
-        /// <summary>
-        /// All tracing off.
-        /// </summary>
-        /// <!--
-        /// No tracing is enabled
-        /// -->
+        /// <summary>All tracing off.</summary>
         None = 0x00000000,
 
-        /// <summary>
-        /// Constructors will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceConstructor methods are enabled
-        /// -->
+        /// <summary>Constructors will be traced.</summary>
         Constructor = 0x00000001,
 
-        /// <summary>
-        /// Dispose will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceDispose methods are enabled
-        /// -->
+        /// <summary>Dispose will be traced.</summary>
         Dispose = 0x00000002,
 
-        /// <summary>
-        /// Finalize will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceFinalizer methods are enabled
-        /// -->
+        /// <summary>Finalize will be traced.</summary>
         Finalizer = 0x00000004,
 
-        /// <summary>
-        /// Methods will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceMethod methods are enabled
-        /// -->
+        /// <summary>Methods will be traced.</summary>
         Method = 0x00000008,
 
-        /// <summary>
-        /// Properties will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceProperty methods are enabled
-        /// -->
+        /// <summary>Properties will be traced.</summary>
         Property = 0x00000010,
 
-        /// <summary>
-        /// Delegates will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceDelegate and TraceDelegateHandler methods are enabled
-        /// -->
+        /// <summary>Delegates will be traced.</summary>
         Delegates = 0x00000020,
 
-        /// <summary>
-        /// Events will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceRaiseEvent and TraceEventHandler methods are enabled
-        /// -->
+        /// <summary>Events will be traced.</summary>
         Events = 0x00000040,
 
-        /// <summary>
-        /// Exceptions will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceException method is enabled
-        /// -->
+        /// <summary>Exceptions will be traced.</summary>
         Exception = 0x00000080,
 
-        /// <summary>
-        /// Locks will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceLock methods are enabled
-        /// -->
+        /// <summary>Locks will be traced.</summary>
         Lock = 0x00000100,
 
-        /// <summary>
-        /// Errors will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceError methods are enabled
-        /// -->
+        /// <summary>Errors will be traced.</summary>
         Error = 0x00000200,
 
-        /// <summary>
-        /// Warnings will be traced.
-        /// </summary>
-        /// <!--
-        /// The TraceWarning methods are enabled
-        /// -->
+        /// <summary>Warnings will be traced.</summary>
         Warning = 0x00000400,
 
-        /// <summary>
-        /// Verbose messages will be traced.
-        /// </summary>
+        /// <summary>Verbose messages will be traced.</summary>
         Verbose = 0x00000800,
 
-        /// <summary>
-        /// WriteLines will be traced.
-        /// </summary>
-        /// <!--
-        /// The WriteLine methods are enabled
-        /// -->
+        /// <summary>WriteLines will be traced.</summary>
         WriteLine = 0x00001000,
 
-        /// <summary>
-        /// TraceScope calls will be traced.
-        /// </summary>
+        /// <summary>TraceScope calls will be traced.</summary>
         Scope = 0x00002000,
 
-        /// <summary>
-        /// Assertions will be traced.
-        /// </summary>
+        /// <summary>Assertions will be traced.</summary>
         Assert = 0x00004000,
 
-        /// <summary>
-        /// A combination of flags that trace the execution flow will
-        /// be traced.
-        /// </summary>
+        /// <summary>A combination of flags that trace the execution flow will be traced.</summary>
         /// <remarks>
         /// The methods associated with the flags; Constructor, Dispose,
         /// Finalizer, Method, Delegates, and Events will be enabled
@@ -163,10 +90,7 @@ namespace System.Management.Automation
             Events |
             Scope,
 
-        /// <summary>
-        /// A combination of flags that trace the data will be traced
-        /// be traced.
-        /// </summary>
+        /// <summary>A combination of flags that trace the data will be traced be traced.</summary>
         /// <remarks>
         /// The methods associated with the flags; Constructor, Dispose,
         /// Finalizer, Property, and WriteLine will be enabled
@@ -179,9 +103,7 @@ namespace System.Management.Automation
             Verbose |
             WriteLine,
 
-        /// <summary>
-        /// A combination of flags that trace the errors.
-        /// </summary>
+        /// <summary>A combination of flags that trace the errors.</summary>
         /// <remarks>
         /// The methods associated with the flags; Error,
         /// and Exception will be enabled
@@ -190,10 +112,7 @@ namespace System.Management.Automation
             Error |
             Exception,
 
-        /// <summary>
-        /// All combination of trace flags will be set
-        /// be traced.
-        /// </summary>
+        /// <summary>All combination of trace flags will be set be traced.</summary>
         /// <remarks>
         /// All methods for tracing will be enabled.
         /// </remarks>
@@ -221,15 +140,6 @@ namespace System.Management.Automation
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
     /// that is used in the PowerShell components to produce trace output.
     /// </summary>
-    /// <!--
-    /// The StructuredTraceSource class is derived from TraceSource to provide granular
-    /// control over the tracing in a program.  An instance of StructuredTraceSource
-    /// is created for each category of tracing such that separate flags
-    /// (filters) can be set. Each flag enables one or more method for tracing.
-    ///
-    /// For instance, the Exception flag will enable tracing on these methods:
-    ///     TraceException.
-    /// </summary>
     /// <remarks>
     /// To get an instance of this class a user should define a static
     /// field of the type StructuredTraceSource, and assign the results of GetTracer() to it.
@@ -245,7 +155,7 @@ namespace System.Management.Automation
     /// Other than initial creation of this class through the GetTracer method,
     /// this class should throw no exceptions. Any call to a StructuredTraceSource method
     /// that results in an exception being thrown will be ignored.
-    /// -->
+    /// </remarks>
     public partial class PSTraceSource
     {
         #region PSTraceSource construction methods
@@ -389,42 +299,6 @@ namespace System.Management.Automation
         }
         #endregion StructuredTraceSource constructor methods
 
-        #region PSTraceSourceOptions.Lock methods/helpers
-
-        /// <summary>
-        /// Call this before acquiring a lock.
-        /// </summary>
-        /// <param name="lockName">
-        /// User defined name given to the lock
-        /// </param>
-        internal void TraceLockAcquiring(string lockName) => Write(PSTraceSourceOptions.Lock, $"Acquiring: {lockName}");
-
-        /// <summary>
-        /// Call this after acquiring a lock.
-        /// </summary>
-        /// <param name="lockName">
-        /// User defined name given to the lock
-        /// </param>
-        /// <remarks>
-        /// Use this only if the TraceLock that returns
-        /// an IDisposable won't work in your situation.
-        /// You will not get automatic indentation or
-        /// release tracing of the lock.
-        /// </remarks>
-        internal void TraceLockAcquired(string lockName) => Write(PSTraceSourceOptions.Lock, $"Enter: {lockName}");
-
-        /// <summary>
-        /// Call this after releasing the lock, but only
-        /// if you called TraceLockAcquired when you acquired
-        /// the lock.
-        /// </summary>
-        /// <param name="lockName">
-        /// User defined name given to the lock
-        /// </param>
-        internal void TraceLockReleased(string lockName) => Write(PSTraceSourceOptions.Lock, $"Leave: {lockName}");
-
-        #endregion PSTraceSourceOptions.Lock methods/helpers
-
         #region PSTraceSourceOptions.Error,Warning,Normal methods/helpers
 
         /// <summary>Traces the formatted output.</summary>
@@ -537,118 +411,6 @@ namespace System.Management.Automation
             }
 
             return result;
-        }
-
-        // The default formatter for TraceMethod
-
-        private const string methodOutputFormatter =
-            "Enter {0}:";
-
-        private const string methodLeavingFormatter =
-            "Leave {0}";
-
-        // The default formatter for TraceEventHandlers
-
-        private const string eventHandlerOutputFormatter =
-            "Enter event handler: {0}:";
-
-        private const string eventHandlerLeavingFormatter =
-            "Leave event handler: {0}";
-
-        // The default formatters for TraceLock
-
-        private const string lockEnterFormatter =
-            "Enter Lock: {0}";
-
-        private const string lockLeavingFormatter =
-            "Leave Lock: {0}";
-
-        private const string lockAcquiringFormatter =
-            "Acquiring Lock: {0}";
-
-        private static void AddTab(StringBuilder lineBuilder)
-        {
-            // The Trace.IndentSize does not change at all
-            // through the running of the process so there
-            // are no thread issues here.
-            int indentSize = Trace.IndentSize;
-            int threadIndentLevel = ThreadIndentLevel;
-
-            lineBuilder.Append(System.Management.Automation.Internal.StringUtil.Padding(indentSize * threadIndentLevel));
-        }
-
-        // used to find and blocks cyclic-loops in tracing.
-        private bool _alreadyTracing;
-
-        /// <summary>
-        /// Composes a line of trace output and then writes it.
-        /// </summary>
-        /// <param name="flag">
-        /// The flag that caused the line to be traced.
-        /// </param>
-        /// <param name="format">
-        /// The string to write with format symbols if necessary.
-        /// </param>
-        /// <param name="arg">
-        /// Arguments to the format string.
-        /// </param>
-        /// <remarks>
-        /// The line is composed by prefixing the process name, thread ID,
-        /// and tick count. Then the indenting is added. Then the
-        /// specified string is formatted. Finally the finished string
-        /// is output using the Trace class.
-        /// </remarks>
-        internal void OutputLine(
-            PSTraceSourceOptions flag,
-            string format,
-            string? arg = null)
-        {
-            // if already tracing something for this current TraceSource,
-            // dont trace again. This will block cyclic-loops from happening.
-            if (_alreadyTracing)
-            {
-                return;
-            }
-
-            _alreadyTracing = true;
-            try
-            {
-                Diagnostics.Assert(
-                    format != null,
-                    "The format string should not be null");
-
-                StringBuilder lineBuilder = new StringBuilder();
-
-                if (ShowHeaders)
-                {
-                    // Get the line prefix string which includes things
-                    // like App name, clock tick, thread ID, etc.
-                    lineBuilder.Append($" {Enum.GetName<PSTraceSourceOptions>(flag),-11} ");
-                }
-
-                // Add the spaces for the indent
-                AddTab(lineBuilder);
-
-                if (arg != null)
-                {
-                    lineBuilder.AppendFormat(
-                        CultureInfo.CurrentCulture,
-                        format,
-                        arg);
-                }
-                else
-                {
-                    lineBuilder.Append(format);
-                }
-
-                this.TraceSource.TraceInformation(lineBuilder.ToString());
-            }
-            finally
-            {
-                // reset tracing for the current trace source..
-                // so future traces can go through.
-                _alreadyTracing = false;
-            }
         }
 
         /// <summary>
@@ -830,8 +592,8 @@ namespace System.Management.Automation
         /// to "Entering: {0}: {1}" where {0} is the name of the
         /// method and {1} is the additional formatted info provided.
         /// </param>
-        /// <param name="leavingScopeFormatter">
-        /// The format string used to determine the general output
+        /// <param name="leavingScopePrefix">
+        /// The prefix string used to determine the general output
         /// format for the scope when the Dispose method is called.
         /// </param>
         /// <param name="scopeName">
@@ -841,15 +603,17 @@ namespace System.Management.Automation
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
             string? scopeOutputFormatter,
-            string? leavingScopeFormatter,
+            string? leavingScopePrefix,
             string scopeName)
         {
+            ArgumentNullException.ThrowIfNull(tracer);
+
             _tracer = tracer;
 
             ScopeTracerHelper(
                 flag,
                 scopeOutputFormatter,
-                leavingScopeFormatter,
+                leavingScopePrefix,
                 scopeName,
                 format: string.Empty);
         }
@@ -873,8 +637,8 @@ namespace System.Management.Automation
         /// to "Entering: {0}: {1}" where {0} is the name of the
         /// method and {1} is the additional formatted info provided.
         /// </param>
-        /// <param name="leavingScopeFormatter">
-        /// The format string used to determine the general output
+        /// <param name="leavingScopePrefix">
+        /// The prefix string used to determine the general output
         /// format for the scope when the Dispose method is called.
         /// </param>
         /// <param name="scopeName">
@@ -891,11 +655,14 @@ namespace System.Management.Automation
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
             string? scopeOutputFormatter,
-            string? leavingScopeFormatter,
+            string? leavingScopePrefix,
             string scopeName,
             string format,
-            params object[] args)
+            params object?[] args)
         {
+            ArgumentNullException.ThrowIfNull(tracer);
+            ArgumentNullException.ThrowIfNull(args);
+
             _tracer = tracer;
 
             if (format is not null)
@@ -903,7 +670,7 @@ namespace System.Management.Automation
                 ScopeTracerHelper(
                     flag,
                     scopeOutputFormatter,
-                    leavingScopeFormatter,
+                    leavingScopePrefix,
                     scopeName,
                     format,
                     args);
@@ -913,7 +680,7 @@ namespace System.Management.Automation
                 ScopeTracerHelper(
                     flag,
                     scopeOutputFormatter,
-                    leavingScopeFormatter,
+                    leavingScopePrefix,
                     scopeName,
                     format: string.Empty);
             }
@@ -932,8 +699,8 @@ namespace System.Management.Automation
         /// to "Entering: {0}: {1}" where {0} is the name of the
         /// method and {1} is the additional formatted info provided.
         /// </param>
-        /// <param name="leavingScopeFormatter">
-        /// The format string used to determine the general output
+        /// <param name="leavingScopePrefix">
+        /// The prefix string used to determine the general output
         /// format for the scope when the Dispose method is called.
         /// </param>
         /// <param name="scopeName">
@@ -946,20 +713,22 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Arguments to the format string.
         /// </param>
+        [MemberNotNull(nameof(_scopeName))]
         internal void ScopeTracerHelper(
             PSTraceSourceOptions flag,
             string? scopeOutputFormatter,
-            string? leavingScopeFormatter,
+            string? leavingScopePrefix,
             string scopeName,
             string format,
-            params object[] args)
+            params object?[] args)
         {
-            // Store the flags, scopeName, and the leavingScopeFormatter
-            // so that it can be used in the Dispose method
+            ArgumentNullException.ThrowIfNullOrEmpty(scopeName);
 
+            // Store the flags, scopeName, and the leavingScopePrefix
+            // so that it can be used in the Dispose method
             _flag = flag;
             _scopeName = scopeName;
-            _leavingScopeFormatter = leavingScopeFormatter;
+            _leavingScopePrefix = leavingScopePrefix;
 
             // Format the string for output
             StringBuilder output = new StringBuilder();
@@ -981,7 +750,7 @@ namespace System.Management.Automation
             }
 
             // Now write the trace
-            _tracer.OutputLine(_flag, output.ToString());
+            _tracer.Write(_flag, $"{output}");
 
             // Increment the current thread indent level
             PSTraceSource.ThreadIndentLevel++;
@@ -997,9 +766,9 @@ namespace System.Management.Automation
             PSTraceSource.ThreadIndentLevel--;
 
             // Trace out the scope name
-            if (!string.IsNullOrEmpty(_leavingScopeFormatter))
+            if (!string.IsNullOrEmpty(_leavingScopePrefix))
             {
-                _tracer.OutputLine(_flag, _leavingScopeFormatter, _scopeName);
+                _tracer.Write(_flag, $"{_leavingScopePrefix}: {_scopeName}");
             }
 
             GC.SuppressFinalize(this);
@@ -1018,13 +787,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Stores the scope name that is passed to the constructor.
         /// </summary>
-        private string? _scopeName;
+        private string _scopeName;
 
         /// <summary>
         /// Stores the format string used when formatting output when
         /// leaving the scope.
         /// </summary>
-        private string? _leavingScopeFormatter;
+        private string? _leavingScopePrefix;
     }
     #endregion ScopeTracer object/helpers
 
@@ -1113,8 +882,6 @@ namespace System.Management.Automation
         }
     }
     #endregion MonadTraceSource
-
-#nullable enable
 
     [InterpolatedStringHandler]
     internal ref struct OutputLineIfInterpolatedStringHandler
@@ -1217,7 +984,7 @@ namespace System.Management.Automation
     /// <summary>Allocation free scope trace.</summary>
     /// <remarks>
     /// It is disposable ref struct. 'Dispose()' method is autovatically called.
-    /// Example:
+    /// <example>
     /// <code>
     ///     private static readonly PSTraceSource s_pathResolutionTracer =
     ///         PSTraceSource.GetTracer(
@@ -1229,6 +996,7 @@ namespace System.Management.Automation
     ///         ...
     ///     }
     /// </code>
+    /// <example>
     /// </remarks>
 
     internal ref struct PSTraceScope
