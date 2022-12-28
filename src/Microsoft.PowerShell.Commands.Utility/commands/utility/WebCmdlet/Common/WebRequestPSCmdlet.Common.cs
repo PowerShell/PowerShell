@@ -1259,27 +1259,21 @@ namespace Microsoft.PowerShell.Commands
         private static bool IsRedirectCode(HttpStatusCode code)
         {
             int intCode = (int)code;
+            
             return
             (
-                (intCode >= 300 && intCode < 304) ||
-                intCode == 307 ||
-                intCode == 308
+                (intCode >= 300 && intCode < 304) || intCode == 307 || intCode == 308
             );
         }
 
         // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
-        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
         private static bool IsRedirectToGet(HttpStatusCode code)
         {
+            int intCode = (int)code;
+
             return
             (
-                code == HttpStatusCode.Found ||
-                code == HttpStatusCode.Moved ||
-                code == HttpStatusCode.Redirect ||
-                code == HttpStatusCode.RedirectMethod ||
-                code == HttpStatusCode.SeeOther ||
-                code == HttpStatusCode.Ambiguous ||
-                code == HttpStatusCode.MultipleChoices
+                intCode >= 300 && intCode <= 303
             );
         }
 
