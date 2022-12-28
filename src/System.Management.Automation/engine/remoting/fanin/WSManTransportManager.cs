@@ -611,7 +611,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void SetDefaultTimeOut(int milliseconds)
         {
             Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
-            using (tracer.TraceMethod("Setting Default timeout: {0} milliseconds", milliseconds))
+            using (new PSTraceScope(tracer, PSTraceSourceOptions.Method, string.Empty, $"Setting Default timeout: {milliseconds} milliseconds"))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_DEFAULT_OPERATION_TIMEOUTMS,
@@ -639,7 +639,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void SetConnectTimeOut(int milliseconds)
         {
             Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
-            using (tracer.TraceMethod("Setting CreateShell timeout: {0} milliseconds", milliseconds))
+            using (new PSTraceScope(tracer, PSTraceSourceOptions.Method, string.Empty, $"Setting CreateShell timeout: {milliseconds} milliseconds"))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_CREATE_SHELL,
@@ -667,7 +667,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void SetCloseTimeOut(int milliseconds)
         {
             Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
-            using (tracer.TraceMethod("Setting CloseShell timeout: {0} milliseconds", milliseconds))
+            using (new PSTraceScope(tracer, PSTraceSourceOptions.Method, string.Empty, $"Setting CloseShell timeout: {milliseconds} milliseconds"))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_CLOSE_SHELL_OPERATION,
@@ -695,7 +695,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void SetSendTimeOut(int milliseconds)
         {
             Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
-            using (tracer.TraceMethod("Setting SendShellInput timeout: {0} milliseconds", milliseconds))
+            using (new PSTraceScope(tracer, PSTraceSourceOptions.Method, string.Empty, $"Setting SendShellInput timeout: {milliseconds} milliseconds"))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_SEND_SHELL_INPUT,
@@ -723,7 +723,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void SetReceiveTimeOut(int milliseconds)
         {
             Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
-            using (tracer.TraceMethod("Setting ReceiveShellOutput timeout: {0} milliseconds", milliseconds))
+            using (new PSTraceScope(tracer, PSTraceSourceOptions.Method, string.Empty, $"Setting ReceiveShellOutput timeout: {milliseconds} milliseconds"))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_RECEIVE_SHELL_OUTPUT,
@@ -751,7 +751,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void SetSignalTimeOut(int milliseconds)
         {
             Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
-            using (tracer.TraceMethod("Setting SignalShell timeout: {0} milliseconds", milliseconds))
+            using (new PSTraceScope(tracer, PSTraceSourceOptions.Method, string.Empty, $"Setting SignalShell timeout: {milliseconds} milliseconds"))
             {
                 int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_SIGNAL_SHELL,
