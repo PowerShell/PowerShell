@@ -20,10 +20,9 @@ namespace System.Management.Automation
 {
     #region PSTraceSourceOptions
     /// <summary>
-    /// These flags enable tracing based on the types of
-    /// a tracing supplied. Each type of tracing will allow
-    /// for one or more methods in the StructuredTraceSource class to become
-    /// "enabled".
+    /// These flags enable tracing based on the types of a tracing supplied.
+    /// Each type of tracing will allow for one or more methods
+    /// in the StructuredTraceSource class to become "enabled".
     /// </summary>
     [Flags]
     public enum PSTraceSourceOptions
@@ -161,8 +160,7 @@ namespace System.Management.Automation
         #region PSTraceSource construction methods
 
         /// <summary>
-        /// Constructor that determines the name of the trace
-        /// flag in the config file.
+        /// Initializes a new instance of the <see cref="PSTraceSource"/> class.
         /// </summary>
         /// <param name="fullName">
         /// The full name for the trace category. This is different from the name parameter as
@@ -180,7 +178,7 @@ namespace System.Management.Automation
         /// <param name="traceHeaders">
         /// If true, the line headers will be traced, if false, only the trace message will be traced.
         /// </param>
-        internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
+        internal PSTraceSource(string fullName, string name, string? description, bool traceHeaders)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(fullName);
             ArgumentNullException.ThrowIfNullOrEmpty(name);
@@ -439,51 +437,62 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// Allocates some thread local storage to hold the indent level.
-        /// </summary>
+        /// <summary>Allocates some thread local storage to hold the indent level.</summary>
         private static readonly ThreadLocal<int> s_localIndentLevel = new ThreadLocal<int>();
 
-        /// <summary>
-        /// Local storage for the trace switch flags.
-        /// </summary>
+        /// <summary>Local storage for the trace switch flags.</summary>
         private PSTraceSourceOptions _flags = PSTraceSourceOptions.None;
+        private readonly string _name;
+        private TraceSource? _traceSource;
 
-        /// <summary>
-        /// Gets or sets the description for this trace sources.
-        /// </summary>
-        public string Description { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Determines if the line and switch headers should be shown.
-        /// </summary>
-        /// <value></value>
-        internal bool ShowHeaders { get; set; } = true;
-
-        /// <summary>
-        /// Gets the full name of the trace source category.
-        /// </summary>
+        /// <summary>Gets the full name of the trace source category.</summary>
         internal string FullName { get; } = string.Empty;
 
-        private readonly string _name;
+        internal bool IsEnabled
+        {
+            get => _flags != PSTraceSourceOptions.None;
+        }
 
-        /// <summary>
-        /// Creates an instance of the TraceSource on demand.
-        /// </summary>
+        /// <summary>Determines if the line and switch headers should be shown.</summary>
+        internal bool ShowHeaders { get; set; } = true;
+
+        /// <summary>Creates an instance of the TraceSource on demand.</summary>
         internal TraceSource TraceSource
         {
             get { return _traceSource ??= new MonadTraceSource(_name); }
         }
 
-        private TraceSource? _traceSource;
-
         #endregion Class helper methods and properties
 
         #region Public members
 
-        /// <summary>
-        /// Gets or sets the options for what will be traced.
-        /// </summary>
+        /// <summary>Gets the attributes of the TraceSource.</summary>
+        public StringDictionary Attributes
+        {
+            get => TraceSource.Attributes;
+        }
+
+        /// <summary>Gets or sets the description for this trace sources.</summary>
+        public string? Description { get; set; } = string.Empty;
+
+        /// <summary>Gets the listeners for the TraceSource.</summary>
+        public TraceListenerCollection Listeners
+        {
+            get => TraceSource.Listeners;
+        }
+
+        /// <summary>Gets the TraceSource name (also known as category).</summary>
+        /// <remarks>
+        /// Note, this name is truncated to 16 characters due to limitations
+        /// in the TraceSource class.
+        /// </remarks>
+        public string Name
+        {
+            get => _name;
+        }
+
+        /// <summary>Gets or sets the options for what will be traced.</summary>
         public PSTraceSourceOptions Options
         {
             get => _flags;
@@ -495,42 +504,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool IsEnabled
-        {
-            get => _flags != PSTraceSourceOptions.None;
-        }
-
-        /// <summary>
-        /// Gets the attributes of the TraceSource.
-        /// </summary>
-        public StringDictionary Attributes
-        {
-            get => TraceSource.Attributes;
-        }
-
-        /// <summary>
-        /// Gets the listeners for the TraceSource.
-        /// </summary>
-        public TraceListenerCollection Listeners
-        {
-            get => TraceSource.Listeners;
-        }
-
-        /// <summary>
-        /// Gets the TraceSource name (also known as category).
-        /// </summary>
-        /// <remarks>
-        /// Note, this name is truncated to 16 characters due to limitations
-        /// in the TraceSource class.
-        /// </remarks>
-        public string Name
-        {
-            get => _name;
-        }
-
-        /// <summary>
-        /// Gets or sets the TraceSource's Switch.
-        /// </summary>
+        /// <summary>Gets or sets the TraceSource's Switch.</summary>
         public SourceSwitch Switch
         {
             get => TraceSource.Switch;
@@ -541,10 +515,7 @@ namespace System.Management.Automation
 
         #region TraceCatalog
 
-        /// <summary>
-        /// Storage for all the PSTraceSource instances.
-        /// </summary>
-        /// <value></value>
+        /// <summary>Storage for all the PSTraceSource instances.</summary>
         internal static Dictionary<string, PSTraceSource> TraceCatalog { get; } = new Dictionary<string, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -842,14 +813,10 @@ namespace System.Management.Automation
             Description = description;
         }
 
-        /// <summary>
-        /// The category to be used for the TraceSource.
-        /// </summary>
+        /// <summary>The category to be used for the TraceSource.</summary>
         internal string Category { get; }
 
-        /// <summary>
-        /// The description for the category to be used for the TraceSource.
-        /// </summary>
+        /// <summary>The description for the category to be used for the TraceSource.</summary>
         internal string? Description { get; set; }
     }
     #endregion TraceSourceAttribute
@@ -868,14 +835,8 @@ namespace System.Management.Automation
         {
         }
 
-        /// <summary>
-        /// Tells the config infrastructure which attributes are supported
-        /// for our TraceSource.
-        /// </summary>
-        /// <returns>
-        /// A string array with the names of the attributes supported by our
-        /// trace source.
-        /// </returns>
+        /// <summary>Tells the config infrastructure which attributes are supported for our TraceSource.</summary>
+        /// <returns>A string array with the names of the attributes supported by our trace source.</returns>
         protected override string[] GetSupportedAttributes()
         {
             return new string[] { "Options" };
@@ -904,9 +865,7 @@ namespace System.Management.Automation
 
                 shouldAppend = true;
 
-                trace.AppendOutputLinePrefix(
-                    ref _handler,
-                    option);
+                trace.AppendOutputLinePrefix(ref _handler, option);
 
             }
             else
@@ -998,14 +957,13 @@ namespace System.Management.Automation
     /// </code>
     /// <example>
     /// </remarks>
-
     internal ref struct PSTraceScope
     {
         private readonly PSTraceSource _traceSource;
         private readonly PSTraceSourceOptions _traceType;
         private readonly string _scopeName;
 
-        /// <summary>Allocation free scope trace.</summary>
+        /// <summary>Output initialize line and increment thread indentation level.</summary>
         /// <param name="traceSource"><see cref="PSTraceSource"/> instance.</param>
         /// <param name="traceType">Type of tracing. See <see cref="PSTraceSourceOptions"/> for more information.</param>
         /// <param name="scopeName">The scope name. If empty it is replaced with calling method name.</param>
@@ -1043,6 +1001,7 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>Output finilize line and decrement thread indentation level.</summary>
         public void Dispose()
         {
             if (_traceSource.Options.HasFlag(_traceType))
