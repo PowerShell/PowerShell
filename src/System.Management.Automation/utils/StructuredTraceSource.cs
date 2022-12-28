@@ -680,7 +680,7 @@ namespace System.Management.Automation
     /// </code>
     /// <example>
     /// </remarks>
-    internal ref struct PSTraceScope
+    internal readonly ref struct PSTraceScope
     {
         private readonly PSTraceSource _traceSource;
         private readonly PSTraceSourceOptions _traceType;
