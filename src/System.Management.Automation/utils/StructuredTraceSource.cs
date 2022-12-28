@@ -447,50 +447,36 @@ namespace System.Management.Automation
 
 
         /// <summary>Gets the full name of the trace source category.</summary>
-        internal string FullName { get; } = string.Empty;
+        internal string FullName => string.Empty;
 
-        internal bool IsEnabled
-        {
-            get => _flags != PSTraceSourceOptions.None;
-        }
+        internal bool IsEnabled => _flags != PSTraceSourceOptions.None;
 
         /// <summary>Determines if the line and switch headers should be shown.</summary>
         internal bool ShowHeaders { get; set; } = true;
 
         /// <summary>Creates an instance of the TraceSource on demand.</summary>
-        internal TraceSource TraceSource
-        {
-            get { return _traceSource ??= new MonadTraceSource(_name); }
-        }
+        internal TraceSource TraceSource => _traceSource ??= new MonadTraceSource(_name);
 
         #endregion Class helper methods and properties
 
         #region Public members
 
         /// <summary>Gets the attributes of the TraceSource.</summary>
-        public StringDictionary Attributes
-        {
-            get => TraceSource.Attributes;
-        }
+        public StringDictionary Attributes => TraceSource.Attributes;
 
         /// <summary>Gets or sets the description for this trace sources.</summary>
         public string? Description { get; set; } = string.Empty;
 
         /// <summary>Gets the listeners for the TraceSource.</summary>
-        public TraceListenerCollection Listeners
-        {
-            get => TraceSource.Listeners;
-        }
+        public TraceListenerCollection Listeners => TraceSource.Listeners;
+
 
         /// <summary>Gets the TraceSource name (also known as category).</summary>
         /// <remarks>
         /// Note, this name is truncated to 16 characters due to limitations
         /// in the TraceSource class.
         /// </remarks>
-        public string Name
-        {
-            get => _name;
-        }
+        public string Name => _name;
 
         /// <summary>Gets or sets the options for what will be traced.</summary>
         public PSTraceSourceOptions Options
