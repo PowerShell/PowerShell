@@ -183,7 +183,7 @@ namespace System.Management.Automation
 
             Collection<PathInfo> result;
 
-            using (s_pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to MSH path", path))
+            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Resolving MSH path '{path}' to MSH path"))
             {
                 TraceFilters(context);
 
@@ -191,7 +191,7 @@ namespace System.Management.Automation
 
                 if (IsHomePath(path))
                 {
-                    using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Resolving HOME relative path"))
                     {
                         path = GetHomeRelativePath(path);
                     }
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
             // First check to see if the path starts with a ~ (home)
             if (IsHomePath(path))
             {
-                using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
+                using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Resolving HOME relative path"))
                 {
                     path = GetHomeRelativePath(path);
                 }
@@ -2634,7 +2634,7 @@ namespace System.Management.Automation
 
             Collection<string> result = new Collection<string>();
 
-            using (s_pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
+            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"EXPANDING WILDCARDS"))
             {
                 if (ShouldPerformGlobbing(path, context))
                 {
@@ -2650,7 +2650,7 @@ namespace System.Management.Automation
 
                     Stack<string> leafElements = new Stack<string>();
 
-                    using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Tokenizing path"))
                     {
                         // If the path contains glob characters then iterate through pulling the
                         // leaf elements off and pushing them on to the leafElements stack until
@@ -2799,7 +2799,7 @@ namespace System.Management.Automation
 
                         if (leafElements.Count > 0)
                         {
-                            using (s_pathResolutionTracer.TraceScope("Checking matches to ensure they are containers"))
+                            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Checking matches to ensure they are containers"))
                             {
                                 int index = 0;
 
@@ -3589,7 +3589,7 @@ namespace System.Management.Automation
 
             Collection<string> result = new Collection<string>();
 
-            using (s_pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
+            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"EXPANDING WILDCARDS"))
             {
                 if (ShouldPerformGlobbing(path, context))
                 {
@@ -3605,7 +3605,7 @@ namespace System.Management.Automation
 
                     Stack<string> leafElements = new Stack<string>();
 
-                    using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Tokenizing path"))
                     {
                         // If the path contains glob characters then iterate through pulling the
                         // leaf elements off and pushing them on to the leafElements stack until
@@ -3764,7 +3764,7 @@ namespace System.Management.Automation
 
                         if (leafElements.Count > 0)
                         {
-                            using (s_pathResolutionTracer.TraceScope("Checking matches to ensure they are containers"))
+                            using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Checking matches to ensure they are containers"))
                             {
                                 int index = 0;
 
@@ -4027,7 +4027,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (s_pathResolutionTracer.TraceScope("Expanding intermediate containers under '{dir}'"))
+                    using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Expanding intermediate containers under '{dir}'"))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)

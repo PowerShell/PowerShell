@@ -2271,7 +2271,7 @@ namespace System.Management.Automation
 
         private static object ConvertNumericThroughDouble(object valueToConvert, Type resultType)
         {
-            using (typeConversion.TraceScope("Numeric Conversion through System.Double."))
+            using (new PSTraceScope(typeConversion, PSTraceSourceOptions.Scope, "<>", $"Numeric Conversion through System.Double."))
             {
                 // Eventual exceptions here are caught by the caller
                 object intermediate = Convert.ChangeType(valueToConvert, typeof(double),
@@ -2507,7 +2507,7 @@ namespace System.Management.Automation
                                                 IFormatProvider formatProvider,
                                                 TypeTable backupTable)
         {
-            using (typeConversion.TraceScope("Standard type conversion to XmlDocument."))
+            using (new PSTraceScope(typeConversion, PSTraceSourceOptions.Scope, "<>", $"Standard type conversion to XmlDocument."))
             {
                 string valueToConvertString;
                 try
@@ -2565,7 +2565,7 @@ namespace System.Management.Automation
                                                    out object result,
                                                    TypeTable backupTypeTable)
         {
-            using (typeConversion.TraceScope("Custom type conversion."))
+            using (new PSTraceScope(typeConversion, PSTraceSourceOptions.Scope, "<>", $"Custom type conversion."))
             {
                 object baseValueToConvert = PSObject.Base(valueToConvert);
                 Type originalType = baseValueToConvert.GetType();

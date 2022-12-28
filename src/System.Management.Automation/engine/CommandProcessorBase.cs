@@ -516,7 +516,7 @@ namespace System.Management.Automation
                     SetCurrentScopeToExecutionScope();
 
                     using (commandRuntime.AllowThisCommandToWrite(true))
-                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING BeginProcessing"))
+                    using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"CALLING BeginProcessing"))
                     {
                         if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                         {
@@ -585,7 +585,7 @@ namespace System.Management.Automation
             try
             {
                 using (commandRuntime.AllowThisCommandToWrite(true))
-                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING EndProcessing"))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"CALLING EndProcessing"))
                 {
                     this.Command.DoEndProcessing();
                 }
@@ -644,7 +644,7 @@ namespace System.Management.Automation
             try
             {
                 using (commandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
-                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING CleanResource"))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"CALLING CleanResource"))
                 {
                     Command.DoCleanResource();
                 }

@@ -4801,7 +4801,7 @@ namespace System.Management.Automation
         {
             get
             {
-                using (PSObject.MemberResolution.TraceScope("Lookup"))
+                using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Lookup"))
                 {
                     if (string.IsNullOrEmpty(name))
                     {
@@ -4863,7 +4863,7 @@ namespace System.Management.Automation
 
         private PSMemberInfoInternalCollection<T> GetIntegratedMembers(MshMemberMatchOptions matchOptions)
         {
-            using (PSObject.MemberResolution.TraceScope("Generating the total list of members"))
+            using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Generating the total list of members"))
             {
                 PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
                 object delegateOwner;
@@ -5067,7 +5067,7 @@ namespace System.Management.Automation
             /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<T> integratingCollection)
             {
-                using (PSObject.MemberResolution.TraceScope("Enumeration Start"))
+                using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Enumeration Start"))
                 {
                     _currentIndex = -1;
                     _current = null;

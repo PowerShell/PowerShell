@@ -1593,8 +1593,7 @@ namespace System.Management.Automation
 
             if (_commandMetadata.ImplementsDynamicParameters)
             {
-                using (ParameterBinderBase.bindingTracer.TraceScope(
-                    "BIND cmd line args to DYNAMIC parameters."))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND cmd line args to DYNAMIC parameters."))
                 {
                     s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The Cmdlet supports the dynamic parameter interface");
 
@@ -1696,8 +1695,7 @@ namespace System.Management.Automation
 
                         if (UnboundArguments.Count > 0)
                         {
-                            using (ParameterBinderBase.bindingTracer.TraceScope(
-                                    "BIND NAMED args to DYNAMIC parameters"))
+                            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND NAMED args to DYNAMIC parameters"))
                             {
                                 // Try to bind the unbound arguments as static parameters to the
                                 // dynamic parameter object.
@@ -1707,8 +1705,7 @@ namespace System.Management.Automation
                                 UnboundArguments = BindNamedParameters(_currentParameterSetFlag, UnboundArguments);
                             }
 
-                            using (ParameterBinderBase.bindingTracer.TraceScope(
-                                    "BIND POSITIONAL args to DYNAMIC parameters"))
+                            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND POSITIONAL args to DYNAMIC parameters"))
                             {
                                 UnboundArguments =
                                     BindPositionalParameters(
@@ -2858,8 +2855,7 @@ namespace System.Management.Automation
                             fieldDescriptionList,
                             missingMandatoryParameters);
 
-                    using (ParameterBinderBase.bindingTracer.TraceScope(
-                        "BIND PROMPTED mandatory parameter args"))
+                    using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND PROMPTED mandatory parameter args"))
                     {
                         // Now bind any parameters that were retrieved.
 
@@ -3672,8 +3668,7 @@ namespace System.Management.Automation
                 Collection<PSObject> output = null;
 
                 Exception error = null;
-                using (ParameterBinderBase.bindingTracer.TraceScope(
-                    "Invoking delay-bind ScriptBlock"))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"Invoking delay-bind ScriptBlock"))
                 {
                     if (delayedScriptBlock.Value._parameterBinder == this)
                     {

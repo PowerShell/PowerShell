@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
 
         internal static void SetReferences(object[] arguments, MethodInformation methodInformation, object[] originalArguments)
         {
-            using (PSObject.MemberResolution.TraceScope("Checking for possible references."))
+            using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Checking for possible references."))
             {
                 ParameterInformation[] parameters = methodInformation.parameters;
                 for (int i = 0; (i < originalArguments.Length) && (i < parameters.Length) && (i < arguments.Length); i++)
@@ -1916,7 +1916,7 @@ namespace System.Management.Automation
             bool isParameterByRef, int parameterIndex, Type resultType,
             IFormatProvider formatProvider)
         {
-            using (PSObject.MemberResolution.TraceScope("Method argument conversion."))
+            using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Method argument conversion."))
             {
                 if (resultType == null)
                 {

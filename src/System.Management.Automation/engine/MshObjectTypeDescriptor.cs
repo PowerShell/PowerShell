@@ -440,7 +440,7 @@ namespace System.Management.Automation
         /// <returns>A PropertyDescriptorCollection containing the property descriptions for the <see cref="PSObject"/> represented by this type descriptor.</returns>
         public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
         {
-            using (typeDescriptor.TraceScope("Getting properties."))
+            using (new PSTraceScope(typeDescriptor, PSTraceSourceOptions.Scope, "<>", $"Getting properties."))
             {
                 PropertyDescriptorCollection returnValue = new PropertyDescriptorCollection(null);
                 if (Instance == null)

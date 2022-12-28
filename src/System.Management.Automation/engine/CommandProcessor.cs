@@ -361,7 +361,7 @@ namespace System.Management.Automation
 
                     // NOTICE-2004/06/08-JonN 959638
                     using (commandRuntime.AllowThisCommandToWrite(true))
-                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING ProcessRecord"))
+                    using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"CALLING ProcessRecord"))
                     {
                         if (CmdletParameterBinderController.ObsoleteParameterWarningList != null &&
                             CmdletParameterBinderController.ObsoleteParameterWarningList.Count > 0)

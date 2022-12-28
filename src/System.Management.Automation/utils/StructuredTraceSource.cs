@@ -795,7 +795,7 @@ namespace System.Management.Automation
         /// <returns>
         /// The name of the method on the stack.
         /// </returns>
-        private static string GetCallingMethodNameAndParameters(int skipFrames)
+        internal static string GetCallingMethodNameAndParameters(int skipFrames)
         {
             string result = null;
 
@@ -1498,20 +1498,45 @@ namespace System.Management.Automation
         public void AppendFormatted(object? value, int alignment = 0, string? format = null) => _handler.AppendFormatted(value, alignment, format);
     }
 
-    /// <summary>
-    /// Allocation free scope trace.
-    /// </summary>
+    /// <summary>Allocation free scope trace.</summary>
+    /// <remarks>
+    /// It is disposable ref struct. 'Dispose()' method is autovatically called.
+    /// Example:
+    /// <code>
+    ///     private static readonly PSTraceSource s_pathResolutionTracer =
+    ///         PSTraceSource.GetTracer(
+    ///             "PathResolution",
+    ///             "Traces the path resolution algorithm.");
+    ///     ...
+    ///     using (new PSTraceScope(s_pathResolutionTracer, PSTraceSourceOptions.Scope, "<>", $"Path '{path}'"))
+    ///     {
+    ///         ...
+    ///     }
+    /// </code>
+    /// </remarks>
+
     internal ref struct PSTraceScope
     {
         private readonly PSTraceSource _traceSource;
         private readonly PSTraceSourceOptions _traceType;
         private readonly string _scopeName;
 
+        /// <summary>Allocation free scope trace.</summary>
+        /// <param name="traceSource"><see cref="PSTraceSource"/> instance.</param>
+        /// <param name="traceType">Type of tracing. See <see cref="PSTraceSourceOptions"/> for more information.</param>
+        /// <param name="scopeName">The scope name. If empty it is replaced with calling method name.</param>
+        /// <param name="handler">Interolated string handler.</param>
         public PSTraceScope(PSTraceSource traceSource, PSTraceSourceOptions traceType, string scopeName, [InterpolatedStringHandlerArgument("traceSource", "traceType")] OutputLineIfInterpolatedStringHandler handler)
         {
+            ArgumentNullException.ThrowIfNull(traceType);
+            ArgumentNullException.ThrowIfNull(scopeName);
+
             _traceSource = traceSource;
             _traceType = traceType;
-            _scopeName = scopeName;
+
+            _scopeName = scopeName != string.Empty
+                ? scopeName
+                : PSTraceSource.GetCallingMethodNameAndParameters(1);
 
             if (_traceSource.Options.HasFlag(_traceType))
             {
