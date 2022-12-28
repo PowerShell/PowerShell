@@ -1840,7 +1840,7 @@ namespace System.Management.Automation
             result = null;
             try
             {
-                using (typeConversion.TraceScope("Converting \"{0}\" to \"{1}\".", valueToConvert, resultType))
+                using (new PSTraceScope(typeConversion, PSTraceSourceOptions.Scope, "<>", $"Converting '{valueToConvert}' to '{resultType}'."))
                 {
                     if (resultType == null)
                     {
@@ -4833,7 +4833,7 @@ namespace System.Management.Automation
                                          IFormatProvider formatProvider,
                                          TypeTable backupTypeTable)
         {
-            using (typeConversion.TraceScope("Converting \"{0}\" to \"{1}\".", valueToConvert, resultType))
+            using (new PSTraceScope(typeConversion, PSTraceSourceOptions.Scope, "<>", $"Converting '{valueToConvert}' to '{resultType}'."))
             {
                 if (resultType == null)
                 {

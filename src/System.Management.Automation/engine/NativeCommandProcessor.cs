@@ -1375,7 +1375,7 @@ namespace System.Management.Automation
                     {
                         if (nativeArgument != null)
                         {
-                            using (ParameterBinderBase.bindingTracer.TraceScope("BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
+                            using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND cmd line arg [{nativeArgument}] to position [{position++}]"))
                             {
                                 startInfo.ArgumentList.Add(nativeArgument);
                             }

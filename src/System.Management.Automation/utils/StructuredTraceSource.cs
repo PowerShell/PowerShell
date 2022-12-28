@@ -386,32 +386,6 @@ namespace System.Management.Automation
         }
         #endregion StructuredTraceSource constructor methods
 
-        #region PSTraceSourceOptions.Scope
-
-        internal IDisposable TraceScope(string format, object arg1, object arg2)
-        {
-            if (_flags.HasFlag(PSTraceSourceOptions.Scope))
-            {
-                try
-                {
-                    return new ScopeTracer(
-                        this,
-                        PSTraceSourceOptions.Scope,
-                        scopeOutputFormatter: null,
-                        leavingScopeFormatter: null,
-                        scopeName: string.Empty,
-                        format,
-                        arg1,
-                        arg2);
-                }
-                catch { }
-            }
-
-            return null;
-        }
-
-        #endregion PSTraceSourceOptions.Scope
-
         #region PSTraceSourceOptions.Method methods/helpers
         /// <summary>
         /// Traces the method name and indents the trace output.

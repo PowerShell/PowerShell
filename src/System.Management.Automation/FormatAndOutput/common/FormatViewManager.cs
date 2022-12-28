@@ -96,8 +96,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     FormattingCommandLineParameters parameters)
         {
             ViewDefinition view = null;
-            const string findViewShapeType = "FINDING VIEW {0} TYPE: {1}";
-            const string findViewNameType = "FINDING VIEW NAME: {0} TYPE: {1}";
             const string viewFound = "An applicable view has been found";
             const string viewNotFound = "No applicable view has been found";
             try
@@ -148,8 +146,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // predefined shape: did the user specify the name of a view?
                 if (parameters != null && !string.IsNullOrEmpty(parameters.viewName))
                 {
-                    using (s_formatViewBindingTracer.TraceScope(findViewNameType, parameters.viewName,
-                        PSObjectTypeName(so)))
+                    using (new PSTraceScope(s_formatViewBindingTracer, PSTraceSourceOptions.Scope, "<>", $"FINDING VIEW NAME: {parameters.viewName} TYPE: {PSObjectTypeName(so)}"))
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, parameters.viewName);
                     }
@@ -172,7 +169,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // predefined shape: do we have a default view in format.ps1xml?
-                using (s_formatViewBindingTracer.TraceScope(findViewShapeType, shape, PSObjectTypeName(so)))
+                using (new PSTraceScope(s_formatViewBindingTracer, PSTraceSourceOptions.Scope, "<>", $"FINDING VIEW {shape} TYPE: {PSObjectTypeName(so)}"))
                 {
                     view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                 }

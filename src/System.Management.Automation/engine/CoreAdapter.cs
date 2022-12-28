@@ -1971,7 +1971,7 @@ namespace System.Management.Automation
         internal static object PropertySetAndMethodArgumentConvertTo(object valueToConvert,
             Type resultType, IFormatProvider formatProvider)
         {
-            using (PSObject.MemberResolution.TraceScope("Converting parameter \"{0}\" to \"{1}\".", valueToConvert, resultType))
+            using (new PSTraceScope(PSObject.MemberResolution, PSTraceSourceOptions.Scope, "<>", $"Converting parameter '{valueToConvert}' to '{resultType}'."))
             {
                 if (resultType == null)
                 {

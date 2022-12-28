@@ -340,10 +340,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
-            using (bindingTracer.TraceScope(
-                       "BIND arg [{0}] to parameter [{1}]",
-                       parameter.ArgumentValue,
-                       parameterMetadata.Name))
+            using (new PSTraceScope(bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND arg [{parameter.ArgumentValue}] to parameter [{parameterMetadata.Name}]"))
             {
                 // Set the complete parameter name
 

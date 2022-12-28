@@ -355,9 +355,7 @@ namespace System.Management.Automation
             if (qualifiedParameterValuePairs != null)
             {
                 bool isSuccess = false;
-                using (ParameterBinderBase.bindingTracer.TraceScope(
-                    "BIND DEFAULT <parameter, value> pairs after [{0}] for [{1}]",
-                    bindingStage, _commandMetadata.Name))
+                using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND DEFAULT <parameter, value> pairs after [{bindingStage}] for [{_commandMetadata.Name}]"))
                 {
                     isSuccess = BindDefaultParameters(_currentParameterSetFlag, qualifiedParameterValuePairs);
                     if (isSuccess && !DefaultParameterBindingInUse)
