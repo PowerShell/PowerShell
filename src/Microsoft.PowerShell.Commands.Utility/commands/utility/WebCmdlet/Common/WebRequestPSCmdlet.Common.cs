@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if (bodyAsDictionary is not null
-                && ((Method == WebRequestMethod.Default || Method == WebRequestMethod.Get) || CustomMethod == "GET"))
+                && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get || CustomMethod == "GET"))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query is not null && uriBuilder.Query.Length > 1)
