@@ -260,13 +260,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Method property.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
         public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Get;
 
         /// <summary>
         /// Gets or sets the CustomMethod property.
         /// </summary>
-        [Parameter]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public virtual string CustomMethod
@@ -393,13 +393,6 @@ namespace Microsoft.PowerShell.Commands
             if (WebSession is not null && SessionVariable is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
-                ThrowTerminatingError(error);
-            }
-
-            // Methods
-            if (Method is not null && CustomMethod is not null)
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletMethodConflictException");
                 ThrowTerminatingError(error);
             }
 

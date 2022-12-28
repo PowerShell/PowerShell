@@ -168,9 +168,6 @@
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
     <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
   </data>
-  <data name="MethodConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Method and CustomMethod. Specify either Method or CustomMethod, then retry.</value>
-  </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
     <value>Path '{0}' can be resolved to multiple paths.</value>
   </data>
