@@ -18,6 +18,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.ComponentModel.dll'
             'System.ComponentModel.Primitives.dll'
             'System.ComponentModel.TypeConverter.dll'
+            'System.Configuration.ConfigurationManager.dll'
             'System.Console.dll'
             'System.Data.Common.dll'
             'System.Diagnostics.Process.dll'
