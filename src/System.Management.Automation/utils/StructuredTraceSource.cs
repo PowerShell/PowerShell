@@ -227,16 +227,16 @@ namespace System.Management.Automation
             }
 
             // AppDomain
-            Write(PSTraceSourceOptions.All, $"Initializing tracing for AppDomain: {AppDomain.CurrentDomain.FriendlyName}");
+            PSTraceWrite(PSTraceSourceOptions.All, $"Initializing tracing for AppDomain: {AppDomain.CurrentDomain.FriendlyName}");
 
             // Current time
-            Write(PSTraceSourceOptions.All, $"\tCurrent time: {DateTime.Now}");
+            PSTraceWrite(PSTraceSourceOptions.All, $"\tCurrent time: {DateTime.Now}");
 
             // OS build
-            Write(PSTraceSourceOptions.All, $"\tOS Build: {Environment.OSVersion}");
+            PSTraceWrite(PSTraceSourceOptions.All, $"\tOS Build: {Environment.OSVersion}");
 
             // .NET Framework version
-            Write(PSTraceSourceOptions.All, $"\tFramework Build: {Environment.Version}\n");
+            PSTraceWrite(PSTraceSourceOptions.All, $"\tFramework Build: {Environment.Version}\n");
 
             // Mark that we have traced the global header
             globalTraceInitialized = true;
@@ -258,31 +258,31 @@ namespace System.Management.Automation
             }
 
             // Write the header for the new trace object
-            Write(PSTraceSourceOptions.All, $"Creating tracer:");
+            PSTraceWrite(PSTraceSourceOptions.All, $"Creating tracer:");
 
             // Category
-            Write(PSTraceSourceOptions.All, $"\tCategory: {Name}");
+            PSTraceWrite(PSTraceSourceOptions.All, $"\tCategory: {Name}");
 
             // Description
-            Write(PSTraceSourceOptions.All, $"\tDescription: {Description}");
+            PSTraceWrite(PSTraceSourceOptions.All, $"\tDescription: {Description}");
 
             if (callingAssembly != null)
             {
                 // Assembly name
-                Write(PSTraceSourceOptions.All, $"\tAssembly: {callingAssembly.FullName}");
+                PSTraceWrite(PSTraceSourceOptions.All, $"\tAssembly: {callingAssembly.FullName}");
 
                 // Assembly location
-                Write(PSTraceSourceOptions.All, $"\tAssembly Location: {callingAssembly.Location}");
+                PSTraceWrite(PSTraceSourceOptions.All, $"\tAssembly Location: {callingAssembly.Location}");
 
                 // Assembly File timestamp
                 FileInfo assemblyFileInfo =
                     new FileInfo(callingAssembly.Location);
 
-                Write(PSTraceSourceOptions.All, $"\tAssembly File Timestamp: {assemblyFileInfo.CreationTime}");
+                PSTraceWrite(PSTraceSourceOptions.All, $"\tAssembly File Timestamp: {assemblyFileInfo.CreationTime}");
             }
 
             // Label
-            Write(PSTraceSourceOptions.All, $"\tFlags: {_flags}");
+            PSTraceWrite(PSTraceSourceOptions.All, $"\tFlags: {_flags}");
         }
         #endregion StructuredTraceSource constructor methods
 
@@ -291,7 +291,7 @@ namespace System.Management.Automation
         /// <summary>Traces the formatted output.</summary>
         /// <param name="handler">The interpolated string handler.</param>
         /// <param name="traceType">Trace type based on <see cref="PSTraceSourceOptions"/>.</param>
-        internal void Write(PSTraceSourceOptions traceType, [InterpolatedStringHandlerArgument("", "traceType")] OutputLineIfInterpolatedStringHandler handler)
+        internal void PSTraceWrite(PSTraceSourceOptions traceType, [InterpolatedStringHandlerArgument("", "traceType")] OutputLineIfInterpolatedStringHandler handler)
         {
             if (_flags.HasFlag(traceType))
             {
@@ -570,7 +570,7 @@ namespace System.Management.Automation
     [InterpolatedStringHandler]
     internal ref struct OutputLineIfInterpolatedStringHandler
     {
-        /// <summary>The handler to perform the conditional formatting in <see cref="PSTraceSource.Write(PSTraceSourceOptions, OutputLineIfInterpolatedStringHandler)"/>.</summary>
+        /// <summary>The handler to perform the conditional formatting in <see cref="PSTraceSource.PSTraceWrite(PSTraceSourceOptions, OutputLineIfInterpolatedStringHandler)"/>.</summary>
         private DefaultInterpolatedStringHandler _handler;
 
         /// <summary>Creates an instance of the handler.</summary>
@@ -707,7 +707,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    _traceSource.Write(_traceType, $"Enter: {_scopeName}");
+                    _traceSource.PSTraceWrite(_traceType, $"Enter: {_scopeName}");
                     _traceSource.TraceSource.TraceInformation(handler.ToStringAndClear());
 
                     // Increment the current thread indent level
@@ -733,7 +733,7 @@ namespace System.Management.Automation
                 {
                     // Decrement the indent level in thread local storage
                     PSTraceSource.ThreadIndentLevel--;
-                    _traceSource.Write(_traceType, $"Leave: {_scopeName}");
+                    _traceSource.PSTraceWrite(_traceType, $"Leave: {_scopeName}");
                 }
                 catch
                 {

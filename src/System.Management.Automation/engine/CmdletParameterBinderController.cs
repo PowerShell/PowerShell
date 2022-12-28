@@ -103,7 +103,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void BindCommandLineParameters(Collection<CommandParameterInternal> arguments)
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Argument count: {arguments.Count}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Argument count: {arguments.Count}");
 
             BindCommandLineParametersNoValidation(arguments);
 
@@ -364,7 +364,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"BIND DEFAULT after [{bindingStage}] result [{isSuccess}]");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"BIND DEFAULT after [{bindingStage}] result [{isSuccess}]");
             }
 
             return;
@@ -959,7 +959,7 @@ namespace System.Management.Automation
                          _commandMetadata.DefaultParameterSetFlag) != 0 &&
                          _commandMetadata.DefaultParameterSetFlag != uint.MaxValue)
                     {
-                        ParameterBinderBase.bindingTracer.Write(
+                        ParameterBinderBase.bindingTracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"{this.BindableParameters.ParameterSetCount} valid parameter sets, using the DEFAULT PARAMETER SET: [{_commandMetadata.DefaultParameterSetName}]");
 
@@ -968,7 +968,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.Error, $"{this.BindableParameters.ParameterSetCount} valid parameter sets, but NOT DEFAULT PARAMETER SET.");
+                        ParameterBinderBase.bindingTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"{this.BindableParameters.ParameterSetCount} valid parameter sets, but NOT DEFAULT PARAMETER SET.");
 
                         // Throw an exception for ambiguous parameter set
                         ThrowAmbiguousParameterSetException(_currentParameterSetFlag, BindableParameters);
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation
                 }
             } while (false);
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"IsParameterScriptBlockBindable: result = {result}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"IsParameterScriptBlockBindable: result = {result}");
             return result;
         }
 
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
                         throw bindingException;
                     }
 
-                    ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding ScriptBlock to delay-bind list for parameter '{parameter.Parameter.Name}'");
+                    ParameterBinderBase.bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding ScriptBlock to delay-bind list for parameter '{parameter.Parameter.Name}'");
 
                     // We need to delay binding of this argument to the parameter
 
@@ -1585,7 +1585,7 @@ namespace System.Management.Automation
             {
                 using (new PSTraceScope(ParameterBinderBase.bindingTracer, PSTraceSourceOptions.Scope, "<>", $"BIND cmd line args to DYNAMIC parameters."))
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The Cmdlet supports the dynamic parameter interface");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The Cmdlet supports the dynamic parameter interface");
 
                     IDynamicParameters dynamicParameterCmdlet = this.Command as IDynamicParameters;
 
@@ -1593,7 +1593,7 @@ namespace System.Management.Automation
                     {
                         if (_dynamicParameterBinder == null)
                         {
-                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Getting the bindable object from the Cmdlet");
+                            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Getting the bindable object from the Cmdlet");
 
                             // Now get the dynamic parameter bindable object.
                             object dynamicParamBindableObject;
@@ -1626,9 +1626,9 @@ namespace System.Management.Automation
 
                             if (dynamicParamBindableObject != null)
                             {
-                                ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"DYNAMIC parameter object: [{dynamicParamBindableObject.GetType()}]");
+                                ParameterBinderBase.bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DYNAMIC parameter object: [{dynamicParamBindableObject.GetType()}]");
 
-                                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Creating a new parameter binder for the dynamic parameter object");
+                                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Creating a new parameter binder for the dynamic parameter object");
 
                                 InternalParameterMetadata dynamicParameterMetadata;
 
@@ -1679,7 +1679,7 @@ namespace System.Management.Automation
 
                         if (_dynamicParameterBinder == null)
                         {
-                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"No dynamic parameter object was returned from the Cmdlet");
+                            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"No dynamic parameter object was returned from the Cmdlet");
                             return;
                         }
 
@@ -2696,7 +2696,7 @@ namespace System.Management.Automation
                     string parameterSetName = bindableParameters.GetParameterSetName(currentParameterSet);
                     if (!string.IsNullOrEmpty(parameterSetName))
                     {
-                        ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Remaining valid parameter set: {parameterSetName}");
+                        ParameterBinderBase.bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Remaining valid parameter set: {parameterSetName}");
                     }
                 }
 
@@ -2816,7 +2816,7 @@ namespace System.Management.Automation
                             Context.EngineHostInterface != null,
                             "The EngineHostInterface should never be null");
 
-                        ParameterBinderBase.bindingTracer.Write(
+                        ParameterBinderBase.bindingTracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"ERROR: host does not support prompting for missing mandatory parameters");
 
@@ -2889,7 +2889,7 @@ namespace System.Management.Automation
             // Prompt
             try
             {
-                ParameterBinderBase.bindingTracer.Write(
+                ParameterBinderBase.bindingTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"PROMPTING for missing mandatory parameters using the host");
                 string msg = ParameterBinderStrings.PromptMessage;
@@ -2915,7 +2915,7 @@ namespace System.Management.Automation
 
             if (error != null)
             {
-                ParameterBinderBase.bindingTracer.Write(
+                ParameterBinderBase.bindingTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"ERROR: host does not support prompting for missing mandatory parameters");
 
@@ -2937,7 +2937,7 @@ namespace System.Management.Automation
 
             if ((parameters == null) || (parameters.Count == 0))
             {
-                ParameterBinderBase.bindingTracer.Write(
+                ParameterBinderBase.bindingTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"ERROR: still missing mandatory parameters after PROMPTING");
 
@@ -3108,7 +3108,7 @@ namespace System.Management.Automation
             get
             {
                 string currentParameterSetName = BindableParameters.GetParameterSetName(_currentParameterSetFlag);
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"CurrentParameterSetName = {currentParameterSetName}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"CurrentParameterSetName = {currentParameterSetName}");
                 return currentParameterSetName;
             }
         }
@@ -3235,13 +3235,13 @@ namespace System.Management.Automation
             if (ParameterBinderBase.bindingTracer.IsEnabled)
             {
                 ConsolidatedString dontuseInternalTypeNames;
-                ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, @$"PIPELINE object TYPE = [{(inputToOperateOn == null || inputToOperateOn == AutomationNull.Value
+                ParameterBinderBase.bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, @$"PIPELINE object TYPE = [{(inputToOperateOn == null || inputToOperateOn == AutomationNull.Value
                         ? "null"
                         : ((dontuseInternalTypeNames = inputToOperateOn.InternalTypeNames).Count > 0 && dontuseInternalTypeNames[0] != null)
                               ? dontuseInternalTypeNames[0]
                               : inputToOperateOn.BaseObject.GetType().FullName)}]");
 
-                ParameterBinderBase.bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"RESTORING pipeline parameter's original values");
+                ParameterBinderBase.bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"RESTORING pipeline parameter's original values");
             }
 
             bool result = false;
@@ -3359,7 +3359,7 @@ namespace System.Management.Automation
                         validParameterSets);
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"aParameterWasBound = {aParameterWasBound}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"aParameterWasBound = {aParameterWasBound}");
             return aParameterWasBound;
         }
 
@@ -3462,7 +3462,7 @@ namespace System.Management.Automation
             // Attempt binding the value from the pipeline
             // without type coercion
 
-            ParameterBinderBase.bindingTracer.Write(
+            ParameterBinderBase.bindingTracer.PSTraceWrite(
                 PSTraceSourceOptions.WriteLine,
                 $"Parameter [{parameter.Parameter.Name}] PIPELINE INPUT ValueFromPipeline {((flags & ParameterBindingFlags.ShouldCoerceType) != 0 ? "WITH" : "NO")} COERCION");
 
@@ -3526,7 +3526,7 @@ namespace System.Management.Automation
         {
             bool bindResult = false;
 
-            ParameterBinderBase.bindingTracer.Write(
+            ParameterBinderBase.bindingTracer.PSTraceWrite(
                 PSTraceSourceOptions.WriteLine,
                 $"Parameter [{parameter.Parameter.Name}] PIPELINE INPUT ValueFromPipelineByPropertyName {((flags & ParameterBindingFlags.ShouldCoerceType) != 0 ? "WITH" : "NO")} COERCION");
 
@@ -4071,7 +4071,7 @@ namespace System.Management.Automation
 
             if (parameterValue != AutomationNull.Value)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, @$"Adding PipelineParameter name={parameter.Parameter.Name}; value={parameterValue ?? "null"}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, @$"Adding PipelineParameter name={parameter.Parameter.Name}; value={parameterValue ?? "null"}");
 
                 // Backup the default value
                 BackupDefaultParameter(parameter);

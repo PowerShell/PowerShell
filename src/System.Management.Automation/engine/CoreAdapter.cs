@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
                     }
 
                     object argument = arguments[i];
-                    PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Argument '{i + 1}' was a reference so it will be set to \"{argument}\".");
+                    PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Argument '{i + 1}' was a reference so it will be set to \"{argument}\".");
                     originalArgumentReference.Value = argument;
                 }
             }
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
             PSReference reference = obj as PSReference;
             if (reference != null)
             {
-                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Parameter was a reference.");
+                PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Parameter was a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
@@ -1960,7 +1960,7 @@ namespace System.Management.Automation
 
             if (reference != null)
             {
-                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Parameter was an PSObject containing a reference.");
+                PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Parameter was an PSObject containing a reference.");
                 isArgumentByRef = true;
                 return reference.Value;
             }
@@ -1983,7 +1983,7 @@ namespace System.Management.Automation
                 {
                     if (resultType == typeof(object))
                     {
-                        PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Parameter was an PSObject and will be converted to System.Object.");
+                        PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Parameter was an PSObject and will be converted to System.Object.");
                         // we use PSObject.Base so we don't return
                         // PSCustomObject
                         return PSObject.Base(mshObj);
@@ -4331,7 +4331,7 @@ namespace System.Management.Automation
 
             string methodDefinition = bestMethod.methodDefinition;
             ScriptTrace.Trace(1, "TraceMethodCall", ParserStrings.TraceMethodCall, methodDefinition);
-            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Calling Method: {methodDefinition}");
+            PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Calling Method: {methodDefinition}");
             return AuxiliaryMethodInvoke(target, newArguments, bestMethod, arguments);
         }
 
@@ -4356,7 +4356,7 @@ namespace System.Management.Automation
         {
             if ((PSObject.MemberResolution.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
-                PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Calling Constructor: {DotNetAdapter.GetMethodInfoOverloadDefinition(null, bestMethod.method, 0)}");
+                PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Calling Constructor: {DotNetAdapter.GetMethodInfoOverloadDefinition(null, bestMethod.method, 0)}");
             }
 
             return AuxiliaryConstructorInvoke(bestMethod, newArguments, arguments);
@@ -4376,7 +4376,7 @@ namespace System.Management.Automation
             // of all parameters but the last one
             object[] newArguments;
             MethodInformation bestMethod = GetBestMethodAndArguments(propertyName, methodInformation, arguments, out newArguments);
-            PSObject.MemberResolution.Write(PSTraceSourceOptions.WriteLine, $"Calling Set Method: {bestMethod.methodDefinition}");
+            PSObject.MemberResolution.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Calling Set Method: {bestMethod.methodDefinition}");
             ParameterInfo[] bestMethodParameters = bestMethod.method.GetParameters();
             Type propertyType = bestMethodParameters[bestMethodParameters.Length - 1].ParameterType;
 
@@ -5957,7 +5957,7 @@ namespace System.Management.Automation
 
             using (new PSTraceScope(s_tracer, PSTraceSourceOptions.Scope, "<>", $"Inferring type parameters for the following method: {genericMethod}"))
             {
-                s_tracer.Write(
+                s_tracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"Types of method arguments: {string.Join(", ", typesOfMethodArguments.Select(static t => t.ToString()).ToArray())}");
 
@@ -5976,13 +5976,13 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Inference successful: {instantiatedMethod}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Inference successful: {instantiatedMethod}");
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)
                 {
                     // Inference failure - most likely due to generic constraints being violated (i.e. where T: IEnumerable)
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Inference failure: {e.Message}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Inference failure: {e.Message}");
                     return null;
                 }
             }
@@ -6041,7 +6041,7 @@ namespace System.Management.Automation
                 Type firstValueType = inferenceCandidates.FirstOrDefault(static t => t.IsValueType);
                 if (firstValueType != null)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Cannot reconcile null and {firstValueType} (a value type)");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Cannot reconcile null and {firstValueType} (a value type)");
                     inferenceCandidates = null;
                     _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                 }
@@ -6073,7 +6073,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Multiple unreconcilable inferences for type parameter {typeParameter}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Multiple unreconcilable inferences for type parameter {typeParameter}");
                     inferenceCandidates = null;
                     _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                 }
@@ -6081,7 +6081,7 @@ namespace System.Management.Automation
 
             if (inferenceCandidates == null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't infer type parameter {typeParameter}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Couldn't infer type parameter {typeParameter}");
                 return null;
             }
             else
@@ -6098,7 +6098,7 @@ namespace System.Management.Automation
 
             if (leftList.Count != rightList.Count)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Mismatch in number of parameters and arguments");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Mismatch in number of parameters and arguments");
                 return false;
             }
 
@@ -6106,7 +6106,7 @@ namespace System.Management.Automation
             {
                 if (!this.Unify(leftList[i], rightList[i]))
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't unify {leftList[i]} with {rightList[i]}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Couldn't unify {leftList[i]} with {rightList[i]}");
                     return false;
                 }
             }
@@ -6137,7 +6137,7 @@ namespace System.Management.Automation
                 }
 
                 inferenceCandidates.Add(argumentType);
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Inferred {parameterType} => {argumentType}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Inferred {parameterType} => {argumentType}");
                 return true;
             }
 
@@ -6153,7 +6153,7 @@ namespace System.Management.Automation
                     return this.Unify(parameterType.GetElementType(), argumentType.GetElementType());
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't unify array {parameterType} with {argumentType}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Couldn't unify array {parameterType} with {argumentType}");
                 return false;
             }
 
@@ -6175,7 +6175,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Couldn't unify reference type {parameterType} with {argumentType}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Couldn't unify reference type {parameterType} with {argumentType}");
                     return false;
                 }
             }
@@ -6201,7 +6201,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized kind of type");
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Unrecognized kind of type: {parameterType}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Unrecognized kind of type: {parameterType}");
             return false;
         }
 
@@ -6236,7 +6236,7 @@ namespace System.Management.Automation
                 baseType = baseType.BaseType;
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Attempt to unify different constructed types: {parameterType} and {argumentType}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Attempt to unify different constructed types: {parameterType} and {argumentType}");
             return false;
         }
 

@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
             bool recurse,
             uint depth)
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}, depth = {depth}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}, depth = {depth}");
 
             if (path == null)
             {
@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(newName));
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"newName = {newName}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"newName = {newName}");
 
             string parentPath = GetParentPath(path, null);
             string newPath = MakePath(parentPath, newName);
@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}");
 
             // Get the parent and child portions of the path
 
@@ -1310,8 +1310,8 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"recurse = {recurse}");
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, false);
 
@@ -1382,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(destination),
                 "The destination should have been validated by the caller");
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
 
             // Get the parent key of the destination
             // If the destination already exists and is a key, then it becomes
@@ -1514,7 +1514,7 @@ namespace Microsoft.PowerShell.Commands
             string sourcePath,
             string destinationPath)
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destinationPath = {destinationPath}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"destinationPath = {destinationPath}");
 
             // Note the paths have already been normalized so case-insensitive
             // comparisons should be sufficient
@@ -1654,7 +1654,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"destination = {destination}");
 
             // Confirm the rename item with the user
 
@@ -3517,7 +3517,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"writeAccess = {writeAccess}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"writeAccess = {writeAccess}");
 
             IRegistryWrapper result = null;
 

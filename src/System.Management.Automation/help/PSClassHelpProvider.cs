@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Error occurred in PSClassHelpProvider {e.Message}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Error occurred in PSClassHelpProvider {e.Message}");
 
             if (reportErrors && (e != null))
             {
@@ -327,7 +327,7 @@ namespace System.Management.Automation
 
             if (helpItemsNode == null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Unable to find 'helpItems' element in file {helpFile}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Unable to find 'helpItems' element in file {helpFile}");
                 return;
             }
 

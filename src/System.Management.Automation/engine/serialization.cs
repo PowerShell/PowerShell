@@ -3115,7 +3115,7 @@ namespace System.Management.Automation
                                        _reader.NodeType.ToString(), nameof(XmlNodeType.Element));
             }
 
-            s_trace.Write(PSTraceSourceOptions.WriteLine, $"Processing start node {_reader.LocalName}");
+            s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Processing start node {_reader.LocalName}");
 
             streamName = _reader.GetAttribute(SerializationStrings.StreamNameAttribute);
             isKnownPrimitiveType = false;
@@ -3151,7 +3151,7 @@ namespace System.Management.Automation
             TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
             if (pktInfo != null)
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Primitive Knowntype Element {pktInfo.ItemTag}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Primitive Knowntype Element {pktInfo.ItemTag}");
                 isKnownPrimitiveType = true;
                 return ReadPrimaryKnownType(pktInfo);
             }
@@ -3159,14 +3159,14 @@ namespace System.Management.Automation
             // Handle PSObject
             if (IsNextElement(SerializationStrings.PSObjectTag))
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"PSObject Element");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"PSObject Element");
                 return ReadPSObject();
             }
 
             // If we are here, we have an unknown node. Unknown nodes may
             // be allowed inside PSObject. We do not allow them at top level.
 
-            s_trace.Write(PSTraceSourceOptions.Error, $"Invalid element {_reader.LocalName} tag found");
+            s_trace.PSTraceWrite(PSTraceSourceOptions.Error, $"Invalid element {_reader.LocalName} tag found");
             throw NewXmlException(Serialization.InvalidElementTag, null, _reader.LocalName);
         }
 
@@ -3663,23 +3663,23 @@ namespace System.Management.Automation
                     TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
                     if (pktInfo != null)
                     {
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Primitive Knowntype Element {pktInfo.ItemTag}");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Primitive Knowntype Element {pktInfo.ItemTag}");
                         baseObject = ReadPrimaryKnownType(pktInfo);
                     }
                     else if (IsKnownContainerTag(out ct))
                     {
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Found container node {ct}");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Found container node {ct}");
                         baseObject = ReadKnownContainer(ct, dso.InternalTypeNames);
                     }
                     else if (IsNextElement(SerializationStrings.PSObjectTag))
                     {
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Found PSObject node");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Found PSObject node");
                         baseObject = ReadOneObject();
                     }
                     else
                     {
                         // We have an unknown tag
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Unknown tag {_reader.LocalName} encountered");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Unknown tag {_reader.LocalName} encountered");
                         if (UnknownTagsAllowed)
                         {
                             Skip();
@@ -3721,7 +3721,7 @@ namespace System.Management.Automation
             // RefId is not mandatory attribute
             if (refId != null)
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Read PSObject with refId: {refId}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Read PSObject with refId: {refId}");
                 _objectRefIdHandler.SetRefId(sh, refId, this.DuplicateRefIdsAllowed);
             }
 
@@ -3746,7 +3746,7 @@ namespace System.Management.Automation
                 // Read refId attribute if available
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
 
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Processing TypeNamesTag with refId {refId}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Processing TypeNamesTag with refId {refId}");
 
                 if (ReadStartElementAndHandleEmpty(SerializationStrings.TypeNamesTag))
                 {
@@ -3780,7 +3780,7 @@ namespace System.Management.Automation
             else if (IsNextElement(SerializationStrings.TypeNamesReferenceTag))
             {
                 string refId = _reader.GetAttribute(SerializationStrings.ReferenceIdAttribute);
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Processing TypeNamesReferenceTag with refId {refId}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Processing TypeNamesReferenceTag with refId {refId}");
                 if (refId == null)
                 {
                     throw NewXmlException(Serialization.AttributeExpected, null, SerializationStrings.ReferenceIdAttribute);

@@ -445,9 +445,9 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The name appears to be a qualified path: {_commandName}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The name appears to be a qualified path: {_commandName}");
 
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Trying to resolve the path as an PSPath");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Trying to resolve the path as an PSPath");
 
                 // Find the match if it is.
                 // Try literal path resolution if it is set to run first
@@ -481,7 +481,7 @@ namespace System.Management.Automation
 
                 if (resolvedPaths.Count > 1)
                 {
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path resolved to more than one result so this path cannot be used.");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path resolved to more than one result so this path cannot be used.");
                     break;
                 }
 
@@ -491,7 +491,7 @@ namespace System.Management.Automation
                 {
                     string path = resolvedPaths[0];
 
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Path resolved to: {path}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Path resolved to: {path}");
 
                     result = GetInfoFromPath(path);
                 }
@@ -518,27 +518,27 @@ namespace System.Management.Automation
             }
             catch (ItemNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path could not be found: {command}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path could not be found: {command}");
             }
             catch (DriveNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A drive could not be found for the path: {command}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"A drive could not be found for the path: {command}");
             }
             catch (ProviderNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A provider could not be found for the path: {command}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"A provider could not be found for the path: {command}");
             }
             catch (InvalidOperationException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path specified a home directory, but the provider home directory was not set. {command}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path specified a home directory, but the provider home directory was not set. {command}");
             }
             catch (ProviderInvocationException providerException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{command}' encountered an error: {providerException.Message}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The provider associated with the path '{command}' encountered an error: {providerException.Message}");
             }
             catch (PSNotSupportedException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{command}' does not implement ContainerCmdletProvider");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The provider associated with the path '{command}' does not implement ContainerCmdletProvider");
             }
 
             provider = null;
@@ -579,7 +579,7 @@ namespace System.Management.Automation
             {
                 if (!File.Exists(path))
                 {
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path does not exist: {path}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path does not exist: {path}");
                     break;
                 }
 
@@ -613,7 +613,7 @@ namespace System.Management.Automation
                     {
                         string scriptName = Path.GetFileName(path);
 
-                        CommandDiscovery.discoveryTracer.Write(
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"Command Found: path ({path}) is a script with name: {scriptName}");
 
@@ -632,7 +632,7 @@ namespace System.Management.Automation
 
                     string appName = Path.GetFileName(path);
 
-                    CommandDiscovery.discoveryTracer.Write(
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"Command Found: path ({path}) is an application with name: {appName}");
 
@@ -721,7 +721,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                CommandDiscovery.discoveryTracer.Write(
+                CommandDiscovery.discoveryTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"Alias found: {result.Name}  {result.Definition}");
             }
@@ -920,15 +920,15 @@ namespace System.Management.Automation
             {
                 if (result is FilterInfo)
                 {
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Filter found: {function}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Filter found: {function}");
                 }
                 else if (result is ConfigurationInfo)
                 {
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Configuration found: {function}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Configuration found: {function}");
                 }
                 else
                 {
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Function found: {function}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Function found: {function}");
                 }
             }
             else
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation
         {
             if (result != null)
             {
-                CommandDiscovery.discoveryTracer.Write(
+                CommandDiscovery.discoveryTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"Cmdlet found: {result.Name}  {result.ImplementingType}");
             }
@@ -1108,13 +1108,13 @@ namespace System.Management.Automation
                     {
                         resolvedPath = null;
 
-                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path with wildcard did not resolve to valid path. {path}");
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The relative path with wildcard did not resolve to valid path. {path}");
                     }
                     else if (resolvedPaths.Count > 1)
                     {
                         resolvedPath = null;
 
-                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path with wildcard resolved to multiple paths. {path}");
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The relative path with wildcard resolved to multiple paths. {path}");
                     }
                     else
                     {
@@ -1134,29 +1134,29 @@ namespace System.Management.Automation
                 {
                     result = resolvedPath;
 
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The relative path was resolved to: {result}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The relative path was resolved to: {result}");
                 }
                 else
                 {
                     // The path was not to the file system
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path was not a file system path. {path}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The relative path was not a file system path. {path}");
                 }
             }
             catch (InvalidOperationException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The home path was not specified for the provider. {path}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The home path was not specified for the provider. {path}");
             }
             catch (ProviderInvocationException providerInvocationException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"While resolving the path, \"{path}\", an error was encountered by the provider: {providerInvocationException.Message}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"While resolving the path, \"{path}\", an error was encountered by the provider: {providerInvocationException.Message}");
             }
             catch (ItemNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path does not exist: {path}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path does not exist: {path}");
             }
             catch (DriveNotFoundException driveNotFound)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The drive does not exist: {driveNotFound.ItemName}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The drive does not exist: {driveNotFound.ItemName}");
             }
 
             return result;
@@ -1181,30 +1181,30 @@ namespace System.Management.Automation
             }
             catch (ItemNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path could not be found: {_commandName}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path could not be found: {_commandName}");
             }
             catch (DriveNotFoundException)
             {
                 // This can be because we think a scope or a url is a drive
                 // and need to continue searching.
                 // Although, scope does not work through get-command
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A drive could not be found for the path: {_commandName}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"A drive could not be found for the path: {_commandName}");
             }
             catch (ProviderNotFoundException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"A provider could not be found for the path: {_commandName}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"A provider could not be found for the path: {_commandName}");
             }
             catch (InvalidOperationException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The path specified a home directory, but the provider home directory was not set. {_commandName}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The path specified a home directory, but the provider home directory was not set. {_commandName}");
             }
             catch (ProviderInvocationException providerException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{_commandName}' encountered an error: {providerException.Message}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The provider associated with the path '{_commandName}' encountered an error: {providerException.Message}");
             }
             catch (PSNotSupportedException)
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The provider associated with the path '{_commandName}' does not implement ContainerCmdletProvider");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The provider associated with the path '{_commandName}' does not implement ContainerCmdletProvider");
             }
 
             provider = null;
@@ -1485,7 +1485,7 @@ namespace System.Management.Automation
                     string? directory = Path.GetDirectoryName(_commandName);
                     var directoryCollection = new LookupPathCollection { directory };
 
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The path is rooted, so only doing the lookup in the specified directory: {directory}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The path is rooted, so only doing the lookup in the specified directory: {directory}");
 
                     string fileName = Path.GetFileName(_commandName);
 
@@ -1515,7 +1515,7 @@ namespace System.Management.Automation
                     string? directory = Path.GetDirectoryName(_commandName);
                     directory = ResolvePSPath(directory);
 
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The path is relative, so only doing the lookup in the specified directory: {directory}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The path is relative, so only doing the lookup in the specified directory: {directory}");
 
                     if (directory == null)
                     {

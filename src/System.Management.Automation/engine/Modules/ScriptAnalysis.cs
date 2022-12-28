@@ -19,7 +19,7 @@ namespace System.Management.Automation
     {
         internal static ScriptAnalysis Analyze(string path, ExecutionContext context)
         {
-            ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Analyzing path: {path}");
+            ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Analyzing path: {path}");
 
             try
             {
@@ -193,7 +193,7 @@ namespace System.Management.Automation
 
             var functionName = functionDefinitionAst.Name;
             DiscoveredFunctions[functionName] = functionDefinitionAst;
-            ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Discovered function definition: {functionName}");
+            ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Discovered function definition: {functionName}");
 
             // Check if they've defined any aliases
             // function Foo-Bar { [Alias("Alias1", "...")] param() ... }
@@ -213,7 +213,7 @@ namespace System.Management.Automation
                                 string alias = aliasExpression.Value;
 
                                 DiscoveredAliases[alias] = functionName;
-                                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Function defines alias: {alias} = {functionName}");
+                                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Function defines alias: {alias} = {functionName}");
                             }
                         }
                     }
@@ -242,7 +242,7 @@ namespace System.Management.Automation
             if (string.Equals("$env:PATH", assignmentStatementAst.Left.ToString(), StringComparison.OrdinalIgnoreCase) &&
                 Regex.IsMatch(assignmentStatementAst.Right.ToString(), "\\$psScriptRoot", RegexOptions.IgnoreCase))
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module adds itself to the path.");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module adds itself to the path.");
                 AddsSelfToPath = true;
             }
 
@@ -295,7 +295,7 @@ namespace System.Management.Automation
 
                 DiscoveredModules.Add(
                     new RequiredModuleInfo { Name = commandName, CommandsToPostFilter = new List<string>() });
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module dots {commandName}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module dots {commandName}");
             }
 
             // They are setting an alias.
@@ -322,7 +322,7 @@ namespace System.Management.Automation
                         // These aren't stored in DiscoveredExports, as they are only
                         // exported after the user calls Export-ModuleMember.
                         DiscoveredAliases[name] = value;
-                        ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module defines alias: {name} = {value}");
+                        ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module defines alias: {name} = {value}");
                     }
                 }
 
@@ -357,7 +357,7 @@ namespace System.Management.Automation
                 // and register them for deeper investigation.
                 Action<string> onEachModule = moduleName =>
                 {
-                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Discovered module import: {moduleName}");
+                    ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Discovered module import: {moduleName}");
                     DiscoveredModules.Add(
                         new RequiredModuleInfo
                         {
@@ -386,7 +386,7 @@ namespace System.Management.Automation
                 Action<string> onEachFunction = exportedCommandName =>
                 {
                     DiscoveredCommandFilters.Add(exportedCommandName);
-                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Discovered explicit export: {exportedCommandName}");
+                    ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Discovered explicit export: {exportedCommandName}");
 
                     // If the export doesn't contain wildcards, then add it to the
                     // discovered commands as well. It is likely that they created

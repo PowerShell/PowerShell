@@ -471,7 +471,7 @@ namespace System.Management.Automation.Remoting
                     if (_pendingDataStream.Length <= FragmentedRemoteObject.HeaderLength)
                     {
                         // there is not enough data to be processed.
-                        s_baseTracer.Write(
+                        s_baseTracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"Not enough data to process. Data is less than header length. Data length is {_pendingDataStream.Length}. Header Length {FragmentedRemoteObject.HeaderLength}.");
                         return;
@@ -493,11 +493,11 @@ namespace System.Management.Automation.Remoting
 
                     if ((s_baseTracer.Options & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
                     {
-                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Object Id: {objectId}");
-                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Fragment Id: {fragmentId}");
-                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Start Flag: {sFlag}");
-                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"End Flag: {eFlag}");
-                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Blob Length: {blobLength}");
+                        s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Object Id: {objectId}");
+                        s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Fragment Id: {fragmentId}");
+                        s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Start Flag: {sFlag}");
+                        s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"End Flag: {eFlag}");
+                        s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Blob Length: {blobLength}");
                     }
 
                     int totalLengthOfFragment = 0;
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Remoting
                     }
                     catch (System.OverflowException)
                     {
-                        s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Fragment too big.");
+                        s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Fragment too big.");
                         ResetReceiveData();
                         PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Remoting
 
                     if (_pendingDataStream.Length < totalLengthOfFragment)
                     {
-                        s_baseTracer.Write(
+                        s_baseTracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"Not enough data to process packet. Data is less than expected blob length. Data length {_pendingDataStream.Length}. Expected Length {totalLengthOfFragment}.");
                         return;
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Remoting
                         _totalReceivedObjectSizeSoFar = unchecked(_totalReceivedObjectSizeSoFar + totalLengthOfFragment);
                         if ((_totalReceivedObjectSizeSoFar < 0) || (_totalReceivedObjectSizeSoFar > _maxReceivedObjectSize.Value))
                         {
-                            s_baseTracer.Write(
+                            s_baseTracer.PSTraceWrite(
                                 PSTraceSourceOptions.WriteLine,
                                 $"ObjectSize > MaxReceivedObjectSize. ObjectSize is {_totalReceivedObjectSizeSoFar}. MaxReceivedObjectSize is {_maxReceivedObjectSize}");
                             PSRemotingTransportException e = null;
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Remoting
                         // check if the data belongs to the same object as the start fragment
                         if (objectId != _currentObjectId)
                         {
-                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"ObjectId != CurrentObjectId");
+                            s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ObjectId != CurrentObjectId");
                             // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
@@ -613,14 +613,14 @@ namespace System.Management.Automation.Remoting
                             }
                             else
                             {
-                                s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Ignoring ObjectId != CurrentObjectId");
+                                s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Ignoring ObjectId != CurrentObjectId");
                                 continue;
                             }
                         }
 
                         if (fragmentId != (_currentFrgId + 1))
                         {
-                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Fragment Id is not in sequence.");
+                            s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Fragment Id is not in sequence.");
                             // TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
@@ -630,7 +630,7 @@ namespace System.Management.Automation.Remoting
                             }
                             else
                             {
-                                s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Ignoring Fragment Id is not in sequence.");
+                                s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Ignoring Fragment Id is not in sequence.");
                                 continue;
                             }
                         }
@@ -649,8 +649,8 @@ namespace System.Management.Automation.Remoting
                             // since we are going to read from now..i am resetting position to 0.
                             _dataToProcessStream.Seek(0, SeekOrigin.Begin);
                             RemoteDataObject<PSObject> remoteObject = RemoteDataObject<PSObject>.CreateFrom(_dataToProcessStream, _defragmentor);
-                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"Runspace Id: {remoteObject.RunspacePoolId}");
-                            s_baseTracer.Write(PSTraceSourceOptions.WriteLine, $"PowerShell Id: {remoteObject.PowerShellId}");
+                            s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Runspace Id: {remoteObject.RunspacePoolId}");
+                            s_baseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"PowerShell Id: {remoteObject.PowerShellId}");
                             // notify the caller that a deserialized object is available.
                             callback(remoteObject);
                         }

@@ -446,7 +446,7 @@ namespace System.Management.Automation
 
                     if (result != null)
                     {
-                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Drive found in scope {scopeID}");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Drive found in scope {scopeID}");
                         break;
                     }
                 }
@@ -624,7 +624,7 @@ namespace System.Management.Automation
 
             if (!IsProviderLoaded(this.ExecutionContext.ProviderNames.FileSystem))
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The {this.ExecutionContext.ProviderNames.FileSystem} provider is not loaded");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The {this.ExecutionContext.ProviderNames.FileSystem} provider is not loaded");
                 return null;
             }
 
@@ -773,10 +773,10 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(moduleName))
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Auto-mounting built-in drive: {name}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Auto-mounting built-in drive: {name}");
                 CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand), null, null, context);
                 Exception exception = null;
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
                 CommandDiscovery.AutoloadSpecifiedModule(moduleName, context, commandInfo.Visibility, out exception);
                 if (exception != null)
                 {
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Drive name = {drive.Name}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Drive name = {drive.Name}");
 
             // First set the drive data
 

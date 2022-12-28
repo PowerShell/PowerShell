@@ -549,7 +549,7 @@ namespace System.Management.Automation
                     path = path.Substring(1);
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"New working path = {path}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"New working path = {path}");
 
                 CurrentDrive.CurrentLocation = path;
             }
@@ -579,7 +579,7 @@ namespace System.Management.Automation
             {
                 var eventArgs = new LocationChangedEventArgs(PublicSessionState, current, CurrentLocation);
                 PublicSessionState.InvokeCommand.LocationChangedAction.Invoke(ExecutionContext.CurrentRunspace, eventArgs);
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Invoked LocationChangedAction");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Invoked LocationChangedAction");
             }
 
             return this.CurrentLocation;
@@ -646,7 +646,7 @@ namespace System.Management.Automation
 
             if (drive != null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Tracing drive");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Tracing drive");
                 drive.Trace();
             }
 
@@ -700,7 +700,7 @@ namespace System.Management.Automation
                     normalizePathContext.ThrowFirstErrorOrDoNothing();
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Provider path = {providerSpecificPath}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Provider path = {providerSpecificPath}");
 
                 // Get the current working directory provider specific path
                 PSDriveInfo currentWorkingDrive = null;
@@ -717,11 +717,11 @@ namespace System.Management.Automation
                     currentWorkingDrive == CurrentDrive,
                     "The current working drive should be the CurrentDrive.");
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Current working path = {currentWorkingPath}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Current working path = {currentWorkingPath}");
 
                 // See if the path is the current working directory or a parent
                 // of the current working directory
-                s_tracer.Write(
+                s_tracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"Comparing {providerSpecificPath} to {currentWorkingPath}");
 
@@ -729,7 +729,7 @@ namespace System.Management.Automation
                 {
                     // The path is the current working directory so
                     // return true
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The path is the current working directory");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The path is the current working directory");
 
                     result = true;
                 }
@@ -752,7 +752,7 @@ namespace System.Management.Automation
                                 string.Empty,
                                 context);
 
-                        s_tracer.Write(
+                        s_tracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"Comparing {lockedDirectory} to {providerSpecificPath}");
 
@@ -760,7 +760,7 @@ namespace System.Management.Automation
                         {
                             // The path is a parent of the current working
                             // directory
-                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"The path is a parent of the current working directory: {lockedDirectory}");
+                            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The path is a parent of the current working directory: {lockedDirectory}");
 
                             result = true;
                             break;
@@ -770,7 +770,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Drives are not the same");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Drives are not the same");
             }
 
             return result;
@@ -839,7 +839,7 @@ namespace System.Management.Automation
                     mshQualifiedPath,
                     new SessionState(this));
 
-            s_tracer.Write(
+            s_tracer.PSTraceWrite(
                 PSTraceSourceOptions.WriteLine,
                 $"Pushing drive: {CurrentDrive.Name} directory: {mshQualifiedPath}");
 

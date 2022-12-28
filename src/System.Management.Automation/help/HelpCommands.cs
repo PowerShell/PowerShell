@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_viewTokenToAdd == HelpView.Default)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Detailed, Full, Examples are not selected. Constructing default view.");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Detailed, Full, Examples are not selected. Constructing default view.");
                 return originalHelpObject;
             }
 
@@ -441,14 +441,14 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     string typeToAdd = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", typeName, tokenToAdd);
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Adding type {typeToAdd}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding type {typeToAdd}");
                     objectToReturn.TypeNames.Add(typeToAdd);
                 }
 
                 // Existing typenames at the bottom..
                 foreach (string typeName in originalHelpObject.TypeNames)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Adding type {typeName}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding type {typeName}");
                     objectToReturn.TypeNames.Add(typeName);
                 }
             }
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="helpInfo">HelpInfo Object to look for the parameter.</param>
         private void GetAndWriteParameterInfo(HelpInfo helpInfo)
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Searching parameters for {helpInfo.Name}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Searching parameters for {helpInfo.Name}");
 
             PSObject[] pInfos = GetParameterInfo(helpInfo);
 
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool onlineUriFound = false;
                     // show online help
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Preparing to show help online.");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Preparing to show help online.");
                     Uri onlineUri = helpInfo.GetUriForOnlineHelp();
                     if (onlineUri != null)
                     {

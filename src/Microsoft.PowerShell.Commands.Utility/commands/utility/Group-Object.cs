@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Create a new group: {currentObjectOrderValues}");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Create a new group: {currentObjectOrderValues}");
                         GroupInfo newObjGrp = noElement ? new GroupInfoNoElement(currentObjectEntry) : new GroupInfo(currentObjectEntry);
                         groups.Add(newObjGrp);
 
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Create a new group: {currentObjectOrderValues}");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Create a new group: {currentObjectOrderValues}");
                         GroupInfo newObjGrp = noElement
                             ? new GroupInfoNoElement(currentObjectEntry)
                             : new GroupInfo(currentObjectEntry);
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"{_groups.Count}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"{_groups.Count}");
             if (_groups.Count > 0)
             {
                 if (AsHashTable.IsPresent)

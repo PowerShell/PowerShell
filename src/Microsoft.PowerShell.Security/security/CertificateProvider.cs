@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
                 result = (bool)item;
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"result = {result}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"result = {result}");
             return result;
         }
 
@@ -1345,7 +1345,7 @@ namespace Microsoft.PowerShell.Commands
                      typeof(Microsoft.PowerShell.Commands.ImportModuleCommand));
             Runspaces.Command importModuleCommand = new(commandInfo);
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
 
             try
             {
@@ -1440,7 +1440,7 @@ namespace Microsoft.PowerShell.Commands
                 result = StringLiterals.DefaultPathSeparator + path;
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"result = {result}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"result = {result}");
             return result;
         }
 
@@ -2236,7 +2236,7 @@ namespace Microsoft.PowerShell.Commands
                 GetItemAtPath(path, true, out isContainer);
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"result = {isContainer}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"result = {isContainer}");
             return isContainer;
         }
 

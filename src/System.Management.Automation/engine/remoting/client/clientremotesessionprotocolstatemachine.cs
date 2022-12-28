@@ -512,7 +512,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Event received : {arg.StateEvent} for {_id}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Event received : {arg.StateEvent} for {_id}");
                 if (clearQueuedEvents)
                 {
                     _processPendingEventsQueue.Clear();
@@ -555,13 +555,13 @@ namespace System.Management.Automation.Remoting
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];
             if (handler != null)
             {
-                s_trace.Write(
+                s_trace.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"Before calling state machine event handler: state = {State}, event = {arg.StateEvent}, id = {_id}");
 
                 handler(this, arg);
 
-                s_trace.Write(
+                s_trace.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"After calling state machine event handler: state = {State}, event = {arg.StateEvent}, id = {_id}");
             }
@@ -793,7 +793,7 @@ namespace System.Management.Automation.Remoting
             if (newState != oldState)
             {
                 _state = newState;
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"state machine state transition: from state {oldState} to state {_state}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"state machine state transition: from state {oldState} to state {_state}");
 
                 RemoteSessionStateInfo stateInfo = new RemoteSessionStateInfo(_state, reason);
                 RemoteSessionStateEventArgs sessionStateEventArg = new RemoteSessionStateEventArgs(stateInfo);

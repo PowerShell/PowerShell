@@ -237,7 +237,7 @@ namespace System.Management.Automation
                                 Authenticode.InvalidHashAlgorithm);
                         }
 
-                        s_tracer.Write(PSTraceSourceOptions.Error, $"CryptUIWizDigitalSign: failed: {error:x}");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.Error, $"CryptUIWizDigitalSign: failed: {error:x}");
                     }
                 }
 
@@ -417,7 +417,7 @@ namespace System.Management.Automation
 
                 if (error != Win32Errors.NO_ERROR)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"GetWinTrustData failed: {error:x}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"GetWinTrustData failed: {error:x}");
                 }
 
                 signature = GetSignatureFromWintrustData(fileName, error, wtd);
@@ -429,7 +429,7 @@ namespace System.Management.Automation
 
                 if (error != Win32Errors.NO_ERROR)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DestroyWinTrustDataStruct failed: {error:x}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DestroyWinTrustDataStruct failed: {error:x}");
                 }
             }
             catch (AccessViolationException)
@@ -516,7 +516,7 @@ namespace System.Management.Automation
             uint error,
             WinTrustMethods.WINTRUST_DATA wtd)
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"GetSignatureFromWintrustData: error: {error}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"GetSignatureFromWintrustData: error: {error}");
 
             Signature signature = null;
             if (TryGetProviderSigner(wtd.hWVTStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert))

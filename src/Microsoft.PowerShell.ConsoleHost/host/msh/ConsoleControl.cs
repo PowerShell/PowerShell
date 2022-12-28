@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell
 
             if ((rows <= 0) || cols <= 0)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"contents passed in has 0 rows and columns");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"contents passed in has 0 rows and columns");
                 return;
             }
 
@@ -1885,7 +1885,7 @@ namespace Microsoft.PowerShell
 
             if ((rows <= 0) || cols <= 0)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"invalid contents region");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"invalid contents region");
                 return;
             }
 
@@ -2058,7 +2058,7 @@ namespace Microsoft.PowerShell
 
             if ((rows <= 0) || cols <= 0)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"invalid contents region");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"invalid contents region");
                 return;
             }
 
@@ -2506,7 +2506,7 @@ namespace Microsoft.PowerShell
                 // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
                 if (err == 0x1f)
                 {
-                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Call to SetConsoleTitle failed: {err}");
+                    tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Call to SetConsoleTitle failed: {err}");
                     s_dontsetConsoleWindowTitle = true;
 
                     // We ignore this specific error as the console can still continue to operate

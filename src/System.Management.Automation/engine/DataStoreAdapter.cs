@@ -545,31 +545,31 @@ namespace System.Management.Automation
         /// </summary>
         internal void Trace()
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"A drive was found:");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"A drive was found:");
 
             if (Name != null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tName: {Name}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"\tName: {Name}");
             }
 
             if (Provider != null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tProvider: {Provider}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"\tProvider: {Provider}");
             }
 
             if (Root != null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tRoot: {Root}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"\tRoot: {Root}");
             }
 
             if (CurrentLocation != null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tCWD: {CurrentLocation}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"\tCWD: {CurrentLocation}");
             }
 
             if (Description != null)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"\tDescription: {Description}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"\tDescription: {Description}");
             }
         }
 

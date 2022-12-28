@@ -131,7 +131,7 @@ namespace System.Management.Automation
                 string? resolvedDirectory = null;
                 string? resolvedPath = null;
 
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Lookup directory \"{_lookupPaths[index]}\" appears to be a relative path. Attempting resolution...");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Lookup directory \"{_lookupPaths[index]}\" appears to be a relative path. Attempting resolution...");
 
                 if (isCurrentDriveValid)
                 {
@@ -145,31 +145,31 @@ namespace System.Management.Automation
                     }
                     catch (ProviderInvocationException providerInvocationException)
                     {
-                        CommandDiscovery.discoveryTracer.Write(
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"The relative path '{_lookupPaths[index]}', could not be resolved because the provider threw an exception: '{providerInvocationException.Message}'");
                     }
                     catch (InvalidOperationException)
                     {
-                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The relative path '{_lookupPaths[index]}', could not resolve a home directory for the provider");
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The relative path '{_lookupPaths[index]}', could not resolve a home directory for the provider");
                     }
 
                     // Note, if the directory resolves to multiple paths, only the first is used.
 
                     if (!string.IsNullOrEmpty(resolvedPath))
                     {
-                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Error, $"The relative path resolved to: {resolvedPath}");
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"The relative path resolved to: {resolvedPath}");
 
                         resolvedDirectory = resolvedPath;
                     }
                     else
                     {
-                        CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The relative path was not a file system path. {_lookupPaths[index]}");
+                        CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The relative path was not a file system path. {_lookupPaths[index]}");
                     }
                 }
                 else
                 {
-                    CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.Warning, $"The current drive is not set, using the process current directory: {environmentCurrentDirectory}");
+                    CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Warning, $"The current drive is not set, using the process current directory: {environmentCurrentDirectory}");
 
                     resolvedDirectory = environmentCurrentDirectory;
                 }
@@ -264,13 +264,13 @@ namespace System.Management.Automation
 
                 if (!_patternEnumerator.MoveNext())
                 {
-                    s_tracer.Write(PSTraceSourceOptions.Error, $"No patterns were specified");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.Error, $"No patterns were specified");
                     return false;
                 }
 
                 if (!_lookupPathsEnumerator.MoveNext())
                 {
-                    s_tracer.Write(PSTraceSourceOptions.Error, $"No lookup paths were specified");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.Error, $"No lookup paths were specified");
                     return false;
                 }
 
@@ -285,14 +285,14 @@ namespace System.Management.Automation
 
                     if (!_currentDirectoryResultsEnumerator.MoveNext())
                     {
-                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Current directory results are invalid");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Current directory results are invalid");
 
                         // Since a path was not found in the current result,
                         // advance the pattern and try again
 
                         if (!_patternEnumerator.MoveNext())
                         {
-                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Current patterns exhausted in current directory: {_lookupPathsEnumerator.Current}");
+                            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Current patterns exhausted in current directory: {_lookupPathsEnumerator.Current}");
                             break;
                         }
 
@@ -302,7 +302,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Next path found: {_currentDirectoryResultsEnumerator.Current}");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Next path found: {_currentDirectoryResultsEnumerator.Current}");
                         result = true;
                         break;
                     }
@@ -320,7 +320,7 @@ namespace System.Management.Automation
 
                 if (!_lookupPathsEnumerator.MoveNext())
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"All lookup paths exhausted, no more matches can be found");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"All lookup paths exhausted, no more matches can be found");
                     break;
                 }
 
@@ -330,7 +330,7 @@ namespace System.Management.Automation
 
                 if (!_patternEnumerator.MoveNext())
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"All patterns exhausted, no more matches can be found");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"All patterns exhausted, no more matches can be found");
                     break;
                 }
 
@@ -410,7 +410,7 @@ namespace System.Management.Automation
             IEnumerable<string>? result = null;
             try
             {
-                CommandDiscovery.discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Looking for {pattern} in {directory}");
+                CommandDiscovery.discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Looking for {pattern} in {directory}");
 
                 // Get the matching files in the directory
                 if (Directory.Exists(directory))

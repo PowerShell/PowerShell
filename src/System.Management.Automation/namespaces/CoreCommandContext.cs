@@ -995,7 +995,7 @@ namespace System.Management.Automation
             {
                 if (_command != null)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Writing to command pipeline");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Writing to command pipeline");
 
                     // Since there was no writeObject handler use
                     // the command WriteObject method.
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation
             }
             else
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Writing to accumulated objects");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Writing to accumulated objects");
 
                 // Convert the object to a PSObject if it's not already
                 // one.
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation
             {
                 if (_command != null)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Writing error package to command error pipe");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Writing error package to command error pipe");
 
                     _command.WriteError(errorRecord);
                 }

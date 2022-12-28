@@ -517,7 +517,7 @@ namespace System.Management.Automation.Provider
 
             basePath ??= string.Empty;
 
-            providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"basePath = {basePath}");
+            providerBaseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"basePath = {basePath}");
 
             string result = path;
             bool originalPathHadTrailingSlash = false;
@@ -960,7 +960,7 @@ namespace System.Management.Automation.Provider
                     break;
                 }
 
-                providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"tokenizedPathStack.Push({childName})");
+                providerBaseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"tokenizedPathStack.Push({childName})");
                 tokenizedPathStack.Push(childName);
 
                 // Get the parent path and verify if we have to continue
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation.Provider
             {
                 string childName = tokenizedPathStack.Pop();
 
-                providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"childName = {childName}");
+                providerBaseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"childName = {childName}");
 
                 // Ignore the current directory token
                 if (childName.Equals(".", StringComparison.OrdinalIgnoreCase))
@@ -1025,7 +1025,7 @@ namespace System.Management.Automation.Provider
                     {
                         // Pop the result and continue processing
                         string poppedName = normalizedPathStack.Pop();
-                        providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"normalizedPathStack.Pop() : {poppedName}");
+                        providerBaseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"normalizedPathStack.Pop() : {poppedName}");
                         continue;
                     }
                     else
@@ -1043,7 +1043,7 @@ namespace System.Management.Automation.Provider
                     }
                 }
 
-                providerBaseTracer.Write(PSTraceSourceOptions.WriteLine, $"normalizedPathStack.Push({childName})");
+                providerBaseTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"normalizedPathStack.Push({childName})");
                 normalizedPathStack.Push(childName);
             }
 

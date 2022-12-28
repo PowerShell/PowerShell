@@ -635,7 +635,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             bool startLifeCycleEventWritten = false;
-            s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"begin open runspace");
+            s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"begin open runspace");
             try
             {
                 _transcriptionData = new TranscriptionData();
@@ -655,12 +655,12 @@ namespace System.Management.Automation.Runspaces
                 _jobManager = new JobManager();
                 _runspaceRepository = new RunspaceRepository();
 
-                s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"initializing built-in aliases and variable information");
+                s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"initializing built-in aliases and variable information");
                 InitializeDefaults();
             }
             catch (Exception exception)
             {
-                s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Runspace open failed");
+                s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Runspace open failed");
 
                 // Log engine health event
                 LogEngineHealthEvent(exception);
@@ -689,7 +689,7 @@ namespace System.Management.Automation.Runspaces
 
             // Raise the event
             RaiseRunspaceStateEvents();
-            s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"runspace opened successfully");
+            s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"runspace opened successfully");
 
             // Now do initial state configuration that requires an active runspace
             Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);

@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (vd == null || mainControlType != vd.mainControl.GetType())
                 {
-                    ActiveTracer.Write(
+                    ActiveTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"NOT MATCH {ControlBase.GetControlShapeName(vd.mainControl)}  NAME: {(vd != null ? vd.name : string.Empty)}");
                     continue;
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (IsOutOfBandView(vd))
                 {
-                    ActiveTracer.Write(
+                    ActiveTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"NOT MATCH OutOfBand {ControlBase.GetControlShapeName(vd.mainControl)}  NAME: {vd.name}");
                     continue;
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (vd.appliesTo == null)
                 {
-                    ActiveTracer.Write(
+                    ActiveTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"NOT MATCH {ControlBase.GetControlShapeName(vd.mainControl)}  NAME: {vd.name}  No applicable types");
                     continue;
@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // if not, we do not try a match at all
                 if (viewName != null && !string.Equals(vd.name, viewName, StringComparison.OrdinalIgnoreCase))
                 {
-                    ActiveTracer.Write(
+                    ActiveTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"NOT MATCH {ControlBase.GetControlShapeName(vd.mainControl)}  NAME: {vd.name}");
                     continue;
@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             ControlBase.GetControlShapeName(vd.mainControl), vd.name, tgr.name);
                     }
 
-                    ActiveTracer.Write(PSTraceSourceOptions.WriteLine, $"{sb}");
+                    ActiveTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"{sb}");
                 }
             }
         }
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (IsOutOfBandView(vd))
                 {
-                    ActiveTracer.Write(
+                    ActiveTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"NOT MATCH OutOfBand {ControlBase.GetControlShapeName(vd.mainControl)}  NAME: {vd.name}");
                     continue;
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (vd.appliesTo == null)
                 {
-                    ActiveTracer.Write(
+                    ActiveTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"NOT MATCH {ControlBase.GetControlShapeName(vd.mainControl)}  NAME: {vd.name}  No applicable types");
                     continue;

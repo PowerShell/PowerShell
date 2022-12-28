@@ -179,9 +179,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_tracer.IsEnabled)
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"path = {path}");
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"mode = {mode}");
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"access = {access}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"path = {path}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"mode = {mode}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"access = {access}");
             }
 
             _path = path;
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool waitChanges = _waitForChanges;
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks requested = {readCount}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"blocks requested = {readCount}");
 
             var blocks = new List<object>();
             bool readToEnd = (readCount <= 0);
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks read = {blocks.Count}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"blocks read = {blocks.Count}");
             }
             catch (Exception e)
             {
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewInvalidOperationException(FileSystemProviderStrings.RawAndWaitCannotCoexist);
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks seek backwards = {backCount}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"blocks seek backwards = {backCount}");
 
             var blocks = new List<object>();
             if (_reader != null)
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
                     Seek(curStreamPosition, SeekOrigin.Begin);
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"blocks seek position = {_stream.Position}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"blocks seek position = {_stream.Position}");
             }
             catch (Exception e)
             {

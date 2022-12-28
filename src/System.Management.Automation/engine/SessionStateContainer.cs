@@ -4231,7 +4231,7 @@ namespace System.Management.Automation
                 }
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"providerDestinationPath = {providerDestinationPath}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"providerDestinationPath = {providerDestinationPath}");
 
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
@@ -4298,7 +4298,7 @@ namespace System.Management.Automation
                         providerDestinationPath,
                         context);
 
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"destinationIsContainer = {destinationIsContainer}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"destinationIsContainer = {destinationIsContainer}");
                 }
 
                 foreach (string providerPath in providerPaths)
@@ -4326,7 +4326,7 @@ namespace System.Management.Automation
                             providerPath,
                             context);
 
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"sourceIsContainer = {sourceIsContainer}");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"sourceIsContainer = {sourceIsContainer}");
 
                     if (sourceIsContainer)
                     {

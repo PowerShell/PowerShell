@@ -197,7 +197,7 @@ namespace System.Management.Automation.Remoting
             // make sure only one thread is processing events.
             lock (_syncObject)
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Event received : {fsmEventArg.StateEvent}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Event received : {fsmEventArg.StateEvent}");
                 _processPendingEventsQueue.Enqueue(fsmEventArg);
 
                 if (_eventsInProcess)
@@ -265,11 +265,11 @@ namespace System.Management.Automation.Remoting
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)_state, (int)fsmEventArg.StateEvent];
             if (handler != null)
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Before calling state machine event handler: state = {_state}, event = {fsmEventArg.StateEvent}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Before calling state machine event handler: state = {_state}, event = {fsmEventArg.StateEvent}");
 
                 handler(this, fsmEventArg);
 
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"After calling state machine event handler: state = {_state}, event = {fsmEventArg.StateEvent}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"After calling state machine event handler: state = {_state}, event = {fsmEventArg.StateEvent}");
             }
         }
 
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Remoting
                         }
                         else
                         {
-                            s_trace.Write(PSTraceSourceOptions.WriteLine, $@"Server received data for Runspace (id: {clientRunspacePoolId}),
+                            s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $@"Server received data for Runspace (id: {clientRunspacePoolId}),
                                 but the Runspace cannot be found");
 
                             PSRemotingDataStructureException reasonOfFailure = new
@@ -559,7 +559,7 @@ namespace System.Management.Automation.Remoting
                         break;
 
                     default:
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Server received data unknown targetInterface: {targetInterface}");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Server received data unknown targetInterface: {targetInterface}");
 
                         PSRemotingDataStructureException reasonOfFailure2 = new PSRemotingDataStructureException(RemotingErrorIdStrings.ReceivedUnsupportedRemotingTargetInterfaceType, targetInterface);
                         RemoteSessionStateMachineEventArgs unknownTargetArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure2);
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation.Remoting
             if (newState != oldState)
             {
                 _state = newState;
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"state machine state transition: from state {oldState} to state {_state}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"state machine state transition: from state {oldState} to state {_state}");
             }
             // TODO: else should we close the session here?
         }

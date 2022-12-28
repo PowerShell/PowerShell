@@ -84,11 +84,11 @@ namespace System.Management.Automation
             if (result != null)
             {
                 s_cacheData.QueueSerialization();
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Returning {result.Count} exported commands.");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Returning {result.Count} exported commands.");
             }
             else
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Returning NULL for exported commands.");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Returning NULL for exported commands.");
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStop(modulePath);
@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 {
                     if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
-                        ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
+                        ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
                         return null;
                     }
 
@@ -115,7 +115,7 @@ namespace System.Management.Automation
                         var versionInManifest = LanguagePrimitives.ConvertTo<Version>(moduleManifestProperties["ModuleVersion"]);
                         if (version != versionInManifest)
                         {
-                            ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"ModuleVersion in manifest does not match versioned module directory, skipping module: {modulePath}");
+                            ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ModuleVersion in manifest does not match versioned module directory, skipping module: {modulePath}");
                             return null;
                         }
                     }
@@ -159,7 +159,7 @@ namespace System.Management.Automation
             {
                 if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisException(modulePath, e.Message);
                 // Ignore the errors, proceed with the usual module analysis
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception on fast-path analysis of module {modulePath}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception on fast-path analysis of module {modulePath}");
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result != null);
@@ -423,12 +423,12 @@ namespace System.Management.Automation
                 // If we're already analyzing this module, let the recursion bottom out.
                 if (!s_modulesBeingAnalyzed.TryAdd(modulePath, modulePath))
                 {
-                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"{modulePath} is already being analyzed. Exiting.");
+                    ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"{modulePath} is already being analyzed. Exiting.");
                     return null;
                 }
 
                 // Record that we're analyzing this specific module so that we don't get stuck in recursion
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Started analysis: {modulePath}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Started analysis: {modulePath}");
                 CallGetModuleDashList(context, modulePath);
 
                 ModuleCacheEntry moduleCacheEntry;
@@ -439,13 +439,13 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
 
                 // Catch-all OK, third-party call-out.
             }
             finally
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Finished analysis: {modulePath}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Finished analysis: {modulePath}");
                 s_modulesBeingAnalyzed.TryRemove(modulePath, out modulePath);
             }
 
@@ -479,7 +479,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
 
                 // Catch-all OK, third-party call-out.
             }
@@ -489,13 +489,13 @@ namespace System.Management.Automation
 
         internal static void CacheModuleExports(PSModuleInfo module, ExecutionContext context)
         {
-            ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Requested caching for {module.Name}");
+            ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Requested caching for {module.Name}");
 
             // Don't cache incompatible modules on the system32 module path even if loaded with
             // -SkipEditionCheck, since it will break subsequent sessions
             if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && !module.IsConsideredEditionCompatible)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module '{module.Name}' not edition compatible and not cached.");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module '{module.Name}' not edition compatible and not cached.");
                 return;
             }
 
@@ -547,7 +547,7 @@ namespace System.Management.Automation
 
                 if (!needToUpdate)
                 {
-                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Existing cached info up-to-date. Skipping.");
+                    ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Existing cached info up-to-date. Skipping.");
                     return;
                 }
 
@@ -572,14 +572,14 @@ namespace System.Management.Automation
             // We need to update the cache
             foreach (var exportedCommand in realExportedCommands.Values)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Caching command: {exportedCommand.Name}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Caching command: {exportedCommand.Name}");
                 exportedCommands.GetOrAdd(exportedCommand.Name, exportedCommand.CommandType);
             }
 
             foreach (var pair in realExportedClasses)
             {
                 var className = pair.Key;
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Caching command: {className}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Caching command: {className}");
                 moduleCacheEntry.Types.AddOrUpdate(className, pair.Value.TypeAttributes, (k, t) => t);
             }
 
@@ -606,7 +606,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Module analysis generated an exception: {e}");
 
                 // Catch-all OK, third-party call-out.
             }
@@ -620,7 +620,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception checking LastWriteTime on module {modulePath}: {e.Message}");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception checking LastWriteTime on module {modulePath}: {e.Message}");
                 lastWriteTime = DateTime.MinValue;
             }
 
@@ -631,7 +631,7 @@ namespace System.Management.Automation
                     return true;
                 }
 
-                ModuleIntrinsics.Tracer.Write(
+                ModuleIntrinsics.Tracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"{modulePath}: cache entry out of date, cached on {moduleCacheEntry.LastWriteTime}, last updated on {lastWriteTime}");
 
@@ -772,7 +772,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception checking module analysis cache {filename}: {e.Message} ");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception checking module analysis cache {filename}: {e.Message} ");
             }
 
             if (fromOtherProcess != null)
@@ -870,7 +870,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception writing module analysis cache {filename}: {e.Message} ");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception writing module analysis cache {filename}: {e.Message} ");
             }
 
             // Reset our counter so we can write again if asked.
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Exception checking module analysis cache: {e.Message}");
+                    ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception checking module analysis cache: {e.Message}");
                     if ((object)e.Message == (object)TruncatedErrorMessage
                         || (object)e.Message == (object)InvalidSignatureErrorMessage
                         || (object)e.Message == (object)PossibleCorruptionErrorMessage)

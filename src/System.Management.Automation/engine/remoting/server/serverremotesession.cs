@@ -207,7 +207,7 @@ namespace System.Management.Automation.Remoting
                 (senderInfo != null) && (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
 
-            s_trace.Write(PSTraceSourceOptions.WriteLine, $"Finding InitialSessionState provider for id : {configurationProviderId}");
+            s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Finding InitialSessionState provider for id : {configurationProviderId}");
 
             if (string.IsNullOrEmpty(configurationProviderId))
             {

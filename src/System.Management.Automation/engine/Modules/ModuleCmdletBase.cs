@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Caching skipped for {moduleInfo.Name} because it had errors while loading.");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Caching skipped for {moduleInfo.Name} because it had errors while loading.");
             }
 
             _currentlyProcessingModules[file] = moduleInfo;
@@ -6397,7 +6397,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ModuleIntrinsics.Tracer.Write(PSTraceSourceOptions.WriteLine, $"Caching skipped for {module.Name} because it had errors while loading.");
+                ModuleIntrinsics.Tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Caching skipped for {module.Name} because it had errors while loading.");
             }
 
             lock (s_lockObject)

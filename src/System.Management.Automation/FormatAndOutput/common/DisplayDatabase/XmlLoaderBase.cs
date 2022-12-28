@@ -104,13 +104,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
             {
-                s_formatFileLoadingtracer.Write(
+                s_formatFileLoadingtracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"ERROR:\r\n FilePath: {entry.filePath}\r\n XPath: {entry.xPath}\r\n Message = {entry.message}");
             }
             else if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Trace)
             {
-                s_formatFileLoadingtracer.Write(
+                s_formatFileLoadingtracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"TRACE:\r\n FilePath: {entry.filePath}\r\n XPath: {entry.xPath}\r\n Message = {entry.message}");
             }

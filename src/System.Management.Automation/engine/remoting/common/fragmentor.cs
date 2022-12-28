@@ -488,7 +488,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal SerializedDataStream(int fragmentSize)
         {
-            s_trace.Write(PSTraceSourceOptions.WriteLine, $"Creating SerializedDataStream with fragmentsize : {fragmentSize}");
+            s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Creating SerializedDataStream with fragmentsize : {fragmentSize}");
             Dbg.Assert(fragmentSize > 0, "fragmentsize should be greater than 0.");
             _syncObject = new object();
             _currentFragment = new FragmentedRemoteObject();
@@ -724,7 +724,7 @@ namespace System.Management.Automation.Remoting
 
                     _readStream.Position = _readOffSet;
                     int result = _readStream.Read(buffer, offSetToWriteTo, count - dataWritten);
-                    s_trace.Write(PSTraceSourceOptions.WriteLine, $"Read {result} data from readstream: {_readStream.GetHashCode()}");
+                    s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Read {result} data from readstream: {_readStream.GetHashCode()}");
                     dataWritten += result;
                     offSetToWriteTo += result;
                     _readOffSet += result;
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Remoting
                     // dispose only if we dont read from the current write stream.
                     if ((_readStream.Capacity == _readOffSet) && (_readStream != _writeStream))
                     {
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Adding readstream {_readStream.GetHashCode()} to dispose collection.");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding readstream {_readStream.GetHashCode()} to dispose collection.");
                         memoryStreamsToDispose.Add(_readStream);
                         prevReadStream = _readStream;
                         _readStream = null;
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
             // Dispose the memory streams outside of the lock
             foreach (MemoryStream streamToDispose in memoryStreamsToDispose)
             {
-                s_trace.Write(PSTraceSourceOptions.WriteLine, $"Disposing stream: {streamToDispose.GetHashCode()}");
+                s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Disposing stream: {streamToDispose.GetHashCode()}");
                 streamToDispose.Dispose();
             }
 
@@ -790,7 +790,7 @@ namespace System.Management.Automation.Remoting
                     if (_writeStream == null)
                     {
                         _writeStream = new MemoryStream(_fragmentSize);
-                        s_trace.Write(PSTraceSourceOptions.WriteLine, $"Created write stream: {_writeStream.GetHashCode()}");
+                        s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Created write stream: {_writeStream.GetHashCode()}");
                         _writeOffset = 0;
                     }
 
@@ -829,14 +829,14 @@ namespace System.Management.Automation.Remoting
 
         private void EnqueueWriteStream()
         {
-            s_trace.Write(
+            s_trace.PSTraceWrite(
                 PSTraceSourceOptions.WriteLine,
                 $"Queuing write stream: {_writeStream.GetHashCode()} Length: {_writeStream.Length} Capacity: {_writeStream.Capacity}");
             _queuedStreams.Enqueue(_writeStream);
 
             _writeStream = new MemoryStream(_fragmentSize);
             _writeOffset = 0;
-            s_trace.Write(PSTraceSourceOptions.WriteLine, $"Created write stream: {_writeStream.GetHashCode()}");
+            s_trace.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Created write stream: {_writeStream.GetHashCode()}");
         }
         /// <summary>
         /// This method provides a thread safe way to get an object id.

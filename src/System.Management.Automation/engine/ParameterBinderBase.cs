@@ -411,11 +411,11 @@ namespace System.Management.Automation
                                     }
                                 }
 
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"result returned from DATA GENERATION: {parameterValue}");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"result returned from DATA GENERATION: {parameterValue}");
                             }
                             catch (Exception e) // Catch-all OK, 3rd party callout
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: DATA GENERATION: {e.Message}");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ERROR: DATA GENERATION: {e.Message}");
 
                                 ParameterBindingException bindingException =
                                         new ParameterBindingArgumentTransformationException(
@@ -494,7 +494,7 @@ namespace System.Management.Automation
                                 }
                                 catch (Exception e) // Catch-all OK, 3rd party callout
                                 {
-                                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: VALIDATION FAILED: {e.Message}");
+                                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ERROR: VALIDATION FAILED: {e.Message}");
 
                                     ParameterBindingValidationException bindingException =
                                         new ParameterBindingValidationException(
@@ -511,7 +511,7 @@ namespace System.Management.Automation
                                     throw bindingException;
                                 }
 
-                                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Validation attribute on {parameterMetadata.Name} returned {result}.");
+                                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Validation attribute on {parameterMetadata.Name} returned {result}.");
                             }
                         }
 
@@ -585,7 +585,7 @@ namespace System.Management.Automation
                 }
                 while (false);
 
-                bindingTracer.Write(
+                bindingTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     @$"BIND arg [{parameterValue}] to param [{parameter.ParameterName}] {(result ? "SUCCESSFUL" : "SKIPPED")}");
 
@@ -676,7 +676,7 @@ namespace System.Management.Automation
             {
                 if (!parameterMetadata.AllowsNullArgument)
                 {
-                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be null");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be null");
 
                     ParameterBindingValidationException bindingException =
                         new ParameterBindingValidationException(
@@ -705,7 +705,7 @@ namespace System.Management.Automation
 
                 if (stringParamValue.Length == 0 && !parameterMetadata.AllowsEmptyStringArgument)
                 {
-                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be an empty string");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be an empty string");
 
                     ParameterBindingValidationException bindingException =
                         new ParameterBindingValidationException(
@@ -770,7 +770,7 @@ namespace System.Management.Automation
 
             if (isEmpty && !parameterMetadata.AllowsEmptyCollectionArgument)
             {
-                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be an empty collection");
+                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ERROR: Argument cannot be an empty collection");
 
                 string errorId, resourceString;
                 if (parameterMetadata.CollectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array)
@@ -1002,13 +1002,13 @@ namespace System.Management.Automation
                         // needs to be done
                         if (toType.IsAssignableFrom(argumentType))
                         {
-                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Parameter and arg types the same, no coercion is needed.");
+                            bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Parameter and arg types the same, no coercion is needed.");
 
                             result = currentValue;
                             break;
                         }
 
-                        bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Trying to convert argument value from {argumentType} to {toType}");
+                        bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Trying to convert argument value from {argumentType} to {toType}");
 
                         // Likewise shortcircuit the case were the user has asked for a shell object.
                         // He always gets a shell object regardless of the actual type of the object.
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation
                                 currentValue = _command.CurrentPipelineObject;
                             }
 
-                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"The parameter is of type [{toType}] and the argument is an PSObject, so the parameter value is the argument value wrapped into an PSObject.");
+                            bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The parameter is of type [{toType}] and the argument is an PSObject, so the parameter value is the argument value wrapped into an PSObject.");
                             result = LanguagePrimitives.AsPSObjectOrNull(currentValue);
                             break;
                         }
@@ -1042,7 +1042,7 @@ namespace System.Management.Automation
 
                             if (currentValueAsPSObject == AutomationNull.Value)
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"CONVERT a null PSObject to a null string.");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"CONVERT a null PSObject to a null string.");
                                 result = null;
                                 break;
                             }
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
 
                         if (collectionTypeInfo.ParameterCollectionType != ParameterCollectionType.NotCollection)
                         {
-                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ENCODING arg into collection");
+                            bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ENCODING arg into collection");
 
                             bool ignored = false;
                             result =
@@ -1206,7 +1206,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"CONVERT arg type to param type using LanguagePrimitives.ConvertTo");
+                        bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"CONVERT arg type to param type using LanguagePrimitives.ConvertTo");
 
                         // If we are in constrained language mode and the target command is trusted, which is often
                         // the case for C# cmdlets, then we allow type conversion to the target parameter type.
@@ -1238,12 +1238,12 @@ namespace System.Management.Automation
                             }
                         }
 
-                        bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"CONVERT SUCCESSFUL using LanguagePrimitives.ConvertTo: [{result?.ToString() ?? "null"}]");
+                        bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"CONVERT SUCCESSFUL using LanguagePrimitives.ConvertTo: [{result?.ToString() ?? "null"}]");
                     } while (false);
                 }
                 catch (NotSupportedException notSupported)
                 {
-                    bindingTracer.Write(PSTraceSourceOptions.Error, $"COERCE FAILED: arg [{result ?? "null"}] could not be converted to the parameter type [{toType}]");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"COERCE FAILED: arg [{result ?? "null"}] could not be converted to the parameter type [{toType}]");
 
                     ParameterBindingException pbe =
                         new ParameterBindingException(
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation
                 }
                 catch (PSInvalidCastException invalidCast)
                 {
-                    bindingTracer.Write(PSTraceSourceOptions.Error, $"COERCE FAILED: arg [{result ?? "null"}] could not be converted to the parameter type [{toType}]");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"COERCE FAILED: arg [{result ?? "null"}] could not be converted to the parameter type [{toType}]");
 
                     ParameterBindingException pbe =
                         new ParameterBindingException(
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation
 
             if (toType == typeof(bool))
             {
-                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"ERROR: No argument is specified for parameter and parameter type is BOOL");
+                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ERROR: No argument is specified for parameter and parameter type is BOOL");
 
                 ParameterBindingException exception =
                     new ParameterBindingException(
@@ -1337,12 +1337,12 @@ namespace System.Management.Automation
             else
                 if (toType == typeof(SwitchParameter))
             {
-                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Arg is null or not present, parameter type is SWITCHPARAMTER, value is true.");
+                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Arg is null or not present, parameter type is SWITCHPARAMTER, value is true.");
                 result = SwitchParameter.Present;
             }
             else if (currentValue == UnboundParameter.Value)
             {
-                bindingTracer.Write(PSTraceSourceOptions.Error, $"No argument was specified for the parameter and the parameter is not of type bool");
+                bindingTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"No argument was specified for the parameter and the parameter is not of type bool");
 
                 ParameterBindingException exception =
                     new ParameterBindingException(
@@ -1359,7 +1359,7 @@ namespace System.Management.Automation
             }
             else
             {
-                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Arg is null, parameter type not bool or SwitchParameter, value is null.");
+                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Arg is null, parameter type not bool or SwitchParameter, value is null.");
                 result = null;
             }
 
@@ -1424,7 +1424,7 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                bindingTracer.Write(
+                bindingTracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"Binding collection parameter {parameterName}: argument type [{currentValue?.GetType().Name ?? "null"}], parameter type [{toType}], collection type {collectionTypeInformation.ParameterCollectionType}, element type [{collectionTypeInformation.ElementType}], {(coerceElementTypeIfNeeded ? "coerceElementType" : "no coerceElementType")}");
 
@@ -1445,8 +1445,8 @@ namespace System.Management.Automation
                 {
                     numberOfElements = currentValueAsIList.Count;
 
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"current value is an IList with {numberOfElements} elements");
-                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Arg is IList with {numberOfElements} elements");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"current value is an IList with {numberOfElements} elements");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Arg is IList with {numberOfElements} elements");
                 }
 
                 object resultCollection = null;
@@ -1468,7 +1468,7 @@ namespace System.Management.Automation
                         collectionElementType = typeof(object);
                     }
 
-                    bindingTracer.Write(
+                    bindingTracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"Creating array with element type [{collectionElementType}] and {numberOfElements} elements");
 
@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
                 else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList ||
                          collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.ICollectionGeneric)
                 {
-                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Creating collection [{toType}]");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Creating collection [{toType}]");
 
                     // Create an instance of the parameter type
 
@@ -1526,12 +1526,12 @@ namespace System.Management.Automation
                             }
                             catch (AmbiguousMatchException e)
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Ambiguous match to Add(T) for type {toType.FullName}: {e.Message}");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Ambiguous match to Add(T) for type {toType.FullName}: {e.Message}");
                                 getMethodError = e;
                             }
                             catch (ArgumentException e)
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine,
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine,
                                     $"ArgumentException matching Add(T) for type {toType.FullName}: {e.Message}");
                                 getMethodError = e;
                             }
@@ -1636,7 +1636,7 @@ namespace System.Management.Automation
                     // to set the value.
                     int arrayIndex = 0;
 
-                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Argument type {currentValue.GetType()} is IList");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Argument type {currentValue.GetType()} is IList");
 
                     foreach (object valueElement in currentValueAsIList)
                     {
@@ -1644,7 +1644,7 @@ namespace System.Management.Automation
 
                         if (coerceElementTypeIfNeeded)
                         {
-                            bindingTracer.Write(
+                            bindingTracer.PSTraceWrite(
                                 PSTraceSourceOptions.WriteLine,
                                 $"COERCE collection element from type {(valueElement == null ? "null" : valueElement.GetType().Name)} to type {collectionElementType}");
 
@@ -1668,7 +1668,7 @@ namespace System.Management.Automation
                             if (currentValueElementType != desiredElementType &&
                                 !currentValueElementType.IsSubclassOf(desiredElementType))
                             {
-                                bindingTracer.Write(
+                                bindingTracer.PSTraceWrite(
                                     PSTraceSourceOptions.WriteLine,
                                     $"COERCION REQUIRED: Did not attempt to coerce collection element from type {(valueElement == null ? "null" : valueElement.GetType().Name)} to type {collectionElementType}");
 
@@ -1684,19 +1684,19 @@ namespace System.Management.Automation
                             if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array ||
                                 isSystemDotArray)
                             {
-                                bindingTracer.Write(
+                                bindingTracer.PSTraceWrite(
                                     PSTraceSourceOptions.WriteLine,
                                     $"Adding element of type {(currentValueElement == null ? "null" : currentValueElement.GetType().Name)} to array position {arrayIndex}");
                                 resultAsIList[arrayIndex++] = currentValueElement;
                             }
                             else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding element of type {currentValueElement?.GetType().Name ?? "null"} via IList.Add");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding element of type {currentValueElement?.GetType().Name ?? "null"} via IList.Add");
                                 resultAsIList.Add(currentValueElement);
                             }
                             else
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding element of type {currentValueElement?.GetType().Name ?? "null"} via ICollection<T>::Add()");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding element of type {currentValueElement?.GetType().Name ?? "null"} via ICollection<T>::Add()");
                                 addMethod.Invoke(resultCollection, new object[1] { currentValueElement });
                             }
                         }
@@ -1729,13 +1729,13 @@ namespace System.Management.Automation
                 }
                 else // (currentValueAsIList == null)
                 {
-                    bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Argument type {currentValue.GetType().Name} is not IList, treating this as scalar");
+                    bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Argument type {currentValue.GetType().Name} is not IList, treating this as scalar");
 
                     if (collectionElementType != null)
                     {
                         if (coerceElementTypeIfNeeded)
                         {
-                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Coercing scalar arg value to type {collectionElementType}");
+                            bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Coercing scalar arg value to type {collectionElementType}");
 
                             // Coerce the scalar type into the collection
 
@@ -1755,7 +1755,7 @@ namespace System.Management.Automation
                             if (currentValueElementType != desiredElementType &&
                                 !currentValueElementType.IsSubclassOf(desiredElementType))
                             {
-                                bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"COERCION REQUIRED: Did not coerce scalar arg value to type {collectionElementType}");
+                                bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"COERCION REQUIRED: Did not coerce scalar arg value to type {collectionElementType}");
 
                                 coercionRequired = true;
                                 break;
@@ -1770,17 +1770,17 @@ namespace System.Management.Automation
                         if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.Array ||
                             isSystemDotArray)
                         {
-                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding scalar element of type {currentValue.GetType().Name ?? "null"} to array position {0}");
+                            bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding scalar element of type {currentValue.GetType().Name ?? "null"} to array position {0}");
                             resultAsIList[0] = currentValue;
                         }
                         else if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                         {
-                            bindingTracer.Write(PSTraceSourceOptions.WriteLine, $"Adding scalar element of type {currentValue?.GetType().Name ?? "null"} via IList.Add");
+                            bindingTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding scalar element of type {currentValue?.GetType().Name ?? "null"} via IList.Add");
                             resultAsIList.Add(currentValue);
                         }
                         else
                         {
-                            bindingTracer.Write(
+                            bindingTracer.PSTraceWrite(
                                 PSTraceSourceOptions.WriteLine,
                                 $"Adding scalar element of type {currentValue?.GetType().Name ?? "null"} via ICollection<T>::Add()");
                             addMethod.Invoke(resultCollection, new object[1] { currentValue });
@@ -1832,7 +1832,7 @@ namespace System.Management.Automation
             if (result != null)
             {
                 // Reference comparison to determine if 'value' is a PSObject
-                s_tracer.Write(
+                s_tracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     @$"{(baseObj == value
                         ? "argument is IList"

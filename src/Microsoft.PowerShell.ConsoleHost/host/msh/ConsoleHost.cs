@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell
                 // Servermode parameter validation check.
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
-                    s_tracer.Write(PSTraceSourceOptions.Error, $"Conflicting server mode parameters, parameters must be used exclusively.");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.Error, $"Conflicting server mode parameters, parameters must be used exclusively.");
                     s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
 
                     return ExitCodeBadCommandLineParameter;
@@ -1439,12 +1439,12 @@ namespace Microsoft.PowerShell
 
             do
             {
-                s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"starting parse of command line parameters");
+                s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"starting parse of command line parameters");
 
                 exitCode = ExitCodeSuccess;
                 if (!string.IsNullOrEmpty(cpp.InitialCommand) && isPrestartWarned)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.Error, $"Start up warnings made command \"{cpp.InitialCommand}\" not executed");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.Error, $"Start up warnings made command \"{cpp.InitialCommand}\" not executed");
                     string msg = StringUtil.Format(ConsoleHostStrings.InitialCommandNotExecuted, cpp.InitialCommand);
                     ui.WriteErrorLine(msg);
                     exitCode = ExitCodeInitFailure;
@@ -1453,7 +1453,7 @@ namespace Microsoft.PowerShell
 
                 if (cpp.AbortStartup)
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"processing of cmdline args failed, exiting");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"processing of cmdline args failed, exiting");
                     exitCode = cpp.ExitCode;
                     break;
                 }
@@ -1566,7 +1566,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
             Dbg.Assert(exec != null, "non-null Executor instance needed");
 
-            s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"running command {command}");
+            s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"running command {command}");
 
             Exception e = null;
 
@@ -1652,7 +1652,7 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(_runspaceRef == null, "_runspaceRef field should be null");
             Dbg.Assert(DefaultInitialSessionState != null, "DefaultInitialSessionState should not be null");
-            s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Calling RunspaceFactory.CreateRunspace");
+            s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Calling RunspaceFactory.CreateRunspace");
 
             // Use session configuration file if provided.
             bool customConfigurationProvided = false;
@@ -1769,7 +1769,7 @@ namespace Microsoft.PowerShell
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
 
-            s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Calling Runspace.Open");
+            s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Calling Runspace.Open");
             runspace.Open();
         }
 
@@ -1876,7 +1876,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"-noprofile option specified: skipping profiles");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"-noprofile option specified: skipping profiles");
                 }
             }
 #if LEGACYTELEMETRY
@@ -1890,7 +1890,7 @@ namespace Microsoft.PowerShell
             {
                 string filePath = s_cpp.File;
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"running -file '{filePath}'");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"running -file '{filePath}'");
 
                 Pipeline tempPipeline = exec.CreatePipeline();
                 Command c;
@@ -1974,7 +1974,7 @@ namespace Microsoft.PowerShell
             {
                 // Run the command passed on the command line
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"running initial command");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"running initial command");
 
                 Pipeline tempPipeline = exec.CreatePipeline(args.InitialCommand, true);
 
@@ -2027,7 +2027,7 @@ namespace Microsoft.PowerShell
         {
             if (!string.IsNullOrEmpty(profileFileName))
             {
-                s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"checking profile {profileFileName}");
+                s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"checking profile {profileFileName}");
 
                 try
                 {
@@ -2040,14 +2040,14 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"profile file not found");
+                        s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"profile file not found");
                     }
                 }
                 catch (Exception e) // Catch-all OK, 3rd party callout
                 {
                     ReportException(e, exec);
 
-                    s_runspaceInitTracer.Write(PSTraceSourceOptions.WriteLine, $"Could not load profile.");
+                    s_runspaceInitTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Could not load profile.");
                 }
             }
         }
@@ -2540,7 +2540,7 @@ namespace Microsoft.PowerShell
                         {
                             previousResponseWasEmpty = true;
 
-                            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"line is null");
+                            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"line is null");
                             if (!ui.ReadFromStdin)
                             {
                                 // If we're not reading from stdin, the we probably got here
@@ -2567,7 +2567,7 @@ namespace Microsoft.PowerShell
                             {
                                 // end block mode and execute the block accumulated block
 
-                                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"exiting block mode");
+                                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"exiting block mode");
                                 line = inputBlock.ToString();
                                 inBlockMode = false;
                             }
@@ -2581,7 +2581,7 @@ namespace Microsoft.PowerShell
                         {
                             if (inBlockMode)
                             {
-                                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"adding line to block");
+                                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"adding line to block");
                                 inputBlock.Append('\n');
                                 inputBlock.Append(line);
                                 continue;

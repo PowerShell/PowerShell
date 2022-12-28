@@ -757,14 +757,14 @@ namespace System.Management.Automation
 
             if (preCommandLookupEvent != null)
             {
-                discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Executing PreCommandLookupAction: {commandName}");
+                discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Executing PreCommandLookupAction: {commandName}");
                 try
                 {
                     context.CommandDiscovery.RegisterLookupCommandInfoAction("ActivePreLookup", originalCommandName);
                     eventArgs = new CommandLookupEventArgs(originalCommandName, commandOrigin, context);
                     preCommandLookupEvent.Invoke(originalCommandName, eventArgs);
 
-                    discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"PreCommandLookupAction returned: {eventArgs.Command}");
+                    discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"PreCommandLookupAction returned: {eventArgs.Command}");
                 }
                 catch (Exception)
                 {
@@ -779,7 +779,7 @@ namespace System.Management.Automation
             {
                 do
                 {
-                    discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Looking up command: {commandName}");
+                    discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Looking up command: {commandName}");
 
                     // Use the CommandSearcher to find the first command. If there are duplicate
                     // command names, then take the first one...
@@ -824,7 +824,7 @@ namespace System.Management.Automation
                 System.EventHandler<CommandLookupEventArgs> postAction = context.EngineIntrinsics.InvokeCommand.PostCommandLookupAction;
                 if (postAction != null)
                 {
-                    discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Executing PostCommandLookupAction: {originalCommandName}");
+                    discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Executing PostCommandLookupAction: {originalCommandName}");
                     try
                     {
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActivePostCommand", originalCommandName);
@@ -836,7 +836,7 @@ namespace System.Management.Automation
                         if (eventArgs != null)
                         {
                             result = eventArgs.Command;
-                            discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"PreCommandLookupAction returned: {eventArgs.Command}");
+                            discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"PreCommandLookupAction returned: {eventArgs.Command}");
                         }
                     }
                     catch (Exception)
@@ -852,7 +852,7 @@ namespace System.Management.Automation
             // After all command lookup is done, throw a CommandNotFound if we have no result.
             if (result == null)
             {
-                discoveryTracer.Write(PSTraceSourceOptions.Error, $"'{commandName}' is not recognized as a cmdlet, function, executable program or script file.");
+                discoveryTracer.PSTraceWrite(PSTraceSourceOptions.Error, $"'{commandName}' is not recognized as a cmdlet, function, executable program or script file.");
 
                 CommandNotFoundException e =
                     new CommandNotFoundException(
@@ -908,7 +908,7 @@ namespace System.Management.Automation
             commandInfo.Visibility = visibility;
             Command importModuleCommand = new Command(commandInfo);
 
-            discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
+            discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
 
             PowerShell ps = null;
             try
@@ -928,7 +928,7 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 exception = e;
-                discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Encountered error importing module: {e.Message}");
+                discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Encountered error importing module: {e.Message}");
                 // Call-out to user code, catch-all OK
             }
 
@@ -942,7 +942,7 @@ namespace System.Management.Automation
             System.EventHandler<CommandLookupEventArgs> cmdNotFoundHandler = context.EngineIntrinsics.InvokeCommand.CommandNotFoundAction;
             if (cmdNotFoundHandler != null)
             {
-                discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Executing CommandNotFoundAction: {commandName}");
+                discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Executing CommandNotFoundAction: {commandName}");
                 try
                 {
                     context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveCommandNotFound", originalCommandName);
@@ -982,7 +982,7 @@ namespace System.Management.Automation
                 {
                     if (!commandName.Contains('-') && !commandName.Contains('\\'))
                     {
-                        discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"The command [{commandName}] was not found, trying again with get- prepended");
+                        discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"The command [{commandName}] was not found, trying again with get- prepended");
 
                         commandName = StringLiterals.DefaultCommandVerb + StringLiterals.CommandVerbNounSeparator + commandName;
 
@@ -1051,7 +1051,7 @@ namespace System.Management.Automation
                     cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
                     if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                     {
-                        discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Executing non module-qualified search: {commandName}");
+                        discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Executing non module-qualified search: {commandName}");
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
 
                         // Get the available module files, preferring modules from $PSHOME so that user modules don't
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
                             // Skip if module only has class or other types and no commands.
                             if (exportedCommands.TryGetValue(commandName, out CommandTypes exportedCommandTypes))
                             {
-                                discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Found in module: {expandedModulePath}");
+                                discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Found in module: {expandedModulePath}");
                                 Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(
                                     expandedModulePath,
                                     context,
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
 
             try
             {
-                discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Executing module-qualified search: {commandName}");
+                discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Executing module-qualified search: {commandName}");
                 context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
 
                 // Verify that auto-loading is only done on for internal commands if it's not public
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation
 
                     if (existingModule == null || existingModule.Count == 0)
                     {
-                        discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
+                        discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Attempting to load module: {moduleName}");
                         Exception exception;
                         Collection<PSModuleInfo> importedModule = AutoloadSpecifiedModule(moduleName, context, cmdletInfo.Visibility, out exception);
                         lastError = exception;
@@ -1280,7 +1280,7 @@ namespace System.Management.Automation
 
             string path = Environment.GetEnvironmentVariable("PATH");
 
-            discoveryTracer.Write(PSTraceSourceOptions.WriteLine, $"PATH: {path}");
+            discoveryTracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"PATH: {path}");
 
             bool isPathCacheValid =
                 path != null &&

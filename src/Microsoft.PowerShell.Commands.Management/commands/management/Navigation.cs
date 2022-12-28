@@ -1377,7 +1377,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string providerName in providerNames)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"ProviderName: {providerName}");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"ProviderName: {providerName}");
 
                 bool providerNameEmpty = string.IsNullOrEmpty(providerName);
                 bool providerNameContainsWildcardCharacters =
@@ -3112,7 +3112,7 @@ namespace Microsoft.PowerShell.Commands
 
             currentContext.PassThru = PassThru;
 
-            tracer.Write(PSTraceSourceOptions.WriteLine, $"Moving {path} to {Destination}");
+            tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Moving {path} to {Destination}");
 
             try
             {
@@ -3451,7 +3451,7 @@ namespace Microsoft.PowerShell.Commands
             // the pipeline.
             currentContext.PassThru = PassThru;
 
-            tracer.Write(PSTraceSourceOptions.WriteLine, $"Rename {path} to {NewName}");
+            tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Rename {path} to {NewName}");
 
             try
             {
@@ -3707,7 +3707,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _paths)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"Copy {path} to {Destination}");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Copy {path} to {Destination}");
 
                 try
                 {
@@ -3898,7 +3898,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in _paths)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"Clearing {path}");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Clearing {path}");
 
                 try
                 {
@@ -4062,7 +4062,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string path in _paths)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"Invoking {path}");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Invoking {path}");
 
                 try
                 {

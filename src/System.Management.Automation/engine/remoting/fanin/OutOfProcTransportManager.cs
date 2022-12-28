@@ -832,7 +832,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
-            tracer.Write(PSTraceSourceOptions.WriteLine, $"Received data to be sent from the callback.");
+            tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Received data to be sent from the callback.");
             SendData(data, priorityType);
         }
 
@@ -2303,7 +2303,7 @@ namespace System.Management.Automation.Remoting.Client
                 // make sure the transport is not closed yet.
                 if (isClosed)
                 {
-                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
+                    tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Client Session TM: Transport manager is closed. So returning");
                     return;
                 }
 
@@ -2324,7 +2324,7 @@ namespace System.Management.Automation.Remoting.Client
                 // if the transport manager is already closed..return immediately
                 if (isClosed)
                 {
-                    tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
+                    tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
                     return;
                 }
             }
@@ -2344,7 +2344,7 @@ namespace System.Management.Automation.Remoting.Client
             // if the transport manager is already closed..return immediately
             if (isClosed)
             {
-                tracer.Write(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
+                tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Client Command TM: Transport manager is closed. So returning");
                 return;
             }
 
@@ -2471,7 +2471,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
-            tracer.Write(PSTraceSourceOptions.WriteLine, $"Received data from dataToBeSent store.");
+            tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Received data from dataToBeSent store.");
             SendData(data, priorityType);
         }
 

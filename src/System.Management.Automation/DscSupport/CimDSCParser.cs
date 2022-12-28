@@ -673,7 +673,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <param name="modulePathList">List of module path from where DSC PS modules will be loaded.</param>
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Initializing DSC class cache force={0}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Initializing DSC class cache force={0}");
 
             if (Platform.IsLinux || Platform.IsMacOS)
             {
@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             string manifestPath = Path.Combine(moduleFolderPath, moduleName + ".psd1");
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC GetModuleVersion: Try retrieving module version information from file: {manifestPath}.");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC GetModuleVersion: Try retrieving module version information from file: {manifestPath}.");
 
             if (!File.Exists(manifestPath))
             {
@@ -869,7 +869,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
                 else
                 {
-                    s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC GetModuleVersion: Manifest file '{manifestPath}' not exist.");
+                    s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC GetModuleVersion: Manifest file '{manifestPath}' not exist.");
                     return null;
                 }
             }
@@ -891,21 +891,21 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                     else
                     {
-                        s_tracer.Write(
+                        s_tracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"DSC GetModuleVersion: ModuleVersion value '{versionValue}' cannot be converted to System.Version. Skip the module '{moduleName}'.");
                     }
                 }
                 else
                 {
-                    s_tracer.Write(
+                    s_tracer.PSTraceWrite(
                         PSTraceSourceOptions.WriteLine,
                         $"DSC GetModuleVersion: Manifest file '{manifestPath}' does not contain ModuleVersion. Skip the module '{moduleName}'.");
                 }
             }
             catch (PSInvalidOperationException ex)
             {
-                s_tracer.Write(
+                s_tracer.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"DSC GetModuleVersion: Error evaluating module manifest file '{manifestPath}', with error '{ex}'. Skip the module '{moduleName}'.");
             }
@@ -957,7 +957,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: importing file: {path}");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: importing file: {path}");
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
@@ -969,7 +969,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             catch (PSInvalidOperationException e)
             {
                 // Ignore modules with invalid schemas.
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: Error importing file '{path}', with error '{e}'.  Skipping file.");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: Error importing file '{path}', with error '{e}'.  Skipping file.");
                 errors?.Add(e);
             }
 
@@ -1033,11 +1033,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     sb.Append(',');
                 }
 
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{path}' added the following classes to the cache: {sb}");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{path}' added the following classes to the cache: {sb}");
             }
             else
             {
-                s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{path}' added no classes to the cache.");
+                s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC ClassCache: loading file '{path}' added no classes to the cache.");
             }
 
             ByFileClassCache[path] = classes;
@@ -1068,7 +1068,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         public static void ClearCache()
         {
-            s_tracer.Write(PSTraceSourceOptions.WriteLine, $"DSC class: clearing the cache and associated keywords.");
+            s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"DSC class: clearing the cache and associated keywords.");
             ClassCache.Clear();
             ByClassModuleCache.Clear();
             ByFileClassCache.Clear();
@@ -1507,7 +1507,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (valueMap.Length != keyProp.Values.Count)
                     {
-                        s_tracer.Write(
+                        s_tracer.PSTraceWrite(
                             PSTraceSourceOptions.WriteLine,
                             $"DSC CreateDynamicKeywordFromClass: the count of values for qualifier 'Values' and 'ValueMap' doesn't match. count of 'Values': {keyProp.Values.Count}, count of 'ValueMap': {valueMap.Length}. Skip the keyword '{keyword.Keyword}'.");
                         return null;
@@ -1520,7 +1520,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                         if (keyProp.ValueMap.ContainsKey(key))
                         {
-                            s_tracer.Write(
+                            s_tracer.PSTraceWrite(
                                 PSTraceSourceOptions.WriteLine,
                                 $"DSC CreateDynamicKeywordFromClass: same string value '{key}' appears more than once in qualifier 'Values'. Skip the keyword '{keyword.Keyword}'.");
                             return null;

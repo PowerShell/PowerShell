@@ -182,7 +182,7 @@ namespace System.Management.Automation
                 property = mshObj.Properties[this.Name] as PSPropertyInfo;
                 if (property == null)
                 {
-                    PSObjectTypeDescriptor.typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Could not find property \"{this.Name}\" to get its value.");
+                    PSObjectTypeDescriptor.typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Could not find property \"{this.Name}\" to get its value.");
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorGetValue",
                         null,
                         ExtendedTypeSystem.PropertyNotFoundInTypeDescriptor, this.Name);
@@ -200,7 +200,7 @@ namespace System.Management.Automation
             }
             catch (ExtendedTypeSystemException e)
             {
-                PSObjectTypeDescriptor.typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Exception getting the value of the property \"{this.Name}\": \"{e.Message}\".");
+                PSObjectTypeDescriptor.typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception getting the value of the property \"{this.Name}\": \"{e.Message}\".");
                 bool shouldThrow;
                 object returnValue = DealWithGetValueException(e, out shouldThrow);
                 if (shouldThrow)
@@ -239,7 +239,7 @@ namespace System.Management.Automation
             if (GettingValueException != null)
             {
                 GettingValueException.SafeInvoke(this, eventArgs);
-                PSObjectTypeDescriptor.typeDescriptor.Write(
+                PSObjectTypeDescriptor.typeDescriptor.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"GettingValueException event has been triggered resulting in ValueReplacement:\"{eventArgs.ValueReplacement}\".");
             }
@@ -279,7 +279,7 @@ namespace System.Management.Automation
                 PSPropertyInfo property = mshObj.Properties[this.Name] as PSPropertyInfo;
                 if (property == null)
                 {
-                    PSObjectTypeDescriptor.typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Could not find property \"{this.Name}\" to set its value.");
+                    PSObjectTypeDescriptor.typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Could not find property \"{this.Name}\" to set its value.");
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorSetValue",
                         null,
                         ExtendedTypeSystem.PropertyNotFoundInTypeDescriptor, this.Name);
@@ -297,7 +297,7 @@ namespace System.Management.Automation
             }
             catch (ExtendedTypeSystemException e)
             {
-                PSObjectTypeDescriptor.typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Exception setting the value of the property \"{this.Name}\": \"{e.Message}\".");
+                PSObjectTypeDescriptor.typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Exception setting the value of the property \"{this.Name}\": \"{e.Message}\".");
                 bool shouldThrow;
                 DealWithSetValueException(e, out shouldThrow);
                 if (shouldThrow)
@@ -315,7 +315,7 @@ namespace System.Management.Automation
             if (SettingValueException != null)
             {
                 SettingValueException.SafeInvoke(this, eventArgs);
-                PSObjectTypeDescriptor.typeDescriptor.Write(
+                PSObjectTypeDescriptor.typeDescriptor.PSTraceWrite(
                     PSTraceSourceOptions.WriteLine,
                     $"SettingValueException event has been triggered resulting in ShouldThrow:\"{eventArgs.ShouldThrow}\".");
             }
@@ -372,7 +372,7 @@ namespace System.Management.Automation
                 // WriteOnly properties are not returned in TypeDescriptor.GetProperties, so we do the same.
                 if (!propertyInfo.IsGettable)
                 {
-                    typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Property \"{propertyInfo.Name}\" is write-only so it has been skipped.");
+                    typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Property \"{propertyInfo.Name}\" is write-only so it has been skipped.");
                     return;
                 }
 
@@ -386,13 +386,13 @@ namespace System.Management.Automation
                         DotNetAdapter.PropertyCacheEntry propertyEntry = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         if (propertyEntry == null)
                         {
-                            typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Skipping attribute check for property \"{property.Name}\" because it is an adapted property (not a .NET property).");
+                            typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Skipping attribute check for property \"{property.Name}\" because it is an adapted property (not a .NET property).");
                         }
                         else if (property.isDeserialized)
                         {
                             // At the moment we are not serializing attributes, so we can skip
                             // the attribute check if the property is deserialized.
-                            typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Skipping attribute check for property \"{property.Name}\" because it has been deserialized.");
+                            typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Skipping attribute check for property \"{property.Name}\" because it has been deserialized.");
                         }
                         else
                         {
@@ -402,7 +402,7 @@ namespace System.Management.Automation
                             {
                                 if (!propertyAttributes.Contains(attribute))
                                 {
-                                    typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Property \"{property.Name}\" does not contain attribute \"{attribute}\" so it has been skipped.");
+                                    typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Property \"{property.Name}\" does not contain attribute \"{attribute}\" so it has been skipped.");
                                     return;
                                 }
                             }
@@ -412,7 +412,7 @@ namespace System.Management.Automation
 
                 propertyAttributes ??= new AttributeCollection();
 
-                typeDescriptor.Write(PSTraceSourceOptions.WriteLine, $"Adding property \"{propertyInfo.Name}\".");
+                typeDescriptor.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Adding property \"{propertyInfo.Name}\".");
 
                 PSObjectPropertyDescriptor propertyDescriptor =
                     new PSObjectPropertyDescriptor(propertyInfo.Name, propertyType, !propertyInfo.IsSettable, propertyAttributes);

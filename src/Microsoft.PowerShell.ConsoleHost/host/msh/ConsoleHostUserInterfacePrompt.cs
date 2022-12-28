@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell
 
                     if (cancelInput)
                     {
-                        s_tracer.Write(PSTraceSourceOptions.WriteLine, $"Prompt canceled");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.WriteLine, $"Prompt canceled");
                         WriteLineToConsole();
                         results.Clear();
                         break;
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell
                     {
                         string noHelpErrMsg =
                             StringUtil.Format(ConsoleHostUserInterfaceStrings.PromptNoHelpAvailableErrorTemplate, desc.Name);
-                        s_tracer.Write(PSTraceSourceOptions.Warning, $"{noHelpErrMsg}");
+                        s_tracer.PSTraceWrite(PSTraceSourceOptions.Warning, $"{noHelpErrMsg}");
                         WriteLineToConsole(WrapToCurrentWindowWidth(noHelpErrMsg));
                     }
                     else
