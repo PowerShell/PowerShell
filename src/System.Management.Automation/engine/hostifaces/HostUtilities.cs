@@ -522,8 +522,18 @@ namespace System.Management.Automation
         internal static string RemoveIdentifierInfoFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (string.IsNullOrEmpty(message))
+            if (message is null ||
+                message.Length < 36 ||
+                message[33] != '[' ||
+                message[32] != ':' ||
+                message[20] != '-' ||
+                message[16] != '-' ||
+                message[12] != '-' ||
+                message[8] != '-')
+            {
+                // Fast return if the message does not start with 'GUID:[]:'.
                 return message;
+            }
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:\[.*\]:).*";
             Match matchResult = Regex.Match(message, pattern);
