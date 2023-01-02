@@ -7998,15 +7998,8 @@ namespace System.Management.Automation.Language
             ErrorList.Add(error);
         }
 
-        private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
+        private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput)
         {
-            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
-
-            if (args != null && args.Length > 0)
-            {
-                errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, args);
-            }
-
             ParseError errorToSave = new ParseError(extent, errorId, errorMsg, incompleteInput);
             SaveError(errorToSave);
         }
@@ -8047,75 +8040,85 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(msgCorrespondsToString, string.Format("Parser error ID \"{0}\" must correspond to the error message \"{1}\"", errorId, errorMsg));
         }
 
-        private static object[] arrayOfOneArg
-        {
-            get { return t_arrayOfOneArg ??= new object[1]; }
-        }
-
-        [ThreadStatic]
-        private static object[] t_arrayOfOneArg;
-
-        private static object[] arrayOfTwoArgs
-        {
-            get { return t_arrayOfTwoArgs ??= new object[2]; }
-        }
-
-        [ThreadStatic]
-        private static object[] t_arrayOfTwoArgs;
-
         internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg)
         {
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
             // If the error position isn't at the end of the input, then we don't want to mark the error
             // as incomplete input.
             bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
-            SaveError(extent, errorId, errorMsg, incompleteInput, null);
+            SaveError(extent, errorId, errorMsg, incompleteInput);
             return incompleteInput;
         }
 
         internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg, object arg)
         {
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
+            errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, arg);
+
             // If the error position isn't at the end of the input, then we don't want to mark the error
             // as incomplete input.
             bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
-            arrayOfOneArg[0] = arg;
-            SaveError(extent, errorId, errorMsg, incompleteInput, arrayOfOneArg);
+            SaveError(extent, errorId, errorMsg, incompleteInput);
             return incompleteInput;
         }
 
         internal bool ReportIncompleteInput(IScriptExtent errorPosition,
                                             IScriptExtent errorDetectedPosition,
                                             string errorId,
-                                            string errorMsg,
-                                            params object[] args)
+                                            string errorMsg)
         {
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
             // If the error position isn't at the end of the input, then we don't want to mark the error
             // as incomplete input.
             bool incompleteInput = _tokenizer.IsAtEndOfScript(errorDetectedPosition, checkCommentsAndWhitespace: true);
-            SaveError(errorPosition, errorId, errorMsg, incompleteInput, args);
+            SaveError(errorPosition, errorId, errorMsg, incompleteInput);
             return incompleteInput;
         }
 
         internal void ReportError(IScriptExtent extent, string errorId, string errorMsg)
         {
-            SaveError(extent, errorId, errorMsg, false, null);
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
+            SaveError(extent, errorId, errorMsg, incompleteInput: false);
         }
 
         internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg)
         {
-            arrayOfOneArg[0] = arg;
-            SaveError(extent, errorId, errorMsg, false, arrayOfOneArg);
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
+            errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, arg);
+
+            SaveError(extent, errorId, errorMsg, incompleteInput: false);
         }
 
         internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg1, object arg2)
         {
-            arrayOfTwoArgs[0] = arg1;
-            arrayOfTwoArgs[1] = arg2;
-            SaveError(extent, errorId, errorMsg, false, arrayOfTwoArgs);
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
+            errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, arg1, arg2);
+
+            SaveError(extent, errorId, errorMsg, incompleteInput: false);
+        }
+
+        internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg1, object arg2, object arg3)
+        {
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
+            errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, arg1, arg2, arg3);
+
+            SaveError(extent, errorId, errorMsg, incompleteInput: false);
         }
 
         internal void ReportError(IScriptExtent extent, string errorId, string errorMsg, params object[] args)
         {
-            SaveError(extent, errorId, errorMsg, false, args);
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
+
+            errorMsg = string.Format(CultureInfo.CurrentCulture, errorMsg, args);
+
+            SaveError(extent, errorId, errorMsg, incompleteInput: false);
         }
 
         internal void ReportError(ParseError error)

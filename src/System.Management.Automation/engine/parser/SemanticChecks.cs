@@ -1842,21 +1842,22 @@ namespace System.Management.Automation.Language
             Utils.EnsureModuleLoaded("Microsoft.PowerShell.Utility", context);
         }
 
-        private void ReportError(Ast ast, string errorId, string errorMsg, params object[] args)
+        private void ReportError(IScriptExtent extent, string errorId, string errorMsg)
         {
-            ReportError(ast.Extent, errorId, errorMsg, args);
+            _parser.ReportError(extent, errorId, errorMsg);
             FoundError = true;
         }
 
-        private void ReportError(IScriptExtent extent, string errorId, string errorMsg, params object[] args)
+        private void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg)
         {
-            _parser.ReportError(extent, errorId, errorMsg, args);
+            _parser.ReportError(extent, errorId, errorMsg, arg);
             FoundError = true;
         }
 
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
-            ReportError(scriptBlockAst,
+            ReportError(
+                scriptBlockAst.Extent,
                 nameof(ParserStrings.ScriptBlockNotSupportedInDataSection),
                 ParserStrings.ScriptBlockNotSupportedInDataSection);
 
@@ -1865,7 +1866,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitParamBlock(ParamBlockAst paramBlockAst)
         {
-            ReportError(paramBlockAst,
+            ReportError(
+                paramBlockAst.Extent,
                 nameof(ParserStrings.ParameterDeclarationNotSupportedInDataSection),
                 ParserStrings.ParameterDeclarationNotSupportedInDataSection);
 
@@ -1890,7 +1892,8 @@ namespace System.Management.Automation.Language
             // If we couldn't resolve the type, then it's definitely an error.
             if (type == null || ((type.IsArray ? type.GetElementType() : type).GetTypeCode() == TypeCode.Object))
             {
-                ReportError(ast,
+                ReportError(
+                    ast.Extent,
                     nameof(ParserStrings.TypeNotAllowedInDataSection),
                     ParserStrings.TypeNotAllowedInDataSection,
                     typename.FullName);
@@ -1907,7 +1910,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
         {
             Diagnostics.Assert(FoundError, "an error should have been reported elsewhere, making this redunant");
-            ReportError(attributeAst,
+            ReportError(
+                attributeAst.Extent,
                 nameof(ParserStrings.AttributeNotSupportedInDataSection),
                 ParserStrings.AttributeNotSupportedInDataSection);
 
@@ -1930,7 +1934,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
-            ReportError(functionDefinitionAst,
+            ReportError(
+                functionDefinitionAst.Extent,
                 nameof(ParserStrings.FunctionDeclarationNotSupportedInDataSection),
                 ParserStrings.FunctionDeclarationNotSupportedInDataSection);
 
@@ -1953,7 +1958,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTrap(TrapStatementAst trapStatementAst)
         {
-            ReportError(trapStatementAst,
+            ReportError(
+                trapStatementAst.Extent,
                 nameof(ParserStrings.TrapStatementNotSupportedInDataSection),
                 ParserStrings.TrapStatementNotSupportedInDataSection);
 
@@ -1962,7 +1968,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst)
         {
-            ReportError(switchStatementAst,
+            ReportError(
+                switchStatementAst.Extent,
                 nameof(ParserStrings.SwitchStatementNotSupportedInDataSection),
                 ParserStrings.SwitchStatementNotSupportedInDataSection);
 
@@ -1971,7 +1978,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
         {
-            ReportError(dataStatementAst,
+            ReportError(
+                dataStatementAst.Extent,
                 nameof(ParserStrings.DataSectionStatementNotSupportedInDataSection),
                 ParserStrings.DataSectionStatementNotSupportedInDataSection);
 
@@ -1980,7 +1988,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst)
         {
-            ReportError(forEachStatementAst,
+            ReportError(
+                forEachStatementAst.Extent,
                 nameof(ParserStrings.ForeachStatementNotSupportedInDataSection),
                 ParserStrings.ForeachStatementNotSupportedInDataSection);
 
@@ -1989,7 +1998,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst)
         {
-            ReportError(doWhileStatementAst,
+            ReportError(
+                doWhileStatementAst.Extent,
                 nameof(ParserStrings.DoWhileStatementNotSupportedInDataSection),
                 ParserStrings.DoWhileStatementNotSupportedInDataSection);
 
@@ -1998,7 +2008,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitForStatement(ForStatementAst forStatementAst)
         {
-            ReportError(forStatementAst,
+            ReportError(
+                forStatementAst.Extent,
                 nameof(ParserStrings.ForWhileStatementNotSupportedInDataSection),
                 ParserStrings.ForWhileStatementNotSupportedInDataSection);
 
@@ -2007,7 +2018,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitWhileStatement(WhileStatementAst whileStatementAst)
         {
-            ReportError(whileStatementAst,
+            ReportError(
+                whileStatementAst.Extent,
                 nameof(ParserStrings.ForWhileStatementNotSupportedInDataSection),
                 ParserStrings.ForWhileStatementNotSupportedInDataSection);
 
@@ -2023,7 +2035,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTryStatement(TryStatementAst tryStatementAst)
         {
-            ReportError(tryStatementAst,
+            ReportError(
+                tryStatementAst.Extent,
                 nameof(ParserStrings.TryStatementNotSupportedInDataSection),
                 ParserStrings.TryStatementNotSupportedInDataSection);
 
@@ -2032,7 +2045,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst)
         {
-            ReportError(breakStatementAst,
+            ReportError(
+                breakStatementAst.Extent,
                 nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
                 ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
@@ -2041,7 +2055,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitContinueStatement(ContinueStatementAst continueStatementAst)
         {
-            ReportError(continueStatementAst,
+            ReportError(
+                continueStatementAst.Extent,
                 nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
                 ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
@@ -2050,7 +2065,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitReturnStatement(ReturnStatementAst returnStatementAst)
         {
-            ReportError(returnStatementAst,
+            ReportError(
+                returnStatementAst.Extent,
                 nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
                 ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
@@ -2059,7 +2075,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitExitStatement(ExitStatementAst exitStatementAst)
         {
-            ReportError(exitStatementAst,
+            ReportError(
+                exitStatementAst.Extent,
                 nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
                 ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
@@ -2068,7 +2085,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitThrowStatement(ThrowStatementAst throwStatementAst)
         {
-            ReportError(throwStatementAst,
+            ReportError(
+                throwStatementAst.Extent,
                 nameof(ParserStrings.FlowControlStatementNotSupportedInDataSection),
                 ParserStrings.FlowControlStatementNotSupportedInDataSection);
 
@@ -2077,7 +2095,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst)
         {
-            ReportError(doUntilStatementAst,
+            ReportError(
+                doUntilStatementAst.Extent,
                 nameof(ParserStrings.DoWhileStatementNotSupportedInDataSection),
                 ParserStrings.DoWhileStatementNotSupportedInDataSection);
 
@@ -2087,7 +2106,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
             // Assignments are never allowed.
-            ReportError(assignmentStatementAst,
+            ReportError(
+                assignmentStatementAst.Extent,
                 nameof(ParserStrings.AssignmentStatementNotSupportedInDataSection),
                 ParserStrings.AssignmentStatementNotSupportedInDataSection);
 
@@ -2110,7 +2130,8 @@ namespace System.Management.Automation.Language
 
             if (commandAst.InvocationOperator == TokenKind.Dot)
             {
-                ReportError(commandAst,
+                ReportError(
+                    commandAst.Extent,
                     nameof(ParserStrings.DotSourcingNotSupportedInDataSection),
                     ParserStrings.DotSourcingNotSupportedInDataSection);
                 return AstVisitAction.Continue;
@@ -2124,14 +2145,16 @@ namespace System.Management.Automation.Language
             {
                 if (commandAst.InvocationOperator == TokenKind.Ampersand)
                 {
-                    ReportError(commandAst,
+                    ReportError(
+                        commandAst.Extent,
                         nameof(ParserStrings.OperatorNotSupportedInDataSection),
                         ParserStrings.OperatorNotSupportedInDataSection,
                         TokenKind.Ampersand.Text());
                 }
                 else
                 {
-                    ReportError(commandAst,
+                    ReportError(
+                        commandAst.Extent,
                         nameof(ParserStrings.CmdletNotInAllowedListForDataSection),
                         ParserStrings.CmdletNotInAllowedListForDataSection,
                         commandAst.Extent.Text);
@@ -2145,7 +2168,8 @@ namespace System.Management.Automation.Language
                 return AstVisitAction.Continue;
             }
 
-            ReportError(commandAst,
+            ReportError(
+                commandAst.Extent,
                 nameof(ParserStrings.CmdletNotInAllowedListForDataSection),
                 ParserStrings.CmdletNotInAllowedListForDataSection,
                 commandName);
@@ -2169,7 +2193,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst)
         {
-            ReportError(mergingRedirectionAst,
+            ReportError(
+                mergingRedirectionAst.Extent,
                 nameof(ParserStrings.RedirectionNotSupportedInDataSection),
                 ParserStrings.RedirectionNotSupportedInDataSection);
 
@@ -2178,7 +2203,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitFileRedirection(FileRedirectionAst fileRedirectionAst)
         {
-            ReportError(fileRedirectionAst,
+            ReportError(
+                fileRedirectionAst.Extent,
                 nameof(ParserStrings.RedirectionNotSupportedInDataSection),
                 ParserStrings.RedirectionNotSupportedInDataSection);
 
@@ -2212,7 +2238,8 @@ namespace System.Management.Automation.Language
         {
             if (unaryExpressionAst.TokenKind.HasTrait(TokenFlags.DisallowedInRestrictedMode))
             {
-                ReportError(unaryExpressionAst,
+                ReportError(
+                    unaryExpressionAst.Extent,
                     nameof(ParserStrings.OperatorNotSupportedInDataSection),
                     ParserStrings.OperatorNotSupportedInDataSection,
                     unaryExpressionAst.TokenKind.Text());
@@ -2298,7 +2325,8 @@ namespace System.Management.Automation.Language
                 resourceArg = argBuilder.ToString();
             }
 
-            ReportError(variableExpressionAst,
+            ReportError(
+                variableExpressionAst.Extent,
                 nameof(ParserStrings.VariableReferenceNotSupportedInDataSection),
                 ParserStrings.VariableReferenceNotSupportedInDataSection,
                 resourceArg);
@@ -2308,7 +2336,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitMemberExpression(MemberExpressionAst memberExpressionAst)
         {
-            ReportError(memberExpressionAst,
+            ReportError(
+                memberExpressionAst.Extent,
                 nameof(ParserStrings.PropertyReferenceNotSupportedInDataSection),
                 ParserStrings.PropertyReferenceNotSupportedInDataSection);
 
@@ -2317,7 +2346,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst)
         {
-            ReportError(methodCallAst,
+            ReportError(
+                methodCallAst.Extent,
                 nameof(ParserStrings.MethodCallNotSupportedInDataSection),
                 ParserStrings.MethodCallNotSupportedInDataSection);
 
@@ -2347,7 +2377,8 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
         {
-            ReportError(scriptBlockExpressionAst,
+            ReportError(
+                scriptBlockExpressionAst.Extent,
                 nameof(ParserStrings.ScriptBlockNotSupportedInDataSection),
                 ParserStrings.ScriptBlockNotSupportedInDataSection);
 
@@ -2373,7 +2404,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst)
         {
             // Array references are never allowed.  They could turn into function calls.
-            ReportError(indexExpressionAst,
+            ReportError(
+                indexExpressionAst.Extent,
                 nameof(ParserStrings.ArrayReferenceNotSupportedInDataSection),
                 ParserStrings.ArrayReferenceNotSupportedInDataSection);
 
@@ -2383,7 +2415,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)
         {
             // Attributes are not allowed, they may code in attribute constructors.
-            ReportError(attributedExpressionAst,
+            ReportError(
+                attributedExpressionAst.Extent,
                 nameof(ParserStrings.AttributeNotSupportedInDataSection),
                 ParserStrings.AttributeNotSupportedInDataSection);
 
@@ -2393,7 +2426,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst)
         {
             // Keyword blocks are not allowed
-            ReportError(blockStatementAst,
+            ReportError(
+                blockStatementAst.Extent,
                 nameof(ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection),
                 ParserStrings.ParallelAndSequenceBlockNotSupportedInDataSection);
 

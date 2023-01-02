@@ -1143,9 +1143,14 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private void ReportError(int errorOffset, string errorId, string errorMsg, params object[] args)
+        private void ReportError(int errorOffset, string errorId, string errorMsg)
         {
-            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset + 1), errorId, errorMsg, args);
+            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset + 1), errorId, errorMsg);
+        }
+
+        private void ReportError(int errorOffset, string errorId, string errorMsg, object arg)
+        {
+            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset + 1), errorId, errorMsg, arg);
         }
 
         private void ReportError(IScriptExtent extent, string errorId, string errorMsg)
