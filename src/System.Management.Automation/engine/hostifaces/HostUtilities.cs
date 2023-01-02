@@ -523,12 +523,12 @@ namespace System.Management.Automation
         {
             matchPattern = false;
             if (message is null ||
-                message.Length < 36 ||
-                message[33] != '[' ||
-                message[32] != ':' ||
-                message[20] != '-' ||
-                message[16] != '-' ||
-                message[12] != '-' ||
+                message.Length < 40 ||
+                message[37] != '[' ||
+                message[36] != ':' ||
+                message[23] != '-' ||
+                message[18] != '-' ||
+                message[13] != '-' ||
                 message[8] != '-')
             {
                 // Fast return if the message does not start with 'GUID:[]:'.
