@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell
         /// the advantage is portability through abstraction. Does not support
         /// arrow key movement, but supports backspace.
         /// </summary>
-        ///<param name="isSecureString">
+        /// <param name="isSecureString">
         /// True to specify reading a SecureString; false reading a string
         /// </param>
         /// <param name="printToken">

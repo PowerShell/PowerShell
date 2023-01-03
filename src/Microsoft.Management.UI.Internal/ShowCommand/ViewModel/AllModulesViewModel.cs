@@ -79,7 +79,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
-            if (commands == null || !commands.GetEnumerator().MoveNext())
+            ArgumentNullException.ThrowIfNull(commands);
+
+            if (!commands.GetEnumerator().MoveNext())
             {
                 throw new ArgumentNullException("commands");
             }

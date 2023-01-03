@@ -181,6 +181,7 @@ namespace System.Management.Automation.Configuration
                 : string.Concat(shellId, ":", "ExecutionPolicy");
         }
 
+        /// <summary>
         /// Get the names of experimental features enabled in the config file.
         /// </summary>
         internal string[] GetExperimentalFeatures()
