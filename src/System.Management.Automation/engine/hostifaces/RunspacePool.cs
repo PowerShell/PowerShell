@@ -1003,7 +1003,7 @@ namespace System.Management.Automation.Runspaces
             return _internalPool.CreateDisconnectedPowerShells(this);
         }
 
-        ///<summary>
+        /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
         /// <returns>RunspacePoolCapability.</returns>

@@ -926,7 +926,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the certificate store to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Ignored.
         /// Only support store.
         /// </param>

@@ -1215,7 +1215,7 @@ namespace System.Management.Automation.Runspaces.Internal
             return psCollection;
         }
 
-        ///<summary>
+        /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
         /// <returns>RunspacePoolCapability.</returns>

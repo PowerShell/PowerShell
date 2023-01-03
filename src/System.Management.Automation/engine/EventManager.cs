@@ -44,6 +44,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a PowerShell event.
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -56,11 +57,11 @@ namespace System.Management.Automation
         /// <param name="extraData">
         /// Any additional data you wish to attach to the event
         /// </param>
-        /// </summary>
         protected abstract PSEventArgs CreateEvent(string sourceIdentifier, object sender, object[] args, PSObject extraData);
 
         /// <summary>
         /// Generate a PowerShell event.
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -73,7 +74,6 @@ namespace System.Management.Automation
         /// <param name="extraData">
         /// Any additional data you wish to attach to the event
         /// </param>
-        /// </summary>
         public PSEventArgs GenerateEvent(string sourceIdentifier, object sender, object[] args, PSObject extraData)
         {
             return this.GenerateEvent(sourceIdentifier, sender, args, extraData, false, false);
@@ -81,6 +81,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Generate a PowerShell event.
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -100,7 +101,6 @@ namespace System.Management.Automation
         /// <param name="waitForCompletionInCurrentThread">
         /// Wait for the event and associated action to be processed and completed.
         /// </param>
-        /// </summary>
         public PSEventArgs GenerateEvent(string sourceIdentifier, object sender, object[] args, PSObject extraData,
             bool processInCurrentThread, bool waitForCompletionInCurrentThread)
         {
@@ -133,14 +133,15 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the event subscription that corresponds to an identifier
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// The identifier that identifies the source of the events
         /// </param>
-        /// </summary>
         public abstract IEnumerable<PSEventSubscriber> GetEventSubscribers(string sourceIdentifier);
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -162,12 +163,12 @@ namespace System.Management.Automation
         /// <param name="forwardEvent">
         /// Whether events in this subscriber should be forwarded to the client PowerShell during remote executions
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public abstract PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent);
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -193,12 +194,12 @@ namespace System.Management.Automation
         /// Indicate how many times the subscriber should be triggered before auto-unregister it
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public abstract PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount);
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -220,12 +221,12 @@ namespace System.Management.Automation
         /// <param name="forwardEvent">
         /// Whether events in this subscriber should be forwarded to the client PowerShell during remote executions
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public abstract PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent);
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -251,12 +252,12 @@ namespace System.Management.Automation
         /// Indicate how many times the subscriber should be triggered before auto-unregister it
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public abstract PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount);
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -286,7 +287,6 @@ namespace System.Management.Automation
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// The default value is zero
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         internal virtual PSEventSubscriber SubscribeEvent(object source,
             string eventName,
@@ -303,10 +303,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
+        /// </summary>
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
-        /// </summary>
         public abstract void UnsubscribeEvent(PSEventSubscriber subscriber);
 
         /// <summary>
@@ -367,6 +367,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -388,7 +389,6 @@ namespace System.Management.Automation
         /// <param name="forwardEvent">
         /// Whether events in this subscriber should be forwarded to the client PowerShell during remote executions
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent)
         {
@@ -397,6 +397,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -422,7 +423,6 @@ namespace System.Management.Automation
         /// Indicate how many times the subscriber should be triggered before auto-unregister it
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
@@ -436,6 +436,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -465,7 +466,6 @@ namespace System.Management.Automation
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// The default value is zero
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         internal override PSEventSubscriber SubscribeEvent(object source,
             string eventName,
@@ -484,6 +484,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -505,7 +506,6 @@ namespace System.Management.Automation
         /// <param name="forwardEvent">
         /// Whether events in this subscriber should be forwarded to the client PowerShell during remote executions
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent)
         {
@@ -514,6 +514,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -539,7 +540,6 @@ namespace System.Management.Automation
         /// Indicate how many times the subscriber should be triggered before auto-unregister it
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
@@ -797,10 +797,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
+        /// </summary>
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
-        /// </summary>
         public override void UnsubscribeEvent(PSEventSubscriber subscriber)
         {
             UnsubscribeEvent(subscriber, false);
@@ -808,13 +808,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
+        /// </summary>
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
         /// <param name="skipDraining">
         /// Indicate if we should skip draining
         /// </param>
-        /// </summary>
         private void UnsubscribeEvent(PSEventSubscriber subscriber, bool skipDraining)
         {
             ArgumentNullException.ThrowIfNull(subscriber);
@@ -876,6 +876,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a PowerShell event.
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -888,7 +889,6 @@ namespace System.Management.Automation
         /// <param name="extraData">
         /// Any additional data you wish to attach to the event
         /// </param>
-        /// </summary>
         protected override PSEventArgs CreateEvent(string sourceIdentifier, object sender, object[] args, PSObject extraData)
         {
             return new PSEventArgs(null, _context.CurrentRunspace.InstanceId, GetNextEventId(), sourceIdentifier, sender, args, extraData);
@@ -1287,10 +1287,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the event subscription that corresponds to an identifier
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// The identifier that identifies the source of the events
         /// </param>
-        /// </summary>
         public override IEnumerable<PSEventSubscriber> GetEventSubscribers(string sourceIdentifier)
         {
             return GetEventSubscribers(sourceIdentifier, false);
@@ -1516,10 +1516,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Stop the timer if it's not null.
         /// Unsubscribes from all events.
+        /// </summary>
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
-        /// </summary>
         public void Dispose(bool disposing)
         {
             if (disposing)
@@ -1580,6 +1580,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a PowerShell event.
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -1592,7 +1593,6 @@ namespace System.Management.Automation
         /// <param name="extraData">
         /// Any additional data you wish to attach to the event
         /// </param>
-        /// </summary>
         protected override PSEventArgs CreateEvent(string sourceIdentifier, object sender, object[] args, PSObject extraData)
         {
             // note that this is a local call, so we use null for the computer name
@@ -1648,10 +1648,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the event subscription that corresponds to an identifier
+        /// </summary>
         /// <param name="sourceIdentifier">
         /// The identifier that identifies the source of the events
         /// </param>
-        /// </summary>
         public override IEnumerable<PSEventSubscriber> GetEventSubscribers(string sourceIdentifier)
         {
             throw new NotSupportedException(EventingResources.RemoteOperationNotSupported);
@@ -1659,6 +1659,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1680,7 +1681,6 @@ namespace System.Management.Automation
         /// <param name="forwardEvent">
         /// Whether events in this subscriber should be forwarded to the client PowerShell during remote executions
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent)
         {
@@ -1689,6 +1689,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1714,7 +1715,6 @@ namespace System.Management.Automation
         /// Indicate how many times the subscriber should be triggered before auto-unregister it
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, ScriptBlock action, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
@@ -1723,6 +1723,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1744,7 +1745,6 @@ namespace System.Management.Automation
         /// <param name="forwardEvent">
         /// Whether events in this subscriber should be forwarded to the client PowerShell during remote executions
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent)
         {
@@ -1753,6 +1753,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
+        /// </summary>
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1778,7 +1779,6 @@ namespace System.Management.Automation
         /// Indicate how many times the subscriber should be triggered before auto-unregister it
         /// If the value is equal or less than zero, there is no limit on the number of times the event can be triggered without being unregistered
         /// </param>
-        /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public override PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount)
         {
@@ -1787,10 +1787,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
+        /// </summary>
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
-        /// </summary>
         public override void UnsubscribeEvent(PSEventSubscriber subscriber)
         {
             throw new NotSupportedException(EventingResources.RemoteOperationNotSupported);
@@ -2048,10 +2048,10 @@ namespace System.Management.Automation
         
         /// <summary>
         /// Determines if two PSEventSubscriber instances are equal
+        /// </summary>
         /// <param name="other">
         /// The PSEventSubscriber to which to compare this instance
         /// </param>
-        /// </summary>
         public bool Equals(PSEventSubscriber other)
         {
             if (other == null)
@@ -2095,6 +2095,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new instance of the PsEventHandler class for a given
         /// event manager, source identifier, and extra data
+        /// </summary>
         /// <param name="eventManager">
         /// The event manager to which we forward events.
         /// </param>
@@ -2108,7 +2109,6 @@ namespace System.Management.Automation
         /// <param name="extraData">
         /// Any additional data you wish to attach to the event
         /// </param>
-        /// </summary>
         public PSEventHandler(PSEventManager eventManager, object sender, string sourceIdentifier, PSObject extraData)
         {
             this.eventManager = eventManager;
@@ -2460,6 +2460,7 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Creates a new instance of the PSEventJob class.
+        /// </summary>
         /// <param name="eventManager">
         /// The event manager that controls the event subscriptions
         /// </param>
@@ -2472,7 +2473,6 @@ namespace System.Management.Automation
         /// <param name="name">
         /// The name of the job
         /// </param>
-        /// </summary>
         public PSEventJob(
             PSEventManager eventManager,
             PSEventSubscriber subscriber,
@@ -2549,13 +2549,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the script block
+        /// </summary>
         /// <param name="eventSubscriber">
         /// The subscriber that generated this event
         /// </param>
         /// <param name="eventArgs">
         /// The context of this event
         /// </param>
-        /// </summary>
         internal void Invoke(PSEventSubscriber eventSubscriber, PSEventArgs eventArgs)
         {
             if (IsFinishedState(JobStateInfo.State))
