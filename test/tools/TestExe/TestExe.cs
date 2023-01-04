@@ -4,6 +4,10 @@
 using System;
 using System.Threading;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Globalization;
 
 namespace TestExe
 {
@@ -28,6 +32,15 @@ namespace TestExe
                     case "-stderr":
                         Console.Error.WriteLine(args[1]);
                         break;
+                    case "-readbytes":
+                        ReadBytes();
+                        break;
+                    case "-writebytes":
+                        WriteBytes(args.AsSpan()[1..]);
+                        break;
+                    case "-writebase64bytes":
+                        WriteBase64Bytes(args[1]);
+                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
@@ -39,6 +52,51 @@ namespace TestExe
             }
 
             return 0;
+        }
+
+        private static void WriteBase64Bytes(string value)
+        {
+            using Stream stdout = Console.OpenStandardOutput();
+            stdout.Write(Convert.FromBase64String(value));
+        }
+
+        private static void WriteBytes(ReadOnlySpan<string> args)
+        {
+            using Stream stdout = Console.OpenStandardOutput();
+            foreach (string arg in args)
+            {
+                if (!byte.TryParse(arg, NumberStyles.AllowHexSpecifier, provider: null, out byte value))
+                {
+                    throw new ArgumentException(
+                        nameof(args),
+                        "All args after -writebytes must be single byte hex strings.");
+                }
+
+                stdout.WriteByte(value);
+            }
+        }
+
+        [SkipLocalsInit]
+        private static void ReadBytes()
+        {
+            using Stream stdin = Console.OpenStandardInput();
+            Span<byte> buffer = stackalloc byte[0x200];
+            Unsafe.InitBlock(ref MemoryMarshal.GetReference(buffer), 0, 0x200);
+            Span<char> hex = stackalloc char[] { '\0', '\0' };
+            while (true)
+            {
+                int received = stdin.Read(buffer);
+                if (received is 0)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < received; i++)
+                {
+                    buffer[i].TryFormat(hex, out _, "X2");
+                    Console.Out.WriteLine(hex);
+                }
+            }
         }
 
         // <Summary>
