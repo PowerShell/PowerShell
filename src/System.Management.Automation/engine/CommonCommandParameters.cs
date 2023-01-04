@@ -129,8 +129,13 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This parameter tells the command what to do when an progress record occurs.
         /// </remarks>
-        [Parameter]
-        [Alias("pa")]
+        /// <!--
+        /// NOTE: The "proga" alias name does not follow the same alias naming convention used
+        /// with other common parameter aliases that control stream functionality; however,
+        /// "pa" was already taken as a parameter alias in other commands when this parameter
+        /// was added to PowerShell, so "proga" was chosen instead.
+        /// -->        [Parameter]
+        [Alias("proga")]
         public ActionPreference ProgressAction
         {
             get { return _commandRuntime.ProgressPreference; }
