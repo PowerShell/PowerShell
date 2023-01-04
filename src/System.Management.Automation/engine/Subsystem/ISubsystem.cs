@@ -10,9 +10,7 @@ namespace System.Management.Automation.Subsystem
 {
     /// <summary>
     /// Define the kinds of subsystems.
-    /// Allow composite enum values to enable one subsystem implementation to serve as multiple subystems.
     /// </summary>
-    [Flags]
     public enum SubsystemKind : uint
     {
         /// <summary>
@@ -36,12 +34,8 @@ namespace System.Management.Automation.Subsystem
     /// The API contracts for specific subsystems are defined within the specific interfaces/abstract classes that implements this interface.
     /// </summary>
     /// <remarks>
-    /// There are two purposes to have the internal member `Kind` declared in 'ISubsystem':
-    /// 1. Make the mapping from an `ISubsystem` implementation to the `SubsystemKind` easy;
-    /// 2. Make sure a user cannot directly implement 'ISubsystem', but have to derive from one of the concrete subsystem interface or abstract class.
-    /// <para/>
-    /// The internal member needs to have a default implementation defined by the specific subsystem interfaces or abstract class,
-    /// because it should be the same for a specific kind of subsystem.
+    /// A user should not directly implement <see cref="ISubsystem"/>, but instead should derive from one of the concrete subsystem interfaces or abstract classes.
+    /// The instance of a type that only implements 'ISubsystem' cannot be registered to the <see cref="SubsystemManager"/>.
     /// </remarks>
     public interface ISubsystem
     {
@@ -65,10 +59,5 @@ namespace System.Management.Automation.Subsystem
         /// Key: function name; Value: function script.
         /// </summary>
         Dictionary<string, string>? FunctionsToDefine { get; }
-
-        /// <summary>
-        /// Gets the subsystem kind.
-        /// </summary>
-        internal SubsystemKind Kind { get; }
     }
 }
