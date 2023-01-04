@@ -419,5 +419,6 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
+        Progress = 16,
     }
 }
