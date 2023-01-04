@@ -124,6 +124,21 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets or sets the value of the ProgressAction parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command what to do when an progress record occurs.
+        /// </remarks>
+        [Parameter]
+        [Alias("pa")]
+        public ActionPreference ProgressAction
+        {
+            get { return _commandRuntime.ProgressPreference; }
+
+            set { _commandRuntime.ProgressPreference = value; }
+        }
+
+        /// <summary>
         /// Gets or sets the value of the ErrorVariable parameter for the cmdlet.
         /// </summary>
         /// <remarks>
