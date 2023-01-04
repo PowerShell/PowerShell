@@ -217,6 +217,7 @@ namespace System.Management.Automation.Subsystem
         /// In the subsystem scenario, registration operations will be minimum, and in most cases, the registered
         /// implementation will never be unregistered, so optimization for reading is more important.
         /// </remarks>
+        /// <param name="rawImpl">The subsystem implementation to be added.</param>
         private protected override void AddImplementation(ISubsystem rawImpl)
         {
             lock (_syncObj)
@@ -273,6 +274,8 @@ namespace System.Management.Automation.Subsystem
         /// In the subsystem scenario, registration operations will be minimum, and in most cases, the registered
         /// implementation will never be unregistered, so optimization for reading is more important.
         /// </remarks>
+        /// <param name="id">The id of the subsystem implementation to be removed.</param>
+        /// <returns>The subsystem implementation that was removed.</returns>
         private protected override ISubsystem RemoveImplementation(Guid id)
         {
             if (!AllowUnregistration)
