@@ -63,17 +63,17 @@ internal abstract class BytePipe : IStreamSource
     }
 }
 
-internal sealed class ProcessBytePipe : BytePipe
+internal sealed class NativeCommandProcessorBytePipe : BytePipe
 {
-    private readonly Process _process;
+    private readonly NativeCommandProcessor _nativeCommand;
 
-    internal ProcessBytePipe(Process process)
+    internal NativeCommandProcessorBytePipe(NativeCommandProcessor nativeCommand)
     {
-        Debug.Assert(process is not null);
-        _process = process;
+        Debug.Assert(nativeCommand is not null);
+        _nativeCommand = nativeCommand;
     }
 
-    public override Stream GetStream() => _process.StandardInput.BaseStream;
+    public override Stream GetStream() => _nativeCommand.GetInputStream();
 }
 
 internal sealed class FileBytePipe : BytePipe

@@ -357,7 +357,9 @@ namespace System.Management.Automation
         /// </summary>
         private NativeCommandParameterBinderController _nativeParameterBinderController;
 
-        internal BytePipe CreateBytePipe() => new ProcessBytePipe(_nativeProcess);
+        internal BytePipe CreateBytePipe() => new NativeCommandProcessorBytePipe(this);
+
+        internal Stream GetInputStream() => _nativeProcess.StandardInput.BaseStream;
 
         internal BytePipe StdOutDestination { get; set; }
 
@@ -412,18 +414,6 @@ namespace System.Management.Automation
         /// </summary>
         internal override void Prepare(IDictionary psDefaultParameterValues)
         {
-            if (_isPreparedCalled)
-            {
-                return;
-            }
-
-            _isPreparedCalled = true;
-
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
-            {
-                DownStreamNativeCommand?.Prepare(psDefaultParameterValues);
-            }
-
             // Check if the application is minishell
             _isMiniShell = IsMiniShell();
 
