@@ -260,11 +260,11 @@ namespace System.Management.Automation.Host
         /// to pre-populate its UI with. This is a PSObject instance so that the value can be serialized, converted,
         /// manipulated like any pipeline object.
         /// </summary>
-        ///<remarks>
+        /// <remarks>
         /// It is up to the implementer of <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> to decide if it
         /// can make use of the object in its presentation of the fields prompt.
         ///
-        ///</remarks>
+        /// </remarks>
         public
         PSObject
         DefaultValue

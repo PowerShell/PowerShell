@@ -1601,8 +1601,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// </summary>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
             LoadDefaultCimKeywords(functionsToDefine, null, null, false);
