@@ -1457,22 +1457,18 @@ namespace System.Management.Automation
         ///     NoLanguage          ->  NoLanguage.
         /// </summary>
         /// <param name="context">ExecutionContext.</param>
-        /// <returns>Previous language mode or null for no language mode change.</returns>
-        internal static PSLanguageMode? EnforceSystemLockDownLanguageMode(ExecutionContext context)
+        /// <returns>The current ExecutionContext language mode.</returns>
+        internal static PSLanguageMode EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
-            PSLanguageMode? oldMode = null;
-
             if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
             {
                 switch (context.LanguageMode)
                 {
                     case PSLanguageMode.FullLanguage:
-                        oldMode = context.LanguageMode;
                         context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         break;
 
                     case PSLanguageMode.RestrictedLanguage:
-                        oldMode = context.LanguageMode;
                         context.LanguageMode = PSLanguageMode.NoLanguage;
                         break;
 
@@ -1482,13 +1478,12 @@ namespace System.Management.Automation
 
                     default:
                         Diagnostics.Assert(false, "Unexpected PSLanguageMode");
-                        oldMode = context.LanguageMode;
                         context.LanguageMode = PSLanguageMode.NoLanguage;
                         break;
                 }
             }
 
-            return oldMode;
+            return context.LanguageMode;
         }
 
         internal static string DisplayHumanReadableFileSize(long bytes)
