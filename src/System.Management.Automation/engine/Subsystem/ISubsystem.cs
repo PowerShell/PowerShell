@@ -11,6 +11,10 @@ namespace System.Management.Automation.Subsystem
     /// <summary>
     /// Define the kinds of subsystems.
     /// </summary>
+    /// <remarks>
+    /// This enum uses power of 2 as the values for the enum elements, so as to make sure
+    /// the bitwise 'or' operation of the elements always results in an invalid value.
+    /// </remarks>
     public enum SubsystemKind : uint
     {
         /// <summary>
