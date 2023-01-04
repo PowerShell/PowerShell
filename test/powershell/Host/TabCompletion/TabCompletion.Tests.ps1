@@ -341,9 +341,23 @@ switch ($x)
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
 
-    It 'Should complete keyword' -Skip {
+    It 'Should complete keyword with partial input' {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'namespace'
+    }
+
+    It 'Should complete keyword with no input' {
+        $res = TabExpansion2 -inputScript 'using ' -cursorColumn 'using '.Length
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
+    }
+
+    It 'Should complete keyword with no input after line continuation' {
+        $InputScript = @'
+using `
+
+'@
+        $res = TabExpansion2 -inputScript $InputScript -cursorColumn $InputScript.Length
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
     }
 
     It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -Skip {

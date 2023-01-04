@@ -22,10 +22,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterInfo(CommandParameterInfo other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.Name = other.Name;
             this.IsMandatory = other.IsMandatory;
@@ -50,10 +47,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterInfo(PSObject other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.Name = other.Members["Name"].Value as string;
             this.IsMandatory = (bool)(other.Members["IsMandatory"].Value);

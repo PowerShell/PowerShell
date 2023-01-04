@@ -72,6 +72,7 @@ jobs:
       sourceScanPath: '$(repoPath)\tools'
 
   # The SBOM .NET install task removes other .NET SDKs. We need to install the SDK we need again.
+
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser

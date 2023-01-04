@@ -302,9 +302,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper fn to check byte[] arg for null.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
             if (arg == null)
@@ -329,9 +329,9 @@ namespace System.Management.Automation
         /// Helper fn to check arg for empty or null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
             if (arg == null)
@@ -348,9 +348,9 @@ namespace System.Management.Automation
         /// Helper fn to check arg for null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckArgForNull(object arg, string argName)
         {
             if (arg == null)
@@ -362,9 +362,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper fn to check arg for null.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
             if (arg == null)
@@ -1702,10 +1702,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal ReadOnlyBag(HashSet<T> hashset)
         {
-            if (hashset == null)
-            {
-                throw new ArgumentNullException(nameof(hashset));
-            }
+            ArgumentNullException.ThrowIfNull(hashset);
 
             _hashset = hashset;
         }
@@ -1743,10 +1740,7 @@ namespace System.Management.Automation.Internal
     {
         internal static void NotNull(object value, string paramName)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            ArgumentNullException.ThrowIfNull(value, paramName);
         }
 
         internal static void NotNullOrEmpty(string value, string paramName)
@@ -1759,7 +1753,9 @@ namespace System.Management.Automation.Internal
 
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            if (value == null || value.Count == 0)
+            ArgumentNullException.ThrowIfNull(value, paramName);
+
+            if (value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
             }

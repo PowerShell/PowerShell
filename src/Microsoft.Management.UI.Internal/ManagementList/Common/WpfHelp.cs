@@ -153,10 +153,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="NotSupportedException">The specified value does not have a parent that supports removal.</exception>
         public static void RemoveFromParent(FrameworkElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
             // If the element has already been detached, do nothing \\
             if (element.Parent == null)
@@ -215,15 +212,9 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="NotSupportedException">The specified value does not have a parent that supports removal.</exception>
         public static void AddChild(FrameworkElement parent, FrameworkElement element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(element);
 
-            if (parent == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(parent, nameof(element));
 
             ContentControl parentContentControl = parent as ContentControl;
 
@@ -310,10 +301,8 @@ namespace Microsoft.Management.UI.Internal
             where T : DependencyObject
         {
             Debug.Assert(obj != null, "obj is null");
-            if (obj == null)
-            {
-                throw new ArgumentNullException("obj");
-            }
+
+            ArgumentNullException.ThrowIfNull(obj);
 
             List<T> childrenOfType = new List<T>();
 
@@ -348,10 +337,7 @@ namespace Microsoft.Management.UI.Internal
         public static T FindVisualAncestorData<T>(this DependencyObject obj)
             where T : class
         {
-            if (obj == null)
-            {
-                throw new ArgumentNullException("obj");
-            }
+            ArgumentNullException.ThrowIfNull(obj);
 
             FrameworkElement parent = obj.FindVisualAncestor<FrameworkElement>();
 
@@ -381,10 +367,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static T FindVisualAncestor<T>(this DependencyObject @object) where T : class
         {
-            if (@object == null)
-            {
-                throw new ArgumentNullException("object");
-            }
+            ArgumentNullException.ThrowIfNull(@object, nameof(@object));
 
             DependencyObject parent = VisualTreeHelper.GetParent(@object);
 
@@ -413,10 +396,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static bool TryExecute(this RoutedCommand command, object parameter, IInputElement target)
         {
-            if (command == null)
-            {
-                throw new ArgumentNullException("command");
-            }
+            ArgumentNullException.ThrowIfNull(command);
 
             if (command.CanExecute(parameter, target))
             {
@@ -437,10 +417,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The reference to the child, or null if the template part wasn't found.</returns>
         public static T GetOptionalTemplateChild<T>(Control templateParent, string childName) where T : FrameworkElement
         {
-            if (templateParent == null)
-            {
-                throw new ArgumentNullException("templateParent");
-            }
+            ArgumentNullException.ThrowIfNull(templateParent);
 
             if (string.IsNullOrEmpty(childName))
             {
@@ -566,10 +543,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentOutOfRangeException">The specified index is not valid for the specified collection.</exception>
         public static void ChangeIndex(ItemCollection items, object item, int newIndex)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException("items");
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             if (!items.Contains(item))
             {

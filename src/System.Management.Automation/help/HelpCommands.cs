@@ -737,8 +737,8 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Checks whether the default runspace associated with the current thread has the standard Get-Help cmdlet.
-        /// <summary>
-        /// <return>True if Get-Help is found, false otherwise.</return>
+        /// </summary>
+        /// <returns>True if Get-Help is found, false otherwise.</returns>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
         {
             InitialSessionState iss = Runspace.DefaultRunspace.InitialSessionState;

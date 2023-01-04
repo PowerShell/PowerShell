@@ -21,10 +21,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterType(Type other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.FullName = other.FullName;
             if (other.IsEnum)
@@ -51,10 +48,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterType(PSObject other)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             this.IsEnum = (bool)(other.Members["IsEnum"].Value);
             this.FullName = other.Members["FullName"].Value as string;

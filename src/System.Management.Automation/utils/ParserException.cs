@@ -131,7 +131,9 @@ namespace System.Management.Automation
             Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
         public ParseException(Language.ParseError[] errors)
         {
-            if ((errors == null) || (errors.Length == 0))
+            ArgumentNullException.ThrowIfNull(errors);
+
+            if (errors.Length == 0)
             {
                 throw new ArgumentNullException(nameof(errors));
             }
