@@ -18,22 +18,22 @@ namespace System.Management.Automation.Subsystem
         #region "Metadata of a Subsystem (public)"
 
         /// <summary>
-        /// The kind of a concrete subsystem.
+        /// Gets the kind of a concrete subsystem.
         /// </summary>
         public SubsystemKind Kind { get; }
 
         /// <summary>
-        /// The type of a concrete subsystem.
+        /// Gets the type of a concrete subsystem.
         /// </summary>
         public Type SubsystemType { get; }
 
         /// <summary>
-        /// Indicate whether the subsystem allows to unregister an implementation.
+        /// Gets a value indicating whether the subsystem allows to unregister an implementation.
         /// </summary>
         public bool AllowUnregistration { get; private set; }
 
         /// <summary>
-        /// Indicate whether the subsystem allows to have multiple implementations registered.
+        /// Gets a value indicating whether the subsystem allows to have multiple implementations registered.
         /// </summary>
         public bool AllowMultipleRegistration { get; private set; }
 
