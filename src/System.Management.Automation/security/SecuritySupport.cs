@@ -1340,7 +1340,17 @@ namespace System.Management.Automation
         static AmsiUtils()
         {
 #if !UNIX
-            s_amsiInitFailed = !CheckAmsiInit();
+            try 
+            {
+                s_amsiInitFailed = !CheckAmsiInit();
+            }
+            catch (DllNotFoundException)
+            {
+                PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
+                s_amsiInitFailed = true;
+                return;
+            }
+            
             PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
 #endif
         }
