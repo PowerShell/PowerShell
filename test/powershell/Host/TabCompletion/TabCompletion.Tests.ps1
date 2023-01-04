@@ -1620,8 +1620,8 @@ dir -Recurse `
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 5
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-ProgressAction,-PSPath,-pv"
         }
 
         It "Test completion for HttpVersion parameter name" {
