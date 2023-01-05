@@ -1265,13 +1265,18 @@ namespace Microsoft.PowerShell.Commands
         // Returns true if the status code is one of the supported redirection codes.
         private static bool IsRedirectCode(HttpStatusCode code)
         {
-            int intCode = (int)code;
-            return
-            (
-                (intCode >= 300 && intCode < 304) ||
-                intCode == 307 ||
-                intCode == 308
-            );
+            switch (statusCode)
+            {
+                case HttpStatusCode.Moved:
+                case HttpStatusCode.Found:
+                case HttpStatusCode.SeeOther:
+                case HttpStatusCode.TemporaryRedirect:
+                case HttpStatusCode.MultipleChoices:
+                case HttpStatusCode.PermanentRedirect:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         // Returns true if the status code is a redirection code and the action requires switching to GET on redirection.
