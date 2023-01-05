@@ -6,10 +6,10 @@
 //
 #if !UNIX
 
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
-using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.Security
 {
@@ -111,7 +111,7 @@ namespace System.Management.Automation.Security
             SafeHandle fileHandle = fileStream.SafeFileHandle;
 
             // First check latest WDAC APIs if available.
-            Exception exError = null;
+            Exception errorException = null;
             if (s_wldpCanExecuteAvailable)
             {
                 try
@@ -154,18 +154,18 @@ namespace System.Management.Automation.Security
                 {
                     // Fall back to legacy system policy checks.
                     s_wldpCanExecuteAvailable = false;
-                    exError = ex;
+                    errorException = ex;
                 }
                 catch (EntryPointNotFoundException ex)
                 {
                     // Fall back to legacy system policy checks.
                     s_wldpCanExecuteAvailable = false;
-                    exError = ex;
+                    errorException = ex;
                 }
 
-                if (exError != null)
+                if (errorException != null)
                 {
-                    PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile_Failed", filePath, exError.HResult, 0);
+                    PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile_Failed", filePath, errorException.HResult, 0);
                 }
             }
 
