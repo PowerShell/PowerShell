@@ -273,6 +273,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual string CustomMethod { get; set; }
 
+        /// <summary>
+        /// Gets or sets the PersistHTTPMethod property.
+        /// </summary>
+        [Parameter]
+        [ValidateSet("All", "300", "301", "302", "303", IgnoreCase = true)]
+        public virtual string[] PersistHTTPMethod { get; set; }
+
         #endregion
 
         #region NoProxy
