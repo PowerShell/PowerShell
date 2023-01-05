@@ -127,7 +127,7 @@ namespace System.Management.Automation.Internal
         /// Gets or sets the value of the ProgressAction parameter for the cmdlet.
         /// </summary>
         /// <remarks>
-        /// This parameter tells the command what to do when an progress record occurs.
+        /// This parameter tells the command what to do when a progress record occurs.
         /// </remarks>
         /// <!--
         /// NOTE: The "proga" alias name does not follow the same alias naming convention used
