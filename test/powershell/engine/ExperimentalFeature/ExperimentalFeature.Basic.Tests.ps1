@@ -254,7 +254,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
 
         ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-VMName', '-Port',
         ## '-Token', '-WebSocketUrl', '-ThrottleLimit' and '-Command'
-        $command.Parameters.Count | Should -Be ($CommonParameterCount + 9) -Becase ($command.Parameters.Keys -join ", ")
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 9) -Because ($command.Parameters.Keys -join ", ")
         $command.ParameterSets.Count | Should -Be 3
 
         $command.Parameters["UserName"].ParameterSets.Count | Should -Be 1
