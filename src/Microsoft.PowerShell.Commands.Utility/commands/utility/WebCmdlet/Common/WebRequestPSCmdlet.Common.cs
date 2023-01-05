@@ -1274,20 +1274,20 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
-        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
-        private static bool IsRedirectToGet(HttpStatusCode code)
+        // Returns true if the status code is a redirection code and the action requires switching to GET on redirection.
+        private static bool RequestRequiresForceGet(HttpStatusCode statusCode, WebRequestMethod requestMethod)
         {
-            return
-            (
-                code == HttpStatusCode.Found ||
-                code == HttpStatusCode.Moved ||
-                code == HttpStatusCode.Redirect ||
-                code == HttpStatusCode.RedirectMethod ||
-                code == HttpStatusCode.SeeOther ||
-                code == HttpStatusCode.Ambiguous ||
-                code == HttpStatusCode.MultipleChoices
-            );
+            switch (statusCode)
+            {
+                case HttpStatusCode.Moved:
+                case HttpStatusCode.Found:
+                case HttpStatusCode.MultipleChoices:
+                    return requestMethod == WebRequestMethod.Post;
+                case HttpStatusCode.SeeOther:
+                    return requestMethod != WebRequestMethod.Get && requestMethod != WebRequestMethod.Head;
+                default:
+                    return false;
+            }
         }
 
         // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
@@ -1327,17 +1327,16 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
-                    // if explicit count was provided, reduce it for this redirection.
+                    // If explicit count was provided, reduce it for this redirection.
                     if (WebSession.MaximumRedirection > 0)
                     {
                         WebSession.MaximumRedirection--;
                     }
-                    // For selected redirects that used POST, GET must be used with the
-                    // redirected Location.
-                    // Since GET is the default; POST only occurs when -Method POST is used.
-                    if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
+
+                    // For selected redirects, GET must be used with the redirected Location.
+                    // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
+                    if (RequestRequiresForceGet(response.StatusCode, Method))
                     {
-                        // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                         Method = WebRequestMethod.Get;
                     }
 
