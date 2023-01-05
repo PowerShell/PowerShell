@@ -975,7 +975,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // This indicates GetResponse will handle redirects.
-            if (handleRedirect)
+            if (handleRedirect || PersistHTTPMethod is not null)
             {
                 handler.AllowAutoRedirect = false;
             }
