@@ -1621,7 +1621,7 @@ dir -Recurse `
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 6
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-ProgressAction,,-proga,-PSPath,-pv"
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
         }
 
         It "Test completion for HttpVersion parameter name" {
