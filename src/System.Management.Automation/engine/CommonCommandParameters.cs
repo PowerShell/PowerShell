@@ -134,7 +134,8 @@ namespace System.Management.Automation.Internal
         /// with other common parameter aliases that control stream functionality; however,
         /// "pa" was already taken as a parameter alias in other commands when this parameter
         /// was added to PowerShell, so "proga" was chosen instead.
-        /// -->        [Parameter]
+        /// -->
+        [Parameter]
         [Alias("proga")]
         public ActionPreference ProgressAction
         {
