@@ -2411,7 +2411,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
         @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
         @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
-        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\plugin"; parameter = "-proc"; expected = "ProcessIdleTimeoutSec"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
     ) {
