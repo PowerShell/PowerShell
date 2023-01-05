@@ -504,8 +504,17 @@ namespace System.Management.Automation
         internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
         {
             matchPattern = false;
-            if (string.IsNullOrEmpty(message))
+            if (message is null ||
+                message.Length < 37 ||
+                message[36] != ':' ||
+                message[23] != '-' ||
+                message[18] != '-' ||
+                message[13] != '-' ||
+                message[8] != '-')
+            {
+                // Fast return if the message does not start with 'GUID:'.
                 return message;
+            }
 
             const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:).*";
             Match matchResult = Regex.Match(message, pattern);
