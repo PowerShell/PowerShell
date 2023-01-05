@@ -1342,6 +1342,23 @@ namespace Microsoft.PowerShell.Commands
                     // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                     if (RequestRequiresForceGet(response.StatusCode, Method))
                     {
+                        if (PersistHTTPMethod is not null)
+                        {
+                            switch (response.StatusCode)
+                            {
+                                case HttpStatusCode.Moved when Array.Exists(PersistHTTPMethod, element => element == "301" || element == "All"):
+                                case HttpStatusCode.Found when Array.Exists(PersistHTTPMethod, element => element == "302" || element == "All"):
+                                case HttpStatusCode.SeeOther when Array.Exists(PersistHTTPMethod, element => element == "303" || element == "All"):
+                                case HttpStatusCode.MultipleChoices when Array.Exists(PersistHTTPMethod, element => element == "300" || element == "All"):
+                                    break;
+                                default:
+                                    Method = WebRequestMethod.Get;
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
                         Method = WebRequestMethod.Get;
                     }
 
