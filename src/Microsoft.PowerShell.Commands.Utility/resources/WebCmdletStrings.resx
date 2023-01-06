@@ -186,9 +186,6 @@
   <data name="OutFileWritingSkipped" xml:space="preserve">
     <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
   </data>
-  <data name="ProxyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Proxy and NoProxy. Specify either Proxy or NoProxy, then retry.</value>
-  </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
   </data>

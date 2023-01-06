@@ -261,12 +261,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Method property.
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
         public virtual WebRequestMethod Method { get; set; } = WebRequestMethod.Get;
 
         /// <summary>
         /// Gets or sets the CustomMethod property.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public virtual string CustomMethod
@@ -285,7 +287,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the NoProxy property.
         /// </summary>
-        [Parameter]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter(Mandatory = true, ParameterSetName = "StandardMethodNoProxy")]
         public virtual SwitchParameter NoProxy { get; set; }
 
         #endregion
@@ -295,19 +298,23 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Proxy property.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "CustomMethod")]
         public virtual Uri Proxy { get; set; }
 
         /// <summary>
         /// Gets or sets the ProxyCredential property.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "CustomMethod")]
         [Credential]
         public virtual PSCredential ProxyCredential { get; set; }
 
         /// <summary>
         /// Gets or sets the ProxyUseDefaultCredentials property.
         /// </summary>
+        [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "CustomMethod")]
         [Parameter]
         public virtual SwitchParameter ProxyUseDefaultCredentials { get; set; }
 
@@ -449,12 +456,6 @@ namespace Microsoft.PowerShell.Commands
             else if (Proxy is null && (ProxyCredential is not null || ProxyUseDefaultCredentials))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied, "WebCmdletProxyUriNotSuppliedException");
-                ThrowTerminatingError(error);
-            }
-
-            if (Proxy is not null && NoProxy)
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyConflict, "WebCmdletProxyConflictException");
                 ThrowTerminatingError(error);
             }
 
