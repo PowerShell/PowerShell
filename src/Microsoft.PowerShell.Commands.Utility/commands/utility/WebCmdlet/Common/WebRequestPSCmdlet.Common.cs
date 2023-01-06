@@ -1263,7 +1263,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Returns true if the status code is one of the supported redirection codes.
-        private static bool IsRedirectCode(HttpStatusCode code)
+        private static bool IsRedirectCode(HttpStatusCode statusCode)
         {
             switch (statusCode)
             {
