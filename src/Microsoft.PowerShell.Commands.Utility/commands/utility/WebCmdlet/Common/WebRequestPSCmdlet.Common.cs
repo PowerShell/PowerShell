@@ -1961,7 +1961,8 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                return error;
+                // Remove HTML tags making it easier to read
+                return System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
             }
         }
         #endregion Helper Methods
