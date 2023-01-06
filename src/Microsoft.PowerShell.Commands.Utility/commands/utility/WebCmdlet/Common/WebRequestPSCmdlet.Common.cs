@@ -1092,7 +1092,7 @@ namespace Microsoft.PowerShell.Commands
                 // request
             }
             // ContentType is null
-            else if (Method == WebRequestMethod.Post || CustomMethod == "POST")
+            else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
