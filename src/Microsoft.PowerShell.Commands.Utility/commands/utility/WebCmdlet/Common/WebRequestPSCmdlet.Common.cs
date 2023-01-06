@@ -315,7 +315,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
-        [Parameter]
         public virtual SwitchParameter ProxyUseDefaultCredentials { get; set; }
 
         #endregion
