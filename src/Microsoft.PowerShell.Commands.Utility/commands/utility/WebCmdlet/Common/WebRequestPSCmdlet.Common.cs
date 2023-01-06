@@ -899,7 +899,7 @@ namespace Microsoft.PowerShell.Commands
 
         private HttpMethod GetHttpMethod(WebRequestMethod method)
         {
-            switch (Method)
+            switch (method)
             {
                 case WebRequestMethod.Default:
                     return HttpMethod.Get;
