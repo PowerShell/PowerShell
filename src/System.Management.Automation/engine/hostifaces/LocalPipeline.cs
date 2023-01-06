@@ -269,10 +269,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Helper method for asynchronous invoke
-        ///<returns>Unhandled FlowControl exception if InvocationSettings.ExposeFlowControlExceptions is true.</returns>
-        ///</summary>
+        /// </summary>
+        /// <returns>Unhandled FlowControl exception if InvocationSettings.ExposeFlowControlExceptions is true.</returns>
         private FlowControlException InvokeHelper()
         {
             FlowControlException flowControlException = null;

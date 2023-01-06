@@ -31,9 +31,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "StandardMethod")]
         public override WebRequestMethod Method
         {
-            get { return base.Method; }
+            get => base.Method;
 
-            set { base.Method = value; }
+            set => base.Method = value;
         }
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public override string CustomMethod
         {
-            get { return base.CustomMethod; }
-
-            set { base.CustomMethod = value.ToUpperInvariant(); }
+            get => base.CustomMethod;
+            
+            set  => base.CustomMethod = value.ToUpperInvariant();
         }
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("FL")]
         public SwitchParameter FollowRelLink
         {
-            get { return base._followRelLink; }
+            get => base._followRelLink;
 
-            set { base._followRelLink = value; }
+            set => base._followRelLink = value;
         }
 
         /// <summary>
@@ -69,9 +69,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int MaximumFollowRelLink
         {
-            get { return base._maximumFollowRelLink; }
+            get => base._maximumFollowRelLink;
 
-            set { base._maximumFollowRelLink = value; }
+            set => base._maximumFollowRelLink = value;
         }
 
         /// <summary>
@@ -399,18 +399,15 @@ namespace Microsoft.PowerShell.Commands
                 _streamBuffer.SetLength(0);
             }
 
-            public override long Length
-            {
-                get { return _length; }
-            }
+            public override long Length => _length;
 
             private long _length;
 
             public override long Position
             {
-                get { return _streamBuffer.Position; }
+                get => _streamBuffer.Position;
 
-                set { _streamBuffer.Position = value; }
+                set => _streamBuffer.Position = value;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
@@ -418,8 +415,7 @@ namespace Microsoft.PowerShell.Commands
                 long previousPosition = Position;
                 bool consumedStream = false;
                 int totalCount = count;
-                while ((!consumedStream) &&
-                    ((Position + totalCount) > _streamBuffer.Length))
+                while (!consumedStream && (Position + totalCount) > _streamBuffer.Length)
                 {
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we
