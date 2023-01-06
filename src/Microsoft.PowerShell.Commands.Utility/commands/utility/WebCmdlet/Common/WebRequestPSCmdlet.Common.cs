@@ -1356,10 +1356,10 @@ namespace Microsoft.PowerShell.Commands
                                     break;
                             }
                         }
-                    }
-                    else
-                    {
-                        Method = WebRequestMethod.Get;
+                        else
+                        {
+                            Method = WebRequestMethod.Get;
+                        }
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
