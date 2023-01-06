@@ -274,11 +274,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual string CustomMethod { get; set; }
 
         /// <summary>
-        /// Gets or sets the PersistHTTPMethod property.
+        /// Gets or sets the PreserveHTTPMethodOnRedirect property.
         /// </summary>
         [Parameter]
-        [ValidateSet("All", "300", "301", "302", "303", IgnoreCase = true)]
-        public virtual string[] PersistHTTPMethod { get; set; }
+        public virtual SwitchParameter PreserveHTTPMethodOnRedirect { get; set; }
 
         #endregion
 
@@ -975,7 +974,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // This indicates GetResponse will handle redirects.
-            if (handleRedirect || PersistHTTPMethod is not null)
+            if (handleRedirect || PreserveHTTPMethodOnRedirect)
             {
                 handler.AllowAutoRedirect = false;
             }
@@ -1327,7 +1326,7 @@ namespace Microsoft.PowerShell.Commands
                 
                 bool sessionRedirect = WebSession.MaximumRedirection > 0 || WebSession.MaximumRedirection == -1;
 
-                if ((keepAuthorization || (PersistHTTPMethod is not null && sessionRedirect)) && IsRedirectCode(response.StatusCode) && response.Headers.Location is not null)
+                if ((keepAuthorization || (PreserveHTTPMethodOnRedirect && sessionRedirect)) && IsRedirectCode(response.StatusCode) && response.Headers.Location is not null)
                 {
                     _cancelToken.Cancel();
                     _cancelToken = null;
@@ -1342,14 +1341,14 @@ namespace Microsoft.PowerShell.Commands
                     // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                     if (RequestRequiresForceGet(response.StatusCode, Method))
                     {
-                        if (PersistHTTPMethod is not null)
+                        if (PreserveHTTPMethodOnRedirect)
                         {
                             switch (response.StatusCode)
                             {
-                                case HttpStatusCode.Moved when Array.Exists(PersistHTTPMethod, element => element == "301" || element == "All"):
-                                case HttpStatusCode.Found when Array.Exists(PersistHTTPMethod, element => element == "302" || element == "All"):
-                                case HttpStatusCode.SeeOther when Array.Exists(PersistHTTPMethod, element => element == "303" || element == "All"):
-                                case HttpStatusCode.MultipleChoices when Array.Exists(PersistHTTPMethod, element => element == "300" || element == "All"):
+                                case HttpStatusCode.Moved:
+                                case HttpStatusCode.Found:
+                                case HttpStatusCode.SeeOther:
+                                case HttpStatusCode.MultipleChoices:
                                     break;
                                 default:
                                     Method = WebRequestMethod.Get;
