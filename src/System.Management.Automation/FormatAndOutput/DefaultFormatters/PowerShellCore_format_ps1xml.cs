@@ -1024,7 +1024,7 @@ namespace System.Management.Automation.Runspaces
                                         if ($Host.UI.SupportsVirtualTerminal) {
                                             $errorColor = $PSStyle.Formatting.Error
                                         }
-                                        
+
                                         $commandPrefix = if ($myinv -and $myinv.MyCommand) {
                                             switch -regex ( $myinv.MyCommand.CommandType )
                                             {
