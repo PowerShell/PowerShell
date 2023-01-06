@@ -1183,7 +1183,7 @@ namespace Microsoft.PowerShell.Commands
             if (request.Content is null)
             {
                 // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
-                if ((request.Method == HttpMethod.Get && ContentType is null) || CustomMethod == "GET")
+                if (request.Method == HttpMethod.Get && ContentType is null)
                 {
                     return;
                 }
