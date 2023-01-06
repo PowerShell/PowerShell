@@ -1279,6 +1279,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Returns true if the status code is a redirection code and the action requires switching to GET on redirection.
+        // See https://learn.microsoft.com/en-us/dotnet/api/system.net.httpstatuscode
         private static bool RequestRequiresForceGet(HttpStatusCode statusCode, WebRequestMethod requestMethod)
         {
             switch (statusCode)
@@ -1338,24 +1339,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
-                    // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                     if (RequestRequiresForceGet(response.StatusCode, Method))
                     {
-                        if (PreserveHTTPMethodOnRedirect)
-                        {
-                            switch (response.StatusCode)
-                            {
-                                case HttpStatusCode.Moved:
-                                case HttpStatusCode.Found:
-                                case HttpStatusCode.SeeOther:
-                                case HttpStatusCode.MultipleChoices:
-                                    break;
-                                default:
-                                    Method = WebRequestMethod.Get;
-                                    break;
-                            }
-                        }
-                        else
+                        if (!PreserveHTTPMethodOnRedirect)
                         {
                             Method = WebRequestMethod.Get;
                         }
