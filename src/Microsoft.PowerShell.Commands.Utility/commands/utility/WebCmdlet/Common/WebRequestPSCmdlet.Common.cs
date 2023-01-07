@@ -1296,14 +1296,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
-        private bool ShouldRetry(HttpStatusCode code)
+        private bool ShouldRetry(HttpStatusCode statusCode)
         {
-            int intCode = (int)code;
-
-            return
-            (
-                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
-            );
+            switch ((int)statusCode)
+            {
+                case 304:
+                case >= 400 and <= 599:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
