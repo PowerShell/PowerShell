@@ -904,7 +904,7 @@ namespace Microsoft.PowerShell.Commands
                 case WebRequestMethod.Default:
                     return HttpMethod.Get;
                 default:
-                    return new HttpMethod(Method.ToString().ToUpperInvariant());
+                    return new HttpMethod(method.ToString().ToUpperInvariant());
             }
         }
 
