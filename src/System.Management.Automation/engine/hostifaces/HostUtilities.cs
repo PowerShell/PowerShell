@@ -499,11 +499,9 @@ namespace System.Management.Automation
         /// Remove the GUID from the message if the message is in the pre-defined format.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="matchPattern"></param>
         /// <returns></returns>
-        internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
+        internal static string RemoveGuidFromMessage(string message)
         {
-            matchPattern = false;
             if (message is null ||
                 message.Length < 37 ||
                 message[36] != ':' ||
@@ -522,7 +520,6 @@ namespace System.Management.Automation
             {
                 string partToRemove = matchResult.Groups[1].Captures[0].Value;
                 message = message.Remove(0, partToRemove.Length);
-                matchPattern = true;
             }
 
             return message;
