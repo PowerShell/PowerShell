@@ -897,7 +897,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private long _resumeFileSize = 0;
 
-        private HttpMethod GetHttpMethod(WebRequestMethod method)
+        private static HttpMethod GetHttpMethod(WebRequestMethod method)
         {
             switch (method)
             {
