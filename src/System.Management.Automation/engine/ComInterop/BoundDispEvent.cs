@@ -73,7 +73,7 @@ namespace System.Management.Automation.ComInterop
         /// <returns>The original event with handler added.</returns>
         private object InPlaceAdd(object handler)
         {
-            ArgumentNullException.ThrowIfNull(handler);
+            Requires.NotNull(handler, nameof(handler));
             VerifyHandler(handler);
 
             ComEventsSink comEventSink = ComEventsSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, true);
@@ -88,7 +88,7 @@ namespace System.Management.Automation.ComInterop
         /// <returns>The original event with handler removed.</returns>
         private object InPlaceSubtract(object handler)
         {
-            ArgumentNullException.ThrowIfNull(handler);
+            Requires.NotNull(handler, nameof(handler));
             VerifyHandler(handler);
 
             ComEventsSink comEventSink = ComEventsSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, false);
