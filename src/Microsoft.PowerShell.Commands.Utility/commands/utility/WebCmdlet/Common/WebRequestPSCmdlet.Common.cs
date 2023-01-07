@@ -1296,7 +1296,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
-        private bool ShouldRetry(HttpStatusCode statusCode)
+        private static bool ShouldRetry(HttpStatusCode statusCode)
         {
             switch ((int)statusCode)
             {
