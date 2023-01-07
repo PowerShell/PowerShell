@@ -115,10 +115,10 @@ namespace System.Management.Automation.Internal
         /// We use WeakReference object to point to the default SessionState because if GC already collect the SessionState,
         /// or the Runspace it chains to is closed and disposed, then we cannot run the static method there anyways.
         /// </summary>
-        /// <remakr>
+        /// <remarks>
         /// The default SessionState is used only if a static method is called from a Runspace where the PowerShell class is
         /// never defined, or is called on a thread without a default Runspace. Usage like those should be rare.
-        /// </remakr>
+        /// </remarks>
         private readonly WeakReference<SessionStateInternal> _defaultSessionStateToUse;
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Internal
         /// Initialization happens when the script that defines PowerShell class is executed.
         /// This initialization is required only if this wrapper is for a static method.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// When the same script file gets executed multiple times, the .NET type generated from the PowerShell class
         /// defined in the file will be shared in those executions, and thus this method will be called multiple times
         /// possibly in the contexts of different Runspace/SessionState.
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Internal
         /// is declared, and thus we can always get the correct SessionState to use by querying the 'SessionStateKeeper'.
         /// The default SessionState is used only if a static method is called from a Runspace where the class is never
         /// defined, or is called on a thread without a default Runspace.
-        /// </remark>
+        /// </remarks>
         internal void InitAtRuntime()
         {
             if (_isStatic)

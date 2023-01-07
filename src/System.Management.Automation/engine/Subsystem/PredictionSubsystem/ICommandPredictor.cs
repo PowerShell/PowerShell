@@ -22,11 +22,6 @@ namespace System.Management.Automation.Subsystem.Prediction
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
-        /// Default implementation for `ISubsystem.Kind`.
-        /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
-
-        /// <summary>
         /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>

@@ -139,9 +139,12 @@ namespace System.Management.Automation.Subsystem
             }
 
             throw new ArgumentException(
-                StringUtil.Format(
-                    SubsystemStrings.SubsystemTypeUnknown,
-                    subsystemType.FullName));
+                subsystemType == typeof(ISubsystem)
+                    ? SubsystemStrings.MustUseConcreteSubsystemType
+                    : StringUtil.Format(
+                        SubsystemStrings.SubsystemTypeUnknown,
+                        subsystemType.FullName),
+                nameof(subsystemType));
         }
 
         /// <summary>
@@ -151,8 +154,6 @@ namespace System.Management.Automation.Subsystem
         /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(SubsystemKind kind)
         {
-            Requires.OneSpecificSubsystemKind(kind);
-
             if (s_subSystemKindMap.TryGetValue(kind, out SubsystemInfo? subsystemInfo))
             {
                 return subsystemInfo;
@@ -161,7 +162,8 @@ namespace System.Management.Automation.Subsystem
             throw new ArgumentException(
                 StringUtil.Format(
                     SubsystemStrings.SubsystemKindUnknown,
-                    kind.ToString()));
+                    kind.ToString()),
+                nameof(kind));
         }
 
         #endregion
@@ -191,19 +193,19 @@ namespace System.Management.Automation.Subsystem
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
             ArgumentNullException.ThrowIfNull(proxy);
-            Requires.OneSpecificSubsystemKind(kind);
 
-            if (!proxy.Kind.HasFlag(kind))
+            SubsystemInfo info = GetSubsystemInfo(kind);
+            if (!info.SubsystemType.IsAssignableFrom(proxy.GetType()))
             {
                 throw new ArgumentException(
                     StringUtil.Format(
-                        SubsystemStrings.ImplementationMismatch,
-                        proxy.Kind.ToString(),
-                        kind.ToString()),
+                        SubsystemStrings.ConcreteSubsystemNotImplemented,
+                        kind.ToString(),
+                        info.SubsystemType.Name),
                     nameof(proxy));
             }
 
-            RegisterSubsystem(GetSubsystemInfo(kind), proxy);
+            RegisterSubsystem(info, proxy);
         }
 
         private static void RegisterSubsystem(SubsystemInfo subsystemInfo, ISubsystem proxy)
@@ -278,8 +280,6 @@ namespace System.Management.Automation.Subsystem
         /// <param name="id">The Id of the implementation to be unregistered.</param>
         public static void UnregisterSubsystem(SubsystemKind kind, Guid id)
         {
-            Requires.OneSpecificSubsystemKind(kind);
-
             UnregisterSubsystem(GetSubsystemInfo(kind), id);
         }
 

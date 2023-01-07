@@ -71,6 +71,14 @@ jobs:
       displayName: SBOM
       sourceScanPath: '$(repoPath)\tools'
 
+  # This is needed as SBOM task removed the installed .NET and installs .NET 3.1
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeeded()
+    workingDirectory: $(repoPath)
+
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
