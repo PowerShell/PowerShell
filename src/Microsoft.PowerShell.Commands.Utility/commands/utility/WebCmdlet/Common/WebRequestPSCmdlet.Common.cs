@@ -1339,12 +1339,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
-                    if (RequestRequiresForceGet(response.StatusCode, Method))
+                    if (RequestRequiresForceGet(response.StatusCode, Method) && !PreserveHTTPMethodOnRedirect)
                     {
-                        if (!PreserveHTTPMethodOnRedirect)
-                        {
-                            Method = WebRequestMethod.Get;
-                        }
+                        Method = WebRequestMethod.Get;
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
