@@ -23,7 +23,7 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
         {
-            ArgumentNullException.ThrowIfNull(binder);
+            Requires.NotNull(binder, nameof(binder));
 
             ComMethodDesc method = null;
 
@@ -63,7 +63,7 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
         {
-            ArgumentNullException.ThrowIfNull(binder);
+            Requires.NotNull(binder, nameof(binder));
 
             if (_self.TryGetGetItem(out ComMethodDesc method))
             {
@@ -108,7 +108,7 @@ namespace System.Management.Automation.ComInterop
             ComBinder.ComGetMemberBinder comBinder = binder as ComBinder.ComGetMemberBinder;
             bool canReturnCallables = comBinder?._canReturnCallables ?? false;
 
-            ArgumentNullException.ThrowIfNull(binder);
+            Requires.NotNull(binder, nameof(binder));
 
             // 1. Try methods
             if (_self.TryGetMemberMethod(binder.Name, out ComMethodDesc method))
@@ -187,7 +187,7 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
         {
-            ArgumentNullException.ThrowIfNull(binder);
+            Requires.NotNull(binder, nameof(binder));
 
             if (_self.TryGetGetItem(out ComMethodDesc getItem))
             {
@@ -203,7 +203,7 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
         {
-            ArgumentNullException.ThrowIfNull(binder);
+            Requires.NotNull(binder, nameof(binder));
 
             if (_self.TryGetSetItem(out ComMethodDesc setItem))
             {
@@ -238,7 +238,7 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
         {
-            ArgumentNullException.ThrowIfNull(binder);
+            Requires.NotNull(binder, nameof(binder));
 
             return
                 // 1. Check for simple property put
