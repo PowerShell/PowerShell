@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Resume requires OutFile.
-            if (Resume && OutFile is null)
+            if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines whether writing to a file should Resume and append rather than overwrite.
         /// </summary>
-        internal bool ShouldResume => Resume && _resumeSuccess;
+        internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
 
         #endregion Helper Properties
 
@@ -1095,7 +1095,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If the file to resume downloading exists, create the Range request header using the file size.
             // If not, create a Range to request the entire file.
-            if (Resume)
+            if (Resume.IsPresent)
             {
                 var fileInfo = new FileInfo(QualifiedOutFile);
                 if (fileInfo.Exists)
@@ -1342,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands
                 // Request again without the Range header because the server indicated the range was not satisfiable.
                 // This happens when the local file is larger than the remote file.
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
-                if (Resume &&
+                if (Resume.IsPresent &&
                     response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
                     (response.Content.Headers.ContentRange.HasLength &&
                     response.Content.Headers.ContentRange.Length != _resumeFileSize))
@@ -1505,7 +1505,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 // Check if the Resume range was not satisfiable because the file already completed downloading.
                                 // This happens when the local file is the same size as the remote file.
-                                if (Resume &&
+                                if (Resume.IsPresent &&
                                     response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
                                     response.Content.Headers.ContentRange.HasLength &&
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
