@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
+        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorizationOnRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
 
@@ -1493,7 +1493,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request, keepAuthorization);
+                                HttpResponseMessage response = GetResponse(client, request, keepAuthorizationOnRedirect);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(
