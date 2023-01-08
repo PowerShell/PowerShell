@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorizationOnRedirect)
+        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
 
@@ -1305,8 +1305,6 @@ namespace Microsoft.PowerShell.Commands
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
-
-                bool handleRedirect = keepAuthorizationOnRedirect; // || AllowInsicureRedirect || PreserveHTTPMethodOnRedirect
 
                 if (handleRedirect
                     && WebSession.MaximumRedirection is not 0
@@ -1335,7 +1333,7 @@ namespace Microsoft.PowerShell.Commands
                     using (client = GetHttpClient(handleRedirect))
                     using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                     {
-                        response = GetResponse(client, redirectRequest, keepAuthorizationOnRedirect);
+                        response = GetResponse(client, redirectRequest, handleRedirect);
                     }
                 }
 
@@ -1373,7 +1371,7 @@ namespace Microsoft.PowerShell.Commands
                         
                         WriteVerbose(reqVerboseMsg);
 
-                        return GetResponse(client, requestWithoutRange, keepAuthorizationOnRedirect);
+                        return GetResponse(client, requestWithoutRange, handleRedirect);
                     }
                 }
 
@@ -1490,7 +1488,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request, keepAuthorizationOnRedirect);
+                                HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(
