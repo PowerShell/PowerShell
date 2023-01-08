@@ -1313,7 +1313,7 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                if (keepAuthorization
+                if (keepAuthorizationOnRedirect
                     && WebSession.MaximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
@@ -1340,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
                     using (client = GetHttpClient(handleRedirect: true))
                     using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                     {
-                        response = GetResponse(client, redirectRequest, keepAuthorization);
+                        response = GetResponse(client, redirectRequest, keepAuthorizationOnRedirect);
                     }
                 }
 
@@ -1378,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
                         
                         WriteVerbose(reqVerboseMsg);
 
-                        return GetResponse(client, requestWithoutRange, keepAuthorization);
+                        return GetResponse(client, requestWithoutRange, keepAuthorizationOnRedirect);
                     }
                 }
 
@@ -1454,12 +1454,12 @@ namespace Microsoft.PowerShell.Commands
 
                 // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorization = WebSession is not null &&
+                bool keepAuthorizationOnRedirect = WebSession is not null &&
                                          WebSession.Headers is not null &&
                                          PreserveAuthorizationOnRedirect.IsPresent &&
                                          WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                using (HttpClient client = GetHttpClient(keepAuthorization))
+                using (HttpClient client = GetHttpClient(keepAuthorizationOnRedirect))
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
