@@ -1313,7 +1313,9 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                if (keepAuthorizationOnRedirect
+                bool handleRedirect = keepAuthorizationOnRedirect; // || AllowInsicureRedirect || PreserveHTTPMethodOnRedirect
+
+                if (handleRedirect
                     && WebSession.MaximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
@@ -1337,7 +1339,7 @@ namespace Microsoft.PowerShell.Commands
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
                     // Continue to handle redirection
-                    using (client = GetHttpClient(handleRedirect: true))
+                    using (client = GetHttpClient(handleRedirect))
                     using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                     {
                         response = GetResponse(client, redirectRequest, keepAuthorizationOnRedirect);
@@ -1459,7 +1461,9 @@ namespace Microsoft.PowerShell.Commands
                                                    PreserveAuthorizationOnRedirect &&
                                                    WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                using (HttpClient client = GetHttpClient(keepAuthorizationOnRedirect))
+                bool handleRedirect = keepAuthorizationOnRedirect; // || AllowInsicureRedirect || PreserveHTTPMethodOnRedirect
+
+                using (HttpClient client = GetHttpClient(handleRedirect))
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
