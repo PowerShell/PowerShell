@@ -1525,7 +1525,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                         ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
                                         er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
-                                        WriteError(er);
+                                        ThrowTerminatingError(er);
                                 }
 
                                 if (ShouldCheckHttpStatus && !_isSuccess)
