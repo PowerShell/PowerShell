@@ -628,4 +628,98 @@ function Update-PsVersionInCode
                 }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is in the path
+##############################
+function Test-GitHubCli {
+    $gitHubCli = Get-Command -Name 'gh' -ErrorAction SilentlyContinue
+
+    if ($gitHubCli) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is the required version
+##############################
+function Test-GitHubCliVersion {
+    param(
+        [Parameter(Mandatory)]
+        [System.Management.Automation.SemanticVersion]
+        $RequiredVersion
+    )
+    [System.Management.Automation.SemanticVersion] $version = gh --version | ForEach-Object {
+        if ($_ -match ' (\d+\.\d+\.\d+) ') {
+            $matches[1]
+        }
+    }
+
+    if ($version -ge $RequiredVersion) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Gets a report of Backport PRs
+#
+#.PARAMETER Triage state
+# The triage states of the PR.  Consider, Approved or Done
+#
+#.PARAMETER Version
+# The version of PowerShell the backport is targeting.  7.0, 7.2, 7.3, etc
+#
+#.PARAMETER Web
+# A switch to open all the PRs in the browser
+#
+##############################
+function Get-PRBackportReport {
+    param(
+        [ValidateSet('Consider', 'Approved', 'Done')]
+        [String] $TriageState = 'Approved',
+        [ValidatePattern('^\d+\.\d+$')]
+        [string] $Version,
+        [switch] $Web
+    )
+
+    if (!(Test-GitHubCli)) {
+        throw "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    }
+
+    $requiredVersion = '2.17'
+    if (!(Test-GitHubCliVersion -RequiredVersion $requiredVersion)) {
+        throw "Please upgrade the GitHub CLI to version $requiredVersion. Please install it from https://cli.github.com/"
+    }
+
+    if (!(gh auth status 2>&1  | Select-String 'logged in')){
+        throw "Please login to GitHub CLI using 'gh auth login'"
+    }
+
+    $prs = gh pr list --state merged --label "Backport-$Version.x-$TriageState" --json title,number,mergeCommit,mergedAt |
+        ConvertFrom-Json |
+        ForEach-Object {
+            [PScustomObject]@{
+                CommitId = $_.mergeCommit.oid
+                Number   = $_.number
+                Title    = $_.title
+                MergedAt = $_.mergedAt
+            }
+        } | Sort-Object -Property MergedAt
+
+    if ($Web) {
+        $prs | ForEach-Object {
+            gh pr view $_.Number --web
+        }
+    } else {
+        $prs
+    }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport

@@ -447,7 +447,7 @@ namespace System.Management.Automation.Runspaces
     #endregion
 
     /// <summary>
-    /// Public interface to Msh Runtime. Provides APIs for creating pipelines,
+    /// Public interface to PowerShell Runtime. Provides APIs for creating pipelines,
     /// access session state etc.
     /// </summary>
     public abstract class Runspace : IDisposable
@@ -1620,8 +1620,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the base transaction for the runspace; any transactions created on this runspace will be nested to this instance.
         /// </summary>
-        ///<param name="transaction">The base transaction</param>
-        ///<remarks>This overload uses RollbackSeverity.Error; i.e. the transaction will be rolled back automatically on a non-terminating error or worse</remarks>
+        /// <param name="transaction">The base transaction</param>
+        /// <remarks>This overload uses RollbackSeverity.Error; i.e. the transaction will be rolled back automatically on a non-terminating error or worse</remarks>
         public void SetBaseTransaction(System.Transactions.CommittableTransaction transaction)
         {
             this.ExecutionContext.TransactionManager.SetBaseTransaction(transaction, RollbackSeverity.Error);
@@ -1630,8 +1630,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the base transaction for the runspace; any transactions created on this runspace will be nested to this instance.
         /// </summary>
-        ///<param name="transaction">The base transaction</param>
-        ///<param name="severity">The severity of error that causes PowerShell to automatically rollback the transaction</param>
+        /// <param name="transaction">The base transaction</param>
+        /// <param name="severity">The severity of error that causes PowerShell to automatically rollback the transaction</param>
         public void SetBaseTransaction(System.Transactions.CommittableTransaction transaction, RollbackSeverity severity)
         {
             this.ExecutionContext.TransactionManager.SetBaseTransaction(transaction, severity);

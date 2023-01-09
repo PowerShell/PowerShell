@@ -21,8 +21,6 @@ namespace Microsoft.PowerShell.Cim
     /// Implementing the PropertyOnlyAdapter for the time being as CimInstanceTypeAdapter currently
     /// supports only properties. If method support is needed in future, this should derive from
     /// Adapter class.
-    ///
-    /// The Adapter registration is done in monad\src\singleshell\installer\MshManagementMshSnapin.cs
     /// </remarks>
     public sealed class CimInstanceAdapter : PSPropertyAdapter
     {
@@ -197,10 +195,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override string GetPropertyTypeName(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException(nameof(adaptedProperty));
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
@@ -222,10 +217,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override object GetPropertyValue(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException(nameof(adaptedProperty));
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
@@ -377,10 +369,7 @@ namespace Microsoft.PowerShell.Cim
         /// <param name="value"></param>
         public override void SetPropertyValue(PSAdaptedProperty adaptedProperty, object value)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException(nameof(adaptedProperty));
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             if (!IsSettable(adaptedProperty))
             {

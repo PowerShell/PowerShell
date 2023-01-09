@@ -9,8 +9,8 @@ using System.Management.Automation.Runspaces;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// This class provides an entry point which is called by minishell's main
-    /// to transfer control to Msh console host implementation.
+    /// This class provides an entry point which is called
+    /// to transfer control to console host implementation.
     /// </summary>
     public static class ConsoleShell
     {

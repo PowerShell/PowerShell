@@ -308,8 +308,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Extract out the bytes and Base64 decode them
-            int startIndex, endIndex;
-            byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
+            byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out int _, out int _);
             if (contentBytes == null)
             {
                 ErrorRecord error = new(

@@ -1632,7 +1632,7 @@ namespace System.Management.Automation
                 instanceMetadata.Properties.Add(
                     new PSNoteProperty(
                         InternalDeserializer.CimModifiedProperties,
-                        string.Join(" ", namesOfModifiedProperties)));
+                        string.Join(' ', namesOfModifiedProperties)));
             }
         }
 
@@ -3457,7 +3457,7 @@ namespace System.Management.Automation
                 if ((modifiedPropertiesProperty != null) && (modifiedPropertiesProperty.Value != null))
                 {
                     string modifiedPropertiesString = modifiedPropertiesProperty.Value.ToString();
-                    foreach (string nameOfModifiedProperty in modifiedPropertiesString.Split(Utils.Separators.Space))
+                    foreach (string nameOfModifiedProperty in modifiedPropertiesString.Split(' '))
                     {
                         namesOfModifiedProperties.Add(nameOfModifiedProperty);
                     }
@@ -4055,7 +4055,7 @@ namespace System.Management.Automation
             // We assume the hash table is a PowerShell hash table and hence uses
             // a case insensitive string comparer.  If we discover a key collision,
             // we'll revert back to the default comparer.
-            
+
             // Find whether original directory was ordered
             bool isOrdered = InternalTypeNames.Count > 0 &&
                 (Deserializer.MaskDeserializationPrefix(InternalTypeNames[0]) == typeof(OrderedDictionary).FullName);
@@ -5933,10 +5933,7 @@ namespace System.Management.Automation
         public PSPrimitiveDictionary(Hashtable other)
             : base(StringComparer.OrdinalIgnoreCase)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             foreach (DictionaryEntry entry in other)
             {
@@ -6628,7 +6625,6 @@ namespace Microsoft.PowerShell
     ///       - PropertySerializationSet=<empty>
     ///     - TargetTypeForDeserialization=DeserializingTypeConverter
     ///   - Add a field of that type in unit tests / S.M.A.Test.SerializationTest+RehydratedType
-    ///     (testsrc\admintest\monad\DRT\engine\UnitTests\SerializationTest.cs)
     /// -->
     public sealed class DeserializingTypeConverter : PSTypeConverter
     {

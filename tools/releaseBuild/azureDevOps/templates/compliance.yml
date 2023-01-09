@@ -9,9 +9,6 @@ jobs:
   - name: NugetSecurityAnalysisWarningLevel
     value: none
 
-  # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
-  - group: PS-PS-APIScan
-
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -19,9 +16,6 @@ jobs:
     name: PowerShell1ES
     demands:
     - ImageOverride -equals PSMMS2019-Secure
-
-  # APIScan can take a long time
-  timeoutInMinutes: 180
 
   steps:
   - checkout: self
@@ -93,18 +87,6 @@ jobs:
 
   # PreFASt is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
-    displayName: 'Run APIScan'
-    inputs:
-      softwareFolder: '$(CompliancePath)'
-      softwareName: PowerShell
-      softwareVersionNum: '$(ReleaseTagVar)'
-      isLargeApp: false
-      preserveTempFiles: true
-    env:
-      AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
-    continueOnError: true
-
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
     displayName: 'Publish Security Analysis Logs to Build Artifacts'
     continueOnError: true
@@ -129,7 +111,7 @@ jobs:
     displayName: 'Create Security Analysis Report'
     inputs:
       TsvFile: false
-      APIScan: true
+      APIScan: false
       BinSkim: true
       CredScan: true
       PoliCheck: true

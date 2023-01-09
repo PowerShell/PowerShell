@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
                 if (!found)
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    if (name.AsSpan().IndexOfAny('\\', '/') == -1)
                     {
                         qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                     }
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool containsWildCards = false;
 
-                string modulePath = mp.TrimEnd(Utils.Separators.Backslash);
+                string modulePath = mp.TrimEnd('\\');
 
                 // If the given path contains wildcards, we won't throw error if no match module path is found.
                 if (WildcardPattern.ContainsWildcardCharacters(modulePath))
@@ -4542,7 +4542,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparamref name="T"/>)</c>.
         /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>

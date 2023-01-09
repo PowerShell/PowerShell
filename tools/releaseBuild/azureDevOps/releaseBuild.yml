@@ -28,6 +28,8 @@ resources:
     ref: master
 
 variables:
+  - name: PS_RELEASE_BUILD
+    value: 1
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
@@ -100,7 +102,7 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: rpm
-          uploadDisplayName: Upload and Sign
+          parentJob: build_deb
 
       - template: templates/linux.yml
         parameters:
@@ -110,6 +112,29 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: alpine
+
+      - template: templates/linux-authenticode-sign.yml
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: deb
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: rpm
+          uploadDisplayName: Upload and Sign
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: alpine
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: fxdependent
+          parentJob: sign_linux_builds
 
   - stage: windows
     dependsOn: ['prep']

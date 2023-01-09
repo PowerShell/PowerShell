@@ -45,15 +45,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             string name,
             List<ParameterViewModel> parameters)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name");
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
-            if (parameters == null)
-            {
-                throw new ArgumentNullException("parameters");
-            }
+            ArgumentNullException.ThrowIfNull(parameters);
 
             parameters.Sort(Compare);
 

@@ -24,10 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
-            if (wildcardPatternsStrings == null)
-            {
-                throw new ArgumentNullException(nameof(wildcardPatternsStrings));
-            }
+            ArgumentNullException.ThrowIfNull(wildcardPatternsStrings);
 
             _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
             for (int k = 0; k < wildcardPatternsStrings.Length; k++)

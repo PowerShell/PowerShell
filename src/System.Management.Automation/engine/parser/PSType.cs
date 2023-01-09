@@ -1434,7 +1434,7 @@ namespace System.Management.Automation.Language
 
             nameParts.Reverse();
             nameParts.Add(typeDefinitionAst.Name);
-            return string.Join(".", nameParts);
+            return string.Join('.', nameParts);
         }
 
         private static readonly OpCode[] s_ldc =
@@ -1470,6 +1470,20 @@ namespace System.Management.Automation.Language
             {
                 emitter.Emit(OpCodes.Ldarg, c);
             }
+        }
+    }
+
+    /// <summary>
+    /// The attribute for a PowerShell class to not affiliate with a particular Runspace\SessionState.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class NoRunspaceAffinityAttribute : ParsingBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the attribute.
+        /// </summary>
+        public NoRunspaceAffinityAttribute()
+        {
         }
     }
 }

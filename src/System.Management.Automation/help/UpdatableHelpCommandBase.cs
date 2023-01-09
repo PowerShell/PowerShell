@@ -899,6 +899,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Save the help content to the user directory.
+        /// </summary>
         CurrentUser,
 
         /// <summary>

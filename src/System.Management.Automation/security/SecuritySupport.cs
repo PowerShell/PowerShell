@@ -32,23 +32,23 @@ namespace Microsoft.PowerShell
     public enum ExecutionPolicy
     {
         /// Unrestricted - No files must be signed.  If a file originates from the
-        ///    internet, Monad provides a warning prompt to alert the user.  To
+        ///    internet, PowerShell provides a warning prompt to alert the user.  To
         ///    suppress this warning message, right-click on the file in File Explorer,
         ///    select "Properties," and then "Unblock."
         Unrestricted = 0,
 
-        /// RemoteSigned - Only .msh and .mshxml files originating from the internet
-        ///    must be digitally signed.  If remote, signed, and executed, Monad
+        /// RemoteSigned - Only .ps1 and .ps1xml files originating from the internet
+        ///    must be digitally signed.  If remote, signed, and executed, PowerShell
         ///    prompts to determine if files from the signing publisher should be
         ///    run or not.  This is the default setting.
         RemoteSigned = 1,
 
-        /// AllSigned - All .msh and .mshxml files must be digitally signed.  If
-        ///    signed and executed, Monad prompts to determine if files from the
+        /// AllSigned - All .ps1 and .ps1xml files must be digitally signed.  If
+        ///    signed and executed, PowerShell prompts to determine if files from the
         ///    signing publisher should be run or not.
         AllSigned = 2,
 
-        /// Restricted - All .msh files are blocked.  Mshxml files must be digitally
+        /// Restricted - All .ps1 files are blocked.  Ps1xml files must be digitally
         ///    signed, and by a trusted publisher.  If you haven't made a trust decision
         ///    on the publisher yet, prompting is done as in AllSigned mode.
         Restricted = 3,
@@ -495,7 +495,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="path">The path to the file in question.</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
@@ -682,7 +681,6 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="cert">Certificate object.</param>
         /// <returns>A collection of cert eku strings.</returns>
-        [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
             Collection<string> ekus = new Collection<string>();
@@ -856,6 +854,7 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
+    using System.Management.Automation.Tracing;
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
@@ -1336,6 +1335,24 @@ namespace System.Management.Automation
 
     internal static class AmsiUtils
     {
+        static AmsiUtils()
+        {
+#if !UNIX
+            try 
+            {
+                s_amsiInitFailed = !CheckAmsiInit();
+            }
+            catch (DllNotFoundException)
+            {
+                PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
+                s_amsiInitFailed = true;
+                return;
+            }
+            
+            PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
+#endif
+        }
+
         internal static int Init()
         {
             Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
@@ -1357,11 +1374,6 @@ namespace System.Management.Automation
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
                 var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
-                if (!Utils.Succeeded(hr))
-                {
-                    s_amsiInitFailed = true;
-                }
-
                 return hr;
             }
         }
@@ -1405,6 +1417,7 @@ namespace System.Management.Automation
             // If we had a previous initialization failure, just return the neutral result.
             if (s_amsiInitFailed)
             {
+                PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", $"{s_amsiContext}-{s_amsiSession}");
                 return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
             }
 
@@ -1412,6 +1425,7 @@ namespace System.Management.Automation
             {
                 if (s_amsiInitFailed)
                 {
+                    PSEtwLog.LogAmsiUtilStateEvent("ScanContent-InitFail", $"{s_amsiContext}-{s_amsiSession}");
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
 
@@ -1451,6 +1465,7 @@ namespace System.Management.Automation
                     if (!Utils.Succeeded(hr))
                     {
                         // If we got a failure, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
+                        PSEtwLog.LogAmsiUtilStateEvent($"AmsiScanBuffer-{hr}", $"{s_amsiContext}-{s_amsiSession}");
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
@@ -1458,7 +1473,7 @@ namespace System.Management.Automation
                 }
                 catch (DllNotFoundException)
                 {
-                    s_amsiInitFailed = true;
+                    PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
             }
@@ -1559,7 +1574,6 @@ namespace System.Management.Automation
 
                 if (!Utils.Succeeded(hr))
                 {
-                    s_amsiInitFailed = true;
                     return false;
                 }
             }
@@ -1573,7 +1587,6 @@ namespace System.Management.Automation
 
                 if (!Utils.Succeeded(hr))
                 {
-                    s_amsiInitFailed = true;
                     return false;
                 }
             }
@@ -1595,7 +1608,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
-        private static bool s_amsiInitFailed = false;
+        private static readonly bool s_amsiInitFailed = false;
         private static bool s_amsiNotifyFailed = false;
         private static readonly object s_amsiLockObject = new object();
 

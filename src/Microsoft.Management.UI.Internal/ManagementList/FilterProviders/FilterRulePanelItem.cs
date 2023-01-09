@@ -79,10 +79,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterRulePanelItem(FilterRule rule, string groupId)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             if (string.IsNullOrEmpty(groupId))
             {

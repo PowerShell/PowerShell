@@ -113,6 +113,14 @@ stages:
       imageName: ubuntu-latest
       packageNamePattern: '**/*fxdependent.tar.gz'
 
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinuxonARM
+      displayName: Fxd Package Test Linux ARM64
+      imageName: 'PSMMSUbuntu20.04-ARM64-secure'
+      packageNamePattern: '**/*fxdependent.tar.gz'
+      use1ES: true
+
 - stage: StaticPkgValidation
   dependsOn: []
   displayName: Static package validation
@@ -283,6 +291,7 @@ stages:
     variables:
     - group: 'Azure Blob variable group'
     - group: 'AzDevOpsArtifacts'
+    - group: ReleasePipelineSecrets
     dependsOn: AzureBlobPublic
     steps:
     - template: templates/release-CreateGitHubDraft.yml

@@ -7,8 +7,8 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// MshManagementMshSnapin (or MshManagementMshSnapinInstaller) is a class for facilitating registry
-    /// of necessary information for monad management mshsnapin.
+    /// PSManagementPSSnapIn is a class for facilitating registry
+    /// of necessary information for PowerShell management PSSnapin.
     ///
     /// This class will be built with monad management dll.
     /// </summary>
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get name of this mshsnapin.
+        /// Get name of this PSSnapin.
         /// </summary>
         public override string Name
         {
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the default vendor string for this mshsnapin.
+        /// Get the default vendor string for this PSSnapin.
         /// </summary>
         public override string Vendor
         {
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the default description string for this mshsnapin.
+        /// Get the default description string for this PSSnapin.
         /// </summary>
         public override string Description
         {

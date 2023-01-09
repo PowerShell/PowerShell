@@ -813,6 +813,14 @@ A Name                                  B
             ($lines | Select-String "Name\s*Value").Count | Should -Be ($numHeaders + 1)
         }
 
+        It "-RepeatHeader should output the header at every screen full for custom table" -Skip:([Console]::WindowHeight -eq 0) {
+            $numHeaders = 4
+            $numObjects = [Console]::WindowHeight * $numHeaders
+            $out = 1..$numObjects | ForEach-Object { [pscustomobject]@{foo=$_;bar=$_;hello=$_;world=$_} } | Format-Table -Property hello, world -RepeatHeader | Out-String
+            $lines = $out.Split([System.Environment]::NewLine)
+            ($lines | Select-String "Hello\s*World").Count | Should -Be ($numHeaders + 1)
+        }
+
         It "Should be formatted correctly if width is declared and using center alignment" {
             $expectedTable = @"
 
@@ -866,7 +874,7 @@ A Name                                  B
         }
     }
 
-Describe 'Table color tests' {
+Describe 'Table color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
@@ -876,10 +884,10 @@ Describe 'Table color tests' {
         $PSStyle.OutputRendering = $originalRendering
     }
 
-    It 'Table header should use FormatAccent' {
+    It 'Table header should use TableHeader' {
         ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
-$($PSStyle.Formatting.FormatAccent)foo$($PSStyle.Reset)
-$($PSStyle.Formatting.FormatAccent)---$($PSStyle.Reset)
+$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)
+$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)
   1
 "@
     }
