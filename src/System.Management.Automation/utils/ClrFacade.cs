@@ -7,7 +7,6 @@ using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Security;
 using System.Text;
@@ -19,7 +18,7 @@ namespace System.Management.Automation
     /// ClrFacade contains all diverging code (different implementation for FullCLR and CoreCLR using if/def).
     /// It exposes common APIs that can be used by the rest of the code base.
     /// </summary>
-    internal static partial class ClrFacade
+    internal static class ClrFacade
     {
         /// <summary>
         /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
@@ -108,12 +107,10 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-                // load all available encodings
-                EncodingRegisterProvider();
 #if UNIX
-                s_oemEncoding = new UTF8Encoding(false);
+                s_oemEncoding = Encoding.Default;
 #else
-                uint oemCp = NativeMethods.GetOEMCP();
+                uint oemCp = Interop.Windows.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
@@ -122,14 +119,6 @@ namespace System.Management.Automation
         }
 
         private static volatile Encoding s_oemEncoding;
-
-        private static void EncodingRegisterProvider()
-        {
-            if (s_oemEncoding == null)
-            {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            }
-        }
 
         #endregion Encoding
 
@@ -362,17 +351,5 @@ namespace System.Management.Automation
         }
 
         #endregion Misc
-
-        /// <summary>
-        /// Native methods that are used by facade methods.
-        /// </summary>
-        private static partial class NativeMethods
-        {
-            /// <summary>
-            /// Pinvoke for GetOEMCP to get the OEM code page.
-            /// </summary>
-            [LibraryImport(PinvokeDllNames.GetOEMCPDllName)]
-            internal static partial uint GetOEMCP();
-        }
     }
 }

@@ -278,7 +278,9 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _parameterNames = value ?? throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
+
+                _parameterNames = value;
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
@@ -303,10 +305,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
                 List<PSTypeName> filteredParameterTypes = new List<PSTypeName>(value.Length);

@@ -13,10 +13,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal WebProxy(Uri address)
         {
-            if (address == null)
-            {
-                throw new ArgumentNullException(nameof(address));
-            }
+            ArgumentNullException.ThrowIfNull(address);
 
             _proxyAddress = address;
         }
@@ -48,10 +45,7 @@ namespace Microsoft.PowerShell.Commands
 
         public Uri GetProxy(Uri destination)
         {
-            if (destination == null)
-            {
-                throw new ArgumentNullException(nameof(destination));
-            }
+            ArgumentNullException.ThrowIfNull(destination);
 
             if (destination.IsLoopback)
             {

@@ -5933,10 +5933,7 @@ namespace System.Management.Automation
         public PSPrimitiveDictionary(Hashtable other)
             : base(StringComparer.OrdinalIgnoreCase)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             foreach (DictionaryEntry entry in other)
             {

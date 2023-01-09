@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater.
-        ///</returns>
+        /// </returns>
         public int Compare(object first, object second)
         {
             // This method will never throw exceptions, two null

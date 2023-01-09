@@ -149,7 +149,7 @@ namespace System.Management.Automation.Runspaces
 
         private static ProgressRecord Validate(ProgressRecord progressRecord)
         {
-            if (progressRecord == null) throw new ArgumentNullException(nameof(progressRecord));
+            ArgumentNullException.ThrowIfNull(progressRecord);
             return progressRecord;
         }
     }

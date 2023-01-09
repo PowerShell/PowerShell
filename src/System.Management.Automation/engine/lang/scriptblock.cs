@@ -1096,15 +1096,9 @@ namespace System.Management.Automation
     {
         internal SteppablePipeline(ExecutionContext context, PipelineProcessor pipeline)
         {
-            if (pipeline == null)
-            {
-                throw new ArgumentNullException(nameof(pipeline));
-            }
+            ArgumentNullException.ThrowIfNull(pipeline);
 
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             _pipeline = pipeline;
             _context = context;
@@ -1128,10 +1122,7 @@ namespace System.Management.Automation
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
-            if (contextToRedirectTo == null)
-            {
-                throw new ArgumentNullException(nameof(contextToRedirectTo));
-            }
+            ArgumentNullException.ThrowIfNull(contextToRedirectTo);
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
@@ -1147,10 +1138,9 @@ namespace System.Management.Automation
         /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
-            if (command == null || command.MyInvocation == null)
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
+            ArgumentNullException.ThrowIfNull(command);
+
+            ArgumentNullException.ThrowIfNull(command.MyInvocation, nameof(command));
 
             Begin(command.MyInvocation.ExpectingInput, command.commandRuntime);
         }

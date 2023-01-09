@@ -1719,8 +1719,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (errorRecord == null)
-                    throw new ArgumentNullException(nameof(errorRecord));
+                ArgumentNullException.ThrowIfNull(errorRecord);
 
                 if (commandRuntime != null)
                 {

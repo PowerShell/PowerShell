@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell
     /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received
     /// progress updates are shown.
     ///
-    ///</summary>
+    /// </summary>
     internal
     class ProgressPane
     {
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell
         internal
         ProgressPane(ConsoleHostUserInterface ui)
         {
-            if (ui == null) throw new ArgumentNullException(nameof(ui));
+            ArgumentNullException.ThrowIfNull(ui);
             _ui = ui;
             _rawui = ui.RawUI;
         }
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell
         /// <value>
         /// true if the pane is visible, false if not.
         ///
-        ///</value>
+        /// </value>
         internal
         bool
         IsShowing

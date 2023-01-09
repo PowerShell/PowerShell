@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell
         /// if true, then flag the parent ConsoleHost that it should shutdown the session.  If false, then only the current
         /// executing instance is stopped.
         ///
-        ///</param>
+        /// </param>
         private static void SpinUpBreakHandlerThread(bool shouldEndSession)
         {
             ConsoleHost host = ConsoleHost.SingletonInstance;
@@ -771,7 +771,7 @@ namespace Microsoft.PowerShell
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
-                if (ui == null) throw new ArgumentNullException(nameof(ui));
+                ArgumentNullException.ThrowIfNull(ui);
                 _ui = ui;
             }
 
