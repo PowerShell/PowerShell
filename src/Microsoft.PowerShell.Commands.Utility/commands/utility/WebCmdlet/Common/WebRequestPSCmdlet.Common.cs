@@ -1264,12 +1264,12 @@ namespace Microsoft.PowerShell.Commands
         // Returns true if the status code is one of the supported redirection codes.
         private static bool IsRedirectCode(HttpStatusCode statusCode) => statusCode switch
         {
-            HttpStatusCode.Moved or
             HttpStatusCode.Found or
-            HttpStatusCode.SeeOther or
-            HttpStatusCode.TemporaryRedirect or
+            HttpStatusCode.Moved or
             HttpStatusCode.MultipleChoices or
-            HttpStatusCode.PermanentRedirect => true,
+            HttpStatusCode.PermanentRedirect or
+            HttpStatusCode.SeeOther or
+            HttpStatusCode.TemporaryRedirect => true,
             _ => false,
         };
 
@@ -1277,8 +1277,8 @@ namespace Microsoft.PowerShell.Commands
         // See https://learn.microsoft.com/en-us/dotnet/api/system.net.httpstatuscode
         private static bool RequestRequiresForceGet(HttpStatusCode statusCode, HttpMethod requestMethod) => statusCode switch
         {
-            HttpStatusCode.Moved or
             HttpStatusCode.Found or
+            HttpStatusCode.Moved or
             HttpStatusCode.MultipleChoices => requestMethod == HttpMethod.Post,
             HttpStatusCode.SeeOther => requestMethod != HttpMethod.Get && requestMethod != HttpMethod.Head,
             _ => false,
