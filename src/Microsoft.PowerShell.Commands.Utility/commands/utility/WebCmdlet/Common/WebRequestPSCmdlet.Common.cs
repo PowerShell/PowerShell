@@ -907,7 +907,7 @@ namespace Microsoft.PowerShell.Commands
             WebRequestMethod.Put => HttpMethod.Put,
             WebRequestMethod.Options => HttpMethod.Options,
             WebRequestMethod.Trace => HttpMethod.Trace,
-            _ => new HttpMethod(method.ToString().ToUpperInvariant()),
+            _ => new HttpMethod(method.ToString().ToUpperInvariant())
         };
 
         #region Virtual Methods
