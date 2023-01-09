@@ -2516,6 +2516,11 @@ namespace System.Management.Automation
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
             }
 
+            if (_commandRuntime.IsProgressActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Progress, _commandRuntime.ProgressPreference);
+            }
+
             if (_commandRuntime.IsWhatIfFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.WhatIf, _commandRuntime.WhatIf);

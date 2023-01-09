@@ -1620,8 +1620,8 @@ dir -Recurse `
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 6
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -2411,7 +2411,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
         @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
         @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
-        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\plugin"; parameter = "-proc"; expected = "ProcessIdleTimeoutSec"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
     ) {
