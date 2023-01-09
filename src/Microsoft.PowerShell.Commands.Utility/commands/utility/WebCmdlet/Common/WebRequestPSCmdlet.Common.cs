@@ -1270,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands
             HttpStatusCode.PermanentRedirect or
             HttpStatusCode.SeeOther or
             HttpStatusCode.TemporaryRedirect => true,
-            _ => false,
+            _ => false
         };
 
         // Returns true if the status code is a redirection code and the action requires switching to GET on redirection.
@@ -1281,14 +1281,14 @@ namespace Microsoft.PowerShell.Commands
             HttpStatusCode.Moved or
             HttpStatusCode.MultipleChoices => requestMethod == HttpMethod.Post,
             HttpStatusCode.SeeOther => requestMethod != HttpMethod.Get && requestMethod != HttpMethod.Head,
-            _ => false,
+            _ => false
         };
 
         // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
         private static bool ShouldRetry(HttpStatusCode statusCode) => (int)statusCode switch
         {
             304 or (>= 400 and <= 599) => true,
-            _ => false,
+            _ => false
         };
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
