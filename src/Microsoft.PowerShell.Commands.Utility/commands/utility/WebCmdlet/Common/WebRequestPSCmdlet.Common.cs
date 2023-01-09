@@ -899,16 +899,15 @@ namespace Microsoft.PowerShell.Commands
 
         private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
         {
-            WebRequestMethod.Default or
-            WebRequestMethod.Get => HttpMethod.Get,
+            WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
+            WebRequestMethod.Delete => HttpMethod.Delete,
             WebRequestMethod.Head => HttpMethod.Head,
+            WebRequestMethod.Patch => HttpMethod.Patch,
             WebRequestMethod.Post => HttpMethod.Post,
             WebRequestMethod.Put => HttpMethod.Put,
-            WebRequestMethod.Delete => HttpMethod.Delete,
-            WebRequestMethod.Trace => HttpMethod.Trace,
             WebRequestMethod.Options => HttpMethod.Options,
-            WebRequestMethod.Patch => HttpMethod.Patch,
-            _ => new HttpMethod(method.ToString().ToUpperInvariant()), //Merge
+            WebRequestMethod.Trace => HttpMethod.Trace,
+            _ => new HttpMethod(method.ToString().ToUpperInvariant()),
         };
 
         #region Virtual Methods
