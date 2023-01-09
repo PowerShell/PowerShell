@@ -897,16 +897,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private long _resumeFileSize = 0;
 
-        private static HttpMethod GetHttpMethod(WebRequestMethod method)
+        private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
         {
-            switch (method)
-            {
-                case WebRequestMethod.Default:
-                    return HttpMethod.Get;
-                default:
-                    return new HttpMethod(method.ToString().ToUpperInvariant());
-            }
-        }
+            WebRequestMethod.Default or
+            WebRequestMethod.Get => HttpMethod.Get,
+            WebRequestMethod.Head => HttpMethod.Head,
+            WebRequestMethod.Post => HttpMethod.Post,
+            WebRequestMethod.Put => HttpMethod.Put,
+            WebRequestMethod.Delete => HttpMethod.Delete,
+            WebRequestMethod.Trace => HttpMethod.Trace,
+            WebRequestMethod.Options => HttpMethod.Options,
+            WebRequestMethod.Patch => HttpMethod.Patch,
+            _ => new HttpMethod(method.ToString().ToUpperInvariant()), //Merge
+        };
 
         #region Virtual Methods
 
