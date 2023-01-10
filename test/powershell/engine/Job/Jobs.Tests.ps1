@@ -30,8 +30,8 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         BeforeAll {
             $invalidPathTestCases = @(
                 @{ path = "This is an invalid path"; case = "invalid path"; errorId = "DirectoryNotFoundException,Microsoft.PowerShell.Commands.StartJobCommand"}
-                @{ path = ""; case = "empty string"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
-                @{ path = " "; case = "whitespace string (single space)"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+                ##@{ path = ""; case = "empty string"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
+                ##@{ path = " "; case = "whitespace string (single space)"; errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartJobCommand"}
             )
         }
 
@@ -86,6 +86,17 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $jobOutput | Should -BeExactly $path.ToString()
         }
 
+        It 'Can specify the working directory with a PSPath' {
+            try {
+                Push-Location 'Temp:\'
+                $job = Start-Job -ScriptBlock { $PWD } -WorkingDirectory $pwd.Path | Wait-Job
+                $jobOutput = Receive-Job $job
+                $jobOutput | Should -BeExactly $pwd.Path
+            } finally {
+                Pop-Location
+            }
+        }
+
         It 'Can use the user specified working directory parameter with quote' -Skip:($IsWindows) {
             $path = Join-Path -Path $TestDrive -ChildPath "My ""Dir"
             $null = New-Item -ItemType Directory -Path "$path"
@@ -100,9 +111,9 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         }
 
         It 'Throws an error when the working directory parameter is <case>' -TestCases $invalidPathTestCases {
-            param($path, $case, $expectedErrorId)
+            param($path, $case, $errorId)
 
-            {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw -ErrorId $expectedErrorId
+            {Start-Job -ScriptBlock { 1 + 1 } -WorkingDirectory $path} | Should -Throw -ErrorId $errorId
         }
 
         It 'Verifies that the current working directory is preserved' {

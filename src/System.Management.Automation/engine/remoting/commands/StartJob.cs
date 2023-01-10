@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
-            if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
+            if (WorkingDirectory != null && !InvokeProvider.Item.IsContainer(WorkingDirectory))
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
                 var errorRecord = new ErrorRecord(
