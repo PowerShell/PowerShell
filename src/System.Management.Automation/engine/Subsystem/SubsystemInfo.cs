@@ -18,22 +18,22 @@ namespace System.Management.Automation.Subsystem
         #region "Metadata of a Subsystem (public)"
 
         /// <summary>
-        /// The kind of a concrete subsystem.
+        /// Gets the kind of a concrete subsystem.
         /// </summary>
         public SubsystemKind Kind { get; }
 
         /// <summary>
-        /// The type of a concrete subsystem.
+        /// Gets the type of a concrete subsystem.
         /// </summary>
         public Type SubsystemType { get; }
 
         /// <summary>
-        /// Indicate whether the subsystem allows to unregister an implementation.
+        /// Gets a value indicating whether the subsystem allows to unregister an implementation.
         /// </summary>
         public bool AllowUnregistration { get; private set; }
 
         /// <summary>
-        /// Indicate whether the subsystem allows to have multiple implementations registered.
+        /// Gets a value indicating whether the subsystem allows to have multiple implementations registered.
         /// </summary>
         public bool AllowMultipleRegistration { get; private set; }
 
@@ -78,8 +78,6 @@ namespace System.Management.Automation.Subsystem
 
         private protected SubsystemInfo(SubsystemKind kind, Type subsystemType)
         {
-            Requires.OneSpecificSubsystemKind(kind);
-
             _syncObj = new object();
             _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
 
@@ -161,10 +159,10 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         public class ImplementationInfo
         {
-            internal ImplementationInfo(ISubsystem implementation)
+            internal ImplementationInfo(SubsystemKind kind, ISubsystem implementation)
             {
                 Id = implementation.Id;
-                Kind = implementation.Kind;
+                Kind = kind;
                 Name = implementation.Name;
                 Description = implementation.Description;
                 ImplementationType = implementation.GetType();
@@ -219,6 +217,7 @@ namespace System.Management.Automation.Subsystem
         /// In the subsystem scenario, registration operations will be minimum, and in most cases, the registered
         /// implementation will never be unregistered, so optimization for reading is more important.
         /// </remarks>
+        /// <param name="rawImpl">The subsystem implementation to be added.</param>
         private protected override void AddImplementation(ISubsystem rawImpl)
         {
             lock (_syncObj)
@@ -228,7 +227,7 @@ namespace System.Management.Automation.Subsystem
                 if (_registeredImpls.Count == 0)
                 {
                     _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(new[] { impl });
-                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(new[] { new ImplementationInfo(impl) });
+                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(new[] { new ImplementationInfo(Kind, impl) });
                     return;
                 }
 
@@ -252,12 +251,17 @@ namespace System.Management.Automation.Subsystem
                     }
                 }
 
-                var list = new List<TConcreteSubsystem>(_registeredImpls.Count + 1);
-                list.AddRange(_registeredImpls);
-                list.Add(impl);
+                int newCapacity = _registeredImpls.Count + 1;
+                var implList = new List<TConcreteSubsystem>(newCapacity);
+                implList.AddRange(_registeredImpls);
+                implList.Add(impl);
 
-                _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(list);
-                _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(static s => new ImplementationInfo(s)));
+                var implInfo = new List<ImplementationInfo>(newCapacity);
+                implInfo.AddRange(_cachedImplInfos);
+                implInfo.Add(new ImplementationInfo(Kind, impl));
+
+                _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(implList);
+                _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(implInfo);
             }
         }
 
@@ -270,6 +274,8 @@ namespace System.Management.Automation.Subsystem
         /// In the subsystem scenario, registration operations will be minimum, and in most cases, the registered
         /// implementation will never be unregistered, so optimization for reading is more important.
         /// </remarks>
+        /// <param name="id">The id of the subsystem implementation to be removed.</param>
+        /// <returns>The subsystem implementation that was removed.</returns>
         private protected override ISubsystem RemoveImplementation(Guid id)
         {
             if (!AllowUnregistration)
@@ -316,7 +322,10 @@ namespace System.Management.Automation.Subsystem
                 }
                 else
                 {
-                    var list = new List<TConcreteSubsystem>(_registeredImpls.Count - 1);
+                    int newCapacity = _registeredImpls.Count - 1;
+                    var implList = new List<TConcreteSubsystem>(newCapacity);
+                    var implInfo = new List<ImplementationInfo>(newCapacity);
+
                     for (int i = 0; i < _registeredImpls.Count; i++)
                     {
                         if (index == i)
@@ -324,11 +333,12 @@ namespace System.Management.Automation.Subsystem
                             continue;
                         }
 
-                        list.Add(_registeredImpls[i]);
+                        implList.Add(_registeredImpls[i]);
+                        implInfo.Add(_cachedImplInfos[i]);
                     }
 
-                    _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(list);
-                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(static s => new ImplementationInfo(s)));
+                    _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(implList);
+                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(implInfo);
                 }
 
                 return target;

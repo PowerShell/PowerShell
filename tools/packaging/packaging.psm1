@@ -2574,7 +2574,8 @@ function CleanupGeneratedSourceCode
         '[Microsoft.PowerShell.Commands.HttpVersionCompletionsAttribute]'
         '[System.Management.Automation.ArgumentToVersionTransformationAttribute]'
         '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ArgumentToPSVersionTransformationAttribute]'
-        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ValidateVersionAttribute]'
+        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ValidateVersionAttribute]',
+        '[System.Management.Automation.OutputTypeAttribute(new System.Type[]{ typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatStartData), typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatEntryData), typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatEndData), typeof(Microsoft.PowerShell.Commands.Internal.Format.GroupStartData), typeof(Microsoft.PowerShell.Commands.Internal.Format.GroupEndData)})]'
         )
 
     $patternsToReplace = @(

@@ -50,7 +50,7 @@ namespace System.Management.Automation
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-                    "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
+                    "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ProgressAction",
                     "ErrorVariable", "WarningVariable", "OutVariable",
                     "OutBuffer", "PipelineVariable", "InformationVariable" };
             }
@@ -1719,8 +1719,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (errorRecord == null)
-                    throw new ArgumentNullException(nameof(errorRecord));
+                ArgumentNullException.ThrowIfNull(errorRecord);
 
                 if (commandRuntime != null)
                 {

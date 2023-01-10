@@ -3842,11 +3842,11 @@ namespace System.Management.Automation
         /// Create a IList to hold all elements, and use the IList to create the object of the resultType.
         /// The reason for using IList is that it can work on constructors that takes IEnumerable[T], ICollection[T] or IList[T].
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// When get to this method, we know the fromType and the toType meet the following two conditions:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
-        /// </remark>
+        /// </remarks>
         private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;

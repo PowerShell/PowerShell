@@ -376,10 +376,7 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException">When the help argument is not recognized as a HelpInfo object.</exception>
         public static string GetHelpComments(PSObject help)
         {
-            if (help == null)
-            {
-                throw new ArgumentNullException(nameof(help));
-            }
+            ArgumentNullException.ThrowIfNull(help);
 
             bool isHelpObject = false;
             foreach (string typeName in help.InternalTypeNames)

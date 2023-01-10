@@ -2208,6 +2208,18 @@
               value="0x6017"
               version="1"
               />
+            <event
+                channel="C_ANALYTIC"
+                keywords="AmsiState"
+                level="win:Verbose"
+                message="$(string.PS_PROVIDER.event.E_A_AmsiState.message)"
+                opcode="Method"
+                symbol="AmsiState"
+                task="Amsi"
+                template="T_AmsiState"
+                value="0x4001"
+                version="1"
+              />
         </events>
         <channels>
           <!--There are three channels defined for PowerShell instrumentation
@@ -2415,6 +2427,12 @@
               symbol="T_ISEOperation"
               value="120"
               />
+            <task
+                message="$(string.PS_PROVIDER.task.T_AmsiState.message)"
+                name="Amsi"
+                symbol="T_Amsi"
+                value="130"
+              />
         </tasks>
         <opcodes>
           <opcode
@@ -2574,6 +2592,12 @@
               message="$(string.PS_PROVIDER.keyword.K_PSWORKFLOW.message)"
               name="PSWorkflow"
               symbol="K_PSWORKFLOW"
+              />
+            <keyword
+                mask="0x400"
+                message="$(string.PS_PROVIDER.keyword.K_AmsiState.message)"
+                name="AmsiState"
+                symbol="K_AmsiState"
               />
         </keywords>
         <maps>
@@ -4056,6 +4080,16 @@
                 name="FileName"
                 />
           </template>
+            <template tid="T_AmsiState">
+                <data
+                    inType="win:UnicodeString"
+                    name="Action"
+                />
+                <data
+                    inType="win:UnicodeString"
+                    name="AmsiContext"
+                />
+            </template>
         </templates>
       </provider>
     </events>
@@ -4949,7 +4983,11 @@
             id="PS_PROVIDER.event.E_O_M3PWorkflowExecutionStarted.message"
             value="Workflow execution started. %n %t WorkflowId: %1 %n %t ManagedNodes: %2"
             />
-        <string
+          <string
+              id="PS_PROVIDER.event.E_A_AmsiState.message"
+              value="AmsiUtil state. %n %t state: %1 %n %t Context: %2"
+            />
+          <string
             id="PS_PROVIDER.event.E_O_M3PEndpointRegistered.message"
             value="A new PowerShell endpoint was registered. %n %t EndpointName: %1 %n %t EndpointType: %2 %n %t RegisteredBy: %3"
             />
@@ -5417,7 +5455,11 @@
             id="PS_PROVIDER.keyword.K_PSWORKFLOW.message"
             value="PSWorkflow Hosting And Execution Layer"
             />
-        <string
+          <string
+              id="PS_PROVIDER.keyword.K_AmsiState.message"
+              value="Amsi state"
+            />
+          <string
             id="PS_PROVIDER.keyword.K_SESSION.message"
             value="All session layer"
             />
@@ -5589,7 +5631,11 @@
             id="PS_PROVIDER.task.T_ISEOperation.message"
             value="PowerShell ISE Operation"
             />
-        <string
+          <string
+              id="PS_PROVIDER.task.T_AmsiState.message"
+              value="Amsi State"
+            />
+          <string
             id="PS_PROVIDER.event.E_O_ISEExecuteScript.message"
             value="Windows PowerShell ISE has started to run script file %1."
             />

@@ -182,9 +182,9 @@ namespace Microsoft.PowerShell.Commands
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
         }
 
-        ///<summary>
+        /// <summary>
         /// Raise WMI state changed event
-        ///</summary>
+        /// </summary>
         internal void RaiseWmiOperationState(EventArgs baseEventArgs, WmiState state)
         {
             WmiJobStateEventArgs wmiJobStateEventArgs = new WmiJobStateEventArgs();
@@ -992,16 +992,16 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    ///<summary>
+    /// <summary>
     /// Event which will be triggered when WMI state is changed.
     /// Currently it is to notify Jobs that state has changed to running.
     /// Other states are notified via OperationComplete.
-    ///</summary>
+    /// </summary>
     internal sealed class WmiJobStateEventArgs : EventArgs
     {
-        ///<summary>
+        /// <summary>
         /// WMI state
-        ///</summary>
+        /// </summary>
         internal WmiState WmiState { get; set; }
     }
 

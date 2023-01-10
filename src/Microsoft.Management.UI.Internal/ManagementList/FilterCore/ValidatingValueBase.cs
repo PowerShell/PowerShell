@@ -141,10 +141,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The validation rule to add.</param>
         public void AddValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.validationRules.Add(rule);
 
@@ -162,10 +159,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The rule to remove.</param>
         public void RemoveValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.validationRules.Remove(rule);
 

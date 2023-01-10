@@ -113,15 +113,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackNoParameter callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -135,15 +129,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackWithState callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -157,15 +145,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, AsyncCallback callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -184,15 +166,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackWithStateAndArgs callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -371,10 +347,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackNoParameter Correlate(CallbackNoParameter callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -386,10 +359,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackWithState Correlate(CallbackWithState callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -401,10 +371,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public AsyncCallback Correlate(AsyncCallback callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -417,10 +384,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackWithStateAndArgs Correlate(CallbackWithStateAndArgs callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
