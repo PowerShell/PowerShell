@@ -3554,7 +3554,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (Context != null)
                     {
-                        if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.ToString()).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
+                        if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
                         {
                             Task.Run(() =>
                             {
