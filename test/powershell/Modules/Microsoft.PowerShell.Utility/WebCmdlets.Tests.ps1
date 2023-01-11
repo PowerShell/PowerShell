@@ -2442,6 +2442,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..3 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
+    It "Validate Invoke-RestMethod -FollowRelLink correctly manages commas" {
+        $maxLinks = 5
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks; type = "with,comma"}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.Count | Should -BeExactly $maxLinks
+        1..$maxLinks | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
+    }
+
     It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
         $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
