@@ -2778,8 +2778,8 @@
       <Component Id="cmp96588875574749E295496861FFC1DB58">
         <File Id="filF931B05A25224A188D08E09A9FDC3A58" KeyPath="yes" Source="$(var.ProductSourcePath)\PenImc_cor3.dll" />
       </Component>
-      <Component Id="cmp11BF5670AA094889995355E2413888C1">
-        <File Id="fil47F94DFC9B1F403997D9913B28B69807" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.51805.dll" />
+      <Component Id="cmpBF268557EF50438AB7374D5AAFD48780">
+        <File Id="filF5B0D5F1948E4854AF505B4A121B0867" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.222.60605.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3669,7 +3669,7 @@
       <ComponentRef Id="cmp42A739F2AAC24D729DDBCAA096B8C55A" />
       <ComponentRef Id="cmp6986F8B66C514347A25E03DD3096B5AE" />
       <ComponentRef Id="cmp96588875574749E295496861FFC1DB58" />
-      <ComponentRef Id="cmp11BF5670AA094889995355E2413888C1" />
+      <ComponentRef Id="cmpBF268557EF50438AB7374D5AAFD48780" />
     </ComponentGroup>
   </Fragment>
 </Wix>

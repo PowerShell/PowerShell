@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
    <!-- Newtonsoft.Json brings in an old version of CSharp
       So, we are forcing a newer version.
     -->
@@ -32,7 +32,7 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.3.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.3.2" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.2.0" />
   </ItemGroup>
