@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="5.0.17" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
@@ -30,7 +31,7 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.9.0" />
     <!-- the source could not be found for the following package(s) -->
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.2" />
   </ItemGroup>
 
 </Project>
