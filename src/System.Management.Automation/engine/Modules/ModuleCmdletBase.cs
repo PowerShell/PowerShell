@@ -7210,6 +7210,9 @@ namespace Microsoft.PowerShell.Commands
                     CommandOrigin.Internal,
                     targetSessionState.ExecutionContext);
 
+                // Note that the module 'func' and the function table 'functionInfo' instances are now linked
+                // together (see 'CopiedCommand' in CommandInfo class), so setting visibility on one also 
+                // sets it on the other.
                 SetCommandVisibility(isImportModulePrivate, functionInfo);
                 functionInfo.Module = sourceModule;
 
