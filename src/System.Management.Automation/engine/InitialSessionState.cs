@@ -2981,13 +2981,20 @@ namespace System.Management.Automation.Runspaces
             HashSet<string> unresolvedCmdsToExpose)
         {
             RunspaceOpenModuleLoadException exceptionToReturn = null;
+            List<PSModuleInfo> processedModules = new List<PSModuleInfo>();
 
             foreach (object module in moduleList)
             {
                 string moduleName = module as string;
                 if (moduleName != null)
                 {
-                    exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
+                    exceptionToReturn = ProcessOneModule(
+                        initializedRunspace: initializedRunspace,
+                        name: moduleName,
+                        moduleInfoToLoad: null,
+                        path: path,
+                        publicCommands: publicCommands,
+                        processedModules: processedModules);
                 }
                 else
                 {
@@ -2998,7 +3005,13 @@ namespace System.Management.Automation.Runspaces
                         {
                             // if only name is specified in the module spec, just try import the module
                             // ie., don't take the performance overhead of calling GetModule.
-                            exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, null, path, publicCommands);
+                            exceptionToReturn = ProcessOneModule(
+                                initializedRunspace: initializedRunspace,
+                                name: moduleSpecification.Name,
+                                moduleInfoToLoad: null,
+                                path: path,
+                                publicCommands: publicCommands,
+                                processedModules: processedModules);
                         }
                         else
                         {
@@ -3006,7 +3019,13 @@ namespace System.Management.Automation.Runspaces
 
                             if (moduleInfos != null && moduleInfos.Count > 0)
                             {
-                                exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, moduleInfos[0], path, publicCommands);
+                                exceptionToReturn = ProcessOneModule(
+                                    initializedRunspace: initializedRunspace,
+                                    name: moduleSpecification.Name,
+                                    moduleInfoToLoad: moduleInfos[0],
+                                    path: path,
+                                    publicCommands: publicCommands,
+                                    processedModules: processedModules);
                             }
                             else
                             {
@@ -3055,7 +3074,11 @@ namespace System.Management.Automation.Runspaces
                     string commandToMakeVisible = Utils.ParseCommandName(unresolvedCommand, out moduleName);
                     bool found = false;
 
-                    foreach (CommandInfo cmd in LookupCommands(commandToMakeVisible, moduleName, initializedRunspace.ExecutionContext))
+                    foreach (CommandInfo cmd in LookupCommands(
+                        commandPattern: commandToMakeVisible,
+                        moduleName: moduleName,
+                        context: initializedRunspace.ExecutionContext,
+                        processedModules: processedModules))
                     {
                         if (!found)
                         {
@@ -3106,11 +3129,13 @@ namespace System.Management.Automation.Runspaces
         /// <param name="commandPattern"></param>
         /// <param name="moduleName"></param>
         /// <param name="context"></param>
+        /// <param name="processedModules"></param>
         /// <returns></returns>
         private static IEnumerable<CommandInfo> LookupCommands(
             string commandPattern,
             string moduleName,
-            ExecutionContext context)
+            ExecutionContext context,
+            List<PSModuleInfo> processedModules)
         {
             bool isWildCardPattern = WildcardPattern.ContainsWildcardCharacters(commandPattern);
             var searchOptions = isWildCardPattern ?
@@ -3124,7 +3149,11 @@ namespace System.Management.Automation.Runspaces
             CommandOrigin cmdOrigin = CommandOrigin.Runspace;
             while (true)
             {
-                foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(commandPattern, CommandTypes.All, searchOptions, cmdOrigin))
+                foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(
+                    name: commandPattern,
+                    commandTypes: CommandTypes.All,
+                    options: searchOptions,
+                    commandOrigin: cmdOrigin))
                 {
                     // If module name is provided then use it to restrict returned results.
                     if (haveModuleName && !moduleName.Equals(commandInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
@@ -3154,13 +3183,43 @@ namespace System.Management.Automation.Runspaces
                 // Next try internal search.
                 cmdOrigin = CommandOrigin.Internal;
             }
+
+            // If the command is associated with a module, try finding the command in the imported module list.
+            // The SessionState function table holds only one command name, and if two or more modules contain
+            // a command with the same name, only one of them will appear in the function table search above.
+            if (!found && haveModuleName)
+            {
+                var pattern = new WildcardPattern(commandPattern);
+
+                foreach (PSModuleInfo moduleInfo in processedModules)
+                {
+                    if (moduleInfo.Name.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach (var cmd in moduleInfo.ExportedCommands.Values)
+                        {
+                            if (pattern.IsMatch(cmd.Name))
+                            {
+                                yield return cmd;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// If <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
         /// import module using <paramref name="moduleInfoToLoad"/>
         /// </summary>
-        private RunspaceOpenModuleLoadException ProcessOneModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
+        private RunspaceOpenModuleLoadException ProcessOneModule(
+            Runspace initializedRunspace,
+            string name,
+            PSModuleInfo moduleInfoToLoad,
+            string path,
+            HashSet<CommandInfo> publicCommands,
+            List<PSModuleInfo> processedModules)
         {
             using (PowerShell pse = PowerShell.Create())
             {
@@ -3197,6 +3256,11 @@ namespace System.Management.Automation.Runspaces
                     c = new CmdletInfo("Out-Default", typeof(OutDefaultCommand), null, null, initializedRunspace.ExecutionContext);
                     pse.AddCommand(new Command(c));
                 }
+                else
+                {
+                    // For runspace init module processing, pass back the PSModuleInfo to the output pipeline.
+                    cmd.Parameters.Add("PassThru");
+                }
 
                 pse.Runspace = initializedRunspace;
                 // Module import should be run in FullLanguage mode since it is running in
@@ -3205,7 +3269,10 @@ namespace System.Management.Automation.Runspaces
                 pse.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.FullLanguage;
                 try
                 {
-                    pse.Invoke();
+                    // For runspace init module processing, collect the imported PSModuleInfo returned in the output pipeline.
+                    // In other cases, this collection will be empty.
+                    Collection<PSModuleInfo> moduleInfos = pse.Invoke<PSModuleInfo>();
+                    processedModules.AddRange(moduleInfos);
                 }
                 finally
                 {
