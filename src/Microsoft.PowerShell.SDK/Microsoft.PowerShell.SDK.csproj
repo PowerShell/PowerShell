@@ -17,7 +17,7 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.2" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="System.Web.Services.Description" Version="4.10.0" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
