@@ -686,8 +686,7 @@ namespace Microsoft.PowerShell.Commands
             // preprocess Body if content is a dictionary and method is GET (set as query)
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
-            if (bodyAsDictionary is not null
-                && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get || CustomMethod == "GET"))
+            if (bodyAsDictionary is not null && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get || CustomMethod == "GET"))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query is not null && uriBuilder.Query.Length > 1)
@@ -1308,10 +1307,10 @@ namespace Microsoft.PowerShell.Commands
                 // Request again without the Range header because the server indicated the range was not satisfiable.
                 // This happens when the local file is larger than the remote file.
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
-                if (Resume.IsPresent &&
-                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
-                    (response.Content.Headers.ContentRange.HasLength &&
-                    response.Content.Headers.ContentRange.Length != _resumeFileSize))
+                if (Resume.IsPresent
+                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                    && (response.Content.Headers.ContentRange.HasLength
+                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
                 {
                     _cancelToken.Cancel();
 
@@ -1415,10 +1414,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorization = WebSession is not null &&
-                                         WebSession.Headers is not null &&
-                                         PreserveAuthorizationOnRedirect.IsPresent &&
-                                         WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
+                bool keepAuthorization = WebSession is not null
+                                         && WebSession.Headers is not null
+                                         && PreserveAuthorizationOnRedirect.IsPresent
+                                         && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 using (HttpClient client = GetHttpClient(keepAuthorization))
                 {
@@ -1469,10 +1468,10 @@ namespace Microsoft.PowerShell.Commands
 
                                 // Check if the Resume range was not satisfiable because the file already completed downloading.
                                 // This happens when the local file is the same size as the remote file.
-                                if (Resume.IsPresent &&
-                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
-                                    response.Content.Headers.ContentRange.HasLength &&
-                                    response.Content.Headers.ContentRange.Length == _resumeFileSize)
+                                if (Resume.IsPresent
+                                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                                    && response.Content.Headers.ContentRange.HasLength
+                                    && response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
                                     WriteVerbose(string.Format(
