@@ -198,6 +198,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SecureString Token { get; set; }
 
+        /// <summary>
+        /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter AllowInsecureRedirect { get; set; }
+
         #endregion
 
         #region Headers
@@ -951,7 +957,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // This indicates GetResponse will handle redirects.
-            if (handleRedirect)
+            if (handleRedirect || AllowInsecureRedirect)
             {
                 handler.AllowAutoRedirect = false;
             }
@@ -1276,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                if (keepAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location is not null)
+                if ((keepAuthorization || (AllowInsecureRedirect && (WebSession.MaximumRedirection > 0 || WebSession.MaximumRedirection == -1))) && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
                 {
                     _cancelToken.Cancel();
                     _cancelToken = null;
