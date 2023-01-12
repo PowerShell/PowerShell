@@ -271,7 +271,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod { get; set; }
+        public virtual string CustomMethod
+        {
+            get => _custommethod;
+
+            set => _custommethod = value.ToUpperInvariant();
+        }
+
+        private string _custommethod;
 
         #endregion
 
@@ -388,7 +395,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void ValidateParameters()
         {
-            // sessions
+            // Sessions
             if (WebSession is not null && SessionVariable is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
@@ -432,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // credentials
+            // Credentials
             if (UseDefaultCredentials && Credential is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
@@ -451,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // request body content
+            // Request body content
             if (Body is not null && InFile is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict, "WebCmdletBodyConflictException");
@@ -470,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // validate InFile path
+            // Validate InFile path
             if (InFile is not null)
             {
                 ProviderInfo provider = null;
@@ -525,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // output ??
+            // Output ??
             if (PassThru && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
@@ -679,9 +686,7 @@ namespace Microsoft.PowerShell.Commands
             // preprocess Body if content is a dictionary and method is GET (set as query)
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
-            if (bodyAsDictionary is not null
-                && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                    || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
+            if (bodyAsDictionary is not null && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get || CustomMethod == "GET"))
             {
                 UriBuilder uriBuilder = new(uri);
                 if (uriBuilder.Query is not null && uriBuilder.Query.Length > 1)
@@ -760,16 +765,6 @@ namespace Microsoft.PowerShell.Commands
             var ex = new ValidationMetadataException(msg);
             var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
             return error;
-        }
-
-        private bool IsStandardMethodSet()
-        {
-            return (ParameterSetName == "StandardMethod" || ParameterSetName == "StandardMethodNoProxy");
-        }
-
-        private bool IsCustomMethodSet()
-        {
-            return (ParameterSetName == "CustomMethod" || ParameterSetName == "CustomMethodNoProxy");
         }
 
         private string GetBasicAuthorizationHeader()
@@ -901,30 +896,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private long _resumeFileSize = 0;
 
-        private HttpMethod GetHttpMethod(WebRequestMethod method)
+        private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
         {
-            switch (Method)
-            {
-                case WebRequestMethod.Default:
-                case WebRequestMethod.Get:
-                    return HttpMethod.Get;
-                case WebRequestMethod.Head:
-                    return HttpMethod.Head;
-                case WebRequestMethod.Post:
-                    return HttpMethod.Post;
-                case WebRequestMethod.Put:
-                    return HttpMethod.Put;
-                case WebRequestMethod.Delete:
-                    return HttpMethod.Delete;
-                case WebRequestMethod.Trace:
-                    return HttpMethod.Trace;
-                case WebRequestMethod.Options:
-                    return HttpMethod.Options;
-                default:
-                    // Merge and Patch
-                    return new HttpMethod(Method.ToString().ToUpperInvariant());
-            }
-        }
+            WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
+            WebRequestMethod.Delete => HttpMethod.Delete,
+            WebRequestMethod.Head => HttpMethod.Head,
+            WebRequestMethod.Patch => HttpMethod.Patch,
+            WebRequestMethod.Post => HttpMethod.Post,
+            WebRequestMethod.Put => HttpMethod.Put,
+            WebRequestMethod.Options => HttpMethod.Options,
+            WebRequestMethod.Trace => HttpMethod.Trace,
+            _ => new HttpMethod(method.ToString().ToUpperInvariant())
+        };
 
         #region Virtual Methods
 
@@ -1005,27 +988,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpRequestMessage GetRequest(Uri uri)
         {
             Uri requestUri = PrepareUri(uri);
-            HttpMethod httpMethod = null;
-
-            switch (ParameterSetName)
-            {
-                case "StandardMethodNoProxy":
-                    goto case "StandardMethod";
-                case "StandardMethod":
-                    // set the method if the parameter was provided
-                    httpMethod = GetHttpMethod(Method);
-                    break;
-                case "CustomMethodNoProxy":
-                    goto case "CustomMethod";
-                case "CustomMethod":
-                    if (!string.IsNullOrEmpty(CustomMethod))
-                    {
-                        // set the method if the parameter was provided
-                        httpMethod = new HttpMethod(CustomMethod.ToUpperInvariant());
-                    }
-
-                    break;
-            }
+            HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
             // create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
@@ -1130,7 +1093,7 @@ namespace Microsoft.PowerShell.Commands
                 // request
             }
             // ContentType is null
-            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
+            else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
@@ -1221,7 +1184,7 @@ namespace Microsoft.PowerShell.Commands
             if (request.Content is null)
             {
                 // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
-                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET"))
+                if (request.Method == HttpMethod.Get && ContentType is null)
                 {
                     return;
                 }
@@ -1344,10 +1307,10 @@ namespace Microsoft.PowerShell.Commands
                 // Request again without the Range header because the server indicated the range was not satisfiable.
                 // This happens when the local file is larger than the remote file.
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
-                if (Resume.IsPresent &&
-                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
-                    (response.Content.Headers.ContentRange.HasLength &&
-                    response.Content.Headers.ContentRange.Length != _resumeFileSize))
+                if (Resume.IsPresent
+                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                    && (response.Content.Headers.ContentRange.HasLength
+                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
                 {
                     _cancelToken.Cancel();
 
@@ -1451,10 +1414,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorization = WebSession is not null &&
-                                         WebSession.Headers is not null &&
-                                         PreserveAuthorizationOnRedirect.IsPresent &&
-                                         WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
+                bool keepAuthorization = WebSession is not null
+                                         && WebSession.Headers is not null
+                                         && PreserveAuthorizationOnRedirect.IsPresent
+                                         && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 using (HttpClient client = GetHttpClient(keepAuthorization))
                 {
@@ -1505,10 +1468,10 @@ namespace Microsoft.PowerShell.Commands
 
                                 // Check if the Resume range was not satisfiable because the file already completed downloading.
                                 // This happens when the local file is the same size as the remote file.
-                                if (Resume.IsPresent &&
-                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
-                                    response.Content.Headers.ContentRange.HasLength &&
-                                    response.Content.Headers.ContentRange.Length == _resumeFileSize)
+                                if (Resume.IsPresent
+                                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                                    && response.Content.Headers.ContentRange.HasLength
+                                    && response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
                                     WriteVerbose(string.Format(
