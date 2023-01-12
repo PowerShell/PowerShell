@@ -215,6 +215,48 @@ stages:
             - sign_windows_fxdependent_release
             - sign_windows_fxdependentWinDesktop_release
 
+- stage: PublishSymbol
+  displayName: Publish symbols
+  dependsOn: Build
+  jobs:
+  - job: Symbols_Job
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-PS-Native-Secure
+    steps:
+    - download: current
+      artifact: release
+
+    - pwsh: |
+        Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)/results"
+        $downloadedArtifacts = Get-ChildItem -Recurse "$(Pipeline.Workspace)/results"
+        $downloadedArtifacts
+        $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
+        $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
+        $downloadedArtifacts | Where-Object { $_.Name -like 'PowerShell*-symbols*.zip'} | ForEach-Object {
+          $destFolder = New-Item -Path "$expandedRoot/$($_.BaseName)/" -ItemType Directory -Verbose
+          Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
+          Get-ChildItem -Path $destFolder -Recurse -Filter '*.ni.pdb' | ForEach-Object {
+            $runtimeFolder = New-Item -Path "$symbolsRoot/$($destFolder.BaseName)/" -ItemType Directory -Verbose
+            Copy-Item -Path $_.FullName -Destination $runtimeFolder -Verbose
+          }
+        }
+        Write-Verbose -Verbose "Enumerating $symbolsRoot"
+        Get-ChildItem -Path $symbolsRoot -Recurse
+        $vstsCommandString = "vso[task.setvariable variable=SymbolsPath]$symbolsRoot"
+        Write-Verbose -Message "$vstsCommandString" -Verbose
+        Write-Host -Object "##$vstsCommandString"
+      displayName: Expand and capture symbols folders
+    - task: PublishSymbols@2
+      inputs:
+        symbolsFolder: '$(SymbolsPath)'
+        searchPattern: '**/*.ni.pdb'
+        indexSources: false
+        publishSymbols: true
+        symbolServerType: teamServices
+        detailedLog: true
+
   - stage: compliance
     dependsOn: ['windows']
     jobs:
