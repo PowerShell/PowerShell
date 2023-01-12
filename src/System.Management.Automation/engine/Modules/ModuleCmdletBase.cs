@@ -5723,7 +5723,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
-                                    // Implict function export is allowed when any of the following is true:
+                                    // Implicit function export is allowed when any of the following is true:
                                     //  - Nested modules are allowed by module manifest
                                     //  - The import context language mode is FullLanguage
                                     //  - This script module not running as trusted (FullLanguage)
