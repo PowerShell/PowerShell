@@ -1449,7 +1449,7 @@ namespace Microsoft.PowerShell.Commands
                 // it needs to be stripped on the first redirect.
                 bool keepAuthorizationOnRedirect = WebSession is not null &&
                                                    WebSession.Headers is not null &&
-                                                   PreserveAuthorizationOnRedirect &&
+                                                   PreserveAuthorizationOnRedirect.IsPresent &&
                                                    WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 bool handleRedirect = keepAuthorizationOnRedirect; // || AllowInsicureRedirect || PreserveHTTPMethodOnRedirect
