@@ -198,6 +198,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SecureString Token { get; set; }
 
+        /// <summary>
+        /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter AllowInsecureRedirect { get; set; }
+
         #endregion
 
         #region Headers
@@ -1415,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
                                                    && PreserveAuthorizationOnRedirect.IsPresent
                                                    && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                bool handleRedirect = keepAuthorizationOnRedirect;
+                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect;
 
                 using (HttpClient client = GetHttpClient(handleRedirect))
                 {
