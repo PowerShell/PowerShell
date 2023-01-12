@@ -347,12 +347,6 @@ namespace System.Management.Automation
         #region parameter binder
 
         /// <summary>
-        /// Variable which is set to true when prepare is called.
-        /// Parameter Binder should only be created after Prepare method is called.
-        /// </summary>
-        private bool _isPreparedCalled = false;
-
-        /// <summary>
         /// Parameter binder used by this command processor.
         /// </summary>
         private NativeCommandParameterBinderController _nativeParameterBinderController;
@@ -374,8 +368,6 @@ namespace System.Management.Automation
         /// </returns>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");
-
             if (_isMiniShell)
             {
                 _nativeParameterBinderController =

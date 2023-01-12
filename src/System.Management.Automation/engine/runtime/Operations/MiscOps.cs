@@ -763,9 +763,30 @@ namespace System.Management.Automation
                 }
             }
 
+            bool lastCommandWasNative = false;
+            NativeCommandProcessor lastNativeCommand = null;
             foreach (var commandTuple in commandTuples)
             {
-                var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context, false);
+                var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context, lastCommandWasNative);
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+                {
+                    if (commandProcessor is NativeCommandProcessor nativeCommand)
+                    {
+                        if (lastCommandWasNative)
+                        {
+                            lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                        }
+
+                        lastCommandWasNative = true;
+                        lastNativeCommand = nativeCommand;
+                    }
+                    else
+                    {
+                        lastCommandWasNative = false;
+                        lastNativeCommand = null;
+                    }
+                }
+
                 commandProcessor.Command.CommandOriginInternal = commandOrigin;
                 commandProcessor.CommandScope.ScopeOrigin = commandOrigin;
                 commandProcessor.Command.MyInvocation.CommandOrigin = commandOrigin;
