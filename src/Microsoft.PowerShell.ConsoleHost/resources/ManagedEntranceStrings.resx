@@ -120,6 +120,15 @@
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}</value>
   </data>
+  <data name="ShellBannerCLMode" xml:space="preserve">
+    <value>[Constrained Language Mode]</value>
+  </data>
+  <data name="ShellBannerNLMode" xml:space="preserve">
+    <value>[No Language Mode]</value>
+  </data>
+  <data name="ShellBannerRLMode" xml:space="preserve">
+    <value>[Restricted Language Mode]</value>
+  </data>
   <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
     <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
   </data>

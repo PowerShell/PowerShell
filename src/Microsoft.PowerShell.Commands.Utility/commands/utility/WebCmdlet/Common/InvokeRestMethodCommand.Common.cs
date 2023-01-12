@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get => base.CustomMethod;
 
-            set => base.CustomMethod = value;
+            set => base.CustomMethod = value.ToUpperInvariant();
         }
 
         /// <summary>
