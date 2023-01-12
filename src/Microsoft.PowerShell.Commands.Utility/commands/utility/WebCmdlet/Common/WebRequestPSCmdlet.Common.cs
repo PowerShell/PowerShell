@@ -1417,7 +1417,7 @@ namespace Microsoft.PowerShell.Commands
                 // If the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
                 bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
-                                                   && WebSession?.Headers?.ContainsKey(HttpKnownHeaderNames.Authorization);
+                                                   && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect;
 
