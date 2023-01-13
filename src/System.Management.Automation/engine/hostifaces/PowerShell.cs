@@ -5251,6 +5251,12 @@ namespace System.Management.Automation
         public string HistoryString { get; set; }
 
         /// <summary>
+        /// The string representing the constructed pipeline
+        /// which includes the json adapter.
+        /// </summary>
+        public string ConstructedPipeline { get; set; }
+
+        /// <summary>
         /// Extra commands to run in a single invocation.
         /// </summary>
         internal Collection<PSCommand> ExtraCommands { get; }

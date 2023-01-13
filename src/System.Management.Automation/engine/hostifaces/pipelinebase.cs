@@ -976,6 +976,11 @@ namespace System.Management.Automation.Runspaces
         /// by invoke-cmd to place correct string in history.</remarks>
         internal string HistoryString { get; set; }
 
+        /// <summary>
+        /// String which represents the actual pipeline.
+        /// </summary>
+        public string ConstructedPipeline { get; set; }
+
         #endregion history
 
         #region misc

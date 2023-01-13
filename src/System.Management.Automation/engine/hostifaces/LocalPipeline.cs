@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Runspaces
             // History id is greater than zero if entry was added to history
             if (AddToHistory)
             {
-                LocalRunspace.History.AddEntry(InstanceId, HistoryString, PipelineState, _pipelineStartTime, DateTime.Now, skipIfLocked);
+                LocalRunspace.History.AddEntry(InstanceId, HistoryString, ConstructedPipeline, PipelineState, _pipelineStartTime, DateTime.Now, skipIfLocked);
             }
         }
 
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation.Runspaces
 
             if (AddToHistory)
             {
-                _historyIdForThisPipeline = LocalRunspace.History.AddEntry(InstanceId, HistoryString, PipelineState, _pipelineStartTime, DateTime.Now, false);
+                _historyIdForThisPipeline = LocalRunspace.History.AddEntry(InstanceId, HistoryString, ConstructedPipeline, PipelineState, _pipelineStartTime, DateTime.Now, false);
             }
         }
 

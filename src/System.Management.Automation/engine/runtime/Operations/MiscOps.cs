@@ -538,7 +538,7 @@ namespace System.Management.Automation
                 if (commandAdded)
                 {
                     // We've added a json adapter, update the history string.
-                    UpdateHistory(context, pipelineProcessor);
+                    AddConstructedPipeline(context, pipelineProcessor);
                 }
 
                 context.PushPipelineProcessor(pipelineProcessor);
@@ -558,8 +558,9 @@ namespace System.Management.Automation
             }
         }
 
-        // This is best effort to change history.
-        internal static void UpdateHistory(ExecutionContext context, PipelineProcessor pipelineProcessor)
+        // Add the constructed pipeline in the case of a discovered JSON adapter.
+        // This is best effort, if an exception occurs that is not a fatal error.
+        internal static void AddConstructedPipeline(ExecutionContext context, PipelineProcessor pipelineProcessor)
         {
             try
             {
@@ -568,12 +569,13 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
                 List<string> commands = new List<string>();
                 foreach (var commandProcessor in pipelineProcessor.Commands)
                 {
                     commands.Add(commandProcessor.Command.InvocationExtent.Text);
                 }
-                runningPipeline.HistoryString = string.Join(" | ", commands);
+                runningPipeline.ConstructedPipeline = string.Join(" | ", commands);
             }
             catch (Exception)
             {

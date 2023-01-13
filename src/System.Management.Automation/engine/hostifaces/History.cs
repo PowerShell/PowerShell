@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(cmdline != null, "caller should validate the parameter");
             _pipelineId = pipelineId;
             CommandLine = cmdline;
+            ConstructedPipeline = cmdline;
             ExecutionStatus = status;
             StartExecutionTime = startTime;
             EndExecutionTime = endTime;
@@ -50,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
             Id = history.Id;
             _pipelineId = history._pipelineId;
             CommandLine = history.CommandLine;
+            ConstructedPipeline = history.ConstructedPipeline;
             ExecutionStatus = history.ExecutionStatus;
             StartExecutionTime = history.StartExecutionTime;
             EndExecutionTime = history.EndExecutionTime;
@@ -67,6 +69,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         public string CommandLine { get; private set; }
+
+        /// <summary>
+        /// The executed pipeline.
+        /// This will include the json adapter.
+        /// </summary>
+        public string ConstructedPipeline { get; internal set; }
 
         /// <summary>
         /// Execution status of associated pipeline.
@@ -191,6 +199,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="pipelineId"></param>
         /// <param name="cmdline"></param>
+        /// <param name="constructedPipeline"></param>
         /// <param name="status"></param>
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
@@ -198,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Id for the new created entry. Use this id to fetch the
         /// entry. Returns -1 if the entry is not added.</returns>
         /// <remarks>This function is thread safe</remarks>
-        internal long AddEntry(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime, bool skipIfLocked)
+        internal long AddEntry(long pipelineId, string cmdline, string constructedPipeline, PipelineState status, DateTime startTime, DateTime endTime, bool skipIfLocked)
         {
             if (!System.Threading.Monitor.TryEnter(_syncRoot, skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
             {
@@ -210,6 +219,7 @@ namespace Microsoft.PowerShell.Commands
                 ReallocateBufferIfNeeded();
 
                 HistoryInfo entry = new HistoryInfo(pipelineId, cmdline, status, startTime, endTime);
+                entry.ConstructedPipeline = constructedPipeline;
                 return Add(entry);
             }
             finally
@@ -1397,6 +1407,7 @@ namespace Microsoft.PowerShell.Commands
                                   (
                                     0,
                                     infoToAdd.CommandLine,
+                                    infoToAdd.ConstructedPipeline,
                                     infoToAdd.ExecutionStatus,
                                     infoToAdd.StartExecutionTime,
                                     infoToAdd.EndExecutionTime,
