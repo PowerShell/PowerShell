@@ -287,10 +287,10 @@ namespace Microsoft.PowerShell.Commands
         private string _custommethod;
 
         /// <summary>
-        /// Gets or sets the PreserveHTTPMethodOnRedirect property.
+        /// Gets or sets the PreserveHttpMethodOnRedirect property.
         /// </summary>
         [Parameter]
-        public virtual SwitchParameter PreserveHTTPMethodOnRedirect { get; set; }
+        public virtual SwitchParameter PreserveHttpMethodOnRedirect { get; set; }
 
         #endregion
 
@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
-                    if (RequestRequiresForceGet(response.StatusCode, req.Method) && !PreserveHTTPMethodOnRedirect)
+                    if (RequestRequiresForceGet(response.StatusCode, req.Method) && !PreserveHttpMethodOnRedirect)
                     {
                         Method = WebRequestMethod.Get;
                     }
@@ -1414,7 +1414,7 @@ namespace Microsoft.PowerShell.Commands
                 bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
                                                    && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHTTPMethodOnRedirect;
+                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
                 using (HttpClient client = GetHttpClient(handleRedirect))
                 {
