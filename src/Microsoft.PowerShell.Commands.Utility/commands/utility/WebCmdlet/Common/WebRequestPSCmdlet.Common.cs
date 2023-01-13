@@ -1415,7 +1415,7 @@ namespace Microsoft.PowerShell.Commands
                 bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
                                                    && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect;
+                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHTTPMethodOnRedirect;
 
                 using (HttpClient client = GetHttpClient(handleRedirect))
                 {
