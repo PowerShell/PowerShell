@@ -379,13 +379,6 @@ $redirectTests = @(
     @{redirectType = 'relative'; redirectedMethod = 'GET'}
 )
 
-$redirectTests2 = @(
-    @{redirectType = 'MultipleChoices'}
-    @{redirectType = 'Moved'}
-    @{redirectType = 'Found'}
-    @{redirectType = 'SeeOther'}
-)
-
 Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $oldProgress = $ProgressPreference
@@ -963,7 +956,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Content.Method | Should -Be $redirectedMethod
         }
 
-        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect keeps the authorization header redirects and do remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests2 {
+        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect keeps the authorization header redirects and do remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
             $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
             $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Uri $uri -Method 'POST'
@@ -2671,7 +2664,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
-    It "Validates Invoke-RestMethod -PreserveHttpMethodOnRedirect keeps the authorization header redirects and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests2 {
+    It "Validates Invoke-RestMethod -PreserveHttpMethodOnRedirect keeps the authorization header redirects and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
