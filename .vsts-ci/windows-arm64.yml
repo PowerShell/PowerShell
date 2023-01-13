@@ -1,0 +1,84 @@
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+    - test/perf/*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - tools/cgmanifest.json
+    - LICENSE.txt
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
+
+variables:
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  __SuppressAnsiEscapeSequences: 1
+
+resources:
+- repo: self
+  clean: true
+
+stages:
+- stage: BuildWin
+  displayName: Build for Windows
+  jobs:
+  - template: templates/ci-build.yml
+    parameters:
+      pool: PS-mscodehub-ARM
+
+- stage: TestWin
+  displayName: Test for Windows
+  jobs:
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: CI
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: CI
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: Others
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: Others
+
+  - template: templates/verify-xunit.yml

@@ -1,12 +1,18 @@
 parameters:
   pool: 'windows-latest'
+  imageName: 'PSMMS2022-ARM64'
   jobName: 'win_build'
   displayName: Windows Build
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
-    vmImage: ${{ parameters.pool }}
+    ${{ if eq( parameters.pool, 'windows-latest') }}:
+      vmImage: ${{ parameters.pool }}
+    ${{ else }}:
+      name: ${{ parameters.pool }}
+      demands:
+      - ImageOverride -equals ${{ parameters.imageName }}
 
   displayName: ${{ parameters.displayName }}
 
