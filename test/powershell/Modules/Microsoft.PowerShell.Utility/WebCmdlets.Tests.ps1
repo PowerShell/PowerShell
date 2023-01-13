@@ -520,7 +520,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be $httpUri.Authority
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should -Match $httpUri.Authority
     }
 
     It "Validate Invoke-WebRequest redirect with -Query destination Https" {
@@ -529,7 +530,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be $httpsUri.Authority
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should -Match $httpsUri.Authority
     }
 
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
@@ -962,7 +964,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
 
             $result = ExecuteWebCommand -command $command
-            $result.Output.Headers.Host | Should -Be $httpUri.Authority
+            $jsonContent = $result.Output.Content | ConvertFrom-Json
+            $jsonContent.headers.Host | Should -Match $httpUri.Authority
         }
 
         It "Validate Invoke-WebRequest Https to Http redirect fails" {
