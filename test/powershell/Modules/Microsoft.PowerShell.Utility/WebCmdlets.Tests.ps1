@@ -514,22 +514,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
-    It "Validate Invoke-WebRequest redirect with query destination Http" {
+    It "Validate Invoke-WebRequest redirect with -Query destination Http" {
         $httpUri = Get-WebListenerUrl -Test 'Get'
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
-        $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be "127.0.0.1:8083"
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
     }
 
-    It "Validate Invoke-WebRequest redirect with query destination Https" {
-        $httpUri = Get-WebListenerUrl -Test 'Get' -Https
-        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+    It "Validate Invoke-WebRequest redirect with -Query destination Https" {
+        $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpsUri}
         $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be "127.0.0.1:9094"
+        $result.Output.Headers.Host | Should -Be $httpsUri.Authority
     }
 
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
@@ -962,7 +962,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
 
             $result = ExecuteWebCommand -command $command
-            $result.Output.Headers.Host | Should -Be "127.0.0.1:8083"
+            $result.Output.Headers.Host | Should -Be $httpUri.Authority
         }
 
         It "Validate Invoke-WebRequest Https to Http redirect fails" {
@@ -2206,22 +2206,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
-    It "Validate Invoke-RestMethod redirect with query destination Http" {
+    It "Validate Invoke-RestMethod redirect with -Query destination Http" {
         $httpUri = Get-WebListenerUrl -Test 'Get'
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
-        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
+        $command = "Invoke-RestMethod -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be "127.0.0.1:8083"
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
     }
 
-    It "Validate Invoke-RestMethod redirect with query destination Https" {
-        $httpUri = Get-WebListenerUrl -Test 'Get' -Https
-        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+    It "Validate Invoke-RestMethod redirect with -Query destination Https" {
+        $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpsUri}
         $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be "127.0.0.1:9094"
+        $result.Output.Headers.Host | Should -Be $httpsUri.Authority
     }
 
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
@@ -2655,7 +2655,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
 
         $result = ExecuteWebCommand -command $command
-        $result.Output.Headers.Host | Should -Be "127.0.0.1:8083"
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
     }
 
     It "Validate Invoke-RestMethod Https to Http redirect fails" {
