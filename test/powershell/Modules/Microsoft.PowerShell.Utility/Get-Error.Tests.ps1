@@ -145,4 +145,9 @@ Describe 'Get-Error tests' -Tag CI {
             }
         }
     }
+
+    It 'Get-Error works with strict mode' {
+        $out = pwsh -noprofile -command 'Set-StrictMode -Version Latest; $PSStyle.OutputRendering = "PlainText"; 1/0; Get-Error' | Out-String
+        $out | Should -Match "Message : Attempted to divide by zero."
+    }
 }
