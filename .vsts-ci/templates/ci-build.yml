@@ -31,7 +31,7 @@ jobs:
       }
 
     displayName: Install PowerShell
-    condition: ne(${{ parameters.pool }}, 'windows-latest')
+    condition: ne('${{ parameters.pool }}', 'windows-latest')
 
   - pwsh: |
       Get-ChildItem -Path env:
