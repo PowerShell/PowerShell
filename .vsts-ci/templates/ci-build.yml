@@ -33,6 +33,9 @@ jobs:
     displayName: Install PowerShell
     condition: ne('${{ parameters.pool }}', 'windows-latest')
 
+  - checkout: self
+    fetchDepth: 1000
+
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture Environment
@@ -48,7 +51,9 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
+      Write-Verbose -Verbose "Start Sync-PSTags"
       Sync-PSTags -AddRemoteIfMissing
+      Write-Verbose -Verbose "End Sync-PSTags"
     displayName: Bootstrap
     condition: succeeded()
 
