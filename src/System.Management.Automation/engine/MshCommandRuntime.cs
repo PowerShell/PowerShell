@@ -3330,7 +3330,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProgressPreferenceSet)
+                if (IsProgressActionSet)
                     return _progressPreference;
 
                 if (!_isProgressPreferenceCached)
@@ -3351,12 +3351,14 @@ namespace System.Management.Automation
                 }
 
                 _progressPreference = value;
-                _isProgressPreferenceSet = true;
+                IsProgressActionSet = true;
             }
         }
 
         private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
-        private bool _isProgressPreferenceSet = false;
+
+        internal bool IsProgressActionSet { get; private set; } = false;
+
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>
