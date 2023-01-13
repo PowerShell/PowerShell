@@ -1486,7 +1486,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
 
                                 // Detect insecure redirection
-                                if (response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
+                                if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                                 {
                                         ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
                                         er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
