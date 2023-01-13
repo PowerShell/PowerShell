@@ -1,5 +1,6 @@
 parameters:
   pool: 'windows-2019'
+  imageName: 'PSMMS2022-ARM64'
   parentJobs: []
   purpose: ''
   tagSet: 'CI'
@@ -9,7 +10,12 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    vmImage: ${{ parameters.pool }}
+    ${{ if eq( parameters.pool, 'windows-latest') }}:
+      vmImage: ${{ parameters.pool }}
+    ${{ else }}:
+      name: ${{ parameters.pool }}
+      demands:
+      - ImageOverride -equals ${{ parameters.imageName }}
 
   displayName: Windows Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
@@ -58,7 +64,14 @@ jobs:
       $options = (Get-PSOptions)
       $path = split-path -path $options.Output
       $rootPath = split-Path -path $path
+
+      Write-Verbose -Verbose "rootPath = $rootPath"
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+
+      if (-not (Test-Path -Path "$rootPath\pwsh.exe" ) {
+        throw "pwsh.exe is not found at: $rootPath"
+      }
+
       Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
     displayName: Test
     condition: succeeded()

@@ -65,20 +65,24 @@ stages:
     parameters:
       purpose: UnelevatedPesterTests
       tagSet: CI
+      pool: PS-mscodehub-ARM
 
   - template: templates/windows-test.yml
     parameters:
       purpose: ElevatedPesterTests
       tagSet: CI
+      pool: PS-mscodehub-ARM
 
   - template: templates/windows-test.yml
     parameters:
       purpose: UnelevatedPesterTests
       tagSet: Others
+      pool: PS-mscodehub-ARM
 
   - template: templates/windows-test.yml
     parameters:
       purpose: ElevatedPesterTests
       tagSet: Others
+      pool: PS-mscodehub-ARM
 
   - template: templates/verify-xunit.yml
