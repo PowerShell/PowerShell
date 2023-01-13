@@ -48,6 +48,7 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
+      Sync-PSTags
     displayName: Bootstrap
     condition: succeeded()
 
