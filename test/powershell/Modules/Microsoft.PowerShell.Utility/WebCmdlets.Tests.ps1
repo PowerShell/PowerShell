@@ -893,7 +893,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
-        
+
         It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect respects -MaximumRedirection on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
             param($redirectType, $redirectedMethod)
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3' -Query @{type = $redirectType}
@@ -947,10 +947,24 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             # ensure user-agent is present (i.e., no false positives )
             $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-            # ensure Authorization header has been removed.
+            # ensure Authorization header has been kept.
             $response.Content.Headers."Authorization" | Should -BeExactly 'test'
             # ensure POST was changed to GET for selected redirections and remains as POST for others.
             $response.Content.Method | Should -Be $redirectedMethod
+        }
+
+        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect keeps the authorization header redirects and do remains POST when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Uri $uri -Method 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been kept.
+            $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+            # ensure POST doesn't change.
+            $response.Content.Method | Should -Be 'POST'
         }
 
         It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
@@ -2641,10 +2655,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been removed.
+        # ensure Authorization header has been kept.
         $response.Content.Headers."Authorization" | Should -BeExactly 'test'
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
         $response.Content.Method | Should -Be $redirectedMethod
+    }
+
+    It "Validates Invoke-RestMethod -PreserveAuthorizationOnRedirect keeps the authorization header redirects and remains POST when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
+
+        $response.Error | Should -BeNullOrEmpty
+        # ensure user-agent is present (i.e., no false positives )
+        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+        # ensure Authorization header has been kept.
+        $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+        # ensure POST doesn't change.
+        $response.Content.Method | Should -Be 'POST'
     }
 
     It "Validates Invoke-RestMethod handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
