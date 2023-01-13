@@ -135,6 +135,9 @@ function ExecuteRedirectRequest {
         [switch]
         $PreserveAuthorizationOnRedirect,
 
+        [switch]
+        $PreserveHttpMethodOnRedirect,
+
         [ValidateRange(0, [int]::MaxValue)]
         [int]
         $MaximumRedirection
@@ -145,13 +148,13 @@ function ExecuteRedirectRequest {
         $headers = @{"Authorization" = "test"}
         if ($Cmdlet -eq 'Invoke-WebRequest') {
             if ($MaximumRedirection -gt 0) {
-                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method -MaximumRedirection:$MaximumRedirection
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -PreserveHttpMethodOnRedirect:$PreserveHttpMethodOnRedirect.IsPresent -Method $Method -MaximumRedirection:$MaximumRedirection
             } else {
-                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -PreserveHttpMethodOnRedirect:$PreserveHttpMethodOnRedirect.IsPresent -Method $Method
             }
             $result.Content = $result.Output.Content | ConvertFrom-Json
         } else {
-            $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+            $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -PreserveHttpMethodOnRedirect:$PreserveHttpMethodOnRedirect.IsPresent -Method $Method
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
