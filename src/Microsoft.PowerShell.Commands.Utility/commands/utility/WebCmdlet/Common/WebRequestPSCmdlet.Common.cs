@@ -963,7 +963,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // This indicates GetResponse will handle redirects.
-
             if (handleRedirect || WebSession.MaximumRedirection == 0)
             {
                 handler.AllowAutoRedirect = false;
