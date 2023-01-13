@@ -1272,7 +1272,7 @@ namespace Microsoft.PowerShell.Commands
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
-                
+
                 if (handleRedirect
                     && WebSession.MaximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
