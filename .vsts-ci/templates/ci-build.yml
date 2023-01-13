@@ -17,6 +17,22 @@ jobs:
   displayName: ${{ parameters.displayName }}
 
   steps:
+  - powershell: |
+      [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+      $pwsh = Get-Command pwshsdsd -ErrorAction SilentlyContinue -CommandType Application
+
+      if ($null -eq $pwsh) {
+        $powerShellPath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'powershell'
+        Invoke-WebRequest -Uri https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.ps1 -outfile ./install-powershell.ps1
+        ./install-powershell.ps1 -Destination $powerShellPath
+        $vstsCommandString = "vso[task.setvariable variable=PATH]$powerShellPath;$env:PATH"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      }
+
+    displayName: Install PowerShell
+    condition: ne(${{ parameters.pool }}, 'windows-latest')
+
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture Environment
