@@ -968,7 +968,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $jsonContent.headers.Host | Should -Match $httpUri.Authority
         }
 
-        It "Validate Invoke-WebRequest Https to Http redirect fails" {
+        It "Validate Invoke-WebRequest Https to Http redirect without -AllowInsecureRedirect" {
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
             $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
@@ -2661,7 +2661,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.Headers.Host | Should -Be $httpUri.Authority
     }
 
-    It "Validate Invoke-RestMethod Https to Http redirect fails" {
+    It "Validate Invoke-RestMethod Https to Http redirect without -AllowInsecureRedirect" {
         $httpUri = Get-WebListenerUrl -Test 'Get'
         $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
         $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
