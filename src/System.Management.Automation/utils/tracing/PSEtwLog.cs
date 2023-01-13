@@ -129,6 +129,22 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal static void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult)
+        {
+            provider.LogWDACQueryEvent(queryName, fileName, querySuccess, queryResult);
+        }
+
+        /// <summary>
         /// Provider interface function for logging settings event.
         /// </summary>
         /// <param name="logContext"></param>

@@ -385,10 +385,11 @@ namespace Microsoft.PowerShell.Commands
         private void InitParallelParameterSet()
         {
             // The following common parameters are not (yet) supported in this parameter set.
-            //  ErrorAction, WarningAction, InformationAction, PipelineVariable.
+            //  ErrorAction, WarningAction, InformationAction, ProgressAction, PipelineVariable.
             if (MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ErrorAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.WarningAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.InformationAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ProgressAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.PipelineVariable)))
             {
                 ThrowTerminatingError(

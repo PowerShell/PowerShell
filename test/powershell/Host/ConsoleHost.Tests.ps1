@@ -917,6 +917,28 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out[0] | Should -MatchExactly $expectedPromptPattern
         }
     }
+
+    Context 'CommandWithArgs tests' {
+        It 'Should be able to run a pipeline with arguments using <param>' -TestCases @(
+            @{ param = '-commandwithargs' }
+            @{ param = '-cwa' }
+        ){
+            param($param)
+            $out = pwsh -nologo -noprofile $param '$args | % { "[$_]" }'  '$fun' '@times'
+            $out.Count | Should -Be 2 -Because ($out | Out-String)
+            $out[0] | Should -BeExactly '[$fun]'
+            $out[1] | Should -BeExactly '[@times]'
+        }
+
+        It 'Should be able to handle boolean switch: <param>' -TestCases @(
+            @{ param = '-switch:$true'; expected = 'True'}
+            @{ param = '-switch:$false'; expected = 'False'}
+        ){
+            param($param, $expected)
+            $out = pwsh -nologo -noprofile -cwa 'param([switch]$switch) $switch.IsPresent' $param
+            $out | Should -Be $expected
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {

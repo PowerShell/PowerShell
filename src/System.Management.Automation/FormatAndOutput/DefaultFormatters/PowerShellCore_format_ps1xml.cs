@@ -138,6 +138,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo+ImplementationInfo",
+                ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo_ImplementationInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ShellVariable",
                 ViewsOf_System_Management_Automation_ShellVariable());
 
@@ -774,6 +778,21 @@ namespace System.Management.Automation.Runspaces
                 .EndTable());
         }
 
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo_ImplementationInfo()
+        {
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo+ImplementationInfo",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemProperty(@"Id")
+                        .AddItemProperty(@"Kind")
+                        .AddItemProperty(@"Name")
+                        .AddItemProperty(@"Description")
+                        .AddItemProperty(@"ImplementationType")
+                    .EndEntry()
+                .EndList());
+        }
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ShellVariable()
         {
             yield return new FormatViewDefinition("ShellVariable",
@@ -997,10 +1016,11 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
+                                    $errorColor = ''
+                                    $commandPrefix = ''
                                     if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
-                                        $errorColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal) {
                                             $errorColor = $PSStyle.Formatting.Error
                                         }
@@ -1051,10 +1071,7 @@ namespace System.Management.Automation.Runspaces
                                         }
                                     }
 
-                                    if ($commandPrefix)
-                                    {
-                                        $errorColor + $commandPrefix
-                                    }
+                                    $errorColor + $commandPrefix
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off

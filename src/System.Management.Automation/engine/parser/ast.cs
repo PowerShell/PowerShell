@@ -7448,9 +7448,9 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy the TernaryExpressionAst instance.
         /// </summary>
-        /// <return>
-        /// Retirns a copy of the ast.
-        /// </return>
+        /// <returns>
+        /// Returns a copy of the ast.
+        /// </returns>
         public override Ast Copy()
         {
             ExpressionAst newCondition = CopyElement(this.Condition);

@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
-                    s_theConsoleHost.UI.WriteLine("PowerShell " + PSVersionInfo.GitCommitId);
+                    s_theConsoleHost.UI.WriteLine($"PowerShell {PSVersionInfo.GitCommitId}");
                     return 0;
                 }
 
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell
         /// if true, then flag the parent ConsoleHost that it should shutdown the session.  If false, then only the current
         /// executing instance is stopped.
         ///
-        ///</param>
+        /// </param>
         private static void SpinUpBreakHandlerThread(bool shouldEndSession)
         {
             ConsoleHost host = ConsoleHost.SingletonInstance;
@@ -1831,8 +1831,29 @@ namespace Microsoft.PowerShell
                 const string shellId = "Microsoft.PowerShell";
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
-                // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                // are loaded so that they are trusted. (Validation of their signatures is done in F&O).
+                var languageMode = Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                // When displaying banner, also display the language mode if running in any restricted mode.
+                if (s_cpp.ShowBanner)
+                {
+                    switch (languageMode)
+                    {
+                        case PSLanguageMode.ConstrainedLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
+                            break;
+
+                        case PSLanguageMode.NoLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerNLMode);
+                            break;
+
+                        case PSLanguageMode.RestrictedLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerRLMode);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
 
                 string allUsersProfile = HostUtilities.GetFullProfileFileName(null, false);
                 string allUsersHostSpecificProfile = HostUtilities.GetFullProfileFileName(shellId, false);

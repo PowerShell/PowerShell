@@ -2,7 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Management.Automation;
 using System.Management.Automation.Subsystem;
 using System.Management.Automation.Subsystem.DSC;
 using System.Management.Automation.Subsystem.Feedback;
@@ -12,6 +14,78 @@ using Xunit;
 
 namespace PSTests.Sequential
 {
+    public class MyInvalidSubsystem : ISubsystem
+    {
+        private readonly Guid _id;
+
+        public static readonly MyInvalidSubsystem Singleton;
+
+        static MyInvalidSubsystem()
+        {
+            Singleton = new MyInvalidSubsystem(Guid.NewGuid());
+        }
+
+        private MyInvalidSubsystem(Guid id)
+        {
+            _id = id;
+        }
+
+        public Guid Id => _id;
+
+        public string Name => "Invalid";
+
+        public string Description => "An invalid subsystem implementation";
+
+        public Dictionary<string, string> FunctionsToDefine => null;
+    }
+
+    public class MyCompositeSubsystem : ICommandPredictor, IFeedbackProvider
+    {
+        private readonly Guid _id;
+
+        public static readonly MyCompositeSubsystem Singleton;
+
+        static MyCompositeSubsystem()
+        {
+            Singleton = new MyCompositeSubsystem(Guid.NewGuid());
+        }
+
+        private MyCompositeSubsystem(Guid id)
+        {
+            _id = id;
+        }
+
+        public Guid Id => _id;
+
+        public string Name => "Composite";
+
+        public string Description => "A composite implementation that serves as both a feedback provider and a command predictor.";
+
+        Dictionary<string, string> ISubsystem.FunctionsToDefine => null;
+
+        #region IFeedbackProvider
+
+        public string GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token) => "nothing";
+
+        #endregion
+
+        #region ICommandPredictor
+
+        public bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback) => false;
+
+        public SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken) => default;
+
+        public void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history) { }
+
+        public void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex) { }
+
+        public void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion) { }
+
+        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success) { }
+
+        #endregion
+    }
+
     public static class SubsystemTests
     {
         private static readonly MyPredictor predictor1, predictor2;
@@ -106,26 +180,62 @@ namespace PSTests.Sequential
         }
 
         [Fact]
+        public static void RegisterSubsystemExpectedFailures()
+        {
+            Assert.Throws<ArgumentNullException>(
+                paramName: "proxy",
+                () => SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(null));
+            Assert.Throws<ArgumentNullException>(
+                paramName: "proxy",
+                () => SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, null));
+
+            ArgumentException ex = Assert.Throws<ArgumentException>(
+                paramName: "proxy",
+                () => SubsystemManager.RegisterSubsystem(SubsystemKind.CrossPlatformDsc, predictor1));
+            Assert.Contains(nameof(ICrossPlatformDsc), ex.Message);
+
+            ex = Assert.Throws<ArgumentException>(
+                paramName: "kind",
+                () => SubsystemManager.RegisterSubsystem((SubsystemKind)0, predictor1));
+            Assert.Contains("0", ex.Message);
+
+            ex = Assert.Throws<ArgumentException>(
+                paramName: "kind",
+                () => SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor | SubsystemKind.CrossPlatformDsc, predictor1));
+            Assert.Contains("3", ex.Message);
+
+            // You cannot register the instance of a type that only implements 'ISubsystem'.
+            ex = Assert.Throws<ArgumentException>(
+                paramName: "proxy",
+                () => SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, MyInvalidSubsystem.Singleton));
+            Assert.Contains(nameof(ICommandPredictor), ex.Message);
+
+            ex = Assert.Throws<ArgumentException>(
+                paramName: "subsystemType",
+                () => SubsystemManager.RegisterSubsystem<ISubsystem, MyInvalidSubsystem>(MyInvalidSubsystem.Singleton));
+            Assert.Contains(nameof(ISubsystem), ex.Message);
+        }
+
+        [Fact]
+        public static void RegisterSubsystemForCompositeImplementation()
+        {
+            try
+            {
+                SubsystemManager.RegisterSubsystem<ICommandPredictor, MyCompositeSubsystem>(MyCompositeSubsystem.Singleton);
+                SubsystemManager.RegisterSubsystem(SubsystemKind.FeedbackProvider, MyCompositeSubsystem.Singleton);
+            }
+            finally
+            {
+                SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, MyCompositeSubsystem.Singleton.Id);
+                SubsystemManager.UnregisterSubsystem<IFeedbackProvider>(MyCompositeSubsystem.Singleton.Id);
+            }
+        }
+
+        [Fact]
         public static void RegisterSubsystem()
         {
             try
             {
-                Assert.Throws<ArgumentNullException>(
-                    paramName: "proxy",
-                    () => SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(null));
-                Assert.Throws<ArgumentNullException>(
-                    paramName: "proxy",
-                    () => SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, null));
-                Assert.Throws<ArgumentException>(
-                    paramName: "proxy",
-                    () => SubsystemManager.RegisterSubsystem(SubsystemKind.CrossPlatformDsc, predictor1));
-                Assert.Throws<ArgumentException>(
-                    paramName: "kind",
-                    () => SubsystemManager.RegisterSubsystem((SubsystemKind)0, predictor1));
-                Assert.Throws<ArgumentException>(
-                    paramName: "kind",
-                    () => SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor | SubsystemKind.FeedbackProvider, predictor1));
-
                 // Register 'predictor1'
                 SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(predictor1);
 
@@ -147,7 +257,6 @@ namespace PSTests.Sequential
                 ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
                 Assert.Same(impl, predictor1);
                 Assert.Null(impl.FunctionsToDefine);
-                Assert.Equal(SubsystemKind.CommandPredictor, impl.Kind);
 
                 const string Client = "SubsystemTest";
                 const string Input = "Hello world";

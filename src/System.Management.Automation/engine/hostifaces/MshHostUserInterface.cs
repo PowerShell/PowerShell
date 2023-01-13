@@ -1430,7 +1430,7 @@ namespace System.Management.Automation.Host
         /// <param name="hotkeysAndPlainLabels"></param>
         /// <returns>
         /// Returns the index into the choices array matching the response string, or -1 if there is no match.
-        ///</returns>
+        /// </returns>
         internal static int DetermineChoicePicked(string response, Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
             Diagnostics.Assert(choices != null, "choices: expected a value");

@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="value">Object which is set as core.</param>
         /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
-        ///<remarks>This method is to be used only by Serialization code</remarks>
+        /// <remarks>This method is to be used only by Serialization code</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
             Diagnostics.Assert(this.ImmediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");
