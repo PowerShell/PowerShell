@@ -522,6 +522,26 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
+    It "Validate Invoke-WebRequest redirect with -Query destination Http" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
+        $command = "Invoke-WebRequest -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should -Match $httpUri.Authority
+    }
+
+    It "Validate Invoke-WebRequest redirect with -Query destination Https" {
+        $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpsUri}
+        $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should -Match $httpsUri.Authority
+    }
+
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
         $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-WebRequest -Uri '$uri'"
@@ -952,6 +972,25 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
             $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
             $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+        }
+
+        It "Validate Invoke-WebRequest Https to Http redirect with -AllowInsecureRedirect" {
+            $httpUri = Get-WebListenerUrl -Test 'Get'
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+            $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
+
+            $result = ExecuteWebCommand -command $command
+            $jsonContent = $result.Output.Content | ConvertFrom-Json
+            $jsonContent.headers.Host | Should -Match $httpUri.Authority
+        }
+
+        It "Validate Invoke-WebRequest Https to Http redirect without -AllowInsecureRedirect" {
+            $httpUri = Get-WebListenerUrl -Test 'Get'
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+            $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
+
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
     }
 
@@ -2186,6 +2225,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
+    It "Validate Invoke-RestMethod redirect with -Query destination Http" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
+        $command = "Invoke-RestMethod -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
+    }
+
+    It "Validate Invoke-RestMethod redirect with -Query destination Https" {
+        $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpsUri}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.Host | Should -Be $httpsUri.Authority
+    }
+
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
         $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-RestMethod -Uri '$uri'"
@@ -2609,6 +2666,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod Https to Http redirect with -AllowInsecureRedirect" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
+    }
+
+    It "Validate Invoke-RestMethod Https to Http redirect without -AllowInsecureRedirect" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     #endregion Redirect tests
