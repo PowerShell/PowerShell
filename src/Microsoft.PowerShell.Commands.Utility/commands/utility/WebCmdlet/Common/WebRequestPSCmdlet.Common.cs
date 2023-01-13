@@ -957,20 +957,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // This indicates GetResponse will handle redirects.
-            if (handleRedirect || AllowInsecureRedirect)
+            if (handleRedirect || WebSession.MaximumRedirection == 0)
             {
                 handler.AllowAutoRedirect = false;
             }
-            else if (WebSession.MaximumRedirection > -1)
+            else if (WebSession.MaximumRedirection > 0)
             {
-                if (WebSession.MaximumRedirection == 0)
-                {
-                    handler.AllowAutoRedirect = false;
-                }
-                else
-                {
-                    handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
-                }
+                handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
             }
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
@@ -1263,7 +1256,7 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
+        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
 
@@ -1282,7 +1275,10 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                if ((keepAuthorization || (AllowInsecureRedirect && (WebSession.MaximumRedirection > 0 || WebSession.MaximumRedirection == -1))) && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
+                if (handleRedirect
+                    && WebSession.MaximumRedirection is not 0
+                    && IsRedirectCode(response.StatusCode)
+                    && response.Headers.Location is not null)
                 {
                     _cancelToken.Cancel();
                     _cancelToken = null;
@@ -1303,10 +1299,10 @@ namespace Microsoft.PowerShell.Commands
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
                     // Continue to handle redirection
-                    using (client = GetHttpClient(handleRedirect: true))
+                    using (client = GetHttpClient(handleRedirect))
                     using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                     {
-                        response = GetResponse(client, redirectRequest, keepAuthorization);
+                        response = GetResponse(client, redirectRequest, handleRedirect);
                     }
                 }
 
@@ -1344,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
                         
                         WriteVerbose(reqVerboseMsg);
 
-                        return GetResponse(client, requestWithoutRange, keepAuthorization);
+                        return GetResponse(client, requestWithoutRange, handleRedirect);
                     }
                 }
 
@@ -1418,14 +1414,14 @@ namespace Microsoft.PowerShell.Commands
                 ValidateParameters();
                 PrepareSession();
 
-                // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
+                // If the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorization = WebSession is not null
-                                         && WebSession.Headers is not null
-                                         && PreserveAuthorizationOnRedirect.IsPresent
-                                         && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
+                bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
+                                                   && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                using (HttpClient client = GetHttpClient(keepAuthorization))
+                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect;
+
+                using (HttpClient client = GetHttpClient(handleRedirect))
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
@@ -1459,7 +1455,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request, keepAuthorization);
+                                HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(
