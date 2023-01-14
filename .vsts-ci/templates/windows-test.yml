@@ -78,8 +78,8 @@ jobs:
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)
-      $path = split-path -path $options.Output
-      $rootPath = split-Path -path $path
+      $rootPATH = split-path -path $options.Output
+      # $rootPath = split-Path -path $path
 
       Write-Verbose -Verbose "rootPath = $rootPath"
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
