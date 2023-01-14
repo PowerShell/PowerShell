@@ -85,6 +85,9 @@ jobs:
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
 
       if (-not (Test-Path -Path "$rootPath\pwsh.exe" )) {
+
+        Get-ChildItem -Path $rootPath -Recurse
+
         throw "pwsh.exe is not found at: $rootPath"
       }
 
