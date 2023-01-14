@@ -84,7 +84,7 @@ jobs:
       Write-Verbose -Verbose "rootPath = $rootPath"
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
 
-      if (-not (Test-Path -Path "$rootPath\pwsh.exe" ) {
+      if (-not (Test-Path -Path "$rootPath\pwsh.exe" )) {
         throw "pwsh.exe is not found at: $rootPath"
       }
 
