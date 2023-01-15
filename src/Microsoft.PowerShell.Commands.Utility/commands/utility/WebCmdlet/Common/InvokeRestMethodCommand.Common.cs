@@ -331,12 +331,7 @@ namespace Microsoft.PowerShell.Commands
                     converted = true;
                 }
             }
-            catch (ArgumentException ex)
-            {
-                exRef = ex;
-                obj = null;
-            }
-            catch (InvalidOperationException ex)
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
                 exRef = ex;
                 obj = null;
