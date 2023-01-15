@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) {4}",
                     Compatibility, PlatformName, OS, Culture, App);
-                return (userAgent);
+                return userAgent;
             }
         }
 
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} (compatible; MSIE 9.0; {1}; {2}; {3})",
                     Compatibility, PlatformName, OS, Culture);
-                return (userAgent);
+                return userAgent;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) Gecko/20100401 Firefox/4.0",
                     Compatibility, PlatformName, OS, Culture);
-                return (userAgent);
+                return userAgent;
             }
         }
 
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6",
                     Compatibility, PlatformName, OS, Culture);
-                return (userAgent);
+                return userAgent;
             }
         }
 
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "Opera/9.70 ({0}; {1}; {2}) Presto/2.2.1",
                     PlatformName, OS, Culture);
-                return (userAgent);
+                return userAgent;
             }
         }
 
@@ -99,27 +99,13 @@ namespace Microsoft.PowerShell.Commands
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16",
                     Compatibility, PlatformName, OS, Culture);
-                return (userAgent);
+                return userAgent;
             }
         }
 
-        internal static string Compatibility
-        {
-            get
-            {
-                return ("Mozilla/5.0");
-            }
-        }
+        internal static string Compatibility => "Mozilla/5.0";
 
-        internal static string App
-        {
-            get
-            {
-                string app = string.Format(CultureInfo.InvariantCulture,
-                    "PowerShell/{0}", PSVersionInfo.PSVersion);
-                return (app);
-            }
-        }
+        internal static string App => string.Format(CultureInfo.InvariantCulture, "PowerShell/{0}", PSVersionInfo.PSVersion);
 
         internal static string PlatformName
         {
@@ -156,20 +142,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static string OS
-        {
-            get
-            {
-                return RuntimeInformation.OSDescription.Trim();
-            }
-        }
+        internal static string OS => RuntimeInformation.OSDescription.Trim();
 
-        internal static string Culture
-        {
-            get
-            {
-                return (CultureInfo.CurrentCulture.Name);
-            }
-        }
+        internal static string Culture => CultureInfo.CurrentCulture.Name;
+
     }
 }
