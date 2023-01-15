@@ -2637,8 +2637,6 @@ namespace System.Management.Automation
             if (AutomationNull.Value == sendToPipeline)
                 return;
 
-            sendToPipeline = LanguagePrimitives.AsPSObjectOrNull(sendToPipeline);
-
             this.OutputPipe.Add(sendToPipeline);
         }
 
@@ -2673,8 +2671,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                object converted = LanguagePrimitives.AsPSObjectOrNull(toConvert);
-                convertedList.Add(converted);
+                convertedList.Add(toConvert);
             }
 
             // Writing normal output with "2>&1"
