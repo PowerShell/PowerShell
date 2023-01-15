@@ -20,27 +20,18 @@ namespace Microsoft.PowerShell.Commands
 
         public ICredentials Credentials
         {
-            get { return _credentials; }
+            get => _credentials;
 
-            set { _credentials = value; }
+            set => _credentials = value;
         }
 
-        internal bool BypassProxyOnLocal
-        {
-            get; set;
-        }
+        internal bool BypassProxyOnLocal { get; set; }
 
         internal bool UseDefaultCredentials
         {
-            get
-            {
-                return _credentials == CredentialCache.DefaultCredentials;
-            }
+            get => _credentials == CredentialCache.DefaultCredentials;
 
-            set
-            {
-                _credentials = value ? CredentialCache.DefaultCredentials : null;
-            }
+            set => _credentials = value ? CredentialCache.DefaultCredentials : null;
         }
 
         public Uri GetProxy(Uri destination)
@@ -55,9 +46,6 @@ namespace Microsoft.PowerShell.Commands
             return _proxyAddress;
         }
 
-        public bool IsBypassed(Uri host)
-        {
-            return host.IsLoopback;
-        }
+        public bool IsBypassed(Uri host) => host.IsLoopback;
     }
 }
