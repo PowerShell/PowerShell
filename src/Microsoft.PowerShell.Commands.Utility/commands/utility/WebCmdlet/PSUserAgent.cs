@@ -145,6 +145,5 @@ namespace Microsoft.PowerShell.Commands
         internal static string OS => RuntimeInformation.OSDescription.Trim();
 
         internal static string Culture => CultureInfo.CurrentCulture.Name;
-
     }
 }
