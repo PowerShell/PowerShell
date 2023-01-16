@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// No SSL protocol will be set and the system defaults will be used.
         /// </summary>
-        Default = 0,
+        Default = SslProtocols.None,
 
         /// <summary>
         /// Specifies the TLS 1.0 is obsolete. Using this value now defaults to TLS 1.2.
@@ -433,13 +433,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            if (!AllowUnencryptedAuthentication && Authentication != WebAuthenticationType.None && Uri.Scheme != "https")
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
-                ThrowTerminatingError(error);
-            }
-
-            if (!AllowUnencryptedAuthentication && (Credential is not null || UseDefaultCredentials) && Uri.Scheme != "https")
+            if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None || Credential is not null || UseDefaultCredentials) && Uri.Scheme != "https")
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
@@ -688,10 +682,9 @@ namespace Microsoft.PowerShell.Commands
         {
             uri = CheckProtocol(uri);
 
-            // before creating the web request,
+            // Before creating the web request,
             // preprocess Body if content is a dictionary and method is GET (set as query)
-            IDictionary bodyAsDictionary;
-            LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
+            LanguagePrimitives.TryConvertTo<IDictionary>(Body, out IDictionary bodyAsDictionary);
             if (bodyAsDictionary is not null && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get || CustomMethod == "GET"))
             {
                 UriBuilder uriBuilder = new(uri);
@@ -1283,7 +1276,7 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
-                    // if explicit count was provided, reduce it for this redirection.
+                    // If explicit count was provided, reduce it for this redirection.
                     if (WebSession.MaximumRedirection > 0)
                     {
                         WebSession.MaximumRedirection--;
@@ -1444,7 +1437,9 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 long requestContentLength = 0;
                                 if (request.Content is not null)
+                                {
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
+                                }
 
                                 string reqVerboseMsg = string.Format(
                                     CultureInfo.CurrentCulture,
@@ -1644,16 +1639,7 @@ namespace Microsoft.PowerShell.Commands
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
                     }
                 }
-                catch (FormatException ex)
-                {
-                    if (!SkipHeaderValidation)
-                    {
-                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                        ThrowTerminatingError(er);
-                    }
-                }
-                catch (ArgumentException ex)
+                catch (Exception ex) when (ex is FormatException || ex is ArgumentException)
                 {
                     if (!SkipHeaderValidation)
                     {
@@ -1690,7 +1676,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml);
+                bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml, encoding: null);
             }
 
             var byteArrayContent = new ByteArrayContent(bytes);
@@ -1767,8 +1753,7 @@ namespace Microsoft.PowerShell.Commands
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
             const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
-            IEnumerable<string> links;
-            if (response.Headers.TryGetValues("Link", out links))
+            if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
             {
                 foreach (string linkHeader in links)
                 {
