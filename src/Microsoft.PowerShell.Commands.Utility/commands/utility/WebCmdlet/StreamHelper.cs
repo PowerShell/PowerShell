@@ -448,6 +448,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             stream.Seek(0, SeekOrigin.Begin);
                             content = StreamToString(stream, localEncoding);
+
                             // Report the encoding used.
                             encoding = localEncoding;
                         }
