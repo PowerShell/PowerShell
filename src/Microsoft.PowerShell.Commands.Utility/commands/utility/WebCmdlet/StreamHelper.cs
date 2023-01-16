@@ -48,22 +48,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        public override bool CanRead => true;
-
-        /// <summary>
-        /// </summary>
-        public override bool CanSeek => true;
-
-        /// <summary>
-        /// </summary>
-        public override bool CanTimeout => base.CanTimeout;
-
-        /// <summary>
-        /// </summary>
-        public override bool CanWrite => true;
-
-        /// <summary>
-        /// </summary>
         public override long Length
         {
             get
