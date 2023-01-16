@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class WebCmdletElementCollection : ReadOnlyCollection<PSObject>
     {
-        internal WebCmdletElementCollection(IList<PSObject> list): base(list)
+        internal WebCmdletElementCollection(IList<PSObject> list) : base(list)
         {
         }
 
