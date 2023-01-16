@@ -364,6 +364,12 @@ namespace Microsoft.PowerShell.Commands
             private readonly MemoryStream _streamBuffer;
             private readonly byte[] _copyBuffer;
 
+            public override bool CanRead => true;
+
+            public override bool CanSeek => true;
+
+            public override bool CanWrite => false;
+
             public override void Flush()
             {
                 _streamBuffer.SetLength(0);
