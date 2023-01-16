@@ -776,14 +776,14 @@ namespace Microsoft.PowerShell.Commands
         private string GetBasicAuthorizationHeader()
         {
             var password = new NetworkCredential(null, Credential.Password).Password;
-            string unencoded = string.Format("{0}:{1}", Credential.UserName, password);
+            string unencoded = string.Format($"{Credential.UserName}:{password}");
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
-            return string.Format("Basic {0}", Convert.ToBase64String(bytes));
+            return string.Format($"Basic {Convert.ToBase64String(bytes)}");
         }
 
         private string GetBearerAuthorizationHeader()
         {
-            return string.Format("Bearer {0}", new NetworkCredential(string.Empty, Token).Password);
+            return string.Format($"Bearer {new NetworkCredential(string.Empty, Token).Password}");
         }
 
         private void ProcessAuthentication()
@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, string.Format("Unrecognized Authentication value: {0}", Authentication));
+                Diagnostics.Assert(false, string.Format($"Unrecognized Authentication value: {Authentication}"));
             }
         }
 
@@ -1170,10 +1170,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    string msg = string.Format(
-                        CultureInfo.InvariantCulture,
-                        WebCmdletStrings.AccessDenied,
-                        _originalFilePath);
+                    string msg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.AccessDenied, _originalFilePath);
 
                     throw new UnauthorizedAccessException(msg);
                 }
