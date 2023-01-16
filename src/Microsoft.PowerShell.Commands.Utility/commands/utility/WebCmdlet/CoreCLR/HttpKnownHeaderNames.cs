@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
         #region Known_HTTP_Header_Names
 
         // Known HTTP Header Names.
-        // List comes from System.Net.Http/src/libraries/Common/src/System/Net/HttpKnownHeaderNames.cs
+        // List comes from https://github.com/dotnet/runtime/blob/51a8dd5323721b363e61069575511f783e7ea6d3/src/libraries/Common/src/System/Net/HttpKnownHeaderNames.cs
         public const string Accept = "Accept";
         public const string AcceptCharset = "Accept-Charset";
         public const string AcceptEncoding = "Accept-Encoding";
