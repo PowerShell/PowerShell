@@ -16,37 +16,32 @@ namespace Microsoft.PowerShell.Commands
     {
         private static string s_windowsUserAgent;
 
-        // format the user-agent string from the various component parts
+        // Format the user-agent string from the various component parts
         internal static string UserAgent => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) {App}");
 
         /// <summary>
         /// Useragent string for InternetExplorer (9.0).
         /// </summary>
-        // format the user-agent string from the various component parts
         public static string InternetExplorer => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} (compatible; MSIE 9.0; {PlatformName}; {OS}; {Culture})");
 
         /// <summary>
         /// Useragent string for Firefox (4.0).
         /// </summary>
-        // format the user-agent string from the various component parts
         public static string FireFox => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) Gecko/20100401 Firefox/4.0");
 
         /// <summary>
         /// Useragent string for Chrome (7.0).
         /// </summary>
-        // format the user-agent string from the various component parts
         public static string Chrome => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6");
 
         /// <summary>
         /// Useragent string for Opera (9.0).
         /// </summary>
-        // format the user-agent string from the various component parts
         public static string Opera => string.Format(CultureInfo.InvariantCulture, $"Opera/9.70 ({PlatformName}; {OS}; {Culture}) Presto/2.2.1");
 
         /// <summary>
         /// Useragent string for Safari (5.0).
         /// </summary>
-        // format the user-agent string from the various component parts
         public static string Safari => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16");
 
         internal static string Compatibility => "Mozilla/5.0";
@@ -59,10 +54,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Platform.IsWindows)
                 {
-                    // only generate the windows user agent once
+                    // Only generate the windows user agent once
                     if (s_windowsUserAgent is null)
                     {
-                        // find the version in the windows operating system description
+                        // Find the version in the windows operating system description
                         Regex pattern = new(@"\d+(\.\d+)+");
                         string versionText = pattern.Match(OS).Value;
                         Version windowsPlatformversion = new(versionText);
@@ -81,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // unknown/unsupported platform
+                    // Unknown/unsupported platform
                     Diagnostics.Assert(false, "Unable to determine Operating System Platform");
                     return string.Empty;
                 }
