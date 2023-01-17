@@ -52,31 +52,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Enable automatic following of rel links.
-        /// </summary>
-        [Parameter]
-        [Alias("FL")]
-        public SwitchParameter FollowRelLink
-        {
-            get => base._followRelLink;
-
-            set => base._followRelLink = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the maximum number of rel links to follow.
-        /// </summary>
-        [Parameter]
-        [Alias("ML")]
-        [ValidateRange(1, int.MaxValue)]
-        public int MaximumFollowRelLink
-        {
-            get => base._maximumFollowRelLink;
-
-            set => base._maximumFollowRelLink = value;
-        }
-
-        /// <summary>
         /// Gets or sets the ResponseHeadersVariable property.
         /// </summary>
         [Parameter]
