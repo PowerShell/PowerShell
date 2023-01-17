@@ -1097,7 +1097,7 @@ namespace Microsoft.PowerShell.Commands
                     AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
                 }
 
-                SetRequestContent(request, formData);
+                request.Content = SetRequestContent(request, formData);
             }
             // coerce body into a usable form
             else if (Body is not null)
@@ -1111,44 +1111,23 @@ namespace Microsoft.PowerShell.Commands
                     content = psBody.BaseObject;
                 }
 
-                if (content is FormObject form)
+                request.Content = content switch
                 {
-                    SetRequestContent(request, form.Fields);
-                }
-                else if (content is IDictionary dictionary && request.Method != HttpMethod.Get)
-                {
-                    SetRequestContent(request, dictionary);
-                }
-                else if (content is XmlNode xmlNode)
-                {
-                    SetRequestContent(request, xmlNode);
-                }
-                else if (content is Stream stream)
-                {
-                    SetRequestContent(request, stream);
-                }
-                else if (content is byte[] bytes)
-                {
-                    SetRequestContent(request, bytes);
-                }
-                else if (content is MultipartFormDataContent multipartFormDataContent)
-                {
-                    WebSession.ContentHeaders.Clear();
-                    SetRequestContent(request, multipartFormDataContent);
-                }
-                else
-                {
-                    SetRequestContent(
-                        request,
-                        (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
-                }
+                    FormObject form => SetRequestContent(request, form.Fields),
+                    IDictionary dictionary => SetRequestContent(request, dictionary),
+                    XmlNode xmlNode => SetRequestContent(request, xmlNode),
+                    Stream stream => SetRequestContent(request, stream),
+                    byte[] bytes => SetRequestContent(request, bytes),
+                    MultipartFormDataContent multipartFormDataContent => SetRequestContent(request, multipartFormDataContent),
+                    _ => SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture))
+                };
             }
             else if (InFile is not null) // copy InFile data
             {
                 try
                 {
                     // open the input file
-                    SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
+                    request.Content = SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -1577,19 +1556,14 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
+        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(content);
 
-            if (content is null)
-            {
-                return 0;
-            }
+            ByteArrayContent byteArrayContent = new(content);
 
-            var byteArrayContent = new ByteArrayContent(content);
-            request.Content = byteArrayContent;
-
-            return byteArrayContent.Headers.ContentLength.Value;
+            return byteArrayContent;
         }
 
         /// <summary>
@@ -1602,14 +1576,10 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, string content)
+        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, string content)
         {
             ArgumentNullException.ThrowIfNull(request);
-
-            if (content is null)
-            {
-                return 0;
-            }
+            ArgumentNullException.ThrowIfNull(content);
             
             Encoding encoding = null;
             if (ContentType is not null)
@@ -1629,7 +1599,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!SkipHeaderValidation)
                     {
-                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
                         ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
@@ -1637,20 +1607,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
-            var byteArrayContent = new ByteArrayContent(bytes);
-            request.Content = byteArrayContent;
-
-            return byteArrayContent.Headers.ContentLength.Value;
+            ByteArrayContent byteArrayContent = new(bytes);
+            
+            return byteArrayContent;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
+        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             ArgumentNullException.ThrowIfNull(request);
-
-            if (xmlNode is null)
-            {
-                return 0;
-            }
+            ArgumentNullException.ThrowIfNull(xmlNode);
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
@@ -1665,10 +1630,9 @@ namespace Microsoft.PowerShell.Commands
                 bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml, encoding: null);
             }
 
-            var byteArrayContent = new ByteArrayContent(bytes);
-            request.Content = byteArrayContent;
+            ByteArrayContent byteArrayContent = new(bytes);
 
-            return byteArrayContent.Headers.ContentLength.Value;
+            return byteArrayContent;
         }
 
         /// <summary>
@@ -1681,16 +1645,14 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
+        internal StreamContent SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             ArgumentNullException.ThrowIfNull(request);
-
             ArgumentNullException.ThrowIfNull(contentStream);
 
-            var streamContent = new StreamContent(contentStream);
-            request.Content = streamContent;
+            StreamContent streamContent = new(contentStream);
 
-            return streamContent.Headers.ContentLength.Value;
+            return streamContent;
         }
 
         /// <summary>
@@ -1703,24 +1665,21 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        internal MultipartFormDataContent SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
             ArgumentNullException.ThrowIfNull(request);
-
             ArgumentNullException.ThrowIfNull(multipartContent);
 
-            request.Content = multipartContent;
-
-            return multipartContent.Headers.ContentLength.Value;
+            return multipartContent;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
+        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(request);
-
             ArgumentNullException.ThrowIfNull(content);
 
             string body = FormatDictionary(content);
+
             return SetRequestContent(request, body);
         }
 
