@@ -19,14 +19,6 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InvokeWebRequestCommand"/> class.
-        /// </summary>
-        public InvokeWebRequestCommand() : base()
-        {
-            this._parseRelLink = true;
-        }
-
-        /// <summary>
         /// Process the web response and output corresponding objects.
         /// </summary>
         /// <param name="response"></param>

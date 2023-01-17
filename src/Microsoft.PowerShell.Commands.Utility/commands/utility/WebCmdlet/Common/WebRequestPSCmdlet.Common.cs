@@ -888,11 +888,6 @@ namespace Microsoft.PowerShell.Commands
         internal CancellationTokenSource _cancelToken = null;
 
         /// <summary>
-        /// Parse Rel Links.
-        /// </summary>
-        internal bool _parseRelLink = false;
-
-        /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
         internal Dictionary<string, string> _relationLink = null;
@@ -1522,11 +1517,7 @@ namespace Microsoft.PowerShell.Commands
                                     ThrowTerminatingError(er);
                                 }
 
-                                if (_parseRelLink || FollowRelLink)
-                                {
-                                    ParseLinkHeader(response, uri);
-                                }
-
+                                ParseLinkHeader(response, uri);
                                 ProcessResponse(response);
                                 UpdateSession(response);
 
