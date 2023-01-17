@@ -1781,7 +1781,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string url = match.Groups["url"].Value;
                             string rel = match.Groups["rel"].Value;
-                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
+                            if (!string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(rel) && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new(requestUri, url);
                                 _relationLink.Add(rel, absoluteUri.AbsoluteUri);
