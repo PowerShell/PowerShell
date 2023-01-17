@@ -1087,9 +1087,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (Form is not null)
             {
-                // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
-                WebSession.ContentHeaders.Clear();
-
                 var formData = new MultipartFormDataContent();
                 foreach (DictionaryEntry formEntry in Form)
                 {
@@ -1670,6 +1667,9 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
+            
+            // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
+            WebSession.ContentHeaders.Clear();
 
             return multipartContent;
         }
