@@ -890,7 +890,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal Dictionary<string, string> _relationLink = null;
+        // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+        internal Dictionary<string, string> _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The remote endpoint returned a 206 status code indicating successful resume.
@@ -1747,15 +1748,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
         {
-            if (_relationLink is null)
-            {
-                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
-                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            }
-            else
-            {
-                _relationLink.Clear();
-            }
+            _relationLink.Clear();
 
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
