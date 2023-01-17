@@ -395,6 +395,21 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        /// <summary>
+        /// Enable automatic following of rel links.
+        /// </summary>
+        [Parameter]
+        [Alias("FL")]
+        public SwitchParameter FollowRelLink { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum number of rel links to follow.
+        /// </summary>
+        [Parameter]
+        [Alias("ML")]
+        [ValidateRange(1, int.MaxValue)]
+        public int MaximumFollowRelLink { get; set; } = int.MaxValue;
+
         #endregion Virtual Properties
 
         #region Virtual Methods
