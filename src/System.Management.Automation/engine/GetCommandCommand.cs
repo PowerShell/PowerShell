@@ -141,10 +141,10 @@ namespace Microsoft.PowerShell.Commands
         private bool _isModuleSpecified = false;
 
         /// <summary>
-        /// Gets or sets the ExcludedModule parameter to the cmdlet.
+        /// Gets or sets the ExcludeModule parameter to the cmdlet.
         /// </summary>
         [Parameter()]
-        public string[] ExcludedModule
+        public string[] ExcludeModule
         {
             get
             {
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Initialize the module patterns
             _modulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-            _excludedModulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(ExcludedModule, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            _excludedModulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(ExcludeModule, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             switch (ParameterSetName)
             {
