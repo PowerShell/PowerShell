@@ -480,12 +480,11 @@ namespace Microsoft.PowerShell.Commands
             // Validate InFile path
             if (InFile is not null)
             {
-                ProviderInfo provider = null;
                 ErrorRecord errorRecord = null;
 
                 try
                 {
-                    Collection<string> providerPaths = GetResolvedProviderPathFromPSPath(InFile, out provider);
+                    Collection<string> providerPaths = GetResolvedProviderPathFromPSPath(InFile, out ProviderInfo provider);
 
                     if (!provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -1021,8 +1020,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set 'User-Agent' if WebSession.Headers doesn't already contain it
-            string userAgent = null;
-            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out userAgent))
+            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out string userAgent))
             {
                 WebSession.UserAgent = userAgent;
             }
@@ -1088,8 +1086,7 @@ namespace Microsoft.PowerShell.Commands
             else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
-                string contentType = null;
-                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out contentType);
+                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
                 if (string.IsNullOrEmpty(contentType))
                 {
                     WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = "application/x-www-form-urlencoded";
