@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Native commands will properly call a JSON adapter" {
+Describe "Native commands will properly call a JSON adapter" -Tag "CI" {
     BeforeAll {
         # no useful overlap in commands, we have use specific commands for each platform
         $winCmd = "whoami"
@@ -78,6 +78,12 @@ Describe "Native commands will properly call a JSON adapter" {
     }
 
     Context "JSON Adapter History" {
+        BeforeEach {
+            $setting = [system.management.automation.psinvocationsettings]::New()
+            $setting.AddToHistory = $true
+            $ps = [PowerShell]::Create("NewRunspace")
+        }
+
         AfterEach {
             If (Test-Path "function:${cmd}-json") {
                 Remove-Item -Force "function:${cmd}-json"
@@ -86,28 +92,31 @@ Describe "Native commands will properly call a JSON adapter" {
             if (Test-Path $nativeAdapterTestPath) {
                 Remove-Item -Force $nativeAdapterTestPath
             }
+            $ps.Dispose()
         }
 
         It "History has the new property with the correct value for a function adapter" {
             # create the adapter function
             Set-Content -Path "function:${cmd}-json" -Value $adapterSB
-
-            $null = $IsWindows ? (& $cmd ${winArguments}) : (& $cmd ${nixArguments})
-            $history = Get-History -Count 1
+            $ps.AddScript("$cmd ${platformArguments}").Invoke($null, $setting)
+            $ps.Commands.Clear()
+            $history = $ps.AddCommand("Get-History").AddParameter("Count", 1).Invoke()
             $history.ConstructedPipeline | Should -Match "| ${cmd}-json$"
         }
 
         It "History has the new property with the correct value for powershell script adapter" {
             Copy-Item $psAdapterPath $TESTDRIVE -Force
-            $null = & $cmd ${platformArguments}
-            $history = Get-History -Count 1
+            $ps.AddScript("$cmd ${platformArguments}").Invoke($null, $setting)
+            $ps.Commands.Clear()
+            $history = $ps.AddCommand("Get-History").AddParameter("Count", 1).Invoke()
             $history.ConstructedPipeline | Should -Match " | ${psAdapterName}$"
         }
 
         It "History has the new property with the correct value for native script adapter '$nativeAdapterName'" {
             Copy-Item $nativeAdapterPath $TESTDRIVE -Force
-            $null = & $cmd ${platformArguments}
-            $history = Get-History -Count 1
+            $ps.AddScript("$cmd ${platformArguments}").Invoke($null, $setting)
+            $ps.Commands.Clear()
+            $history = $ps.AddCommand("Get-History").AddParameter("Count", 1).Invoke()
             $history.ConstructedPipeline | Should -Match " | ${nativeAdapterName}$"
         }
     }
