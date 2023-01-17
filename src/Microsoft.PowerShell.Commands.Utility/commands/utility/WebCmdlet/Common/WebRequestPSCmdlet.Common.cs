@@ -1099,12 +1099,12 @@ namespace Microsoft.PowerShell.Commands
 
                 request.Content = SetRequestContent(request, formData);
             }
-            // coerce body into a usable form
+            // Coerce body into a usable form
             else if (Body is not null)
             {
                 object content = Body;
 
-                // make sure we're using the base object of the body, not the PSObject wrapper
+                // Make sure we're using the base object of the body, not the PSObject wrapper
                 PSObject psBody = Body as PSObject;
                 if (psBody is not null)
                 {
@@ -1122,11 +1122,12 @@ namespace Microsoft.PowerShell.Commands
                     _ => SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture))
                 };
             }
-            else if (InFile is not null) // copy InFile data
+            // Copy InFile data
+            else if (InFile is not null)
             {
                 try
                 {
-                    // open the input file
+                    // Open the input file
                     request.Content = SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
                 }
                 catch (UnauthorizedAccessException)
