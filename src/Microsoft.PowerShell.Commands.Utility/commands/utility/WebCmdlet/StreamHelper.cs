@@ -56,10 +56,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        public override bool CanTimeout => base.CanTimeout;
-
-        /// <summary>
-        /// </summary>
         public override bool CanWrite => true;
 
         /// <summary>
