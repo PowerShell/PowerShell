@@ -1522,7 +1522,7 @@ namespace Microsoft.PowerShell.Commands
                                     ThrowTerminatingError(er);
                                 }
 
-                                if (_parseRelLink || _followRelLink)
+                                if (_parseRelLink || FollowRelLink)
                                 {
                                     ParseLinkHeader(response, uri);
                                 }
@@ -1552,7 +1552,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(er);
                             }
 
-                            if (_followRelLink)
+                            if (FollowRelLink)
                             {
                                 if (!_relationLink.ContainsKey("next"))
                                 {
@@ -1564,7 +1564,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
-                    while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
+                    while (FollowRelLink && (followedRelLink < MaximumFollowRelLink));
                 }
             }
             catch (CryptographicException ex)
