@@ -31,6 +31,21 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
+
+    if (-not $IsWindows) {
+        try {
+            New-Item -Path ~/.local/share/PackageManagement/NuGet/Packages -ItemType Directory -Force -ErrorAction Stop
+        }
+        catch {
+                .{
+                    Get-Item ~/.local -ErrorAction Ignore
+                    Get-Item ~/.local/share -ErrorAction Ignore
+                    Get-Item ~/.local/share/PackageManagement -ErrorAction Ignore
+                    Get-Item ~/.local/share/PackageManagement/NuGet -ErrorAction Ignore
+                    Get-Item ~/.local/share/PackageManagement/NuGet/Packages -ErrorAction Ignore
+                } | Out-String | Write-Verbose -Verbose
+        }
+    }
  }
  AfterAll {
      $ProgressPreference = $SavedProgressPreference
