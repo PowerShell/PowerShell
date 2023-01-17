@@ -895,17 +895,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal bool _followRelLink = false;
-
-        /// <summary>
-        /// Automatically follow Rel Links.
-        /// </summary>
         internal Dictionary<string, string> _relationLink = null;
-
-        /// <summary>
-        /// Maximum number of Rel Links to follow.
-        /// </summary>
-        internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
         /// The remote endpoint returned a 206 status code indicating successful resume.
