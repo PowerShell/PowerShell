@@ -26,32 +26,6 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the parameter Method.
-        /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
-        public override WebRequestMethod Method
-        {
-            get => base.Method;
-
-            set => base.Method = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the parameter CustomMethod.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
-        [Alias("CM")]
-        [ValidateNotNullOrEmpty]
-        public override string CustomMethod
-        {
-            get => base.CustomMethod;
-
-            set => base.CustomMethod = value.ToUpperInvariant();
-        }
-
-        /// <summary>
         /// Enable automatic following of rel links.
         /// </summary>
         [Parameter]
