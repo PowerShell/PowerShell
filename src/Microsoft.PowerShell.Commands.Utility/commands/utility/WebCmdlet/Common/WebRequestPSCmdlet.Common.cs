@@ -962,16 +962,8 @@ namespace Microsoft.PowerShell.Commands
 
             HttpClient httpClient = new(handler);
 
-            // check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            if (TimeoutSec == 0)
-            {
-                // A zero timeout means infinite
-                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-            }
-            else if (TimeoutSec > 0)
-            {
-                httpClient.Timeout = new TimeSpan(0, 0, TimeoutSec);
-            }
+            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
+            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
 
             return httpClient;
         }
