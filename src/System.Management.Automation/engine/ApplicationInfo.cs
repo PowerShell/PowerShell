@@ -158,7 +158,7 @@ namespace System.Management.Automation
         /// </summary>
         private void FindJsonAdapter()
         {
-            string jsonAdapterName = string.Format("{0}-json{1}", System.IO.Path.GetFileNameWithoutExtension(this.Path), Extension);
+            string jsonAdapterName = string.Format("{0}-json", System.IO.Path.GetFileNameWithoutExtension(this.Path));
             JsonAdapter = _context.SessionState.InvokeCommand.GetCommand(jsonAdapterName, CommandTypes.All);
             return;
         }
