@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell
         /// the advantage is portability through abstraction. Does not support
         /// arrow key movement, but supports backspace.
         /// </summary>
-        ///<param name="isSecureString">
+        /// <param name="isSecureString">
         /// True to specify reading a SecureString; false reading a string
         /// </param>
         /// <param name="printToken">
@@ -1910,22 +1910,24 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// Strip nulls from a string...
+        /// Strip nulls from a string.
         /// </summary>
         /// <param name="input">The string to process.</param>
-        /// <returns>The string with any \0 characters removed...</returns>
+        /// <returns>The string with any '\0' characters removed.</returns>
         private static string RemoveNulls(string input)
         {
-            if (input.Contains('\0'))
+            if (!input.Contains('\0'))
             {
                 return input;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(input.Length);
             foreach (char c in input)
             {
                 if (c != '\0')
+                {
                     sb.Append(c);
+                }
             }
 
             return sb.ToString();

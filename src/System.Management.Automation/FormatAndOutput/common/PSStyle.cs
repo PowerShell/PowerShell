@@ -761,10 +761,7 @@ namespace System.Management.Automation
 
         private static string ValidateNoContent(string text)
         {
-            if (text is null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
+            ArgumentNullException.ThrowIfNull(text);
 
             var decorartedString = new ValueStringDecorated(text);
             if (decorartedString.ContentLength > 0)

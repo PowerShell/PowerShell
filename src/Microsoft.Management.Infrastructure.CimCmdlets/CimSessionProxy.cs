@@ -2154,12 +2154,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSessionProxyNewCimInstance"/> class.
-        /// <summary>
+        /// </summary>
         /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
         /// </remarks>
-        /// <param name="computerName"></param>
         public CimSessionProxyNewCimInstance(string computerName, CimNewCimInstance operation)
             : base(computerName)
         {
@@ -2169,6 +2168,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSessionProxyNewCimInstance"/> class.
         /// </summary>
+        /// <param name="computerName"></param>
         /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.

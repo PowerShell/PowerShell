@@ -45,10 +45,7 @@ namespace Microsoft.Management.UI.Internal
         public bool TryAddSearchableRule<T>(SelectorFilterRule selectorRule)
             where T : TextFilterRule
         {
-            if (selectorRule == null)
-            {
-                throw new ArgumentNullException("selectorRule");
-            }
+            ArgumentNullException.ThrowIfNull(selectorRule);
 
             T textRule = selectorRule.AvailableRules.AvailableValues.Find<T>();
 
@@ -193,20 +190,11 @@ namespace Microsoft.Management.UI.Internal
             /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
             public SearchableRule(string uniqueId, SelectorFilterRule selectorFilterRule, TextFilterRule childRule)
             {
-                if (uniqueId == null)
-                {
-                    throw new ArgumentNullException("uniqueId");
-                }
+                ArgumentNullException.ThrowIfNull(uniqueId);
 
-                if (selectorFilterRule == null)
-                {
-                    throw new ArgumentNullException("selectorFilterRule");
-                }
+                ArgumentNullException.ThrowIfNull(selectorFilterRule);
 
-                if (childRule == null)
-                {
-                    throw new ArgumentNullException("childRule");
-                }
+                ArgumentNullException.ThrowIfNull(childRule);
 
                 this.UniqueId = uniqueId;
                 this.selectorFilterRule = selectorFilterRule;
@@ -240,10 +228,7 @@ namespace Microsoft.Management.UI.Internal
             /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
             public SelectorFilterRule GetRuleWithValueSet(string value)
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 SelectorFilterRule selectorRule = (SelectorFilterRule)this.selectorFilterRule.DeepCopy();
                 selectorRule.AvailableRules.SelectedIndex = this.selectorFilterRule.AvailableRules.AvailableValues.IndexOf(this.childRule);

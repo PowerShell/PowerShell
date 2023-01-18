@@ -38,8 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="initialCapacity"></param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength)
-            : base(initialCapacity)
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
@@ -49,43 +48,15 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        public override bool CanRead
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanRead => true;
 
         /// <summary>
         /// </summary>
-        public override bool CanSeek
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanSeek => true;
 
         /// <summary>
         /// </summary>
-        public override bool CanTimeout
-        {
-            get
-            {
-                return base.CanTimeout;
-            }
-        }
-
-        /// <summary>
-        /// </summary>
-        public override bool CanWrite
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanWrite => true;
 
         /// <summary>
         /// </summary>
@@ -215,7 +186,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void Initialize()
         {
-            if (_isInitialized) { return; }
+            if (_isInitialized) 
+            {
+                return;
+            }
 
             _isInitialized = true;
             try
@@ -226,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                 string totalDownloadSize = _contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)_contentLength);
                 for (int read = 1; read > 0; totalRead += read)
                 {
-                    if (_ownerCmdlet != null)
+                    if (_ownerCmdlet is not null)
                     {
                         record.StatusDescription = StringUtil.Format(
                             WebCmdletStrings.ReadResponseProgressStatus,
@@ -254,14 +228,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (_ownerCmdlet != null)
+                if (_ownerCmdlet is not null)
                 {
                     record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalRead);
                     record.RecordType = ProgressRecordType.Completed;
                     _ownerCmdlet.WriteProgress(record);
                 }
 
-                // make sure the length is set appropriately
+                // Make sure the length is set appropriately
                 base.SetLength(totalRead);
                 base.Seek(0, SeekOrigin.Begin);
             }
@@ -281,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal const int ChunkSize = 10000;
 
-        // just picked a random number
+        // Just picked a random number
         internal const int ActivityId = 174593042;
 
         #endregion Constants
@@ -290,10 +264,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet);
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
@@ -380,8 +351,6 @@ namespace Microsoft.PowerShell.Commands
 
                 bool completed = false;
                 int byteIndex = 0;
-                int bytesUsed;
-                int charsUsed;
 
                 while (!completed)
                 {
@@ -389,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
                     bool flush = (bytesRead == 0);
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
                                     chars, 0, useBufferSize, flush,
-                                    out bytesUsed, out charsUsed, out completed);
+                                    out int bytesUsed, out int charsUsed, out completed);
 
                     // The conversion produced the number of characters indicated by charsUsed. Write that number
                     // of characters to our result buffer
@@ -450,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
             bool isDefaultEncoding = false;
-            if (encoding == null)
+            if (encoding is null)
             {
                 // Use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
@@ -462,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 do
                 {
-                    // check for a charset attribute on the meta element to override the default
+                    // Check for a charset attribute on the meta element to override the default
                     // we only look within the first 1k characters as the meta tag is in the head
                     // tag which is at the start of the document
                     Match match = s_metaexp.Match(content.Substring(0, Math.Min(content.Length, 1024)));
@@ -475,7 +444,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             stream.Seek(0, SeekOrigin.Begin);
                             content = StreamToString(stream, localEncoding);
-                            // report the encoding used.
+
+                            // Report the encoding used.
                             encoding = localEncoding;
                         }
                     }
@@ -487,23 +457,13 @@ namespace Microsoft.PowerShell.Commands
 
         internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
-            // just use the default encoding if one wasn't provided
+            // Just use the default encoding if one wasn't provided
             encoding ??= ContentHelper.GetDefaultEncoding();
 
             return encoding.GetBytes(str);
         }
 
-        internal static byte[] EncodeToBytes(string str)
-        {
-            return EncodeToBytes(str, null);
-        }
-
-        internal static Stream GetResponseStream(HttpResponseMessage response)
-        {
-            Stream responseStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
-
-            return responseStream;
-        }
+        internal static Stream GetResponseStream(HttpResponseMessage response) => response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
 
         #endregion Static Methods
     }

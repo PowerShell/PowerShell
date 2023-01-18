@@ -529,7 +529,7 @@ Fix steps:
         if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
             Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
+            if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
                 ## when 'Microsoft.NET.Sdk.WindowsDesktop' is used.
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
@@ -731,7 +731,7 @@ function Restore-PSPackage
         }
         else {
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$Options.ForMinimalSize) {
+            if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$Options.ForMinimalSize) {
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
         }

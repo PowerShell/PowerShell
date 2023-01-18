@@ -1059,7 +1059,7 @@ namespace System.Management.Automation.Host
         /// <returns>
         /// Hash code for this instance.
         ///
-        ///</returns>
+        /// </returns>
         public override
         int
         GetHashCode()
@@ -1687,7 +1687,7 @@ namespace System.Management.Automation.Host
         /// <paramref name="contents"/> is null;
         /// Any string in <paramref name="contents"/> is null or empty
         /// </exception>
-        /// <remark>
+        /// <remarks>
         /// If a character C takes one BufferCell to display as determined by LengthInBufferCells,
         /// one BufferCell is allocated with its Character set to C and BufferCellType to BufferCell.Complete.
         /// On the other hand, if C takes two BufferCell, two adjacent BufferCells on a row in
@@ -1701,7 +1701,7 @@ namespace System.Management.Automation.Host
         /// <paramref name="foregroundColor"/> and <paramref name="backgroundColor"/>, respectively.
         /// The resulting array is suitable for use with <see cref="PSHostRawUserInterface.SetBufferContents(Rectangle, BufferCell)"/>
         /// and <see cref="PSHostRawUserInterface.SetBufferContents(Coordinates, BufferCell[,])"/>.
-        /// </remark>
+        /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(Size, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.LengthInBufferCells(char)"/>

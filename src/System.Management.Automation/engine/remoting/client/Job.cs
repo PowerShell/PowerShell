@@ -641,7 +641,7 @@ namespace System.Management.Automation
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Success status of the command execution.
         /// </summary>
         public abstract string StatusMessage { get; }

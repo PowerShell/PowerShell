@@ -1601,8 +1601,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// </summary>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
             LoadDefaultCimKeywords(functionsToDefine, null, null, false);
@@ -3250,14 +3250,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 //
                 try
                 {
-                    var dscResourceDirectories = Directory.GetDirectories(dscResourcesPath);
-                    foreach (var directory in dscResourceDirectories)
+                    foreach (var directory in Directory.EnumerateDirectories(dscResourcesPath))
                     {
-                        var schemaFiles = Directory.GetFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
-                        if (schemaFiles.Length > 0)
+                        IEnumerable<string> schemaFiles = Directory.EnumerateFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
+                        string tempSchemaFilepath = schemaFiles.FirstOrDefault();
+
+                        Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
+                        
+                        if (tempSchemaFilepath is not null)
                         {
-                            Debug.Assert(schemaFiles.Length == 1, "A valid DSCResource module can have only one schema mof file");
-                            var tempSchemaFilepath = schemaFiles[0];
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
                             if (classes != null)
                             {

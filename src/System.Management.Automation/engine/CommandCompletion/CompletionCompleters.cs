@@ -1617,7 +1617,9 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (bestMatchSet is null || bestMatchSet.Position > positionInParameterSet)
+                    if (bestMatchSet is null
+                        || bestMatchSet.Position > positionInParameterSet
+                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
                     {
                         bestMatchParam = param;
                         bestMatchSet = parameterSetData;

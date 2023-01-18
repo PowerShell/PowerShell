@@ -528,18 +528,18 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _includeUserName = false;
 
-        ///<summary>
+        /// <summary>
         /// To display the modules of a process.
-        ///</summary>
+        /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
         [ValidateNotNull]
         public SwitchParameter Module { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// To display the fileversioninfo of the main module of a process.
-        ///</summary>
+        /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
@@ -2962,9 +2962,8 @@ namespace Microsoft.PowerShell.Commands
         {
             base.GetObjectData(info, context);
 
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
-
+            ArgumentNullException.ThrowIfNull(info);
+            
             info.AddValue("ProcessName", _processName);
         }
         #endregion Serialization

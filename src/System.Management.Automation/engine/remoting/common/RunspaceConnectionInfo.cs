@@ -168,10 +168,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 _culture = value;
             }
@@ -191,10 +188,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 _uiCulture = value;
             }
@@ -284,10 +278,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="options"></param>
         public virtual void SetSessionOptions(PSSessionOption options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             if (options.Culture != null)
             {
@@ -1029,10 +1020,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public override void SetSessionOptions(PSSessionOption options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             if ((options.ProxyAccessType == ProxyAccessType.None) && (options.ProxyCredential != null))
             {
@@ -2000,6 +1988,7 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
         /// The SSH options to pass to OpenSSH.
         /// Gets or sets the SSH options to pass to OpenSSH.
         /// </summary>
