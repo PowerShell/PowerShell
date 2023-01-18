@@ -1112,7 +1112,7 @@ namespace Microsoft.PowerShell.Commands
                     case FormObject form:
                         SetRequestContent(request, form.Fields);
                         break;
-                    case IDictionary dictionary:
+                    case IDictionary dictionary when request.Method != HttpMethod.Get:
                         SetRequestContent(request, dictionary);
                         break;
                     case XmlNode xmlNode:
