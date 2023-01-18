@@ -864,15 +864,6 @@ dynamicparam
 ", GetDynamicParamBlock());
             }
 
-            string cleanBlock = string.Empty;
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCleanBlockFeatureName))
-            {
-                cleanBlock = string.Format(CultureInfo.InvariantCulture, @"
-clean
-{{{0}}}
-", GetCleanBlock());
-            }
-
             string result = string.Format(CultureInfo.InvariantCulture, @"{0}
 param({1})
 
@@ -884,7 +875,9 @@ process
 
 end
 {{{5}}}
-{6}
+
+clean
+{{{6}}}
 <#
 {7}
 #>
@@ -895,7 +888,7 @@ end
                 GetBeginBlock(),
                 GetProcessBlock(),
                 GetEndBlock(),
-                cleanBlock,
+                GetCleanBlock(),
                 CodeGeneration.EscapeBlockCommentContent(helpComment));
 
             return result;
@@ -1256,7 +1249,7 @@ end
 
             // This should only be called with 1 valid category
             ParameterMetadata categoryParameter = new ParameterMetadata("Category", typeof(string[]));
-            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
+            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames<HelpCategory>()));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
             return GetRestrictedCmdlet("Get-Help", null, "https://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);

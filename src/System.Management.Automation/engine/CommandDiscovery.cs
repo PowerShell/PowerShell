@@ -421,7 +421,7 @@ namespace System.Management.Automation
             // in single shell mode
             if (requiresPSVersion != null)
             {
-                if (!Utils.IsPSVersionSupported(requiresPSVersion))
+                if (!PSVersionInfo.IsValidPSVersion(requiresPSVersion))
                 {
                     ScriptRequiresException scriptRequiresException =
                         new ScriptRequiresException(
@@ -454,11 +454,11 @@ namespace System.Management.Automation
                 //
                 if (isRequiresPSEditionSpecified && !isCurrentEditionListed)
                 {
-                    var specifiedEditionsString = string.Join(",", scriptInfo.RequiresPSEditions);
+                    var specifiedEditionsString = string.Join(',', scriptInfo.RequiresPSEditions);
                     var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible,
                         scriptInfo.Name,
                         specifiedEditionsString,
-                        PSVersionInfo.PSEdition);
+                        PSVersionInfo.PSEditionValue);
                     var ex = new RuntimeException(message);
                     ex.SetErrorId("ScriptRequiresUnmatchedPSEdition");
                     ex.SetTargetObject(scriptInfo.Name);
@@ -1045,7 +1045,7 @@ namespace System.Management.Automation
                 // If commandName had a slash, it was module-qualified or path-qualified.
                 // In that case, we should not return anything (module-qualified is handled
                 // by the previous call to TryModuleAutoLoading().
-                int colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
+                int colonOrBackslash = commandName.AsSpan().IndexOfAny('\\', ':');
                 if (colonOrBackslash != -1)
                     return null;
 
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
             CommandInfo result = null;
 
             // If commandName was module-qualified. In that case, we should load the module.
-            var colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
+            var colonOrBackslash = commandName.AsSpan().IndexOfAny('\\', ':');
 
             // If we don't see '\', there is no module specified, so no module to load.
             // If we see ':' before '\', then we probably have a drive qualified path, not a module name
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation
             string moduleName;
 
             // Now we check if there exists the second '\'
-            var secondBackslash = moduleCommandName.IndexOfAny(Utils.Separators.Backslash);
+            var secondBackslash = moduleCommandName.IndexOf('\\');
             if (secondBackslash == -1)
             {
                 moduleName = commandName.Substring(0, colonOrBackslash);
@@ -1306,7 +1306,7 @@ namespace System.Management.Automation
 
                 if (_pathCacheKey != null)
                 {
-                    string[] tokenizedPath = _pathCacheKey.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedPath = new Collection<string>();
 
                     foreach (string directory in tokenizedPath)
@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
             lock (s_lockObject)
             {
                 s_cachedPathExtCollection = pathExt != null
-                    ? pathExt.ToLower().Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.ToLower().Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;

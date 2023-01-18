@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                foreach (AccessRightTypeNames member in Enum.GetValues(typeof(AccessRightTypeNames)))
+                foreach (AccessRightTypeNames member in Enum.GetValues<AccessRightTypeNames>())
                 {
                     typesToExamine.Add(GetRealAccessRightType(member));
                 }

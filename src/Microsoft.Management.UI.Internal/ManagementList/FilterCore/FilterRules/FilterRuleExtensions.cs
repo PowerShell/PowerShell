@@ -27,10 +27,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public static FilterRule DeepCopy(this FilterRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             Debug.Assert(rule.GetType().IsSerializable, "rule is serializable");
 

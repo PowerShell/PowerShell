@@ -1059,7 +1059,7 @@ namespace System.Management.Automation.Host
         /// <returns>
         /// Hash code for this instance.
         ///
-        ///</returns>
+        /// </returns>
         public override
         int
         GetHashCode()
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation.Host
     #endregion Ancillary types
 
     /// <summary>
-    /// Defines the lowest-level user interface functions that an interactive application hosting an MSH
+    /// Defines the lowest-level user interface functions that an interactive application hosting PowerShell
     /// <see cref="System.Management.Automation.Runspaces.Runspace"/> can choose to implement if it wants to
     /// support any cmdlet that does character-mode interaction with the user.
     /// </summary>
@@ -1340,9 +1340,9 @@ namespace System.Management.Automation.Host
         /// Key stroke when a key is pressed.
         /// </returns>
         /// <example>
-        ///     <MSH>
+        ///     <code>
         ///         $Host.UI.RawUI.ReadKey()
-        ///     </MSH>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey(ReadKeyOptions)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.FlushInputBuffer"/>
@@ -1370,10 +1370,10 @@ namespace System.Management.Automation.Host
         /// Neither ReadKeyOptions.IncludeKeyDown nor ReadKeyOptions.IncludeKeyUp is specified.
         /// </exception>
         /// <example>
-        ///     <MSH>
+        ///     <code>
         ///         $option = [System.Management.Automation.Host.ReadKeyOptions]"IncludeKeyDown";
         ///         $host.UI.RawUI.ReadKey($option)
-        ///     </MSH>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.ReadKeyOptions"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey()"/>
@@ -1462,7 +1462,7 @@ namespace System.Management.Automation.Host
         ///         using System;
         ///         using System.Management.Automation;
         ///         using System.Management.Automation.Host;
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet("Clear","Screen")]
         ///             public class ClearScreen : PSCmdlet
@@ -1687,7 +1687,7 @@ namespace System.Management.Automation.Host
         /// <paramref name="contents"/> is null;
         /// Any string in <paramref name="contents"/> is null or empty
         /// </exception>
-        /// <remark>
+        /// <remarks>
         /// If a character C takes one BufferCell to display as determined by LengthInBufferCells,
         /// one BufferCell is allocated with its Character set to C and BufferCellType to BufferCell.Complete.
         /// On the other hand, if C takes two BufferCell, two adjacent BufferCells on a row in
@@ -1701,7 +1701,7 @@ namespace System.Management.Automation.Host
         /// <paramref name="foregroundColor"/> and <paramref name="backgroundColor"/>, respectively.
         /// The resulting array is suitable for use with <see cref="PSHostRawUserInterface.SetBufferContents(Rectangle, BufferCell)"/>
         /// and <see cref="PSHostRawUserInterface.SetBufferContents(Coordinates, BufferCell[,])"/>.
-        /// </remark>
+        /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(Size, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.LengthInBufferCells(char)"/>

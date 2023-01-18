@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 s_sessionId = Guid.NewGuid().ToString();
                 TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-                configuration.InstrumentationKey = _psCoreTelemetryKey;
+                configuration.ConnectionString = "InstrumentationKey=" + _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
                 configuration.TelemetryChannel.DeveloperMode = false;

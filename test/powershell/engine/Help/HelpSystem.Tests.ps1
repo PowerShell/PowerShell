@@ -30,7 +30,8 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Scope $Scope
+    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
 function GetCurrentUserHelpRoot {
@@ -42,6 +43,16 @@ function GetCurrentUserHelpRoot {
     }
 
     return $userHelpRoot
+}
+
+Describe 'Validate HelpInfo type' -Tags @('CI') {
+
+    It 'Category should be a string' {
+        $help = Get-Help *
+        $category = $help | ForEach-Object { $_.Category.GetType().FullName } | Select-Object -Unique
+        $category.Count | Should -Be 1 -Because 'All help categories should be strings, >1 indicates a type mismatch'
+        $category | Should -BeExactly 'System.String'
+    }
 }
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
@@ -301,10 +312,6 @@ Describe "Get-Help should find help info within help files" -Tags @('CI') {
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
 
-    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
-    # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
-    # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
-
     BeforeAll {
         $helpFile1 = "about_testCase1.help.txt"
         $helpFile2 = "about_testCase.2.help.txt"
@@ -338,7 +345,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
     )
 
-    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases -Pending: (-not $IsWindows) {
+    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases {
         param (
             $command,
             $result

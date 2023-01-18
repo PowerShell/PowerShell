@@ -6891,22 +6891,19 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAMSIMethodInvocationLogging))
-                {
-                    // Expression block runs two expressions in order:
-                    //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
-                    //  - Invoke method
-                    string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
-                    expr = Expression.Block(
-                        Expression.Call(
-                            CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                            Expression.Constant(targetName),
-                            Expression.Constant(name),
-                            Expression.NewArrayInit(
-                                typeof(object),
-                                args.Select(static e => e.Expression.Cast(typeof(object))))),
-                        expr);
-                }
+                // Expression block runs two expressions in order:
+                //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+                //  - Invoke method
+                string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
+                expr = Expression.Block(
+                    Expression.Call(
+                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                        Expression.Constant(targetName),
+                        Expression.Constant(name),
+                        Expression.NewArrayInit(
+                            typeof(object),
+                            args.Select(static e => e.Expression.Cast(typeof(object))))),
+                    expr);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
@@ -7352,11 +7349,15 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            return args.All(element =>
-                            {
-                                var obj = PSObject.Base(element);
-                                return obj != null && obj.GetType().Equals(typeof(T));
-                            });
+            foreach (object element in args)
+            {
+                if (Adapter.GetObjectType(element, debase: true) != typeof(T))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static bool IsHeterogeneousArray(object[] args)
@@ -7384,11 +7385,15 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            return args.Skip(1).Any(element =>
-                                    {
-                                        var obj = PSObject.Base(element);
-                                        return obj == null || !firstType.Equals(obj.GetType());
-                                    });
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (Adapter.GetObjectType(args[i], debase: true) != firstType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)

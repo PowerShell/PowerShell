@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// These are platform abstractions and platform specific implementations.
     /// </summary>
-    public static class Platform
+    public static partial class Platform
     {
         /// <summary>
         /// True if the current platform is Linux.
@@ -163,19 +163,16 @@ namespace System.Management.Automation
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
-            // See objbase.h
-            const int COINIT_APARTMENTTHREADED = 0x2;
-            const int E_NOTIMPL = unchecked((int)0X80004001);
-            int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+            int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
 
             // If 0 is returned the thread has been initialized for the first time
             // as an STA and thus supported and needs to be uninitialized.
             if (result > 0)
             {
-                Windows.NativeMethods.CoUninitialize();
+                Interop.Windows.CoUninitialize();
             }
 
-            return result != E_NOTIMPL;
+            return result != Interop.Windows.E_NOTIMPL;
         });
 
         private static bool? _isNanoServer = null;
@@ -368,11 +365,6 @@ namespace System.Management.Automation
         // - only to be used with the IsWindows feature query, and only if
         //   no other more specific feature query makes sense
 
-        internal static bool NonWindowsIsHardLink(ref IntPtr handle)
-        {
-            return Unix.IsHardLink(ref handle);
-        }
-
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
             return Unix.IsHardLink(fileInfo);
@@ -453,21 +445,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.WaitPid(pid, nohang);
         }
 
-        internal static class Windows
-        {
-            /// <summary>The native methods class.</summary>
-            internal static class NativeMethods
-            {
-                private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
-
-                [DllImport(ole32Lib)]
-                internal static extern int CoInitializeEx(IntPtr reserve, int coinit);
-
-                [DllImport(ole32Lib)]
-                internal static extern void CoUninitialize();
-            }
-        }
-
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
         // works *correctly* on Linux in that it creates an exception with
         // the string perror would give you for the last set value of errno.
@@ -475,7 +452,7 @@ namespace System.Management.Automation
         // to a PAL value and calls strerror_r underneath to generate the message.
 
         /// <summary>Unix specific implementations of required functionality.</summary>
-        internal static class Unix
+        internal static partial class Unix
         {
             private static readonly Dictionary<int, string> usernameCache = new();
             private static readonly Dictionary<int, string> groupnameCache = new();
@@ -734,15 +711,6 @@ namespace System.Management.Automation
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
             }
 
-            /// <summary>Is this a hardlink.</summary>
-            /// <param name="handle">The handle to a file.</param>
-            /// <returns>A boolean that represents whether the item is a hardlink.</returns>
-            public static bool IsHardLink(ref IntPtr handle)
-            {
-                // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
-                return false;
-            }
-
             /// <summary>Determine if the item is a hardlink.</summary>
             /// <param name="fs">A FileSystemInfo to check to determine if it is a hardlink.</param>
             /// <returns>A boolean that represents whether the item is a hardlink.</returns>
@@ -883,20 +851,40 @@ namespace System.Management.Automation
             {
                 const int invalidPid = -1;
 
-                // read /proc/<pid>/stat
-                // 4th column will contain the ppid, 92 in the example below
-                // ex: 93 (bash) S 92 93 2 4294967295 ...
-                var path = $"/proc/{pid}/stat";
+                // read /proc/<pid>/status
+                // Row beginning with PPid: \d is the parent process id.
+                // This used to check /proc/<pid>/stat but that file was meant
+                // to be a space delimited line but it contains a value which
+                // could contain spaces itself. Using the status file is a lot
+                // simpler because each line contains a record with a simple
+                // label.
+                // https://github.com/PowerShell/PowerShell/issues/17541#issuecomment-1159911577
+                var path = $"/proc/{pid}/status";
                 try
                 {
-                    var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(' ', 5);
-                    if (parts.Length < 5)
+                    using FileStream fs = File.OpenRead(path);
+                    using StreamReader sr = new(fs);
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        return invalidPid;
+                        if (!line.StartsWith("PPid:\t", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        string[] lineSplit = line.Split('\t', 2, StringSplitOptions.RemoveEmptyEntries);
+                        if (lineSplit.Length != 2)
+                        {
+                            continue;
+                        }
+
+                        if (int.TryParse(lineSplit[1].Trim(), out var ppid))
+                        {
+                            return ppid;
+                        }
                     }
 
-                    return int.Parse(parts[3]);
+                    return invalidPid;
                 }
                 catch (Exception)
                 {
@@ -905,35 +893,35 @@ namespace System.Management.Automation
             }
 
             /// <summary>The native methods class.</summary>
-            internal static class NativeMethods
+            internal static partial class NativeMethods
             {
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
                 // C bools are 1 byte and so must be marshaled as I1
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern int GetErrorCategory(int errno);
+                [LibraryImport(psLib)]
+                internal static partial int GetErrorCategory(int errno);
 
-                [DllImport(psLib)]
-                internal static extern int GetPPid(int pid);
+                [LibraryImport(psLib)]
+                internal static partial int GetPPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)] string filePath, out int linkCount);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)] string filePath);
+                internal static partial bool IsExecutable(string filePath);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern uint GetCurrentThreadId();
+                [LibraryImport(psLib)]
+                internal static partial uint GetCurrentThreadId();
 
-                [DllImport(psLib)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.Bool)]
-                internal static extern bool KillProcess(int pid);
+                internal static partial bool KillProcess(int pid);
 
-                [DllImport(psLib)]
-                internal static extern int WaitPid(int pid, bool nohang);
+                [LibraryImport(psLib)]
+                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
                 // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]
@@ -983,29 +971,25 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int SetDate(UnixTm* tm);
+                [LibraryImport(psLib)]
+                internal static unsafe partial int SetDate(UnixTm* tm);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                         [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateSymLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateHardLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserFromPid(int pid);
+                internal static partial string GetUserFromPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)] string filePathOne,
-                                                                 [MarshalAs(UnmanagedType.LPStr)] string filePathTwo);
+                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)] string path,
-                                                        out ulong device, out ulong inode);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1083,17 +1067,17 @@ namespace System.Management.Automation
                     internal int IsSticky;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int GetCommonLStat(string filePath, [Out] out CommonStatStruct cs);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonLStat(string filePath, out CommonStatStruct cs);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int GetCommonStat(string filePath, [Out] out CommonStatStruct cs);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern string GetPwUid(int id);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetPwUid(int id);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern string GetGrGid(int id);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetGrGid(int id);
             }
         }
     }

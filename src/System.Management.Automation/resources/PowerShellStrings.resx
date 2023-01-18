@@ -132,12 +132,6 @@
   <data name="InvalidRunspaceState" xml:space="preserve">
     <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
   </data>
-  <data name="RemoteRunspacePoolNotOpened" xml:space="preserve">
-    <value>The runspace pool specified is not in an opened state.</value>
-  </data>
-  <data name="OperationNotSupportedForRemoting" xml:space="preserve">
-    <value>This operation is currently not supported in the remoting scenario.</value>
-  </data>
   <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
     <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
   </data>
@@ -159,24 +153,6 @@
   <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
     <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
   </data>
-  <data name="GetJobForCommandNotSupported" xml:space="preserve">
-    <value>GetJobForCommand is not supported when there is more than one command in the PowerShell instance.</value>
-  </data>
-  <data name="GetJobForCommandRequiresACommand" xml:space="preserve">
-    <value>The Command property of a PowerShell object cannot be empty.</value>
-  </data>
-  <data name="JobCannotBeStartedWhenRunning" xml:space="preserve">
-    <value>A job cannot be started when it is already running.</value>
-  </data>
-  <data name="UnblockNotSupported" xml:space="preserve">
-    <value>Support for interactive jobs is not available</value>
-  </data>
-  <data name="JobObjectCanBeUsedOnce" xml:space="preserve">
-    <value>A job object can be used only once.</value>
-  </data>
-  <data name="JobCanBeStartedOnce" xml:space="preserve">
-    <value>A job object cannot be reused.</value>
-  </data>
   <data name="CannotConnect" xml:space="preserve">
     <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
   </data>
@@ -191,10 +167,6 @@
   </data>
   <data name="ConnectFailed" xml:space="preserve">
     <value>The connection attempt to the remote command failed.</value>
-  </data>
-  <data name="ProxyChildJobControlNotSupported" xml:space="preserve">
-    <value>PSChildJobProxy does not support control methods.</value>
-    <comment>PSChildJobProxy is the name of a class and should not be localized</comment>
   </data>
   <data name="ExecutionStopping" xml:space="preserve">
     <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>

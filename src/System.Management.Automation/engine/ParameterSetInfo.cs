@@ -284,7 +284,7 @@ namespace System.Management.Automation
                     parameterTypeString = typeName.PSTypeName;
 
                     // Drop the namespace from the typename, if any.
-                    var lastDotIndex = parameterTypeString.LastIndexOfAny(Utils.Separators.Dot);
+                    var lastDotIndex = parameterTypeString.LastIndexOf('.');
                     if (lastDotIndex != -1 && lastDotIndex + 1 < parameterTypeString.Length)
                     {
                         parameterTypeString = parameterTypeString.Substring(lastDotIndex + 1);

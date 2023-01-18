@@ -820,14 +820,11 @@ namespace System.Management.Automation.Remoting
 
         public override InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData, PSSenderInfo senderInfo, string configProviderId)
         {
-            if (sessionConfigurationData == null)
-                throw new ArgumentNullException(nameof(sessionConfigurationData));
+            ArgumentNullException.ThrowIfNull(sessionConfigurationData);
 
-            if (senderInfo == null)
-                throw new ArgumentNullException(nameof(senderInfo));
+            ArgumentNullException.ThrowIfNull(senderInfo);
 
-            if (configProviderId == null)
-                throw new ArgumentNullException(nameof(configProviderId));
+            ArgumentNullException.ThrowIfNull(configProviderId);
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
             // now get all the modules in the specified path and import the same
@@ -1929,13 +1926,13 @@ namespace System.Management.Automation.Remoting
             string moduleName = "*";
             if (roleCapability.Contains('\\'))
             {
-                string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
+                string[] components = roleCapability.Split('\\', 2);
                 moduleName = components[0];
                 roleCapability = components[1];
             }
 
             // Go through each directory in the module path
-            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Utils.Separators.PathSeparator);
+            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Path.PathSeparator);
             foreach (string path in modulePaths)
             {
                 try
@@ -2985,7 +2982,7 @@ namespace System.Management.Automation.Remoting
         };
 #endif
 
-        // These are configuration options for WSMan (WinRM) endpoint configurations, that 
+        // These are configuration options for WSMan (WinRM) endpoint configurations, that
         // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
         private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -3022,6 +3019,6 @@ namespace System.Management.Automation.Remoting
     }
 
     #endregion
-    
+
     #endregion
 }

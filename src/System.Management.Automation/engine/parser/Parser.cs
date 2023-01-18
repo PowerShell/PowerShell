@@ -142,10 +142,7 @@ namespace System.Management.Automation.Language
         /// <returns>The <see cref="ScriptBlockAst"/> that represents the input script file.</returns>
         public static ScriptBlockAst ParseInput(string input, string fileName, out Token[] tokens, out ParseError[] errors)
         {
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
 
             Parser parser = new Parser();
             List<Token> tokenList = new List<Token>();
@@ -5115,13 +5112,6 @@ namespace System.Management.Automation.Language
 
                         assemblyFileName = workingDirectory + @"\" + assemblyFileName;
                     }
-
-#if !CORECLR
-                    if (!File.Exists(assemblyFileName))
-                    {
-                        GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                    }
-#endif
                 }
                 catch
                 {

@@ -876,7 +876,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to PowerShell log under log category "Pipeline execution detail"
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
         ///             public class RemoveMyObjectType1 : PSCmdlet
@@ -1176,7 +1176,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
         ///             public class RemoveMyObjectType2 : PSCmdlet
@@ -1279,7 +1279,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : PSCmdlet
@@ -1394,7 +1394,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : PSCmdlet
@@ -1700,7 +1700,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType4 : PSCmdlet
@@ -1882,7 +1882,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType5 : PSCmdlet
@@ -3330,7 +3330,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProgressPreferenceSet)
+                if (IsProgressActionSet)
                     return _progressPreference;
 
                 if (!_isProgressPreferenceCached)
@@ -3351,12 +3351,14 @@ namespace System.Management.Automation
                 }
 
                 _progressPreference = value;
-                _isProgressPreferenceSet = true;
+                IsProgressActionSet = true;
             }
         }
 
         private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
-        private bool _isProgressPreferenceSet = false;
+
+        internal bool IsProgressActionSet { get; private set; } = false;
+
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>

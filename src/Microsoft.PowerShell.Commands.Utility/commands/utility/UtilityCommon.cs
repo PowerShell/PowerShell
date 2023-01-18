@@ -83,11 +83,6 @@ namespace Microsoft.PowerShell.Commands
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
 
         /// <summary>
-        /// Error message to indicate that requested algorithm is not supported on the target platform.
-        /// </summary>
-        public static string AlgorithmTypeNotSupported { get { return UtilityCommonStrings.AlgorithmTypeNotSupported; } }
-
-        /// <summary>
         /// The file '{0}' could not be parsed as a PowerShell Data File.
         /// </summary>
         public static string CouldNotParseAsPowerShellDataFile { get { return UtilityCommonStrings.CouldNotParseAsPowerShellDataFile; } }

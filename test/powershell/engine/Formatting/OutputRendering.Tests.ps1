@@ -1,7 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'OutputRendering tests' {
+Describe 'OutputRendering tests' -Tag 'CI' {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        # Console host does not support VT100 escape sequences on Windows 2012R2 or earlier
+        if ($IsWindows -and [System.Environment]::OSVersion.Version -le [version]::new(6, 3)) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
     BeforeEach {
         if ($null -ne $PSStyle) {
             $oldOutputRendering = $PSStyle.OutputRendering
@@ -12,6 +20,10 @@ Describe 'OutputRendering tests' {
         if ($null -ne $PSStyle) {
             $PSStyle.OutputRendering = $oldOutputRendering
         }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It 'OutputRendering works for "<outputRendering>" to the host' -TestCases @(

@@ -482,6 +482,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Stop-Transcript",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Suspend-Job",                      "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Suspend-Service",                  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
+"Cmdlet",       "Switch-Process",                   "",                                 $(                              $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Tee-Object",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Test-Connection",                  "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Test-ComputerSecureChannel",       "",                                 $($FullCLR                               ),     "",                     "",                     ""

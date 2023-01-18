@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// INSTALLATION:
     ///
-    /// Type the following at an msh prompt:
+    /// Type the following at a PowerShell prompt:
     ///
     /// new-PSProvider -Path "REG.cmdletprovider" -description "My registry navigation provider"
     ///

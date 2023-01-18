@@ -376,8 +376,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static readonly DateTime s_epoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
         /// <summary>
         /// This is more an implementation of the UNIX strftime.
         /// </summary>
@@ -501,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(s_epoch).TotalSeconds));
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(DateTime.UnixEpoch).TotalSeconds));
                             break;
 
                         case 'T':

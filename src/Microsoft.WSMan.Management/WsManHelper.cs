@@ -178,10 +178,7 @@ namespace Microsoft.WSMan.Management
             string resourceName,
             object[] args)
         {
-            if (resourceManager == null)
-            {
-                throw new ArgumentNullException(nameof(resourceManager));
-            }
+            ArgumentNullException.ThrowIfNull(resourceManager);
 
             if (string.IsNullOrEmpty(resourceName))
             {

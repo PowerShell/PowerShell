@@ -23,6 +23,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements the Get-WinEvent cmdlet.
     /// </summary>
+    [OutputType(typeof(EventRecord), ParameterSetName = new string[] { "GetLogSet", "GetProviderSet", "FileSet", "HashQuerySet", "XmlQuerySet" })]
+    [OutputType(typeof(ProviderMetadata), ParameterSetName = new string[] { "ListProviderSet" })]
+    [OutputType(typeof(EventLogConfiguration), ParameterSetName = new string[] { "ListLogSet" })]
     [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096581")]
     public sealed class GetWinEventCommand : PSCmdlet
     {

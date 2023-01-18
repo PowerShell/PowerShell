@@ -347,7 +347,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     return true;
                 }
 
-                // sending the message should be done withing the lock
+                // sending the message should be done within the lock
                 // to ensure that multiple calls to SetMaxRunspaces
                 // will be executed on the server in the order in which
                 // they were called in the client
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     return true;
                 }
 
-                // sending the message should be done withing the lock
+                // sending the message should be done within the lock
                 // to ensure that multiple calls to SetMinRunspaces
                 // will be executed on the server in the order in which
                 // they were called in the client
@@ -452,7 +452,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // return maxrunspaces
                 if (stateInfo.State == RunspacePoolState.Opened)
                 {
-                    // sending the message should be done withing the lock
+                    // sending the message should be done within the lock
                     // to ensure that multiple calls to GetAvailableRunspaces
                     // will be executed on the server in the order in which
                     // they were called in the client
@@ -1215,7 +1215,7 @@ namespace System.Management.Automation.Runspaces.Internal
             return psCollection;
         }
 
-        ///<summary>
+        /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
         /// <returns>RunspacePoolCapability.</returns>

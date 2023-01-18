@@ -133,14 +133,22 @@ function ExecuteRedirectRequest {
         $Method = 'GET',
 
         [switch]
-        $PreserveAuthorizationOnRedirect
+        $PreserveAuthorizationOnRedirect,
+
+        [ValidateRange(0, [int]::MaxValue)]
+        [int]
+        $MaximumRedirection
     )
     $result = [PSObject]@{Output = $null; Error = $null; Content = $null}
 
     try {
         $headers = @{"Authorization" = "test"}
         if ($Cmdlet -eq 'Invoke-WebRequest') {
-            $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+            if ($MaximumRedirection -gt 0) {
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method -MaximumRedirection:$MaximumRedirection
+            } else {
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+            }
             $result.Content = $result.Output.Content | ConvertFrom-Json
         } else {
             $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
@@ -514,6 +522,26 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
+    It "Validate Invoke-WebRequest redirect with -Query destination Http" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
+        $command = "Invoke-WebRequest -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should -Match $httpUri.Authority
+    }
+
+    It "Validate Invoke-WebRequest redirect with -Query destination Https" {
+        $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpsUri}
+        $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should -Match $httpsUri.Authority
+    }
+
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
         $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-WebRequest -Uri '$uri'"
@@ -584,11 +612,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     # Perform the following operation for Invoke-WebRequest
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
+    # brotli Returns brotli-encoded data.
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     # Note: These are the supported options, but we do not have a web service to test them all.
     It "Invoke-WebRequest supports request that returns <DataEncoding>-encoded data." -TestCases @(
-        @{ DataEncoding = "gzip"}
-        @{ DataEncoding = "deflate"}
+        @{ DataEncoding = "gzip" }
+        @{ DataEncoding = "deflate" }
+        @{ DataEncoding = "brotli" }
     ) {
         param($dataEncoding)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
@@ -598,7 +628,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ValidateResponse -response $result
 
         # Validate response content
-        $result.Output.Headers.'Content-Encoding'[0] | Should -BeExactly $dataEncoding
+        # The content should be de-compressed, and otherwise converting from JSON will fail.
         $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.Headers.Host | Should -BeExactly $uri.Authority
     }
@@ -863,6 +893,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
+        
+        It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect respects -MaximumRedirection on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2
+
+            $response.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
 
         It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
@@ -934,6 +972,25 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
             $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
             $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+        }
+
+        It "Validate Invoke-WebRequest Https to Http redirect with -AllowInsecureRedirect" {
+            $httpUri = Get-WebListenerUrl -Test 'Get'
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+            $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
+
+            $result = ExecuteWebCommand -command $command
+            $jsonContent = $result.Output.Content | ConvertFrom-Json
+            $jsonContent.headers.Host | Should -Match $httpUri.Authority
+        }
+
+        It "Validate Invoke-WebRequest Https to Http redirect without -AllowInsecureRedirect" {
+            $httpUri = Get-WebListenerUrl -Test 'Get'
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+            $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
+
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
     }
 
@@ -1193,39 +1250,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
-        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
+        It "Verifies Invoke-WebRequest defaults to iso-UTF-8 when an unsupported/invalid charset is declared" {
             $query = @{
                 contenttype = 'text/html'
                 body        = '<html><head><meta charset="invalid"></head></html>'
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
-        }
-
-        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
-            $query = @{
-                contenttype = 'text/html'
-                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
-        }
-
-        It "Verifies Invoke-WebRequest defaults to UTF8 on application/json when no charset is present" {
-            # when contenttype is set, WebListener suppresses charset unless it is included in the query
-            $query = @{
-                contenttype = 'application/json'
-                body        = '{"Test": "Test"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::UTF8
@@ -1234,7 +1262,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
             $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
-            $response.Output.Content | Should -BeExactly $query.body
+        }
+
+        It "Verifies Invoke-WebRequest defaults to UTF-8 when an unsupported/invalid charset is declared using http-equiv" {
+            $query = @{
+                contenttype = 'text/html'
+                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
     }
 
@@ -2035,6 +2076,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         It "Charset Parsing" {
+            Set-ItResult -Pending -Because "We need a better way to test this and .NET has made bad regex's run faster"
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='charset'
                 dosLength='2850'
@@ -2183,6 +2225,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
+    It "Validate Invoke-RestMethod redirect with -Query destination Http" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
+        $command = "Invoke-RestMethod -Uri '$uri'"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
+    }
+
+    It "Validate Invoke-RestMethod redirect with -Query destination Https" {
+        $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpsUri}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.Host | Should -Be $httpsUri.Authority
+    }
+
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
         $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-RestMethod -Uri '$uri'"
@@ -2243,18 +2303,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     # Perform the following operation for Invoke-RestMethod
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
+    # brotli Returns brotli-encoded data.
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     # Note: These are the supported options, but we do not have a web service to test them all.
     It "Invoke-RestMethod supports request that returns <DataEncoding>-encoded data." -TestCases @(
-        @{ DataEncoding = "gzip"}
-        @{ DataEncoding = "deflate"}
+        @{ DataEncoding = "gzip" }
+        @{ DataEncoding = "deflate" }
+        @{ DataEncoding = "brotli" }
     ) {
         param($dataEncoding)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
-        $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
+        $result = Invoke-RestMethod -Uri $uri
 
         # Validate response content
-        $headers.'Content-Encoding'[0] | Should -BeExactly $dataEncoding
+        # The content should be de-compressed. Otherwise, the above 'Invoke-RestMethod' would have thrown because converting to JSON internally would fail.
         $result.Headers.Host | Should -BeExactly $uri.Authority
     }
 
@@ -2453,6 +2515,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..3 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
+    It "Validate Invoke-RestMethod -FollowRelLink correctly manages commas" {
+        $maxLinks = 5
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks; type = "with,comma"}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.Count | Should -BeExactly $maxLinks
+        1..$maxLinks | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
+    }
+
     It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
         $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
@@ -2594,6 +2666,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod Https to Http redirect with -AllowInsecureRedirect" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -AllowInsecureRedirect"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.Host | Should -Be $httpUri.Authority
+    }
+
+    It "Validate Invoke-RestMethod Https to Http redirect without -AllowInsecureRedirect" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     #endregion Redirect tests
@@ -3056,37 +3146,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
         }
 
-        It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
+        It "Verifies Invoke-RestMethod defaults to UTF-8 when an unsupported/invalid charset is declared" {
             $query = @{
                 contenttype = 'text/html'
                 body        = '<html><head><meta charset="invalid"></head></html>'
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
-            $query = @{
-                contenttype = 'text/html'
-                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
-            }
-            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
-
-            $response.Error | Should -BeNullOrEmpty
-            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod defaults to UTF8 on application/json when no charset is present" {
-            # when contenttype is set, WebListener suppresses charset unless it is included in the query
-            $query = @{
-                contenttype = 'application/json'
-                body        = '{"Test": "Test"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::UTF8
@@ -3094,7 +3157,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.output.Test | Should -BeExactly 'Test'
+        }
+
+        It "Verifies Invoke-RestMethod defaults to UTF-8 when an unsupported/invalid charset is declared using http-equiv" {
+            $query = @{
+                contenttype = 'text/html'
+                body        = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
         }
     }
 

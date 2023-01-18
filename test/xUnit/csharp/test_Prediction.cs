@@ -147,7 +147,7 @@ namespace PSTests.Sequential
                 // cannot finish before the specified timeout.
                 // The specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInputAsync(predClient, ast, tokens, millisecondsTimeout: 1000).Result;
+                results = CommandPrediction.PredictInputAsync(predClient, ast, tokens, millisecondsTimeout: 1500).Result;
                 Assert.Single(results);
 
                 PredictionResult res = results[0];
@@ -214,7 +214,7 @@ namespace PSTests.Sequential
                        slow.DisplayedSuggestions.Count == 0 || fast.DisplayedSuggestions.Count == 0 ||
                        slow.AcceptedSuggestions.Count == 0)
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(300);
                 }
 
                 Assert.Equal(2, slow.History.Count);

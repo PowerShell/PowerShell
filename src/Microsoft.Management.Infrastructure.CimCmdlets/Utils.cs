@@ -371,10 +371,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="argumentName"></param>
         public static void ValidateNoNullArgument(object obj, string argumentName)
         {
-            if (obj == null)
-            {
-                throw new ArgumentNullException(argumentName);
-            }
+            ArgumentNullException.ThrowIfNull(obj, argumentName);
         }
 
         /// <summary>

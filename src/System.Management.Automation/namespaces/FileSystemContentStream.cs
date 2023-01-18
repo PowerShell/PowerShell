@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 // the changes
                 if (waitChanges)
                 {
-                    WaitForChanges(_path, _mode, _access, _share, ClrFacade.GetDefaultEncoding());
+                    WaitForChanges(_path, _mode, _access, _share, Encoding.Default);
                     byteRead = _stream.ReadByte();
                 }
             }
@@ -1173,38 +1173,8 @@ namespace Microsoft.PowerShell.Commands
         private int _byteCount = 0;
         private int _charCount = 0;
         private long _currentPosition = 0;
-        private bool? _singleByteCharSet = null;
-
         private const byte BothTopBitsSet = 0xC0;
         private const byte TopBitUnset = 0x80;
-
-        /// <summary>
-        /// If the given encoding is OEM or Default, check to see if the code page
-        /// is SBCS(single byte character set).
-        /// </summary>
-        /// <returns></returns>
-        private bool IsSingleByteCharacterSet()
-        {
-            if (_singleByteCharSet != null)
-                return (bool)_singleByteCharSet;
-
-            // Porting note: only UTF-8 is supported on Linux, which is not an SBCS
-            if ((_currentEncoding.Equals(_oemEncoding) ||
-                 _currentEncoding.Equals(_defaultAnsiEncoding))
-                && Platform.IsWindows)
-            {
-                NativeMethods.CPINFO cpInfo;
-                if (NativeMethods.GetCPInfo((uint)_currentEncoding.CodePage, out cpInfo) &&
-                    cpInfo.MaxCharSize == 1)
-                {
-                    _singleByteCharSet = true;
-                    return true;
-                }
-            }
-
-            _singleByteCharSet = false;
-            return false;
-        }
 
         /// <summary>
         /// We don't support this method because it is not used by the ReadBackward method in FileStreamContentReaderWriter.
@@ -1474,8 +1444,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (_currentEncoding is UnicodeEncoding ||
                 _currentEncoding is UTF32Encoding ||
-                _currentEncoding is ASCIIEncoding ||
-                IsSingleByteCharacterSet())
+                _currentEncoding.IsSingleByte)
             {
                 // Unicode -- two bytes per character
                 // UTF-32 -- four bytes per character
@@ -1525,16 +1494,6 @@ namespace Microsoft.PowerShell.Commands
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
                 public byte[] LeadBytes;
             }
-
-            /// <summary>
-            /// Get information on a named code page.
-            /// </summary>
-            /// <param name="codePage"></param>
-            /// <param name="lpCpInfo"></param>
-            /// <returns></returns>
-            [DllImport(PinvokeDllNames.GetCPInfoDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool GetCPInfo(uint codePage, out CPINFO lpCpInfo);
         }
     }
 

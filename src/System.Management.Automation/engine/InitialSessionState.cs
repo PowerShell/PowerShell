@@ -44,22 +44,28 @@ namespace System.Management.Automation.Runspaces
 
             // We shouldn't create too many tasks.
 #if !UNIX
-            // Amsi initialize can be a little slow
+            // Amsi initialize can be a little slow.
             Task.Run(() => AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true));
 #endif
+            // Initialize the types 'Compiler', 'CachedReflectionInfo', and 'ExpressionCache'.
+            // Their type initializers do a lot of reflection operations.
+            // We will access 'Compiler' members when creating the first session state.
+            Task.Run(() => _ = Compiler.DottedLocalsTupleType);
 
             // One other task for other stuff that's faster, but still a little slow.
             Task.Run(() =>
             {
-                // Loading the resources for System.Management.Automation can be expensive, so force that to
-                // happen early on a background thread.
+                // Loading the resources for System.Management.Automation can be expensive,
+                // so force that to happen early on a background thread.
                 _ = RunspaceInit.OutputEncodingDescription;
 
                 // This will init some tables and could load some assemblies.
-                _ = TypeAccelerators.builtinTypeAccelerators;
+                // We will access 'LanguagePrimitives' when binding built-in variables for the Runspace.
+                LanguagePrimitives.GetEnumerator(null);
 
                 // This will init some tables and could load some assemblies.
-                LanguagePrimitives.GetEnumerator(null);
+                // We will access 'TypeAccelerators' when auto-loading the PSReadLine module, which happens last.
+                _ = TypeAccelerators.builtinTypeAccelerators;
             });
         }
     }
@@ -646,7 +652,7 @@ namespace System.Management.Automation.Runspaces
         public string Description { get; } = string.Empty;
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
     }
@@ -803,7 +809,7 @@ namespace System.Management.Automation.Runspaces
         internal ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
 
@@ -974,10 +980,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public InitialSessionStateEntryCollection(IEnumerable<T> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             _internalCollection = new Collection<T>();
 
@@ -1148,10 +1151,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="type">The type of object to remove, can be null to remove any type.</param>
         public void Remove(string name, object type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             lock (_syncObject)
             {
@@ -1186,10 +1186,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="item">The item to add...</param>
         public void Add(T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             lock (_syncObject)
             {
@@ -1203,10 +1200,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public void Add(IEnumerable<T> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             lock (_syncObject)
             {
@@ -1864,10 +1858,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public void ImportPSModule(params string[] name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             foreach (string n in name)
             {
@@ -1892,10 +1883,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         public void ImportPSModule(IEnumerable<ModuleSpecification> modules)
         {
-            if (modules == null)
-            {
-                throw new ArgumentNullException(nameof(modules));
-            }
+            ArgumentNullException.ThrowIfNull(modules);
 
             foreach (var moduleSpecification in modules)
             {
@@ -1923,10 +1911,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal void ImportPSCoreModule(string[] name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             foreach (string n in name)
             {
@@ -2775,7 +2760,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     case "ValidatePattern":
-                        string pattern = "^(" + string.Join("|", parameterValidationValues) + ")$";
+                        string pattern = "^(" + string.Join('|', parameterValidationValues) + ")$";
                         ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
                         metadata.Parameters[parameterName].Attributes.Add(validatePattern);
                         break;
@@ -3726,7 +3711,7 @@ namespace System.Management.Automation.Runspaces
             // implementation and should be refactored.
             PSSnapInInfo newPSSnapIn = PSSnapInReader.Read("2", name);
 
-            if (!Utils.IsPSVersionSupported(newPSSnapIn.PSVersion.ToString()))
+            if (!PSVersionInfo.IsValidPSVersion(newPSSnapIn.PSVersion))
             {
                 s_PSSnapInTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", name);
 
@@ -3753,11 +3738,7 @@ namespace System.Management.Automation.Runspaces
 
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
-            if (psSnapInInfo == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(psSnapInInfo);
 
             // See if the snapin is already loaded. If has been then there will be an entry in the
             // Assemblies list for it already...
@@ -3933,11 +3914,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void ImportCmdletsFromAssembly(Assembly assembly, PSModuleInfo module)
         {
-            if (assembly == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(assembly);
 
             string assemblyPath = assembly.Location;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(
@@ -4072,6 +4049,15 @@ $RawUI.SetBufferContents(
             }
         }
 
+#if UNIX
+        internal static string GetExecFunctionText()
+        {
+            return @"
+Switch-Process -WithCommand $args
+";
+        }
+#endif
+
         /// <summary>
         /// This is the default function to use for man/help. It uses
         /// splatting to pass in the parameters.
@@ -4161,13 +4147,7 @@ param(
         }
         else {
             $pagerCommand = 'less'
-            # PSNativeCommandArgumentPassing arguments should be constructed differently.
-            if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-                $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
-            }
-            else {
-                $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
-            }
+            $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
         }
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
@@ -4207,16 +4187,7 @@ param(
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
-                # Start the pager arguments directly if the PSNativeCommandArgumentPassing feature is enabled.
-                # Otherwise, supply pager arguments to an application without any PowerShell parsing of the arguments.
-                # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
-                }
-                else {
-                    $env:__PSPAGER_ARGS = $pagerArgs
-                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
-                }
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
             }
             else {
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
@@ -4350,12 +4321,12 @@ end {
                     SpecialVariables.PSStyle,
                     PSStyle.Instance,
                     RunspaceInit.PSStyleDescription,
-                    ScopedItemOptions.None),
+                    ScopedItemOptions.Constant),
 
                 // Variable which controls the encoding for piping data to a NativeCommand
                 new SessionStateVariableEntry(
                     SpecialVariables.OutputEncoding,
-                    Utils.utf8NoBom,
+                    Encoding.Default,
                     RunspaceInit.OutputEncodingDescription,
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
@@ -4486,22 +4457,19 @@ end {
                 builtinVariables.Add(
                     new SessionStateVariableEntry(
                         SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        value: false,
+                        value: true,    // when this feature is changed to stable, this should default to `false`
                         RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
                         ScopedItemOptions.None,
                         new ArgumentTypeConverterAttribute(typeof(bool))));
             }
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
-            {
-                builtinVariables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.NativeArgumentPassing,
-                        Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
-                        RunspaceInit.NativeCommandArgumentPassingDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
-            }
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.NativeArgumentPassing,
+                    Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    RunspaceInit.NativeCommandArgumentPassingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
 
             BuiltInVariables = builtinVariables.ToArray();
         }
@@ -4695,13 +4663,6 @@ end {
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
 
-#if UNIX
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
-                {
-                    builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
-                }
-#endif
-
                 return builtInAliases.ToArray();
             }
         }
@@ -4724,11 +4685,16 @@ end {
            // Functions that don't require full language mode
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd~", "Set-Location ~", isProductCode: true, languageMode: systemLanguageMode),
             // Win8: 320909. Retaining the original definition to ensure backward compatability.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true, languageMode: systemLanguageMode),
+
+#if UNIX
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("exec", GetExecFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
+#endif
 
             // Functions that require full language mode and are trusted
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true, languageMode: PSLanguageMode.FullLanguage),
@@ -4936,10 +4902,8 @@ end {
             out string helpFile)
         {
             helpFile = null;
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+
+            ArgumentNullException.ThrowIfNull(assembly);
 
             cmdlets = null;
             aliases = null;
@@ -5341,10 +5305,7 @@ end {
             }
 
 #if UNIX
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
-            {
-                cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
-            }
+            cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
 #endif
 
             foreach (var val in cmdlets.Values)
