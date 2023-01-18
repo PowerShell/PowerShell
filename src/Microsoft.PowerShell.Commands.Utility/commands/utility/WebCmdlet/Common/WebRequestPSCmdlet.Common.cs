@@ -1567,15 +1567,13 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
+        internal void SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
 
             ByteArrayContent byteArrayContent = new(content);
             request.Content = byteArrayContent;
-
-            return 0;
         }
 
         /// <summary>
@@ -1588,7 +1586,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, string content)
+        internal void SetRequestContent(HttpRequestMessage request, string content)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
@@ -1621,11 +1619,9 @@ namespace Microsoft.PowerShell.Commands
             byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
             ByteArrayContent byteArrayContent = new(bytes);
             request.Content = byteArrayContent;
-
-            return 0;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
+        internal void SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(xmlNode);
@@ -1646,8 +1642,6 @@ namespace Microsoft.PowerShell.Commands
             ByteArrayContent byteArrayContent = new(bytes);
 
             request.Content = byteArrayContent;
-
-            return 0;
         }
 
         /// <summary>
@@ -1660,15 +1654,13 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
+        internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(contentStream);
 
             StreamContent streamContent = new(contentStream);
             request.Content = streamContent;
-
-            return 0;
         }
 
         /// <summary>
@@ -1681,7 +1673,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
@@ -1690,18 +1682,15 @@ namespace Microsoft.PowerShell.Commands
             WebSession.ContentHeaders.Clear();
 
             request.Content = multipartContent;
-
-            return 0;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
+        internal void SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
 
             string body = FormatDictionary(content);
-
-            return SetRequestContent(request, body);
+            SetRequestContent(request, body);
         }
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
