@@ -1444,7 +1444,7 @@ namespace Microsoft.PowerShell
                 exitCode = ExitCodeSuccess;
                 if (!string.IsNullOrEmpty(cpp.InitialCommand) && isPrestartWarned)
                 {
-                    s_tracer.TraceError("Start up warnings made command \"{0}\" not executed", cpp.InitialCommand);
+                    s_tracer.TraceError($"Start up warnings made command \"{cpp.InitialCommand}\" not executed");
                     string msg = StringUtil.Format(ConsoleHostStrings.InitialCommandNotExecuted, cpp.InitialCommand);
                     ui.WriteErrorLine(msg);
                     exitCode = ExitCodeInitFailure;
@@ -1566,7 +1566,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
             Dbg.Assert(exec != null, "non-null Executor instance needed");
 
-            s_runspaceInitTracer.WriteLine("running command {0}", command);
+            s_runspaceInitTracer.WriteLine($"running command {command}");
 
             Exception e = null;
 
@@ -1911,7 +1911,7 @@ namespace Microsoft.PowerShell
             {
                 string filePath = s_cpp.File;
 
-                s_tracer.WriteLine("running -file '{0}'", filePath);
+                s_tracer.WriteLine($"running -file '{filePath}'");
 
                 Pipeline tempPipeline = exec.CreatePipeline();
                 Command c;

@@ -293,7 +293,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 object propertyValue = GetBaseObject(enumerator.Value);
 
-                DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
+                DebugHelper.WriteLog($"Create and add new property to ciminstance: name = {propertyName}; value = {propertyValue}; flags = {flag}", 5);
 
                 PSReference cimReference = propertyValue as PSReference;
                 if (cimReference != null)

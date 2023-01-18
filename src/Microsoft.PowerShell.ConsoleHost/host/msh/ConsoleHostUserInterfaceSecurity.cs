@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell
 
             if (!string.IsNullOrEmpty(targetName))
             {
-                userName = StringUtil.Format("{0}\\{1}", targetName, userName);
+                userName = StringUtil.Format($"{targetName}\\{userName}");
             }
 
             cred = new PSCredential(userName, password);

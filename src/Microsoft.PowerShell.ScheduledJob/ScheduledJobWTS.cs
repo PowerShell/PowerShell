@@ -797,13 +797,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>WTS time string.</returns>
         internal static string ConvertTimeSpanToWTSString(TimeSpan time)
         {
-            return string.Format(
-                    CultureInfo.InvariantCulture,
-                    "P{0}DT{1}H{2}M{3}S",
-                    time.Days,
-                    time.Hours,
-                    time.Minutes,
-                    time.Seconds);
+            return string.Format(CultureInfo.InvariantCulture, $"P{time.Days}DT{time.Hours}H{time.Minutes}M{time.Seconds}S");
         }
 
         /// <summary>

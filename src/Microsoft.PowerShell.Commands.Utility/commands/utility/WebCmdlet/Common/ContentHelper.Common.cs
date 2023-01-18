@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int statusCode = WebResponseHelper.GetStatusCode(response);
                 string statusDescription = WebResponseHelper.GetStatusDescription(response);
-                raw.AppendFormat("{0} {1} {2}", protocol, statusCode, statusDescription);
+                raw.AppendFormat($"{protocol} {statusCode} {statusDescription}");
                 raw.AppendLine();
             }
 

@@ -193,10 +193,7 @@ namespace Microsoft.PowerShell.Commands
                 // Initialization Vector, Encrypted Data
                 string dataPackage = string.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
-                    "{0}|{1}|{2}",
-                    2,
-                    encryptionResult.IV,
-                    encryptionResult.EncryptedData);
+                    $"{2}|{encryptionResult.IV}|{encryptionResult.EncryptedData}");
 
                 // encode the package, and output it.
                 // We also include a recognizable prefix so that

@@ -125,7 +125,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string queryExpression,
             uint operationTimeout)
         {
-            DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
+            DebugHelper.WriteLogEx($"queryDialect = '{queryDialect}'; queryExpression = '{queryExpression}'", 0);
             this.TargetComputerName = computerName;
             CimSessionProxy proxy = CreateSessionProxy(computerName, operationTimeout);
             proxy.SubscribeAsync(nameSpace, queryDialect, queryExpression);
@@ -148,7 +148,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string queryExpression,
             uint operationTimeout)
         {
-            DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
+            DebugHelper.WriteLogEx($"queryDialect = '{queryDialect}'; queryExpression = '{queryExpression}'", 0);
 
             ArgumentNullException.ThrowIfNull(cimSession, string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, nameof(cimSession)));
 
@@ -188,7 +188,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="actionArgs">Event argument.</param>
         private void CimIndicationHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
-            DebugHelper.WriteLogEx("action is {0}. Disposed {1}", 0, actionArgs.Action, this.Disposed);
+            DebugHelper.WriteLogEx($"action is {actionArgs.Action}. Disposed {this.Disposed}", 0);
 
             if (this.Disposed)
             {
@@ -216,7 +216,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     temp(this, new CimSubscriptionExceptionEventArgs(this.Exception));
                 }
 
-                DebugHelper.WriteLog("Got an exception: {0}", 2, Exception);
+                DebugHelper.WriteLog($"Got an exception: {Exception}", 2);
             }
 
             CimWriteResultObject cimWriteResultObject = actionArgs.Action as CimWriteResultObject;
