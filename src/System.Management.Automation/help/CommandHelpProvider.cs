@@ -544,7 +544,7 @@ namespace System.Management.Automation
             // like "get-command -syntax"
             if (string.IsNullOrEmpty(location))
             {
-                s_tracer.WriteLine("Unable to load file {0}", helpFileToLoad);
+                s_tracer.WriteLine($"Unable to load file {helpFileToLoad}");
             }
 
             return location;
@@ -706,7 +706,7 @@ namespace System.Management.Automation
 
             if (helpItemsNode == null)
             {
-                s_tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
+                s_tracer.WriteLine($"Unable to find 'helpItems' element in file {helpFile}");
                 return;
             }
 
@@ -951,14 +951,14 @@ namespace System.Management.Automation
             // Add snapin qualified type name for this command at the top..
             // this will enable customizations of the help object.
             helpInfo.FullHelp.TypeNames.Insert(0, string.Format(CultureInfo.InvariantCulture,
-                "MamlCommandHelpInfo#{0}#{1}", mshSnapInId, cmdletName));
+                $"MamlCommandHelpInfo#{mshSnapInId}#{cmdletName}"));
 
             if (!string.IsNullOrEmpty(mshSnapInId))
             {
                 key = mshSnapInId + "\\" + key;
                 // Add snapin name to the typenames of this object
                 helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
-                    "MamlCommandHelpInfo#{0}", mshSnapInId));
+                    $"MamlCommandHelpInfo#{mshSnapInId}"));
             }
 
             AddCache(key, helpInfo);

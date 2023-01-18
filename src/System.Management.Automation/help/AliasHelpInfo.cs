@@ -41,7 +41,7 @@ namespace System.Management.Automation
 
             _fullHelpObject.TypeNames.Clear();
             _fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
-                "AliasHelpInfo#{0}", Name));
+                $"AliasHelpInfo#{Name}"));
             _fullHelpObject.TypeNames.Add("AliasHelpInfo");
             _fullHelpObject.TypeNames.Add("HelpInfo");
         }

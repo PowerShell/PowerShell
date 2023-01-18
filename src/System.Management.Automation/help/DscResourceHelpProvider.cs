@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                s_tracer.WriteLine("Error occurred in DscResourceHelpProvider {0}", e.Message);
+                s_tracer.WriteLine($"Error occurred in DscResourceHelpProvider {e.Message}");
 
             if (reportErrors && (e != null))
             {
@@ -327,7 +327,7 @@ namespace System.Management.Automation
 
             if (helpItemsNode == null)
             {
-                s_tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
+                s_tracer.WriteLine($"Unable to find 'helpItems' element in file {helpFile}");
                 return;
             }
 
