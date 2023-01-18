@@ -1619,7 +1619,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
-            ByteArrayContent byteArrayContent = new(bytes); 
+            ByteArrayContent byteArrayContent = new(bytes);
             request.Content = byteArrayContent;
 
             return 0;
