@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell.Commands
                     AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
                 }
 
-                request.Content = SetRequestContent(request, formData);
+                SetRequestContent(request, formData);
             }
             else if (Body is not null)
             {
