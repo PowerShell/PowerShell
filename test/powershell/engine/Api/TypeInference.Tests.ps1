@@ -1389,6 +1389,23 @@ Describe "Type inference Tests" -tags "CI" {
         ($Object.Property1 = 2) }.Ast)
         $res.Name | Should -Be "System.String"
     }
+
+    It 'Infers type of $null after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $null = "Hello";$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of all scope variable after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $true = "Hello";$true }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers type of all scope variable host after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $Host = "Hello";$Host }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {

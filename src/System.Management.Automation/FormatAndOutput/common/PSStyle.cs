@@ -653,6 +653,16 @@ namespace System.Management.Automation
         public string Bold { get; } = "\x1b[1m";
 
         /// <summary>
+        /// Gets value to turn off dim.
+        /// </summary>
+        public string DimOff { get; } = "\x1b[22m";
+
+        /// <summary>
+        /// Gets value to turn on dim.
+        /// </summary>
+        public string Dim { get; } = "\x1b[2m";
+
+        /// <summary>
         /// Gets value to turn on hidden.
         /// </summary>
         public string Hidden { get; } = "\x1b[8m";
@@ -751,10 +761,7 @@ namespace System.Management.Automation
 
         private static string ValidateNoContent(string text)
         {
-            if (text is null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
+            ArgumentNullException.ThrowIfNull(text);
 
             var decorartedString = new ValueStringDecorated(text);
             if (decorartedString.ContentLength > 0)

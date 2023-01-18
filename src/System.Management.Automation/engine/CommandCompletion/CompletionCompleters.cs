@@ -30,7 +30,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// </summary>
-    public static partial class CompletionCompleters
+    public static class CompletionCompleters
     {
         static CompletionCompleters()
         {
@@ -1617,7 +1617,9 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (bestMatchSet is null || bestMatchSet.Position > positionInParameterSet)
+                    if (bestMatchSet is null
+                        || bestMatchSet.Position > positionInParameterSet
+                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
                     {
                         bestMatchParam = param;
                         bestMatchSet = parameterSetData;
@@ -4739,47 +4741,48 @@ namespace System.Management.Automation
             public string remark;
         }
 
-        private const int MAX_PREFERRED_LENGTH = -1;
-        private const int NERR_Success = 0;
-        private const int ERROR_MORE_DATA = 234;
-        private const int STYPE_DISKTREE = 0;
-        private const int STYPE_MASK = 0x000000FF;
-
         private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
 
-        [LibraryImport("Netapi32.dll", StringMarshalling = StringMarshalling.Utf16)]
-        private static partial int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,
-                                               out uint entriesRead, out uint totalEntries, ref uint resumeHandle);
-
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
 #if UNIX
             return new List<string>();
 #else
-            IntPtr shBuf;
-            uint numEntries;
+            nint shBuf = nint.Zero;
+            uint numEntries = 0;
             uint totalEntries;
             uint resumeHandle = 0;
-            int result = NetShareEnum(machine, 1, out shBuf,
-                                        MAX_PREFERRED_LENGTH, out numEntries, out totalEntries,
-                                        ref resumeHandle);
+            int result = Interop.Windows.NetShareEnum(
+                machine,
+                level: 1,
+                out shBuf,
+                Interop.Windows.MAX_PREFERRED_LENGTH,
+                out numEntries,
+                out totalEntries,
+                ref resumeHandle);
 
             var shares = new List<string>();
-            if (result == NERR_Success || result == ERROR_MORE_DATA)
+            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
-                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
+                    nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
                     SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
-                    if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
+                    if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                    {
                         continue;
+                    }
+
                     if (ignoreHidden && shareInfo.netname.EndsWith('$'))
+                    {
                         continue;
+                    }
+
                     shares.Add(shareInfo.netname);
                 }
             }

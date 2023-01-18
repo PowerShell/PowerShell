@@ -803,9 +803,9 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #region Select-Xml
-    ///<summary>
-    ///This cmdlet is used to search an xml document based on the XPath Query.
-    ///</summary>
+    /// <summary>
+    /// This cmdlet is used to search an xml document based on the XPath Query.
+    /// </summary>
     [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097031")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet

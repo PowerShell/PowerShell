@@ -1857,7 +1857,7 @@ namespace System.Management.Automation
             // We don't need to handle drive qualified variables, we can usually get those values
             // without needing to "guess" at the type.
             var astVariablePath = variableExpressionAst.VariablePath;
-            if (!astVariablePath.IsVariable)
+            if (!astVariablePath.IsVariable || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.Null))
             {
                 // Not a variable - the caller should have already tried going to session state
                 // to get the item and hence it's type, but that must have failed.  Don't try again.
@@ -1972,6 +1972,23 @@ namespace System.Management.Automation
                 var isThis = astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This);
                 if (!isThis || (_context.CurrentTypeDefinitionAst == null && _context.CurrentThisType == null))
                 {
+                    if (SpecialVariables.AllScopeVariables.TryGetValue(astVariablePath.UserPath, out Type knownType))
+                    {
+                        if (knownType == typeof(object))
+                        {
+                            if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var psType))
+                            {
+                                inferredTypes.Add(psType);
+                            }
+                        }
+                        else
+                        {
+                            inferredTypes.Add(new PSTypeName(knownType));
+                        }
+
+                        return;
+                    }
+
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
                         if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))

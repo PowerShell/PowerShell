@@ -6,9 +6,10 @@
 //
 #if !UNIX
 
-using System.Management.Automation.Internal;
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
+using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.Security
 {
@@ -110,6 +111,7 @@ namespace System.Management.Automation.Security
             SafeHandle fileHandle = fileStream.SafeFileHandle;
 
             // First check latest WDAC APIs if available.
+            Exception errorException = null;
             if (s_wldpCanExecuteAvailable)
             {
                 try
@@ -123,6 +125,8 @@ namespace System.Management.Automation.Security
                         fileHandle: fileHandle.DangerousGetHandle(),
                         auditInfo: auditMsg,
                         result: out WLDP_EXECUTION_POLICY canExecuteResult);
+
+                    PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile", filePath, hr, (int)canExecuteResult);
 
                     if (hr >= 0)
                     {
@@ -146,15 +150,22 @@ namespace System.Management.Automation.Security
 
                     // If HResult is unsuccessful (such as E_NOTIMPL (0x80004001)), fall through to legacy system checks.
                 }
-                catch (DllNotFoundException)
+                catch (DllNotFoundException ex)
                 {
                     // Fall back to legacy system policy checks.
                     s_wldpCanExecuteAvailable = false;
+                    errorException = ex;
                 }
-                catch (EntryPointNotFoundException)
+                catch (EntryPointNotFoundException ex)
                 {
                     // Fall back to legacy system policy checks.
                     s_wldpCanExecuteAvailable = false;
+                    errorException = ex;
+                }
+
+                if (errorException != null)
+                {
+                    PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile_Failed", filePath, errorException.HResult, 0);
                 }
             }
 
@@ -263,6 +274,7 @@ namespace System.Management.Automation.Security
 
                 uint pdwLockdownState = 0;
                 int result = WldpNativeMethods.WldpGetLockdownPolicy(ref hostInformation, ref pdwLockdownState, 0);
+                PSEtwLog.LogWDACQueryEvent("WldpGetLockdownPolicy", path, result, (int)pdwLockdownState);
                 if (result >= 0)
                 {
                     SystemEnforcementMode resultingLockdownPolicy = GetLockdownPolicyForResult(pdwLockdownState);
@@ -281,9 +293,10 @@ namespace System.Management.Automation.Security
                     return SystemEnforcementMode.Enforce;
                 }
             }
-            catch (DllNotFoundException)
+            catch (DllNotFoundException ex)
             {
                 s_hadMissingWldpAssembly = true;
+                PSEtwLog.LogWDACQueryEvent("WldpGetLockdownPolicy_Failed", path, ex.HResult, 0);
                 return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
         }

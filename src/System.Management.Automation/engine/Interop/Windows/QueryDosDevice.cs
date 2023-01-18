@@ -3,7 +3,6 @@
 
 #nullable enable
 
-#if !UNIX
 using System;
 using System.Buffers;
 using System.ComponentModel;
@@ -123,4 +122,3 @@ internal static partial class Interop
         }
     }
 }
-#endif

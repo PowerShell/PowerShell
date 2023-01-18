@@ -813,6 +813,14 @@ A Name                                  B
             ($lines | Select-String "Name\s*Value").Count | Should -Be ($numHeaders + 1)
         }
 
+        It "-RepeatHeader should output the header at every screen full for custom table" -Skip:([Console]::WindowHeight -eq 0) {
+            $numHeaders = 4
+            $numObjects = [Console]::WindowHeight * $numHeaders
+            $out = 1..$numObjects | ForEach-Object { [pscustomobject]@{foo=$_;bar=$_;hello=$_;world=$_} } | Format-Table -Property hello, world -RepeatHeader | Out-String
+            $lines = $out.Split([System.Environment]::NewLine)
+            ($lines | Select-String "Hello\s*World").Count | Should -Be ($numHeaders + 1)
+        }
+
         It "Should be formatted correctly if width is declared and using center alignment" {
             $expectedTable = @"
 

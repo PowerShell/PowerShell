@@ -2569,10 +2569,7 @@ namespace Microsoft.PowerShell.Commands
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             _serviceName = info.GetString("ServiceName");
         }
@@ -2583,10 +2580,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">Streaming context.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             base.GetObjectData(info, context);
             info.AddValue("ServiceName", _serviceName);
@@ -2961,20 +2955,20 @@ namespace Microsoft.PowerShell.Commands
     #endregion NativeMethods
 
     #region ServiceStartupType
-    ///<summary>
-    ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
-    ///</summary>
+    /// <summary>
+    /// Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
+    /// </summary>
     public enum ServiceStartupType
     {
-        ///<summary>Invalid service</summary>
+        /// <summary>Invalid service</summary>
         InvalidValue = -1,
-        ///<summary>Automatic service</summary>
+        /// <summary>Automatic service</summary>
         Automatic = 2,
-        ///<summary>Manual service</summary>
+        /// <summary>Manual service</summary>
         Manual = 3,
-        ///<summary>Disabled service</summary>
+        /// <summary>Disabled service</summary>
         Disabled = 4,
-        ///<summary>Automatic (Delayed Start) service</summary>
+        /// <summary>Automatic (Delayed Start) service</summary>
         AutomaticDelayedStart = 10
     }
     #endregion ServiceStartupType

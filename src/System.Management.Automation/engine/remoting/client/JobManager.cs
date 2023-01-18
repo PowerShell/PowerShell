@@ -176,10 +176,7 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobDefinition definition)
         {
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
+            ArgumentNullException.ThrowIfNull(definition);
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
             Job2 newJob;
@@ -216,10 +213,7 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobInvocationInfo specification)
         {
-            if (specification == null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
+            ArgumentNullException.ThrowIfNull(specification);
 
             if (specification.Definition == null)
             {

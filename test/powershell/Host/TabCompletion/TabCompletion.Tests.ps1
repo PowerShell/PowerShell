@@ -341,9 +341,23 @@ switch ($x)
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
 
-    It 'Should complete keyword' -Skip {
+    It 'Should complete keyword with partial input' {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'namespace'
+    }
+
+    It 'Should complete keyword with no input' {
+        $res = TabExpansion2 -inputScript 'using ' -cursorColumn 'using '.Length
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
+    }
+
+    It 'Should complete keyword with no input after line continuation' {
+        $InputScript = @'
+using `
+
+'@
+        $res = TabExpansion2 -inputScript $InputScript -cursorColumn $InputScript.Length
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
     }
 
     It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -Skip {
@@ -821,6 +835,12 @@ Verb-Noun -Param1 Hello ^
     it 'Should complete command with an empty arrayexpression element' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem @()' -cursorColumn 1
         $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
+    }
+
+    it 'Should prefer the default parameterset when completing positional parameters' {
+        $ScriptInput = 'Get-ChildItem | Where-Object '
+        $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+        $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
     }
 
     Context "Script name completion" {
@@ -1606,8 +1626,8 @@ dir -Recurse `
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 6
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -2397,7 +2417,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
         @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
         @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
-        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\plugin"; parameter = "-proc"; expected = "ProcessIdleTimeoutSec"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
     ) {

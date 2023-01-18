@@ -22,11 +22,6 @@ namespace System.Management.Automation.Subsystem.Prediction
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
-        /// Default implementation for `ISubsystem.Kind`.
-        /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
-
-        /// <summary>
         /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
@@ -186,8 +181,8 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="inputTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         public PredictionContext(Ast inputAst, Token[] inputTokens)
         {
-            Requires.NotNull(inputAst, nameof(inputAst));
-            Requires.NotNull(inputTokens, nameof(inputTokens));
+            ArgumentNullException.ThrowIfNull(inputAst);
+            ArgumentNullException.ThrowIfNull(inputTokens);
 
             var cursor = inputAst.Extent.EndScriptPosition;
             var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);

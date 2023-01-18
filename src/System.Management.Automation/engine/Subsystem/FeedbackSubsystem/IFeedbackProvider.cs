@@ -25,11 +25,6 @@ namespace System.Management.Automation.Subsystem.Feedback
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
-        /// Default implementation for `ISubsystem.Kind`.
-        /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.FeedbackProvider;
-
-        /// <summary>
         /// Gets feedback based on the given commandline and error record.
         /// </summary>
         /// <returns></returns>
@@ -122,8 +117,6 @@ namespace System.Management.Automation.Subsystem.Feedback
         }
 
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
-
-        SubsystemKind ISubsystem.Kind => SubsystemKind.FeedbackProvider | SubsystemKind.CommandPredictor;
 
         public Guid Id => _guid;
 
