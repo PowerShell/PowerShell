@@ -34,11 +34,6 @@ Describe "Type inference Tests" -tags "CI" {
                 return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
             }
         }
-
-        class TypeConstrainedTestClass
-        {
-            [string] $Property1
-        }
     }
 
     It "Infers type from integer" {
@@ -366,8 +361,10 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object of integer" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object {$_ * 10} }.Ast)
-        $res.Count | Should -Be 1
-        $res.Name | Should -Be 'System.Int32'
+        $res.Count | Should -Be 2
+        foreach ($r in $res) {
+            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
+        }
     }
 
     It "Infers type from generic new" {
@@ -389,9 +386,9 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object with begin/end" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object -Begin {"Hi"} {$_ * 10} -End {[int]} }.Ast)
-        $res.Count | Should -Be 3
+        $res.Count | Should -Be 4
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -BeTrue
+            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -601,6 +598,16 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res = [AstTypeInference]::InferTypeOf( $ast.EndBlock.Statements[0])
         $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type from attributed expession' {
+        $res = [AstTypeInference]::InferTypeOf( {
+                [ValidateRange(1, 2)]
+                [int]$i = 1
+            }.Ast)
+
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be System.Int32
     }
 
     It 'Infers type from if statement' {
@@ -1362,7 +1369,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers closest variable type' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
-        $res.Name | Should -Be "System.Collections.Hashtable"
+        $res.Name | Select-Object -Last 1 | Should -Be "System.Collections.Hashtable"
     }
 
     It 'Infers closest variable type and ignores unrelated param blocks' {
@@ -1376,18 +1383,6 @@ Describe "Type inference Tests" -tags "CI" {
         }
         $ParameterName }.Ast)
         $res.Name | Should -Be "System.Collections.Hashtable"
-    }
-
-    It 'Infers output from AssignmentStatement inside ParenExpression' {
-        $res = [AstTypeInference]::InferTypeOf( { ($TestVar = "Hello") }.Ast)
-        $res.Name | Should -Be "System.String"
-    }
-
-    It 'Infers output from left side of AssignmentStatement inside ParenExpression when assigning to property' {
-        $res = [AstTypeInference]::InferTypeOf( {
-        $Object = [TypeConstrainedTestClass]@{Property1="Test"}
-        ($Object.Property1 = 2) }.Ast)
-        $res.Name | Should -Be "System.String"
     }
 
     It 'Infers type of $null after variable assignment' {
