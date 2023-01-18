@@ -38,9 +38,6 @@ namespace TestExe
                     case "-writebytes":
                         WriteBytes(args.AsSpan()[1..]);
                         break;
-                    case "-writebase64bytes":
-                        WriteBase64Bytes(args[1]);
-                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
@@ -53,13 +50,6 @@ namespace TestExe
 
             return 0;
         }
-
-        private static void WriteBase64Bytes(string value)
-        {
-            using Stream stdout = Console.OpenStandardOutput();
-            stdout.Write(Convert.FromBase64String(value));
-        }
-
         private static void WriteBytes(ReadOnlySpan<string> args)
         {
             using Stream stdout = Console.OpenStandardOutput();
