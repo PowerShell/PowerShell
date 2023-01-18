@@ -1646,6 +1646,8 @@ namespace Microsoft.PowerShell.Commands
             ByteArrayContent byteArrayContent = new(bytes);
 
             request.Content = byteArrayContent;
+
+            return 0;
         }
 
         /// <summary>
