@@ -1096,9 +1096,9 @@ namespace Microsoft.PowerShell.Commands
 
                 request.Content = SetRequestContent(request, formData);
             }
-            // Coerce body into a usable form
             else if (Body is not null)
             {
+                // Coerce body into a usable form
                 object content = Body;
 
                 // Make sure we're using the base object of the body, not the PSObject wrapper
@@ -1118,9 +1118,9 @@ namespace Microsoft.PowerShell.Commands
                     _ => SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture))
                 };
             }
-            // Copy InFile data
             else if (InFile is not null)
             {
+                // Copy InFile data
                 try
                 {
                     // Open the input file
