@@ -701,7 +701,7 @@ namespace Microsoft.PowerShell.Commands
                         StringBuilder possibleMatches = new StringBuilder();
                         foreach (PSMemberInfo item in members)
                         {
-                            possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                            possibleMatches.AppendFormat(CultureInfo.InvariantCulture, $" {item.Name}");
                         }
 
                         WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousPropertyOrMethodName,
@@ -1019,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(GenerateNameParameterError(
@@ -2355,7 +2355,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in members)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(

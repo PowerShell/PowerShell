@@ -172,9 +172,7 @@ namespace System.Management.Automation
                     synopsis.AppendLine(
                         string.Format(
                             Globalization.CultureInfo.CurrentCulture,
-                            "{0} {1}",
-                            Name,
-                            parameterSet));
+                            $"{Name} {parameterSet}"));
                 }
 
                 return synopsis.ToString();

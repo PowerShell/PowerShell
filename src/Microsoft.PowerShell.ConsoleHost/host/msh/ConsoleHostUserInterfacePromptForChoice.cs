@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell
                     }
 
                     defaultChoicesBuilder.Append(string.Format(CultureInfo.InvariantCulture,
-                        "{0}{1}", prepend, defaultStr));
+                        $"{prepend}{defaultStr}"));
                     prepend = ",";
                 }
 
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell
 
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
-                        string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
+                        string.Format(CultureInfo.InvariantCulture, $"{s} - {choices[i].HelpMessage}")));
             }
         }
 

@@ -59,9 +59,7 @@ namespace System.Management.Automation
                         result =
                             string.Format(
                                 System.Globalization.CultureInfo.InvariantCulture,
-                                "{0}\\{1}",
-                                psSnapInName,
-                                name);
+                                $"{psSnapInName}\\{name}");
                     }
 
                     // After converting core snapins to load as modules, the providers will have Module property populated
@@ -70,9 +68,7 @@ namespace System.Management.Automation
                         result =
                             string.Format(
                                 System.Globalization.CultureInfo.InvariantCulture,
-                                "{0}\\{1}",
-                                moduleName,
-                                name);
+                                $"{moduleName}\\{name}");
                     }
 
                     return result;
