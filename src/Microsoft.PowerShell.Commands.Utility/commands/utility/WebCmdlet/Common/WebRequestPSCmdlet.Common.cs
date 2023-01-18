@@ -1102,8 +1102,7 @@ namespace Microsoft.PowerShell.Commands
                 object content = Body;
 
                 // Make sure we're using the base object of the body, not the PSObject wrapper
-                PSObject psBody = Body as PSObject;
-                if (psBody is not null)
+                if (Body is PSObject psBody)
                 {
                     content = psBody.BaseObject;
                 }
