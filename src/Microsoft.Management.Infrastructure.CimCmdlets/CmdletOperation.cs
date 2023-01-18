@@ -387,7 +387,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             else
             {
                 // NOTES: May need to output for warning message/verbose message
-                DebugHelper.WriteLog("Ignore other type object {0}", 1, sendToPipeline);
+                DebugHelper.WriteLog($"Ignore other type object {sendToPipeline}", 1);
             }
         }
 

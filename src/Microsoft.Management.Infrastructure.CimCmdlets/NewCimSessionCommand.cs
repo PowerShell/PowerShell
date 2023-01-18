@@ -299,16 +299,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return;
                 }
 
-                DebugHelper.WriteLog("Credentials: {0}", 1, credentials);
+                DebugHelper.WriteLog($"Credentials: {credentials}", 1);
                 outputCredential = credentials;
                 if (options != null)
                 {
-                    DebugHelper.WriteLog("Add credentials to option: {0}", 1, options);
+                    DebugHelper.WriteLog($"Add credentials to option: {options}", 1);
                     options.AddDestinationCredentials(credentials);
                 }
             }
 
-            DebugHelper.WriteLogEx("Set outputOptions: {0}", 1, outputOptions);
+            DebugHelper.WriteLogEx($"Set outputOptions: {outputOptions}", 1);
             outputOptions = options;
         }
 

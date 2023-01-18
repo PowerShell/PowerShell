@@ -68,12 +68,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public override void Execute(CmdletOperationBase cmdlet)
         {
             DebugHelper.WriteLog(
-                "...Activity {0}: id={1}, remain seconds ={2}, percentage completed = {3}",
-                4,
-                this.Activity,
-                this.ActivityID,
-                this.SecondsRemaining,
-                this.PercentageCompleted);
+                $"...Activity {this.Activity}: id={this.ActivityID}, remain seconds ={this.SecondsRemaining}, percentage completed = {this.PercentageCompleted}",
+                4);
 
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
             ProgressRecord record = new(

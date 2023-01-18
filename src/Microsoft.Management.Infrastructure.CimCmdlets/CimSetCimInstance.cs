@@ -191,7 +191,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 object value = GetBaseObject(enumerator.Value);
                 string key = enumerator.Key.ToString();
-                DebugHelper.WriteLog("Input property name '{0}' with value '{1}'", 1, key, value);
+                DebugHelper.WriteLog($"Input property name '{key}' with value '{value}'", 1);
 
                 try
                 {
@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
                         // allow modify the key property value as long as it is not readonly,
                         // then the modified ciminstance is stand for a different CimInstance
-                        DebugHelper.WriteLog("Set property name '{0}' has old value '{1}'", 4, key, property.Value);
+                        DebugHelper.WriteLog($"Set property name '{key}' has old value '{property.Value}'", 4);
                         property.Value = value;
                     }
                     else // For dynamic instance, it is valid to add a new property
@@ -265,12 +265,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             return false;
                         }
 
-                        DebugHelper.WriteLog("Add non-key property name '{0}' with value '{1}'.", 3, key, value);
+                        DebugHelper.WriteLog($"Add non-key property name '{key}' with value '{value}'.", 3);
                     }
                 }
                 catch (Exception e)
                 {
-                    DebugHelper.WriteLog("Exception {0}", 4, e);
+                    DebugHelper.WriteLog($"Exception {e}", 4);
                     exception = e;
                     return false;
                 }
