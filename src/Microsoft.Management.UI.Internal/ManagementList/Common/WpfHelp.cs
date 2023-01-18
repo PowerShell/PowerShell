@@ -463,9 +463,7 @@ namespace Microsoft.Management.UI.Internal
         {
             throw new ApplicationException(string.Format(
                 CultureInfo.CurrentCulture,
-                "A template part with the name of '{0}' is not of type {1}.",
-                name,
-                typeof(T).Name));
+                $"A template part with the name of '{name}' is not of type {typeof(T).Name}."));
         }
 
         /// <summary>
@@ -477,9 +475,7 @@ namespace Microsoft.Management.UI.Internal
         {
             throw new ApplicationException(string.Format(
                 CultureInfo.CurrentCulture,
-                "A template part with the name of '{0}' and type of {1} was not found.",
-                name,
-                typeof(T).Name));
+                $"A template part with the name of '{name}' and type of {typeof(T).Name} was not found."));
         }
         #endregion TemplateChild
 
