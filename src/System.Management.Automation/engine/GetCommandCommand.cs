@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
                         replacedSyntax = string.Format(
                             "{0} (alias) -> {1}{2}{3}",
                             aliasName,
-                            string.Format("{0}{1}", externalScript.Path, Environment.NewLine),
+                            string.Format($"{externalScript.Path}{Environment.NewLine}"),
                             Environment.NewLine,
                             command.Syntax.Replace(command.Name, aliasName));
                         break;

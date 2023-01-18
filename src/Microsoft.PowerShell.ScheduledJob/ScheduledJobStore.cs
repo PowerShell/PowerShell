@@ -109,8 +109,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 throw new PSArgumentException("definitionPath");
             }
 
-            string filePathName = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}\{2}.xml",
-                definitionPath, definitionName, DefinitionFileName);
+            string filePathName = string.Format(CultureInfo.InvariantCulture, $@"{definitionPath}\{definitionName}\{DefinitionFileName}.xml");
             return File.Open(filePathName, fileMode, fileAccess, fileShare);
         }
 

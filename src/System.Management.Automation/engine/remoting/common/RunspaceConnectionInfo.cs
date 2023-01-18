@@ -2239,7 +2239,7 @@ namespace System.Management.Automation.Runspaces
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
                 }
 
-                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
+                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, $@"-i ""{this.KeyFilePath}"""));
             }
 
             // pass "-l login_name" command line argument to ssh if UserName is set

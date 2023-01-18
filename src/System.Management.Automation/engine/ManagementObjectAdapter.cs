@@ -454,7 +454,7 @@ namespace System.Management.Automation
 
                 // unique identifier for identifying this ManagementObject's type
                 ManagementPath classPath = wmiObject.ClassPath;
-                string key = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", classPath.Path, staticBinding.ToString());
+                string key = string.Format(CultureInfo.InvariantCulture, $"{classPath.Path}#{staticBinding.ToString()}");
 
                 typeTable = (CacheTable)s_instanceMethodCacheTable[key];
                 if (typeTable != null)

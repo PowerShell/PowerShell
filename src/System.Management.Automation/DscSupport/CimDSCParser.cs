@@ -1086,7 +1086,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
+            return string.Format(CultureInfo.InvariantCulture, $"{moduleName}\\{moduleVersion}\\{className}\\{resourceName}");
         }
 
         /// <summary>
