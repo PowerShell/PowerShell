@@ -1107,16 +1107,30 @@ namespace Microsoft.PowerShell.Commands
                     content = psBody.BaseObject;
                 }
 
-                request.Content = content switch
+                switch (content)
                 {
-                    FormObject form => SetRequestContent(request, form.Fields),
-                    IDictionary dictionary => SetRequestContent(request, dictionary),
-                    XmlNode xmlNode => SetRequestContent(request, xmlNode),
-                    Stream stream => SetRequestContent(request, stream),
-                    byte[] bytes => SetRequestContent(request, bytes),
-                    MultipartFormDataContent multipartFormDataContent => SetRequestContent(request, multipartFormDataContent),
-                    _ => SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture))
-                };
+                    case FormObject form:
+                        SetRequestContent(request, form.Fields);
+                        break;
+                    case IDictionary dictionary:
+                        SetRequestContent(request, dictionary);
+                        break;
+                    case XmlNode xmlNode:
+                        SetRequestContent(request, xmlNode);
+                        break;
+                    case Stream stream:
+                        SetRequestContent(request, stream);
+                        break;
+                    case byte[] bytes:
+                        SetRequestContent(request, bytes);
+                        break;
+                    case MultipartFormDataContent multipartFormDataContent:
+                        SetRequestContent(request, multipartFormDataContent);
+                        break;
+                    default:
+                        SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
+                        break;
+                }
             }
             else if (InFile is not null)
             {
@@ -1124,7 +1138,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // Open the input file
-                    request.Content = SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
+                    SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -1553,14 +1567,15 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, byte[] content)
+        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
 
             ByteArrayContent byteArrayContent = new(content);
+            request.Content = byteArrayContent;
 
-            return byteArrayContent;
+            return 0;
         }
 
         /// <summary>
@@ -1573,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, string content)
+        internal long SetRequestContent(HttpRequestMessage request, string content)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
@@ -1604,12 +1619,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
-            ByteArrayContent byteArrayContent = new(bytes);
-            
-            return byteArrayContent;
+            ByteArrayContent byteArrayContent = new(bytes); 
+            request.Content = byteArrayContent;
+
+            return 0;
         }
 
-        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
+        internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(xmlNode);
@@ -1629,7 +1645,7 @@ namespace Microsoft.PowerShell.Commands
 
             ByteArrayContent byteArrayContent = new(bytes);
 
-            return byteArrayContent;
+            request.Content = byteArrayContent;
         }
 
         /// <summary>
@@ -1642,14 +1658,15 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal StreamContent SetRequestContent(HttpRequestMessage request, Stream contentStream)
+        internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(contentStream);
 
             StreamContent streamContent = new(contentStream);
+            request.Content = streamContent;
 
-            return streamContent;
+            return 0;
         }
 
         /// <summary>
@@ -1662,7 +1679,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal MultipartFormDataContent SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
@@ -1670,10 +1687,12 @@ namespace Microsoft.PowerShell.Commands
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
             WebSession.ContentHeaders.Clear();
 
-            return multipartContent;
+            request.Content = multipartContent;
+
+            return 0;
         }
 
-        internal ByteArrayContent SetRequestContent(HttpRequestMessage request, IDictionary content)
+        internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
