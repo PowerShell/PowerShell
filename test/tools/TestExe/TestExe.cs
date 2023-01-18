@@ -59,7 +59,7 @@ namespace TestExe
         {
             for (int i = 1; i < args.Length; i++)
             {
-                Console.WriteLine("Arg {0} is <{1}>", i - 1, args[i]);
+                Console.WriteLine($"Arg {i - 1} is <{args[i]}>");
             }
         }
 

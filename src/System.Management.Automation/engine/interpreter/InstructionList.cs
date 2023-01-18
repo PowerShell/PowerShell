@@ -283,7 +283,7 @@ namespace System.Management.Automation.Interpreter
                 }
 
                 PerfTrack.DumpHistogram(referenced);
-                Console.WriteLine("-- Total referenced: {0}", total);
+                Console.WriteLine($"-- Total referenced: {total}");
                 Console.WriteLine("-----");
             });
         }

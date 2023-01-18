@@ -3307,8 +3307,7 @@ namespace System.Management.Automation
                     errorId = "InvalidSessionState";
                     if (!string.IsNullOrEmpty(failureException.Source))
                     {
-                        errorId = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                            "{0},{1}", errorId, failureException.Source);
+                        errorId = string.Format(System.Globalization.CultureInfo.InvariantCulture, $"{errorId},{failureException.Source}");
                     }
                 }
 

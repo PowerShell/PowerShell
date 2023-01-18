@@ -34,7 +34,7 @@ namespace MicroBenchmarks
             }
             catch (ArgumentException e)
             {
-                Console.WriteLine("ArgumentException: {0}", e.Message);
+                Console.WriteLine($"ArgumentException: {e.Message}");
                 return 1;
             }
 
