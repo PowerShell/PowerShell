@@ -20,4 +20,8 @@ Describe 'Automatic variable $input' -Tags "CI" {
         & { [cmdletbinding()]param() process { @($input).Count } } | Should -Be 0
         & { [cmdletbinding()]param() end { @($input).Count } } | Should -Be 0
     }
+
+    It '$PSScriptRoot is the same as $PWD when not running from a script file' {
+        [powershell]::Create().AddScript("Set-Location -LiteralPath $($PWD.ProviderPath); `$PSScriptRoot").Invoke()[0] | Should -Be $PWD.ProviderPath
+    }
 }
