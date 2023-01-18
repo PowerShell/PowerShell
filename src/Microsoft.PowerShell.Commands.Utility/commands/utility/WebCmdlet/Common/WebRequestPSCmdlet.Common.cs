@@ -1562,7 +1562,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
@@ -1581,7 +1580,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
@@ -1649,7 +1647,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
@@ -1668,7 +1665,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
