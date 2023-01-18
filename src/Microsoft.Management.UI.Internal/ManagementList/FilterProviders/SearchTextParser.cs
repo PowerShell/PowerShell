@@ -121,7 +121,7 @@ namespace Microsoft.Management.UI.Internal
                 patterns.Add(rule.Pattern);
             }
 
-            patterns.Add(string.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}", FullTextRuleGroupName, ValuePattern));
+            patterns.Add(string.Format(CultureInfo.InvariantCulture, $"(?<{FullTextRuleGroupName}>){ValuePattern}"));
 
             return string.Join("|", patterns.ToArray());
         }
@@ -199,7 +199,7 @@ namespace Microsoft.Management.UI.Internal
                 this.UniqueId = uniqueId;
                 this.selectorFilterRule = selectorFilterRule;
                 this.childRule = childRule;
-                this.Pattern = string.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}\\s*:\\s*{2}", uniqueId, Regex.Escape(selectorFilterRule.DisplayName), SearchTextParser.ValuePattern);
+                this.Pattern = string.Format(CultureInfo.InvariantCulture, $"(?<{uniqueId}>){Regex.Escape(selectorFilterRule.DisplayName)}\\s*:\\s*{SearchTextParser.ValuePattern}");
             }
 
             /// <summary>

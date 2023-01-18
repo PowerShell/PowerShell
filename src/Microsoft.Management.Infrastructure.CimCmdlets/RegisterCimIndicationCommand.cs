@@ -205,7 +205,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ClassNameComputerSet:
                     // validate the classname
                     this.CheckArgument();
-                    tempQueryExpression = string.Format(CultureInfo.CurrentCulture, "Select * from {0}", this.ClassName);
+                    tempQueryExpression = string.Format(CultureInfo.CurrentCulture, $"Select * from {this.ClassName}");
                     break;
             }
 

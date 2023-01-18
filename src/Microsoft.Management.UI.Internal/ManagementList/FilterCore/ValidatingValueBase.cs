@@ -218,7 +218,7 @@ namespace Microsoft.Management.UI.Internal
                 DataErrorInfoValidationResult result = rule.Validate(value, cultureInfo);
                 if (result == null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "DataErrorInfoValidationResult not returned by ValidationRule: {0}", rule.ToString()));
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, $"DataErrorInfoValidationResult not returned by ValidationRule: {rule.ToString()}"));
                 }
 
                 if (!result.IsValid)

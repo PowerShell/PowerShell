@@ -1151,7 +1151,7 @@ namespace Microsoft.PowerShell.Commands
                     temp = temp.Substring(4);
                 }
 
-                type = string.Format(System.Globalization.CultureInfo.InvariantCulture, "#TYPE {0}", temp);
+                type = string.Format(System.Globalization.CultureInfo.InvariantCulture, $"#TYPE {temp}");
             }
 
             return type;

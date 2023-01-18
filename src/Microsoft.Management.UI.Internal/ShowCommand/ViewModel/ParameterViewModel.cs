@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 string returnValue = this.Parameter.Name;
                 if (this.Parameter.IsMandatory)
                 {
-                    returnValue = string.Format(CultureInfo.CurrentUICulture, "{0}{1}", returnValue, ShowCommandResources.MandatoryLabelSegment);
+                    returnValue = string.Format(CultureInfo.CurrentUICulture, $"{returnValue}{ShowCommandResources.MandatoryLabelSegment}");
                 }
 
                 return returnValue;

@@ -1092,7 +1092,7 @@ namespace System.Management.Automation
             // When multiple copies of pwsh are on the system, they should use their own copy of the cache.
             // Append hash of `$PSHOME` to cacheFileName.
             string hashString = CRC32Hash.ComputeHash(Utils.DefaultPowerShellAppBase);
-            cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
+            cacheFileName = string.Format(CultureInfo.InvariantCulture, $"{cacheFileName}-{hashString}");
 
             if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
             {
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
                 // Use CRC32 because it's faster.
                 // It's very unlikely to get collision from hashing the combinations of enabled features names.
                 hashString = CRC32Hash.ComputeHash(allNames);
-                cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
+                cacheFileName = string.Format(CultureInfo.InvariantCulture, $"{cacheFileName}-{hashString}");
             }
 
             s_cacheStoreLocation = Path.Combine(Platform.CacheDirectory, cacheFileName);

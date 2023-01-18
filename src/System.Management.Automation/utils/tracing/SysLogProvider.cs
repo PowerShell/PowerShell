@@ -227,7 +227,7 @@ namespace System.Management.Automation.Tracing
             string value = ResourceManager.GetString(resourceName, Culture);
             if (string.IsNullOrEmpty(value))
             {
-                value = string.Format(CultureInfo.InvariantCulture, "Unknown resource: {0}", resourceName);
+                value = string.Format(CultureInfo.InvariantCulture, $"Unknown resource: {resourceName}");
                 Diagnostics.Assert(false, value);
             }
 

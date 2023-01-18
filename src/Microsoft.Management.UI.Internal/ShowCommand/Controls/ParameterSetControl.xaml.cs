@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             checkBox.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "chk{0}", parameterViewModel.Name));
+                string.Format(CultureInfo.CurrentCulture, $"chk{parameterViewModel.Name}"));
 
             checkBox.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,

@@ -23,7 +23,7 @@ namespace BenchmarkDotNet.Extensions
                 }
                 else
                 {
-                    throw new ArgumentException(String.Format("{0} must be followed by an integer", parameter));
+                    throw new ArgumentException(String.Format($"{parameter} must be followed by an integer"));
                 }
             }
 

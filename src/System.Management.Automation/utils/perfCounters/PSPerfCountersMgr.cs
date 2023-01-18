@@ -65,7 +65,7 @@ namespace System.Management.Automation.PerformanceData
         public string GetCounterSetInstanceName()
         {
             Process currentProcess = Process.GetCurrentProcess();
-            string pid = string.Format(CultureInfo.InvariantCulture, "{0}", currentProcess.Id);
+            string pid = string.Format(CultureInfo.InvariantCulture, $"{currentProcess.Id}");
             return pid;
         }
 

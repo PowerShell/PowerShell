@@ -296,7 +296,7 @@ namespace System.Management.Automation.Language
                 var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
 
                 _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, interfaces.ToArray());
-                _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, "{0}_<staticHelpers>", typeName), Reflection.TypeAttributes.Class);
+                _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, $"{Reflection.TypeAttributes.Class}_<staticHelpers>", typeName));
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
                 _typeDefinitionAst.Type = _typeBuilder;
 
@@ -629,7 +629,7 @@ namespace System.Management.Automation.Language
                     getSetAttributes |= Reflection.MethodAttributes.Static;
                 }
                 // C# naming convention for backing fields.
-                string backingFieldName = string.Format(CultureInfo.InvariantCulture, "<{0}>k__BackingField", propertyMemberAst.Name);
+                string backingFieldName = string.Format(CultureInfo.InvariantCulture, $"<{propertyMemberAst.Name}>k__BackingField");
                 var backingField = _typeBuilder.DefineField(backingFieldName, type, backingFieldAttributes);
 
                 bool hasValidateAttributes = false;
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Language
                 Type returnType,
                 Action<int, string> parameterNameSetter)
             {
-                var wrapperFieldName = string.Format(CultureInfo.InvariantCulture, "<{0}>", metadataToken);
+                var wrapperFieldName = string.Format(CultureInfo.InvariantCulture, $"<{metadataToken}>");
                 var scriptBlockWrapperField = _staticHelpersTypeBuilder.DefineField(wrapperFieldName,
                                                                        typeof(ScriptBlockMemberMethodWrapper),
                                                                        FieldAttributes.Assembly | FieldAttributes.Static);
