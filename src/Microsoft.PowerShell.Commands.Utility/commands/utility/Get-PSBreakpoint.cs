@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                Diagnostics.Assert(false, $"Invalid parameter set: {this.ParameterSetName}");
             }
 
             // Filter by script

@@ -1030,7 +1030,7 @@ namespace Microsoft.PowerShell.Commands
                     syntaxTrees.Add(ParseSourceText(sourceText, parseOptions));
                     break;
                 default:
-                    Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                    Diagnostics.Assert(false, $"Invalid parameter set: {this.ParameterSetName}");
                     break;
             }
 
