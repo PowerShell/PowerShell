@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             //    return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetMethod()}:");
             // }
 
-            return string.Format(CultureInfo.CurrentUICulture, $"{frame.GetMethod().DeclaringType.Name}::{frame.GetMethod().Name}        ");
+            return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetMethod().DeclaringType.Name}::{frame.GetMethod().Name}        ");
         }
         #endregion
 

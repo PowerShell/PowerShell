@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string resolvedPath in resolvedPaths)
                     {
                         _resolvedPaths.Add(resolvedPath);
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, $"Found file {resolvedPath}"));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Found file {resolvedPath}"));
                     }
                 }
 
@@ -2047,7 +2047,7 @@ namespace Microsoft.PowerShell.Commands
                       ||
                       (wildProvPattern.IsMatch(provName)))
                     {
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, $"Found matching provider: {provName}"));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Found matching provider: {provName}"));
                         AddLogsForProviderToInternalMap(eventLogSession, provName);
                         bMatched = true;
                     }

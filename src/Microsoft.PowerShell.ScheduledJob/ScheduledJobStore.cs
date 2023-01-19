@@ -524,8 +524,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             DateTime runStart)
         {
             string directoryPath = GetJobRunOutputDirectory(definitionName);
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}", directoryPath,
-                ConvertDateTimeToJobRunName(runStart));
+            return string.reate(CultureInfo.InvariantCulture, $@"{directoryPath}\{ConvertDateTimeToJobRunName(runStart)}");
         }
 
         /// <summary>

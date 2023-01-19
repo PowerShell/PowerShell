@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, string.Format($"Unrecognized Authentication value: {Authentication}"));
+                Diagnostics.Assert(false, string.Create($"Unrecognized Authentication value: {Authentication}"));
             }
         }
 

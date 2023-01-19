@@ -71,7 +71,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{X},{Y}");
+            return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
         }
 
         /// <summary>
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"'{Character}' {ForegroundColor} {BackgroundColor} {BufferCellType}");
+            return string.Create(CultureInfo.InvariantCulture, $"'{Character}' {ForegroundColor} {BackgroundColor} {BufferCellType}");
         }
 
         /// <summary>

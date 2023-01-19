@@ -296,7 +296,7 @@ namespace System.Management.Automation.Language
                 var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
 
                 _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, interfaces.ToArray());
-                _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, $"{Reflection.TypeAttributes.Class}_<staticHelpers>", typeName));
+                _staticHelpersTypeBuilder = module.DefineType(string.Create(CultureInfo.InvariantCulture, $"{typeName}_<staticHelpers>"), Reflection.TypeAttributes.Class);
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
                 _typeDefinitionAst.Type = _typeBuilder;
 

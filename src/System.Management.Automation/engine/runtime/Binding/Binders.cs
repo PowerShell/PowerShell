@@ -5976,7 +5976,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "SetMember: {0}{1} ver:{2}", _static ? "static " : string.Empty, Name, _getMemberBinder._version);
+            return string.Create(CultureInfo.InvariantCulture, $"SetMember: {(_static ? "static " : string.Empty)}{Name} ver:{_getMemberBinder._version}");
         }
 
         private static Expression GetTransformedExpression(IEnumerable<ArgumentTransformationAttribute> transformationAttributes, Expression originalExpression)

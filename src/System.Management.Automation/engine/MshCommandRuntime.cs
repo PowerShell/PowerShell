@@ -1295,8 +1295,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Create($"Deleting file {filename}"),
-        ///                         string.Create($"Are you sure you want to delete file {filename}?"),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1724,14 +1724,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Create($"Deleting file {filename}"),
-        ///                         string.Create($"Are you sure you want to delete file {filename}"),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Create($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {

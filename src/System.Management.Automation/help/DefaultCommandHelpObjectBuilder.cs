@@ -339,7 +339,7 @@ namespace System.Management.Automation.Help
             PSObject paramValueGroup = new PSObject();
 
             paramValueGroup.TypeNames.Clear();
-            paramValueGroup.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#parameterValueGroup"));
+            paramValueGroup.TypeNames.Add(string.Create(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#parameterValueGroup"));
 
             ArrayList paramValue = new ArrayList(values);
 
@@ -753,7 +753,7 @@ namespace System.Management.Automation.Help
                 PSObject navigationLinkObj = new PSObject();
 
                 navigationLinkObj.TypeNames.Clear();
-                navigationLinkObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#navigationLinks", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                navigationLinkObj.TypeNames.Add(string.Create(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#navigationLinks"));
 
                 navigationLinkObj.Properties.Add(new PSNoteProperty("uri", relatedLink));
 

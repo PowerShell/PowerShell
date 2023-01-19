@@ -369,7 +369,7 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                string commandStart = string.Format(CultureInfo.CurrentCulture, $"{commandName} ");
+                string commandStart = string.Create(CultureInfo.CurrentCulture, $"{commandName} ");
                 this.AddText(HelpParagraphBuilder.AddIndent(commandStart), false);
 
                 foreach (object parameterObj in parameterObjs)

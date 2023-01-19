@@ -1249,7 +1249,7 @@ namespace Microsoft.PowerShell
             {
                 if (firstLeftTrailingRow >= 0)
                 {
-                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{firstLeftTrailingRow}, {contentsRegion.Left}]"));
+                    throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{firstLeftTrailingRow}, {contentsRegion.Left}]"));
                 }
             }
             else
@@ -1273,7 +1273,7 @@ namespace Microsoft.PowerShell
             {
                 if (firstRightLeadingRow >= 0)
                 {
-                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{firstRightLeadingRow}, {contentsRegion.Right}]"));
+                    throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{firstRightLeadingRow}, {contentsRegion.Right}]"));
                 }
             }
             else
@@ -1288,7 +1288,7 @@ namespace Microsoft.PowerShell
                     if (rightExisting[r, 0].BufferCellType == BufferCellType.Leading ^
                             contents[r, contentsRegion.Right].BufferCellType == BufferCellType.Leading)
                     {
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Right}]"));
+                        throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Right}]"));
                     }
                 }
             }
@@ -1323,7 +1323,7 @@ namespace Microsoft.PowerShell
                         {
                             // for a 2 cell character, either there is no trailing BufferCell or
                             // the trailing BufferCell's character is not 0
-                            throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
+                            throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
                         }
                     }
                 }
@@ -1971,7 +1971,7 @@ namespace Microsoft.PowerShell
                                 // to write is larger than bufferLimit. In that case, the algorithm reads one row
                                 // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                                 // to retry with a smaller bufferSize.X.
-                                Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
+                                Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                                 bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                                 continue;
                             }
