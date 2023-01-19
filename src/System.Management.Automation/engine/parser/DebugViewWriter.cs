@@ -985,7 +985,7 @@ namespace System.Management.Automation.Language {
             // Display <type> if the type of the BlockExpression is different from the
             // last expression's type in the block.
             if (node.Type != node.Expressions[node.Expressions.Count - 1].Type) {
-                Out(string.Format(CultureInfo.CurrentCulture, $"<{node.Type.ToString()}>"));
+                Out(string.Create(CultureInfo.CurrentCulture, $"<{node.Type.ToString()}>"));
             }
 
             VisitDeclarations(node.Variables);
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitExtension(Expression node) {
-            Out(string.Format(CultureInfo.CurrentCulture, $".Extension<{node.GetType().ToString()}>"));
+            Out(string.Create(CultureInfo.CurrentCulture, $".Extension<{node.GetType().ToString()}>"));
 
             if (node.CanReduce) {
                 Out(Flow.Space, "{", Flow.NewLine);
@@ -1151,13 +1151,13 @@ namespace System.Management.Automation.Language {
         }
 
         private void DumpLabel(LabelTarget target) {
-            Out(string.Format(CultureInfo.CurrentCulture, $".LabelTarget {GetLabelTargetName(target)}:"));
+            Out(string.Create(CultureInfo.CurrentCulture, $".LabelTarget {GetLabelTargetName(target)}:"));
         }
 
         private string GetLabelTargetName(LabelTarget target) {
             if (string.IsNullOrEmpty(target.Name)) {
                 // Create the label target name as #Label1, #Label2, etc.
-                return string.Format(CultureInfo.CurrentCulture, $"#Label{GetLabelTargetId(target)}");
+                return string.Create(CultureInfo.CurrentCulture, $"#Label{GetLabelTargetId(target)}");
             } else {
                 return GetDisplayName(target.Name);
             }
@@ -1165,11 +1165,7 @@ namespace System.Management.Automation.Language {
 
         private void WriteLambda(LambdaExpression lambda) {
             Out(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    ".Lambda {0}<{1}>",
-                    GetLambdaName(lambda),
-                    lambda.Type.ToString())
+                string.Create(CultureInfo.CurrentCulture, $".Lambda {GetLambdaName(lambda)}<{lambda.Type.ToString()}>")
             );
 
             VisitDeclarations(lambda.Parameters);
@@ -1205,7 +1201,7 @@ namespace System.Management.Automation.Language {
         }
 
         private static string QuoteName(string name) {
-            return string.Format(CultureInfo.CurrentCulture, $"'{name}'");
+            return string.Create(CultureInfo.CurrentCulture, $"'{name}'");
         }
 
         private static string GetDisplayName(string name) {

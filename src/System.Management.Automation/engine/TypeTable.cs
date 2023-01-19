@@ -1819,7 +1819,7 @@ namespace System.Management.Automation.Runspaces
                 _errors = new Collection<string>();
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, $"Error{index}");
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     _errors.Add(info.GetString(key));
                 }
             }
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation.Runspaces
 
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, $"Error{index}");
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     info.AddValue(key, _errors[index]);
                 }
             }

@@ -2701,7 +2701,7 @@ namespace System.Management.Automation
             WildcardPattern resultClassNamePattern = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             result.AddRange(resultClassNames
                 .Where(resultClassNamePattern.IsMatch)
-                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Format(CultureInfo.InvariantCulture, $"{pseudoboundClassName} -> {x}"))));
+                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Create(CultureInfo.InvariantCulture, $"{pseudoboundClassName} -> {x}"))));
         }
 
         private static void NativeCompletionCimMethodName(
@@ -6511,7 +6511,7 @@ namespace System.Management.Automation
                     if (i != 0) tooltip.Append(", ");
                     tooltip.Append(GenericArgumentCount == 1
                                        ? "T"
-                                       : string.Format(CultureInfo.InvariantCulture, $"T{i + 1}"));
+                                       : string.Create(CultureInfo.InvariantCulture, $"T{i + 1}"));
                 }
 
                 tooltip.Append(']');

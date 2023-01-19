@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     default:
-                        Debug.Fail(string.Format(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
+                        Debug.Fail(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                         break;
                 }
             }

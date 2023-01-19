@@ -1413,7 +1413,7 @@ namespace System.Management.Automation.Host
                 if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        string.Format(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
+                        string.Create(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }

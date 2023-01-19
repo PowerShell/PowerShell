@@ -946,7 +946,7 @@ namespace System.Management.Automation
 
             // first character in parameter name must be a dash
             _powershell.AddParameter(
-                string.Format(CultureInfo.InvariantCulture, $"-{commandParameterAst.ParameterName}{nameSuffix}"),
+                string.Create(CultureInfo.InvariantCulture, $"-{commandParameterAst.ParameterName}{nameSuffix}"),
                 argument);
         }
     }

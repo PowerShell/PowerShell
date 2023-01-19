@@ -886,12 +886,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{_indent}# {resourceString}{streamWriter.NewLine}{_indent}{key:19} = {value}{streamWriter.NewLine}{streamWriter.NewLine}");
+            return string.Create(CultureInfo.InvariantCulture, $"{_indent}# {resourceString}{streamWriter.NewLine}{_indent}{key:19} = {value}{streamWriter.NewLine}{streamWriter.NewLine}");
         }
 
         private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture,  $"{_indent}# {resourceString}{streamWriter.NewLine}{_indent}{key:19} = {value}{streamWriter.NewLine}{streamWriter.NewLine}");
+            return string.Create(CultureInfo.InvariantCulture,  $"{_indent}# {resourceString}{streamWriter.NewLine}{_indent}{key:19} = {value}{streamWriter.NewLine}{streamWriter.NewLine}");
         }
 
         private static string ManifestComment(string insert, StreamWriter streamWriter)
@@ -902,7 +902,7 @@ namespace Microsoft.PowerShell.Commands
                 insert = " " + insert;
             }
 
-            return string.Format(CultureInfo.InvariantCulture, $"#{insert}{streamWriter.NewLine}");
+            return string.Create(CultureInfo.InvariantCulture, $"#{insert}{streamWriter.NewLine}");
         }
 
         /// <summary>

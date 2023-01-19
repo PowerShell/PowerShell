@@ -34,7 +34,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"->{Index} C({ContinuationStackDepth}) S({StackDepth})");
+            return string.Create(CultureInfo.InvariantCulture, $"->{Index} C({ContinuationStackDepth}) S({StackDepth})");
         }
     }
 

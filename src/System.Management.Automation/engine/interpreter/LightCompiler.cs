@@ -231,11 +231,11 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return string.Format(CultureInfo.InvariantCulture, $"{Index}: clear");
+                return string.Create(CultureInfo.InvariantCulture, $"{Index}: clear");
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture, $"{Index}: [{StartLine}-{EndLine}] '{FileName}'");
+                return string.Create(CultureInfo.InvariantCulture, $"{Index}: [{StartLine}-{EndLine}] '{FileName}'");
             }
         }
     }

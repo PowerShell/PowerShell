@@ -922,7 +922,7 @@ namespace System.Management.Automation
         {
             return FromStream == RedirectionStream.All
                        ? "*>&1"
-                       : string.Format(CultureInfo.InvariantCulture, $"{(int)FromStream}>&1");
+                       : string.Create(CultureInfo.InvariantCulture, $"{(int)FromStream}>&1");
         }
 
         // private RedirectionStream ToStream { get; set; }
@@ -1031,8 +1031,7 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{0}> {File}",
-                                 FromStream == RedirectionStream.All ? "*" : ((int)FromStream).ToString(CultureInfo.InvariantCulture));
+            return string.Create(CultureInfo.InvariantCulture, $"{(FromStream == RedirectionStream.All ? "*" : ((int)FromStream).ToString(CultureInfo.InvariantCulture))}> {File}");
         }
 
         internal string File { get; }

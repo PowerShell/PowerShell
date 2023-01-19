@@ -955,7 +955,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"MultiAssignRHSBinder {_elements}");
+            return string.Create(CultureInfo.InvariantCulture, $"MultiAssignRHSBinder {_elements}");
         }
 
         public override Type ReturnType { get { return typeof(IList); } }
@@ -2239,7 +2239,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"PSBinaryOperationBinder {GetOperatorText()}{(_scalarCompare ? " scalarOnly" : string.Empty)} ver:{_version}");
+            return string.Create(CultureInfo.InvariantCulture, $"PSBinaryOperationBinder {GetOperatorText()}{(_scalarCompare ? " scalarOnly" : string.Empty)} ver:{_version}");
         }
 
         internal static void InvalidateCache()
@@ -3488,7 +3488,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"PSUnaryOperationBinder {this.Operation}");
+            return string.Create(CultureInfo.InvariantCulture, $"PSUnaryOperationBinder {this.Operation}");
         }
 
         internal DynamicMetaObject Not(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
@@ -3790,7 +3790,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"PSConvertBinder [{Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true)}]  ver:{_version}");
+            return string.Create(CultureInfo.InvariantCulture, $"PSConvertBinder [{Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true)}]  ver:{_version}");
         }
 
         internal static void InvalidateCache()

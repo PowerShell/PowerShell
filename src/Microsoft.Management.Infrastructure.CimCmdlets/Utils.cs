@@ -201,11 +201,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             StackFrame frame = trace.GetFrame(depth);
             // if (withFileName)
             // {
-            //    return string.Format(CultureInfo.CurrentUICulture, "{0}#{1}:{2}:", frame.GetFileName()., frame.GetFileLineNumber(), frame.GetMethod().Name);
+            //    return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetFileName().}#{frame.GetFileLineNumber()}:{frame.GetMethod().Name}:");
             // }
             // else
             // {
-            //    return string.Format(CultureInfo.CurrentUICulture, $"{frame.GetMethod()}:");
+            //    return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetMethod()}:");
             // }
 
             return string.Format(CultureInfo.CurrentUICulture, $"{frame.GetMethod().DeclaringType.Name}::{frame.GetMethod().Name}        ");

@@ -364,7 +364,7 @@ namespace System.Management.Automation.Remoting
             {
                 // we dont support this stream..so ignore the data
                 Dbg.Assert(false,
-                    string.Format(CultureInfo.InvariantCulture, $"Data should be from one of the streams : {WSManNativeApi.WSMAN_STREAM_ID_STDIN} or {WSManNativeApi.WSMAN_STREAM_ID_STDOUT} or {WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE}"));
+                    string.Create(CultureInfo.InvariantCulture, $"Data should be from one of the streams : {WSManNativeApi.WSMAN_STREAM_ID_STDIN} or {WSManNativeApi.WSMAN_STREAM_ID_STDOUT} or {WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE}"));
                 s_baseTracer.WriteLine("{0} is not a valid stream", stream);
             }
             // process data

@@ -926,7 +926,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
-                    string base64EncodedDataInXml = string.Format(CultureInfo.InvariantCulture, $"<{WSManNativeApi.PS_CONNECT_XML_TAG} xmlns=\"{WSManNativeApi.PS_XML_NAMESPACE}\">{Convert.ToBase64String(additionalData)}</{WSManNativeApi.PS_CONNECT_XML_TAG}>");
+                    string base64EncodedDataInXml = string.Create(CultureInfo.InvariantCulture, $"<{WSManNativeApi.PS_CONNECT_XML_TAG} xmlns=\"{WSManNativeApi.PS_XML_NAMESPACE}\">{Convert.ToBase64String(additionalData)}</{WSManNativeApi.PS_CONNECT_XML_TAG}>");
                     _openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
                 }
 

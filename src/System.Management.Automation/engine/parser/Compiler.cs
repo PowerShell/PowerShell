@@ -1149,7 +1149,7 @@ namespace System.Management.Automation.Language
 
         internal ParameterExpression NewTemp(Type type, string name)
         {
-            return Expression.Variable(type, string.Format(CultureInfo.InvariantCulture, $"{name}{_tempCounter++}"));
+            return Expression.Variable(type, string.Create(CultureInfo.InvariantCulture, $"{name}{_tempCounter++}"));
         }
 
         internal static Type GetTypeConstraintForMethodResolution(ExpressionAst expr)

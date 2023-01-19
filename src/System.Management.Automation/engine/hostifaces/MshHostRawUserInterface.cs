@@ -257,7 +257,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{Width},{Height}");
+            return string.Create(CultureInfo.InvariantCulture, $"{Width},{Height}");
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{VirtualKeyCode},{Character},{ControlKeyState},{KeyDown}");
+            return string.Create(CultureInfo.InvariantCulture, $"{VirtualKeyCode},{Character},{ControlKeyState},{KeyDown}");
         }
         /// <summary>
         /// Overrides <see cref="System.Object.Equals(object)"/>
@@ -796,7 +796,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{Left},{Top} ; {Right},{Bottom}");
+            return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top} ; {Right},{Bottom}");
         }
 
         /// <summary>

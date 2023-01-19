@@ -17,7 +17,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.CurrentCulture, $"<enum '{TypeName}'>");
+            return string.Create(CultureInfo.CurrentCulture, $"<enum '{TypeName}'>");
         }
 
         internal ComTypeEnumDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) : base(typeInfo, typeLibDesc)

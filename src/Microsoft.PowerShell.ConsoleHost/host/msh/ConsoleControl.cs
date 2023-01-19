@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, $"{X},{Y}");
+                return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
             }
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top},{Right},{Bottom}");
             }
         }
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, $"Size: {Size}, Visible: {Visible}");
+                return string.Create(CultureInfo.InvariantCulture, $"Size: {Size}, Visible: {Visible}");
             }
         }
 
@@ -1518,7 +1518,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm writes one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
+                            Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
@@ -1646,7 +1646,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm writes one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
+                            Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
@@ -2141,7 +2141,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm reads one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
+                            Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }

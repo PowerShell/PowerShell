@@ -32,21 +32,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Useragent string for Chrome (7.0).
         /// </summary>
-        public static string Chrome => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6");
+        public static string Chrome => string.Create(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6");
 
         /// <summary>
         /// Useragent string for Opera (9.0).
         /// </summary>
-        public static string Opera => string.Format(CultureInfo.InvariantCulture, $"Opera/9.70 ({PlatformName}; {OS}; {Culture}) Presto/2.2.1");
+        public static string Opera => string.Create(CultureInfo.InvariantCulture, $"Opera/9.70 ({PlatformName}; {OS}; {Culture}) Presto/2.2.1");
 
         /// <summary>
         /// Useragent string for Safari (5.0).
         /// </summary>
-        public static string Safari => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16");
+        public static string Safari => string.Create(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16");
 
         internal static string Compatibility => "Mozilla/5.0";
 
-        internal static string App => string.Format(CultureInfo.InvariantCulture, $"PowerShell/{PSVersionInfo.PSVersion}");
+        internal static string App => string.Create(CultureInfo.InvariantCulture, $"PowerShell/{PSVersionInfo.PSVersion}");
 
         internal static string PlatformName
         {

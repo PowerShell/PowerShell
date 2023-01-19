@@ -8898,7 +8898,7 @@ namespace System.Management.Automation.Language
                 if (!TypeName.FullName.Contains('`'))
                 {
                     var newTypeName = new TypeName(Extent,
-                        string.Format(CultureInfo.InvariantCulture, $"{TypeName.FullName}`{GenericArguments.Count}"));
+                        string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}`{GenericArguments.Count}"));
                     generic = newTypeName.GetReflectionType();
                 }
             }

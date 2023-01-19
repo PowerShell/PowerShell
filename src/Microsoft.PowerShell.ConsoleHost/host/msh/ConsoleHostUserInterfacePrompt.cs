@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell
                     {
                         throw PSTraceSource.NewArgumentException(nameof(descriptions),
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
-                            string.Format(CultureInfo.InvariantCulture, $"descriptions[{descIndex}]"));
+                            string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}]"));
                     }
 
                     PSObject inputPSObject = null;
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell
                     if (string.IsNullOrEmpty(desc.ParameterAssemblyFullName))
                     {
                         string paramName =
-                            string.Format(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName");
+                            string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName");
                         throw PSTraceSource.NewArgumentException(paramName, ConsoleHostUserInterfaceStrings.NullOrEmptyErrorTemplate, paramName);
                     }
 
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
                         while (true)
                         {
                             fieldPromptList.Append(
-                                string.Format(CultureInfo.InvariantCulture, $"{inputList.Count}]: "));
+                                string.Create(CultureInfo.InvariantCulture, $"{inputList.Count}]: "));
                             bool endListInput = false;
                             object convertedObj = null;
                             _ = PromptForSingleItem(
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
             Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
-                string.Format(CultureInfo.InvariantCulture, $"input should start with {PromptCommandPrefix}"));
+                string.Create(CultureInfo.InvariantCulture, $"input should start with {PromptCommandPrefix}"));
             Dbg.Assert(desc != null, "desc should never be null when PromptCommandMode is called");
             string command = input.Substring(1);
 

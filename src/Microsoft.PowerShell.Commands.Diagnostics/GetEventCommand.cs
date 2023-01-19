@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    WriteDebug(string.Format(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
+                    WriteDebug(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                     break;
             }
         }
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string log in _providersByLogMap.Keys)
                     {
                         logQuery = new EventLogQuery(log, PathType.LogName, AddProviderPredicatesToFilter(_providersByLogMap[log]));
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, $"Log {log} will be queried"));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Log {log} will be queried"));
                     }
                 }
 
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    WriteDebug(string.Format(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
+                    WriteDebug(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                     break;
             }
 

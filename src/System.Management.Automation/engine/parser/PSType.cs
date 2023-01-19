@@ -629,7 +629,7 @@ namespace System.Management.Automation.Language
                     getSetAttributes |= Reflection.MethodAttributes.Static;
                 }
                 // C# naming convention for backing fields.
-                string backingFieldName = string.Format(CultureInfo.InvariantCulture, $"<{propertyMemberAst.Name}>k__BackingField");
+                string backingFieldName = string.Create(CultureInfo.InvariantCulture, $"<{propertyMemberAst.Name}>k__BackingField");
                 var backingField = _typeBuilder.DefineField(backingFieldName, type, backingFieldAttributes);
 
                 bool hasValidateAttributes = false;
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Language
                 Type returnType,
                 Action<int, string> parameterNameSetter)
             {
-                var wrapperFieldName = string.Format(CultureInfo.InvariantCulture, $"<{metadataToken}>");
+                var wrapperFieldName = string.Create(CultureInfo.InvariantCulture, $"<{metadataToken}>");
                 var scriptBlockWrapperField = _staticHelpersTypeBuilder.DefineField(wrapperFieldName,
                                                                        typeof(ScriptBlockMemberMethodWrapper),
                                                                        FieldAttributes.Assembly | FieldAttributes.Static);

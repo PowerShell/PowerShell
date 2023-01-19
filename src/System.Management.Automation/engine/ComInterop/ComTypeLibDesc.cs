@@ -34,7 +34,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.CurrentCulture, $"<type library {Name}>");
+            return string.Create(CultureInfo.CurrentCulture, $"<type library {Name}>");
         }
 
         public string Documentation

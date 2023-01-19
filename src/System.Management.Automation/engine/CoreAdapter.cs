@@ -3887,11 +3887,11 @@ namespace System.Management.Automation
 
             if (parameterType.IsEnum)
             {
-                return string.Format(CultureInfo.InvariantCulture, $"{parameterType.ToString()}.{parameterDefaultValue.ToString()}");
+                return string.Create(CultureInfo.InvariantCulture, $"{parameterType.ToString()}.{parameterDefaultValue.ToString()}");
             }
 
             return (parameterDefaultValue is string)
-                ? string.Format(CultureInfo.InvariantCulture, $"\"{parameterDefaultValue.ToString()}\"")
+                ? string.Create(CultureInfo.InvariantCulture, $"\"{parameterDefaultValue.ToString()}\"")
                 : parameterDefaultValue.ToString();
         }
 

@@ -876,7 +876,7 @@ namespace System.Management.Automation
             psVersion = PSVersionInfo.PSVersion;
             Dbg.Assert(
                 psVersion != null,
-                string.Format(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_MonadVersion} is null"));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_MonadVersion} is null"));
 
             // Get version number in x.x.x.x format
             // This information is available from the executing assembly

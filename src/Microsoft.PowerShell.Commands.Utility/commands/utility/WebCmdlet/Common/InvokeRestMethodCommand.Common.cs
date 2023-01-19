@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Format(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
+                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
                     
                     bool convertSuccess = false;
 
