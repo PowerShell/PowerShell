@@ -577,8 +577,7 @@ namespace System.Management.Automation
             try
             {
                 string cimType = (string)pData.Qualifiers["cimtype"].Value;
-                result = string.Format(CultureInfo.InvariantCulture, "{0}#{1}",
-                    typeof(ManagementObject).FullName, cimType.Replace("object:", string.Empty));
+                result = string.Format(CultureInfo.InvariantCulture, $"{typeof(ManagementObject).FullName}#{cimType.Replace("object:", string.Empty)}");
             }
             catch (ManagementException)
             {

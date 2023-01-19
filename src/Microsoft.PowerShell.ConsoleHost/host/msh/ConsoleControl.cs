@@ -1312,7 +1312,7 @@ namespace Microsoft.PowerShell
                         contents[r, c].Character != 0)
                     {
                         // trailing character is not 0
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]", r, c));
+                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
                     }
 
                     if (contents[r, c].BufferCellType == BufferCellType.Leading)
@@ -1327,7 +1327,7 @@ namespace Microsoft.PowerShell
                         {
                             // for a 2 cell character, either there is no trailing BufferCell or
                             // the trailing BufferCell's character is not 0
-                            throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]", r, c));
+                            throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
                         }
                     }
                 }
@@ -1522,7 +1522,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm writes one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm writes one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
