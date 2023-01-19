@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new();
-            var moduleQualifiedName = string.Create(CultureInfo.InvariantCulture, $"{module.Name}\\{module.Version.ToString()}");
+            var moduleQualifiedName = string.Create(CultureInfo.InvariantCulture, $"{module.Name}\\{module.Version}");
             foreach (var dscClassCacheEntry in ClassCache)
             {
                 if (dscClassCacheEntry.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))

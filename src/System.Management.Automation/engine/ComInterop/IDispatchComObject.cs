@@ -99,7 +99,7 @@ namespace System.Management.Automation.ComInterop
                 typeName = "IDispatch";
             }
 
-            return string.Create(CultureInfo.CurrentCulture, $"{RuntimeCallableWrapper.ToString()} ({typeName})");
+            return string.Create(CultureInfo.CurrentCulture, $"{RuntimeCallableWrapper} ({typeName})");
         }
 
         public ComTypeDesc ComTypeDesc

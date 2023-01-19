@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             string directoryPath = GetJobRunOutputDirectory(definitionName);
             string jobRunPath = string.Create(CultureInfo.InvariantCulture, $@"{directoryPath}\{ConvertDateTimeToJobRunName(runStart)}");
 
-            return string.Create(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem.ToString()}.xml");
+            return string.Create(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem}.xml");
         }
 
         /// <summary>
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 Directory.CreateDirectory(jobRunPath);
             }
 
-            return string.Create(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem.ToString()}.xml");
+            return string.Create(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem}.xml");
         }
 
         private static void AddFullAccessToDirectory(

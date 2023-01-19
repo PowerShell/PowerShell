@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             foreach (object selectedItem in multipleSelectionDialog.listboxParameter.SelectedItems)
             {
-                newComboText.AppendFormat(CultureInfo.InvariantCulture, $"{selectedItem.ToString()},");
+                newComboText.AppendFormat(CultureInfo.InvariantCulture, $"{selectedItem.},");
             }
 
             if (newComboText.Length > 1)
