@@ -1264,7 +1264,7 @@ namespace Microsoft.PowerShell
                     if (leftExisting[r, 0].BufferCellType == BufferCellType.Leading ^
                             contents[r, contentsRegion.Left].BufferCellType == BufferCellType.Trailing)
                     {
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Left}]"));
+                        throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Left}]"));
                     }
                 }
             }
@@ -1308,7 +1308,7 @@ namespace Microsoft.PowerShell
                         contents[r, c].Character != 0)
                     {
                         // trailing character is not 0
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
+                        throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
                     }
 
                     if (contents[r, c].BufferCellType == BufferCellType.Leading)

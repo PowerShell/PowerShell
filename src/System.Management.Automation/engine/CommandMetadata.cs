@@ -863,32 +863,24 @@ dynamicparam
 ");
             }
 
-            string result = string.Format(CultureInfo.InvariantCulture, @"{0}
-param({1})
+            string result = string.Create(CultureInfo.InvariantCulture, $@"{GetDecl()}
+param({GetParamBlock()})
 
-{2}begin
-{{{3}}}
+{dynamicParamblock}begin
+{{{GetBeginBlock()}}}
 
 process
-{{{4}}}
+{{{GetProcessBlock()}}}
 
 end
-{{{5}}}
+{{{GetEndBlock()}}}
 
 clean
-{{{6}}}
+{{{GetCleanBlock()}}}
 <#
-{7}
+{CodeGeneration.EscapeBlockCommentContent(helpComment)}
 #>
-",
-                GetDecl(),
-                GetParamBlock(),
-                dynamicParamblock,
-                GetBeginBlock(),
-                GetProcessBlock(),
-                GetEndBlock(),
-                GetCleanBlock(),
-                CodeGeneration.EscapeBlockCommentContent(helpComment));
+");
 
             return result;
         }
