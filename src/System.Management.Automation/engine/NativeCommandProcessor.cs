@@ -351,9 +351,11 @@ namespace System.Management.Automation
         /// </summary>
         private NativeCommandParameterBinderController _nativeParameterBinderController;
 
-        internal BytePipe CreateBytePipe() => new NativeCommandProcessorBytePipe(this);
+        internal BytePipe CreateBytePipe(bool stdout) => new NativeCommandProcessorBytePipe(this, stdout);
 
-        internal Stream GetInputStream() => _nativeProcess.StandardInput.BaseStream;
+        internal Stream GetStream(bool stdout) => stdout
+            ? _nativeProcess.StandardOutput.BaseStream
+            : _nativeProcess.StandardInput.BaseStream;
 
         internal BytePipe StdOutDestination { get; set; }
 
@@ -773,14 +775,21 @@ namespace System.Management.Automation
 
                         _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
                         // we don't assign the handler to anything, because it's used only for objects marshaling
-                        BytePipe bytePipe = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                            ? StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe()
+                        BytePipe stdOutDestination = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                            ? StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe(stdout: false)
                             : null;
+
+                        BytePipe stdOutSource = null;
+                        if (stdOutDestination is not null)
+                        {
+                            stdOutSource = CreateBytePipe(stdout: true);
+                        }
 
                         _ = new ProcessOutputHandler(
                             _nativeProcess,
                             _nativeProcessOutputQueue,
-                            bytePipe,
+                            stdOutDestination,
+                            stdOutSource,
                             out _stdOutByteDrainer);
 
                     }
@@ -1701,7 +1710,7 @@ namespace System.Management.Automation
         private readonly AsyncByteStreamDrainer _stdOutDrainer;
 
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
-            : this(process, queue, null, out _)
+            : this(process, queue, null, null, out _)
         {
         }
 
@@ -1709,6 +1718,7 @@ namespace System.Management.Automation
             Process process,
             BlockingCollection<ProcessOutputObject> queue,
             BytePipe stdOutDestination,
+            BytePipe stdOutSource,
             out AsyncByteStreamDrainer stdOutDrainer)
         {
             Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
@@ -1748,7 +1758,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(new StdOutStreamSource(process));
+            stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(stdOutSource);
             stdOutDrainer.BeginReadChucks();
         }
 

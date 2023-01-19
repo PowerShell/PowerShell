@@ -5,61 +5,21 @@
 
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 
 namespace System.Management.Automation;
 
-internal interface IStreamSource
+internal abstract class BytePipe
 {
-    Stream GetStream();
-}
-
-internal sealed class StdOutStreamSource : IStreamSource
-{
-    private readonly Process _process;
-
-    public StdOutStreamSource(Process process) => _process = process;
-
-    public Stream GetStream() => _process.StandardOutput.BaseStream;
-}
-
-internal abstract class BytePipe : IStreamSource
-{
-    private readonly object _syncObject = new();
-
-    private int _refCount;
-
     public abstract Stream GetStream();
 
-    internal AsyncByteStreamDrainer Bind(IStreamSource sourceStream)
+    internal AsyncByteStreamDrainer Bind(BytePipe bytePipe)
     {
-        Debug.Assert(sourceStream is not null);
-        Interlocked.Increment(ref _refCount);
-        try
-        {
-            return new AsyncByteStreamDrainer(
-                sourceStream,
-                (bytes, _) =>
-                {
-                    lock (_syncObject)
-                    {
-                        GetStream().Write(bytes);
-                    }
-                },
-                callbackArg: null,
-                () =>
-                {
-                    if (Interlocked.Decrement(ref _refCount) <= 0)
-                    {
-                        GetStream().Close();
-                    }
-                });
-        }
-        catch
-        {
-            Interlocked.Decrement(ref _refCount);
-            throw;
-        }
+        Debug.Assert(bytePipe is not null);
+        return new AsyncByteStreamDrainer(
+            bytePipe,
+            (bytes, _) => GetStream().Write(bytes),
+            callbackArg: null,
+            () => GetStream().Close());
     }
 }
 
@@ -67,13 +27,18 @@ internal sealed class NativeCommandProcessorBytePipe : BytePipe
 {
     private readonly NativeCommandProcessor _nativeCommand;
 
-    internal NativeCommandProcessorBytePipe(NativeCommandProcessor nativeCommand)
+    private readonly bool _stdout;
+
+    internal NativeCommandProcessorBytePipe(
+        NativeCommandProcessor nativeCommand,
+        bool stdout)
     {
         Debug.Assert(nativeCommand is not null);
         _nativeCommand = nativeCommand;
+        _stdout = stdout;
     }
 
-    public override Stream GetStream() => _nativeCommand.GetInputStream();
+    public override Stream GetStream() => _nativeCommand.GetStream(_stdout);
 }
 
 internal sealed class FileBytePipe : BytePipe
@@ -93,15 +58,15 @@ internal sealed class FileBytePipe : BytePipe
         {
             PathUtils.MasterStreamOpen(
                 fileName,
-                null,
-                false,
+                resolvedEncoding: null,
+                defaultEncoding: false,
                 append,
-                true,
-                false,
+                Force: true,
+                NoClobber: false,
                 out fileStream,
-                out _,
-                out _,
-                true);
+                streamWriter: out _,
+                readOnlyFileInfo: out _,
+                isLiteralPath: true);
         }
         catch (Exception e) when (e.Data.Contains(typeof(ErrorRecord)))
         {

@@ -20,7 +20,7 @@ internal sealed class AsyncByteStreamDrainer : IDisposable
 
     private readonly object? _callbackArg;
 
-    private readonly IStreamSource _streamSource;
+    private readonly BytePipe _bytePipe;
 
     private readonly Memory<byte> _buffer;
 
@@ -28,9 +28,9 @@ internal sealed class AsyncByteStreamDrainer : IDisposable
 
     private Task? _readToBufferTask;
 
-    public AsyncByteStreamDrainer(IStreamSource streamSource, SpanAction<byte, object?> callback, object? callbackArg, Action completedCallback)
+    public AsyncByteStreamDrainer(BytePipe bytePipe, SpanAction<byte, object?> callback, object? callbackArg, Action completedCallback)
     {
-        _streamSource = streamSource;
+        _bytePipe = bytePipe;
         _callback = callback;
         _callbackArg = callbackArg;
         _callbackCompleted = completedCallback;
@@ -51,7 +51,7 @@ internal sealed class AsyncByteStreamDrainer : IDisposable
             int bytesRead;
             try
             {
-                bytesRead = await _streamSource.GetStream().ReadAsync(_buffer, _cts.Token);
+                bytesRead = await _bytePipe.GetStream().ReadAsync(_buffer, _cts.Token);
                 if (bytesRead is 0)
                 {
                     break;
