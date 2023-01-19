@@ -160,7 +160,7 @@ namespace System.Management.Automation.Help
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#details", typeNameForHelp));
+            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{typeNameForHelp}#details"));
 
             mshObject.Properties.Add(new PSNoteProperty("name", name));
             mshObject.Properties.Add(new PSNoteProperty("noun", noun));
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Help
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#syntax", typeNameForHelp));
+            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{typeNameForHelp}#syntax"));
 
             AddSyntaxItemProperties(mshObject, cmdletName, parameterSets, common, typeNameForHelp);
 
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Help
                 PSObject mshObject = new PSObject();
 
                 mshObject.TypeNames.Clear();
-                mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#syntaxItem", typeNameForHelp));
+                mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{typeNameForHelp}#syntaxItem"));
 
                 mshObject.Properties.Add(new PSNoteProperty("name", cmdletName));
                 mshObject.Properties.Add(new PSNoteProperty("CommonParameters", common));
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Help
                 PSObject mshObject = new PSObject();
 
                 mshObject.TypeNames.Clear();
-                mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#parameter"));
 
                 Collection<Attribute> attributes = new Collection<Attribute>(parameter.Attributes);
 
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Help
             PSObject paramValueGroup = new PSObject();
 
             paramValueGroup.TypeNames.Clear();
-            paramValueGroup.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameterValueGroup", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            paramValueGroup.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#parameterValueGroup"));
 
             ArrayList paramValue = new ArrayList(values);
 
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Help
             PSObject paramsObject = new PSObject();
 
             paramsObject.TypeNames.Clear();
-            paramsObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameters", typeNameForHelp));
+            paramsObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{typeNameForHelp}#parameters"));
 
             ArrayList paramObjects = new ArrayList();
 
@@ -385,7 +385,7 @@ namespace System.Management.Automation.Help
                 PSObject paramObject = new PSObject();
 
                 paramObject.TypeNames.Clear();
-                paramObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                paramObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#parameter"));
 
                 AddParameterProperties(paramObject, parameter, parameters[parameter].Aliases,
                     parameters[parameter].IsDynamic, parameters[parameter].ParameterType, parameters[parameter].Attributes);
@@ -551,7 +551,7 @@ namespace System.Management.Automation.Help
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            mshObject.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#type"));
 
             var parameterTypeString = CommandParameterSetInfo.GetParameterTypeString(parameterType, attributes);
             mshObject.Properties.Add(new PSNoteProperty("name", parameterTypeString));
@@ -633,17 +633,17 @@ namespace System.Management.Automation.Help
             PSObject inputTypesObj = new PSObject();
 
             inputTypesObj.TypeNames.Clear();
-            inputTypesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#inputTypes", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            inputTypesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#inputTypes"));
 
             PSObject inputTypeObj = new PSObject();
 
             inputTypeObj.TypeNames.Clear();
-            inputTypeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#inputType", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            inputTypeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#inputType"));
 
             PSObject typeObj = new PSObject();
 
             typeObj.TypeNames.Clear();
-            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#type"));
 
             typeObj.Properties.Add(new PSNoteProperty("name", sb.ToString()));
             inputTypeObj.Properties.Add(new PSNoteProperty("type", typeObj));
@@ -661,17 +661,17 @@ namespace System.Management.Automation.Help
             PSObject returnValuesObj = new PSObject();
 
             returnValuesObj.TypeNames.Clear();
-            returnValuesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#returnValues", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            returnValuesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#returnValues"));
 
             PSObject returnValueObj = new PSObject();
 
             returnValueObj.TypeNames.Clear();
-            returnValueObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#returnValue", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            returnValueObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#returnValue"));
 
             PSObject typeObj = new PSObject();
 
             typeObj.TypeNames.Clear();
-            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#type", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#type"));
 
             if (outputTypes.Count == 0)
             {

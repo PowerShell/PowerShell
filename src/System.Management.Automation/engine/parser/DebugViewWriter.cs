@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitExtension(Expression node) {
-            Out(string.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType().ToString()));
+            Out(string.Format(CultureInfo.CurrentCulture, $".Extension<{node.GetType().ToString()}>"));
 
             if (node.CanReduce) {
                 Out(Flow.Space, "{", Flow.NewLine);
