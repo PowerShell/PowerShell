@@ -697,7 +697,7 @@ namespace Microsoft.Management.UI.Internal
                             }
                         }
 
-                        string paramString = string.Format(CultureInfo.CurrentCulture, "[{0}] ${1},", parameterType, parameterName);
+                        string paramString = string.Format(CultureInfo.CurrentCulture, $"[{parameterType}] ${parameterName},");
 
                         parameterText.Append(paramString);
                     }

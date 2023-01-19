@@ -560,8 +560,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             string jobRunPath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
                 directoryPath, ConvertDateTimeToJobRunName(runStart));
 
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", jobRunPath,
-                runItem.ToString());
+            return string.Format(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem.ToString()}.xml");
         }
 
         /// <summary>

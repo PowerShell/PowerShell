@@ -1151,13 +1151,13 @@ namespace System.Management.Automation.Language {
         }
 
         private void DumpLabel(LabelTarget target) {
-            Out(string.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));
+            Out(string.Format(CultureInfo.CurrentCulture, $".LabelTarget {GetLabelTargetName(target)}:"));
         }
 
         private string GetLabelTargetName(LabelTarget target) {
             if (string.IsNullOrEmpty(target.Name)) {
                 // Create the label target name as #Label1, #Label2, etc.
-                return string.Format(CultureInfo.CurrentCulture, "#Label{0}", GetLabelTargetId(target));
+                return string.Format(CultureInfo.CurrentCulture, $"#Label{GetLabelTargetId(target)}");
             } else {
                 return GetDisplayName(target.Name);
             }
