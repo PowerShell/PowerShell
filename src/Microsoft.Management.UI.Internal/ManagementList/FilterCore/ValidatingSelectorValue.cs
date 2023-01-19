@@ -188,7 +188,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (!columnName.Equals(SelectedIndexPropertyName, StringComparison.CurrentCulture))
             {
-                throw new ArgumentException( is not a valid column name."), "columnName");
+                throw new ArgumentException(string.Create(CultureInfo.CurrentCulture, $"{columnName} is not a valid column name."), "columnName");
             }
 
             if (!this.IsIndexWithinBounds(this.SelectedIndex))
