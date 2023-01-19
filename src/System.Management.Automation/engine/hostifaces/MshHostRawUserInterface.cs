@@ -257,7 +257,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"{Width},{Height}}");
+            return string.Format(CultureInfo.InvariantCulture, $"{Width},{Height}");
         }
 
         /// <summary>
