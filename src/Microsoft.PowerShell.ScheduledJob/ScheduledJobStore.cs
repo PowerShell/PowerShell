@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             Directory.CreateDirectory(filePath);
             Directory.CreateDirectory(outputPath);
-            return string.Format(CultureInfo.InstalledUICulture, @"{0}\{1}.xml", filePath, fileName);
+            return string.Format(CultureInfo.InstalledUICulture, $@"{filePath}\{fileName}.xml");
         }
 
         /// <summary>
@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private static string GetFilePathName(string definitionName, string fileName)
         {
             string filePath = GetJobDefinitionPath(definitionName);
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", filePath, fileName);
+            return string.Format(CultureInfo.InvariantCulture, $@"{filePath}\{fileName}.xml");
         }
 
         /// <summary>
@@ -557,8 +557,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             DateTime runStart)
         {
             string directoryPath = GetJobRunOutputDirectory(definitionName);
-            string jobRunPath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
-                directoryPath, ConvertDateTimeToJobRunName(runStart));
+            string jobRunPath = string.Format(CultureInfo.InvariantCulture, $@"{directoryPath}\{ConvertDateTimeToJobRunName(runStart)}");
 
             return string.Format(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem.ToString()}.xml");
         }
@@ -577,8 +576,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             JobRunItem runItem,
             DateTime runStart)
         {
-            string jobRunPath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
-                outputPath, ConvertDateTimeToJobRunName(runStart));
+            string jobRunPath = string.Format(CultureInfo.InvariantCulture, $@"{outputPath}\{ConvertDateTimeToJobRunName(runStart)}");
 
             if (!Directory.Exists(jobRunPath))
             {
@@ -586,8 +584,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 Directory.CreateDirectory(jobRunPath);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", jobRunPath,
-                runItem.ToString());
+            return string.Format(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem.ToString()}.xml");
         }
 
         private static void AddFullAccessToDirectory(

@@ -4548,7 +4548,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSSetIndexBinder indexCnt={0}{1} ver:{2}",
+            return {1} ver:{2}",
                 CallInfo.ArgumentCount, _constraints == null ? string.Empty : " constraints: " + _constraints, _version);
         }
 

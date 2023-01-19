@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "Size: {0}, Visible: {1}", Size, Visible);
+                return string.Format(CultureInfo.InvariantCulture, $"Size: {Size}, Visible: {Visible}");
             }
         }
 

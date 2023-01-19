@@ -985,7 +985,7 @@ namespace System.Management.Automation.Language {
             // Display <type> if the type of the BlockExpression is different from the
             // last expression's type in the block.
             if (node.Type != node.Expressions[node.Expressions.Count - 1].Type) {
-                Out(string.Format(CultureInfo.CurrentCulture, "<{0}>", node.Type.ToString()));
+                Out(string.Format(CultureInfo.CurrentCulture, $"<{node.Type.ToString()}>"));
             }
 
             VisitDeclarations(node.Variables);

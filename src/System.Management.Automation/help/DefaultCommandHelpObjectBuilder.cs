@@ -57,8 +57,8 @@ namespace System.Management.Automation.Help
             PSObject obj = new PSObject();
 
             obj.TypeNames.Clear();
-            obj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#{1}#command", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, commandInfo.ModuleName));
-            obj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}#{1}", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp, commandInfo.ModuleName));
+            obj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#{commandInfo.ModuleName}#command"));
+            obj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#{commandInfo.ModuleName}"));
             obj.TypeNames.Add(DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp);
             obj.TypeNames.Add("CmdletHelpInfo");
             obj.TypeNames.Add("HelpInfo");
