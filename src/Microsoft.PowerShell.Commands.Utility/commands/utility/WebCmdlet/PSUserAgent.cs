@@ -17,17 +17,17 @@ namespace Microsoft.PowerShell.Commands
         private static string s_windowsUserAgent;
 
         // Format the user-agent string from the various component parts
-        internal static string UserAgent => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) {App}");
+        internal static string UserAgent => string.Create(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) {App}");
 
         /// <summary>
         /// Useragent string for InternetExplorer (9.0).
         /// </summary>
-        public static string InternetExplorer => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} (compatible; MSIE 9.0; {PlatformName}; {OS}; {Culture})");
+        public static string InternetExplorer => string.Create(CultureInfo.InvariantCulture, $"{Compatibility} (compatible; MSIE 9.0; {PlatformName}; {OS}; {Culture})");
 
         /// <summary>
         /// Useragent string for Firefox (4.0).
         /// </summary>
-        public static string FireFox => string.Format(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) Gecko/20100401 Firefox/4.0");
+        public static string FireFox => string.Create(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) Gecko/20100401 Firefox/4.0");
 
         /// <summary>
         /// Useragent string for Chrome (7.0).

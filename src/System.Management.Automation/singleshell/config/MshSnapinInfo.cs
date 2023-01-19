@@ -870,7 +870,7 @@ namespace System.Management.Automation
             applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(
                 !string.IsNullOrEmpty(applicationBase),
-                string.Format(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_ApplicationBase} is empty or null"));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_ApplicationBase} is empty or null"));
 
             // Get the PSVersion from Utils..this is hardcoded
             psVersion = PSVersionInfo.PSVersion;
@@ -939,7 +939,7 @@ namespace System.Management.Automation
                          "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
-            string strongName = string.Format(CultureInfo.InvariantCulture, $"{s_coreSnapin.AssemblyName}, Version={assemblyVersion}, Culture={culture}, PublicKeyToken={publicKeyToken}");
+            string strongName = string.Create(CultureInfo.InvariantCulture, $"{s_coreSnapin.AssemblyName}, Version={assemblyVersion}, Culture={culture}, PublicKeyToken={publicKeyToken}");
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 

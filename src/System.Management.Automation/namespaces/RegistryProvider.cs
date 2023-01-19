@@ -786,7 +786,7 @@ namespace Microsoft.PowerShell.Commands
 
             Dbg.Diagnostics.Assert(
                 textEnumerator != null,
-                string.Format(CultureInfo.CurrentCulture, $"Cannot get a text enumerator for name {path}"));
+                string.Create(CultureInfo.CurrentCulture, $"Cannot get a text enumerator for name {path}"));
 
             while (textEnumerator.MoveNext())
             {
@@ -835,7 +835,7 @@ namespace Microsoft.PowerShell.Commands
 
             Dbg.Diagnostics.Assert(
                 textEnumerator != null,
-                string.Format(CultureInfo.CurrentCulture, $"Cannot get a text enumerator for name {name}"));
+                string.Create(CultureInfo.CurrentCulture, $"Cannot get a text enumerator for name {name}"));
 
             while (textEnumerator.MoveNext())
             {

@@ -389,7 +389,7 @@ namespace Microsoft.Management.UI.Internal
                         continue;
                     }
 
-                    string parameterType = parameterValue == null ? string.Empty : string.Format(CultureInfo.CurrentCulture, $"<{parameterValue}>");
+                    string parameterType = parameterValue == null ? string.Empty : string.Create(CultureInfo.CurrentCulture, $"<{parameterValue}>");
 
                     string parameterOptionalOpenBrace, parameterOptionalCloseBrace;
 
@@ -607,7 +607,7 @@ namespace Microsoft.Management.UI.Internal
                             description = GetPropertyString(propertyTypeObject, "description");
                         }
 
-                        memberText = string.Format(CultureInfo.CurrentCulture, $" [{propertyType}] {name}\r\n");
+                        memberText = string.Create(CultureInfo.CurrentCulture, $" [{propertyType}] {name}\r\n");
                     }
                 }
                 else if (string.Equals("method", type, StringComparison.OrdinalIgnoreCase))
@@ -697,7 +697,7 @@ namespace Microsoft.Management.UI.Internal
                             }
                         }
 
-                        string paramString = string.Format(CultureInfo.CurrentCulture, $"[{parameterType}] ${parameterName},");
+                        string paramString = string.Create(CultureInfo.CurrentCulture, $"[{parameterType}] ${parameterName},");
 
                         parameterText.Append(paramString);
                     }
@@ -709,7 +709,7 @@ namespace Microsoft.Management.UI.Internal
                 }
             }
 
-            memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}({2})\r\n", returnType, name, parameterText);
+            memberText = string.Create(CultureInfo.CurrentCulture, $" [{returnType}] {name}({parameterText})\r\n");
         }
 
         /// <summary>

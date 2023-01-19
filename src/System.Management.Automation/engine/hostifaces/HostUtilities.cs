@@ -639,10 +639,10 @@ namespace System.Management.Automation
                 !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
                 !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal))
             {
-                return string.Format(CultureInfo.InvariantCulture, $"[{sshConnectionInfo.UserName}@{sshConnectionInfo.ComputerName}]: {basePrompt}");
+                return string.Create(CultureInfo.InvariantCulture, $"[{sshConnectionInfo.UserName}@{sshConnectionInfo.ComputerName}]: {basePrompt}");
             }
 
-            return string.Format(CultureInfo.InvariantCulture, $"[{runspace.ConnectionInfo.ComputerName}]: {basePrompt}");
+            return string.Create(CultureInfo.InvariantCulture, $"[{runspace.ConnectionInfo.ComputerName}]: {basePrompt}");
         }
 
         /// <summary>

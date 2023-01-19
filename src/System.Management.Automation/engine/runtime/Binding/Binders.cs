@@ -4548,7 +4548,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, $"PSSetIndexBinder indexCnt={CallInfo.ArgumentCount}{(_constraints == null ? string.Empty : " constraints: " + _constraints)} ver:{_version}");
+            return string.Create(CultureInfo.InvariantCulture, $"PSSetIndexBinder indexCnt={CallInfo.ArgumentCount}{(_constraints == null ? string.Empty : " constraints: " + _constraints)} ver:{_version}");
         }
 
         internal static void InvalidateCache()

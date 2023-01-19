@@ -1232,7 +1232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimInstance> asyncResult = this.CimSession.EnumerateInstancesAsync(namespaceName, className, this.OperationOptions);
-            string errorSource = string.Format(CultureInfo.CurrentUICulture, $"{namespaceName}:{className}");
+            string errorSource = string.Create(CultureInfo.CurrentUICulture, $"{namespaceName}:{className}");
             ConsumeCimInstanceAsync(asyncResult, new CimResultContext(errorSource));
         }
 

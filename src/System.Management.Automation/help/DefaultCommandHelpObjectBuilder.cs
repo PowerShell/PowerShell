@@ -633,17 +633,17 @@ namespace System.Management.Automation.Help
             PSObject inputTypesObj = new PSObject();
 
             inputTypesObj.TypeNames.Clear();
-            inputTypesObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#inputTypes"));
+            inputTypesObj.TypeNames.Add(string.Create(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#inputTypes"));
 
             PSObject inputTypeObj = new PSObject();
 
             inputTypeObj.TypeNames.Clear();
-            inputTypeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#inputType"));
+            inputTypeObj.TypeNames.Add(string.Create(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#inputType"));
 
             PSObject typeObj = new PSObject();
 
             typeObj.TypeNames.Clear();
-            typeObj.TypeNames.Add(string.Format(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#type"));
+            typeObj.TypeNames.Add(string.Create(CultureInfo.InvariantCulture, $"{DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp}#type"));
 
             typeObj.Properties.Add(new PSNoteProperty("name", sb.ToString()));
             inputTypeObj.Properties.Add(new PSNoteProperty("type", typeObj));
