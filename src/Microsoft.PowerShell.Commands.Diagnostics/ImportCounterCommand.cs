@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
+                    Debug.Assert(false, $"Invalid parameter set name: {ParameterSetName}");
                     break;
             }
 
