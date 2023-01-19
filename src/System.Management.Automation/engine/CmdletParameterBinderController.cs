@@ -2983,7 +2983,7 @@ namespace System.Management.Automation
 
             foreach (MergedCompiledCommandParameter missingParameter in missingMandatoryParameters)
             {
-                missingParameters.AppendFormat(CultureInfo.InvariantCulture, " {0}", missingParameter.Parameter.Name);
+                missingParameters.AppendFormat(CultureInfo.InvariantCulture, $" {missingParameter.Parameter.Name}");
             }
 
             return missingParameters.ToString();
