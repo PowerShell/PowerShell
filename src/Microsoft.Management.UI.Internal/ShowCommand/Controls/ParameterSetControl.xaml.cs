@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             checkBox.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "chk{0}", parameterViewModel.Name));
+                string.Create(CultureInfo.CurrentCulture, $"chk{parameterViewModel.Name}"));
 
             checkBox.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             multiControls.comboxParameter.SetBinding(ComboBox.TextProperty, valueBinding);
 
             // Add AutomationProperties.AutomationId for Ui Automation test.
-            multiControls.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, string.Format("combox{0}", parameterViewModel.Name));
+            multiControls.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, string.Create($"combox{parameterViewModel.Name}"));
 
             multiControls.comboxParameter.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for UI Automation test.
             textBox.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "txt{0}", parameterViewModel.Name));
+                string.Create(CultureInfo.CurrentCulture, $"txt{parameterViewModel.Name}"));
 
             textBox.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             label.SetValue(
                 System.Windows.Automation.AutomationProperties.AutomationIdProperty,
-                string.Format(CultureInfo.CurrentCulture, "lbl{0}", parameterViewModel.Name));
+                string.Create(CultureInfo.CurrentCulture, $"lbl{parameterViewModel.Name}"));
 
             return label;
         }
