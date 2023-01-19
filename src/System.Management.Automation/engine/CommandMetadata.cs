@@ -847,21 +847,20 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(helpComment))
             {
-                helpComment = string.Format(CultureInfo.InvariantCulture, @"
-.ForwardHelpTargetName {0}
-.ForwardHelpCategory {1}
-",
-                    _wrappedCommand, _wrappedCommandType);
+                helpComment = string.Create(CultureInfo.InvariantCulture, $@"
+.ForwardHelpTargetName {_wrappedCommand}
+.ForwardHelpCategory {_wrappedCommandType}
+");
             }
 
             string dynamicParamblock = string.Empty;
             if (generateDynamicParameters && this.ImplementsDynamicParameters)
             {
-                dynamicParamblock = string.Format(CultureInfo.InvariantCulture, @"
+                dynamicParamblock = string.Create(CultureInfo.InvariantCulture, $@"
 dynamicparam
-{{{0}}}
+{{{GetDynamicParamBlock()}}}
 
-", GetDynamicParamBlock());
+");
             }
 
             string result = string.Format(CultureInfo.InvariantCulture, @"{0}

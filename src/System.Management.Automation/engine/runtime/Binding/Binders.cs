@@ -5143,8 +5143,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "GetMember: {0}{1}{2} ver:{3}",
-                Name, _static ? " static" : string.Empty, _nonEnumerating ? " nonEnumerating" : string.Empty, _version);
+            return string.Create(CultureInfo.InvariantCulture, $"GetMember: {Name}{(_static ? " static" : string.Empty)}{(_nonEnumerating ? " nonEnumerating" : string.Empty)} ver:{_version}");
         }
 
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)

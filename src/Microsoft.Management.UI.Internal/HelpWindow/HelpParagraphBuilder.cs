@@ -276,7 +276,7 @@ namespace Microsoft.Management.UI.Internal
             foreach (string line in lines)
             {
                 // Indentation is not localized
-                returnValue.AppendFormat("{0}{1}\r\n", indentString, line);
+                returnValue.AppendFormat($"{indentString}{line}\r\n");
             }
 
             if (returnValue.Length > 2)

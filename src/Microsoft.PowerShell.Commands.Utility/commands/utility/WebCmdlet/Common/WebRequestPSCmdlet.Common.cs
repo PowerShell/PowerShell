@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
                     encodedValue = WebUtility.UrlEncode(value.ToString());
                 }
 
-                bodyBuilder.AppendFormat("{0}={1}", encodedKey, encodedValue);
+                bodyBuilder.AppendFormat($"{encodedKey}={encodedValue}");
             }
 
             return bodyBuilder.ToString();
@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, string.Create($"Unrecognized Authentication value: {Authentication}"));
+                Diagnostics.Assert(false, string.Format($"Unrecognized Authentication value: {Authentication}"));
             }
         }
 

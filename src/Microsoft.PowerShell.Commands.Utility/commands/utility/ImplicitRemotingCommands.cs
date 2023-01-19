@@ -2247,13 +2247,13 @@ function Get-PSImplicitRemotingSessionOption
             RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
             if (runspaceConnectionInfo != null)
             {
-                result.AppendFormat(null, "-Culture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString()));
-                result.AppendFormat(null, "-UICulture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString()));
+                result.AppendFormat(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString())}' ");
+                result.AppendFormat(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString())}' ");
 
-                result.AppendFormat(null, "-CancelTimeOut {0} ", runspaceConnectionInfo.CancelTimeout);
-                result.AppendFormat(null, "-IdleTimeOut {0} ", runspaceConnectionInfo.IdleTimeout);
-                result.AppendFormat(null, "-OpenTimeOut {0} ", runspaceConnectionInfo.OpenTimeout);
-                result.AppendFormat(null, "-OperationTimeOut {0} ", runspaceConnectionInfo.OperationTimeout);
+                result.AppendFormat(null, $"-CancelTimeOut {runspaceConnectionInfo.CancelTimeout} ");
+                result.AppendFormat(null, $"-IdleTimeOut {runspaceConnectionInfo.IdleTimeout} ");
+                result.AppendFormat(null, $"-OpenTimeOut {runspaceConnectionInfo.OpenTimeout} ");
+                result.AppendFormat(null, $"-OperationTimeOut {runspaceConnectionInfo.OperationTimeout} ");
             }
 
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
