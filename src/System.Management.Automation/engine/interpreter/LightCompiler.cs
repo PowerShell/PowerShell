@@ -231,7 +231,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
+                return string.Format(CultureInfo.InvariantCulture, $"{Index}: clear");
             }
             else
             {

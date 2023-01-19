@@ -2252,11 +2252,11 @@ namespace System.Management.Automation.Runspaces
                     // convert DOMAIN\user to user@DOMAIN
                     var domainName = parts[0];
                     var userName = parts[1];
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1}", userName, domainName));
+                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, $@"-l {userName}@{domainName}"));
                 }
                 else
                 {
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}", this.UserName));
+                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, $@"-l {this.UserName}"));
                 }
             }
 
@@ -2264,7 +2264,7 @@ namespace System.Management.Automation.Runspaces
             // if Port is not set, then ssh will use Port from ssh_config if defined else 22 by default
             if (this.Port != 0)
             {
-                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, $@"-p {this.Port}"));
             }
 
             // pass "-o option=value" command line argument to ssh if options are provided
@@ -2272,7 +2272,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (DictionaryEntry pair in this.Options)
                 {
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-o {0}={1}", pair.Key, pair.Value));
+                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, $@"-o {pair.Key}={pair.Value}"));
                 }
             }
 

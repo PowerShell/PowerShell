@@ -607,7 +607,7 @@ namespace Microsoft.Management.UI.Internal
                             description = GetPropertyString(propertyTypeObject, "description");
                         }
 
-                        memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}\r\n", propertyType, name);
+                        memberText = string.Format(CultureInfo.CurrentCulture, $" [{propertyType}] {name}\r\n");
                     }
                 }
                 else if (string.Equals("method", type, StringComparison.OrdinalIgnoreCase))

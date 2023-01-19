@@ -796,7 +796,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0},{1} ; {2},{3}", Left, Top, Right, Bottom);
+            return string.Format(CultureInfo.InvariantCulture, $"{Left},{Top} ; {Right},{Bottom}");
         }
 
         /// <summary>

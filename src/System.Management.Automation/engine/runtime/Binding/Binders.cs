@@ -955,7 +955,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "MultiAssignRHSBinder {0}", _elements);
+            return string.Format(CultureInfo.InvariantCulture, $"MultiAssignRHSBinder {_elements}");
         }
 
         public override Type ReturnType { get { return typeof(IList); } }
@@ -2239,7 +2239,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSBinaryOperationBinder {0}{1} ver:{2}", GetOperatorText(), _scalarCompare ? " scalarOnly" : string.Empty, _version);
+            return string.Format(CultureInfo.InvariantCulture, $"PSBinaryOperationBinder {GetOperatorText()}{(_scalarCompare ? " scalarOnly" : string.Empty)} ver:{_version}");
         }
 
         internal static void InvalidateCache()
@@ -3488,7 +3488,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSUnaryOperationBinder {0}", this.Operation);
+            return string.Format(CultureInfo.InvariantCulture, $"PSUnaryOperationBinder {this.Operation}");
         }
 
         internal DynamicMetaObject Not(DynamicMetaObject target, DynamicMetaObject errorSuggestion)

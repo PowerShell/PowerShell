@@ -1265,8 +1265,7 @@ namespace Microsoft.PowerShell
                     if (leftExisting[r, 0].BufferCellType == BufferCellType.Leading ^
                             contents[r, contentsRegion.Left].BufferCellType == BufferCellType.Trailing)
                     {
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                            r, contentsRegion.Left));
+                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Left}]"));
                     }
                 }
             }
@@ -1275,8 +1274,7 @@ namespace Microsoft.PowerShell
             {
                 if (firstRightLeadingRow >= 0)
                 {
-                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                            firstRightLeadingRow, contentsRegion.Right));
+                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{firstRightLeadingRow}, {contentsRegion.Right}]"));
                 }
             }
             else
@@ -1291,8 +1289,7 @@ namespace Microsoft.PowerShell
                     if (rightExisting[r, 0].BufferCellType == BufferCellType.Leading ^
                             contents[r, contentsRegion.Right].BufferCellType == BufferCellType.Leading)
                     {
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                            r, contentsRegion.Right));
+                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Right}]"));
                     }
                 }
             }
@@ -1975,7 +1972,7 @@ namespace Microsoft.PowerShell
                                 // to write is larger than bufferLimit. In that case, the algorithm reads one row
                                 // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                                 // to retry with a smaller bufferSize.X.
-                                Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                                Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                                 bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                                 continue;
                             }
