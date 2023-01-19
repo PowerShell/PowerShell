@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
                     encodedValue = WebUtility.UrlEncode(value.ToString());
                 }
 
-                bodyBuilder.AppendFormat("{0}={1}", encodedKey, encodedValue);
+                bodyBuilder.AppendFormat($"{encodedKey}={encodedValue}");
             }
 
             return bodyBuilder.ToString();

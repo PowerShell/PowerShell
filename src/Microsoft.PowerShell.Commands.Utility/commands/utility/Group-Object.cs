@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (object item in propertyValueItems)
                         {
-                            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}, ", item.ToString());
+                            sb.AppendFormat(CultureInfo.InvariantCulture, $"{item}, ");
                         }
 
                         sb = sb.Length > length ? sb.Remove(sb.Length - 2, 2) : sb;
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}, ", propValuePropertyValue.ToString());
+                        sb.AppendFormat(CultureInfo.InvariantCulture, $"{propValuePropertyValue}, ");
                     }
                 }
             }

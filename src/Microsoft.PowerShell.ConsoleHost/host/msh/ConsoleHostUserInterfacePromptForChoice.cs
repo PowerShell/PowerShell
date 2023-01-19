@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell
 
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
-                        string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
+                        string.Create(CultureInfo.InvariantCulture, $"{s} - {choices[i].HelpMessage}")));
             }
         }
 
