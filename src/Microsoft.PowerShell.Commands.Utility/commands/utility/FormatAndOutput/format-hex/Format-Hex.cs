@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Random _idGenerator = new();
 
         private static string GetGroupLabel(Type inputType)
-            => string.Create($"{inputType.Name} ({inputType.FullName}) <{_idGenerator.Next():X8}>");
+            => string.Format($"{inputType.Name} ({inputType.FullName}) <{_idGenerator.Next():X8}>");
 
         private void FlushInputBuffer()
         {
