@@ -3790,7 +3790,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSConvertBinder [{0}]  ver:{1}", Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true), _version);
+            return string.Format(CultureInfo.InvariantCulture, $"PSConvertBinder [{Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true)}]  ver:{_version}");
         }
 
         internal static void InvalidateCache()

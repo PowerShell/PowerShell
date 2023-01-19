@@ -369,7 +369,7 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                string commandStart = string.Format(CultureInfo.CurrentCulture, "{0} ", commandName);
+                string commandStart = string.Format(CultureInfo.CurrentCulture, $"{commandName} ");
                 this.AddText(HelpParagraphBuilder.AddIndent(commandStart), false);
 
                 foreach (object parameterObj in parameterObjs)
@@ -389,7 +389,7 @@ namespace Microsoft.Management.UI.Internal
                         continue;
                     }
 
-                    string parameterType = parameterValue == null ? string.Empty : string.Format(CultureInfo.CurrentCulture, "<{0}>", parameterValue);
+                    string parameterType = parameterValue == null ? string.Empty : string.Format(CultureInfo.CurrentCulture, $"<{parameterValue}>");
 
                     string parameterOptionalOpenBrace, parameterOptionalCloseBrace;
 

@@ -2019,7 +2019,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             string moduleString = moduleToImport.Version == null
                                 ? moduleToImport.Name
-                                : string.Format(CultureInfo.CurrentCulture, "<{0}, {1}>", moduleToImport.Name, moduleToImport.Version);
+                                : string.Format(CultureInfo.CurrentCulture, $"<{moduleToImport.Name}, {moduleToImport.Version}>");
 
                             errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse",
                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));

@@ -566,7 +566,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", VirtualKeyCode, Character, ControlKeyState, KeyDown);
+            return string.Format(CultureInfo.InvariantCulture, $"{VirtualKeyCode},{Character},{ControlKeyState},{KeyDown}");
         }
         /// <summary>
         /// Overrides <see cref="System.Object.Equals(object)"/>
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "'{0}' {1} {2} {3}", Character, ForegroundColor, BackgroundColor, BufferCellType);
+            return string.Format(CultureInfo.InvariantCulture, $"'{Character}' {ForegroundColor} {BackgroundColor} {BufferCellType}");
         }
 
         /// <summary>

@@ -235,7 +235,7 @@ namespace System.Management.Automation.Interpreter
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
+                return string.Format(CultureInfo.InvariantCulture, $"{Index}: [{StartLine}-{EndLine}] '{FileName}'");
             }
         }
     }

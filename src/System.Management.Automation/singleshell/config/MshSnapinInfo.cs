@@ -939,8 +939,7 @@ namespace System.Management.Automation
                          "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
-            string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
-                s_coreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken);
+            string strongName = string.Format(CultureInfo.InvariantCulture, $"{s_coreSnapin.AssemblyName}, Version={assemblyVersion}, Culture={culture}, PublicKeyToken={publicKeyToken}");
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 

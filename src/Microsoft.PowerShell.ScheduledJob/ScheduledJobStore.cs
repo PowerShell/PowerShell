@@ -539,8 +539,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             string definitionOutputPath,
             DateTime runStart)
         {
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
-                definitionOutputPath, ConvertDateTimeToJobRunName(runStart));
+            return string.Format(CultureInfo.InvariantCulture, $@"{definitionOutputPath}\{ConvertDateTimeToJobRunName(runStart)}");
         }
 
         /// <summary>

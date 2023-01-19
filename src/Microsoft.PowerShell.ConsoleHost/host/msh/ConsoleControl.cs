@@ -1249,8 +1249,7 @@ namespace Microsoft.PowerShell
             {
                 if (firstLeftTrailingRow >= 0)
                 {
-                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                        firstLeftTrailingRow, contentsRegion.Left));
+                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, $"contents[{firstLeftTrailingRow}, {contentsRegion.Left}]"));
                 }
             }
             else
@@ -2142,7 +2141,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm reads one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }

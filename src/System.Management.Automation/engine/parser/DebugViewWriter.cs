@@ -1205,7 +1205,7 @@ namespace System.Management.Automation.Language {
         }
 
         private static string QuoteName(string name) {
-            return string.Format(CultureInfo.CurrentCulture, "'{0}'", name);
+            return string.Format(CultureInfo.CurrentCulture, $"'{name}'");
         }
 
         private static string GetDisplayName(string name) {

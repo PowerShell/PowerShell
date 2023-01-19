@@ -205,7 +205,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // }
             // else
             // {
-            //    return string.Format(CultureInfo.CurrentUICulture, "{0}:", frame.GetMethod());
+            //    return string.Format(CultureInfo.CurrentUICulture, $"{frame.GetMethod()}:");
             // }
 
             return string.Format(CultureInfo.CurrentUICulture, $"{frame.GetMethod().DeclaringType.Name}::{frame.GetMethod().Name}        ");
