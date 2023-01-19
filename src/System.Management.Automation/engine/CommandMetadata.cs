@@ -1019,7 +1019,7 @@ clean
 
             if (_wrappedAnyCmdlet)
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
         $outBuffer = $null
         if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
@@ -1027,38 +1027,30 @@ clean
             $PSBoundParameters['OutBuffer'] = 1
         }}
 
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($PSCmdlet)
     }} catch {{
         throw
     }}
-",
-                    CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                    _wrappedCommandType,
-                    commandOrigin
-                    );
+");
             }
             else
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $PSBoundParameters.Add('$args', $args)
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
     }} catch {{
         throw
     }}
-",
-                CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                _wrappedCommandType,
-                commandOrigin
-                );
+");
             }
 
             return result;
@@ -1082,9 +1074,9 @@ clean
 
         internal string GetDynamicParamBlock()
         {
-            return string.Format(CultureInfo.InvariantCulture, @"
+            return string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1}, $PSBoundParameters)
+        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType}, $PSBoundParameters)
         $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object {{ $_.Value.IsDynamic }})
         if ($dynamicParams.Length -gt 0)
         {{
@@ -1105,9 +1097,7 @@ clean
     }} catch {{
         throw
     }}
-",
-            CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-            _wrappedCommandType);
+");
         }
 
         internal string GetEndBlock()
