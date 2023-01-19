@@ -23,7 +23,7 @@ namespace Engine
 
         static Compiler()
         {
-            string pattern = string.Format($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}perf{Path.DirectorySeparatorChar}benchmarks", );
+            string pattern = string.Format($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}perf{Path.DirectorySeparatorChar}benchmarks");
             string location = typeof(Compiler).Assembly.Location;
             string testFilePath = null;
 
