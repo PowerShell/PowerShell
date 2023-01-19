@@ -342,6 +342,8 @@ namespace System.Management.Automation
 
         internal bool UpstreamIsNativeCommand { get; set; }
 
+        internal BytePipe StdOutDestination { get; set; }
+
         #endregion ctor/native command properties
 
         #region parameter binder
@@ -350,14 +352,6 @@ namespace System.Management.Automation
         /// Parameter binder used by this command processor.
         /// </summary>
         private NativeCommandParameterBinderController _nativeParameterBinderController;
-
-        internal BytePipe CreateBytePipe(bool stdout) => new NativeCommandProcessorBytePipe(this, stdout);
-
-        internal Stream GetStream(bool stdout) => stdout
-            ? _nativeProcess.StandardOutput.BaseStream
-            : _nativeProcess.StandardInput.BaseStream;
-
-        internal BytePipe StdOutDestination { get; set; }
 
         /// <summary>
         /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder.
@@ -502,6 +496,29 @@ namespace System.Management.Automation
         /// Pipeline thread.
         /// </summary>
         private readonly object _sync = new object();
+
+        /// <summary>
+        /// Creates a pipe representing the streaming of unprocessed bytes.
+        /// </summary>
+        /// <param name="stdout">
+        /// The stream that the pipe should represent. <see langword="true" />
+        /// for stdout, <see langword="false" /> for stdin.
+        /// </param>
+        /// <returns>A new byte pipe representing the specified stream.</returns>
+        internal BytePipe CreateBytePipe(bool stdout) => new NativeCommandProcessorBytePipe(this, stdout);
+
+        /// <summary>
+        /// Gets the specified base <see cref="Stream" /> for the underlying
+        /// <see cref="Process" />.
+        /// </summary>
+        /// <param name="stdout">
+        /// The stream that should be retrieved. <see langword="true" /> for
+        /// stdout, <see langword="false" /> for stdin.
+        /// </param>
+        /// <returns>The specified <see cref="Stream" />.</returns>
+        internal Stream GetStream(bool stdout) => stdout
+            ? _nativeProcess.StandardOutput.BaseStream
+            : _nativeProcess.StandardInput.BaseStream;
 
         /// <summary>
         /// Executes the native command once all of the input has been gathered.
