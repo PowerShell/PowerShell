@@ -8,6 +8,10 @@ using System.IO;
 
 namespace System.Management.Automation;
 
+/// <summary>
+/// Represents a lazily retrieved <see cref="Stream" /> for transfering bytes
+/// to or from.
+/// </summary>
 internal abstract class BytePipe
 {
     public abstract Stream GetStream();
@@ -23,6 +27,10 @@ internal abstract class BytePipe
     }
 }
 
+/// <summary>
+/// Represents a <see cref="Stream" /> lazily retrieved from the underlying
+/// <see cref="NativeCommandProcessor" />.
+/// </summary>
 internal sealed class NativeCommandProcessorBytePipe : BytePipe
 {
     private readonly NativeCommandProcessor _nativeCommand;
@@ -41,6 +49,9 @@ internal sealed class NativeCommandProcessorBytePipe : BytePipe
     public override Stream GetStream() => _nativeCommand.GetStream(_stdout);
 }
 
+/// <summary>
+/// Provides an byte pipe implementation representing a <see cref="FileStream" />.
+/// </summary>
 internal sealed class FileBytePipe : BytePipe
 {
     private readonly Stream _stream;

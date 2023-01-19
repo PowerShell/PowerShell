@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace System.Management.Automation;
 
+/// <summary>
+/// Represents the transfer of bytes from one <see cref="Stream" /> to another
+/// asynchronously.
+/// </summary>
 internal sealed class AsyncByteStreamDrainer : IDisposable
 {
     private const int DefaultBufferSize = 1024;
@@ -44,6 +48,8 @@ internal sealed class AsyncByteStreamDrainer : IDisposable
         _readToBufferTask = Task.Run(ReadBufferAsync);
     }
 
+    public void Dispose() => _cts.Cancel();
+
     private async Task ReadBufferAsync()
     {
         while (true)
@@ -71,6 +77,4 @@ internal sealed class AsyncByteStreamDrainer : IDisposable
 
         _callbackCompleted();
     }
-
-    public void Dispose() => _cts.Cancel();
 }
