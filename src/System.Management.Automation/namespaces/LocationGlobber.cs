@@ -4704,7 +4704,7 @@ namespace System.Management.Automation
                     StringBuilder includeString = new StringBuilder();
                     foreach (string includeFilter in context.Include)
                     {
-                        includeString.AppendFormat("{0} ", includeFilter);
+                        includeString.AppendFormat($"{includeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
@@ -4716,7 +4716,7 @@ namespace System.Management.Automation
                     StringBuilder excludeString = new StringBuilder();
                     foreach (string excludeFilter in context.Exclude)
                     {
-                        excludeString.AppendFormat("{0} ", excludeFilter);
+                        excludeString.AppendFormat($"{excludeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());

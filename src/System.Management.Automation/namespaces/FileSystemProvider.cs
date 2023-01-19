@@ -1957,7 +1957,7 @@ namespace Microsoft.PowerShell.Commands
         public static string LastWriteTimeString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? string.Format(CultureInfo.CurrentCulture, "{0,10:d} {0,8:t}", fileInfo.LastWriteTime)
+                ? string.Create(CultureInfo.CurrentCulture, $"{fileInfo.LastWriteTime,10:d} {fileInfo.LastWriteTime,8:t}")
                 : string.Empty;
         }
 
