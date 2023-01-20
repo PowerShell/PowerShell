@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Telemetry
                 configuration.ConnectionString = "InstrumentationKey=" + _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                configuration.TelemetryChannel.DeveloperMode = true;
+                configuration.TelemetryChannel.DeveloperMode = false;
 
                 // Be sure to obscure any information about the client node name.
                 configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
