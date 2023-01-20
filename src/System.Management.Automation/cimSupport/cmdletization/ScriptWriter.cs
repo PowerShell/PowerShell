@@ -249,7 +249,7 @@ function __cmdletization_BindCommonParameters
                     ? ("'" + CodeGeneration.EscapeSingleQuotedStringContent(cmdletMetadata.Obsolete.Message) + "'")
                     : string.Empty;
                 string newline = (attributes.Length > 0) ? Environment.NewLine : string.Empty;
-                attributes.AppendFormat(CultureInfo.InvariantCulture, $"{newline}[Obsolete({obsoleteMsg})]");
+                attributes.Append(CultureInfo.InvariantCulture, $"{newline}[Obsolete({obsoleteMsg})]");
             }
 
             return attributes.ToString();
