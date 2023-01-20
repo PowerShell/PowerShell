@@ -2248,7 +2248,7 @@ function Get-PSImplicitRemotingSessionOption
             if (runspaceConnectionInfo != null)
             {
                 result.Append(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture)}' ");
-                result.Append(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString())}' ");
+                result.Append(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture)}' ");
 
                 result.Append(null, $"-CancelTimeOut {runspaceConnectionInfo.CancelTimeout} ");
                 result.Append(null, $"-IdleTimeOut {runspaceConnectionInfo.IdleTimeout} ");
