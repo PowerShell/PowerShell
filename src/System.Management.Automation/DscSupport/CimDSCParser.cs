@@ -2339,7 +2339,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static void GenerateMofForAst(TypeDefinitionAst typeAst, StringBuilder sb, List<object> embeddedInstanceTypes)
         {
             var className = typeAst.Name;
-            sb.AppendFormat(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
+            sb.Append(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
 
             if (typeAst.Attributes.Any(static a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
             {
@@ -2912,19 +2912,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
+                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
                         needComma = true;
                     }
 
                     if (dscProperty.Mandatory)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}required");
+                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}required");
                         needComma = true;
                     }
 
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
+                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
                         needComma = true;
                     }
 
@@ -2936,13 +2936,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new(", Values{");
-                    sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
-                        sbValues.AppendFormat(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
+                        sb.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
+                        sbValues.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
                         valueMapComma = true;
                     }
 
@@ -2961,11 +2961,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
                     needComma = true;
                 }
 
@@ -2973,7 +2973,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
                     needComma = true;
                 }
 
@@ -2981,7 +2981,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else if (embeddedInstanceType != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}EmbeddedInstance(\"{embeddedInstanceType}\")");
+                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}EmbeddedInstance(\"{embeddedInstanceType}\")");
             }
 
             sb.Append(']');
@@ -3047,7 +3047,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             var className = type.Name;
             // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
-            sb.AppendFormat(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
+            sb.Append(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
 
             if (type.GetCustomAttributes<DscResourceAttribute>().Any())
             {
