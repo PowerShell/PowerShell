@@ -32,10 +32,7 @@ namespace System.Management.Automation.ComInterop
             _classes = new LinkedList<ComTypeClassDesc>();
         }
 
-        public override string ToString()
-        {
-            return string.Create(CultureInfo.CurrentCulture, $"<type library {Name}>");
-        }
+        public override string ToString() => $"<type library {Name}>";
 
         public string Documentation
         {
