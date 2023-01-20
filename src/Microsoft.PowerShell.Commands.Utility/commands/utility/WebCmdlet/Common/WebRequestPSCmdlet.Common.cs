@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -285,6 +286,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _custommethod;
+
+        /// <summary>
+        /// Gets or sets the UnixSocket property.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
         #endregion
 
@@ -913,7 +921,21 @@ namespace Microsoft.PowerShell.Commands
         // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            HttpClientHandler handler = new();
+            //HttpClientHandler handler = new();
+            SocketsHttpHandler handler = new();
+
+            if (UnixSocket is not null)
+            {
+                handler.ConnectCallback = async (context, token) =>
+                {
+                    Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
+                    UnixDomainSocketEndPoint endpoint = UnixSocket;
+                    await socket.ConnectAsync(endpoint).ConfigureAwait(false);
+
+                    return new NetworkStream(socket, ownsSocket: false);
+                };
+            }
+
             handler.CookieContainer = WebSession.Cookies;
             handler.AutomaticDecompression = DecompressionMethods.All;
 
@@ -921,7 +943,8 @@ namespace Microsoft.PowerShell.Commands
             if (WebSession.UseDefaultCredentials)
             {
                 // the UseDefaultCredentials flag overrides other supplied credentials
-                handler.UseDefaultCredentials = true;
+                //handler.UseDefaultCredentials = true;
+                handler.Credentials = CredentialCache.DefaultCredentials;
             }
             else if (WebSession.Credentials is not null)
             {
@@ -939,13 +962,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (WebSession.Certificates is not null)
             {
-                handler.ClientCertificates.AddRange(WebSession.Certificates);
+                //handler.ClientCertificates.AddRange(WebSession.Certificates);
+                handler.SslOptions.ClientCertificates.AddRange(WebSession.Certificates);
             }
 
             if (SkipCertificateCheck)
             {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                //handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                //handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                handler.SslOptions.RemoteCertificateValidationCallback = delegate { return true; };
             }
 
             // This indicates GetResponse will handle redirects.
@@ -958,7 +983,8 @@ namespace Microsoft.PowerShell.Commands
                 handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
             }
 
-            handler.SslProtocols = (SslProtocols)SslProtocol;
+            //handler.SslProtocols = (SslProtocols)SslProtocol;
+            handler.SslOptions.EnabledSslProtocols = (SslProtocols)SslProtocol;
 
             HttpClient httpClient = new(handler);
 
@@ -1513,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect is false"
+                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
