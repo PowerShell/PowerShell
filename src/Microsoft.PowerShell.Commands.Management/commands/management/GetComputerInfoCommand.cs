@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 var halPath = CIMHelper.EscapePath(System.IO.Path.Combine(systemDirectory, "hal.dll"));
-                var query = string.Format($"SELECT * FROM CIM_DataFile Where Name='{halPath}'");
+                var query = string.Create(CultureInfo.InvariantCulture, $"SELECT * FROM CIM_DataFile Where Name='{halPath}'");
                 var instance = session.QueryFirstInstance(query);
 
                 if (instance != null)
