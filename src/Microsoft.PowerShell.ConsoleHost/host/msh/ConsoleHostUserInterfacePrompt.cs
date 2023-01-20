@@ -190,8 +190,7 @@ namespace Microsoft.PowerShell
                             {
                                 string msg = StringUtil.Format(ConsoleHostUserInterfaceStrings.RankZeroArrayErrorTemplate, desc.Name);
                                 ArgumentException innerException = PSTraceSource.NewArgumentException(
-                                    string.Format(CultureInfo.InvariantCulture,
-                                    "descriptions[{0}].AssemblyFullName", descIndex));
+                                    string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName"));
                                 PromptingException e = new PromptingException(msg, innerException, "ZeroRankArray", ErrorCategory.InvalidOperation);
                                 throw e;
                             }
@@ -203,8 +202,7 @@ namespace Microsoft.PowerShell
 
                         while (true)
                         {
-                            fieldPromptList.Append(
-                                string.Create(CultureInfo.InvariantCulture, $"{inputList.Count}]: "));
+                            fieldPromptList.Append($"{inputList.Count}]: ");
                             bool endListInput = false;
                             object convertedObj = null;
                             _ = PromptForSingleItem(

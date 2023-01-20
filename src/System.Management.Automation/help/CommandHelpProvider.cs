@@ -950,15 +950,13 @@ namespace System.Management.Automation
 
             // Add snapin qualified type name for this command at the top..
             // this will enable customizations of the help object.
-            helpInfo.FullHelp.TypeNames.Insert(0, string.Format(CultureInfo.InvariantCulture,
-                "MamlCommandHelpInfo#{0}#{1}", mshSnapInId, cmdletName));
+            helpInfo.FullHelp.TypeNames.Insert(0, string.Create(CultureInfo.InvariantCulture, $"MamlCommandHelpInfo#{mshSnapInId}#{cmdletName}"));
 
             if (!string.IsNullOrEmpty(mshSnapInId))
             {
                 key = mshSnapInId + "\\" + key;
                 // Add snapin name to the typenames of this object
-                helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
-                    "MamlCommandHelpInfo#{0}", mshSnapInId));
+                helpInfo.FullHelp.TypeNames.Insert(1, string.Create(CultureInfo.InvariantCulture, $"MamlCommandHelpInfo#{mshSnapInId}"));
             }
 
             AddCache(key, helpInfo);
