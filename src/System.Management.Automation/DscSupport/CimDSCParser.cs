@@ -2913,7 +2913,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     if (dscProperty.Key)
                     {
                         sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
-
                         needComma = true;
                     }
 
@@ -2926,7 +2925,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     if (dscProperty.NotConfigurable)
                     {
                         sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
-
                         needComma = true;
                     }
 
