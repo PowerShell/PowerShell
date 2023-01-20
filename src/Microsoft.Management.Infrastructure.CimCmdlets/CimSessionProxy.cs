@@ -875,7 +875,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         parameters.Append(',');
                     }
 
-                    parameters.AppendFormat(CultureInfo.CurrentUICulture, $@"'{key}' = {parameterList[key]}");
+                    parameters.Append(CultureInfo.CurrentUICulture, $@"'{key}' = {parameterList[key]}");
                 }
             }
 
