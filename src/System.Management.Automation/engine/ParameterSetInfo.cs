@@ -238,7 +238,14 @@ namespace System.Management.Automation
 
             if (parameter.ParameterType == typeof(SwitchParameter))
             {
-                result.AppendFormat(CultureInfo.InvariantCulture, parameter.IsMandatory ? "-{0}" : "[-{0}]", parameter.Name);
+                if (parameter.IsMandatory)
+                {
+                    result.Append($"-{parameter.Name}");
+                }
+                else
+                {
+                    result.Append($"[-{parameter.Name}]");
+                }
             }
             else
             {
@@ -246,15 +253,25 @@ namespace System.Management.Automation
 
                 if (parameter.IsMandatory)
                 {
-                    result.AppendFormat(CultureInfo.InvariantCulture,
-                                        parameter.Position != int.MinValue ? "[-{0}] <{1}>" : "-{0} <{1}>",
-                                        parameter.Name, parameterTypeString);
+                    if (parameter.Position != int.MinValue)
+                    {
+                        result.Append($"[-{parameter.Name}] <{parameterTypeString}>");
+                    }
+                    else
+                    {
+                        result.Append($"-{parameter.Name} <{parameterTypeString}>");
+                    }
                 }
                 else
                 {
-                    result.AppendFormat(CultureInfo.InvariantCulture,
-                                        parameter.Position != int.MinValue ? "[[-{0}] <{1}>]" : "[-{0} <{1}>]",
-                                        parameter.Name, parameterTypeString);
+                    if (parameter.Position != int.MinValue)
+                    {
+                        result.Append($"[[-{parameter.Name}] <{parameterTypeString}>]");
+                    }
+                    else
+                    {
+                        result.Append($"[-{parameter.Name} <{parameterTypeString}>]");
+                    }
                 }
             }
         }
