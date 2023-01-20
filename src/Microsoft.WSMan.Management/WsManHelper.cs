@@ -1070,7 +1070,7 @@ namespace Microsoft.WSMan.Management
 #if CORECLR
                     "0409" /* TODO: don't assume it is always English on CSS? */
 #else
-                    string.Concat("0", string.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
+                    string.Concat("0", string.Create(CultureInfo.CurrentCulture, $"{checked((uint)CultureInfo.CurrentUICulture.LCID):x2}"))
 #endif
                     + "\\" + "winrm.ini";
                 if (File.Exists(filepath))
