@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
                     encodedValue = WebUtility.UrlEncode(value.ToString());
                 }
 
-                bodyBuilder.AppendFormat("{0}={1}", encodedKey, encodedValue);
+                bodyBuilder.Append($"{encodedKey}={encodedValue}");
             }
 
             return bodyBuilder.ToString();
@@ -768,14 +768,14 @@ namespace Microsoft.PowerShell.Commands
         private string GetBasicAuthorizationHeader()
         {
             var password = new NetworkCredential(null, Credential.Password).Password;
-            string unencoded = string.Format($"{Credential.UserName}:{password}");
+            string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential.UserName}:{password}");
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
-            return string.Format($"Basic {Convert.ToBase64String(bytes)}");
+            return string.Create(CultureInfo.InvariantCulture, $"Basic {Convert.ToBase64String(bytes)}");
         }
 
         private string GetBearerAuthorizationHeader()
         {
-            return string.Format($"Bearer {new NetworkCredential(string.Empty, Token).Password}");
+            return string.Create(CultureInfo.InvariantCulture, $"Bearer {new NetworkCredential(string.Empty, Token).Password}");
         }
 
         private void ProcessAuthentication()
@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, string.Format($"Unrecognized Authentication value: {Authentication}"));
+                Diagnostics.Assert(false, string.Create(CultureInfo.InvariantCulture, $"Unrecognized Authentication value: {Authentication}"));
             }
         }
 

@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    WriteDebug(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                    WriteDebug(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                     break;
             }
         }
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string log in _providersByLogMap.Keys)
                     {
                         logQuery = new EventLogQuery(log, PathType.LogName, AddProviderPredicatesToFilter(_providersByLogMap[log]));
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Log {0} will be queried", log));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Log {log} will be queried"));
                     }
                 }
 
@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string resolvedPath in resolvedPaths)
                     {
                         _resolvedPaths.Add(resolvedPath);
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Found file {0}", resolvedPath));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Found file {resolvedPath}"));
                     }
                 }
 
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    WriteDebug(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                    WriteDebug(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                     break;
             }
 
@@ -2047,7 +2047,7 @@ namespace Microsoft.PowerShell.Commands
                       ||
                       (wildProvPattern.IsMatch(provName)))
                     {
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Found matching provider: {0}", provName));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Found matching provider: {provName}"));
                         AddLogsForProviderToInternalMap(eventLogSession, provName);
                         bMatched = true;
                     }
