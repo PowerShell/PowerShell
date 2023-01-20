@@ -2247,13 +2247,13 @@ function Get-PSImplicitRemotingSessionOption
             RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
             if (runspaceConnectionInfo != null)
             {
-                result.AppendFormat(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString())}' ");
-                result.AppendFormat(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString())}' ");
+                result.Append(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture)}' ");
+                result.Append(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture)}' ");
 
-                result.AppendFormat(null, $"-CancelTimeOut {runspaceConnectionInfo.CancelTimeout} ");
-                result.AppendFormat(null, $"-IdleTimeOut {runspaceConnectionInfo.IdleTimeout} ");
-                result.AppendFormat(null, $"-OpenTimeOut {runspaceConnectionInfo.OpenTimeout} ");
-                result.AppendFormat(null, $"-OperationTimeOut {runspaceConnectionInfo.OperationTimeout} ");
+                result.Append(null, $"-CancelTimeOut {runspaceConnectionInfo.CancelTimeout} ");
+                result.Append(null, $"-IdleTimeOut {runspaceConnectionInfo.IdleTimeout} ");
+                result.Append(null, $"-OpenTimeOut {runspaceConnectionInfo.OpenTimeout} ");
+                result.Append(null, $"-OperationTimeOut {runspaceConnectionInfo.OperationTimeout} ");
             }
 
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
@@ -2275,33 +2275,18 @@ function Get-PSImplicitRemotingSessionOption
 
                 if (wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.HasValue)
                 {
-                    result.AppendFormat(
-                        CultureInfo.InvariantCulture,
-                        "-MaximumReceivedDataSizePerCommand {0} ",
-                        wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value);
+                    result.Append(CultureInfo.InvariantCulture, $"-MaximumReceivedDataSizePerCommand {wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value} ");
                 }
 
                 if (wsmanConnectionInfo.MaximumReceivedObjectSize.HasValue)
                 {
-                    result.AppendFormat(
-                        CultureInfo.InvariantCulture,
-                        "-MaximumReceivedObjectSize {0} ",
-                        wsmanConnectionInfo.MaximumReceivedObjectSize.Value);
+                    result.Append(CultureInfo.InvariantCulture, $"-MaximumReceivedObjectSize {wsmanConnectionInfo.MaximumReceivedObjectSize.Value} ");
                 }
 
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-MaximumRedirection {0} ",
-                    wsmanConnectionInfo.MaximumConnectionRedirectionCount);
+                result.Append(CultureInfo.InvariantCulture, $"-MaximumRedirection {wsmanConnectionInfo.MaximumConnectionRedirectionCount} ");
 
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-ProxyAccessType {0} ",
-                    wsmanConnectionInfo.ProxyAccessType.ToString());
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-ProxyAuthentication {0} ",
-                    wsmanConnectionInfo.ProxyAuthentication.ToString());
+                result.Append(CultureInfo.InvariantCulture, $"-ProxyAccessType {wsmanConnectionInfo.ProxyAccessType} ");
+                result.Append(CultureInfo.InvariantCulture, $"-ProxyAuthentication {wsmanConnectionInfo.ProxyAuthentication} ");
                 result.Append(this.GenerateProxyCredentialParameter(wsmanConnectionInfo));
             }
 
