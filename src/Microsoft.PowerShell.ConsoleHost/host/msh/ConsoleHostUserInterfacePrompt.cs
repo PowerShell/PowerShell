@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell
 
                         while (true)
                         {
-                            fieldPromptList.AppendFormat(CultureInfo.InvariantCulture, $"{inputList.Count}]: ");
+                            fieldPromptList.Append(CultureInfo.InvariantCulture, $"{inputList.Count}]: ");
                             bool endListInput = false;
                             object convertedObj = null;
                             _ = PromptForSingleItem(

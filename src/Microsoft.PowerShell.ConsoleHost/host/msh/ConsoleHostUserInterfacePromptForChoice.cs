@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell
                         defaultStr = hotkeysAndPlainLabels[1, defaultChoice];
                     }
 
-                    defaultChoicesBuilder.AppendFormat(CultureInfo.InvariantCulture, $"{prepend}{defaultStr}");
+                    defaultChoicesBuilder.Append(CultureInfo.InvariantCulture, $"{prepend}{defaultStr}");
                     prepend = ",";
                 }
 
