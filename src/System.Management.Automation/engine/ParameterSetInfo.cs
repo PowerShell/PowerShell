@@ -238,7 +238,7 @@ namespace System.Management.Automation
 
             if (parameter.ParameterType == typeof(SwitchParameter))
             {
-                result.AppendFormat(CultureInfo.InvariantCulture, parameter.IsMandatory ? $"-{parameter.Name}" : $"[-{parameter.Name}]");
+                result.Append(CultureInfo.InvariantCulture, parameter.IsMandatory ? $"-{parameter.Name}" : $"[-{parameter.Name}]");
             }
             else
             {

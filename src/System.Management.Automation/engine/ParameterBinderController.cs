@@ -1029,7 +1029,7 @@ namespace System.Management.Automation
             StringBuilder defaultParamsGetBound = new StringBuilder();
             foreach (string paramName in BoundDefaultParameters)
             {
-                defaultParamsGetBound.AppendFormat(CultureInfo.InvariantCulture, $" -{paramName}");
+                defaultParamsGetBound.Append(CultureInfo.InvariantCulture, $" -{paramName}");
             }
 
             string resourceString = ParameterBinderStrings.DefaultBindingErrorElaborationSingle;
