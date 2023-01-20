@@ -145,7 +145,7 @@ namespace Reporting
 
         private string LeftJustify(string str, int width)
         {
-            return String.Create($"{str,-" + width + "}");
+            return String.Format("{0,-" + width + "}", str);
         }
 
         public bool InLab => environment.GetEnvironmentVariable("PERFLAB_INLAB")?.Equals("1") ?? false;
