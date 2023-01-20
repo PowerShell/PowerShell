@@ -124,10 +124,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             Binding selectedItemBinding = new Binding("Value");
             comboBox.SetBinding(ComboBox.SelectedItemProperty, selectedItemBinding);
 
-            string automationId = string.Format(
-                    CultureInfo.CurrentCulture,
-                    "combox{0}",
-                    parameterViewModel.Name);
+            string automationId = string.Create(CultureInfo.CurrentCulture, $"combox{parameterViewModel.Name}");
 
             //// Add AutomationProperties.AutomationId for Ui Automation test.
             comboBox.SetValue(
@@ -164,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             multiControls.comboxParameter.SetBinding(ComboBox.TextProperty, valueBinding);
 
             // Add AutomationProperties.AutomationId for Ui Automation test.
-            multiControls.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, string.Format($"combox{parameterViewModel.Name}"));
+            multiControls.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, string.Create($"combox{parameterViewModel.Name}"));
 
             multiControls.comboxParameter.SetValue(
                 System.Windows.Automation.AutomationProperties.NameProperty,
