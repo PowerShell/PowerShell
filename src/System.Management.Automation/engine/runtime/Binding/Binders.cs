@@ -7577,8 +7577,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints != null ? _constraints.ToString() : string.Empty);
+            return string.Create(CultureInfo.InvariantCulture, $"PSCreateInstanceBinder: ver:{_version} args:{_callInfo.ArgumentCount} constraints:<{(_constraints != null ? _constraints : string.Empty)}>");
         }
 
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)

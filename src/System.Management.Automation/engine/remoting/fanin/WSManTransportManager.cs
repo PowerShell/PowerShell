@@ -202,8 +202,7 @@ namespace System.Management.Automation.Remoting.Client
                 Collection<PSToken> tokens = PSParser.Tokenize(errorMessage, out parserErrors);
                 if (parserErrors.Count > 0)
                 {
-                    tracer.WriteLine(string.Format(CultureInfo.InvariantCulture,
-                        "There were errors parsing string '{0}'", errorMessage);
+                    tracer.WriteLine(string.Create(CultureInfo.InvariantCulture, $"There were errors parsing string '{errorMessage}'");
                     return errorMessage;
                 }
 
@@ -1399,25 +1398,17 @@ namespace System.Management.Automation.Remoting.Client
             if (string.IsNullOrEmpty(connectionUri.Query))
             {
                 // if there is no query string already, create one..see RFC 3986
-                connectionStr = string.Format(CultureInfo.InvariantCulture,
-                    "{0}?PSVersion={1}{2}",
+                connectionStr = string.Create(CultureInfo.InvariantCulture, $"{connectionStr.TrimEnd('/')}?PSVersion={PSVersionInfo.PSVersion}{additionalUriSuffixString}");
                     // Trimming the last '/' as this will allow WSMan to
                     // properly apply URLPrefix.
                     // Ex: http://localhost?PSVersion=2.0 will be converted
                     // to http://localhost:<port>/<urlprefix>?PSVersion=2.0
                     // by WSMan
-                    connectionStr.TrimEnd('/'),
-                    PSVersionInfo.PSVersion,
-                    additionalUriSuffixString);
             }
             else
             {
                 // if there is already a query string, append using & .. see RFC 3986
-                connectionStr = string.Format(CultureInfo.InvariantCulture,
-                       "{0};PSVersion={1}{2}",
-                       connectionStr,
-                       PSVersionInfo.PSVersion,
-                       additionalUriSuffixString);
+                connectionStr = string.Create(CultureInfo.InvariantCulture, $"{connectionStr};PSVersion={PSVersionInfo.PSVersion}{additionalUriSuffixString}");
             }
 
             WSManNativeApi.BaseWSManAuthenticationCredentials authCredentials;

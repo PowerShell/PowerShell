@@ -821,8 +821,7 @@ namespace Microsoft.PowerShell.Commands
             string cmdName = cmdInfo.Name;
             if (!string.IsNullOrEmpty(cmdInfo.ModuleName))
             {
-                cmdName = string.Format(CultureInfo.InvariantCulture,
-                                        "{0}\\{1}", cmdInfo.ModuleName, cmdInfo.Name);
+                cmdName = string.Create(CultureInfo.InvariantCulture, $"{cmdInfo.ModuleName}\\{cmdInfo.Name}");
             }
 
             if (DoesCurrentRunspaceIncludeCoreHelpCmdlet())
