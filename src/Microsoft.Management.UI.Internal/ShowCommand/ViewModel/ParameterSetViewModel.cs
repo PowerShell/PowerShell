@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     if (((bool?)parameter.Value) == true)
                     {
-                        builder.AppendFormat($"-{parameter.Name} ");
+                        builder.Append($"-{parameter.Name} ");
                     }
 
                     continue;
