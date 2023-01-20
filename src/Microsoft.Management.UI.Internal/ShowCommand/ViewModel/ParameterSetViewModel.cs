@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "(", ")");
                 }
 
-                builder.AppendFormat($"-{parameter.Name} {parameterValueString} ");
+                builder.Append($"-{parameter.Name} {parameterValueString} ");
             }
 
             return builder.ToString().Trim();
