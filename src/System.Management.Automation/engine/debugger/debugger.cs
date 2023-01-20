@@ -5302,9 +5302,9 @@ namespace System.Management.Automation
             {
                 WriteLine(
                     lineNumber == invocationInfo.ScriptLineNumber ?
-                    string.Format(CultureInfo.CurrentCulture, "{0,5}:* {1}", lineNumber, _lines[lineNumber - 1])
+                    string.Create(CultureInfo.CurrentCulture, $"{lineNumber,5}:* { _lines[lineNumber - 1]}")
                     :
-                    string.Format(CultureInfo.CurrentCulture, "{0,5}:  {1}", lineNumber, _lines[lineNumber - 1]),
+                    string.Create(CultureInfo.CurrentCulture, $"{lineNumber,5}:  { _lines[lineNumber - 1]}"),
                     host,
                     output);
 

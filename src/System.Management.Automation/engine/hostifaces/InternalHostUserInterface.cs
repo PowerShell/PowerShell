@@ -927,7 +927,8 @@ namespace System.Management.Automation.Internal.Host
                         defaultStr = hotkeysAndPlainLabels[1, defaultChoice];
                     }
 
-                    defaultChoicesBuilder.Append(Globalization.CultureInfo.InvariantCulture, $"{prepend}{defaultStr}");
+                    defaultChoicesBuilder.Append(string.Format(Globalization.CultureInfo.InvariantCulture,
+                        "{0}{1}", prepend, defaultStr));
                     prepend = ",";
                 }
 

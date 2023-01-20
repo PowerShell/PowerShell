@@ -97,6 +97,7 @@ namespace System.Management.Automation.Interpreter
                 StartIndex, EndIndex,
                 HandlerStartIndex, HandlerEndIndex
             );
+            //return string.Create(CultureInfo.InvariantCulture, $"{(IsFault ? "fault" : "catch(" + ExceptionType.Name + ")")} [{StartIndex}-{EndIndex}] [{HandlerStartIndex}->{HandlerEndIndex}]");
         }
     }
 
@@ -231,11 +232,11 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
+                return string.Create(CultureInfo.InvariantCulture, $"{Index}: clear");
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
+                return string.Create(CultureInfo.InvariantCulture, $"{Index}: [{StartLine}-{EndLine}] '{FileName}'");
             }
         }
     }
