@@ -447,7 +447,7 @@ namespace System.Management.Automation.Language {
 
         protected override Expression VisitLambda<T>(Expression<T> node) {
             Out(
-                string.Create(CultureInfo.CurrentCulture, $"{".Lambda"} {GetLambdaName(node)}<{node.Type.ToString()}>")
+                string.Create(CultureInfo.CurrentCulture, $"{".Lambda"} {GetLambdaName(node)}<{node.Type}>")
             );
 
             if (_lambdas == null) {
