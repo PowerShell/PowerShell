@@ -14,7 +14,7 @@ namespace PSTests.Sequential
     public class RunspaceTests
     {
         private static readonly int count = 1;
-        private static readonly string script = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"get-command get-command");
+        private static readonly string script = string.Format($"get-command get-command");
 
         [Fact]
         public void TestRunspaceWithPipeline()

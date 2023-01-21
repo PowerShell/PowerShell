@@ -4704,7 +4704,7 @@ namespace System.Management.Automation
                     StringBuilder includeString = new StringBuilder();
                     foreach (string includeFilter in context.Include)
                     {
-                        includeString.Append(System.Globalization.CultureInfo.InvariantCulture, $"{includeFilter} ");
+                        includeString.Append($"{includeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
@@ -4716,7 +4716,7 @@ namespace System.Management.Automation
                     StringBuilder excludeString = new StringBuilder();
                     foreach (string excludeFilter in context.Exclude)
                     {
-                        excludeString.Append(System.Globalization.CultureInfo.InvariantCulture, $"{excludeFilter} ");
+                        excludeString.Append($"{excludeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
