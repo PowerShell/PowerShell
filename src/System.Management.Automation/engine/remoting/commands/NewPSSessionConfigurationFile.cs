@@ -1862,17 +1862,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string ConfigFragment(string key, string resourceString, string value, StreamWriter streamWriter, bool isExample)
         {
-            string nl = streamWriter.NewLine;
+            string nl = streamWriter.NewLine.ToString();
 
             if (isExample)
             {
-                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
-
-                // return string.Format(CultureInfo.InvariantCulture, $"# {resourceString}{nl}# {key:19} = {value}{nl}{nl}");
+                return string.Create(CultureInfo.InvariantCulture, $"# {resourceString}{nl}# {key:19} = {value}{nl}{nl}");
             }
-            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
-
-            // return string.Format(CultureInfo.InvariantCulture, $"# {resourceString}{nl}{key:19} = {value}{nl}{nl}");
+            
+            return string.Create(CultureInfo.InvariantCulture, $"# {resourceString}{nl}{key:19} = {value}{nl}{nl}");
         }
 
         /// <summary>
