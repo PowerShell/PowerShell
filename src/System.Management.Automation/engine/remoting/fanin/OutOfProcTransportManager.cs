@@ -75,7 +75,7 @@ namespace System.Management.Automation.Remoting
 
         internal static string CreateDataPacket(byte[] data, DataPriorityType streamType, Guid psGuid)
         {
-            string result = string.Create(CultureInfo.InvariantCulture, $"<{PS_OUT_OF_PROC_DATA_TAG} {PS_OUT_OF_PROC_STREAM_ATTRIBUTE}='{streamType.ToString()}' {PS_OUT_OF_PROC_PSGUID_ATTRIBUTE}='{psGuid.ToString()}'>{Convert.ToBase64String(data)}</{PS_OUT_OF_PROC_DATA_TAG}>");
+            string result = string.Create(CultureInfo.InvariantCulture, $"<{PS_OUT_OF_PROC_DATA_TAG} {PS_OUT_OF_PROC_STREAM_ATTRIBUTE}='{streamType}' {PS_OUT_OF_PROC_PSGUID_ATTRIBUTE}='{psGuid}'>{Convert.ToBase64String(data)}</{PS_OUT_OF_PROC_DATA_TAG}>");
 
             return result;
         }
