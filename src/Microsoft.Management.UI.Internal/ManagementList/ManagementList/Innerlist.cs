@@ -596,7 +596,7 @@ namespace Microsoft.Management.UI.Internal
                     propertyValue = string.Empty;
                 }
 
-                entryText.AppendFormat(CultureInfo.CurrentCulture, "{0}\t", propertyValue);
+                entryText.Append(CultureInfo.CurrentCulture, $"{propertyValue}\t");
             }
 
             return entryText.ToString();

@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (commandName.Contains(' '))
             {
-                builder.AppendFormat("& \"{0}\"", commandName);
+                builder.Append($"& \"{commandName}\"");
             }
             else
             {

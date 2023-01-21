@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     if (((bool?)parameter.Value) == true)
                     {
-                        builder.AppendFormat("-{0} ", parameter.Name);
+                        builder.Append($"-{parameter.Name} ");
                     }
 
                     continue;
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "(", ")");
                 }
 
-                builder.AppendFormat("-{0} {1} ", parameter.Name, parameterValueString);
+                builder.Append($"-{parameter.Name} {parameterValueString} ");
             }
 
             return builder.ToString().Trim();
