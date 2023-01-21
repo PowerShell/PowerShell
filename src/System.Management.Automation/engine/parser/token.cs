@@ -1271,7 +1271,7 @@ namespace System.Management.Automation.Language
 
         internal virtual string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", StringUtil.Padding(indent), _kind, Text);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{_kind}: <{Text}>");
         }
     }
 
