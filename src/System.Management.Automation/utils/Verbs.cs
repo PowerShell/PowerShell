@@ -387,9 +387,9 @@ namespace System.Management.Automation
         /// </summary>
         public const string Invoke = "Invoke";
 
-        ///<summary>
+        /// <summary>
         /// Record details about an item in a public store or publishing location
-        ///</summary>
+        /// </summary>
         public const string Register = "Register";
 
         /// <summary>
@@ -397,9 +397,9 @@ namespace System.Management.Automation
         /// </summary>
         public const string Request = "Request";
 
-        ///<summary>
+        /// <summary>
         /// Terminate existing activity and begin it again (with the same configuration)
-        ///</summary>
+        /// </summary>
         public const string Restart = "Restart";
 
         /// <summary>
@@ -412,9 +412,9 @@ namespace System.Management.Automation
         /// </summary>
         public const string Start = "Start";
 
-        ///<summary>
+        /// <summary>
         ///Discontinue or cease an activity
-        ///</summary>
+        /// </summary>
         public const string Stop = "Stop";
 
         /// <summary>
@@ -432,14 +432,14 @@ namespace System.Management.Automation
         /// </summary>
         public const string Uninstall = "Uninstall";
 
-        ///<summary>
+        /// <summary>
         /// Remove details of an item from a public store or publishing location
-        ///</summary>
+        /// </summary>
         public const string Unregister = "Unregister";
 
-        ///<summary>
+        /// <summary>
         /// Suspend execution until an expected event
-        ///</summary>
+        /// </summary>
         public const string Wait = "Wait";
     }
 

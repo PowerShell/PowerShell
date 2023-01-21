@@ -1210,10 +1210,10 @@ namespace System.Management.Automation
         /// After file redirection is done, we need to call 'DoComplete' on the pipeline processor,
         /// so that 'EndProcessing' of Out-File can be called to wrap up the file write operation.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// 'StartStepping' is called after creating the pipeline processor.
         /// 'Step' is called when an object is added to the pipe created with the pipeline processor.
-        /// </remark>
+        /// </remarks>
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
@@ -2777,10 +2777,8 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(enumerator != null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+
+            ArgumentNullException.ThrowIfNull(expression);
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
 

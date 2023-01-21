@@ -600,6 +600,24 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
         }
+
+        It 'New-Item can create hardlink with relative path' {
+            try {
+                Push-Location $TestDrive
+                1 > 1.txt
+                New-Item -ItemType HardLink -Path 2.txt -Target 1.txt -ErrorAction Stop
+                $hl = Get-Item -Path .\2.txt -ErrorAction Stop
+                $hl.LinkType | Should -BeExactly "HardLink"
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        It 'New-Item will fail to forcibly create hardlink to itself' {
+            $i = New-Item -ItemType File -Path "$TestDrive\file.txt" -Force -ErrorAction Ignore
+            { New-Item -ItemType HardLink -Path $i -Target $i -Force -ErrorAction Stop } | Should -Throw -ErrorId "TargetIsSameAsLink,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
     }
 
     Context "Get-ChildItem and symbolic links" {

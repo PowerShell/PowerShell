@@ -230,7 +230,7 @@ namespace System.Management.Automation
         ///
         /// Normally displayed beside the progress bar, as "N seconds remaining."
         /// </summary>
-        ///<remarks>
+        /// <remarks>
         /// A value less than 0 means "don't display a time remaining."
         /// </remarks>
         public
@@ -512,7 +512,7 @@ namespace System.Management.Automation
     public
     enum ProgressRecordType
     {
-        ///<summary>
+        /// <summary>
         /// Operation just started or is not yet complete.
         /// </summary>
         /// <remarks>

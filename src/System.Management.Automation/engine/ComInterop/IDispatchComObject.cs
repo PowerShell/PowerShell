@@ -99,7 +99,7 @@ namespace System.Management.Automation.ComInterop
                 typeName = "IDispatch";
             }
 
-            return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
+            return $"{RuntimeCallableWrapper} ({typeName})";
         }
 
         public ComTypeDesc ComTypeDesc
@@ -222,7 +222,7 @@ namespace System.Management.Automation.ComInterop
                 return false;
             }
 
-            throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+            throw Error.CouldNotGetDispId(name, string.Create(CultureInfo.InvariantCulture, $"0x{hresult:X})"));
         }
 
         internal bool TryGetPropertySetterExplicit(string name, out ComMethodDesc method, Type limitType, bool holdsNull)
@@ -258,7 +258,7 @@ namespace System.Management.Automation.ComInterop
                 return false;
             }
 
-            throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+            throw Error.CouldNotGetDispId(name, string.Create(CultureInfo.InvariantCulture, $"0x{hresult:X})"));
         }
 
         internal override IList<string> GetMemberNames(bool dataOnly)

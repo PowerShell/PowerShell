@@ -1086,7 +1086,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
+            return string.Create(CultureInfo.InvariantCulture, $"{moduleName}\\{moduleVersion}\\{className}\\{resourceName}");
         }
 
         /// <summary>
@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new();
-            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            var moduleQualifiedName = string.Create(CultureInfo.InvariantCulture, $"{module.Name}\\{module.Version}");
             foreach (var dscClassCacheEntry in ClassCache)
             {
                 if (dscClassCacheEntry.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
@@ -1601,8 +1601,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         /// <summary>
         /// Load the default system CIM classes and create the corresponding keywords.
-        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         /// </summary>
+        /// <param name="functionsToDefine">A dictionary to add the defined functions to, may be null.</param>
         public static void LoadDefaultCimKeywords(Dictionary<string, ScriptBlock> functionsToDefine)
         {
             LoadDefaultCimKeywords(functionsToDefine, null, null, false);
@@ -2019,7 +2019,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             string moduleString = moduleToImport.Version == null
                                 ? moduleToImport.Name
-                                : string.Format(CultureInfo.CurrentCulture, "<{0}, {1}>", moduleToImport.Name, moduleToImport.Version);
+                                : string.Create(CultureInfo.CurrentCulture, $"<{moduleToImport.Name}, {moduleToImport.Version}>");
 
                             errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse",
                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
@@ -2339,7 +2339,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static void GenerateMofForAst(TypeDefinitionAst typeAst, StringBuilder sb, List<object> embeddedInstanceTypes)
         {
             var className = typeAst.Name;
-            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
+            sb.Append(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
 
             if (typeAst.Attributes.Any(static a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
             {
@@ -2912,19 +2912,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
+                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
                         needComma = true;
                     }
 
                     if (dscProperty.Mandatory)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
+                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}required");
                         needComma = true;
                     }
 
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
+                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
                         needComma = true;
                     }
 
@@ -2936,13 +2936,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new(", Values{");
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
+                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
-                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        sb.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
+                        sbValues.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
                         valueMapComma = true;
                     }
 
@@ -2961,11 +2961,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
+                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
+                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
                     needComma = true;
                 }
 
@@ -2973,7 +2973,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
+                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
                     needComma = true;
                 }
 
@@ -2981,7 +2981,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else if (embeddedInstanceType != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
+                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}EmbeddedInstance(\"{embeddedInstanceType}\")");
             }
 
             sb.Append(']');
@@ -3047,7 +3047,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             var className = type.Name;
             // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
-            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
+            sb.Append(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
 
             if (type.GetCustomAttributes<DscResourceAttribute>().Any())
             {
@@ -3250,14 +3250,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 //
                 try
                 {
-                    var dscResourceDirectories = Directory.GetDirectories(dscResourcesPath);
-                    foreach (var directory in dscResourceDirectories)
+                    foreach (var directory in Directory.EnumerateDirectories(dscResourcesPath))
                     {
-                        var schemaFiles = Directory.GetFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
-                        if (schemaFiles.Length > 0)
+                        IEnumerable<string> schemaFiles = Directory.EnumerateFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
+                        string tempSchemaFilepath = schemaFiles.FirstOrDefault();
+
+                        Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
+                        
+                        if (tempSchemaFilepath is not null)
                         {
-                            Debug.Assert(schemaFiles.Length == 1, "A valid DSCResource module can have only one schema mof file");
-                            var tempSchemaFilepath = schemaFiles[0];
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
                             if (classes != null)
                             {

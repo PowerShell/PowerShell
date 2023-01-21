@@ -278,7 +278,9 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _parameterNames = value ?? throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
+
+                _parameterNames = value;
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
@@ -303,10 +305,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
                 List<PSTypeName> filteredParameterTypes = new List<PSTypeName>(value.Length);
@@ -615,12 +614,7 @@ namespace Microsoft.PowerShell.Commands
                 switch (command)
                 {
                     case ExternalScriptInfo externalScript:
-                        replacedSyntax = string.Format(
-                            "{0} (alias) -> {1}{2}{3}",
-                            aliasName,
-                            string.Format("{0}{1}", externalScript.Path, Environment.NewLine),
-                            Environment.NewLine,
-                            command.Syntax.Replace(command.Name, aliasName));
+                        replacedSyntax = string.Create(CultureInfo.InvariantCulture, $"{aliasName} (alias) -> {externalScript.Path}{Environment.NewLine}{Environment.NewLine}{command.Syntax.Replace(command.Name, aliasName)}");
                         break;
                     case ApplicationInfo app:
                         replacedSyntax = app.Path;
@@ -632,12 +626,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            replacedSyntax = string.Format(
-                                "{0} (alias) -> {1}{2}{3}",
-                                aliasName,
-                                command.Name,
-                                Environment.NewLine,
-                                command.Syntax.Replace(command.Name, aliasName));
+                            replacedSyntax = string.Create(CultureInfo.InvariantCulture, $"{aliasName} (alias) -> {command.Name}{Environment.NewLine}{command.Syntax.Replace(command.Name, aliasName)}");
                         }
 
                         break;

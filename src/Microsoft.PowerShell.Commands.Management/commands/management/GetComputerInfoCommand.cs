@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 var halPath = CIMHelper.EscapePath(System.IO.Path.Combine(systemDirectory, "hal.dll"));
-                var query = string.Format("SELECT * FROM CIM_DataFile Where Name='{0}'", halPath);
+                var query = string.Create(CultureInfo.InvariantCulture, $"SELECT * FROM CIM_DataFile Where Name='{halPath}'");
                 var instance = session.QueryFirstInstance(query);
 
                 if (instance != null)
@@ -3325,9 +3325,9 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum BootOptionAction
     {
-        //  <summary>
-        //  This value is reserved
-        //  </summary>
+        // <summary>
+        // This value is reserved
+        // </summary>
         // Reserved = 0,
 
         /// <summary>

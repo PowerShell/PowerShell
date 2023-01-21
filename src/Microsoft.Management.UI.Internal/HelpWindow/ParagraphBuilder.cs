@@ -43,10 +43,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="paragraph">Paragraph we will be adding lines to in BuildParagraph.</param>
         internal ParagraphBuilder(Paragraph paragraph)
         {
-            if (paragraph == null)
-            {
-                throw new ArgumentNullException("paragraph");
-            }
+            ArgumentNullException.ThrowIfNull(paragraph);
 
             this.paragraph = paragraph;
             this.boldSpans = new List<TextSpan>();
@@ -185,10 +182,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="bold">True if the text should be bold.</param>
         internal void AddText(string str, bool bold)
         {
-            if (str == null)
-            {
-                throw new ArgumentNullException("str");
-            }
+            ArgumentNullException.ThrowIfNull(str);
 
             if (str.Length == 0)
             {

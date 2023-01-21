@@ -35,10 +35,7 @@ namespace System.Management.Automation.ComInterop
         [System.Diagnostics.Conditional("DEBUG")]
         internal static void NotNull(object value, string paramName)
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            ArgumentNullException.ThrowIfNull(value, paramName);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

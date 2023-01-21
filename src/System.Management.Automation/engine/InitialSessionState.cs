@@ -980,10 +980,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public InitialSessionStateEntryCollection(IEnumerable<T> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             _internalCollection = new Collection<T>();
 
@@ -1154,10 +1151,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="type">The type of object to remove, can be null to remove any type.</param>
         public void Remove(string name, object type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             lock (_syncObject)
             {
@@ -1192,10 +1186,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="item">The item to add...</param>
         public void Add(T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             lock (_syncObject)
             {
@@ -1209,10 +1200,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public void Add(IEnumerable<T> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             lock (_syncObject)
             {
@@ -1870,10 +1858,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public void ImportPSModule(params string[] name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             foreach (string n in name)
             {
@@ -1898,10 +1883,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         public void ImportPSModule(IEnumerable<ModuleSpecification> modules)
         {
-            if (modules == null)
-            {
-                throw new ArgumentNullException(nameof(modules));
-            }
+            ArgumentNullException.ThrowIfNull(modules);
 
             foreach (var moduleSpecification in modules)
             {
@@ -1929,10 +1911,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal void ImportPSCoreModule(string[] name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             foreach (string n in name)
             {
@@ -3759,11 +3738,7 @@ namespace System.Management.Automation.Runspaces
 
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
-            if (psSnapInInfo == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(psSnapInInfo);
 
             // See if the snapin is already loaded. If has been then there will be an entry in the
             // Assemblies list for it already...
@@ -3939,11 +3914,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void ImportCmdletsFromAssembly(Assembly assembly, PSModuleInfo module)
         {
-            if (assembly == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
-                throw e;
-            }
+            ArgumentNullException.ThrowIfNull(assembly);
 
             string assemblyPath = assembly.Location;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(
@@ -4931,10 +4902,8 @@ end {
             out string helpFile)
         {
             helpFile = null;
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+
+            ArgumentNullException.ThrowIfNull(assembly);
 
             cmdlets = null;
             aliases = null;
