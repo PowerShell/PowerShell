@@ -3959,12 +3959,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                                 "PSGetIndexBinder indexCount={0}{1}{2} ver:{3}",
-                                 this.CallInfo.ArgumentCount,
-                                 _allowSlicing ? string.Empty : " slicing disallowed",
-                                 _constraints == null ? string.Empty : " constraints: " + _constraints,
-                                 _version);
+            return string.Create(CultureInfo.InvariantCulture, $"PSGetIndexBinder indexCount={this.CallInfo.ArgumentCount}{(_allowSlicing ? string.Empty : " slicing disallowed")}{(_constraints == null ? string.Empty : " constraints: " + _constraints)} ver:{_version}");
         }
 
         internal static void InvalidateCache()
@@ -6579,9 +6574,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "PSInvokeMember: {0}{1}{2} ver:{3} args:{4} constraints:<{5}>", _static ? "static " : string.Empty, _propertySetter ? "propset " : string.Empty,
-                Name, _getMemberBinder._version, CallInfo.ArgumentCount, _invocationConstraints != null ? _invocationConstraints.ToString() : string.Empty);
+            return string.Create(CultureInfo.InvariantCulture, $"PSInvokeMember: {(_static ? "static " : string.Empty)}{(_propertySetter ? "propset " : string.Empty)}{Name} ver:{_getMemberBinder._version} args:{CallInfo.ArgumentCount} constraints:<{(_invocationConstraints != null ? _invocationConstraints.ToString() : string.Empty)}>");
         }
 
         public override DynamicMetaObject FallbackInvokeMember(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
