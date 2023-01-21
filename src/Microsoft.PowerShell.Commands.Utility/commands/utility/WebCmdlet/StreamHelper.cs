@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isInitialized = false;
         private readonly Cmdlet _ownerCmdlet;
 
-        #endregion
+        #endregion Data
 
         #region Constructors
         /// <summary>
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
         }
-        #endregion
+        #endregion Constructors
 
         /// <summary>
         /// </summary>
@@ -411,10 +411,15 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaexp = new(
+        private static readonly Regex s_metaRegex = new(
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
             );
+        
+        private static readonly Regex s_xmlRegex = new(
+                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
+            ); 
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
@@ -429,27 +434,31 @@ namespace Microsoft.PowerShell.Commands
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
             {
-                do
+                // We only look within the first 1k characters as the meta element and
+                // the xml declaration are at the start of the document
+                string substring = content.Substring(0, Math.Min(content.Length, 1024));
+
+                // Check for a charset attribute on the meta element to override the default
+                Match match = s_metaRegex.Match(substring);
+                
+                // Check for a encoding attribute on the xml declaration to override the default
+                if (!match.Success)
                 {
-                    // Check for a charset attribute on the meta element to override the default
-                    // we only look within the first 1k characters as the meta tag is in the head
-                    // tag which is at the start of the document
-                    Match match = s_metaexp.Match(content.Substring(0, Math.Min(content.Length, 1024)));
-                    if (match.Success)
+                    match = s_xmlRegex.Match(substring);
+                }
+                
+                if (match.Success)
+                {
+                    Encoding localEncoding = null;
+                    string characterSet = match.Groups["charset"].Value;
+
+                    if (TryGetEncoding(characterSet, out localEncoding))
                     {
-                        Encoding localEncoding = null;
-                        string characterSet = match.Groups["charset"].Value;
-
-                        if (TryGetEncoding(characterSet, out localEncoding))
-                        {
-                            stream.Seek(0, SeekOrigin.Begin);
-                            content = StreamToString(stream, localEncoding);
-
-                            // Report the encoding used.
-                            encoding = localEncoding;
-                        }
+                        stream.Seek(0, SeekOrigin.Begin);
+                        content = StreamToString(stream, localEncoding);
+                        encoding = localEncoding;
                     }
-                } while (false);
+                }
             }
 
             return content;
