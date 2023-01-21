@@ -921,7 +921,6 @@ namespace Microsoft.PowerShell.Commands
         // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            //HttpClientHandler handler = new();
             SocketsHttpHandler handler = new();
 
             if (UnixSocket is not null)
@@ -943,7 +942,6 @@ namespace Microsoft.PowerShell.Commands
             if (WebSession.UseDefaultCredentials)
             {
                 // the UseDefaultCredentials flag overrides other supplied credentials
-                //handler.UseDefaultCredentials = true;
                 handler.Credentials = CredentialCache.DefaultCredentials;
             }
             else if (WebSession.Credentials is not null)
@@ -962,7 +960,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (WebSession.Certificates is not null)
             {
-                //handler.ClientCertificates.AddRange(WebSession.Certificates);
                 handler.SslOptions.ClientCertificates.AddRange(WebSession.Certificates);
             }
 
@@ -983,7 +980,6 @@ namespace Microsoft.PowerShell.Commands
                 handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
             }
 
-            //handler.SslProtocols = (SslProtocols)SslProtocol;
             handler.SslOptions.EnabledSslProtocols = (SslProtocols)SslProtocol;
 
             HttpClient httpClient = new(handler);
