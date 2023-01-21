@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (originalHelpObject.TypeNames.Count == 0)
             {
-                string typeToAdd = string.Format(CultureInfo.InvariantCulture, "HelpInfo#{0}", tokenToAdd);
+                string typeToAdd = string.Create(CultureInfo.InvariantCulture, $"HelpInfo#{tokenToAdd}");
                 objectToReturn.TypeNames.Add(typeToAdd);
             }
             else
@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    string typeToAdd = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", typeName, tokenToAdd);
+                    string typeToAdd = string.Create(CultureInfo.InvariantCulture, $"{typeName}#{tokenToAdd}");
                     s_tracer.WriteLine("Adding type {0}", typeToAdd);
                     objectToReturn.TypeNames.Add(typeToAdd);
                 }
