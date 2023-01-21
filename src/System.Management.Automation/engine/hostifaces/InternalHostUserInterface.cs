@@ -935,8 +935,7 @@ namespace System.Management.Automation.Internal.Host
 
                 if (defaultChoiceKeys.Count == 1)
                 {
-                    defaultPrompt = StringUtil.Format(InternalHostUserInterfaceStrings.DefaultChoice,
-                        defaultChoicesStr);
+                    defaultPrompt = StringUtil.Format(InternalHostUserInterfaceStrings.DefaultChoice, defaultChoicesStr);
                 }
                 else
                 {
