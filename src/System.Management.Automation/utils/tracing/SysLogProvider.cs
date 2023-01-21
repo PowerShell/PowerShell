@@ -303,9 +303,7 @@ namespace System.Management.Automation.Tracing
             Activity = activity;
 
             // NOTE: always log
-            string message = string.Format(CultureInfo.InvariantCulture,
-                                           "({0:X}:{1:X}:{2:X}) [Activity] {3}",
-                                           PSVersionInfo.GitCommitId, threadId, PSChannel.Operational, activity.ToString("B"));
+            string message = string.Create(CultureInfo.InvariantCulture, $"({PSVersionInfo.GitCommitId:X}:{threadId:X}:{PSChannel.Operational:X}) [Activity] {activity.ToString("B")}");
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
