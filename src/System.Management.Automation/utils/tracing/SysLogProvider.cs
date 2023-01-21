@@ -288,11 +288,7 @@ namespace System.Management.Automation.Tracing
         {
             // NOTE: always log
             int threadId = Environment.CurrentManagedThreadId;
-            string message = string.Format(CultureInfo.InvariantCulture,
-                                           "({0}:{1:X}:{2:X}) [Transfer]:{3} {4}",
-                                           PSVersionInfo.GitCommitId, threadId, PSChannel.Operational,
-                                           parentActivityId.ToString("B"),
-                                           Activity.ToString("B"));
+            string message = string.Create(CultureInfo.InvariantCulture, $"({PSVersionInfo.GitCommitId}:{threadId:X}:{PSChannel.Operational:X}) [Transfer]:{parentActivityId.ToString("B")} {Activity.ToString("B")}");
 
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
@@ -333,9 +329,7 @@ namespace System.Management.Automation.Tracing
                 sb.Clear();
 
                 // add the message preamble
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                                "({0}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ",
-                                PSVersionInfo.GitCommitId, threadId, channel, eventId, task, opcode, level);
+                sb.Append(CultureInfo.InvariantCulture, $"({PSVersionInfo.GitCommitId}:{threadId:X}:{channel:X}) [{eventId:G}:{task:G}.{opcode:G}.{level:G}] ");
 
                 // add the message
                 GetEventMessage(sb, eventId, args);

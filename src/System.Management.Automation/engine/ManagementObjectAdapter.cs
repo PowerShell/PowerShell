@@ -1161,9 +1161,7 @@ namespace System.Management.Automation
                                     PSLevel.Informational,
                                     PSTask.None,
                                     PSKeyword.UseAlwaysOperational,
-                                    string.Format(CultureInfo.InvariantCulture,
-                                                  "ManagementBaseObjectAdapter::DoGetProperty::PropertyName:{0}, Exception:{1}, StackTrace:{2}",
-                                                  propertyName, e.Message, e.StackTrace),
+                                    string.Create(CultureInfo.InvariantCulture, $"ManagementBaseObjectAdapter::DoGetProperty::PropertyName:{propertyName}, Exception:{e.Message}, StackTrace:{e.StackTrace}"),
                                     string.Empty,
                                     string.Empty);
                 // ignore the exception.

@@ -2589,15 +2589,12 @@ function Get-PSImplicitRemotingSession
                     CodeGeneration.EscapeSingleQuotedStringContent(connectionInfo.AppName),
                     connectionInfo.UseDefaultWSManPort ?
                         string.Empty :
-                        string.Format(CultureInfo.InvariantCulture,
-                            "-Port {0} ", connectionInfo.Port),
+                        string.Create(CultureInfo.InvariantCulture, $"-Port {connectionInfo.Port} "),
                     isSSLSpecified ? "-useSSL" : string.Empty);
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture,
-                    "-connectionUri '{0}'",
-                    CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString()));
+                return string.Create(CultureInfo.InvariantCulture, $"-connectionUri '{CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString())}'");
             }
         }
 

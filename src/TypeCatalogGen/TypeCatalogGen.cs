@@ -257,9 +257,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
 
             // Convert bytes to hex format strings in lower case.
             string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes).Replace("-", string.Empty).ToLowerInvariant();
-            string strongAssemblyName = string.Format(CultureInfo.InvariantCulture,
-                                                      "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
-                                                      asmName, asmVersion, asmCulture, publicKeyTokenString);
+            string strongAssemblyName = string.Create(CultureInfo.InvariantCulture, $"{asmName}, Version={asmVersion}}, Culture={asmCulture}, PublicKeyToken={publicKeyTokenString}");
 
             return strongAssemblyName;
         }
