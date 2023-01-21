@@ -71,7 +71,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+            return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0},{1}", Width, Height);
+            return string.Create(CultureInfo.InvariantCulture, $"{Width},{Height}");
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", VirtualKeyCode, Character, ControlKeyState, KeyDown);
+            return string.Create(CultureInfo.InvariantCulture, $"{VirtualKeyCode},{Character},{ControlKeyState},{KeyDown}");
         }
         /// <summary>
         /// Overrides <see cref="System.Object.Equals(object)"/>
@@ -796,7 +796,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0},{1} ; {2},{3}", Left, Top, Right, Bottom);
+            return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top} ; {Right},{Bottom}");
         }
 
         /// <summary>
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation.Host
         string
         ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "'{0}' {1} {2} {3}", Character, ForegroundColor, BackgroundColor, BufferCellType);
+            return string.Create(CultureInfo.InvariantCulture, $"'{Character}' {ForegroundColor} {BackgroundColor} {BufferCellType}");
         }
 
         /// <summary>
