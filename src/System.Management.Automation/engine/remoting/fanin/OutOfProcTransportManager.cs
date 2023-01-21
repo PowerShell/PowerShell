@@ -124,7 +124,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static string CreatePSGuidPacket(string element, Guid psGuid)
         {
-            string result = string.Format(CultureInfo.InvariantCulture, $"<{element} {PS_OUT_OF_PROC_PSGUID_ATTRIBUTE}='{psGuid.ToString()}' />");
+            string result = string.Create(CultureInfo.InvariantCulture, $"<{element} {PS_OUT_OF_PROC_PSGUID_ATTRIBUTE}='{psGuid}' />");
 
             return result;
         }
