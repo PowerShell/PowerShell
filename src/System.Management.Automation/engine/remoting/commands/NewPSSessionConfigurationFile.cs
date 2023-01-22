@@ -1862,14 +1862,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string ConfigFragment(string key, string resourceString, string value, StreamWriter streamWriter, bool isExample)
         {
-            string nl = streamWriter.NewLine.ToString();
+            string nl = streamWriter.NewLine;
 
             if (isExample)
             {
-                return string.Create(CultureInfo.InvariantCulture, $"# {resourceString}{nl}# {key:19} = {value}{nl}{nl}");
+                return string.Format(CultureInfo.InvariantCulture, $"# {resourceString}{nl}# {key:19} = {value}{nl}{nl}");
             }
             
-            return string.Create(CultureInfo.InvariantCulture, $"# {resourceString}{nl}{key:19} = {value}{nl}{nl}");
+            return string.Format(CultureInfo.InvariantCulture, $"# {resourceString}{nl}{key:19} = {value}{nl}{nl}");
         }
 
         /// <summary>
@@ -1880,7 +1880,10 @@ namespace Microsoft.PowerShell.Commands
         internal static string QuoteName(object name)
         {
             if (name == null)
+            {
                 return "''";
+            }
+            
             return "'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(name.ToString()) + "'";
         }
 
