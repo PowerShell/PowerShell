@@ -887,13 +887,13 @@ namespace Microsoft.PowerShell.Commands
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
             string nl = streamWriter.NewLine;
-            return string.Format(CultureInfo.InvariantCulture, $"{_indent}# {resourceString}{nl}{_indent}{key:19} = {value}{nl}{nl}");
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}", _indent, resourceString, nl, key, value);
         }
 
         private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
             string nl = streamWriter.NewLine;
-            return string.Format(CultureInfo.InvariantCulture, $"{_indent}# {resourceString}{nl}{_indent}# {key:19} = {value}{nl}{nl}");
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}", _indent, resourceString, nl, key, value);
         }
 
         private static string ManifestComment(string insert, StreamWriter streamWriter)
@@ -903,8 +903,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 insert = " " + insert;
             }
-
-            return string.Format(CultureInfo.InvariantCulture, $"#{insert}{streamWriter.NewLine}");
+            
+            return string.Format(CultureInfo.InvariantCulture, "#{0}{1}", insert, streamWriter.NewLine);
         }
 
         /// <summary>

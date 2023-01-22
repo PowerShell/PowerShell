@@ -1866,10 +1866,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (isExample)
             {
-                return string.Format(CultureInfo.InvariantCulture, $"# {resourceString}{nl}# {key:19} = {value}{nl}{nl}");
+                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{1}{1}", resourceString, nl, key, value);
             }
-            
-            return string.Format(CultureInfo.InvariantCulture, $"# {resourceString}{nl}{key:19} = {value}{nl}{nl}");
+
+            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{1}{1}", resourceString, nl, key, value);
         }
 
         /// <summary>
@@ -1883,7 +1883,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return "''";
             }
-            
+
             return "'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(name.ToString()) + "'";
         }
 
