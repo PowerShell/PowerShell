@@ -1232,6 +1232,11 @@ CommonCommandParameters.cs
 preview.6.22352.1
 v2.2.6
 ResultsComparer
+pre-defined
+System.Runtime.CompilerServices.Unsafe
+TabExpansion
+PSv2
+System.Data.SqlClient
  - CHANGELOG.md
 aavdberg
 asrosent
