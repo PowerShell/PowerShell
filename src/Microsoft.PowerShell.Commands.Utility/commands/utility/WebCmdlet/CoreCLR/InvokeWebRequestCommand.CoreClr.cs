@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
@@ -60,20 +59,8 @@ namespace Microsoft.PowerShell.Commands
                 // Check if OutFile is a folder
                 if (Directory.Exists(OutFile))
                 {
-                    if (response.Headers.TryGetValues(HttpKnownHeaderNames.ContentDisposition, out IEnumerable<string> contentDisposition)) 
-                    {
-                        IEnumerator<string> enumerator = contentDisposition.GetEnumerator();
-                        if (enumerator.MoveNext())
-                        {
-                            // Get file name from Content-Disposition header if present
-                            OutFile = Path.Combine(OutFile, Path.GetFileName((string)enumerator.Current));
-                        }
-                    }
-                    else
-                    {
-                        // Get file name from last segment of Uri
-                        OutFile = Path.Combine(OutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
-                    }
+                    // Get file name from last segment of Uri
+                    OutFile = Path.Combine(OutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
                 }
 
                 StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
