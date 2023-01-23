@@ -468,11 +468,7 @@ namespace System.Management.Automation.Remoting
                     _remoteSession.ExecuteConnect(inputData, out outputData);
 
                     // construct Xml to send back
-                    string responseData = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                                    "<{0} xmlns=\"{1}\">{2}</{0}>",
-                                    WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
-                                    WSManNativeApi.PS_XML_NAMESPACE,
-                                    Convert.ToBase64String(outputData));
+                    string responseData = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"<{WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG} xmlns=\"{WSManNativeApi.PS_XML_NAMESPACE}\">{Convert.ToBase64String(outputData)}</{WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG}>");
 
                     // TODO: currently using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
                     // that is currently internal.

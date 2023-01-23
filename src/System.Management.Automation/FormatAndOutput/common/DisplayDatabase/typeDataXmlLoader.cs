@@ -436,10 +436,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ViewDefinition view = LoadViewFromObjectModel(typeDefinition.TypeNames, formatView, viewIndex++);
                 if (view != null)
                 {
-                    ReportTrace(string.Format(CultureInfo.InvariantCulture,
-                        "{0} view {1} is loaded from the 'FormatViewDefinition' at index {2} in 'ExtendedTypeDefinition' with type name {3}",
-                        ControlBase.GetControlShapeName(view.mainControl),
-                        view.name, viewIndex - 1, typeDefinition.TypeName));
+                    ReportTrace(string.Create(CultureInfo.InvariantCulture, $"{ControlBase.GetControlShapeName(view.mainControl)} view {view.name} is loaded from the 'FormatViewDefinition' at index {viewIndex - 1} in 'ExtendedTypeDefinition' with type name {typeDefinition.TypeName}"));
 
                     // we are fine, add the view to the list
                     db.viewDefinitionsSection.viewDefinitionList.Add(view);
