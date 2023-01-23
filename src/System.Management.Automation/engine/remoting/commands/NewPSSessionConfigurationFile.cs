@@ -1866,10 +1866,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (isExample)
             {
-                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{1}{1}", resourceString, nl, key, value);
+                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{1}{1}", resourceString, nl, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
         }
 
         /// <summary>
