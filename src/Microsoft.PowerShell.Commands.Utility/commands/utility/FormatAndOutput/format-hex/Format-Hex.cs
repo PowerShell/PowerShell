@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets count of bytes to read from the input stream.
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Random _idGenerator = new();
 
         private static string GetGroupLabel(Type inputType)
-            => string.Format("{0} ({1}) <{2:X8}>", inputType.Name, inputType.FullName, _idGenerator.Next());
+            => string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{inputType.Name} ({inputType.FullName}) <{_idGenerator.Next():X8}>");
 
         private void FlushInputBuffer()
         {

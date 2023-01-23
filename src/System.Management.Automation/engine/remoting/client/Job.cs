@@ -633,10 +633,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_childJobs == null)
-                        {
-                            _childJobs = new List<Job>();
-                        }
+                        _childJobs ??= new List<Job>();
                     }
                 }
 
@@ -644,7 +641,7 @@ namespace System.Management.Automation
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Success status of the command execution.
         /// </summary>
         public abstract string StatusMessage { get; }
@@ -1451,10 +1448,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_finished != null)
-                        {
-                            _finished.Set();
-                        }
+                        _finished?.Set();
                     }
                 }
 #pragma warning restore 56500
@@ -3313,8 +3307,7 @@ namespace System.Management.Automation
                     errorId = "InvalidSessionState";
                     if (!string.IsNullOrEmpty(failureException.Source))
                     {
-                        errorId = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                            "{0},{1}", errorId, failureException.Source);
+                        errorId = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{errorId},{failureException.Source}");
                     }
                 }
 
@@ -3371,13 +3364,10 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (failureException == null)
-                {
-                    failureException = new RuntimeException(
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
-                            runspace.RunspaceStateInfo.State));
-                }
+                failureException ??= new RuntimeException(
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
+                        runspace.RunspaceStateInfo.State));
 
                 failureErrorRecord = new ErrorRecord(failureException, targetObject,
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
@@ -4080,10 +4070,7 @@ namespace System.Management.Automation
         internal void CheckStateAndRaiseStopEvent()
         {
             RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
-            {
-                remoteDebugger.CheckStateAndRaiseStopEvent();
-            }
+            remoteDebugger?.CheckStateAndRaiseStopEvent();
         }
 
         /// <summary>
@@ -4131,13 +4118,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static void RestoreRemoteOutput(Pipeline runningCmd)
-        {
-            if (runningCmd != null)
-            {
-                runningCmd.ResumeIncomingData();
-            }
-        }
+        private static void RestoreRemoteOutput(Pipeline runningCmd) => runningCmd?.ResumeIncomingData();
 
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {

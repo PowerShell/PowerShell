@@ -275,10 +275,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!string.IsNullOrEmpty(currentAppDomainName))
                     {
-                        if (appDomainNames == null)
-                        {
-                            appDomainNames = new List<string>();
-                        }
+                        appDomainNames ??= new List<string>();
 
                         appDomainNames.Add(currentAppDomainName.ToLowerInvariant());
                     }

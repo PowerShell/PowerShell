@@ -528,18 +528,18 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _includeUserName = false;
 
-        ///<summary>
+        /// <summary>
         /// To display the modules of a process.
-        ///</summary>
+        /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
         [ValidateNotNull]
         public SwitchParameter Module { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// To display the fileversioninfo of the main module of a process.
-        ///</summary>
+        /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                         }
                     }
-                    catch (PipelineStoppedException) 
+                    catch (PipelineStoppedException)
                     {
                         throw;
                     }
@@ -743,51 +743,46 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                do
+                int error;
+                if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { return null; }
+
+                // Set the default length to be 256, so it will be sufficient for most cases.
+                int tokenInfoLength = 256;
+                tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
                 {
-                    int error;
-                    if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { break; }
-
-                    // Set the default length to be 256, so it will be sufficient for most cases.
-                    int tokenInfoLength = 256;
-                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                    error = Marshal.GetLastWin32Error();
+                    if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
                     {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            Marshal.FreeHGlobal(tokenUserInfo);
-                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                        Marshal.FreeHGlobal(tokenUserInfo);
+                        tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
 
-                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { return null; }
                     }
-
-                    var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
-
-                    // Max username is defined as UNLEN = 256 in lmcons.h
-                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                    // The buffer length must be +1, last position is for a null string terminator.
-                    int userNameLength = 257;
-                    int domainNameLength = 16;
-#pragma warning disable CA2014
-                    Span<char> userNameStr = stackalloc char[userNameLength];
-                    Span<char> domainNameStr = stackalloc char[domainNameLength];
-#pragma warning restore CA2014
-                    Win32Native.SID_NAME_USE accountType;
-
-                    // userNameLength and domainNameLength will be set to actual lengths.
-                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    else
                     {
-                        break;
+                        return null;
                     }
+                }
 
-                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
-                } while (false);
+                var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                // Max username is defined as UNLEN = 256 in lmcons.h
+                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                // The buffer length must be +1, last position is for a null string terminator.
+                int userNameLength = 257;
+                int domainNameLength = 16;
+                Span<char> userNameStr = stackalloc char[userNameLength];
+                Span<char> domainNameStr = stackalloc char[domainNameLength];
+                Win32Native.SID_NAME_USE accountType;
+
+                // userNameLength and domainNameLength will be set to actual lengths.
+                if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                {
+                    return null;
+                }
+
+                userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
             }
             catch (NotSupportedException)
             {
@@ -817,7 +812,6 @@ namespace Microsoft.PowerShell.Commands
                     Win32Native.CloseHandle(processTokenHandler);
                 }
             }
-
 #endif
             return userName;
         }
@@ -938,10 +932,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0)
             {
-                if (_waitHandle != null)
-                {
-                    _waitHandle.Set();
-                }
+                _waitHandle?.Set();
             }
         }
 
@@ -1040,13 +1031,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// StopProcessing.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_waitHandle != null)
-            {
-                _waitHandle.Set();
-            }
-        }
+        protected override void StopProcessing() => _waitHandle?.Set();
+
         #endregion Overrides
 
     }
@@ -1916,8 +1902,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // Working Directory not specified -> Assign Current Path.
-                startInfo.WorkingDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
+                // Working Directory not specified -> Assign Current Path, but only if it still exists
+                var currentDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
+                if (Directory.Exists(currentDirectory))
+                {
+                    startInfo.WorkingDirectory = currentDirectory;
+                }
             }
 
             if (this.ParameterSetName.Equals("Default"))
@@ -2079,13 +2069,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements ^c, after creating a process.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_waithandle != null)
-            {
-                _waithandle.Set();
-            }
-        }
+        protected override void StopProcessing() => _waithandle?.Set();
 
         #endregion
 
@@ -2116,13 +2100,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// When Process exits the wait handle is set.
         /// </summary>
-        private void myProcess_Exited(object sender, System.EventArgs e)
-        {
-            if (_waithandle != null)
-            {
-                _waithandle.Set();
-            }
-        }
+        private void myProcess_Exited(object sender, System.EventArgs e) => _waithandle?.Set();
 
         private string ResolveFilePath(string path)
         {
@@ -2221,15 +2199,8 @@ namespace Microsoft.PowerShell.Commands
         {
             Thread.Sleep(1000);
 
-            if (_outputWriter != null)
-            {
-                _outputWriter.Dispose();
-            }
-
-            if (_errorWriter != null)
-            {
-                _errorWriter.Dispose();
-            }
+            _outputWriter?.Dispose();
+            _errorWriter?.Dispose();
         }
 
         private void SetupInputOutputRedirection(Process p)
@@ -2290,28 +2261,22 @@ namespace Microsoft.PowerShell.Commands
             writer.Dispose();
         }
 #else
-        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, uint dwCreationDisposition)
-        {
-            System.IntPtr hFileHandle = System.IntPtr.Zero;
-            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new();
 
-            hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
-                ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
-                ProcessNativeMethods.FILE_SHARE_WRITE | ProcessNativeMethods.FILE_SHARE_READ,
-                lpSecurityAttributes,
-                dwCreationDisposition,
-                ProcessNativeMethods.FILE_ATTRIBUTE_NORMAL,
-                System.IntPtr.Zero);
-            if (hFileHandle == System.IntPtr.Zero)
+        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, FileMode mode)
+        {
+            SafeFileHandle sf = null;
+            try
             {
-                int error = Marshal.GetLastWin32Error();
-                Win32Exception win32ex = new(error);
+                sf = File.OpenHandle(RedirectionPath, mode, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Inheritable, FileOptions.WriteThrough);
+            }
+            catch (Win32Exception win32ex)
+            {
+                sf?.Dispose();
                 string message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
                 ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
 
-            SafeFileHandle sf = new(hFileHandle, true);
             return sf;
         }
 
@@ -2372,7 +2337,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 startinfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
-                lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, ProcessNativeMethods.OPEN_EXISTING);
+                lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, FileMode.Open);
             }
             else
             {
@@ -2384,7 +2349,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 startinfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, ProcessNativeMethods.CREATE_ALWAYS);
+                lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, FileMode.Create);
             }
             else
             {
@@ -2396,7 +2361,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, ProcessNativeMethods.CREATE_ALWAYS);
+                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
             }
             else
             {
@@ -2716,18 +2681,6 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
-        // Fields
-        internal static readonly UInt32 GENERIC_READ = 0x80000000;
-        internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
-        internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
-        internal static readonly UInt32 CREATE_ALWAYS = 2;
-        internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
-        internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
-        internal static readonly UInt32 OF_READWRITE = 0x00000002;
-        internal static readonly UInt32 OPEN_EXISTING = 3;
-
-        // Methods
-
         [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
         public static extern IntPtr GetStdHandle(int whichHandle);
 
@@ -2760,17 +2713,6 @@ namespace Microsoft.PowerShell.Commands
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern uint ResumeThread(IntPtr threadHandle);
-
-        [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern FileNakedHandle CreateFileW(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-            DWORD dwDesiredAccess,
-            DWORD dwShareMode,
-            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes,
-            DWORD dwCreationDisposition,
-            DWORD dwFlagsAndAttributes,
-            System.IntPtr hTemplateFile
-            );
 
         [DllImport("userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -3020,9 +2962,8 @@ namespace Microsoft.PowerShell.Commands
         {
             base.GetObjectData(info, context);
 
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
-
+            ArgumentNullException.ThrowIfNull(info);
+            
             info.AddValue("ProcessName", _processName);
         }
         #endregion Serialization

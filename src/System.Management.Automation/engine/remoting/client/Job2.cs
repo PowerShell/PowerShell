@@ -93,8 +93,7 @@ namespace System.Management.Automation
                 {
                     lock (_syncobject)
                     {
-                        if (_parameters == null)
-                            _parameters = new List<CommandParameterCollection>();
+                        _parameters ??= new List<CommandParameterCollection>();
                     }
                 }
 
@@ -707,10 +706,8 @@ namespace System.Management.Automation
         public void AddChildJob(Job2 childJob)
         {
             AssertNotDisposed();
-            if (childJob == null)
-            {
-                throw new ArgumentNullException(nameof(childJob));
-            }
+
+            ArgumentNullException.ThrowIfNull(childJob);
 
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
 
@@ -2022,11 +2019,8 @@ namespace System.Management.Automation
                     job.Dispose();
                 }
 
-                if (_jobRunning != null)
-                    _jobRunning.Dispose();
-
-                if (_jobSuspendedOrAborted != null)
-                    _jobSuspendedOrAborted.Dispose();
+                _jobRunning?.Dispose();
+                _jobSuspendedOrAborted?.Dispose();
             }
             finally
             {
@@ -2185,8 +2179,7 @@ namespace System.Management.Automation
         /// <param name="context">The standard StreaminContext.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
+            ArgumentNullException.ThrowIfNull(info);
 
             base.GetObjectData(info, context);
 

@@ -496,13 +496,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals the running task to stop.
         /// </summary>
-        public void SignalStop()
-        {
-            if (_powershell != null)
-            {
-                _powershell.BeginStop(null, null);
-            }
-        }
+        public void SignalStop() => _powershell?.BeginStop(null, null);
 
         #endregion
     }
@@ -918,7 +912,7 @@ namespace System.Management.Automation.PSTasks
 
         private Runspace GetRunspace(int taskId)
         {
-            var runspaceName = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", PSTask.RunspaceName, taskId);
+            var runspaceName = string.Create(CultureInfo.InvariantCulture, $"{PSTask.RunspaceName}:{taskId}");
 
             if (_useRunspacePool && _runspacePool.TryDequeue(out Runspace runspace))
             {
@@ -1536,12 +1530,9 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                if (_jobDebuggerWrapper == null)
-                {
-                    _jobDebuggerWrapper = new PSTaskChildDebugger(
-                        _task.Debugger,
-                        this.Name);
-                }
+                _jobDebuggerWrapper ??= new PSTaskChildDebugger(
+                    _task.Debugger,
+                    this.Name);
 
                 return _jobDebuggerWrapper;
             }

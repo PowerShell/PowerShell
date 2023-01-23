@@ -6,12 +6,13 @@
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
+using System.Management.Automation.Win32Native;
 using System.Runtime.InteropServices;
-using DWORD = System.UInt32;
 
 namespace System.Management.Automation
 {
@@ -83,12 +84,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="catalogHandle">Handle to open catalog file.</param>
         /// <returns>Version of the catalog.</returns>
-        private static int GetCatalogVersion(IntPtr catalogHandle)
+        private static int GetCatalogVersion(SafeCATHandle catalogHandle)
         {
             int catalogVersion = -1;
 
-            IntPtr catalogData = NativeMethods.CryptCATStoreFromHandle(catalogHandle);
-            NativeMethods.CRYPTCATSTORE catalogInfo = Marshal.PtrToStructure<NativeMethods.CRYPTCATSTORE>(catalogData);
+            WinTrustMethods.CRYPTCATSTORE catalogInfo = WinTrustMethods.CryptCATStoreFromHandle(catalogHandle);
 
             if (catalogInfo.dwPublicVersion == catalogVersion2)
             {
@@ -248,20 +248,32 @@ namespace System.Management.Automation
         /// <param name="cdfFilePath">Path to the Input .cdf file.</param>
         internal static void GenerateCatalogFile(string cdfFilePath)
         {
-            string pwszFilePath = cdfFilePath;
-            NativeMethods.CryptCATCDFOpenCallBack catOpenCallBack = new NativeMethods.CryptCATCDFOpenCallBack(ParseErrorCallback);
-
             // Open CDF File
-            IntPtr resultCDF = NativeMethods.CryptCATCDFOpen(pwszFilePath, catOpenCallBack);
+            SafeCATCDFHandle resultCDF;
+            try
+            {
+                resultCDF = WinTrustMethods.CryptCATCDFOpen(cdfFilePath, ParseErrorCallback);
+            }
+            catch (Win32Exception e)
+            {
+                // If we are not able to open CDF file we can not continue generating catalog
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new InvalidOperationException(CatalogStrings.UnableToOpenCatalogDefinitionFile, e),
+                    "UnableToOpenCatalogDefinitionFile",
+                    ErrorCategory.InvalidOperation,
+                    null);
+                _cmdlet.ThrowTerminatingError(errorRecord);
+                return;
+            }
 
             // navigate CDF header and files sections
-            if (resultCDF != IntPtr.Zero)
+            using (resultCDF)
             {
                 // First navigate all catalog level attributes entries first, they represent zero size files
                 IntPtr catalogAttr = IntPtr.Zero;
                 do
                 {
-                    catalogAttr = NativeMethods.CryptCATCDFEnumCatAttributes(resultCDF, catalogAttr, catOpenCallBack);
+                    catalogAttr = WinTrustMethods.CryptCATCDFEnumCatAttributes(resultCDF, catalogAttr, ParseErrorCallback);
 
                     if (catalogAttr != IntPtr.Zero)
                     {
@@ -272,51 +284,38 @@ namespace System.Management.Automation
 
                 // navigate all the files hash entries in the .cdf file
                 IntPtr memberInfo = IntPtr.Zero;
-                try
+                IntPtr memberFile = IntPtr.Zero;
+                string fileName = string.Empty;
+                do
                 {
-                    IntPtr memberFile = IntPtr.Zero;
-                    NativeMethods.CryptCATCDFEnumMembersByCDFTagExErrorCallBack memberCallBack = new NativeMethods.CryptCATCDFEnumMembersByCDFTagExErrorCallBack(ParseErrorCallback);
-                    string fileName = string.Empty;
-                    do
+                    memberFile = WinTrustMethods.CryptCATCDFEnumMembersByCDFTagEx(resultCDF, memberFile, ParseErrorCallback, ref memberInfo,
+                        fContinueOnError: true, pvReserved: IntPtr.Zero);
+                    fileName = Marshal.PtrToStringUni(memberFile);
+
+                    if (!string.IsNullOrEmpty(fileName))
                     {
-                        memberFile = NativeMethods.CryptCATCDFEnumMembersByCDFTagEx(resultCDF, memberFile, memberCallBack, ref memberInfo, true, IntPtr.Zero);
-                        fileName = Marshal.PtrToStringUni(memberFile);
-
-                        if (!string.IsNullOrEmpty(fileName))
+                        IntPtr memberAttr = IntPtr.Zero;
+                        string fileRelativePath = string.Empty;
+                        do
                         {
-                            IntPtr memberAttr = IntPtr.Zero;
-                            string fileRelativePath = string.Empty;
-                            do
-                            {
-                                memberAttr = NativeMethods.CryptCATCDFEnumAttributesWithCDFTag(resultCDF, memberFile, memberInfo, memberAttr, memberCallBack);
+                            memberAttr = WinTrustMethods.CryptCATCDFEnumAttributesWithCDFTag(resultCDF, memberFile, memberInfo, memberAttr, ParseErrorCallback);
 
-                                if (memberAttr != IntPtr.Zero)
+                            if (memberAttr != IntPtr.Zero)
+                            {
+                                fileRelativePath = ProcessFilePathAttributeInCatalog(memberAttr);
+                                if (!string.IsNullOrEmpty(fileRelativePath))
                                 {
-                                    fileRelativePath = ProcessFilePathAttributeInCatalog(memberAttr);
-                                    if (!string.IsNullOrEmpty(fileRelativePath))
-                                    {
-                                        // Found the attribute we are looking for
-                                        // Filename we read from the above API has <Hash> appended to its name as per CDF file tags convention
-                                        // Truncating that Information from the string.
-                                        string itemName = fileName.Substring(6);
-                                        _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.AddFileToCatalog, itemName, fileRelativePath));
-                                        break;
-                                    }
+                                    // Found the attribute we are looking for
+                                    // Filename we read from the above API has <Hash> appended to its name as per CDF file tags convention
+                                    // Truncating that Information from the string.
+                                    string itemName = fileName.Substring(6);
+                                    _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.AddFileToCatalog, itemName, fileRelativePath));
+                                    break;
                                 }
-                            } while (memberAttr != IntPtr.Zero);
-                        }
-                    } while (fileName != null);
-                }
-                finally
-                {
-                    NativeMethods.CryptCATCDFClose(resultCDF);
-                }
-            }
-            else
-            {
-                // If we are not able to open CDF file we can not continue generating catalog
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.UnableToOpenCatalogDefinitionFile), "UnableToOpenCatalogDefinitionFile", ErrorCategory.InvalidOperation, null);
-                _cmdlet.ThrowTerminatingError(errorRecord);
+                            }
+                        } while (memberAttr != IntPtr.Zero);
+                    }
+                } while (fileName != null);
             }
         }
 
@@ -374,7 +373,7 @@ namespace System.Management.Automation
         {
             string relativePath = string.Empty;
 
-            NativeMethods.CRYPTCATATTRIBUTE currentMemberAttr = Marshal.PtrToStructure<NativeMethods.CRYPTCATATTRIBUTE>(memberAttrInfo);
+            WinTrustMethods.CRYPTCATATTRIBUTE currentMemberAttr = Marshal.PtrToStructure<WinTrustMethods.CRYPTCATATTRIBUTE>(memberAttrInfo);
 
             // check if this is the attribute we are looking for
             // catalog generated other way not using New-FileCatalog can have attributes we don't understand
@@ -400,69 +399,65 @@ namespace System.Management.Automation
         internal static string CalculateFileHash(string filePath, string hashAlgorithm)
         {
             string hashValue = string.Empty;
-            IntPtr catAdmin = IntPtr.Zero;
 
             // To get handle to the hash algorithm to be used to calculate hashes
-            if (!NativeMethods.CryptCATAdminAcquireContext2(ref catAdmin, IntPtr.Zero, hashAlgorithm, IntPtr.Zero, 0))
+            SafeCATAdminHandle catAdmin;
+            try
             {
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToAcquireHashAlgorithmContext, hashAlgorithm)), "UnableToAcquireHashAlgorithmContext", ErrorCategory.InvalidOperation, null);
-                _cmdlet.ThrowTerminatingError(errorRecord);
+                catAdmin = WinTrustMethods.CryptCATAdminAcquireContext2(hashAlgorithm);
             }
+            catch (Win32Exception e)
+            {
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToAcquireHashAlgorithmContext, hashAlgorithm), e),
+                    "UnableToAcquireHashAlgorithmContext",
+                    ErrorCategory.InvalidOperation,
+                    null);
+                _cmdlet.ThrowTerminatingError(errorRecord);
 
-            const DWORD GENERIC_READ = 0x80000000;
-            const DWORD OPEN_EXISTING = 3;
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+                // The method returns an empty string on a failure.
+                return hashValue;
+            }
 
             // Open the file that is to be hashed for reading and get its handle
-            IntPtr fileHandle = NativeMethods.CreateFile(filePath, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, IntPtr.Zero);
-            if (fileHandle != INVALID_HANDLE_VALUE)
+            FileStream fileStream;
+            try
             {
-                try
-                {
-                    DWORD hashBufferSize = 0;
-                    IntPtr hashBuffer = IntPtr.Zero;
-
-                    // Call first time to get the size of expected buffer to hold new hash value
-                    if (!NativeMethods.CryptCATAdminCalcHashFromFileHandle2(catAdmin, fileHandle, ref hashBufferSize, hashBuffer, 0))
-                    {
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
-                        _cmdlet.ThrowTerminatingError(errorRecord);
-                    }
-
-                    int size = (int)hashBufferSize;
-                    hashBuffer = Marshal.AllocHGlobal(size);
-                    try
-                    {
-                        // Call second time to actually get the hash value
-                        if (!NativeMethods.CryptCATAdminCalcHashFromFileHandle2(catAdmin, fileHandle, ref hashBufferSize, hashBuffer, 0))
-                        {
-                            ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
-                            _cmdlet.ThrowTerminatingError(errorRecord);
-                        }
-
-                        byte[] hashBytes = new byte[size];
-                        Marshal.Copy(hashBuffer, hashBytes, 0, size);
-                        hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
-                    }
-                    finally
-                    {
-                        if (hashBuffer != IntPtr.Zero)
-                        {
-                            Marshal.FreeHGlobal(hashBuffer);
-                        }
-                    }
-                }
-                finally
-                {
-                    NativeMethods.CryptCATAdminReleaseContext(catAdmin, 0);
-                    NativeMethods.CloseHandle(fileHandle);
-                }
+                fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
             }
-            else
+            catch (Exception e)
             {
                 // If we are not able to open file that is to be hashed we can not continue with catalog validation
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToReadFileToHash, filePath)), "UnableToReadFileToHash", ErrorCategory.InvalidOperation, null);
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToReadFileToHash, filePath), e),
+                    "UnableToReadFileToHash",
+                    ErrorCategory.InvalidOperation,
+                    null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
+
+                // The method returns an empty string on a failure.
+                return hashValue;
+            }
+
+            using (catAdmin)
+            using (fileStream)
+            {
+                byte[] hashBytes = Array.Empty<byte>();
+                try
+                {
+                    hashBytes = WinTrustMethods.CryptCATAdminCalcHashFromFileHandle2(catAdmin, fileStream.SafeFileHandle);
+                }
+                catch (Win32Exception e)
+                {
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath), e),
+                        "UnableToCreateFileHash",
+                        ErrorCategory.InvalidOperation,
+                        null);
+                    _cmdlet.ThrowTerminatingError(errorRecord);
+                }
+
+                hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
             }
 
             return hashValue;
@@ -477,90 +472,92 @@ namespace System.Management.Automation
         /// <returns>Dictionary mapping files relative paths to HashValues.</returns>
         internal static Dictionary<string, string> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns, out int catalogVersion)
         {
-            IntPtr resultCatalog = NativeMethods.CryptCATOpen(catalogFilePath, 0, IntPtr.Zero, 1, 0);
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
             Dictionary<string, string> catalogHashes = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             catalogVersion = 0;
 
-            if (resultCatalog != INVALID_HANDLE_VALUE)
+            SafeCATHandle resultCatalog;
+            try
             {
-                try
+                resultCatalog = WinTrustMethods.CryptCATOpen(catalogFilePath, 0, IntPtr.Zero, 1, 0);
+            }
+            catch (Win32Exception e)
+            {
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath), e),
+                    "UnableToOpenCatalogFile",
+                    ErrorCategory.InvalidOperation,
+                    null);
+                _cmdlet.ThrowTerminatingError(errorRecord);
+                return catalogHashes;
+            }
+
+            using (resultCatalog)
+            {
+                IntPtr catAttrInfo = IntPtr.Zero;
+
+                // First traverse all catalog level attributes to get information about zero size file.
+                do
                 {
-                    IntPtr catAttrInfo = IntPtr.Zero;
+                    catAttrInfo = WinTrustMethods.CryptCATEnumerateCatAttr(resultCatalog, catAttrInfo);
 
-                    // First traverse all catalog level attributes to get information about zero size file.
-                    do
+                    // If we found attribute it is a file information retrieve its relative path
+                    // and add it to catalog hash collection if its not in excluded files criteria
+                    if (catAttrInfo != IntPtr.Zero)
                     {
-                        catAttrInfo = NativeMethods.CryptCATEnumerateCatAttr(resultCatalog, catAttrInfo);
-
-                        // If we found attribute it is a file information retrieve its relative path
-                        // and add it to catalog hash collection if its not in excluded files criteria
-                        if (catAttrInfo != IntPtr.Zero)
+                        string relativePath = ProcessFilePathAttributeInCatalog(catAttrInfo);
+                        if (!string.IsNullOrEmpty(relativePath))
                         {
-                            string relativePath = ProcessFilePathAttributeInCatalog(catAttrInfo);
-                            if (!string.IsNullOrEmpty(relativePath))
-                            {
-                                ProcessCatalogFile(relativePath, string.Empty, excludedPatterns, ref catalogHashes);
-                            }
+                            ProcessCatalogFile(relativePath, string.Empty, excludedPatterns, ref catalogHashes);
                         }
-                    } while (catAttrInfo != IntPtr.Zero);
+                    }
+                } while (catAttrInfo != IntPtr.Zero);
 
-                    catalogVersion = GetCatalogVersion(resultCatalog);
+                catalogVersion = GetCatalogVersion(resultCatalog);
 
-                    IntPtr memberInfo = IntPtr.Zero;
-                    // Next Navigate all members in Catalog files and get their relative paths and hashes
-                    do
+                IntPtr memberInfo = IntPtr.Zero;
+                // Next Navigate all members in Catalog files and get their relative paths and hashes
+                do
+                {
+                    memberInfo = WinTrustMethods.CryptCATEnumerateMember(resultCatalog, memberInfo);
+                    if (memberInfo != IntPtr.Zero)
                     {
-                        memberInfo = NativeMethods.CryptCATEnumerateMember(resultCatalog, memberInfo);
-                        if (memberInfo != IntPtr.Zero)
+                        WinTrustMethods.CRYPTCATMEMBER currentMember = Marshal.PtrToStructure<WinTrustMethods.CRYPTCATMEMBER>(memberInfo);
+                        WinTrustMethods.SIP_INDIRECT_DATA pIndirectData = Marshal.PtrToStructure<WinTrustMethods.SIP_INDIRECT_DATA>(currentMember.pIndirectData);
+
+                        // For Catalog version 2 CryptoAPI puts hashes of file attributes(relative path in our case) in Catalog as well
+                        // We validate those along with file hashes so we are skipping duplicate entries
+                        if (!((catalogVersion == 2) && (pIndirectData.DigestAlgorithm.pszObjId.Equals(new Oid("SHA1").Value, StringComparison.OrdinalIgnoreCase))))
                         {
-                            NativeMethods.CRYPTCATMEMBER currentMember = Marshal.PtrToStructure<NativeMethods.CRYPTCATMEMBER>(memberInfo);
-                            NativeMethods.SIP_INDIRECT_DATA pIndirectData = Marshal.PtrToStructure<NativeMethods.SIP_INDIRECT_DATA>(currentMember.pIndirectData);
-
-                            // For Catalog version 2 CryptoAPI puts hashes of file attributes(relative path in our case) in Catalog as well
-                            // We validate those along with file hashes so we are skipping duplicate entries
-                            if (!((catalogVersion == 2) && (pIndirectData.DigestAlgorithm.pszObjId.Equals(new Oid("SHA1").Value, StringComparison.OrdinalIgnoreCase))))
+                            string relativePath = string.Empty;
+                            IntPtr memberAttrInfo = IntPtr.Zero;
+                            do
                             {
-                                string relativePath = string.Empty;
-                                IntPtr memberAttrInfo = IntPtr.Zero;
-                                do
-                                {
-                                    memberAttrInfo = NativeMethods.CryptCATEnumerateAttr(resultCatalog, memberInfo, memberAttrInfo);
+                                memberAttrInfo = WinTrustMethods.CryptCATEnumerateAttr(resultCatalog, memberInfo, memberAttrInfo);
 
-                                    if (memberAttrInfo != IntPtr.Zero)
+                                if (memberAttrInfo != IntPtr.Zero)
+                                {
+                                    relativePath = ProcessFilePathAttributeInCatalog(memberAttrInfo);
+                                    if (!string.IsNullOrEmpty(relativePath))
                                     {
-                                        relativePath = ProcessFilePathAttributeInCatalog(memberAttrInfo);
-                                        if (!string.IsNullOrEmpty(relativePath))
-                                        {
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
-                                while (memberAttrInfo != IntPtr.Zero);
-
-                                // If we did not find any Relative Path for the item in catalog we should quit
-                                // This catalog must not be valid for our use as catalogs generated using New-FileCatalog
-                                // always contains relative file Paths
-                                if (string.IsNullOrEmpty(relativePath))
-                                {
-                                    ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
-                                    _cmdlet.ThrowTerminatingError(errorRecord);
-                                }
-
-                                ProcessCatalogFile(relativePath, currentMember.pwszReferenceTag, excludedPatterns, ref catalogHashes);
                             }
+                            while (memberAttrInfo != IntPtr.Zero);
+
+                            // If we did not find any Relative Path for the item in catalog we should quit
+                            // This catalog must not be valid for our use as catalogs generated using New-FileCatalog
+                            // always contains relative file Paths
+                            if (string.IsNullOrEmpty(relativePath))
+                            {
+                                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
+                                _cmdlet.ThrowTerminatingError(errorRecord);
+                            }
+
+                            ProcessCatalogFile(relativePath, currentMember.pwszReferenceTag, excludedPatterns, ref catalogHashes);
                         }
-                    } while (memberInfo != IntPtr.Zero);
-                }
-                finally
-                {
-                    NativeMethods.CryptCATClose(resultCatalog);
-                }
-            }
-            else
-            {
-                ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
-                _cmdlet.ThrowTerminatingError(errorRecord);
+                    }
+                } while (memberInfo != IntPtr.Zero);
             }
 
             return catalogHashes;
@@ -785,14 +782,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Call back when error is thrown by catalog API's.
         /// </summary>
-        private static void ParseErrorCallback(DWORD dwErrorArea, DWORD dwLocalError, string pwszLine)
+        private static void ParseErrorCallback(uint dwErrorArea, uint dwLocalError, string pwszLine)
         {
             switch (dwErrorArea)
             {
-                case NativeConstants.CRYPTCAT_E_AREA_HEADER: break;
-                case NativeConstants.CRYPTCAT_E_AREA_MEMBER: break;
-                case NativeConstants.CRYPTCAT_E_AREA_ATTRIBUTE: break;
-                default: break;
+                case NativeConstants.CRYPTCAT_E_AREA_HEADER:
+                    break;
+                case NativeConstants.CRYPTCAT_E_AREA_MEMBER:
+                    break;
+                case NativeConstants.CRYPTCAT_E_AREA_ATTRIBUTE:
+                    break;
+                default:
+                    break;
             }
 
             switch (dwLocalError)
@@ -815,18 +816,24 @@ namespace System.Management.Automation
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
-                case NativeConstants.CRYPTCAT_E_CDF_BAD_GUID_CONV: break;
-                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TYPECOMBO: break;
-                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES: break;
-                case NativeConstants.CRYPTCAT_E_CDF_UNSUPPORTED: break;
+                case NativeConstants.CRYPTCAT_E_CDF_BAD_GUID_CONV:
+                    break;
+                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TYPECOMBO:
+                    break;
+                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES:
+                    break;
+                case NativeConstants.CRYPTCAT_E_CDF_UNSUPPORTED:
+                    break;
                 case NativeConstants.CRYPTCAT_E_CDF_DUPLICATE:
                     {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFileMemberInCatalog, pwszLine)), "FoundDuplicateFileMemberInCatalog", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
-                case NativeConstants.CRYPTCAT_E_CDF_TAGNOTFOUND: break;
-                default: break;
+                case NativeConstants.CRYPTCAT_E_CDF_TAGNOTFOUND:
+                    break;
+                default:
+                    break;
             }
         }
     }

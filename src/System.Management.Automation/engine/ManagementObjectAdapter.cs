@@ -454,7 +454,7 @@ namespace System.Management.Automation
 
                 // unique identifier for identifying this ManagementObject's type
                 ManagementPath classPath = wmiObject.ClassPath;
-                string key = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", classPath.Path, staticBinding.ToString());
+                string key = string.Create(CultureInfo.InvariantCulture, $"{classPath.Path}#{staticBinding}");
 
                 typeTable = (CacheTable)s_instanceMethodCacheTable[key];
                 if (typeTable != null)
@@ -577,8 +577,7 @@ namespace System.Management.Automation
             try
             {
                 string cimType = (string)pData.Qualifiers["cimtype"].Value;
-                result = string.Format(CultureInfo.InvariantCulture, "{0}#{1}",
-                    typeof(ManagementObject).FullName, cimType.Replace("object:", string.Empty));
+                result = string.Create(CultureInfo.InvariantCulture, $"{typeof(ManagementObject).FullName}#{cimType.Replace("object:", string.Empty)}");
             }
             catch (ManagementException)
             {
@@ -1162,9 +1161,7 @@ namespace System.Management.Automation
                                     PSLevel.Informational,
                                     PSTask.None,
                                     PSKeyword.UseAlwaysOperational,
-                                    string.Format(CultureInfo.InvariantCulture,
-                                                  "ManagementBaseObjectAdapter::DoGetProperty::PropertyName:{0}, Exception:{1}, StackTrace:{2}",
-                                                  propertyName, e.Message, e.StackTrace),
+                                    string.Create(CultureInfo.InvariantCulture, $"ManagementBaseObjectAdapter::DoGetProperty::PropertyName:{propertyName}, Exception:{e.Message}, StackTrace:{e.StackTrace}"),
                                     string.Empty,
                                     string.Empty);
                 // ignore the exception.

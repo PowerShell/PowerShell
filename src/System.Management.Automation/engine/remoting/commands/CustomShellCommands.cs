@@ -544,9 +544,7 @@ else
                 string restartServiceTarget = StringUtil.Format(RemotingErrorIdStrings.RestartWSManServiceTarget, "WinRM");
 
                 string restartWSManRequiredForUI = StringUtil.Format(RemotingErrorIdStrings.RestartWSManRequiredShowUI,
-                    string.Format(CultureInfo.InvariantCulture,
-                        "Set-PSSessionConfiguration {0} -ShowSecurityDescriptorUI",
-                        shellName));
+                    string.Create(CultureInfo.InvariantCulture, $"Set-PSSessionConfiguration {shellName} -ShowSecurityDescriptorUI"));
 
                 // gather -WhatIf, -Confirm parameter data and pass it to the script block
                 bool whatIf = false;
@@ -1373,7 +1371,7 @@ else
             Dbg.Assert(!string.IsNullOrEmpty(gmsaAccount), "Should not be null or empty string.");
 
             // Validate account name form (must be DomainName\UserName)
-            var parts = gmsaAccount.Split(Utils.Separators.Backslash);
+            var parts = gmsaAccount.Split('\\');
             if ((parts.Length != 2) ||
                 (string.IsNullOrEmpty(parts[0])) ||
                 (string.IsNullOrEmpty(parts[1]))
@@ -1462,7 +1460,7 @@ else
         {
             if (groups == null) { return string.Empty; }
 
-            return string.Join(";", groups);
+            return string.Join(';', groups);
         }
 
         /// <summary>
@@ -5273,7 +5271,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
                     validator = null;
 
                     // Convert DOMAIN\user to the upn (user@DOMAIN)
-                    string[] upnComponents = this.Username.Split(Utils.Separators.Backslash);
+                    string[] upnComponents = this.Username.Split('\\');
                     if (upnComponents.Length == 2)
                     {
                         this.Username = upnComponents[1] + "@" + upnComponents[0];

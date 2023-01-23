@@ -1160,10 +1160,7 @@ namespace Microsoft.PowerShell.Commands
                     indicesToRemove.Sort();
                     for (int i = indicesToRemove.Count - 1; i >= 0; i--)
                     {
-                        if (Context.InitialSessionState != null)
-                        {
-                            Context.InitialSessionState.Types.RemoveItem(indicesToRemove[i]);
-                        }
+                        Context.InitialSessionState?.Types.RemoveItem(indicesToRemove[i]);
                     }
 
                     try

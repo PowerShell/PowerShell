@@ -876,7 +876,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to PowerShell log under log category "Pipeline execution detail"
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>
@@ -945,8 +945,7 @@ namespace System.Management.Automation
             if (!OutVariable.StartsWith('+') &&
                 string.Equals("Out-Default", _commandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (_state == null)
-                    _state = new SessionState(Context.EngineSessionState);
+                _state ??= new SessionState(Context.EngineSessionState);
 
                 IList oldValue = null;
                 oldValue = PSObject.Base(_state.PSVariable.GetValue(this.OutVariable)) as IList;
@@ -978,8 +977,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state == null)
-                _state = new SessionState(Context.EngineSessionState);
+            _state ??= new SessionState(Context.EngineSessionState);
 
             // Create the pipeline variable
             _pipelineVarReference = new PSVariable(PipelineVariable);
@@ -1084,7 +1082,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
         ///             public class RemoveMyObjectType1 : PSCmdlet
@@ -1178,7 +1176,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
         ///             public class RemoveMyObjectType2 : PSCmdlet
@@ -1281,7 +1279,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : PSCmdlet
@@ -1297,8 +1295,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1396,7 +1394,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : PSCmdlet
@@ -1413,8 +1411,8 @@ namespace System.Management.Automation
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1702,7 +1700,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType4 : PSCmdlet
@@ -1726,14 +1724,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1884,7 +1882,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <example>
         ///     <code>
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType5 : PSCmdlet
@@ -1911,14 +1909,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -2397,10 +2395,7 @@ namespace System.Management.Automation
             if (e == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));
 
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.RecordFailure(e, _thisCommand);
-            }
+            PipelineProcessor?.RecordFailure(e, _thisCommand);
 
             // 1021203-2005/05/09-JonN
             // HaltCommandException will cause the command
@@ -2562,8 +2557,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state == null)
-                _state = new SessionState(Context.EngineSessionState);
+            _state ??= new SessionState(Context.EngineSessionState);
 
             if (variableName.StartsWith('+'))
             {
@@ -3336,7 +3330,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isProgressPreferenceSet)
+                if (IsProgressActionSet)
                     return _progressPreference;
 
                 if (!_isProgressPreferenceCached)
@@ -3357,12 +3351,14 @@ namespace System.Management.Automation
                 }
 
                 _progressPreference = value;
-                _isProgressPreferenceSet = true;
+                IsProgressActionSet = true;
             }
         }
 
         private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
-        private bool _isProgressPreferenceSet = false;
+
+        internal bool IsProgressActionSet { get; private set; } = false;
+
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>

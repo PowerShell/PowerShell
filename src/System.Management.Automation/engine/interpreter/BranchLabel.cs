@@ -34,7 +34,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "->{0} C({1}) S({2})", Index, ContinuationStackDepth, StackDepth);
+            return string.Create(CultureInfo.InvariantCulture, $"->{Index} C({ContinuationStackDepth}) S({StackDepth})");
         }
     }
 
@@ -110,10 +110,7 @@ namespace System.Management.Automation.Interpreter
 
             if (_targetIndex == UnknownIndex)
             {
-                if (_forwardBranchFixups == null)
-                {
-                    _forwardBranchFixups = new List<int>();
-                }
+                _forwardBranchFixups ??= new List<int>();
 
                 _forwardBranchFixups.Add(branchIndex);
             }

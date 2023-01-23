@@ -77,7 +77,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}: {1} {2}", Index, IsBoxed ? "boxed" : null, InClosure ? "in closure" : null);
+            return string.Create(CultureInfo.InvariantCulture, $"{Index}: {(IsBoxed ? "boxed" : null)} {(InClosure ? "in closure" : null)}");
         }
     }
 
@@ -163,10 +163,7 @@ namespace System.Management.Automation.Interpreter
             if (_variables.TryGetValue(variable, out existing))
             {
                 newScope = new VariableScope(result, start, existing);
-                if (existing.ChildScopes == null)
-                {
-                    existing.ChildScopes = new List<VariableScope>();
-                }
+                existing.ChildScopes ??= new List<VariableScope>();
 
                 existing.ChildScopes.Add(newScope);
             }
@@ -296,10 +293,7 @@ namespace System.Management.Automation.Interpreter
 
         internal LocalVariable AddClosureVariable(ParameterExpression variable)
         {
-            if (_closureVariables == null)
-            {
-                _closureVariables = new Dictionary<ParameterExpression, LocalVariable>();
-            }
+            _closureVariables ??= new Dictionary<ParameterExpression, LocalVariable>();
 
             LocalVariable result = new LocalVariable(_closureVariables.Count, true, false);
             _closureVariables.Add(variable, result);

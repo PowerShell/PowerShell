@@ -374,10 +374,7 @@ namespace System.Management.Automation.Interpreter
 
         private ParameterExpression AddTemp(ParameterExpression variable)
         {
-            if (_temps == null)
-            {
-                _temps = new List<ParameterExpression>();
-            }
+            _temps ??= new List<ParameterExpression>();
 
             _temps.Add(variable);
             return variable;

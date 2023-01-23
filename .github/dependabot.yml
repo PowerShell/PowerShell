@@ -51,3 +51,10 @@ updates:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"

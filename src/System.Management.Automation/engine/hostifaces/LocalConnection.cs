@@ -84,10 +84,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (this.SyncRoot)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -768,10 +765,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {
-            if (_pipelineThread == null)
-            {
-                _pipelineThread = new PipelineThread(this.ApartmentState);
-            }
+            _pipelineThread ??= new PipelineThread(this.ApartmentState);
 
             return _pipelineThread;
         }
@@ -840,18 +834,14 @@ namespace System.Management.Automation.Runspaces
                 if (executionContext != null)
                 {
                     PSHostUserInterface hostUI = executionContext.EngineHostInterface.UI;
-                    if (hostUI != null)
-                    {
-                        hostUI.StopAllTranscribing();
-                    }
+                    hostUI?.StopAllTranscribing();
                 }
 
                 AmsiUtils.Uninitialize();
             }
 
             // Generate the shutdown event
-            if (Events != null)
-                Events.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
+            Events?.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
 
             // Stop all running pipelines
             // Note:Do not perform the Cancel in lock. Reason is
@@ -1272,10 +1262,7 @@ namespace System.Management.Automation.Runspaces
 
             base.Close(); // call base.Close() first to make it stop the pipeline
 
-            if (_pipelineThread != null)
-            {
-                _pipelineThread.Close();
-            }
+            _pipelineThread?.Close();
         }
 
         #endregion IDisposable Members

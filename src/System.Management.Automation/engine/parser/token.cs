@@ -1271,7 +1271,7 @@ namespace System.Management.Automation.Language
 
         internal virtual string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", StringUtil.Padding(indent), _kind, Text);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{_kind}: <{Text}>");
         }
     }
 
@@ -1290,8 +1290,7 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>", StringUtil.Padding(indent), Kind, Text, _value, _value.GetType().Name);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{Kind}: <{Text}> Value:<{_value}> Type:<{_value.GetType().Name}>");
         }
 
         /// <summary>
@@ -1332,8 +1331,7 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : string.Empty);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{Kind}: <-{_parameterName}{(_usedColon ? ":" : string.Empty)}>");
         }
     }
 
@@ -1360,8 +1358,7 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Name:<{3}>", StringUtil.Padding(indent), Kind, Text, Name);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{Kind}: <{Text}> Name:<{Name}>");
         }
     }
 
@@ -1383,8 +1380,7 @@ namespace System.Management.Automation.Language
 
         internal override string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}>", StringUtil.Padding(indent), Kind, Text, Value);
+            return string.Create(CultureInfo.InvariantCulture, $"{StringUtil.Padding(indent)}{Kind}: <{Text}> Value:<{Value}>");
         }
     }
 

@@ -202,10 +202,7 @@ namespace System.Management.Automation
         internal void BindCommandLineParametersNoValidation(Collection<CommandParameterInternal> arguments)
         {
             var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
-            if (psCompiledScriptCmdlet != null)
-            {
-                psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
-            }
+            psCompiledScriptCmdlet?.PrepareForBinding(this.CommandLineParameters);
 
             InitUnboundArguments(arguments);
             CommandMetadata cmdletMetadata = _commandMetadata;
@@ -270,8 +267,7 @@ namespace System.Management.Automation
 
             // If this generated an exception (but we didn't have one from the non-dynamic
             // parameters, report on this one.
-            if (reportedBindingException == null)
-                reportedBindingException = currentBindingException;
+            reportedBindingException ??= currentBindingException;
 
             // If the cmdlet implements a ValueFromRemainingArguments parameter (VarArgs)
             // bind the unbound arguments to that parameter.
@@ -1045,10 +1041,7 @@ namespace System.Management.Automation
                         _commandMetadata.ImplementsDynamicParameters,
                         "The metadata for the dynamic parameters should only be available if the command supports IDynamicParameters");
 
-                    if (_dynamicParameterBinder != null)
-                    {
-                        _dynamicParameterBinder.BindParameter(argumentToBind.ParameterName, argumentToBind.ArgumentValue, parameter.Parameter);
-                    }
+                    _dynamicParameterBinder?.BindParameter(argumentToBind.ParameterName, argumentToBind.ArgumentValue, parameter.Parameter);
 
                     break;
             }
@@ -1452,8 +1445,7 @@ namespace System.Management.Automation
 
                     BoundObsoleteParameterNames.Add(parameter.Parameter.Name);
 
-                    if (ObsoleteParameterWarningList == null)
-                        ObsoleteParameterWarningList = new List<WarningRecord>();
+                    ObsoleteParameterWarningList ??= new List<WarningRecord>();
 
                     ObsoleteParameterWarningList.Add(warningRecord);
                 }
@@ -2991,7 +2983,7 @@ namespace System.Management.Automation
 
             foreach (MergedCompiledCommandParameter missingParameter in missingMandatoryParameters)
             {
-                missingParameters.AppendFormat(CultureInfo.InvariantCulture, " {0}", missingParameter.Parameter.Name);
+                missingParameters.Append(CultureInfo.InvariantCulture, $" {missingParameter.Parameter.Name}");
             }
 
             return missingParameters.ToString();

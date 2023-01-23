@@ -553,11 +553,8 @@ namespace System.Management.Automation
                 // raise the events outside of the lock.
                 if (raiseEvents)
                 {
-                    if (_readWaitHandle != null)
-                    {
-                        // unblock any readers waiting on the handle
-                        _readWaitHandle.Set();
-                    }
+                    // unblock any readers waiting on the handle
+                    _readWaitHandle?.Set();
 
                     // A temporary variable is used as the Completed may
                     // reach null (because of -='s) after the null check
@@ -798,10 +795,7 @@ namespace System.Management.Automation
         {
             lock (SyncObject)
             {
-                if (_data != null)
-                {
-                    _data.Clear();
-                }
+                _data?.Clear();
             }
         }
 
@@ -1322,12 +1316,9 @@ namespace System.Management.Automation
                 {
                     lock (SyncObject)
                     {
-                        if (_readWaitHandle == null)
-                        {
-                            // Create the handle signaled if there are objects in the buffer
-                            // or the buffer has been closed.
-                            _readWaitHandle = new ManualResetEvent(_data.Count > 0 || !_isOpen);
-                        }
+                        // Create the handle signaled if there are objects in the buffer
+                        // or the buffer has been closed.
+                        _readWaitHandle ??= new ManualResetEvent(_data.Count > 0 || !_isOpen);
                     }
                 }
 
@@ -1560,10 +1551,7 @@ namespace System.Management.Automation
                 if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1)) return;
 
                 // release threads blocked on waithandle
-                if (_readWaitHandle != null)
-                {
-                    _readWaitHandle.Set();
-                }
+                _readWaitHandle?.Set();
 
                 // release any threads to notify refCount is 0. Enumerator
                 // blocks on this syncObject and it needs to be notified
@@ -1795,10 +1783,7 @@ namespace System.Management.Automation
                         _readWaitHandle = null;
                     }
 
-                    if (_data != null)
-                    {
-                        _data.Clear();
-                    }
+                    _data?.Clear();
                 }
             }
         }
@@ -2099,65 +2084,35 @@ namespace System.Management.Automation
         /// The item is added to the buffer along with PowerShell InstanceId.
         /// </summary>
         /// <param name="item"></param>
-        internal void AddProgress(ProgressRecord item)
-        {
-            if (progress != null)
-            {
-                progress.InternalAdd(_psInstanceId, item);
-            }
-        }
+        internal void AddProgress(ProgressRecord item) => progress?.InternalAdd(_psInstanceId, item);
 
         /// <summary>
         /// Adds item to the verbose buffer.
         /// The item is added to the buffer along with PowerShell InstanceId.
         /// </summary>
         /// <param name="item"></param>
-        internal void AddVerbose(VerboseRecord item)
-        {
-            if (verbose != null)
-            {
-                verbose.InternalAdd(_psInstanceId, item);
-            }
-        }
+        internal void AddVerbose(VerboseRecord item) => verbose?.InternalAdd(_psInstanceId, item);
 
         /// <summary>
         /// Adds item to the debug buffer.
         /// The item is added to the buffer along with PowerShell InstanceId.
         /// </summary>
         /// <param name="item"></param>
-        internal void AddDebug(DebugRecord item)
-        {
-            if (debug != null)
-            {
-                debug.InternalAdd(_psInstanceId, item);
-            }
-        }
+        internal void AddDebug(DebugRecord item) => debug?.InternalAdd(_psInstanceId, item);
 
         /// <summary>
         /// Adds item to the warning buffer.
         /// The item is added to the buffer along with PowerShell InstanceId.
         /// </summary>
         /// <param name="item"></param>
-        internal void AddWarning(WarningRecord item)
-        {
-            if (Warning != null)
-            {
-                Warning.InternalAdd(_psInstanceId, item);
-            }
-        }
+        internal void AddWarning(WarningRecord item) => Warning?.InternalAdd(_psInstanceId, item);
 
         /// <summary>
         /// Adds item to the information buffer.
         /// The item is added to the buffer along with PowerShell InstanceId.
         /// </summary>
         /// <param name="item"></param>
-        internal void AddInformation(InformationRecord item)
-        {
-            if (Information != null)
-            {
-                Information.InternalAdd(_psInstanceId, item);
-            }
-        }
+        internal void AddInformation(InformationRecord item) => Information?.InternalAdd(_psInstanceId, item);
 
         #endregion
     }

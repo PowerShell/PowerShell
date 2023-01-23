@@ -130,11 +130,8 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (t_messageBuilder == null)
-                {
-                    // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    t_messageBuilder = new StringBuilder(200);
-                }
+                // NOTE: Thread static fields must be explicitly initialized for each thread.
+                t_messageBuilder ??= new StringBuilder(200);
 
                 return t_messageBuilder;
             }
@@ -201,10 +198,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (_resourceManager is null)
-                {
-                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
-                }
+                _resourceManager ??= new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
 
                 return _resourceManager;
             }
@@ -233,7 +227,7 @@ namespace System.Management.Automation.Tracing
             string value = ResourceManager.GetString(resourceName, Culture);
             if (string.IsNullOrEmpty(value))
             {
-                value = string.Format(CultureInfo.InvariantCulture, "Unknown resource: {0}", resourceName);
+                value = string.Create(CultureInfo.InvariantCulture, $"Unknown resource: {resourceName}");
                 Diagnostics.Assert(false, value);
             }
 
@@ -294,11 +288,7 @@ namespace System.Management.Automation.Tracing
         {
             // NOTE: always log
             int threadId = Environment.CurrentManagedThreadId;
-            string message = string.Format(CultureInfo.InvariantCulture,
-                                           "({0}:{1:X}:{2:X}) [Transfer]:{3} {4}",
-                                           PSVersionInfo.GitCommitId, threadId, PSChannel.Operational,
-                                           parentActivityId.ToString("B"),
-                                           Activity.ToString("B"));
+            string message = string.Create(CultureInfo.InvariantCulture, $"({PSVersionInfo.GitCommitId}:{threadId:X}:{PSChannel.Operational:X}) [Transfer]:{parentActivityId.ToString("B")} {Activity.ToString("B")}");
 
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
@@ -313,9 +303,7 @@ namespace System.Management.Automation.Tracing
             Activity = activity;
 
             // NOTE: always log
-            string message = string.Format(CultureInfo.InvariantCulture,
-                                           "({0:X}:{1:X}:{2:X}) [Activity] {3}",
-                                           PSVersionInfo.GitCommitId, threadId, PSChannel.Operational, activity.ToString("B"));
+            string message = string.Create(CultureInfo.InvariantCulture, $"({PSVersionInfo.GitCommitId:X}:{threadId:X}:{PSChannel.Operational:X}) [Activity] {activity.ToString("B")}");
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
@@ -339,9 +327,7 @@ namespace System.Management.Automation.Tracing
                 sb.Clear();
 
                 // add the message preamble
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                                "({0}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ",
-                                PSVersionInfo.GitCommitId, threadId, channel, eventId, task, opcode, level);
+                sb.Append(CultureInfo.InvariantCulture, $"({PSVersionInfo.GitCommitId}:{threadId:X}:{channel:X}) [{eventId:G}:{task:G}.{opcode:G}.{level:G}] ");
 
                 // add the message
                 GetEventMessage(sb, eventId, args);

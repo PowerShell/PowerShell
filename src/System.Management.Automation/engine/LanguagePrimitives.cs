@@ -634,10 +634,7 @@ namespace System.Management.Automation
             // If second can be converted to the type of the first, it does so and returns first.Equals(secondConverted)
             // Otherwise false is returned
 
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -781,10 +778,7 @@ namespace System.Management.Automation
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
         {
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -901,10 +895,7 @@ namespace System.Management.Automation
         public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
         {
             result = 0;
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (formatProvider is not CultureInfo culture)
             {
@@ -2155,7 +2146,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    sourceValueEntries = sourceValueString.Split(Utils.Separators.Comma);
+                    sourceValueEntries = sourceValueString.Split(',');
                     fromValuePatterns = new WildcardPattern[sourceValueEntries.Length];
                     for (int i = 0; i < sourceValueEntries.Length; i++)
                     {
@@ -3851,11 +3842,11 @@ namespace System.Management.Automation
         /// Create a IList to hold all elements, and use the IList to create the object of the resultType.
         /// The reason for using IList is that it can work on constructors that takes IEnumerable[T], ICollection[T] or IList[T].
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// When get to this method, we know the fromType and the toType meet the following two conditions:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
-        /// </remark>
+        /// </remarks>
         private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
@@ -4675,7 +4666,7 @@ namespace System.Management.Automation
                                     Type propType;
                                     if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
                                     {
-                                        if (formatProvider == null) { formatProvider = CultureInfo.InvariantCulture; }
+                                        formatProvider ??= CultureInfo.InvariantCulture;
 
                                         try
                                         {
@@ -5743,10 +5734,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (converter == null)
-            {
-                converter = FigurePropertyConversion(fromType, toType, ref rank);
-            }
+            converter ??= FigurePropertyConversion(fromType, toType, ref rank);
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
                 || (converter != null && valueDependentConversion != null))

@@ -847,56 +847,40 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(helpComment))
             {
-                helpComment = string.Format(CultureInfo.InvariantCulture, @"
-.ForwardHelpTargetName {0}
-.ForwardHelpCategory {1}
-",
-                    _wrappedCommand, _wrappedCommandType);
+                helpComment = string.Create(CultureInfo.InvariantCulture, $@"
+.ForwardHelpTargetName {_wrappedCommand}
+.ForwardHelpCategory {_wrappedCommandType}
+");
             }
 
             string dynamicParamblock = string.Empty;
             if (generateDynamicParameters && this.ImplementsDynamicParameters)
             {
-                dynamicParamblock = string.Format(CultureInfo.InvariantCulture, @"
+                dynamicParamblock = string.Create(CultureInfo.InvariantCulture, $@"
 dynamicparam
-{{{0}}}
+{{{GetDynamicParamBlock()}}}
 
-", GetDynamicParamBlock());
+");
             }
 
-            string cleanBlock = string.Empty;
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCleanBlockFeatureName))
-            {
-                cleanBlock = string.Format(CultureInfo.InvariantCulture, @"
-clean
-{{{0}}}
-", GetCleanBlock());
-            }
+            string result = string.Create(CultureInfo.InvariantCulture, $@"{GetDecl()}
+param({GetParamBlock()})
 
-            string result = string.Format(CultureInfo.InvariantCulture, @"{0}
-param({1})
-
-{2}begin
-{{{3}}}
+{dynamicParamblock}begin
+{{{GetBeginBlock()}}}
 
 process
-{{{4}}}
+{{{GetProcessBlock()}}}
 
 end
-{{{5}}}
-{6}
+{{{GetEndBlock()}}}
+
+clean
+{{{GetCleanBlock()}}}
 <#
-{7}
+{CodeGeneration.EscapeBlockCommentContent(helpComment)}
 #>
-",
-                GetDecl(),
-                GetParamBlock(),
-                dynamicParamblock,
-                GetBeginBlock(),
-                GetProcessBlock(),
-                GetEndBlock(),
-                cleanBlock,
-                CodeGeneration.EscapeBlockCommentContent(helpComment));
+");
 
             return result;
         }
@@ -1027,7 +1011,7 @@ end
 
             if (_wrappedAnyCmdlet)
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
         $outBuffer = $null
         if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
@@ -1035,38 +1019,30 @@ end
             $PSBoundParameters['OutBuffer'] = 1
         }}
 
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($PSCmdlet)
     }} catch {{
         throw
     }}
-",
-                    CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                    _wrappedCommandType,
-                    commandOrigin
-                    );
+");
             }
             else
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $PSBoundParameters.Add('$args', $args)
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
     }} catch {{
         throw
     }}
-",
-                CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                _wrappedCommandType,
-                commandOrigin
-                );
+");
             }
 
             return result;
@@ -1090,9 +1066,9 @@ end
 
         internal string GetDynamicParamBlock()
         {
-            return string.Format(CultureInfo.InvariantCulture, @"
+            return string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1}, $PSBoundParameters)
+        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType}, $PSBoundParameters)
         $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object {{ $_.Value.IsDynamic }})
         if ($dynamicParams.Length -gt 0)
         {{
@@ -1113,9 +1089,7 @@ end
     }} catch {{
         throw
     }}
-",
-            CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-            _wrappedCommandType);
+");
         }
 
         internal string GetEndBlock()
@@ -1256,7 +1230,7 @@ end
 
             // This should only be called with 1 valid category
             ParameterMetadata categoryParameter = new ParameterMetadata("Category", typeof(string[]));
-            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
+            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames<HelpCategory>()));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
             return GetRestrictedCmdlet("Get-Help", null, "https://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);

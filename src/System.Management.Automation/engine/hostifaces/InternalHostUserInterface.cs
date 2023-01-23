@@ -338,13 +338,7 @@ namespace System.Management.Automation.Internal.Host
         /// Writes the DebugRecord to informational buffers.
         /// </summary>
         /// <param name="record">DebugRecord.</param>
-        internal void WriteDebugInfoBuffers(DebugRecord record)
-        {
-            if (_informationalBuffers != null)
-            {
-                _informationalBuffers.AddDebug(record);
-            }
-        }
+        internal void WriteDebugInfoBuffers(DebugRecord record) => _informationalBuffers?.AddDebug(record);
 
         /// <summary>
         /// Helper function for WriteDebugLine.
@@ -538,10 +532,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // Write to Information Buffers
-            if (_informationalBuffers != null)
-            {
-                _informationalBuffers.AddProgress(record);
-            }
+            _informationalBuffers?.AddProgress(record);
 
             if (_externalUI == null)
             {
@@ -588,13 +579,7 @@ namespace System.Management.Automation.Internal.Host
         /// Writes the VerboseRecord to informational buffers.
         /// </summary>
         /// <param name="record">VerboseRecord.</param>
-        internal void WriteVerboseInfoBuffers(VerboseRecord record)
-        {
-            if (_informationalBuffers != null)
-            {
-                _informationalBuffers.AddVerbose(record);
-            }
-        }
+        internal void WriteVerboseInfoBuffers(VerboseRecord record) => _informationalBuffers?.AddVerbose(record);
 
         /// <summary>
         /// See base class.
@@ -631,13 +616,7 @@ namespace System.Management.Automation.Internal.Host
         /// Writes the WarningRecord to informational buffers.
         /// </summary>
         /// <param name="record">WarningRecord.</param>
-        internal void WriteWarningInfoBuffers(WarningRecord record)
-        {
-            if (_informationalBuffers != null)
-            {
-                _informationalBuffers.AddWarning(record);
-            }
-        }
+        internal void WriteWarningInfoBuffers(WarningRecord record) => _informationalBuffers?.AddWarning(record);
 
         /// <summary>
         /// </summary>
@@ -657,13 +636,7 @@ namespace System.Management.Automation.Internal.Host
         /// Writes the InformationRecord to informational buffers.
         /// </summary>
         /// <param name="record">WarningRecord.</param>
-        internal void WriteInformationInfoBuffers(InformationRecord record)
-        {
-            if (_informationalBuffers != null)
-            {
-                _informationalBuffers.AddInformation(record);
-            }
-        }
+        internal void WriteInformationInfoBuffers(InformationRecord record) => _informationalBuffers?.AddInformation(record);
 
         internal static Type GetFieldType(FieldDescription field)
         {
@@ -954,8 +927,7 @@ namespace System.Management.Automation.Internal.Host
                         defaultStr = hotkeysAndPlainLabels[1, defaultChoice];
                     }
 
-                    defaultChoicesBuilder.Append(string.Format(Globalization.CultureInfo.InvariantCulture,
-                        "{0}{1}", prepend, defaultStr));
+                    defaultChoicesBuilder.Append(Globalization.CultureInfo.InvariantCulture, $"{prepend}{defaultStr}");
                     prepend = ",";
                 }
 
@@ -963,8 +935,7 @@ namespace System.Management.Automation.Internal.Host
 
                 if (defaultChoiceKeys.Count == 1)
                 {
-                    defaultPrompt = StringUtil.Format(InternalHostUserInterfaceStrings.DefaultChoice,
-                        defaultChoicesStr);
+                    defaultPrompt = StringUtil.Format(InternalHostUserInterfaceStrings.DefaultChoice, defaultChoicesStr);
                 }
                 else
                 {

@@ -212,10 +212,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             RemoteRunspace connectingRunspace = _connectingRemoteRunspace;
-            if (connectingRunspace != null)
-            {
-                connectingRunspace.AbortOpen();
-            }
+            connectingRunspace?.AbortOpen();
         }
 
         #endregion

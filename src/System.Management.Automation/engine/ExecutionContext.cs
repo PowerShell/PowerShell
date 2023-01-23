@@ -53,22 +53,12 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetManagers()
         {
-            if (_debugger != null)
-            {
-                _debugger.ResetDebugger();
-            }
+            _debugger?.ResetDebugger();
 
-            if (Events != null)
-            {
-                Events.Dispose();
-            }
-
+            Events?.Dispose();
             Events = new PSLocalEventManager(this);
-            if (this.transactionManager != null)
-            {
-                this.transactionManager.Dispose();
-            }
 
+            this.transactionManager?.Dispose();
             this.transactionManager = new PSTransactionManager();
         }
         /// <summary>
@@ -114,10 +104,7 @@ namespace System.Management.Automation
         // Helper for generated code to handle running w/ no execution context
         internal static bool IsStrictVersion(ExecutionContext context, int majorVersion)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             return (context != null) && context.IsStrictVersion(majorVersion);
         }
@@ -219,10 +206,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_providerNames == null)
-                {
-                    _providerNames = new SingleShellProviderNames();
-                }
+                _providerNames ??= new SingleShellProviderNames();
 
                 return _providerNames;
             }
@@ -1161,22 +1145,12 @@ namespace System.Management.Automation
         {
             EngineSessionState.RunspaceClosingNotification();
 
-            if (_debugger != null)
-            {
-                _debugger.Dispose();
-            }
+            _debugger?.Dispose();
 
-            if (Events != null)
-            {
-                Events.Dispose();
-            }
-
+            Events?.Dispose();
             Events = null;
-            if (this.transactionManager != null)
-            {
-                this.transactionManager.Dispose();
-            }
 
+            this.transactionManager?.Dispose();
             this.transactionManager = null;
         }
 
@@ -1660,12 +1634,9 @@ namespace System.Management.Automation
             // Initialize the fixed toplevel session state and the current session state
             TopLevelSessionState = EngineSessionState = new SessionStateInternal(this);
 
-            if (AuthorizationManager == null)
-            {
-                // if authorizationmanager==null, this means the configuration
-                // explicitly asked for dummy authorization manager.
-                AuthorizationManager = new AuthorizationManager(null);
-            }
+            // if authorizationmanager==null, this means the configuration
+            // explicitly asked for dummy authorization manager.
+            AuthorizationManager ??= new AuthorizationManager(null);
 
             // Set up the module intrinsics
             Modules = new ModuleIntrinsics(this);

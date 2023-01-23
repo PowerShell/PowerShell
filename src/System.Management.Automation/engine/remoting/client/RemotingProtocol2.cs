@@ -275,10 +275,7 @@ namespace System.Management.Automation.Internal
             // if a data structure handler does not exist it means
             // the association has been removed -
             // discard messages
-            if (dsHandler != null)
-            {
-                dsHandler.ProcessReceivedData(rcvdData);
-            }
+            dsHandler?.ProcessReceivedData(rcvdData);
         }
 
         /// <summary>

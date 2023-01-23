@@ -123,9 +123,6 @@
   <data name="TypeNotFoundWithMessage" xml:space="preserve">
     <value>Unable to find type [{0}]. Details: {1}</value>
   </data>
-  <data name="IncompleteVariableReference" xml:space="preserve">
-    <value>Incomplete variable reference token.</value>
-  </data>
   <data name="IncompleteString" xml:space="preserve">
     <value>Incomplete string token.</value>
   </data>
@@ -140,9 +137,6 @@
   </data>
   <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
     <value>The Unicode escape sequence contains more than the maximum of six hex digits between braces.</value>
-  </data>
-  <data name="NumberBothLongAndFloatingPoint" xml:space="preserve">
-    <value>A number cannot be both a long and floating point.</value>
   </data>
   <data name="ReferenceNeedsToBeByItselfInTypeConstraint" xml:space="preserve">
     <value>Cannot use [ref] with other types in a type constraint.</value>
@@ -183,14 +177,6 @@
   <data name="InvalidParameter" xml:space="preserve">
     <value>Parameter '{0}' is not valid</value>
   </data>
-  <data name="AmbiguousParameterBaseMessage" xml:space="preserve">
-    <value>Ambiguous parameter '-{0}'
-Possible matches are</value>
-  </data>
-  <data name="AmbiguousParameterExtendMessage" xml:space="preserve">
-    <value>
-    {0} ({1})</value>
-  </data>
   <data name="MissingExpression" xml:space="preserve">
     <value>Missing expression after '{0}' in pipeline element.</value>
   </data>
@@ -227,14 +213,8 @@ Possible matches are</value>
   <data name="EmptyPipeElement" xml:space="preserve">
     <value>An empty pipe element is not allowed.</value>
   </data>
-  <data name="UnknownAssignmentOperator" xml:space="preserve">
-    <value>Unknown assignment operator '{0}'.</value>
-  </data>
   <data name="InvalidLeftHandSide" xml:space="preserve">
     <value>The assignment expression is not valid. The input to an assignment operator must be an object that is able to accept assignments, such as a variable or a property.</value>
-  </data>
-  <data name="NoPropertiesInSplatting" xml:space="preserve">
-    <value>Cannot expand the splatted variable '@{0}'. Splatted variables cannot be used as part of a property or array expression. Assign the result of the expression to a temporary variable then splat the temporary variable instead.</value>
   </data>
   <data name="AddHashTableToNonHashTable" xml:space="preserve">
     <value>A hash table can only be added to another hash table.</value>
@@ -260,9 +240,6 @@ Possible matches are</value>
   <data name="ExpectedValueExpression" xml:space="preserve">
     <value>You must provide a value expression following the '{0}' operator.</value>
   </data>
-  <data name="BadRegularExpression" xml:space="preserve">
-    <value>A regular expression that was provided to '{0}' is not valid: {1}.</value>
-  </data>
   <data name="OperatorRequiresVariableOrProperty" xml:space="preserve">
     <value>The '{0}' operator works only on variables or on properties.</value>
   </data>
@@ -274,9 +251,6 @@ Possible matches are</value>
   </data>
   <data name="MissingPropertyName" xml:space="preserve">
     <value>Missing property name after reference operator.</value>
-  </data>
-  <data name="MissingPropertyReference" xml:space="preserve">
-    <value>Property reference or expression is missing or not valid.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
     <value>The property '{0}' cannot be found on this object. Verify that the property exists and can be set.</value>
@@ -299,26 +273,14 @@ Possible matches are</value>
   <data name="ArrayHasTooManyDimensions" xml:space="preserve">
     <value>The array has too many dimensions: {0}. The number of dimensions for an array must be less than or equal to 32.</value>
   </data>
-  <data name="ArrayAssignmentFailed" xml:space="preserve">
-    <value>Array assignment to [{0}] failed: {1}.</value>
-  </data>
   <data name="ArraySliceAssignmentFailed" xml:space="preserve">
     <value>Array assignment to [{0}] failed because assignment to slices is not supported.</value>
   </data>
   <data name="NeedMultidimensionalIndex" xml:space="preserve">
     <value>You cannot index into a {0} dimensional array with index [{1}].</value>
   </data>
-  <data name="KeyTypeMismatch" xml:space="preserve">
-    <value>Unable to assign to a dictionary of type {0} when the key is of type {1}.</value>
-  </data>
-  <data name="NotADictionary" xml:space="preserve">
-    <value>Unable to assign to an index into an object of type {0}.</value>
-  </data>
   <data name="IndexOutOfRange" xml:space="preserve">
     <value>Array assignment failed because index '{0}' was out of range.</value>
-  </data>
-  <data name="IndexOperationFailed" xml:space="preserve">
-    <value>Assigning to array element at index [{0}] failed: {1}.</value>
   </data>
   <data name="MissingExpressionAfterToken" xml:space="preserve">
     <value>Missing expression after '{0}'.</value>
@@ -350,14 +312,8 @@ Possible matches are</value>
   <data name="ExpectedExpression" xml:space="preserve">
     <value>An expression was expected after '('.</value>
   </data>
-  <data name="MissingKeyInHashLiteral" xml:space="preserve">
-    <value>Missing key before '=' in hash literal.</value>
-  </data>
   <data name="MissingEqualsInHashLiteral" xml:space="preserve">
     <value>Missing '=' operator after key in hash literal.</value>
-  </data>
-  <data name="MissingEqualsInNamedArgument" xml:space="preserve">
-    <value>The "=" operator is missing after a named argument.</value>
   </data>
   <data name="MissingStatementInHashLiteral" xml:space="preserve">
     <value>Missing statement after '=' in hash literal.</value>
@@ -392,9 +348,6 @@ Possible matches are</value>
   <data name="AmbiguousPath" xml:space="preserve">
     <value>The path cannot be processed because it resolved to more than one file; only one file at a time can be processed.</value>
   </data>
-  <data name="IncompleteSwitchStatement" xml:space="preserve">
-    <value>The switch statement was incomplete.</value>
-  </data>
   <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
     <value>The {0} '-{1}' parameter is reserved for future use.</value>
   </data>
@@ -412,9 +365,6 @@ Possible matches are</value>
   </data>
   <data name="PipelineValueRequired" xml:space="preserve">
     <value>A switch statement must have one of the following:  '-file file_name' or '( expression )'.</value>
-  </data>
-  <data name="MissingSwitchValueExpression" xml:space="preserve">
-    <value>Missing expression after '(' in switch statement.</value>
   </data>
   <data name="MissingSwitchConditionExpression" xml:space="preserve">
     <value>Missing condition in switch statement clause.</value>
@@ -460,14 +410,8 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="InvalidSplitOptionWithPredicate" xml:space="preserve">
     <value>Options are not allowed on the -split operator with a predicate.</value>
   </data>
-  <data name="MissingEndMultiLineComment" xml:space="preserve">
-    <value>The terminator '{0}' is missing from the multiline comment.</value>
-  </data>
   <data name="InvalidEndOfLine" xml:space="preserve">
     <value>The token '{0}' is not a valid statement separator in this version.</value>
-  </data>
-  <data name="FromKeywordNotAllowed" xml:space="preserve">
-    <value>The 'from' keyword is not supported in this version of the language.</value>
   </data>
   <data name="ReservedKeywordNotAllowed" xml:space="preserve">
     <value>The '{0}' keyword is not supported in this version of the language.</value>
@@ -484,17 +428,11 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="MissingTryStatement" xml:space="preserve">
     <value>Incomplete 'try' statement. A try statement requires a body.</value>
   </data>
-  <data name="InvalidLabelCharacter" xml:space="preserve">
-    <value>The character '{0}' is not valid. Labels can contain only alphanumeric characters, numbers, and underscores ('_').</value>
-  </data>
   <data name="InvalidFunctionParameter" xml:space="preserve">
     <value>Parameter declarations are a comma-separated list of variable names with optional initializer expressions.</value>
   </data>
   <data name="MissingFunctionBody" xml:space="preserve">
     <value>Missing function body in function declaration.</value>
-  </data>
-  <data name="BadlyFormedCmdlet" xml:space="preserve">
-    <value>Could not process combined Begin/Process/End clauses with command text. A script or function can either have begin/process/end clauses or command text but not both.</value>
   </data>
   <data name="DuplicateScriptCommandClause" xml:space="preserve">
     <value>Script command clause '{0}' has already been defined.</value>
@@ -614,44 +552,17 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>At {0}:{1} char:{2}
 + {3}</value>
   </data>
-  <data name="TextForCharPositionMessage" xml:space="preserve">
-    <value>At char:{0}</value>
-  </data>
   <data name="TraceScriptLineMessage" xml:space="preserve">
     <value>{0,4}+ {1}</value>
   </data>
-  <data name="TrapOnExceptionMatch" xml:space="preserve">
-    <value>    ! Trap or Catch on matching exception [{0}]</value>
-  </data>
-  <data name="TrapOnSubclassMatch" xml:space="preserve">
-    <value>    ! Trap or Catch on [{0}]; subclass of exception [{1}]</value>
-  </data>
-  <data name="TrapOnGenericException" xml:space="preserve">
-    <value>    ! Trap or Catch generic; caught [{0}]</value>
-  </data>
-  <data name="TraceSetMultipleRemaining" xml:space="preserve">
-    <value>    ! SET-MULTIPLE ${0} assigned remaining {1} values.</value>
-  </data>
-  <data name="TraceSetMultipleIndex" xml:space="preserve">
-    <value>    ! SET-MULTIPLE ${0} = '{1}'.</value>
-  </data>
   <data name="TraceVariableAssignment" xml:space="preserve">
     <value>    ! SET ${0} = '{1}'.</value>
-  </data>
-  <data name="TraceEnteringScriptBlock" xml:space="preserve">
-    <value>    ! CALL scriptblock.</value>
-  </data>
-  <data name="TraceEnteringScript" xml:space="preserve">
-    <value>    ! CALL script '{0}'</value>
   </data>
   <data name="TraceEnteringFunction" xml:space="preserve">
     <value>    ! CALL function '{0}'</value>
   </data>
   <data name="TraceEnteringFunctionDefinedInFile" xml:space="preserve">
     <value>    ! CALL function '{0}'  (defined in file '{1}')</value>
-  </data>
-  <data name="TraceParameterizedPropertySet" xml:space="preserve">
-    <value>   ! Setting parameterized property '{0}'</value>
   </data>
   <data name="TraceMethodCall" xml:space="preserve">
     <value>    ! CALL method '{0}'</value>
@@ -671,41 +582,14 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
     <value>Missing ] at end of type token.</value>
   </data>
-  <data name="EndBracketExpectedAtEndOfSubExpression" xml:space="preserve">
-    <value>Missing ) at end of subexpression.</value>
-  </data>
   <data name="OpenBraceNeedsToBeBackTickedInVariableName" xml:space="preserve">
     <value>Use `{ instead of { in variable names.</value>
-  </data>
-  <data name="EndBraceExpectedAtEndOfVariableName" xml:space="preserve">
-    <value>Missing } at end of variable name.</value>
-  </data>
-  <data name="EmptyBracedVariableName" xml:space="preserve">
-    <value>Braced variable name cannot be empty.</value>
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
     <value>The Data section is missing its statement block.</value>
   </data>
-  <data name="MissingOpenBraceInDataSectionStatement" xml:space="preserve">
-    <value>Missing the opening brace "{" in the Data section.</value>
-  </data>
-  <data name="MissingCloseBraceInDataSectionStatement" xml:space="preserve">
-    <value>Missing closing brace in the data section statement.</value>
-  </data>
-  <data name="InvalidDataSectionBody" xml:space="preserve">
-    <value>The body of the Data section is not valid. The Data section body can be only a convert-* command invocation optionally enclosed by an If statement.</value>
-  </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
     <value>The "{0}" parameter of the Data section is not valid. The valid Data section parameter is SupportedCommand.</value>
-  </data>
-  <data name="ExpandableStringsNotSupportedInDataSectionCmdletList" xml:space="preserve">
-    <value>Expandable strings are not allowed in the list of supported commands for the Data section.</value>
-  </data>
-  <data name="InvalidTokenForDataSectionCmdletList" xml:space="preserve">
-    <value>A token that is not valid was found in the list of supported commands for the Data section.</value>
-  </data>
-  <data name="DataSectionNameHasAlreadyBeenUsed" xml:space="preserve">
-    <value>The Data section variable "{0}" has already been used for an existing variable or another Data section.</value>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
     <value>Array references are not allowed in restricted language mode or a Data section.</value>
@@ -715,9 +599,6 @@ The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
     <value>Redirection is not allowed in restricted language mode or a Data section.</value>
-  </data>
-  <data name="OnlyConvertFromCmdletsAreSupportedInDataSection" xml:space="preserve">
-    <value>A command is referenced that is not allowed. Only convertfrom-* commands are supported in restricted language mode or a Data section.</value>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
     <value>The Do and While statements are not allowed in restricted language mode or a Data section.</value>
@@ -791,20 +672,11 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="CustomAttributeTypeNotFound" xml:space="preserve">
     <value>Cannot find the type for custom attribute '{0}'. Make sure that the assembly that contains this type is loaded.</value>
   </data>
-  <data name="CannotFindConstructorForCustomAttribute" xml:space="preserve">
-    <value>Cannot find an appropriate constructor to instantiate the custom attribute object for type '{0}'.</value>
-  </data>
-  <data name="InValidCustomAttributeType" xml:space="preserve">
-    <value>The custom attribute type '{0}' is not derived from System.Attribute.</value>
-  </data>
   <data name="PropertyNotFoundForType" xml:space="preserve">
     <value>Property '{0}' cannot be found for type '{1}'.</value>
   </data>
   <data name="UnexpectedAttribute" xml:space="preserve">
     <value>Unexpected attribute '{0}'.</value>
-  </data>
-  <data name="OperatorNotSupportedForType" xml:space="preserve">
-    <value>Operator '{0}' is not supported for type '{1}'.</value>
   </data>
   <data name="EndSquareBracketExpectedAtEndOfAttribute" xml:space="preserve">
     <value>Missing ] at end of attribute or type literal.</value>
@@ -902,9 +774,6 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="ErrorStream" xml:space="preserve">
     <value>error stream</value>
   </data>
-  <data name="HostStream" xml:space="preserve">
-    <value>host stream</value>
-  </data>
   <data name="OutputStream" xml:space="preserve">
     <value>output stream</value>
   </data>
@@ -965,21 +834,12 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="ConfigurationInvalidPropertyName" xml:space="preserve">
     <value>An attribute name for resource '{0}' was found that is not valid. An attribute name must be a simple string, and cannot contain variables or expressions. Replace '{1}' with a simple string.</value>
   </data>
-  <data name="ConfigurationNameMissing" xml:space="preserve">
-    <value>The configuration name is missing or '{' was not found for a default definition.</value>
-  </data>
-  <data name="InvalidConfigurationParameter" xml:space="preserve">
-    <value>The parameter {0} is not valid for the configuration statement.</value>
-  </data>
   <data name="InvalidInstanceProperty" xml:space="preserve">
     <value>The member '{0}' is not valid. Valid members are
 '{1}'.</value>
   </data>
   <data name="MissingBraceInObjectDefinition" xml:space="preserve">
     <value>Missing '{' in object definition.</value>
-  </data>
-  <data name="ParameterNameCanOnlyBeSpecifiedOnce" xml:space="preserve">
-    <value>Parameter {0} can only be specified once for a configuration.</value>
   </data>
   <data name="RequiredNameOrExpressionMissing" xml:space="preserve">
     <value>A required name or expression was missing.</value>
@@ -998,14 +858,6 @@ The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingConfigurationName" xml:space="preserve">
     <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expression.</value>
-  </data>
-  <data name="MissingRequiredResourcesArgument" xml:space="preserve">
-    <value>Missing argument to -Resources. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
-    <comment>-Required Resources should not be localized</comment>
-  </data>
-  <data name="MissingRequiredResourcesArgumentFatalError" xml:space="preserve">
-    <value>Unexpected token '{0}'. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
-    <comment>-Resource parameter should not be localized</comment>
   </data>
   <data name="ModuleNotFoundDuringParse" xml:space="preserve">
     <value>Could not find the module '{0}'.</value>
@@ -1162,14 +1014,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="MissingUsingStatementDirective" xml:space="preserve">
     <value>Missing using directive</value>
   </data>
-  <data name="MissingPropertyNameInClass" xml:space="preserve">
-    <value>Missing property name</value>
-  </data>
   <data name="MissingNamespaceAlias" xml:space="preserve">
     <value>Missing namespace alias</value>
-  </data>
-  <data name="MissingTypeAlias" xml:space="preserve">
-    <value>Missing type alias</value>
   </data>
   <data name="MissingEqualsInUsingAlias" xml:space="preserve">
     <value>Missing '=' operator</value>
@@ -1463,12 +1309,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
-  </data>
-  <data name="PsDscMissingSchemaStore" xml:space="preserve">
-    <value>Unable to find DSC schema store at "{0}". Please ensure PSDesiredStateConfiguration v3 module is installed.</value>
-  </data>
-  <data name="PS7DscSupportDisabled" xml:space="preserve">
-    <value>PS7DscSupport experimental feature is disabled; use Enable-ExperimentalFeature or update powershell.config.json to enable this feature.</value>
   </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>

@@ -960,10 +960,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (context == null)
-            {
-                context = new CmdletProviderContext(this.ExecutionContext);
-            }
+            context ??= new CmdletProviderContext(this.ExecutionContext);
 
             // Initialize the provider so that it can add any drives
             // that it needs.

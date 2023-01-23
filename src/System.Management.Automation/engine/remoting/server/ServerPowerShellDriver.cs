@@ -798,11 +798,9 @@ namespace System.Management.Automation
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (InputCollection != null)
-            {
-                // TODO: Post an ETW event
-                InputCollection.Complete();
-            }
+
+            // TODO: Post an ETW event
+            InputCollection?.Complete();
         }
 
         /// <summary>

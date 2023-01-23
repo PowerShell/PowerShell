@@ -13,35 +13,17 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
-    public partial class InvokeRestMethodCommand
+    /// <summary>
+    /// The Invoke-RestMethod command
+    /// This command makes an HTTP or HTTPS request to a web service,
+    /// and returns the response in an appropriate way.
+    /// Intended to work against the wide spectrum of "RESTful" web services
+    /// currently deployed across the web.
+    /// </summary>
+    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
+    public class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
         #region Parameters
-
-        /// <summary>
-        /// Gets or sets the parameter Method.
-        /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
-        public override WebRequestMethod Method
-        {
-            get { return base.Method; }
-
-            set { base.Method = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the parameter CustomMethod.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
-        [Alias("CM")]
-        [ValidateNotNullOrEmpty]
-        public override string CustomMethod
-        {
-            get { return base.CustomMethod; }
-
-            set { base.CustomMethod = value; }
-        }
 
         /// <summary>
         /// Enable automatic following of rel links.
@@ -50,9 +32,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("FL")]
         public SwitchParameter FollowRelLink
         {
-            get { return base._followRelLink; }
+            get => base._followRelLink;
 
-            set { base._followRelLink = value; }
+            set => base._followRelLink = value;
         }
 
         /// <summary>
@@ -63,9 +45,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int MaximumFollowRelLink
         {
-            get { return base._maximumFollowRelLink; }
+            get => base._maximumFollowRelLink;
 
-            set { base._maximumFollowRelLink = value; }
+            set => base._maximumFollowRelLink = value;
         }
 
         /// <summary>
@@ -83,7 +65,123 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Parameters
 
+        #region Virtual Method Overrides
+
+        /// <summary>
+        /// Process the web response and output corresponding objects.
+        /// </summary>
+        /// <param name="response"></param>
+        internal override void ProcessResponse(HttpResponseMessage response)
+        {
+            ArgumentNullException.ThrowIfNull(response);
+
+            var baseResponseStream = StreamHelper.GetResponseStream(response);
+
+            if (ShouldWriteToPipeline)
+            {
+                using var responseStream = new BufferingStreamReader(baseResponseStream);
+
+                // First see if it is an RSS / ATOM feed, in which case we can
+                // stream it - unless the user has overridden it with a return type of "XML"
+                if (TryProcessFeedStream(responseStream))
+                {
+                    // Do nothing, content has been processed.
+                }
+                else
+                {
+                    // determine the response type
+                    RestReturnType returnType = CheckReturnType(response);
+
+                    // Try to get the response encoding from the ContentType header.
+                    Encoding encoding = null;
+                    string charSet = response.Content.Headers.ContentType?.CharSet;
+                    if (!string.IsNullOrEmpty(charSet))
+                    {
+                        StreamHelper.TryGetEncoding(charSet, out encoding);
+                    }
+
+                    object obj = null;
+                    Exception ex = null;
+
+                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
+
+                    string encodingVerboseName;
+                    try
+                    {
+                        encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
+                    }
+                    catch (NotSupportedException)
+                    {
+                        encodingVerboseName = encoding.EncodingName;
+                    }
+
+                    // NOTE: Tests use this verbose output to verify the encoding.
+                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
+                    
+                    bool convertSuccess = false;
+
+                    if (returnType == RestReturnType.Json)
+                    {
+                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                    }
+                    // default to try xml first since it's more common
+                    else
+                    {
+                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
+                    }
+
+                    if (!convertSuccess)
+                    {
+                        // fallback to string
+                        obj = str;
+                    }
+
+                    WriteObject(obj);
+                }
+            }
+            else if (ShouldSaveToOutFile)
+            {
+                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+            }
+
+            if (!string.IsNullOrEmpty(StatusCodeVariable))
+            {
+                PSVariableIntrinsics vi = SessionState.PSVariable;
+                vi.Set(StatusCodeVariable, (int)response.StatusCode);
+            }
+
+            if (!string.IsNullOrEmpty(ResponseHeadersVariable))
+            {
+                PSVariableIntrinsics vi = SessionState.PSVariable;
+                vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));
+            }
+        }
+
+        #endregion Virtual Method Overrides
+
         #region Helper Methods
+
+        private static RestReturnType CheckReturnType(HttpResponseMessage response)
+        {
+            ArgumentNullException.ThrowIfNull(response);
+
+            RestReturnType rt = RestReturnType.Detect;
+            string contentType = ContentHelper.GetContentType(response);
+            if (string.IsNullOrEmpty(contentType))
+            {
+                rt = RestReturnType.Detect;
+            }
+            else if (ContentHelper.IsJson(contentType))
+            {
+                rt = RestReturnType.Json;
+            }
+            else if (ContentHelper.IsXml(contentType))
+            {
+                rt = RestReturnType.Xml;
+            }
+
+            return rt;
+        }
 
         private bool TryProcessFeedStream(Stream responseStream)
         {
@@ -111,7 +209,8 @@ namespace Microsoft.PowerShell.Commands
                 if (isRssOrFeed)
                 {
                     XmlDocument workingDocument = new();
-                    // performing a Read() here to avoid rrechecking
+
+                    // Performing a Read() here to avoid rechecking
                     // "rss" or "feed" items
                     reader.Read();
                     while (!reader.EOF)
@@ -122,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
                              string.Equals("Entry", reader.Name, StringComparison.OrdinalIgnoreCase))
                            )
                         {
-                            // this one will do reader.Read() internally
+                            // This one will do reader.Read() internally
                             XmlNode result = workingDocument.ReadNode(reader);
                             WriteObject(result);
                         }
@@ -178,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
                 doc = null;
             }
 
-            return (doc != null);
+            return doc != null;
         }
 
         private static bool TryConvertToJson(string json, out object obj, ref Exception exRef)
@@ -206,12 +305,7 @@ namespace Microsoft.PowerShell.Commands
                     converted = true;
                 }
             }
-            catch (ArgumentException ex)
-            {
-                exRef = ex;
-                obj = null;
-            }
-            catch (InvalidOperationException ex)
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
                 exRef = ex;
                 obj = null;
@@ -226,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
             return converted;
         }
 
-        #endregion
+        #endregion Helper Methods
 
         /// <summary>
         /// Enum for rest return type.
@@ -265,38 +359,26 @@ namespace Microsoft.PowerShell.Commands
             private readonly MemoryStream _streamBuffer;
             private readonly byte[] _copyBuffer;
 
-            public override bool CanRead
-            {
-                get { return true; }
-            }
+            public override bool CanRead => true;
 
-            public override bool CanSeek
-            {
-                get { return true; }
-            }
+            public override bool CanSeek => true;
 
-            public override bool CanWrite
-            {
-                get { return false; }
-            }
+            public override bool CanWrite => false;
 
             public override void Flush()
             {
                 _streamBuffer.SetLength(0);
             }
 
-            public override long Length
-            {
-                get { return _length; }
-            }
+            public override long Length => _length;
 
             private long _length;
 
             public override long Position
             {
-                get { return _streamBuffer.Position; }
+                get => _streamBuffer.Position;
 
-                set { _streamBuffer.Position = value; }
+                set => _streamBuffer.Position = value;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
@@ -304,8 +386,7 @@ namespace Microsoft.PowerShell.Commands
                 long previousPosition = Position;
                 bool consumedStream = false;
                 int totalCount = count;
-                while ((!consumedStream) &&
-                    ((Position + totalCount) > _streamBuffer.Length))
+                while (!consumedStream && (Position + totalCount) > _streamBuffer.Length)
                 {
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we
@@ -358,148 +439,5 @@ namespace Microsoft.PowerShell.Commands
                 throw new NotSupportedException();
             }
         }
-    }
-
-    // TODO: Merge Partials
-
-    /// <summary>
-    /// The Invoke-RestMethod command
-    /// This command makes an HTTP or HTTPS request to a web service,
-    /// and returns the response in an appropriate way.
-    /// Intended to work against the wide spectrum of "RESTful" web services
-    /// currently deployed across the web.
-    /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096706", DefaultParameterSetName = "StandardMethod")]
-    public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
-    {
-        #region Virtual Method Overrides
-
-        /// <summary>
-        /// Process the web response and output corresponding objects.
-        /// </summary>
-        /// <param name="response"></param>
-        internal override void ProcessResponse(HttpResponseMessage response)
-        {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
-
-            var baseResponseStream = StreamHelper.GetResponseStream(response);
-
-            if (ShouldWriteToPipeline)
-            {
-                using var responseStream = new BufferingStreamReader(baseResponseStream);
-
-                // First see if it is an RSS / ATOM feed, in which case we can
-                // stream it - unless the user has overridden it with a return type of "XML"
-                if (TryProcessFeedStream(responseStream))
-                {
-                    // Do nothing, content has been processed.
-                }
-                else
-                {
-                    // determine the response type
-                    RestReturnType returnType = CheckReturnType(response);
-
-                    // Try to get the response encoding from the ContentType header.
-                    Encoding encoding = null;
-                    string charSet = response.Content.Headers.ContentType?.CharSet;
-                    if (!string.IsNullOrEmpty(charSet))
-                    {
-                        // NOTE: Don't use ContentHelper.GetEncoding; it returns a
-                        // default which bypasses checking for a meta charset value.
-                        StreamHelper.TryGetEncoding(charSet, out encoding);
-                    }
-
-                    if (string.IsNullOrEmpty(charSet) && returnType == RestReturnType.Json)
-                    {
-                        encoding = Encoding.UTF8;
-                    }
-
-                    object obj = null;
-                    Exception ex = null;
-
-                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
-
-                    string encodingVerboseName;
-                    try
-                    {
-                        encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
-                    }
-                    catch (NotSupportedException)
-                    {
-                        encodingVerboseName = encoding.EncodingName;
-                    }
-                    // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Format
-                    (
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        "Content encoding: {0}",
-                        encodingVerboseName)
-                    );
-                    bool convertSuccess = false;
-
-                    if (returnType == RestReturnType.Json)
-                    {
-                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
-                    }
-                    // default to try xml first since it's more common
-                    else
-                    {
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
-                    }
-
-                    if (!convertSuccess)
-                    {
-                        // fallback to string
-                        obj = str;
-                    }
-
-                    WriteObject(obj);
-                }
-            }
-            else if (ShouldSaveToOutFile)
-            {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, _cancelToken.Token);
-            }
-
-            if (!string.IsNullOrEmpty(StatusCodeVariable))
-            {
-                PSVariableIntrinsics vi = SessionState.PSVariable;
-                vi.Set(StatusCodeVariable, (int)response.StatusCode);
-            }
-
-            if (!string.IsNullOrEmpty(ResponseHeadersVariable))
-            {
-                PSVariableIntrinsics vi = SessionState.PSVariable;
-                vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));
-            }
-        }
-
-        #endregion Virtual Method Overrides
-
-        #region Helper Methods
-
-        private static RestReturnType CheckReturnType(HttpResponseMessage response)
-        {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
-
-            RestReturnType rt = RestReturnType.Detect;
-            string contentType = ContentHelper.GetContentType(response);
-            if (string.IsNullOrEmpty(contentType))
-            {
-                rt = RestReturnType.Detect;
-            }
-            else if (ContentHelper.IsJson(contentType))
-            {
-                rt = RestReturnType.Json;
-            }
-            else if (ContentHelper.IsXml(contentType))
-            {
-                rt = RestReturnType.Xml;
-            }
-
-            return (rt);
-        }
-
-        #endregion Helper Methods
     }
 }

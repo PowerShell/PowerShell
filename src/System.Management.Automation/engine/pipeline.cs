@@ -213,10 +213,7 @@ namespace System.Management.Automation.Internal
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
             if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
             {
-                if (hostInterface != null)
-                {
-                    hostInterface.TranscribeCommand(logElement, invocation);
-                }
+                hostInterface?.TranscribeCommand(logElement, invocation);
             }
 
             if (_needToLog && !string.IsNullOrEmpty(logElement))
@@ -1021,10 +1018,7 @@ namespace System.Management.Automation.Internal
             ValidateCommandProcessorNotNull(firstcommandProcessor, PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
 
             // Set the execution scope using the current scope
-            if (_executionScope == null)
-            {
-                _executionScope = firstcommandProcessor.Context.EngineSessionState.CurrentScope;
-            }
+            _executionScope ??= firstcommandProcessor.Context.EngineSessionState.CurrentScope;
 
             // add ExternalSuccessOutput to the last command
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];

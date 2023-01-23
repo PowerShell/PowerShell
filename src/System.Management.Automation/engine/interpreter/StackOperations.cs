@@ -60,7 +60,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
-            return string.Format(CultureInfo.InvariantCulture, "LoadCached({0}: {1})", _index, objects[(int)_index]);
+            return string.Create(CultureInfo.InvariantCulture, $"LoadCached({_index}: {objects[(int)_index]})");
         }
 
         public override string ToString()

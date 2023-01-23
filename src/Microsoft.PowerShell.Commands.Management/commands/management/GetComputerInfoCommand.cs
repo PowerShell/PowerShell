@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 var halPath = CIMHelper.EscapePath(System.IO.Path.Combine(systemDirectory, "hal.dll"));
-                var query = string.Format("SELECT * FROM CIM_DataFile Where Name='{0}'", halPath);
+                var query = string.Create(CultureInfo.InvariantCulture, $"SELECT * FROM CIM_DataFile Where Name='{halPath}'");
                 var instance = session.QueryFirstInstance(query);
 
                 if (instance != null)
@@ -1130,11 +1130,8 @@ namespace Microsoft.PowerShell.Commands
                         culture = CultureInfo.GetCultureInfo((int)localeNum);
                     }
 
-                    if (culture == null)
-                    {
-                        // If TryParse failed we'll try using the original string as culture name
-                        culture = CultureInfo.GetCultureInfo(locale);
-                    }
+                    // If TryParse failed we'll try using the original string as culture name
+                    culture ??= CultureInfo.GetCultureInfo(locale);
                 }
                 catch (Exception)
                 {
@@ -1893,7 +1890,7 @@ namespace Microsoft.PowerShell.Commands
             var mask = suiteMask.Value;
             var list = new List<OSProductSuite>();
 
-            foreach (OSProductSuite suite in Enum.GetValues(typeof(OSProductSuite)))
+            foreach (OSProductSuite suite in Enum.GetValues<OSProductSuite>())
                 if ((mask & (uint)suite) != 0)
                     list.Add(suite);
 
@@ -3328,9 +3325,9 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum BootOptionAction
     {
-        //  <summary>
-        //  This value is reserved
-        //  </summary>
+        // <summary>
+        // This value is reserved
+        // </summary>
         // Reserved = 0,
 
         /// <summary>
@@ -3687,7 +3684,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Secure Memory Overwrite.
         /// </summary>
-        SecureMemoryOverwrite = 4
+        SecureMemoryOverwrite = 4,
+        
+        /// <summary>
+        /// UEFI Code Readonly.
+        /// </summary>
+        UEFICodeReadonly = 5,
+
+        /// <summary>
+        /// SMM Security Mitigations 1.0.
+        /// </summary>
+        SMMSecurityMitigations = 6,
+
+        /// <summary>
+        /// Mode Based Execution Control.
+        /// </summary>
+        ModeBasedExecutionControl = 7
     }
 
     /// <summary>
@@ -5086,7 +5098,7 @@ namespace Microsoft.PowerShell.Commands
     #endregion Output components
 
     #region Native
-    internal static class Native
+    internal static partial class Native
     {
         private static class PInvokeDllNames
         {
@@ -5106,17 +5118,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="version">The version of the POWER_PLATFORM_ROLE enumeration for the platform.</param>
         /// <returns>POWER_PLATFORM_ROLE enumeration.</returns>
-        [DllImport(PInvokeDllNames.PowerDeterminePlatformRoleExDllName, EntryPoint = "PowerDeterminePlatformRoleEx", CharSet = CharSet.Ansi)]
-        public static extern uint PowerDeterminePlatformRoleEx(uint version);
+        [LibraryImport(PInvokeDllNames.PowerDeterminePlatformRoleExDllName, EntryPoint = "PowerDeterminePlatformRoleEx")]
+        public static partial uint PowerDeterminePlatformRoleEx(uint version);
 
         /// <summary>
         /// Retrieve the amount of RAM physically installed in the computer.
         /// </summary>
         /// <param name="MemoryInKilobytes"></param>
         /// <returns></returns>
-        [DllImport(PInvokeDllNames.GetPhysicallyInstalledSystemMemoryDllName, SetLastError = true)]
+        [LibraryImport(PInvokeDllNames.GetPhysicallyInstalledSystemMemoryDllName)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
+        public static partial bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
 
         /// <summary>
         /// Retrieve the firmware type of the local computer.
@@ -5126,9 +5138,9 @@ namespace Microsoft.PowerShell.Commands
         /// the resultant firmware type
         /// </param>
         /// <returns></returns>
-        [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]
+        [LibraryImport(PInvokeDllNames.GetFirmwareTypeDllName)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetFirmwareType(out FirmwareType firmwareType);
+        public static partial bool GetFirmwareType(out FirmwareType firmwareType);
 
         /// <summary>
         /// Gets the data specified for the passed in property name from the
@@ -5137,8 +5149,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="licenseProperty">Name of the licensing property to get.</param>
         /// <param name="propertyValue">Out parameter for the value.</param>
         /// <returns>An hresult indicating success or failure.</returns>
-        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
-        internal static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
+        [LibraryImport("slc.dll", StringMarshalling = StringMarshalling.Utf16)]
+        internal static partial int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
     }
     #endregion Native
 }

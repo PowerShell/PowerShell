@@ -174,6 +174,7 @@ namespace Microsoft.PowerShell
             "sta",
             "mta",
             "command",
+            "commandwithargs",
             "configurationname",
             "custompipename",
             "encodedcommand",
@@ -230,6 +231,7 @@ namespace Microsoft.PowerShell
             WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
             ConfigurationFile   = 0x04000000, // -ConfigurationFile
             NoProfileLoadTime   = 0x08000000, // -NoProfileLoadTime
+            CommandWithArgs     = 0x10000000, // -CommandWithArgs | -cwa
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -833,10 +835,7 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i] is null)
-                {
-                    throw new ArgumentNullException(nameof(args), CommandLineParameterParserStrings.NullElementInArgs);
-                }
+                ArgumentNullException.ThrowIfNull(args[i], CommandLineParameterParserStrings.NullElementInArgs);
             }
 
             // Indicates that we've called this method on this instance, and that when it's done, the state variables
@@ -914,21 +913,25 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
                 {
                     _socketServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SocketServerMode;
                 }
                 else if (MatchSwitch(switchKey, "servermode", "s"))
                 {
                     _serverMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.ServerMode;
                 }
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.NamedPipeServerMode;
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
                     _sshServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
                 }
                 else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
@@ -993,6 +996,19 @@ namespace Microsoft.PowerShell
 
                     _customPipeName = args[i];
                     ParametersUsed |= ParameterBitmap.CustomPipeName;
+                }
+                else if (MatchSwitch(switchKey, "commandwithargs", "commandwithargs") || MatchSwitch(switchKey, "cwa", "cwa"))
+                {
+                    _commandHasArgs = true;
+
+                    if (!ParseCommand(args, ref i, noexitSeen, false))
+                    {
+                        break;
+                    }
+
+                    i++;
+                    CollectPSArgs(args, ref i);
+                    ParametersUsed |= ParameterBitmap.CommandWithArgs;
                 }
                 else if (MatchSwitch(switchKey, "command", "c"))
                 {
@@ -1196,7 +1212,7 @@ namespace Microsoft.PowerShell
         private void ParseFormat(string[] args, ref int i, ref Serialization.DataFormat format, string resourceStr)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (string s in Enum.GetNames(typeof(Serialization.DataFormat)))
+            foreach (string s in Enum.GetNames<Serialization.DataFormat>())
             {
                 sb.Append(s);
                 sb.Append(Environment.NewLine);
@@ -1246,15 +1262,6 @@ namespace Microsoft.PowerShell
         // treat -command as an argument to the script...
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
-            // Try parse '$true', 'true', '$false' and 'false' values.
-            static object ConvertToBoolIfPossible(string arg)
-            {
-                // Before parsing we skip '$' if present.
-                return arg.Length > 0 && bool.TryParse(arg.AsSpan(arg[0] == '$' ? 1 : 0), out bool boolValue)
-                    ? (object)boolValue
-                    : (object)arg;
-            }
-
             ++i;
             if (i >= args.Length)
             {
@@ -1342,51 +1349,64 @@ namespace Microsoft.PowerShell
 
                 i++;
 
-                string? pendingParameter = null;
+                CollectPSArgs(args, ref i);
+            }
 
-                // Accumulate the arguments to this script...
-                while (i < args.Length)
+            return true;
+        }
+
+        private void CollectPSArgs(string[] args, ref int i)
+        {
+            // Try parse '$true', 'true', '$false' and 'false' values.
+            static object ConvertToBoolIfPossible(string arg)
+            {
+                // Before parsing we skip '$' if present.
+                return arg.Length > 0 && bool.TryParse(arg.AsSpan(arg[0] == '$' ? 1 : 0), out bool boolValue)
+                    ? (object)boolValue
+                    : (object)arg;
+            }
+
+            string? pendingParameter = null;
+
+            while (i < args.Length)
+            {
+                string arg = args[i];
+
+                // If there was a pending parameter, add a named parameter
+                // using the pending parameter and current argument
+                if (pendingParameter != null)
                 {
-                    string arg = args[i];
-
-                    // If there was a pending parameter, add a named parameter
-                    // using the pending parameter and current argument
-                    if (pendingParameter != null)
+                    _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
+                    pendingParameter = null;
+                }
+                else if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]) && arg.Length > 1)
+                {
+                    int offset = arg.IndexOf(':');
+                    if (offset >= 0)
                     {
-                        _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
-                        pendingParameter = null;
-                    }
-                    else if (!string.IsNullOrEmpty(arg) && CharExtensions.IsDash(arg[0]) && arg.Length > 1)
-                    {
-                        int offset = arg.IndexOf(':');
-                        if (offset >= 0)
+                        if (offset == arg.Length - 1)
                         {
-                            if (offset == arg.Length - 1)
-                            {
-                                pendingParameter = arg.TrimEnd(':');
-                            }
-                            else
-                            {
-                                string argValue = arg.Substring(offset + 1);
-                                string argName = arg.Substring(0, offset);
-                                _collectedArgs.Add(new CommandParameter(argName, ConvertToBoolIfPossible(argValue)));
-                            }
+                            pendingParameter = arg.TrimEnd(':');
                         }
                         else
                         {
-                            _collectedArgs.Add(new CommandParameter(arg));
+                            string argValue = arg.Substring(offset + 1);
+                            string argName = arg.Substring(0, offset);
+                            _collectedArgs.Add(new CommandParameter(argName, ConvertToBoolIfPossible(argValue)));
                         }
                     }
                     else
                     {
-                        _collectedArgs.Add(new CommandParameter(null, arg));
+                        _collectedArgs.Add(new CommandParameter(arg));
                     }
-
-                    ++i;
                 }
-            }
+                else
+                {
+                    _collectedArgs.Add(new CommandParameter(null, arg));
+                }
 
-            return true;
+                ++i;
+            }
         }
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
@@ -1442,23 +1462,15 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // Collect the remaining parameters and combine them into a single command to be run.
-
-                StringBuilder cmdLineCmdSB = new StringBuilder();
-
-                while (i < args.Length)
+                if (_commandHasArgs)
                 {
-                    cmdLineCmdSB.Append(args[i] + " ");
-                    ++i;
+                    _commandLineCommand = args[i];
                 }
-
-                if (cmdLineCmdSB.Length > 0)
+                else
                 {
-                    // remove the last blank
-                    cmdLineCmdSB.Remove(cmdLineCmdSB.Length - 1, 1);
+                    _commandLineCommand = string.Join(' ', args, i, args.Length - i);
+                    i = args.Length;
                 }
-
-                _commandLineCommand = cmdLineCmdSB.ToString();
             }
 
             if (!noexitSeen && !_explicitReadCommandsFromStdin)
@@ -1530,6 +1542,7 @@ namespace Microsoft.PowerShell
         private bool _noPrompt;
         private string? _commandLineCommand;
         private bool _wasCommandEncoded;
+        private bool _commandHasArgs;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;

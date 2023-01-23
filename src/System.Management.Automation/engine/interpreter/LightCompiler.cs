@@ -92,11 +92,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0} [{1}-{2}] [{3}->{4}]",
-                (IsFault ? "fault" : "catch(" + ExceptionType.Name + ")"),
-                StartIndex, EndIndex,
-                HandlerStartIndex, HandlerEndIndex
-            );
+            return string.Create(CultureInfo.InvariantCulture, $"{(IsFault ? "fault" : "catch(" + ExceptionType.Name + ")")} [{StartIndex}-{EndIndex}] [{HandlerStartIndex}->{HandlerEndIndex}]");
         }
     }
 
@@ -231,11 +227,11 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
+                return string.Create(CultureInfo.InvariantCulture, $"{Index}: clear");
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
+                return string.Create(CultureInfo.InvariantCulture, $"{Index}: [{StartLine}-{EndLine}] '{FileName}'");
             }
         }
     }
@@ -1132,10 +1128,7 @@ namespace System.Management.Automation.Interpreter
                 Debug.Assert(label != null);
             }
 
-            if (label == null)
-            {
-                label = DefineLabel(node.Target);
-            }
+            label ??= DefineLabel(node.Target);
 
             if (node.DefaultValue != null)
             {

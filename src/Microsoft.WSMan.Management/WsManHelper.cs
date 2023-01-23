@@ -178,10 +178,7 @@ namespace Microsoft.WSMan.Management
             string resourceName,
             object[] args)
         {
-            if (resourceManager == null)
-            {
-                throw new ArgumentNullException(nameof(resourceManager));
-            }
+            ArgumentNullException.ThrowIfNull(resourceManager);
 
             if (string.IsNullOrEmpty(resourceName))
             {
@@ -370,17 +367,8 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (_sr != null)
-                {
-                    // _sr.Close();
-                    _sr.Dispose();
-                }
-
-                if (_fs != null)
-                {
-                    // _fs.Close();
-                    _fs.Dispose();
-                }
+                _sr?.Dispose();
+                _fs?.Dispose();
             }
 
             return strOut;
@@ -1082,7 +1070,7 @@ namespace Microsoft.WSMan.Management
 #if CORECLR
                     "0409" /* TODO: don't assume it is always English on CSS? */
 #else
-                    string.Concat("0", string.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
+                    string.Concat("0", string.Create(CultureInfo.CurrentCulture, $"{checked((uint)CultureInfo.CurrentUICulture.LCID):x2}"))
 #endif
                     + "\\" + "winrm.ini";
                 if (File.Exists(filepath))

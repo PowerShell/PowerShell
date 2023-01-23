@@ -770,6 +770,7 @@ namespace System.Management.Automation
         private const string ValidateSetFormat = @"{0}[ValidateSet({1})]";
         private const string ValidateNotNullFormat = @"{0}[ValidateNotNull()]";
         private const string ValidateNotNullOrEmptyFormat = @"{0}[ValidateNotNullOrEmpty()]";
+        private const string ValidateNotNullOrWhiteSpaceFormat = @"{0}[ValidateNotNullOrWhiteSpace()]";
         private const string AllowNullFormat = @"{0}[AllowNull()]";
         private const string AllowEmptyStringFormat = @"{0}[AllowEmptyString()]";
         private const string AllowEmptyCollectionFormat = @"{0}[AllowEmptyCollection()]";
@@ -982,7 +983,7 @@ namespace System.Management.Automation
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
                 string or = string.Empty;
-                string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
+                string[] regexOptionEnumValues = Enum.GetNames<System.Text.RegularExpressions.RegexOptions>();
 
                 foreach (string regexOption in regexOptionEnumValues)
                 {
@@ -1028,6 +1029,14 @@ namespace System.Management.Automation
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullOrEmptyFormat, prefix);
+                return result;
+            }
+
+            ValidateNotNullOrWhiteSpaceAttribute notNullWhiteSpaceAttrib = attrib as ValidateNotNullOrWhiteSpaceAttribute;
+            if (notNullWhiteSpaceAttrib != null)
+            {
+                result = string.Format(CultureInfo.InvariantCulture,
+                    ValidateNotNullOrWhiteSpaceFormat, prefix);
                 return result;
             }
 

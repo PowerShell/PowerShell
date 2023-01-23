@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#pragma warning disable 1634, 1691
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime;
@@ -181,7 +180,7 @@ namespace Microsoft.PowerShell
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
-                    s_theConsoleHost.UI.WriteLine("PowerShell " + PSVersionInfo.GitCommitId);
+                    s_theConsoleHost.UI.WriteLine($"PowerShell {PSVersionInfo.GitCommitId}");
                     return 0;
                 }
 
@@ -189,10 +188,7 @@ namespace Microsoft.PowerShell
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
-                    if (s_theConsoleHost != null)
-                    {
-                        s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
-                    }
+                    s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
 
                     return ExitCodeBadCommandLineParameter;
                 }
@@ -277,6 +273,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
+#pragma warning disable IDE0031
                 if (s_theConsoleHost != null)
                 {
 #if LEGACYTELEMETRY
@@ -292,6 +289,7 @@ namespace Microsoft.PowerShell
 #endif
                     s_theConsoleHost.Dispose();
                 }
+#pragma warning restore IDE0031
             }
 
             unchecked
@@ -433,7 +431,7 @@ namespace Microsoft.PowerShell
         /// if true, then flag the parent ConsoleHost that it should shutdown the session.  If false, then only the current
         /// executing instance is stopped.
         ///
-        ///</param>
+        /// </param>
         private static void SpinUpBreakHandlerThread(bool shouldEndSession)
         {
             ConsoleHost host = ConsoleHost.SingletonInstance;
@@ -499,10 +497,7 @@ namespace Microsoft.PowerShell
                     if (runspaceRef != null)
                     {
                         var runspace = runspaceRef.Runspace;
-                        if (runspace != null)
-                        {
-                            runspace.Close();
-                        }
+                        runspace?.Close();
                     }
                 }
             }
@@ -776,7 +771,7 @@ namespace Microsoft.PowerShell
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
-                if (ui == null) throw new ArgumentNullException(nameof(ui));
+                ArgumentNullException.ThrowIfNull(ui);
                 _ui = ui;
             }
 
@@ -1264,15 +1259,8 @@ namespace Microsoft.PowerShell
                         StopTranscribing();
                     }
 
-                    if (_outputSerializer != null)
-                    {
-                        _outputSerializer.End();
-                    }
-
-                    if (_errorSerializer != null)
-                    {
-                        _errorSerializer.End();
-                    }
+                    _outputSerializer?.End();
+                    _errorSerializer?.End();
 
                     if (_runspaceRef != null)
                     {
@@ -1388,14 +1376,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_outputSerializer == null)
-                {
-                    _outputSerializer =
-                        new WrappedSerializer(
-                            OutputFormat,
-                            "Output",
-                            Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
-                }
+                _outputSerializer ??=
+                    new WrappedSerializer(
+                        OutputFormat,
+                        "Output",
+                        Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
 
                 return _outputSerializer;
             }
@@ -1405,14 +1390,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (_errorSerializer == null)
-                {
-                    _errorSerializer =
-                        new WrappedSerializer(
-                            ErrorFormat,
-                            "Error",
-                            Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
-                }
+                _errorSerializer ??=
+                    new WrappedSerializer(
+                        ErrorFormat,
+                        "Error",
+                        Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
 
                 return _errorSerializer;
             }
@@ -1849,8 +1831,29 @@ namespace Microsoft.PowerShell
                 const string shellId = "Microsoft.PowerShell";
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
-                // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                // are loaded so that they are trusted. (Validation of their signatures is done in F&O).
+                var languageMode = Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                // When displaying banner, also display the language mode if running in any restricted mode.
+                if (s_cpp.ShowBanner)
+                {
+                    switch (languageMode)
+                    {
+                        case PSLanguageMode.ConstrainedLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
+                            break;
+
+                        case PSLanguageMode.NoLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerNLMode);
+                            break;
+
+                        case PSLanguageMode.RestrictedLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerRLMode);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
 
                 string allUsersProfile = HostUtilities.GetFullProfileFileName(null, false);
                 string allUsersHostSpecificProfile = HostUtilities.GetFullProfileFileName(shellId, false);
@@ -2237,10 +2240,7 @@ namespace Microsoft.PowerShell
                     // For remote debugging block data coming from the main (not-nested)
                     // running command.
                     baseLoop = InputLoop.GetNonNestedLoop();
-                    if (baseLoop != null)
-                    {
-                        baseLoop.BlockCommandOutput();
-                    }
+                    baseLoop?.BlockCommandOutput();
                 }
 
                 //
@@ -2285,10 +2285,7 @@ namespace Microsoft.PowerShell
             finally
             {
                 _debuggerStopEventArgs = null;
-                if (baseLoop != null)
-                {
-                    baseLoop.ResumeCommandOutput();
-                }
+                baseLoop?.ResumeCommandOutput();
             }
         }
 
@@ -2488,14 +2485,15 @@ namespace Microsoft.PowerShell
             /// </summary>
             internal void Run(bool inputLoopIsNested)
             {
-                System.Management.Automation.Host.PSHostUserInterface c = _parent.UI;
+                PSHostUserInterface c = _parent.UI;
                 ConsoleHostUserInterface ui = c as ConsoleHostUserInterface;
 
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
-                bool previousResponseWasEmpty = false;
-                StringBuilder inputBlock = new StringBuilder();
+                // Use nullable so that we don't evaluate suggestions at startup.
+                bool? previousResponseWasEmpty = null;
+                var inputBlock = new StringBuilder();
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
@@ -2511,7 +2509,6 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 // use a special prompt that denotes block mode
-
                                 prompt = ">> ";
                             }
                             else
@@ -2522,9 +2519,16 @@ namespace Microsoft.PowerShell
                                     ui.WriteLine();
 
                                 // Evaluate any suggestions
-                                if (!previousResponseWasEmpty)
+                                if (previousResponseWasEmpty == false)
                                 {
-                                    EvaluateSuggestions(ui);
+                                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
+                                    {
+                                        EvaluateFeedbacks(ui);
+                                    }
+                                    else
+                                    {
+                                        EvaluateSuggestions(ui);
+                                    }
                                 }
 
                                 // Then output the prompt
@@ -2533,10 +2537,7 @@ namespace Microsoft.PowerShell
                                     prompt = EvaluateDebugPrompt();
                                 }
 
-                                if (prompt == null)
-                                {
-                                    prompt = EvaluatePrompt();
-                                }
+                                prompt ??= EvaluatePrompt();
                             }
 
                             ui.Write(prompt);
@@ -2677,10 +2678,7 @@ namespace Microsoft.PowerShell
                                 bht = _parent._breakHandlerThread;
                             }
 
-                            if (bht != null)
-                            {
-                                bht.Join();
-                            }
+                            bht?.Join();
 
                             // Once the pipeline has been executed, we toss any outstanding progress data and
                             // take down the display.
@@ -2831,6 +2829,77 @@ namespace Microsoft.PowerShell
                 }
 
                 return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
+            }
+
+            private void EvaluateFeedbacks(ConsoleHostUserInterface ui)
+            {
+                // Output any training suggestions
+                try
+                {
+                    List<FeedbackEntry> feedbacks = FeedbackHub.GetFeedback(_parent.Runspace);
+                    if (feedbacks is null || feedbacks.Count == 0)
+                    {
+                        return;
+                    }
+
+                    // Feedback section starts with a new line.
+                    ui.WriteLine();
+
+                    const string Indentation = "  ";
+                    string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
+                    string textStyle = PSStyle.Instance.Formatting.FeedbackText;
+                    string ansiReset = PSStyle.Instance.Reset;
+
+                    if (!ui.SupportsVirtualTerminal)
+                    {
+                        nameStyle = string.Empty;
+                        textStyle = string.Empty;
+                        ansiReset = string.Empty;
+                    }
+
+                    int count = 0;
+                    var output = new StringBuilder();
+
+                    foreach (FeedbackEntry entry in feedbacks)
+                    {
+                        if (count > 0)
+                        {
+                            output.AppendLine();
+                        }
+
+                        output.Append("Suggestion [")
+                            .Append(nameStyle)
+                            .Append(entry.Name)
+                            .Append(ansiReset)
+                            .AppendLine("]:")
+                            .Append(textStyle);
+
+                        string[] lines = entry.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string line in lines)
+                        {
+                            output.Append(Indentation)
+                                .Append(line.AsSpan().TrimEnd())
+                                .AppendLine();
+                        }
+
+                        output.Append(ansiReset);
+                        ui.Write(output.ToString());
+
+                        count++;
+                        output.Clear();
+                    }
+
+                    // Feedback section ends with a new line.
+                    ui.WriteLine();
+                }
+                catch (Exception e)
+                {
+                    // Catch-all OK. This is a third-party call-out.
+                    ui.WriteErrorLine(e.Message);
+
+                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
+                    localRunspace.GetExecutionContext.AppendDollarError(e);
+                }
             }
 
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)

@@ -13,20 +13,6 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class ContentHelper
     {
-        #region Constants
-
-        // default codepage encoding for web content.  See RFC 2616.
-        private const string _defaultCodePage = "ISO-8859-1";
-
-        #endregion Constants
-
-        #region Fields
-
-        // used to split contentType arguments
-        private static readonly char[] s_contentTypeParamSeparator = { ';' };
-
-        #endregion Fields
-
         #region Internal Methods
 
         internal static string GetContentType(HttpResponseMessage response)
@@ -35,36 +21,7 @@ namespace Microsoft.PowerShell.Commands
             return response.Content.Headers.ContentType?.MediaType;
         }
 
-        internal static Encoding GetDefaultEncoding()
-        {
-            return GetEncodingOrDefault((string)null);
-        }
-
-        internal static Encoding GetEncoding(HttpResponseMessage response)
-        {
-            // ContentType may not exist in response header.
-            string charSet = response.Content.Headers.ContentType?.CharSet;
-            return GetEncodingOrDefault(charSet);
-        }
-
-        internal static Encoding GetEncodingOrDefault(string characterSet)
-        {
-            // get the name of the codepage to use for response content
-            string codepage = (string.IsNullOrEmpty(characterSet) ? _defaultCodePage : characterSet);
-            Encoding encoding = null;
-
-            try
-            {
-                encoding = Encoding.GetEncoding(codepage);
-            }
-            catch (ArgumentException)
-            {
-                // 0, default code page
-                encoding = Encoding.GetEncoding(0);
-            }
-
-            return encoding;
-        }
+        internal static Encoding GetDefaultEncoding() => Encoding.UTF8;
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)
         {
@@ -75,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int statusCode = WebResponseHelper.GetStatusCode(response);
                 string statusDescription = WebResponseHelper.GetStatusDescription(response);
-                raw.AppendFormat("{0} {1} {2}", protocol, statusCode, statusDescription);
+                raw.Append($"{protocol} {statusCode} {statusDescription}");
                 raw.AppendLine();
             }
 
@@ -134,12 +91,14 @@ namespace Microsoft.PowerShell.Commands
         private static bool CheckIsJson(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return false;
+            }
 
-            // the correct type for JSON content, as specified in RFC 4627
+            // The correct type for JSON content, as specified in RFC 4627
             bool isJson = contentType.Equals("application/json", StringComparison.OrdinalIgnoreCase);
 
-            // add in these other "javascript" related types that
+            // Add in these other "javascript" related types that
             // sometimes get sent down as the mime type for JSON content
             isJson |= contentType.Equals("text/json", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
@@ -147,15 +106,17 @@ namespace Microsoft.PowerShell.Commands
             || contentType.Equals("application/javascript", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("text/javascript", StringComparison.OrdinalIgnoreCase);
 
-            return (isJson);
+            return isJson;
         }
 
         private static bool CheckIsText(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return false;
+            }
 
-            // any text, xml or json types are text
+            // Any text, xml or json types are text
             bool isText = contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
             || CheckIsXml(contentType)
             || CheckIsJson(contentType);
@@ -184,13 +145,15 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (isText);
+            return isText;
         }
 
         private static bool CheckIsXml(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return false;
+            }
 
             // RFC 3023: Media types with the suffix "+xml" are XML
             bool isXml = (contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
@@ -198,16 +161,18 @@ namespace Microsoft.PowerShell.Commands
             || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase));
 
             isXml |= contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
-            return (isXml);
+            return isXml;
         }
 
         private static string GetContentTypeSignature(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return null;
+            }
 
-            string sig = contentType.Split(s_contentTypeParamSeparator, 2)[0].ToUpperInvariant();
-            return (sig);
+            string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
+            return sig;
         }
 
         #endregion Private Helper Methods

@@ -530,10 +530,10 @@ namespace System.Management.Automation.Language
             // Get the value of the index and value and call the compiler
             var index = indexExpressionAst.Index.Accept(this);
             var target = indexExpressionAst.Target.Accept(this);
-            if (index == null || target == null)
-            {
-                throw new ArgumentNullException(nameof(indexExpressionAst));
-            }
+            
+            ArgumentNullException.ThrowIfNull(index, nameof(indexExpressionAst));
+
+            ArgumentNullException.ThrowIfNull(target, nameof(indexExpressionAst));
 
             return GetIndexedValueFromTarget(target, index);
         }
@@ -548,10 +548,7 @@ namespace System.Management.Automation.Language
                 ofs = t_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
 
-            if (ofs == null)
-            {
-                ofs = " ";
-            }
+            ofs ??= " ";
 
             for (int offset = 0; offset < safeValues.Length; offset++)
             {

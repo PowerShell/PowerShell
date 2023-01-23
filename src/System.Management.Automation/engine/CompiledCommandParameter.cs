@@ -440,8 +440,7 @@ namespace System.Management.Automation
             ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
             if (validateAttr != null)
             {
-                if (validationAttributes == null)
-                    validationAttributes = new Collection<ValidateArgumentsAttribute>();
+                validationAttributes ??= new Collection<ValidateArgumentsAttribute>();
                 validationAttributes.Add(validateAttr);
                 if ((attribute is ValidateNotNullAttribute) || (attribute is ValidateNotNullOrEmptyAttribute))
                 {
@@ -473,8 +472,7 @@ namespace System.Management.Automation
             ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
             if (argumentAttr != null)
             {
-                if (argTransformationAttributes == null)
-                    argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
+                argTransformationAttributes ??= new Collection<ArgumentTransformationAttribute>();
                 argTransformationAttributes.Add(argumentAttr);
                 return;
             }

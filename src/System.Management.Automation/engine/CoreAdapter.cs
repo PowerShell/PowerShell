@@ -833,7 +833,7 @@ namespace System.Management.Automation
                 return GetArgumentType(PSObject.Base(psref.Value), isByRefParameter: false);
             }
 
-            return argument.GetType();
+            return GetObjectType(argument, debase: false);
         }
 
         internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType, bool isByRef, bool allowCastingToByRefLikeType)
@@ -1670,18 +1670,21 @@ namespace System.Management.Automation
 
         internal static Type EffectiveArgumentType(object arg)
         {
-            if (arg != null)
+            arg = PSObject.Base(arg);
+            if (arg is null)
             {
-                arg = PSObject.Base(arg);
-                object[] argAsArray = arg as object[];
-                if (argAsArray != null && argAsArray.Length > 0 && PSObject.Base(argAsArray[0]) != null)
-                {
-                    Type firstType = PSObject.Base(argAsArray[0]).GetType();
-                    bool allSameType = true;
+                return typeof(LanguagePrimitives.Null);
+            }
 
-                    for (int j = 1; j < argAsArray.Length; ++j)
+            if (arg is object[] array && array.Length > 0)
+            {
+                Type firstType = GetObjectType(array[0], debase: true);
+                if (firstType is not null)
+                {
+                    bool allSameType = true;
+                    for (int j = 1; j < array.Length; ++j)
                     {
-                        if (argAsArray[j] == null || firstType != PSObject.Base(argAsArray[j]).GetType())
+                        if (firstType != GetObjectType(array[j], debase: true))
                         {
                             allSameType = false;
                             break;
@@ -1693,13 +1696,19 @@ namespace System.Management.Automation
                         return firstType.MakeArrayType();
                     }
                 }
+            }
 
-                return arg.GetType();
-            }
-            else
+            return GetObjectType(arg, debase: false);
+        }
+
+        internal static Type GetObjectType(object obj, bool debase)
+        {
+            if (debase)
             {
-                return typeof(LanguagePrimitives.Null);
+                obj = PSObject.Base(obj);
             }
+
+            return obj == NullString.Value ? typeof(string) : obj?.GetType();
         }
 
         internal static void SetReferences(object[] arguments, MethodInformation methodInformation, object[] originalArguments)
@@ -2258,10 +2267,7 @@ namespace System.Management.Automation
 
             if (!_useReflection)
             {
-                if (_methodInvoker == null)
-                {
-                    _methodInvoker = GetMethodInvoker(methodInfo);
-                }
+                _methodInvoker ??= GetMethodInvoker(methodInfo);
 
                 if (_methodInvoker != null)
                 {
@@ -3047,10 +3053,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
-                    {
-                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
-                    }
+                    _isHidden ??= member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
 
                     return _isHidden.Value;
                 }
@@ -3884,11 +3887,11 @@ namespace System.Management.Automation
 
             if (parameterType.IsEnum)
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterDefaultValue.ToString());
+                return string.Create(CultureInfo.InvariantCulture, $"{parameterType}.{parameterDefaultValue}");
             }
 
             return (parameterDefaultValue is string)
-                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterDefaultValue.ToString())
+                ? string.Create(CultureInfo.InvariantCulture, $"\"{parameterDefaultValue}\"")
                 : parameterDefaultValue.ToString();
         }
 
@@ -3917,11 +3920,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the .NET member based on the given member name.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// Dynamic members of an object that implements IDynamicMetaObjectProvider are not included because
         ///   1. Dynamic members cannot be invoked via reflection;
         ///   2. Access to dynamic members is handled by the DLR for free.
-        /// </remark>
+        /// </remarks>
         /// <param name="obj">Object to retrieve the PSMemberInfo from.</param>
         /// <param name="memberName">Name of the member to be retrieved.</param>
         /// <returns>
@@ -3954,10 +3957,10 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// Dynamic members of an object that implements IDynamicMetaObjectProvider are included because
         /// we want to view the dynamic members via 'Get-Member' and be able to auto-complete those members.
-        /// </remark>
+        /// </remarks>
         /// <param name="obj">Object to get all the member information from.</param>
         /// <returns>All members in obj.</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
@@ -4762,6 +4765,7 @@ namespace System.Management.Automation
 
     #endregion
 
+#if !UNIX
     /// <summary>
     /// Used only to add a COM style type name to a COM interop .NET type.
     /// </summary>
@@ -4792,6 +4796,8 @@ namespace System.Management.Automation
             return new ConsolidatedString(GetTypeNameHierarchy(obj), interned: true);
         }
     }
+#endif
+
     /// <summary>
     /// Adapter used for GetMember and GetMembers only.
     /// All other methods will not be called.

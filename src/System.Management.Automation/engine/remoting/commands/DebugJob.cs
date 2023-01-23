@@ -203,10 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Unblock the data collection.
             PSDataCollection<PSStreamObject> debugCollection = _debugCollection;
-            if (debugCollection != null)
-            {
-                debugCollection.Complete();
-            }
+            debugCollection?.Complete();
         }
 
         #endregion
@@ -260,10 +257,7 @@ namespace Microsoft.PowerShell.Commands
                 // or this command is cancelled.
                 foreach (var streamItem in _debugCollection)
                 {
-                    if (streamItem != null)
-                    {
-                        streamItem.WriteStreamObject(this);
-                    }
+                    streamItem?.WriteStreamObject(this);
                 }
             }
             catch (Exception)

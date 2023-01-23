@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If this parameter is specified the Msh Host trace listener will be added.
+        /// If this parameter is specified the PSHost trace listener will be added.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]

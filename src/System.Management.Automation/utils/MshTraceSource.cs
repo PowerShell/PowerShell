@@ -10,14 +10,14 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
-    /// that is used in the Monad components to produce trace output.
+    /// that is used in the PowerShell components to produce trace output.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSTraceSource"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
     /// <!--
-    /// IF YOU ARE NOT PART OF THE MONAD DEVELOPMENT TEAM PLEASE
+    /// IF YOU ARE NOT PART OF THE PowerShell DEVELOPMENT TEAM PLEASE
     /// DO NOT USE THIS CLASS!!!!!
     ///
     /// The PSTraceSource class is derived from Switch to provide granular

@@ -1,6 +1,4 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <!-- MSI installs on Win7 and above -->
-  <?define MinOSVersionSupported = "VersionNT >= 601" ?>
   <!-- The URL for add/remove programs -->
   <!-- TBD:Point to the actual release -->
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
@@ -87,7 +85,7 @@
     <SetProperty Id="EnableMU"
                  Before="EnableMU"
                  Sequence="execute"
-                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;$null=(New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')&quot;" />
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[VersionFolder]RegisterMicrosoftUpdate.ps1&quot;" />
     <CustomAction Id="EnableMU"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
@@ -110,7 +108,7 @@
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
         <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="yes" Text="!(loc.ExitDialogBitmap)" />
-        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" TabSkip="yes" />
+        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Bigger}!(loc.Error1707)" TabSkip="yes" />
         <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" TabSkip="yes" />
         <!-- divider between check boxes and button row -->
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"  />
@@ -135,8 +133,11 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT=1</Publish>
     </UI>
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Windows 7 and above">
-      <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
+    <Condition Message="Supported only on Windows 8.1 and above">
+      <![CDATA[ Installed OR MsiNTProductType <> 1 OR VersionNT >= 603 ]]>
+    </Condition>
+    <Condition Message="Supported only on Windows Server 2012 and above">
+      <![CDATA[ Installed OR MsiNTProductType = 1 OR VersionNT >= 602 ]]>
     </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(var.ProductName) is already installed." />

@@ -9,7 +9,7 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH cmdlets that are directly executable by MSH.
+    /// The command information for cmdlets that are directly executable by PowerShell.
     /// </summary>
     public class CmdletInfo : CommandInfo
     {
@@ -380,11 +380,8 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (provider == null)
-                    {
-                        // No path argument, so just use the current path to choose the provider.
-                        provider = Context.SessionState.Path.CurrentLocation.Provider;
-                    }
+                    // If no path argument, just use the current path to choose the provider.
+                    provider ??= Context.SessionState.Path.CurrentLocation.Provider;
 
                     provider.GetOutputTypes(Name, providerTypes);
                     if (providerTypes.Count > 0)

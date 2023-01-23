@@ -771,10 +771,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Somewhat pointlessly (backcompat), we allow a missing Member node
-            if (members == null)
-            {
-                members = new Collection<TypeMemberData>();
-            }
+            members ??= new Collection<TypeMemberData>();
 
             if (_context.errors.Count != errorCount)
             {
@@ -841,10 +838,7 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties == null)
-                                            {
-                                                referencedProperties = new List<string>(8);
-                                            }
+                                            referencedProperties ??= new List<string>(8);
 
                                             referencedProperties.Add(ReadElementString(_idName));
                                         }
@@ -1825,7 +1819,7 @@ namespace System.Management.Automation.Runspaces
                 _errors = new Collection<string>();
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     _errors.Add(info.GetString(key));
                 }
             }
@@ -1855,7 +1849,7 @@ namespace System.Management.Automation.Runspaces
 
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     info.AddValue(key, _errors[index]);
                 }
             }
@@ -3724,10 +3718,7 @@ namespace System.Management.Automation.Runspaces
 
             if (hasStandardMembers)
             {
-                if (typeMembers == null)
-                {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
-                }
+                typeMembers ??= _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers, propertySets, typeMembers, typeData.IsOverride);
             }
@@ -4741,15 +4732,9 @@ namespace System.Management.Automation.Runspaces
             PSHost host,
             out bool failToLoadFile)
         {
-            if (filePath == null)
-            {
-                throw new ArgumentNullException(nameof(filePath));
-            }
+            ArgumentNullException.ThrowIfNull(filePath);
 
-            if (errors == null)
-            {
-                throw new ArgumentNullException(nameof(errors));
-            }
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (isShared)
             {
@@ -4819,10 +4804,9 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors,
             bool isRemove)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-            if (errors == null)
-                throw new ArgumentNullException(nameof(errors));
+            ArgumentNullException.ThrowIfNull(type);
+
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (isShared)
             {

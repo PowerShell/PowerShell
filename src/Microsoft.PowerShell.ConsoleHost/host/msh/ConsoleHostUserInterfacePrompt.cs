@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell
                     {
                         throw PSTraceSource.NewArgumentException(nameof(descriptions),
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
-                            string.Format(CultureInfo.InvariantCulture, "descriptions[{0}]", descIndex));
+                            string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}]"));
                     }
 
                     PSObject inputPSObject = null;
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell
                     if (string.IsNullOrEmpty(desc.ParameterAssemblyFullName))
                     {
                         string paramName =
-                            string.Format(CultureInfo.InvariantCulture, "descriptions[{0}].AssemblyFullName", descIndex);
+                            string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName");
                         throw PSTraceSource.NewArgumentException(paramName, ConsoleHostUserInterfaceStrings.NullOrEmptyErrorTemplate, paramName);
                     }
 
@@ -190,8 +190,7 @@ namespace Microsoft.PowerShell
                             {
                                 string msg = StringUtil.Format(ConsoleHostUserInterfaceStrings.RankZeroArrayErrorTemplate, desc.Name);
                                 ArgumentException innerException = PSTraceSource.NewArgumentException(
-                                    string.Format(CultureInfo.InvariantCulture,
-                                    "descriptions[{0}].AssemblyFullName", descIndex));
+                                    string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName"));
                                 PromptingException e = new PromptingException(msg, innerException, "ZeroRankArray", ErrorCategory.InvalidOperation);
                                 throw e;
                             }
@@ -203,8 +202,7 @@ namespace Microsoft.PowerShell
 
                         while (true)
                         {
-                            fieldPromptList.Append(
-                                string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
+                            fieldPromptList.Append(CultureInfo.InvariantCulture, $"{inputList.Count}]: ");
                             bool endListInput = false;
                             object convertedObj = null;
                             _ = PromptForSingleItem(
@@ -495,7 +493,7 @@ namespace Microsoft.PowerShell
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
             Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
-                string.Format(CultureInfo.InvariantCulture, "input should start with {0}", PromptCommandPrefix));
+                string.Create(CultureInfo.InvariantCulture, $"input should start with {PromptCommandPrefix}"));
             Dbg.Assert(desc != null, "desc should never be null when PromptCommandMode is called");
             string command = input.Substring(1);
 

@@ -135,12 +135,6 @@
   <data name="ImportAliasTarget" xml:space="preserve">
     <value>Name: {0} Value: {1}</value>
   </data>
-  <data name="ExportAliasToFileSystemOnly" xml:space="preserve">
-    <value>Cannot export the aliases because path '{0}' referred to a '{1}' provider path. Change the Path parameter to a file system path.</value>
-  </data>
-  <data name="ExportAliasPathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot export the aliases because path '{0}' contains wildcard characters that resolved to multiple paths. Aliases can be exported to only one file. Change the value of the Path parameter to a path that resolves to a single file.</value>
-  </data>
   <data name="ExportAliasFileOpenFailed" xml:space="preserve">
     <value>Cannot open file {0} to export the alias. {1}</value>
   </data>

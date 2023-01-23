@@ -38,10 +38,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>A converted value. If the method returns nullNothingnullptra null reference (Nothing in Visual Basic), the valid null value is used.</returns>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values == null)
-            {
-                throw new ArgumentNullException("values");
-            }
+            ArgumentNullException.ThrowIfNull(values);
 
             if (object.ReferenceEquals(values[0], DependencyProperty.UnsetValue) ||
                 object.ReferenceEquals(values[1], DependencyProperty.UnsetValue))

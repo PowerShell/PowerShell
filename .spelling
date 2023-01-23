@@ -14,10 +14,12 @@
 32-bit
 4.final
 64-bit
+AAATechGuy
 about_
 about_debuggers
 about_jobs
 about_Telemetry
+about_PSDesiredStateConfiguration
 acl
 adamdriscoll
 add-localgroupmember
@@ -49,6 +51,7 @@ alpha.9
 alternatestream
 alvarodelvalle
 amd64
+ananya26-vishnoi
 andschwa
 anmenaga
 api
@@ -57,19 +60,23 @@ APIScan
 appimage
 applocker
 appveyor
-AppX
+appx
+ArchitectureSensitiveAttribute
 args
 argumentlist
 arm32
 arm64
 asp.net
+ast.cs
 assemblyloadcontext
 AssemblyInfo
 assessibility
+AtariDreams
 authenticode
 authenticodesignature
 azdevops
 AzFileCopy
+AzureFileCopy
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -99,6 +106,7 @@ brcrista
 breakpoint
 brianbunke
 britishben
+brotli
 brucepay
 bugfix
 build.json
@@ -106,12 +114,16 @@ build.psm1
 bulid
 buildInfoJson
 callmejoebob
+CarloToso
 catchable
 cdxml
 celsius
 CentOS
-cgmanifest
+CimDscParser
+codeql-action
 CGManifest
+cgmanifest.json
+cgmanifest
 changelog
 changelog.md
 changelogs
@@ -124,7 +136,9 @@ checkbox
 checksum
 chibi
 childitem
+ChuckieChen945
 ChrisLGardner
+chrullrich
 cimsession
 cimsupport
 ci.psm1
@@ -152,6 +166,7 @@ CommandSearcher
 comobject
 Compiler.cs
 composability
+computerinfo
 ComRuntimeHelpers.cs
 config
 connect-pssession
@@ -180,6 +195,8 @@ CorePsAssemblyLoadContext.cs
 coveralls.exe
 coveralls.io.
 coveralls.net
+CreateFile
+CreateFileW
 credssp
 cron
 crontab
@@ -197,6 +214,7 @@ DarylGraves
 darquewarrior
 darwinjs
 DateTime
+DateTime.UnixEpoch
 daxian-dbw
 dayofweek
 dchristian3188
@@ -232,7 +250,9 @@ displaydataquery
 Distribution_Request.md
 distro
 distros
+dkaszews
 dll
+DllImport
 dlls
 dlwyatt
 dockerbasedbuild
@@ -294,6 +314,8 @@ fbehrens
 felixfbecker
 ffeldhaus
 ffi
+fflaten
+File.OpenHandle
 filecatalog
 filename
 filesystem
@@ -318,6 +340,7 @@ functionprovider
 FunctionTable
 fxdependent
 gabrielsroka
+GAC_Arm64
 gamified
 gc.regions.xml
 Generic.SortedList
@@ -363,16 +386,19 @@ GetExceptionForHR
 getparentprocess
 gettype
 Geweldig
+GigaScratch
 gitcommitid
 github
 githug
 gitter
 glachancecmaisonneuve
+global.json
 globbing
 GoogleTest
 GUIs
 gzip
 hackathons
+HashData
 HashSet
 hashtable
 hashtables
@@ -387,6 +413,7 @@ Higinbotham
 himura2la
 hololens
 homebrew
+hostifaces
 hostname
 hotfix
 httpbin.org
@@ -412,6 +439,7 @@ includeide
 includeusername
 informationrecord
 initializers
+InitialSessionState.cs
 install-packageprovider
 IntelliSense
 interactivetesting
@@ -422,6 +450,7 @@ invoke-cimmethod
 Invoke-DSCResource
 invoke-restmethod
 invoke-wsmanaction
+InvokeRestMethodCommand.Common
 iot
 isazonov
 iscore
@@ -441,6 +470,7 @@ joandrsn
 joeltankam
 joeyaiello
 jokajak
+JohnLBevan
 joshuacooper
 journalctl
 jpsnover
@@ -478,6 +508,7 @@ lee303
 Leonhardt
 Libera.Chat
 libicu
+LibraryImport
 libpsl
 libpsl-native
 libunwind8
@@ -502,12 +533,15 @@ maertendmsft
 mahawar
 Markdig.Signed
 markdown.yml
+manifest.spdx.json
 markekraus
 marktiedemann
 Marusyk
 MarvTheRobot
+mattifestation
 matt9ucci
 mcbobke
+mcr.microsoft.com
 md
 meir017
 memberresolution
@@ -522,11 +556,13 @@ Microsoft.ApplicationInsights
 Microsoft.CodeAnalysis.CSharp
 Microsoft.CodeAnalysis.NetAnalyzers
 microsoft.com
+Microsoft.Management
 microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
 Microsoft.Management.Infrastructure.Runtime.Win
 microsoft.net.test.sdk
 microsoft.powershell.archive
+Microsoft.PowerShell.Commands
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
 microsoft.powershell.commands.utility
@@ -542,6 +578,7 @@ microsoft.powershell.psreadline
 microsoft.powershell.security
 microsoft.powershell.utility
 Microsoft.Security.Extensions
+Microsoft.WSMan
 microsoft.wsman.management
 microsoft.wsman.runtime
 mikeTWC1984
@@ -549,7 +586,9 @@ mirichmo
 mjanko5
 mkdir
 mklement0
+ModuleCmdletBase.cs
 MohiTheFish
+Molkree
 move-itemproperty
 ms-psrp
 msbuild
@@ -569,6 +608,7 @@ NameObscurerTelemetryInitializer
 namespace
 nano
 nanoserver
+NativeCultureResolver
 nativeexecution
 net5.0
 netcoreapp5.0
@@ -597,6 +637,7 @@ new-wsmaninstance
 new-wsmansessionoption
 NextTurn
 ngharo
+Newtonsoft.Json
 NJsonSchema
 NoMoreFood
 non-22
@@ -639,6 +680,7 @@ parameterbindercontroller
 parameterbinding
 ParenExpression
 ParseError.ToString
+Path.Join
 pathresolution
 PathResolvedToMultiple
 patochun
@@ -649,7 +691,10 @@ payette
 perf
 perfview
 perfview.exe
+peter-evans
 petseral
+pinvoke
+pinvokes
 plaintext
 pluggable
 pluralsight
@@ -675,8 +720,10 @@ powershellproperties
 ppadmavilasom
 pre-build
 pre-compiled
+pre-defined
 pre-generated
 pre-installed
+pre-parse
 pre-release
 pre-releases
 pre-requisites
@@ -703,6 +750,7 @@ preview.7.20358.6
 preview.7.20364.3
 preview.7.20366.2
 preview.7.20366.15
+preview.7.22377.5
 preview.4.20258.7
 preview.4.20229.10
 preview.4.22252.9
@@ -710,6 +758,7 @@ preview.8
 preview1-24530-04
 preview1.22217.1
 preview7
+ProcessorArchitecture
 productversion
 program.cs
 prototyyppi
@@ -728,6 +777,7 @@ PSGalleryModules
 psm1
 psobject
 psobjects
+psoptions.json
 psproxyjobs
 psreadline
 psrp.windows
@@ -743,15 +793,18 @@ pvs-studio
 pwd
 pwrshplughin.dll
 pwsh
+pwsh.deps.json
 qmfrederik
 raghav710
 RandomNoun7
+RandomNumberGenerator.Fill
 raspbian
 rc
 rc.1
 rc.1.21455.2
 rc.1.21458.32
 rc.2
+rc.2.22477.20
 rc.3
 rc2-24027
 rc3-24011
@@ -778,6 +831,7 @@ register-packagesource
 register-psrepository
 registryprovider
 relationlink
+RemoteSessionNamedPipe
 remotesigned
 remoting
 remove-ciminstance
@@ -821,8 +875,10 @@ runspaceinit
 runspaces
 runtime
 runtimes
+Ryan-Hutchison-USAF
 SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation
 Saancreed
+SafeRegistryHandle
 sample-dotnet1
 sample-dotnet2
 sarithsutha
@@ -914,6 +970,7 @@ System.IO.Packaging
 System.InvalidOperationException
 system.manage
 system.management.automation
+System.Management.Automation.utils
 systemd
 SytzeAndr
 tabcompletion
@@ -924,6 +981,7 @@ TargetFramework
 test-modulemanifest
 test-pssessionconfigurationfile
 test-scriptfileinfo
+tar.gz
 test.ps1
 test.txt.
 Tests.ps1
@@ -957,8 +1015,10 @@ toolset
 tracesource
 travisez13
 travisty
+trossr32
 truher
 TSAUpload
+turbedi
 TValue
 tylerleonhardt
 typecataloggen
@@ -984,6 +1044,7 @@ update-modulemanifest
 update-scriptfileinfo
 update-typedata
 uri
+urizen-source
 urls
 userdata
 uservoice
@@ -1026,12 +1087,18 @@ v7.1.0
 v7.1.6
 v7.1.7
 v7.2.2
+v7.2.6
 v7.3.0
+v7.4.0
+v7.0.12
+v7.0.13
 validatenotnullorempty
 ValidateSet
+varunsh-coder
 versioned
 versioning
 vexx32
+Virtualization
 visualstudio
 vmsilvamolina
 vorobev
@@ -1043,6 +1110,8 @@ walkthrough
 webcmdlets
 weblistener
 webrequest
+webrequestpscmdlet.common.cs
+webresponseobject.common
 weltner
 wesholton84
 wget
@@ -1053,11 +1122,15 @@ wildcards
 win32
 win32-openssh
 win7
+win8
 windos
 windowspsmodulepath
 windowsversion
 winrm
 wix
+wmentha
+WNetGetConnection
+WNetAddConnection2
 worrenb
 wpr
 wprui.exe
@@ -1203,6 +1276,11 @@ manifest.spdx.json
 buildinfo
 SKUs
 vmImage
+InternalCommands.cs
+CommonCommandParameters.cs
+preview.6.22352.1
+v2.2.6
+ResultsComparer
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1242,6 +1320,7 @@ weltkante
 kilasuit
 tnieto88
 Orca88
+OrderBy
 centreboard
 romero126
 Greg-Smulko
@@ -1271,7 +1350,9 @@ Francisco-Gamino
 adamdriscoll
 analytics
 deserialized
+string.Join
 string.Split
+StringSplitOptions.TrimEntries
 Dictionary.TryAdd
 Environment.NewLine
 ParseError.ToString
@@ -1294,6 +1375,35 @@ SetVersionVariables
 yml
 DateTime
 DeploymentScripts
+GetValues
+GetNames
+SessionStateStrings
+Enum.HasFlags
+ConsoleInfoErrorStrings.resx
+ContentHelper.Common.cs
+FusionAssemblyIdentity
+GlobalAssemblyCache
+StringManipulationHelper
+testexe.exe
+echocmdline
+MemoryExtensions.IndexOfAny
+PSv2CompletionCompleter
+RemoteRunspacePoolInternal.cs
+PSVersionInfo
+WildcardPattern
+UTF8Encoding
+PowerShell.Core.Instrumentation.man
+Encoding.Default
+WinTrust
+System.Runtime.CompilerServices.Unsafe
+azCopy
+APISets
+ApiScan
+System.Data.SqlClient
+minimatch
+2.final
+SessionStateInternal
+Microsoft.PowerShell.SDK
 Markdig.Signed
  - docs/debugging/README.md
 corehost
@@ -1509,8 +1619,9 @@ kilasuit
 michaeltlombardi
 SeeminglyScience
 TobiasPSP
- - CHANGELOG/preview.md
+ - CHANGELOG/7.3.md
 ayousuf23
+AzCopy.exe
 hammy3502
 PowerShellExecutionHelper.cs
 ClientRemotePowerShell
@@ -1528,6 +1639,7 @@ vmImage
 NoLanguage
 GetValueOrDefault
 kondratyev-nv
+penimc_cor3.dll
 PkgES
 v7.2.0
 preview.9
@@ -1550,3 +1662,6 @@ vmImage
 ci.psm1
 jcotton42
 centos-7
+Security.types.ps1xml
+ - ADOPTERS.md
+MicrosoftPowerBIMgmt

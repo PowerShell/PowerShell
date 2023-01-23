@@ -306,7 +306,7 @@ foreach ($computerName in $array[1])
         ComputerName = $computerName
         ScriptBlock = { $true }
 
-        SessionOption = NewPSSessionOption -NoMachineProfile
+        SessionOption = New-PSSessionOption -NoMachineProfile
         ErrorAction = 'SilentlyContinue'
     }
 
@@ -393,17 +393,10 @@ $result
         {
             if (disposing)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                }
-
+                _timer?.Dispose();
                 _waitHandler.Dispose();
                 _cancel.Dispose();
-                if (_powershell != null)
-                {
-                    _powershell.Dispose();
-                }
+                _powershell?.Dispose();
             }
         }
 
@@ -1098,10 +1091,7 @@ $result
             _cancel.Cancel();
             _waitHandler.Set();
 
-            if (_timer != null)
-            {
-                _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-            }
+            _timer?.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 
             if (_powershell != null)
             {

@@ -69,7 +69,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains information about a mshsnapin.
+    /// Contains information about a PSSnapin.
     /// </summary>
     public class PSSnapInInfo
     {
@@ -118,25 +118,13 @@ namespace System.Management.Automation
                 version = new Version("0.0");
             }
 
-            if (types == null)
-            {
-                types = new Collection<string>();
-            }
+            types ??= new Collection<string>();
 
-            if (formats == null)
-            {
-                formats = new Collection<string>();
-            }
+            formats ??= new Collection<string>();
 
-            if (descriptionFallback == null)
-            {
-                descriptionFallback = string.Empty;
-            }
+            descriptionFallback ??= string.Empty;
 
-            if (vendorFallback == null)
-            {
-                vendorFallback = string.Empty;
-            }
+            vendorFallback ??= string.Empty;
 
             Name = name;
             IsDefault = isDefault;
@@ -201,22 +189,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Unique Name of the mshsnapin.
+        /// Unique Name of the PSSnapin.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Is this mshsnapin default mshsnapin.
+        /// Is this PSSnapin default PSSnapin.
         /// </summary>
         public bool IsDefault { get; }
 
         /// <summary>
-        /// Returns applicationbase for mshsnapin.
+        /// Returns applicationbase for PSSnapin.
         /// </summary>
         public string ApplicationBase { get; }
 
         /// <summary>
-        /// Strong name of mshSnapIn assembly.
+        /// Strong name of PSSnapin assembly.
         /// </summary>
         public string AssemblyName { get; }
 
@@ -243,12 +231,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Monad version used by mshsnapin.
+        /// PowerShell version used by PSSnapin.
         /// </summary>
         public Version PSVersion { get; }
 
         /// <summary>
-        /// Version of mshsnapin.
+        /// Version of PSSnapin.
         /// </summary>
         public Version Version { get; }
 
@@ -266,7 +254,7 @@ namespace System.Management.Automation
         private readonly string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
-        /// Description of mshsnapin.
+        /// Description of PSSnapin.
         /// </summary>
         public string Description
         {
@@ -285,7 +273,7 @@ namespace System.Management.Automation
         private readonly string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
-        /// Vendor of mshsnapin.
+        /// Vendor of PSSnapin.
         /// </summary>
         public string Vendor
         {
@@ -877,18 +865,18 @@ namespace System.Management.Automation
             return v;
         }
 
-        internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
+        internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string applicationBase, out Version psVersion)
         {
             applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(
                 !string.IsNullOrEmpty(applicationBase),
-                string.Format(CultureInfo.CurrentCulture, "{0} is empty or null", RegistryStrings.MonadEngine_ApplicationBase));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_ApplicationBase} is empty or null"));
 
             // Get the PSVersion from Utils..this is hardcoded
             psVersion = PSVersionInfo.PSVersion;
             Dbg.Assert(
                 psVersion != null,
-                string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_MonadVersion} is null"));
 
             // Get version number in x.x.x.x format
             // This information is available from the executing assembly
@@ -897,8 +885,7 @@ namespace System.Management.Automation
             // culture, publickeytoken...This will break the scenarios where only one of
             // the assemblies is patched. ie., all monad assemblies should have the
             // same version number.
-            Assembly currentAssembly = typeof(PSSnapInReader).Assembly;
-            AssemblyName assemblyName = currentAssembly.GetName();
+            AssemblyName assemblyName = typeof(PSSnapInReader).Assembly.GetName();
             assemblyVersion = assemblyName.Version;
             byte[] publicTokens = assemblyName.GetPublicKeyToken();
             if (publicTokens.Length == 0)
@@ -911,11 +898,6 @@ namespace System.Management.Automation
             // save some cpu cycles by hardcoding the culture to neutral
             // assembly should never be targeted to a particular culture
             culture = "neutral";
-
-            // Hardcoding the architecture MSIL as PowerShell assemblies are architecture neutral, this should
-            // be changed if the assumption is broken. Preferred hardcoded string to using (for perf reasons):
-            // string architecture = currentAssembly.GetName().ProcessorArchitecture.ToString()
-            architecture = "MSIL";
         }
 
         /// <summary>
@@ -943,13 +925,12 @@ namespace System.Management.Automation
         /// </returns>
         internal static PSSnapInInfo ReadCoreEngineSnapIn()
         {
-            Version assemblyVersion, psVersion;
-            string publicKeyToken = null;
-            string culture = null;
-            string architecture = null;
-            string applicationBase = null;
-
-            ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
+            ReadRegistryInfo(
+                out Version assemblyVersion,
+                out string publicKeyToken,
+                out string culture,
+                out string applicationBase,
+                out Version psVersion);
 
             // System.Management.Automation formats & types files
             Collection<string> types = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
@@ -958,8 +939,7 @@ namespace System.Management.Automation
                          "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
-            string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
-                s_coreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken, architecture);
+            string strongName = string.Create(CultureInfo.InvariantCulture, $"{s_coreSnapin.AssemblyName}, Version={assemblyVersion}, Culture={culture}, PublicKeyToken={publicKeyToken}");
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 
@@ -997,13 +977,12 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<PSSnapInInfo> ReadEnginePSSnapIns()
         {
-            Version assemblyVersion, psVersion;
-            string publicKeyToken = null;
-            string culture = null;
-            string architecture = null;
-            string applicationBase = null;
-
-            ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
+            ReadRegistryInfo(
+                out Version assemblyVersion,
+                out string publicKeyToken,
+                out string culture,
+                out string applicationBase,
+                out Version psVersion);
 
             // System.Management.Automation formats & types files
             Collection<string> smaFormats = new Collection<string>(new string[]
@@ -1022,12 +1001,11 @@ namespace System.Management.Automation
 
                 string strongName = string.Format(
                     CultureInfo.InvariantCulture,
-                    "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
+                    "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
                     defaultMshSnapinInfo.AssemblyName,
                     assemblyVersionString,
                     culture,
-                    publicKeyToken,
-                    architecture);
+                    publicKeyToken);
 
                 Collection<string> formats = null;
                 Collection<string> types = null;
@@ -1296,7 +1274,9 @@ namespace System.Management.Automation
                 {
                     lock (s_syncObject)
                     {
+#pragma warning disable IDE0074 // Disabling the rule because it can't be applied on non Unix
                         if (s_defaultMshSnapins == null)
+#pragma warning restore IDE0074
                         {
                             s_defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {

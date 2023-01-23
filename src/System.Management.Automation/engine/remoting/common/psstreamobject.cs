@@ -120,10 +120,7 @@ namespace System.Management.Automation.Remoting.Internal
                             ErrorRecord errorRecord = (ErrorRecord)this.Value;
                             errorRecord.PreserveInvocationInfoOnce = true;
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.WriteError(errorRecord, overrideInquire);
-                            }
+                            mshCommandRuntime?.WriteError(errorRecord, overrideInquire);
                         }
 
                         break;
@@ -133,10 +130,7 @@ namespace System.Management.Automation.Remoting.Internal
                             string debug = (string)Value;
                             DebugRecord debugRecord = new DebugRecord(debug);
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
-                            }
+                            mshCommandRuntime?.WriteDebug(debugRecord, overrideInquire);
                         }
 
                         break;
@@ -146,10 +140,7 @@ namespace System.Management.Automation.Remoting.Internal
                             string warning = (string)Value;
                             WarningRecord warningRecord = new WarningRecord(warning);
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
-                            }
+                            mshCommandRuntime?.WriteWarning(warningRecord, overrideInquire);
                         }
 
                         break;
@@ -159,10 +150,7 @@ namespace System.Management.Automation.Remoting.Internal
                             string verbose = (string)Value;
                             VerboseRecord verboseRecord = new VerboseRecord(verbose);
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
-                            }
+                            mshCommandRuntime?.WriteVerbose(verboseRecord, overrideInquire);
                         }
 
                         break;
@@ -170,10 +158,7 @@ namespace System.Management.Automation.Remoting.Internal
                     case PSStreamObjectType.Progress:
                         {
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.WriteProgress((ProgressRecord)Value, overrideInquire);
-                            }
+                            mshCommandRuntime?.WriteProgress((ProgressRecord)Value, overrideInquire);
                         }
 
                         break;
@@ -181,10 +166,7 @@ namespace System.Management.Automation.Remoting.Internal
                     case PSStreamObjectType.Information:
                         {
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.WriteInformation((InformationRecord)Value, overrideInquire);
-                            }
+                            mshCommandRuntime?.WriteInformation((InformationRecord)Value, overrideInquire);
                         }
 
                         break;
@@ -193,10 +175,7 @@ namespace System.Management.Automation.Remoting.Internal
                         {
                             WarningRecord warningRecord = (WarningRecord)Value;
                             MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                            if (mshCommandRuntime != null)
-                            {
-                                mshCommandRuntime.AppendWarningVarList(warningRecord);
-                            }
+                            mshCommandRuntime?.AppendWarningVarList(warningRecord);
                         }
 
                         break;
@@ -247,7 +226,7 @@ namespace System.Management.Automation.Remoting.Internal
             computerName = string.Empty;
 
             if (message == null) return;
-            string[] parts = message.Split(Utils.Separators.Colon, 3);
+            string[] parts = message.Split(':', 3);
 
             if (parts.Length != 3) return;
 
@@ -311,10 +290,7 @@ namespace System.Management.Automation.Remoting.Internal
 
                         errorRecord.PreserveInvocationInfoOnce = true;
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            mshCommandRuntime.WriteError(errorRecord, overrideInquire);
-                        }
+                        mshCommandRuntime?.WriteError(errorRecord, overrideInquire);
                     }
 
                     break;
@@ -324,10 +300,7 @@ namespace System.Management.Automation.Remoting.Internal
                         string warning = (string)Value;
                         WarningRecord warningRecord = new WarningRecord(warning);
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            mshCommandRuntime.WriteWarning(warningRecord, overrideInquire);
-                        }
+                        mshCommandRuntime?.WriteWarning(warningRecord, overrideInquire);
                     }
 
                     break;
@@ -337,10 +310,7 @@ namespace System.Management.Automation.Remoting.Internal
                         string verbose = (string)Value;
                         VerboseRecord verboseRecord = new VerboseRecord(verbose);
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            mshCommandRuntime.WriteVerbose(verboseRecord, overrideInquire);
-                        }
+                        mshCommandRuntime?.WriteVerbose(verboseRecord, overrideInquire);
                     }
 
                     break;
@@ -365,10 +335,7 @@ namespace System.Management.Automation.Remoting.Internal
                         }
 
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            mshCommandRuntime.WriteProgress(progressRecord, overrideInquire);
-                        }
+                        mshCommandRuntime?.WriteProgress(progressRecord, overrideInquire);
                     }
 
                     break;
@@ -378,10 +345,7 @@ namespace System.Management.Automation.Remoting.Internal
                         string debug = (string)Value;
                         DebugRecord debugRecord = new DebugRecord(debug);
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            mshCommandRuntime.WriteDebug(debugRecord, overrideInquire);
-                        }
+                        mshCommandRuntime?.WriteDebug(debugRecord, overrideInquire);
                     }
 
                     break;
@@ -411,10 +375,7 @@ namespace System.Management.Automation.Remoting.Internal
                         }
 
                         MshCommandRuntime mshCommandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            mshCommandRuntime.WriteInformation(informationRecord, overrideInquire);
-                        }
+                        mshCommandRuntime?.WriteInformation(informationRecord, overrideInquire);
                     }
 
                     break;
@@ -470,10 +431,7 @@ namespace System.Management.Automation.Remoting.Internal
             }
             finally
             {
-                if (cmdletMethodInvoker.Finished != null)
-                {
-                    cmdletMethodInvoker.Finished.Set();
-                }
+                cmdletMethodInvoker.Finished?.Set();
             }
         }
 
@@ -499,7 +457,7 @@ namespace System.Management.Automation.Remoting.Internal
         internal static ErrorRecord AddSourceTagToError(ErrorRecord errorRecord, Guid sourceId)
         {
             if (errorRecord == null) return null;
-            if (errorRecord.ErrorDetails == null) errorRecord.ErrorDetails = new ErrorDetails(string.Empty);
+            errorRecord.ErrorDetails ??= new ErrorDetails(string.Empty);
             errorRecord.ErrorDetails.RecommendedAction = CreateInformationalMessage(sourceId, errorRecord.ErrorDetails.RecommendedAction);
             return errorRecord;
         }
