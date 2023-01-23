@@ -807,6 +807,7 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("UUID", s_uniqueUserIdentifier);
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
+            properties.Add("RuntimeIdentifier", RuntimeInformation.RuntimeIdentifier);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
             properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
 
