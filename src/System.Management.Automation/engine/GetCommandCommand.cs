@@ -1607,6 +1607,9 @@ namespace Microsoft.PowerShell.Commands
                 parameterObj.Properties.Add(new PSNoteProperty("HasParameterSet", hasParameterSet));
                 parameterObj.Properties.Add(new PSNoteProperty("ValidParamSetValues", validValues));
 
+                var parameterAttribute = parameter.Attributes.OfType<ParameterAttribute>().LastOrDefault();
+                parameterObj.Properties.Add(new PSNoteProperty("DontShow", parameterAttribute?.DontShow ?? false));
+
                 parameterObjs.Add(parameterObj);
             }
 
