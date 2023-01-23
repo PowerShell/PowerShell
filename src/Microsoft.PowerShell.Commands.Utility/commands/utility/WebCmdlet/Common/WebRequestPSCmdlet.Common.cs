@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Commands
             // OutFile must not be a directory to use Resume.
             if (Resume.IsPresent && Directory.Exists(OutFile))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", Path.GetFullPath(OutFile)));
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", Path.GetFullPath(OutFile));
                 ThrowTerminatingError(error);
             }
         }
