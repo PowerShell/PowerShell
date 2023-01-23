@@ -1055,6 +1055,10 @@ namespace Microsoft.PowerShell.Commands
                     request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
                     _resumeFileSize = fileInfo.Length;
                 }
+                else
+                {
+                    request.Headers.Range = new RangeHeaderValue(0, null);
+                }
             }
 
             return request;
