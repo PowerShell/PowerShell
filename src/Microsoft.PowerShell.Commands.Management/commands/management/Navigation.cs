@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Dbg.Diagnostics.Assert(false, string.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
+                    Dbg.Diagnostics.Assert(false, string.Create(System.Globalization.CultureInfo.InvariantCulture, $"One of the predefined parameter sets should have been specified, instead we got: {ParameterSetName}"));
                     break;
             }
         }

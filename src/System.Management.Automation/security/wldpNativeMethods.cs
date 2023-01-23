@@ -110,9 +110,9 @@ namespace System.Management.Automation.Security
         {
             SafeHandle fileHandle = fileStream.SafeFileHandle;
 
-            // First check latest WDAC APIs if available.
+            // First check latest WDAC APIs if available. Also revert to legacy APIs if debug hook is in effect.
             Exception errorException = null;
-            if (s_wldpCanExecuteAvailable)
+            if (s_wldpCanExecuteAvailable && !s_allowDebugOverridePolicy)
             {
                 try
                 {

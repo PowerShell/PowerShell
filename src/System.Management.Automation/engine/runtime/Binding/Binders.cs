@@ -955,7 +955,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "MultiAssignRHSBinder {0}", _elements);
+            return string.Create(CultureInfo.InvariantCulture, $"MultiAssignRHSBinder {_elements}");
         }
 
         public override Type ReturnType { get { return typeof(IList); } }
@@ -2239,7 +2239,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSBinaryOperationBinder {0}{1} ver:{2}", GetOperatorText(), _scalarCompare ? " scalarOnly" : string.Empty, _version);
+            return string.Create(CultureInfo.InvariantCulture, $"PSBinaryOperationBinder {GetOperatorText()}{(_scalarCompare ? " scalarOnly" : string.Empty)} ver:{_version}");
         }
 
         internal static void InvalidateCache()
@@ -3488,7 +3488,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSUnaryOperationBinder {0}", this.Operation);
+            return string.Create(CultureInfo.InvariantCulture, $"PSUnaryOperationBinder {this.Operation}");
         }
 
         internal DynamicMetaObject Not(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
@@ -3790,7 +3790,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSConvertBinder [{0}]  ver:{1}", Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true), _version);
+            return string.Create(CultureInfo.InvariantCulture, $"PSConvertBinder [{Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true)}]  ver:{_version}");
         }
 
         internal static void InvalidateCache()
@@ -4548,8 +4548,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSSetIndexBinder indexCnt={0}{1} ver:{2}",
-                CallInfo.ArgumentCount, _constraints == null ? string.Empty : " constraints: " + _constraints, _version);
+            return string.Create(CultureInfo.InvariantCulture, $"PSSetIndexBinder indexCnt={CallInfo.ArgumentCount}{(_constraints == null ? string.Empty : " constraints: " + _constraints)} ver:{_version}");
         }
 
         internal static void InvalidateCache()
@@ -5144,8 +5143,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "GetMember: {0}{1}{2} ver:{3}",
-                Name, _static ? " static" : string.Empty, _nonEnumerating ? " nonEnumerating" : string.Empty, _version);
+            return string.Create(CultureInfo.InvariantCulture, $"GetMember: {Name}{(_static ? " static" : string.Empty)}{(_nonEnumerating ? " nonEnumerating" : string.Empty)} ver:{_version}");
         }
 
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
@@ -5977,7 +5975,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "SetMember: {0}{1} ver:{2}", _static ? "static " : string.Empty, Name, _getMemberBinder._version);
+            return string.Create(CultureInfo.InvariantCulture, $"SetMember: {(_static ? "static " : string.Empty)}{Name} ver:{_getMemberBinder._version}");
         }
 
         private static Expression GetTransformedExpression(IEnumerable<ArgumentTransformationAttribute> transformationAttributes, Expression originalExpression)
@@ -7577,8 +7575,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints != null ? _constraints.ToString() : string.Empty);
+            return string.Create(CultureInfo.InvariantCulture, $"PSCreateInstanceBinder: ver:{_version} args:{_callInfo.ArgumentCount} constraints:<{(_constraints != null ? _constraints : string.Empty)}>");
         }
 
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)

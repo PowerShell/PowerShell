@@ -21,9 +21,10 @@ namespace mvc.Controllers
         public IActionResult Index(int count)
         {
             string url = Regex.Replace(input: Request.GetDisplayUrl(), pattern: "\\/Redirect.*", replacement: string.Empty, options: RegexOptions.IgnoreCase);
+            var destinationIsPresent = Request.Query.TryGetValue("destination", out StringValues destination);
             if (count <= 1)
             {
-                url = $"{url}/Get/";
+                url = destinationIsPresent ? destination.FirstOrDefault() : $"{url}/Get/";
             }
             else
             {
@@ -43,6 +44,11 @@ namespace mvc.Controllers
             {
                 url = new Uri($"{url}?type={type.FirstOrDefault()}").PathAndQuery;
                 Response.Redirect(url, false);
+            }
+            else if (destinationIsPresent)
+            {
+                Response.StatusCode = 302;
+                Response.Headers.Add("Location", url);
             }
             else
             {

@@ -4939,7 +4939,7 @@ namespace Microsoft.PowerShell.Commands
                 using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                 ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
                 ps.AddParameter("Session", compatSession);
-                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Create(CultureInfo.InvariantCulture, $"Set-Location -Path '{args.NewPath.Path}'")));
                 ps.Invoke();
             }
         }
@@ -5723,7 +5723,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
-                                    // Implict function export is allowed when any of the following is true:
+                                    // Implicit function export is allowed when any of the following is true:
                                     //  - Nested modules are allowed by module manifest
                                     //  - The import context language mode is FullLanguage
                                     //  - This script module not running as trusted (FullLanguage)

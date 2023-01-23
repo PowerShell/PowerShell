@@ -1016,10 +1016,11 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
+                                    $errorColor = ''
+                                    $commandPrefix = ''
                                     if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
-                                        $errorColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal) {
                                             $errorColor = $PSStyle.Formatting.Error
                                         }
@@ -1070,10 +1071,7 @@ namespace System.Management.Automation.Runspaces
                                         }
                                     }
 
-                                    if ($commandPrefix)
-                                    {
-                                        $errorColor + $commandPrefix
-                                    }
+                                    $errorColor + $commandPrefix
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
