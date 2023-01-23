@@ -201,6 +201,9 @@
   <data name="ReadResponseProgressStatus" xml:space="preserve">
     <value>Downloaded: {0} of {1}</value>
   </data>
+   <data name="ResumeNotFilePath" xml:space="preserve">
+    <value>Path '{0}' resolves to a directory. The Resume switch can only be used on paths including a file name.</value>
+  </data>
   <data name="SessionConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
   </data>

@@ -544,6 +544,13 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
             }
+
+            // OutFile must not be a directory to use Resume.
+            if (Resume.IsPresent && Directory.Exists(OutFile))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", Path.GetFullPath(OutFile)));
+                ThrowTerminatingError(error);
+            }
         }
 
         internal virtual void PrepareSession()
