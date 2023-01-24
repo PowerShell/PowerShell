@@ -272,6 +272,8 @@ namespace System.Management.Automation
                 _defaultParameterSetName = null;
             }
 
+            _implementsDynamicParameters = scriptBlock.HasDynamicParameters;
+
             Obsolete = scriptBlock.ObsoleteAttribute;
             _scriptBlock = scriptBlock;
             _wrappedCommand = Name = name;
