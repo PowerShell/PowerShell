@@ -748,6 +748,11 @@ namespace Microsoft.PowerShell
             }
             else
             {
+                if (SupportsVirtualTerminal)
+                {
+                    value += PSStyle.Instance.Reset;
+                }
+
                 if (newLine)
                 {
                     writer.WriteLine(value);
