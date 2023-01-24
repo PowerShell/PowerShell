@@ -1012,7 +1012,6 @@ clean
             string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
             if (_wrappedAnyCmdlet)
             {
-
                 result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
         $outBuffer = $null

@@ -2532,15 +2532,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
+                string mofAttr = MapAttributesToMof(enumNames, attributes, embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                sb.AppendFormat(
+                sb.Append(
                     CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, attributes, embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
@@ -3088,22 +3085,21 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 // TODO - validate type and name
-                bool isArrayType;
-                string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
+                string mofType = MapTypeToMofType(
+                    memberType,
+                    member.Name,
+                    className,
+                    out bool isArrayType,
+                    out string embeddedInstanceType,
                     embeddedInstanceTypes);
+
+                var enumNames = memberType.IsEnum ? Enum.GetNames(memberType) : null;
+                string mofAttr = MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                var enumNames = memberType.IsEnum
-                    ? Enum.GetNames(memberType)
-                    : null;
-                sb.AppendFormat(
+                sb.Append(
                     CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
