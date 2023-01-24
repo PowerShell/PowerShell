@@ -312,6 +312,14 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
         if (-not $IsWindows) {
             return;
         }
+        else {
+            $storageModule = Get-Module -Name 'Storage' -ListAvailable -ErrorAction SilentlyContinue
+
+            if (-not $storageModule) {
+                Write-Verbose -Verbose "Storage module is not available."
+                return;
+            }
+        }
 
         $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
 
@@ -340,6 +348,13 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
 
     AfterAll {
         if ($IsWindows) {
+            $storageModule = Get-Module -Name 'Storage' -ListAvailable -ErrorAction SilentlyContinue
+
+            if (-not $storageModule) {
+                Write-Verbose -Verbose "Storage module is not available."
+                return;
+            }
+
             Dismount-DiskImage -ImagePath $vhdx
             Remove-Item $vhdx, $create_vhdx -Force
         }
