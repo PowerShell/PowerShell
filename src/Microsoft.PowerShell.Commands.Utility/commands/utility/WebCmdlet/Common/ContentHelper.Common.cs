@@ -151,11 +151,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // RFC 3023: Media types with the suffix "+xml" are XML
-            bool isXml = (contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
+            bool isXml = contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase));
-
-            isXml |= contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
+            || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase)
+            || contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
+            
             return isXml;
         }
 
