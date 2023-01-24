@@ -818,6 +818,11 @@ namespace Microsoft.PowerShell
                 RawUI.ForegroundColor = foregroundColor;
                 RawUI.BackgroundColor = backgroundColor;
 
+                if (SupportsVirtualTerminal)
+                {
+                    value += PSStyle.Instance.Reset;
+                }
+
                 try
                 {
                     this.WriteImpl(value, newLine);
