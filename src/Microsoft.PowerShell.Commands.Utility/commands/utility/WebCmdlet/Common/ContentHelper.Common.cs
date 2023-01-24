@@ -15,11 +15,8 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Internal Methods
 
-        internal static string GetContentType(HttpResponseMessage response)
-        {
-            // ContentType may not exist in response header.  Return null if not.
-            return response.Content.Headers.ContentType?.MediaType;
-        }
+        // ContentType may not exist in response header.  Return null if not.
+        internal static string GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
 
         internal static Encoding GetDefaultEncoding() => Encoding.UTF8;
 
