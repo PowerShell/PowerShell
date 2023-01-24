@@ -116,20 +116,17 @@ namespace System.Management.Automation
                 }
             }
 
-            CmdletInfo cmdletInfo;
-            ExternalScriptInfo scriptInfo;
-            FunctionInfo funcInfo;
-            if ((cmdletInfo = commandInfo as CmdletInfo) != null)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
                 Init(commandInfo.Name, cmdletInfo.FullName, cmdletInfo.ImplementingType, shouldGenerateCommonParameters);
             }
-            else if ((scriptInfo = commandInfo as ExternalScriptInfo) != null)
+            else if (commandInfo is ExternalScriptInfo scriptInfo)
             {
                 // Accessing the script block property here reads and parses the script
                 Init(scriptInfo.ScriptBlock, scriptInfo.Path, shouldGenerateCommonParameters);
                 _wrappedCommandType = CommandTypes.ExternalScript;
             }
-            else if ((funcInfo = commandInfo as FunctionInfo) != null)
+            else if (commandInfo is FunctionInfo funcInfo)
             {
                 Init(funcInfo.ScriptBlock, funcInfo.Name, shouldGenerateCommonParameters);
                 _wrappedCommandType = commandInfo.CommandType;
@@ -417,25 +414,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(scriptblock));
             }
 
-            CmdletBindingAttribute cmdletBindingAttribute = scriptblock.CmdletBindingAttribute;
-
-            if (cmdletBindingAttribute != null)
-            {
-                ProcessCmdletAttribute(cmdletBindingAttribute);
-            }
-            else
-            {
-                _defaultParameterSetName = null;
-            }
-
-            Obsolete = scriptblock.ObsoleteAttribute;
-            Name = commandName;
+            Init(scriptblock, commandName, scriptblock.UsesCmdletBinding);
             this.CommandType = typeof(PSScriptCmdlet);
-
-            if (scriptblock.HasDynamicParameters)
-            {
-                _implementsDynamicParameters = true;
-            }
 
             InternalParameterMetadata parameterMetadata = InternalParameterMetadata.Get(scriptblock.RuntimeDefinedParameters, false,
                                                                                         scriptblock.UsesCmdletBinding);
