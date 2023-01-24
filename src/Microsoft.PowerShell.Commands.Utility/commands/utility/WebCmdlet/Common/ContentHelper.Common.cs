@@ -54,9 +54,7 @@ namespace Microsoft.PowerShell.Commands
                     // Headers may have multiple entries with different values
                     foreach (var headerValue in header.Value)
                     {
-                        raw.Append(header.Key);
-                        raw.Append(": ");
-                        raw.Append(headerValue);
+                        raw.Append($"{header.Key}: {headerValue}");
                         raw.AppendLine();
                     }
                 }
