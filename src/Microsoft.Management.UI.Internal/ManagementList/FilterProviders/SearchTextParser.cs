@@ -199,7 +199,12 @@ namespace Microsoft.Management.UI.Internal
                 this.UniqueId = uniqueId;
                 this.selectorFilterRule = selectorFilterRule;
                 this.childRule = childRule;
-                this.Pattern = string.Create(CultureInfo.InvariantCulture, $"(?<{uniqueId}>){Regex.Escape(selectorFilterRule.DisplayName)}\\s*:\\s*{SearchTextParser.ValuePattern}");
+                this.Pattern = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "(?<{0}>){1}\\s*:\\s*{2}",
+                    uniqueId,
+                    Regex.Escape(selectorFilterRule.DisplayName),
+                    SearchTextParser.ValuePattern);
             }
 
             /// <summary>

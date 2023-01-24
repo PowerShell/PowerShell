@@ -236,12 +236,20 @@ namespace System.Management.Automation
                                 this.HelpSystem.TraceErrors(helpInfo.Errors);
                                 // Add snapin qualified type name for this command..
                                 // this will enable customizations of the help object.
-                                helpInfo.FullHelp.TypeNames.Insert(0, string.Create(CultureInfo.InvariantCulture, $"ProviderHelpInfo#{providerInfo.PSSnapInName}#{helpInfo.Name}"));
+                                helpInfo.FullHelp.TypeNames.Insert(
+                                    index: 0,
+                                    string.Create(
+                                        CultureInfo.InvariantCulture,
+                                        $"ProviderHelpInfo#{providerInfo.PSSnapInName}#{helpInfo.Name}"));
 
                                 if (!string.IsNullOrEmpty(providerInfo.PSSnapInName))
                                 {
                                     helpInfo.FullHelp.Properties.Add(new PSNoteProperty("PSSnapIn", providerInfo.PSSnapIn));
-                                    helpInfo.FullHelp.TypeNames.Insert(1, string.Create(CultureInfo.InvariantCulture, $"ProviderHelpInfo#{providerInfo.PSSnapInName}"));
+                                    helpInfo.FullHelp.TypeNames.Insert(
+                                        index: 1,
+                                        string.Create(
+                                            CultureInfo.InvariantCulture,
+                                            $"ProviderHelpInfo#{providerInfo.PSSnapInName}"));
                                 }
 
                                 AddCache(providerInfo.PSSnapInName + "\\" + helpInfo.Name, helpInfo);

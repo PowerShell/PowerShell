@@ -27,7 +27,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ViewDefinition view = LoadView(n, index++);
                         if (view != null)
                         {
-                            ReportTrace(string.Create(CultureInfo.InvariantCulture, $"{ControlBase.GetControlShapeName(view.mainControl)} view {view.name} is loaded from file {view.loadingInfo.filePath}"));
+                            ReportTrace(string.Format(
+                                CultureInfo.InvariantCulture,
+                                "{0} view {1} is loaded from file {2}",
+                                ControlBase.GetControlShapeName(view.mainControl),
+                                view.name,
+                                view.loadingInfo.filePath));
                             // we are fine, add the view to the list
                             db.viewDefinitionsSection.viewDefinitionList.Add(view);
                         }

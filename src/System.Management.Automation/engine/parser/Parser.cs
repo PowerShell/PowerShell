@@ -8044,7 +8044,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            Diagnostics.Assert(msgCorrespondsToString, string.Create(CultureInfo.InvariantCulture, $"Parser error ID \"{errorId}\" must correspond to the error message \"{errorMsg}\""));
+            Diagnostics.Assert(msgCorrespondsToString, $"Parser error ID \"{errorId}\" must correspond to the error message \"{errorMsg}\"");
         }
 
         private static object[] arrayOfOneArg

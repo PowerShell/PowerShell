@@ -2534,7 +2534,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                sb.Append(CultureInfo.InvariantCulture, $"    {MapAttributesToMof(enumNames, attributes, embeddedInstanceType)}{mofType} {member.Name}{arrayAffix};\n");
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "    {0}{1} {2}{3};\n",
+                    MapAttributesToMof(enumNames, attributes, embeddedInstanceType),
+                    mofType,
+                    member.Name,
+                    arrayAffix);
             }
         }
 
@@ -3091,7 +3097,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
                     : null;
-                sb.Append(CultureInfo.InvariantCulture, $"    {MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType)}{mofType} {member.Name}{arrayAffix};\n");
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "    {0}{1} {2}{3};\n",
+                    MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType),
+                    mofType,
+                    member.Name,
+                    arrayAffix);
             }
         }
 

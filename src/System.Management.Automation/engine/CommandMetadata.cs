@@ -1009,8 +1009,10 @@ clean
                 commandOrigin = string.Empty;
             }
 
+            string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
             if (_wrappedAnyCmdlet)
             {
+
                 result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
         $outBuffer = $null
@@ -1019,7 +1021,7 @@ clean
             $PSBoundParameters['OutBuffer'] = 1
         }}
 
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
         $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
@@ -1033,7 +1035,7 @@ clean
             {
                 result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $PSBoundParameters.Add('$args', $args)
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
@@ -1066,9 +1068,10 @@ clean
 
         internal string GetDynamicParamBlock()
         {
+            string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
             return string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand)}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType}, $PSBoundParameters)
+        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType}, $PSBoundParameters)
         $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object {{ $_.Value.IsDynamic }})
         if ($dynamicParams.Length -gt 0)
         {{

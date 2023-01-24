@@ -614,7 +614,12 @@ namespace Microsoft.PowerShell.Commands
                 switch (command)
                 {
                     case ExternalScriptInfo externalScript:
-                        replacedSyntax = string.Create(CultureInfo.InvariantCulture, $"{aliasName} (alias) -> {externalScript.Path}{Environment.NewLine}{Environment.NewLine}{command.Syntax.Replace(command.Name, aliasName)}");
+                        replacedSyntax = string.Format(
+                            "{0} (alias) -> {1}{2}{3}",
+                            aliasName,
+                            string.Format("{0}{1}", externalScript.Path, Environment.NewLine),
+                            Environment.NewLine,
+                            command.Syntax.Replace(command.Name, aliasName));
                         break;
                     case ApplicationInfo app:
                         replacedSyntax = app.Path;
@@ -626,7 +631,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            replacedSyntax = string.Create(CultureInfo.InvariantCulture, $"{aliasName} (alias) -> {command.Name}{Environment.NewLine}{command.Syntax.Replace(command.Name, aliasName)}");
+                            replacedSyntax = string.Format(
+                                "{0} (alias) -> {1}{2}{3}",
+                                aliasName,
+                                command.Name,
+                                Environment.NewLine,
+                                command.Syntax.Replace(command.Name, aliasName));
                         }
 
                         break;

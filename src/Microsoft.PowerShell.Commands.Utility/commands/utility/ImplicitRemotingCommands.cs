@@ -2594,7 +2594,8 @@ function Get-PSImplicitRemotingSession
             }
             else
             {
-                return string.Create(CultureInfo.InvariantCulture, $"-connectionUri '{CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString())}'");
+                string connectionString = CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString());
+                return string.Create(CultureInfo.InvariantCulture, $"-connectionUri '{connectionString}'");
             }
         }
 
