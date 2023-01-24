@@ -121,7 +121,7 @@ namespace Microsoft.Management.UI.Internal
                 patterns.Add(rule.Pattern);
             }
 
-            patterns.Add(string.Create(CultureInfo.InvariantCulture, $"(?<{FullTextRuleGroupName}>){ValuePattern}"));
+            patterns.Add(string.Format(CultureInfo.InvariantCulture, "(?<{0}>){1}", FullTextRuleGroupName, ValuePattern));
 
             return string.Join("|", patterns.ToArray());
         }
