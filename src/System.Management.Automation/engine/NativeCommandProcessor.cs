@@ -527,16 +527,12 @@ namespace System.Management.Automation
             ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
 
 #if !UNIX
-            string commandPath = this.Path.ToLowerInvariant();
-            if (commandPath.EndsWith("powershell.exe") || commandPath.EndsWith("powershell_ise.exe"))
-            {
-                // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
-                string psmodulepath = ModuleIntrinsics.GetWindowsPowerShellModulePath();
-                startInfo.Environment["PSModulePath"] = psmodulepath;
+            // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
+            string psmodulepath = ModuleIntrinsics.GetWindowsPowerShellModulePath();
+            startInfo.Environment["PSModulePath"] = psmodulepath;
 
-                // must set UseShellExecute to false if we modify the environment block
-                startInfo.UseShellExecute = false;
-            }
+            // must set UseShellExecute to false if we modify the environment block
+            startInfo.UseShellExecute = false;
 #endif
 
             if (this.Command.Context.CurrentPipelineStopping)
