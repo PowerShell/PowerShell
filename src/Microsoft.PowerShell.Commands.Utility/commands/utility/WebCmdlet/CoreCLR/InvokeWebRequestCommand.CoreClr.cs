@@ -56,15 +56,13 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                string qualifiedOutFile = QualifiedOutFile;
-
-                if (Directory.Exists(qualifiedOutFile))
+                if (Directory.Exists(_qualifiedOutFile))
                 {
                     // Get file name from last segment of Uri
-                    qualifiedOutFile = Path.Combine(qualifiedOutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
+                    _qualifiedOutFile = Path.Combine(_qualifiedOutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
                 }
 
-                StreamHelper.SaveStreamToFile(responseStream, qualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                StreamHelper.SaveStreamToFile(responseStream, _qualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
         }
 

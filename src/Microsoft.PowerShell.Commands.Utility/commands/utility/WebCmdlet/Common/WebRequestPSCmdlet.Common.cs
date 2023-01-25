@@ -401,6 +401,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void ValidateParameters()
         {
+            _qualifiedOutFile = QualifiedOutFile;
+
             // Sessions
             if (WebSession is not null && SessionVariable is not null)
             {
@@ -546,9 +548,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // OutFile must not be a directory to use Resume.
-            if (Resume.IsPresent && Directory.Exists(QualifiedOutFile))
+            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", Path.GetFullPath(OutFile));
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", Path.GetFullPath(_qualifiedOutFile));
                 ThrowTerminatingError(error);
             }
         }
@@ -881,6 +883,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal bool _followRelLink = false;
 
+        internal string _qualifiedOutFile = null;
+
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
@@ -1056,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
             // If not, create a Range to request the entire file.
             if (Resume.IsPresent)
             {
-                var fileInfo = new FileInfo(QualifiedOutFile);
+                var fileInfo = new FileInfo(_qualifiedOutFile);
                 if (fileInfo.Exists)
                 {
                     request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
