@@ -279,7 +279,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return ScriptPosition.Text ?? string.Empty;
+                return ScriptPosition.Text;
             }
         }
 
