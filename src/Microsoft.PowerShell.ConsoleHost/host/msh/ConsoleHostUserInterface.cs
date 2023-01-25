@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell
                 if (newLine)
                 {
                     // write the newline after resetting the colors so there isn't a buffer wide colored line when buffer scrolls
-                    WriteLineToConsole(string.Empty, transcribeResult: true);
+                    WriteToConsole(string.Empty, transcribeResult: true, newLine: true);
                 }
             }
         }
