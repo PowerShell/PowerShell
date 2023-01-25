@@ -3552,9 +3552,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else // Copy-Item local
                 {
-                    if (Context != null)
-                    {
-                        if (Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
+                    if (Context != null && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
                         {
                             Task.Run(() =>
                             {
