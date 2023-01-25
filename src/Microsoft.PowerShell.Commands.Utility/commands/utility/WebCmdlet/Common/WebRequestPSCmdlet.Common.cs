@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual Uri Uri { get; set; }
 
-        #endregion
+        #endregion URI
 
         #region HTTP Version
 
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         [HttpVersionCompletions]
         public virtual Version HttpVersion { get; set; }
 
-        #endregion
+        #endregion HTTP Version
 
         #region Session
         /// <summary>
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("SV")]
         public virtual string SessionVariable { get; set; }
 
-        #endregion
+        #endregion Session
 
         #region Authorization and Credentials
 
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter AllowInsecureRedirect { get; set; }
 
-        #endregion
+        #endregion Authorization and Credentials
 
         #region Headers
 
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual IDictionary Headers { get; set; }
 
-        #endregion
+        #endregion Headers
 
         #region Redirect
 
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public virtual int RetryIntervalSec { get; set; } = 5;
 
-        #endregion
+        #endregion Redirect
 
         #region Method
 
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string _custommethod;
 
-        #endregion
+        #endregion Method
 
         #region NoProxy
 
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "StandardMethodNoProxy")]
         public virtual SwitchParameter NoProxy { get; set; }
 
-        #endregion
+        #endregion NoProxy
 
         #region Proxy
 
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "CustomMethod")]
         public virtual SwitchParameter ProxyUseDefaultCredentials { get; set; }
 
-        #endregion
+        #endregion Proxy
 
         #region Input
 
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string _originalFilePath;
 
-        #endregion
+        #endregion Input
 
         #region Output
 
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter SkipHttpErrorCheck { get; set; }
 
-        #endregion
+        #endregion Output
 
         #endregion Virtual Properties
 
