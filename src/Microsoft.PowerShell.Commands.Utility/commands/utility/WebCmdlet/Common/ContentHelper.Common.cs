@@ -96,10 +96,10 @@ namespace Microsoft.PowerShell.Commands
             // Add in these other "javascript" related types that
             // sometimes get sent down as the mime type for JSON content
             isJson |= contentType.Equals("text/json", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("text/x-javascript", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/javascript", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("text/javascript", StringComparison.OrdinalIgnoreCase);
+                   || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
+                   || contentType.Equals("text/x-javascript", StringComparison.OrdinalIgnoreCase)
+                   || contentType.Equals("application/javascript", StringComparison.OrdinalIgnoreCase)
+                   || contentType.Equals("text/javascript", StringComparison.OrdinalIgnoreCase);
 
             return isJson;
         }
@@ -113,8 +113,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Any text, xml or json types are text
             bool isText = contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
-            || CheckIsXml(contentType)
-            || CheckIsJson(contentType);
+                        || CheckIsXml(contentType)
+                        || CheckIsJson(contentType);
 
             // Further content type analysis is available on Windows
             if (Platform.IsWindows && !isText)
@@ -152,9 +152,9 @@ namespace Microsoft.PowerShell.Commands
 
             // RFC 3023: Media types with the suffix "+xml" are XML
             bool isXml = contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase)
-            || contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
+                       || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
+                       || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase)
+                       || contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
             
             return isXml;
         }
