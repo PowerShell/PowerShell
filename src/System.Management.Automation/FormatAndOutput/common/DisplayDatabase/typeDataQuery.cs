@@ -490,12 +490,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     sb.Append(isMatched ? "MATCH FOUND" : "NOT MATCH");
                     if (tr != null)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $" {ControlBase.GetControlShapeName(vd.mainControl)} NAME: {vd.name}  TYPE: {tr.name}");
+                        sb.AppendFormat(
+                            CultureInfo.InvariantCulture,
+                            " {0} NAME: {1}  TYPE: {2}",
+                            ControlBase.GetControlShapeName(vd.mainControl),
+                            vd.name,
+                            tr.name);
                     }
                     else
                     {
                         TypeGroupReference tgr = togr as TypeGroupReference;
-                        sb.Append(CultureInfo.InvariantCulture, $" {ControlBase.GetControlShapeName(vd.mainControl)} NAME: {vd.name}  GROUP: {tgr.name}");
+                        sb.AppendFormat(
+                            CultureInfo.InvariantCulture,
+                            " {0} NAME: {1}  GROUP: {2}",
+                            ControlBase.GetControlShapeName(vd.mainControl),
+                            vd.name,
+                            tgr.name);
                     }
 
                     ActiveTracer.WriteLine(sb.ToString());
