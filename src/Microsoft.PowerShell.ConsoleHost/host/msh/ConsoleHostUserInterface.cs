@@ -645,12 +645,18 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    WriteToConsole(text, transcribeResult: true, newLine);
+                    WriteToConsole(text, transcribeResult: true, newLine: false);
                 }
                 finally
                 {
                     RawUI.ForegroundColor = fg;
                     RawUI.BackgroundColor = bg;
+                }
+
+                if (newLine)
+                {
+                    // write the newline after resetting the colors so there isn't a buffer wide colored line when buffer scrolls
+                    WriteLineToConsole(string.Empty, transcribeResult: true);
                 }
             }
         }
@@ -823,19 +829,20 @@ namespace Microsoft.PowerShell
                 RawUI.ForegroundColor = foregroundColor;
                 RawUI.BackgroundColor = backgroundColor;
 
-                if (SupportsVirtualTerminal && Console.CursorTop == Console.BufferHeight - 1)
-                {
-                    value += PSStyle.Instance.Reset;
-                }
-
                 try
                 {
-                    this.WriteImpl(value, newLine);
+                    this.WriteImpl(value, newLine: false);
                 }
                 finally
                 {
                     RawUI.ForegroundColor = fg;
                     RawUI.BackgroundColor = bg;
+                }
+
+                if (newLine)
+                {
+                    // write the newline after resetting the colors so there isn't a buffer wide colored line when buffer scrolls
+                    this.WriteImpl(string.Empty, newLine: true);
                 }
             }
         }
