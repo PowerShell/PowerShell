@@ -3553,6 +3553,7 @@ namespace Microsoft.PowerShell.Commands
                 else // Copy-Item local
                 {
                     if (Context != null && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
+                    {
                         {
                             Task.Run(() =>
                             {
@@ -3937,7 +3938,7 @@ namespace Microsoft.PowerShell.Commands
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
                                 );
-                                var percentComplete = (int) Math.Min(_copiedBytes * 100 / _totalBytes, 100);
+                                var percentComplete = (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100);
                                 progress.PercentComplete = percentComplete;
                                 progress.RecordType = ProgressRecordType.Processing;
                                 WriteProgress(progress);
