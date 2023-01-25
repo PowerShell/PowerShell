@@ -2910,19 +2910,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.Mandatory)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}required");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
@@ -2934,13 +2934,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new(", Values{");
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
-                        sbValues.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
                         valueMapComma = true;
                     }
 
@@ -2959,11 +2959,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
 
@@ -2971,7 +2971,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
 
@@ -2979,7 +2979,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else if (embeddedInstanceType != null)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}EmbeddedInstance(\"{embeddedInstanceType}\")");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
 
             sb.Append(']');
