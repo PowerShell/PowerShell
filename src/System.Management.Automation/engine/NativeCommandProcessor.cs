@@ -894,12 +894,12 @@ namespace System.Management.Automation
                     // The variable is unset
                     if (useDefaultSetting)
                     {
-                        TelemetrySendUseData("unset");
+                        ApplicationInsightsTelemetry.SendExperimentalUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, "unset");
                         return;
                     }
 
                     // Send the value that was set.
-                    TelemetrySendUseData(nativeErrorActionPreferenceSetting.ToString());
+                    ApplicationInsightsTelemetry.SendExperimentalUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, nativeErrorActionPreferenceSetting.ToString());
 
                     // if it was explicitly set to false, return
                     if (!nativeErrorActionPreferenceSetting)
@@ -959,17 +959,6 @@ namespace System.Management.Automation
 
                 throw appFailedException;
             }
-        }
-
-        /// <summary>
-        /// We need to send the telemetry as to whether the user has set the variable, and if so, what the value is.
-        /// </summary>
-        /// <param name="detail">The details of the ErrorActionPreference setting.</param>
-        private static void TelemetrySendUseData(string detail)
-        {
-            ApplicationInsightsTelemetry.SendTelemetryMetric(
-                TelemetryType.ExperimentalFeatureUse,
-                ApplicationInsightsTelemetry.GetExperimentalFeatureUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, detail));
         }
 
         #region Process cleanup with Child Process cleanup

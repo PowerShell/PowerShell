@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Telemetry
         private static readonly HashSet<string> s_knownModules;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
-        public static bool CanSendTelemetry { get; private set; }
+        public static bool CanSendTelemetry { get; private set; } = false;
 
         /// <summary>
         /// Initializes static members of the <see cref="ApplicationInsightsTelemetry"/> class.
@@ -746,6 +746,21 @@ namespace Microsoft.PowerShell.Telemetry
             }
         }
 
+        /// <summary>
+        /// Send additional information about an experimental feature as it is used.
+        /// </summary>
+        /// <param name="detail">The name of the experimental feature.</param>
+        /// <param name="featureName">The details of the experimental feature.</param>
+        internal static void SendExperimentalUseData(string featureName, string detail)
+        {
+            if (!CanSendTelemetry)
+            {
+                return;
+            }
+
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureUse, string.Join(":", featureName, detail));
+        }
+
         // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"
         private static string GetExperimentalFeatureName(string featureNameToValidate)
         {
@@ -963,17 +978,5 @@ namespace Microsoft.PowerShell.Telemetry
             return id;
         }
 
-        /// <summary>
-        /// Construct a string which represents the experimental feature use.
-        /// This takes the feature name and the detail and joins them with a colon
-        /// so they can be deconstructed in the telemetry queries.
-        /// </summary>
-        /// <param name="feature">The name of the experimental feature.</param>
-        /// <param name="detail">The detail of the experimental feature.</param>
-        /// <returns>A string which represents the experimental feature use.</returns>
-        public static string GetExperimentalFeatureUseData(string feature, string detail)
-        {
-            return string.Join(":", feature, detail);
-        }
     }
 }
