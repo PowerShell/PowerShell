@@ -141,14 +141,16 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ShouldSaveToOutFile)
             {
+                string qualifiedOutFile = QualifiedOutFile;
+
                 // Check if OutFile is a folder
-                if (Directory.Exists(QualifiedOutFile))
+                if (Directory.Exists(qualifiedOutFile))
                 {
                     // Get file name from last segment of Uri
-                    OutFile = Path.Combine(OutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
+                    qualifiedOutFile = Path.Combine(qualifiedOutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
                 }
 
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                StreamHelper.SaveStreamToFile(baseResponseStream, qualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))
