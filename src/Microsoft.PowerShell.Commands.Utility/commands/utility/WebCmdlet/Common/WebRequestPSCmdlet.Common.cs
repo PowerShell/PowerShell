@@ -198,12 +198,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SecureString Token { get; set; }
 
-        /// <summary>
-        /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
-        /// </summary>
-        [Parameter]
-        public virtual SwitchParameter AllowInsecureRedirect { get; set; }
-
         #endregion Authorization and Credentials
 
         #region Headers
@@ -234,9 +228,24 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual IDictionary Headers { get; set; }
 
+        /// <summary>
+        /// Gets or sets the SkipHeaderValidation property.
+        /// </summary>
+        /// <remarks>
+        /// This property adds headers to the request's header collection without validation.
+        /// </remarks>
+        [Parameter]
+        public virtual SwitchParameter SkipHeaderValidation { get; set; }
+
         #endregion Headers
 
         #region Redirect
+
+        /// <summary>
+        /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter AllowInsecureRedirect { get; set; }
 
         /// <summary>
         /// Gets or sets the RedirectMax property.
@@ -251,6 +260,21 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRetryCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the PreserveAuthorizationOnRedirect property.
+        /// </summary>
+        /// <remarks>
+        /// This property overrides compatibility with web requests on Windows.
+        /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
+        /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
+        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
+        /// we'll detect requests with an Authorization header and automatically strip
+        /// the header when the first redirect occurs. This switch turns off this logic for
+        /// edge cases where the authorization header needs to be preserved across redirects.
+        /// </remarks>
+        [Parameter]
+        public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
@@ -825,30 +849,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-        /// <summary>
-        /// Gets or sets the PreserveAuthorizationOnRedirect property.
-        /// </summary>
-        /// <remarks>
-        /// This property overrides compatibility with web requests on Windows.
-        /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
-        /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
-        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
-        /// we'll detect requests with an Authorization header and automatically strip
-        /// the header when the first redirect occurs. This switch turns off this logic for
-        /// edge cases where the authorization header needs to be preserved across redirects.
-        /// </remarks>
-        [Parameter]
-        public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SkipHeaderValidation property.
-        /// </summary>
-        /// <remarks>
-        /// This property adds headers to the request's header collection without validation.
-        /// </remarks>
-        [Parameter]
-        public virtual SwitchParameter SkipHeaderValidation { get; set; }
-
         #region Abstract Methods
 
         /// <summary>
