@@ -2264,7 +2264,11 @@ function CopyReferenceAssemblies
 
     $supportedRefList = @(
         "Microsoft.PowerShell.Commands.Utility",
-        "Microsoft.PowerShell.ConsoleHost")
+        "Microsoft.PowerShell.ConsoleHost",
+        "Microsoft.PowerShell.Commands.Management",
+        "Microsoft.PowerShell.Commands.Diagnostics",
+        "Microsoft.PowerShell.Security",
+        "Microsoft.WSMan.Management")
 
     switch ($assemblyName) {
         { $_ -in $supportedRefList } {
