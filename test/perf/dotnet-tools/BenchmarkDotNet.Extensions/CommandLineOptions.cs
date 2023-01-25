@@ -23,7 +23,7 @@ namespace BenchmarkDotNet.Extensions
                 }
                 else
                 {
-                    throw new ArgumentException(String.Create($"{parameter} must be followed by an integer"));
+                    throw new ArgumentException($"{parameter} must be followed by an integer");
                 }
             }
 

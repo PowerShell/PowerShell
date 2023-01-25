@@ -1031,7 +1031,13 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            return string.Create(CultureInfo.InvariantCulture, $"{(FromStream == RedirectionStream.All ? "*" : ((int)FromStream).ToString(CultureInfo.InvariantCulture))}> {File}");
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}> {1}",
+                FromStream == RedirectionStream.All
+                    ? "*"
+                    : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
+                File);
         }
 
         internal string File { get; }

@@ -200,7 +200,10 @@ namespace Microsoft.WSMan.Management
                     return;
                 }
 
-                string inputXml = string.Create(CultureInfo.InvariantCulture, $@"<cfg:Auth xmlns:cfg=""{helper.Service_CredSSP_XMLNmsp}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>");
+                string inputXml = string.Format(
+                    CultureInfo.InvariantCulture,
+                    @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>false</cfg:CredSSP></cfg:Auth>",
+                    helper.Service_CredSSP_XMLNmsp);
 
                 m_SessionObj.Put(helper.Service_CredSSP_Uri, inputXml, 0);
             }
@@ -591,8 +594,11 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     XmlDocument xmldoc = new XmlDocument();
-                    string newxmlcontent = string.Create(CultureInfo.InvariantCulture, $@"<cfg:Auth xmlns:cfg=""{helper.Service_CredSSP_XMLNmsp}""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>");
-                    
+                    string newxmlcontent = string.Format(
+                        CultureInfo.InvariantCulture,
+                        @"<cfg:Auth xmlns:cfg=""{0}""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>",
+                        helper.Service_CredSSP_XMLNmsp);
+
                     // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.Service_CredSSP_Uri, newxmlcontent, 0));
                     WriteObject(xmldoc.FirstChild);

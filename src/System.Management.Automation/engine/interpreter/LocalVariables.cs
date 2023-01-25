@@ -77,7 +77,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Create(CultureInfo.InvariantCulture, $"{Index}: {(IsBoxed ? "boxed" : null)} {(InClosure ? "in closure" : null)}");
+            return string.Format(CultureInfo.InvariantCulture, "{0}: {1} {2}", Index, IsBoxed ? "boxed" : null, InClosure ? "in closure" : null);
         }
     }
 

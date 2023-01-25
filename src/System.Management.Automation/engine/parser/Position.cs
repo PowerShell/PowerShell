@@ -766,7 +766,9 @@ namespace System.Management.Automation.Language
                                                              _endPosition.ColumnNumber - _startPosition.ColumnNumber);
                     }
 
-                    return string.Create(CultureInfo.InvariantCulture, $"{_startPosition.Line.AsSpan(_startPosition.ColumnNumber)}...{ _endPosition.Line.AsSpan(0, _endPosition.ColumnNumber)}");
+                    var start = _startPosition.Line.AsSpan(_startPosition.ColumnNumber);
+                    var end = _endPosition.Line.AsSpan(0, _endPosition.ColumnNumber);
+                    return string.Create(CultureInfo.InvariantCulture, $"{start}...{end}");
                 }
                 else
                 {
