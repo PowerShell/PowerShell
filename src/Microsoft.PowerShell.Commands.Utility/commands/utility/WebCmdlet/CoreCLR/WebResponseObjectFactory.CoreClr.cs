@@ -11,11 +11,7 @@ namespace Microsoft.PowerShell.Commands
     {
         internal static WebResponseObject GetResponseObject(HttpResponseMessage response, Stream responseStream, ExecutionContext executionContext)
         {
-            WebResponseObject output = WebResponseHelper.IsText(response) switch
-            {
-                true => new BasicHtmlWebResponseObject(response, responseStream),
-                _ => new WebResponseObject(response, responseStream)
-            };
+            WebResponseObject output = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream) : new WebResponseObject(response, responseStream) ;
 
             return output;
         }
