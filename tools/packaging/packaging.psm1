@@ -438,6 +438,7 @@ function Start-PSPackage {
                     PackageVersion = $Version
                     PackageRuntime = $Runtime
                     PackageConfiguration = $Configuration
+                    IncludeSymbols = $IncludeSymbols
                     Force = $Force
                 }
 
@@ -2831,7 +2832,7 @@ function New-NugetContentPackage
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $PackageSourcePath,
-
+        [switch] $IncludeSymbols,
         [Switch]
         $Force
     )
@@ -2858,12 +2859,21 @@ function New-NugetContentPackage
     $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
     $arguments = @('pack')
+    if($IncludeSymbols.IsPresent)
+    {
+        $arguments += '--include-symbols'
+    }
     $arguments += @('--output',$nugetFolder)
     $arguments += @('--configuration',$PackageConfiguration)
     $arguments += "/p:StagingPath=$stagingRoot"
     $arguments += "/p:RID=$PackageRuntime"
     $arguments += "/p:SemVer=$nugetSemanticVersion"
     $arguments += "/p:PackageName=$nuspecPackageName"
+    if($env:TF_BUILD)
+    {
+        $arguments += "/p:ContinuousIntegrationBuild=true"
+        $arguments += "/p:EmbedUntrackedSources=true"
+    }
     $arguments += $projectFolder
 
     Write-Log "Running dotnet $arguments"

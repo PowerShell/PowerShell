@@ -66,5 +66,5 @@ steps:
       Import-Module -Name $env:REPOROOT\build.psm1
       Import-Module -Name $env:REPOROOT\tools\packaging
       Find-DotNet
-      New-ILNugetPackageFromSource -FileName $FileName -PackageVersion '${{ parameters.PackageVersion }}' -PackagePath '${{ parameters.PackagePath }}'
+      New-ILNugetPackageFromSource -FileName $FileName -PackageVersion '${{ parameters.PackageVersion }}' -PackagePath '${{ parameters.PackagePath }}' -IncludeSymbols
     displayName: 'Create NuGet Package for single file'

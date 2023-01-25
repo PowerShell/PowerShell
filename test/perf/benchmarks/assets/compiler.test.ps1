@@ -2278,6 +2278,7 @@ function Start-PSPackage {
                     PackageVersion = $Version
                     PackageRuntime = $Runtime
                     PackageConfiguration = $Configuration
+                    IncludeSymbols = $IncludeSymbols
                     Force = $Force
                 }
 
