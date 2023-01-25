@@ -748,7 +748,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal)
+                if (SupportsVirtualTerminal && Console.CursorTop == Console.BufferHeight - 1)
                 {
                     value += PSStyle.Instance.Reset;
                 }
@@ -823,7 +823,7 @@ namespace Microsoft.PowerShell
                 RawUI.ForegroundColor = foregroundColor;
                 RawUI.BackgroundColor = backgroundColor;
 
-                if (SupportsVirtualTerminal)
+                if (SupportsVirtualTerminal && Console.CursorTop == Console.BufferHeight - 1)
                 {
                     value += PSStyle.Instance.Reset;
                 }
