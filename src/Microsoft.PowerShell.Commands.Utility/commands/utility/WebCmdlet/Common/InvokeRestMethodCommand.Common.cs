@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
             else if (ShouldSaveToOutFile)
             {
                 // Check if OutFile is a folder
-                if (Directory.Exists(OutFile))
+                if (Directory.Exists(QualifiedOutFile))
                 {
                     // Get file name from last segment of Uri
                     OutFile = Path.Combine(OutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
