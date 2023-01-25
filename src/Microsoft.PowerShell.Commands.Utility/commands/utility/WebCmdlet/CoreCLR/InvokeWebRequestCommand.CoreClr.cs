@@ -58,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 string qualifiedOutFile = QualifiedOutFile;
 
-                // Check if OutFile is a folder
                 if (Directory.Exists(qualifiedOutFile))
                 {
                     // Get file name from last segment of Uri
