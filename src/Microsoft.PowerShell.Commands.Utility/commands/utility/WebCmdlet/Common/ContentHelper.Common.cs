@@ -29,8 +29,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int statusCode = WebResponseHelper.GetStatusCode(response);
                 string statusDescription = WebResponseHelper.GetStatusDescription(response);
-                raw.Append($"{protocol} {statusCode} {statusDescription}");
-                raw.AppendLine();
+                raw.AppendLine($"{protocol} {statusCode} {statusDescription}");
             }
 
             HttpHeaders[] headerCollections =
@@ -49,10 +48,9 @@ namespace Microsoft.PowerShell.Commands
                 foreach (var header in headerCollection)
                 {
                     // Headers may have multiple entries with different values
-                    foreach (var headerValue in header.Value)
+                    foreach (string headerValue in header.Value)
                     {
-                        raw.Append($"{header.Key}: {headerValue}");
-                        raw.AppendLine();
+                        raw.AppendLine($"{header.Key}: {headerValue}");
                     }
                 }
             }
