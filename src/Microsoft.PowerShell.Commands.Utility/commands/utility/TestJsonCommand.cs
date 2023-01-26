@@ -16,18 +16,33 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Test-Json command.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = ParameterAttribute.AllParameterSets, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096609")]
+    [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = JsonStringParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096609")]
     [OutputType(typeof(bool))]
     public class TestJsonCommand : PSCmdlet
     {
-        private const string SchemaFileParameterSet = "SchemaFile";
-        private const string SchemaStringParameterSet = "SchemaString";
+        private const string JsonStringParameterSet = "JsonString";
+        private const string JsonStringWithSchemaStringParameterSet = "JsonStringWithSchemaString";
+        private const string JsonStringWithSchemaFileParameterSet = "JsonStringWithSchemaFile";
+        private const string JsonFileParameterSet = "JsonFile";
+        private const string JsonFileWithSchemaStringParameterSet = "JsonFileWithSchemaString";
+        private const string JsonFileWithSchemaFileParameterSet = "JsonFileWithSchemaFile";
 
         /// <summary>
         /// Gets or sets JSON string to be validated.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonStringParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonStringWithSchemaStringParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonStringWithSchemaFileParameterSet)]
         public string Json { get; set; }
+
+        /// <summary>
+        /// Gets or sets JSON file path to be validated.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonFileParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
+        [Alias("JsonFile")]
+        public string Path { get; set; }
 
         /// <summary>
         /// Gets or sets schema to validate the JSON against.
@@ -37,7 +52,8 @@ namespace Microsoft.PowerShell.Commands
         /// then validates the JSON against the schema. Before testing the JSON string,
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = SchemaStringParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = JsonStringWithSchemaStringParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
         [ValidateNotNullOrEmpty]
         public string Schema { get; set; }
 
@@ -45,10 +61,12 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets path to the file containing schema to validate the JSON string against.
         /// This is optional parameter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = JsonStringWithSchemaFileParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
+        private string _json;
         private JsonSchema _jschema;
 
         /// <summary>
@@ -78,6 +96,44 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string resolvedpath = string.Empty;
+
+            try
+            {
+                if (Json != null)
+                {
+                    _json = Json;
+                }
+                else if (Path != null)
+                {
+                    try
+                    {
+                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path);
+                        _json = File.ReadAllText(Path);
+                    }
+                    catch (AggregateException ae)
+                    {
+                        ae.Handle(UnwrapException);
+                    }
+                }
+            }
+
+            catch (Exception e) when (
+                // Handle exceptions related to file access to provide more specific error message
+                // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
+                e is IOException ||
+                e is UnauthorizedAccessException ||
+                e is NotSupportedException ||
+                e is SecurityException
+            )
+            {
+                Exception exception = new(
+                    string.Format(
+                        CultureInfo.CurrentUICulture,
+                        TestJsonCmdletStrings.JsonFileOpenFailure,
+                        resolvedpath),
+                    e);
+                ThrowTerminatingError(new ErrorRecord(exception, "JsonFileOpenFailure", ErrorCategory.OpenError, resolvedpath));
+            }
 
             try
             {
@@ -140,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var parsedJson = JToken.Parse(Json);
+                var parsedJson = JToken.Parse(_json);
 
                 if (_jschema != null)
                 {
@@ -165,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
                 result = false;
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
-                WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, Json));
+                WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, _json));
             }
 
             WriteObject(result);
