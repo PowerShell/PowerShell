@@ -405,8 +405,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void ValidateParameters()
         {
-            _qualifiedOutFile = QualifiedOutFile;
-
             // Sessions
             if (WebSession is not null && SessionVariable is not null)
             {
