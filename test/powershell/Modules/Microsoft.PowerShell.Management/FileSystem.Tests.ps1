@@ -1551,6 +1551,9 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
+        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            Set-ItResult -Pending -Because "runas.exe /trustlevel:0x20000 is not supported on ARM64"
+        }
 
         # The expected error is returned when there is a empty directory with the user does not have authorization to is deleted.
         # It cannot have 'System. 'Hidden' or 'ReadOnly' attribute as well as -Force should not be used.

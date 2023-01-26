@@ -830,6 +830,12 @@ namespace PowershellTestConfigNamespace
 
     Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
         BeforeAll {
+            if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+                Write-Verbose "remoting is not setup on ARM64, skipping tests" -Verbose
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+
             if ($IsNotSkipped) {
                 Enable-PSRemoting
             }

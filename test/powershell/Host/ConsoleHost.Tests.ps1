@@ -997,6 +997,10 @@ public enum ShowWindowCommands : int
         ) {
         param ($WindowStyle)
 
+        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+        }
+
         try {
             $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
             $startTime = Get-Date
