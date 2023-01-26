@@ -541,11 +541,16 @@ using `
     It 'Should show multiple constructors in the tooltip' {
         $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
         $res.CompletionMatches | Should -HaveCount 1
-        $completionText = $res.CompletionMatches.ToolTip | Should -BeExactly @'
+        $completionText = $res.CompletionMatches.ToolTip
+        $completionText.replace("`r`n", [System.Environment]::NewLine).trim()
+
+        $expected = @'
 ConstructorTestClass(string s)
 ConstructorTestClass(int i)
 ConstructorTestClass(int i, bool b)
 '@
+        $expected.replace("`r`n", [System.Environment]::NewLine).trim()
+        $completionText.replace("`r`n", [System.Environment]::NewLine).trim() | Should -BeExactly $expected
     }
 
     It 'Should complete parameter in param block' {
@@ -1229,12 +1234,8 @@ class InheritedClassTest : System.Attribute
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
-            if (!$env:HOMEDRIVE) {
-                Set-ItResult -Skipped -Because "Homerdrive is not set"
-            }
-            $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
-            $beforeTab = "\\localhost\$homeDrive\wind"
-            $afterTab = "& '\\localhost\$homeDrive\Windows'"
+            $beforeTab = "\\localhost\ADMIN$\boo"
+            $afterTab = "& '\\localhost\ADMIN$\Boot'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
