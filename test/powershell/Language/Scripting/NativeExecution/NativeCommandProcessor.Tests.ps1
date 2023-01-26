@@ -343,7 +343,7 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
         diskpart.exe /s $create_vhdx
         Mount-DiskImage -ImagePath $vhdx > $null
 
-        Copy-Item "$env:WinDir\System32\whoami.exe" T:\whoami.exe
+        Copy-Item "$env:WinDir\System32\whoami.exe" "T:\whoami.exe"
     }
 
     AfterAll {
