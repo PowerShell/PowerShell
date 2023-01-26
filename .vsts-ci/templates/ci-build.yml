@@ -1,3 +1,4 @@
+# should I move the image name to the pool names variable group
 parameters:
   pool: 'windows-latest'
   imageName: 'PSWindows11-ARM64'
