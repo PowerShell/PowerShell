@@ -397,6 +397,10 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Virtual Properties
 
+        internal string _qualifiedOutFile;
+
+        internal bool _shouldSaveToOutFile;
+
         #region Virtual Methods
 
         internal virtual void ValidateParameters()
@@ -533,24 +537,31 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            _shouldSaveToOutFile = ShouldSaveToOutFile;
+
             // Output ??
-            if (PassThru && OutFile is null)
+            if (PassThru && !_shouldSaveToOutFile)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
-            if (Resume.IsPresent && OutFile is null)
+            if (Resume.IsPresent && !_shouldSaveToOutFile)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
             }
 
-            // OutFile must not be a directory to use Resume.
-            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
+            if (_shouldSaveToOutFile)
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", Path.GetFullPath(_qualifiedOutFile));
+                _qualifiedOutFile = QualifiedOutFile;
+            }
+
+            // OutFile must not be a directory to use Resume.
+            if (Resume.IsPresent && _shouldSaveToOutFile && Directory.Exists(_qualifiedOutFile))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
                 ThrowTerminatingError(error);
             }
         }
@@ -672,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
-        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
+        internal bool ShouldSaveToOutFile => !string.IsNullOrWhiteSpace(OutFile);
 
         internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
 
@@ -882,8 +893,6 @@ namespace Microsoft.PowerShell.Commands
         /// Automatically follow Rel Links.
         /// </summary>
         internal bool _followRelLink = false;
-
-        internal string _qualifiedOutFile = null;
 
         /// <summary>
         /// Automatically follow Rel Links.
