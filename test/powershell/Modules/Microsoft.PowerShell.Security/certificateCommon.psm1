@@ -239,6 +239,9 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 
 function Install-TestCertificates
 {
+    Write-Verbose -Verbose "Installing test certificates"
+    Write-Verbose -Verbose "Listing PSDrives before installing certificates"
+    Get-PSDrive | Out-String | Write-Verbose -Verbose
     $script:certLocation = New-GoodCertificate
     $script:certLocation | Should -Not -BeNullOrEmpty | Out-Null
 
