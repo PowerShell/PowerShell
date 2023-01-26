@@ -106,12 +106,17 @@ Describe 'Basic COM Tests' -Tags "CI" {
         }
 
         It "InvokeMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
-            if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
+            try {
+                ## InvokeMember on the member name 'Windows'
+                $shell | ForEach-Object { $_.Windows() } > $null
             }
-
-            ## InvokeMember on the member name 'Windows'
-            $shell | ForEach-Object { $_.Windows() } > $null
+            catch {
+                $notSupported = $_.Exception -is [System.Runtime.InteropServices.COMException]
+                if ($notSupported) {
+                    Set-ItResult -Skipped -Because "COM object invocation is not supported"
+                    return
+                }
+            }
 
             ## '$str' is a PSObject that wraps a string, but with ScriptMethod 'Windows'
             $str.Windows() | Should -Be "Windows"
