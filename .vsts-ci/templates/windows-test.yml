@@ -1,6 +1,6 @@
 parameters:
   pool: 'windows-2019'
-  imageName: 'PSMMS2022-ARM64'
+  imageName: 'PSWindows11-ARM64'
   parentJobs: []
   purpose: ''
   tagSet: 'CI'
