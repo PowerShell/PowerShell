@@ -33,7 +33,7 @@ jobs:
         Write-Host "##$vstsCommandString"
       }
 
-    displayName: Install PowerShell
+    displayName: Install PowerShell if missing
     condition: ne('${{ parameters.pool }}', 'windows-2019')
 
   - pwsh: |
