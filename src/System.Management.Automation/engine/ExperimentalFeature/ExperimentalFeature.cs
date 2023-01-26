@@ -205,14 +205,12 @@ namespace System.Management.Automation
                     {
                         string message = StringUtil.Format(Logging.EngineExperimentalFeatureNotFound, name);
                         LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
-                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureInvalid, "InvalidName");
                     }
                 }
                 else
                 {
                     string message = StringUtil.Format(Logging.InvalidExperimentalFeatureName, name);
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
-                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureInvalid, "InvalidName");
                 }
             }
 

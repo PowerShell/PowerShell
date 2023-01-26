@@ -51,11 +51,6 @@ namespace Microsoft.PowerShell.Telemetry
         ExperimentalEngineFeatureActivation,
 
         /// <summary>
-        /// Send telemetry for an invalid experimental name.
-        /// </summary>
-        ExperimentalFeatureInvalid,
-
-        /// <summary>
         /// Send telemetry for an experimental feature when use.
         /// </summary>
         ExperimentalFeatureUse,
@@ -728,7 +723,6 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
                     case TelemetryType.ExperimentalEngineFeatureDeactivation:
-                    case TelemetryType.ExperimentalFeatureInvalid:
                     case TelemetryType.ExperimentalFeatureUse:
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, data);
                         break;
