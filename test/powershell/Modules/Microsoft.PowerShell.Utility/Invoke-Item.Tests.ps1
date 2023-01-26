@@ -214,6 +214,10 @@ Categories=Application;
         It "Should invoke a folder without error" -Skip:(!$supportedEnvironment) {
             if ($IsWindows)
             {
+                if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+                    Set-ItResult -Pending -Because "Shell.Application errors with COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
+                }
+
                 $shell = New-Object -ComObject "Shell.Application"
                 $windows = $shell.Windows()
 
