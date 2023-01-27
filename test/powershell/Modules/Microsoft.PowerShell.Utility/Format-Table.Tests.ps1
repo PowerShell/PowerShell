@@ -13,6 +13,7 @@ Describe "Format-Table" -Tags "CI" {
             }
         } catch {
         }
+    }
 
     AfterAll {
         if ($null -ne $PSStyle) {
