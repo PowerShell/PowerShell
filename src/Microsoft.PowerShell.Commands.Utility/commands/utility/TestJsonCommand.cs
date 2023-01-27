@@ -38,9 +38,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets JSON file path to be validated.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonFileParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = JsonFileParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
         [Alias("JsonFile")]
         public string Path { get; set; }
 
@@ -52,8 +52,8 @@ namespace Microsoft.PowerShell.Commands
         /// then validates the JSON against the schema. Before testing the JSON string,
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = JsonStringWithSchemaStringParameterSet)]
-        [Parameter(Position = 1, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonStringWithSchemaStringParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
         [ValidateNotNullOrEmpty]
         public string Schema { get; set; }
 
@@ -61,8 +61,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets path to the file containing schema to validate the JSON string against.
         /// This is optional parameter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = JsonStringWithSchemaFileParameterSet)]
-        [Parameter(Position = 1, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonStringWithSchemaFileParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
