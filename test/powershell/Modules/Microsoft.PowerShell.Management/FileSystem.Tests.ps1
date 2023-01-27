@@ -317,6 +317,12 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
             }
          }
+
+         It "Copy-Item can copy 0 byte length file" {
+            $zeroLengthFile = New-Item -Path (Join-Path $TestDrive "zeroLengthFile.txt") -ItemType File -Force
+            Copy-Item -Path $zeroLengthFile -Destination "$TestDrive\zeroLengthFile2.txt" -Force
+            "$TestDrive\zeroLengthFile2.txt" | Should -Exist
+         }
     }
 
     Context "Validate behavior when access is denied" {
