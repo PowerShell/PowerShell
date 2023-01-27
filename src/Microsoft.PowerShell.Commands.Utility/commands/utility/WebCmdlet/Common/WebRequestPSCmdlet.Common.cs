@@ -373,6 +373,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the OutFile property.
         /// </summary>
         [Parameter]
+        [ValidateNotNullOrEmpty]
         public virtual string OutFile { get; set; }
 
         /// <summary>
