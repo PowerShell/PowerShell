@@ -22,7 +22,7 @@ jobs:
   steps:
   - powershell: |
       [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
-      $pwsh = Get-Command pwshsdsd -ErrorAction SilentlyContinue -CommandType Application
+      $pwsh = Get-Command pwsh -ErrorAction SilentlyContinue -CommandType Application
 
       if ($null -eq $pwsh) {
         $powerShellPath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'powershell'
