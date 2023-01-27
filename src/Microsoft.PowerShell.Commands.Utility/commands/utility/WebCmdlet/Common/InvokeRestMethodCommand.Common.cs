@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(obj);
                 }
             }
-            else if (_shouldSaveToOutFile)
+            else if (ShouldSaveToOutFile)
             {   
                 if (Directory.Exists(_qualifiedOutFile))
                 {

@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 responseStream.Seek(0, SeekOrigin.Begin);
             }
 
-            if (_shouldSaveToOutFile)
+            if (ShouldSaveToOutFile)
             {
                 if (Directory.Exists(_qualifiedOutFile))
                 {

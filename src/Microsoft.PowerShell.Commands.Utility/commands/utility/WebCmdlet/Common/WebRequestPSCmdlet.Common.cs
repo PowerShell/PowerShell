@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal string _qualifiedOutFile;
 
-        internal bool _shouldSaveToOutFile;
+        //internal bool _shouldSaveToOutFile;
 
         #region Virtual Methods
 
@@ -535,29 +535,29 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            _shouldSaveToOutFile = ShouldSaveToOutFile;
+            //_shouldSaveToOutFile = ShouldSaveToOutFile;
 
             // Output ??
-            if (PassThru && !_shouldSaveToOutFile)
+            if (PassThru && !ShouldSaveToOutFile)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
-            if (Resume.IsPresent && !_shouldSaveToOutFile)
+            if (Resume.IsPresent && !ShouldSaveToOutFile)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
             }
 
-            if (_shouldSaveToOutFile)
+            if (ShouldSaveToOutFile)
             {
                 _qualifiedOutFile = QualifiedOutFile;
             }
 
             // OutFile must not be a directory to use Resume.
-            if (Resume.IsPresent && _shouldSaveToOutFile && Directory.Exists(_qualifiedOutFile))
+            if (Resume.IsPresent && ShouldSaveToOutFile && Directory.Exists(_qualifiedOutFile))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
                 ThrowTerminatingError(error);
