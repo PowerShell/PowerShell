@@ -3938,7 +3938,7 @@ namespace Microsoft.PowerShell.Commands
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
                                     StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
                                 );
-                                var percentComplete = (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100);
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
                                 progress.PercentComplete = percentComplete;
                                 progress.RecordType = ProgressRecordType.Processing;
                                 WriteProgress(progress);
