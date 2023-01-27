@@ -41,7 +41,6 @@ jobs:
       }
 
     displayName: Install PowerShell
-    condition: ne('${{ parameters.pool }}', 'windows-latest')
 
   - checkout: self
     fetchDepth: 1000
