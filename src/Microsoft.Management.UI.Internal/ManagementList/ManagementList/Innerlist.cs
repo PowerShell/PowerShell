@@ -596,7 +596,8 @@ namespace Microsoft.Management.UI.Internal
                     propertyValue = string.Empty;
                 }
 
-                entryText.Append(CultureInfo.CurrentCulture, $"{propertyValue}\t");
+                entryText.Append(EscapeClipboardTableCellValue(propertyValue.ToString()));
+                entryText.Append('\t');
             }
 
             return entryText.ToString();
@@ -705,6 +706,14 @@ namespace Microsoft.Management.UI.Internal
             ListView.ViewProperty.OverrideMetadata(
                 typeof(InnerList),
                 new PropertyMetadata(new PropertyChangedCallback(InnerList_OnViewChanged)));
+        }
+
+        internal static string EscapeClipboardTableCellValue(string input)
+        {
+            if (input == null || input.Length == 0 || !input.Contains('\t') && !input.Contains('\r') && !input.Contains('\n') && !input.Contains('"'))
+                return input;
+
+            return $"\"{input.Replace("\"", "\"\"")}\"";
         }
 
         #endregion instance private methods
