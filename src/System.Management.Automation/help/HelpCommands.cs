@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (originalHelpObject.TypeNames.Count == 0)
             {
-                string typeToAdd = string.Format(CultureInfo.InvariantCulture, "HelpInfo#{0}", tokenToAdd);
+                string typeToAdd = string.Create(CultureInfo.InvariantCulture, $"HelpInfo#{tokenToAdd}");
                 objectToReturn.TypeNames.Add(typeToAdd);
             }
             else
@@ -440,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    string typeToAdd = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", typeName, tokenToAdd);
+                    string typeToAdd = string.Create(CultureInfo.InvariantCulture, $"{typeName}#{tokenToAdd}");
                     s_tracer.WriteLine("Adding type {0}", typeToAdd);
                     objectToReturn.TypeNames.Add(typeToAdd);
                 }
@@ -737,8 +737,8 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Checks whether the default runspace associated with the current thread has the standard Get-Help cmdlet.
-        /// <summary>
-        /// <return>True if Get-Help is found, false otherwise.</return>
+        /// </summary>
+        /// <returns>True if Get-Help is found, false otherwise.</returns>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
         {
             InitialSessionState iss = Runspace.DefaultRunspace.InitialSessionState;
@@ -821,8 +821,7 @@ namespace Microsoft.PowerShell.Commands
             string cmdName = cmdInfo.Name;
             if (!string.IsNullOrEmpty(cmdInfo.ModuleName))
             {
-                cmdName = string.Format(CultureInfo.InvariantCulture,
-                                        "{0}\\{1}", cmdInfo.ModuleName, cmdInfo.Name);
+                cmdName = string.Create(CultureInfo.InvariantCulture, $"{cmdInfo.ModuleName}\\{cmdInfo.Name}");
             }
 
             if (DoesCurrentRunspaceIncludeCoreHelpCmdlet())

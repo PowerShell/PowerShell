@@ -15,12 +15,16 @@ namespace TestExe
     {
         private static int Main(string[] args)
         {
+            int exitCode = 0;
             if (args.Length > 0)
             {
                 switch (args[0].ToLowerInvariant())
                 {
                     case "-echoargs":
                         EchoArgs(args);
+                        break;
+                    case "-echocmdline":
+                        EchoCmdLine();
                         break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
@@ -38,17 +42,23 @@ namespace TestExe
                     case "-writebytes":
                         WriteBytes(args.AsSpan()[1..]);
                         break;
+                    case "--help":
+                    case "-h":
+                        PrintHelp();
+                        break;
                     default:
-                        Console.WriteLine("Unknown test {0}", args[0]);
+                        exitCode = 1;
+                        Console.Error.WriteLine("Unknown test {0}. Run with '-h' for help.", args[0]);
                         break;
                 }
             }
             else
             {
-                Console.WriteLine("Test not specified");
+                exitCode = 1;
+                Console.Error.WriteLine("Test not specified");
             }
 
-            return 0;
+            return exitCode;
         }
         private static void WriteBytes(ReadOnlySpan<string> args)
         {
@@ -101,6 +111,36 @@ namespace TestExe
         }
 
         // <Summary>
+        // Echos the raw command line received by the process plus the arguments passed in.
+        // </Summary>
+        private static void EchoCmdLine()
+        {
+            string rawCmdLine = "N/A";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                nint cmdLinePtr = Interop.GetCommandLineW();
+                rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
+            }
+
+            Console.WriteLine(rawCmdLine);
+        }
+
+        // <Summary>
+        // Print help content.
+        // </Summary>
+        private static void PrintHelp()
+        {
+            const string Content = @"
+Options for echoing args are:
+   -echoargs     Echos back to stdout the arguments passed in.
+   -echocmdline  Echos the raw command line received by the process.
+
+Other options are for specific tests only. Read source code for details.
+";
+            Console.WriteLine(Content);
+        }
+
+        // <Summary>
         // First argument is the number of child processes to create which are instances of itself
         // Processes automatically exit after 100 seconds
         // </Summary>
@@ -120,5 +160,11 @@ namespace TestExe
             // sleep is needed so the process doesn't exit before the test case kill it
             Thread.Sleep(100000);
         }
+    }
+
+    internal static partial class Interop
+    {
+        [LibraryImport("Kernel32.dll")]
+        internal static partial nint GetCommandLineW();
     }
 }

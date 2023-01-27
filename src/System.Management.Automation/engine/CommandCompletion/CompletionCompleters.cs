@@ -1617,7 +1617,9 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (bestMatchSet is null || bestMatchSet.Position > positionInParameterSet)
+                    if (bestMatchSet is null
+                        || bestMatchSet.Position > positionInParameterSet
+                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
                     {
                         bestMatchParam = param;
                         bestMatchSet = parameterSetData;
@@ -2699,7 +2701,7 @@ namespace System.Management.Automation
             WildcardPattern resultClassNamePattern = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             result.AddRange(resultClassNames
                 .Where(resultClassNamePattern.IsMatch)
-                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", pseudoboundClassName, x))));
+                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Create(CultureInfo.InvariantCulture, $"{pseudoboundClassName} -> {x}"))));
         }
 
         private static void NativeCompletionCimMethodName(
@@ -4764,7 +4766,7 @@ namespace System.Management.Automation
                 ref resumeHandle);
 
             var shares = new List<string>();
-            if (result == Interop.Windows.NERR_Success || result == Interop.Windows.ERROR_MORE_DATA)
+            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
@@ -6509,7 +6511,7 @@ namespace System.Management.Automation
                     if (i != 0) tooltip.Append(", ");
                     tooltip.Append(GenericArgumentCount == 1
                                        ? "T"
-                                       : string.Format(CultureInfo.InvariantCulture, "T{0}", i + 1));
+                                       : string.Create(CultureInfo.InvariantCulture, $"T{i + 1}"));
                 }
 
                 tooltip.Append(']');

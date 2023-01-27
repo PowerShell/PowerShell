@@ -26,6 +26,7 @@ namespace System.Management.Automation
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
+        internal const string PSCommandWithArgs = "PSCommandWithArgs";
 
         #endregion
 
@@ -132,6 +133,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
+                new ExperimentalFeature(
+                    name: PSCommandWithArgs,
+                    description: "Enable `-CommandWithArgs` parameter for pwsh"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

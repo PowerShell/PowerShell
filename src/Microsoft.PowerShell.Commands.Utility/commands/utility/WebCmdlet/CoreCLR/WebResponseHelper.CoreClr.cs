@@ -10,11 +10,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseHelper
     {
-        internal static string GetCharacterSet(HttpResponseMessage response)
-        {
-            string characterSet = response.Content.Headers.ContentType.CharSet;
-            return characterSet;
-        }
+        internal static string GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType.CharSet;
 
         internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
         {
@@ -27,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
             // HttpResponseMessage.Content.Headers. The remaining headers are in HttpResponseMessage.Headers.
             // The keys in both should be unique with no duplicates between them.
             // Added for backwards compatibility with PowerShell 5.1 and earlier.
-            if (response.Content != null)
+            if (response.Content is not null)
             {
                 foreach (var entry in response.Content.Headers)
                 {
@@ -38,24 +34,11 @@ namespace Microsoft.PowerShell.Commands
             return headers;
         }
 
-        internal static string GetProtocol(HttpResponseMessage response)
-        {
-            string protocol = string.Format(CultureInfo.InvariantCulture,
-                                            "HTTP/{0}", response.Version);
-            return protocol;
-        }
+        internal static string GetProtocol(HttpResponseMessage response) => string.Create(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");
 
-        internal static int GetStatusCode(HttpResponseMessage response)
-        {
-            int statusCode = (int)response.StatusCode;
-            return statusCode;
-        }
+        internal static int GetStatusCode(HttpResponseMessage response) => (int)response.StatusCode;
 
-        internal static string GetStatusDescription(HttpResponseMessage response)
-        {
-            string statusDescription = response.StatusCode.ToString();
-            return statusDescription;
-        }
+        internal static string GetStatusDescription(HttpResponseMessage response) => response.StatusCode.ToString();
 
         internal static bool IsText(HttpResponseMessage response)
         {

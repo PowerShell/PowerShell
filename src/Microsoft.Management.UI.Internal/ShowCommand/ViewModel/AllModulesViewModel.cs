@@ -79,7 +79,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
-            if (commands == null || !commands.GetEnumerator().MoveNext())
+            ArgumentNullException.ThrowIfNull(commands);
+
+            if (!commands.GetEnumerator().MoveNext())
             {
                 throw new ArgumentNullException("commands");
             }
@@ -95,10 +97,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="noCommonParameter">True not to show common parameters.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter)
         {
-            if (commands == null)
-            {
-                throw new ArgumentNullException("commands");
-            }
+            ArgumentNullException.ThrowIfNull(commands);
 
             this.Initialization(importedModules, commands, noCommonParameter);
         }

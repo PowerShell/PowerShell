@@ -30,21 +30,21 @@ namespace System.Management.Automation
 
         internal static readonly Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
         {
-            { Ascii, System.Text.Encoding.ASCII },
-            { BigEndianUnicode, System.Text.Encoding.BigEndianUnicode },
+            { Ascii, Encoding.ASCII },
+            { BigEndianUnicode, Encoding.BigEndianUnicode },
             { BigEndianUtf32, new UTF32Encoding(bigEndian: true, byteOrderMark: true) },
             { Default, Encoding.Default },
             { OEM, ClrFacade.GetOEMEncoding() },
-            { Unicode, System.Text.Encoding.Unicode },
+            { Unicode, Encoding.Unicode },
 #pragma warning disable SYSLIB0001
-            { Utf7, System.Text.Encoding.UTF7 },
+            { Utf7, Encoding.UTF7 },
 #pragma warning restore SYSLIB0001
             { Utf8, Encoding.Default },
-            { Utf8Bom, System.Text.Encoding.UTF8 },
+            { Utf8Bom, Encoding.UTF8 },
             { Utf8NoBom, Encoding.Default },
-            { Utf32, System.Text.Encoding.UTF32 },
-            { String, System.Text.Encoding.Unicode },
-            { Unknown, System.Text.Encoding.Unicode },
+            { Utf32, Encoding.UTF32 },
+            { String, Encoding.Unicode },
+            { Unknown, Encoding.Unicode },
         };
 
         /// <summary>

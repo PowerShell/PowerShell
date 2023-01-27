@@ -128,4 +128,10 @@ public class NullStringTest {
         [NullStringTest]::Get([NullString]::Value) | Should -BeExactly 'System.String'
         [NullStringTest]::Get(@('foo', [NullString]::Value, 'bar')) | Should -BeExactly 'System.String[]; 2nd element is NULL'
     }
+
+    It 'Non-default encoding should work in PowerShell' {
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $result = & $powershell -noprofile -c '[System.Text.Encoding]::GetEncoding("IBM437").WebName'
+        $result | Should -BeExactly "ibm437"
+    }
 }

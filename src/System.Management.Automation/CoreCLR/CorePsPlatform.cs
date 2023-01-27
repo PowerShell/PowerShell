@@ -365,11 +365,6 @@ namespace System.Management.Automation
         // - only to be used with the IsWindows feature query, and only if
         //   no other more specific feature query makes sense
 
-        internal static bool NonWindowsIsHardLink(ref IntPtr handle)
-        {
-            return Unix.IsHardLink(ref handle);
-        }
-
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
             return Unix.IsHardLink(fileInfo);
@@ -714,15 +709,6 @@ namespace System.Management.Automation
             internal static ErrorCategory GetErrorCategory(int errno)
             {
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
-            }
-
-            /// <summary>Is this a hardlink.</summary>
-            /// <param name="handle">The handle to a file.</param>
-            /// <returns>A boolean that represents whether the item is a hardlink.</returns>
-            public static bool IsHardLink(ref IntPtr handle)
-            {
-                // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
-                return false;
             }
 
             /// <summary>Determine if the item is a hardlink.</summary>

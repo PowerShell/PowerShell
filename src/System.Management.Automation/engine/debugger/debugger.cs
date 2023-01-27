@@ -5301,10 +5301,9 @@ namespace System.Management.Automation
             for (int lineNumber = start; lineNumber <= _lines.Length && lineNumber < start + count; lineNumber++)
             {
                 WriteLine(
-                    lineNumber == invocationInfo.ScriptLineNumber ?
-                    string.Format(CultureInfo.CurrentCulture, "{0,5}:* {1}", lineNumber, _lines[lineNumber - 1])
-                    :
-                    string.Format(CultureInfo.CurrentCulture, "{0,5}:  {1}", lineNumber, _lines[lineNumber - 1]),
+                    lineNumber == invocationInfo.ScriptLineNumber
+                        ? string.Format(CultureInfo.CurrentCulture, "{0,5}:* {1}", lineNumber, _lines[lineNumber - 1])
+                        : string.Format(CultureInfo.CurrentCulture, "{0,5}:  {1}", lineNumber, _lines[lineNumber - 1]),
                     host,
                     output);
 

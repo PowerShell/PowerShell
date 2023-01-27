@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
@@ -735,6 +736,30 @@ namespace System.Management.Automation
         // https://github.com/dotnet/runtime/blob/dcce0f56e10f5ac9539354b049341a2d7c0cdebf/src/libraries/System.Private.CoreLib/src/System/IO/PathInternal.Windows.cs
         // It has been left as a verbatim copy.
 
+#nullable enable
+
+        /// <summary>
+        /// Adds the extended path prefix (\\?\) if not already a device path, IF the path is not relative,
+        /// AND the path is more than 259 characters. (> MAX_PATH + null). This will also insert the extended
+        /// prefix if the path ends with a period or a space. Trailing periods and spaces are normally eaten
+        /// away from paths during normalization, but if we see such a path at this point it should be
+        /// normalized and has retained the final characters. (Typically from one of the *Info classes).
+        /// </summary>
+        /// <param name="path">File path.</param>
+        /// <returns>File path (with extended prefix if the path is long path).</returns>
+        [return: NotNullIfNotNull(nameof(path))]
+        internal static string? EnsureExtendedPrefixIfNeeded(string? path)
+        {
+            if (path != null && (path.Length >= MaxShortPath || EndsWithPeriodOrSpace(path)))
+            {
+                return EnsureExtendedPrefix(path);
+            }
+            else
+            {
+                return path;
+            }
+        }
+
         internal static string EnsureExtendedPrefix(string path)
         {
             if (IsPartiallyQualified(path) || IsDevice(path))
@@ -752,9 +777,21 @@ namespace System.Management.Automation
         private const string UncDevicePrefixToInsert = @"?\UNC\";
         private const string UncExtendedPathPrefix = @"\\?\UNC\";
         private const string DevicePathPrefix = @"\\.\";
+        private const int MaxShortPath = 260;
 
         // \\?\, \\.\, \??\
         private const int DevicePrefixLength = 4;
+
+        private static bool EndsWithPeriodOrSpace(string? path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return false;
+            }
+
+            char c = path[path.Length - 1];
+            return c == ' ' || c == '.';
+        }
 
         /// <summary>
         /// Returns true if the given character is a valid drive letter

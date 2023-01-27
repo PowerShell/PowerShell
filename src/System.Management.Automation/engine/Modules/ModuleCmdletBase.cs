@@ -4542,7 +4542,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparamref name="T"/>)</c>.
         /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
@@ -4939,7 +4939,7 @@ namespace Microsoft.PowerShell.Commands
                 using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                 ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
                 ps.AddParameter("Session", compatSession);
-                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Create(CultureInfo.InvariantCulture, $"Set-Location -Path '{args.NewPath.Path}'")));
                 ps.Invoke();
             }
         }
@@ -5723,7 +5723,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
-                                    // Implict function export is allowed when any of the following is true:
+                                    // Implicit function export is allowed when any of the following is true:
                                     //  - Nested modules are allowed by module manifest
                                     //  - The import context language mode is FullLanguage
                                     //  - This script module not running as trusted (FullLanguage)
