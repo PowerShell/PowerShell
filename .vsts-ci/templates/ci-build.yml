@@ -1,15 +1,24 @@
 # should I move the image name to the pool names variable group
 parameters:
-  pool: 'windows-latest'
-  imageName: 'PSWindows11-ARM64'
-  jobName: 'win_build'
-  displayName: Windows Build
-  1esPool: false
+  - name: pool
+    default: 'windows-latest'
+  - name: imageName
+    default: 'PSWindows11-ARM64'
+  - name: jobName
+    default: 'win_build'
+  - name: displayName
+    default: Windows Build
+  - name: PoolType
+    default: AzDoHosted
+    type: string
+    values:
+      - AzDoHosted
+      - 1esHosted
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
-    ${{ if eq( parameters.1esPool, 'false') }}:
+    ${{ if eq( parameters.PoolType, 'AzDoHosted') }}:
       vmImage: ${{ parameters.pool }}
     ${{ else }}:
       name: ${{ parameters.pool }}
