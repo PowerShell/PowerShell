@@ -545,13 +545,10 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            if (ShouldSaveToOutFile)
-            {
-                _qualifiedOutFile = QualifiedOutFile;
-            }
+            _qualifiedOutFile = ShouldSaveToOutFile ? QualifiedOutFile : null;
 
             // OutFile must not be a directory to use Resume.
-            if (Resume.IsPresent && ShouldSaveToOutFile && Directory.Exists(_qualifiedOutFile))
+            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
                 ThrowTerminatingError(error);
