@@ -4,11 +4,12 @@ parameters:
   imageName: 'PSWindows11-ARM64'
   jobName: 'win_build'
   displayName: Windows Build
+  1esPool: false
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
-    ${{ if eq( parameters.pool, 'windows-latest') }}:
+    ${{ if eq( parameters.1esPool, 'false') }}:
       vmImage: ${{ parameters.pool }}
     ${{ else }}:
       name: ${{ parameters.pool }}

@@ -10,7 +10,7 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    ${{ if eq( parameters.pool, 'windows-latest') }}:
+    ${{ if startsWith( parameters.pool, 'windows-') }}:
       vmImage: ${{ parameters.pool }}
     ${{ else }}:
       name: ${{ parameters.pool }}

@@ -63,6 +63,7 @@ stages:
   - template: templates/ci-build.yml
     parameters:
       pool: $(armPool)
+      1esPool: true
 
 - stage: TestWin
   displayName: Test for Windows
