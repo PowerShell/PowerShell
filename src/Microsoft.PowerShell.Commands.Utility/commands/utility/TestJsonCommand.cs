@@ -116,7 +116,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
             catch (Exception e) when (
                 // Handle exceptions related to file access to provide more specific error message
                 // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
