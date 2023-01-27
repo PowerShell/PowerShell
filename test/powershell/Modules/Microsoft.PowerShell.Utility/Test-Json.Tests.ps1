@@ -178,7 +178,7 @@ Describe "Test-Json" -Tags "CI" {
         param ($json, $errorId)
 
         $errorVar = $null
-        Test-Json -JsonFile $json -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        Test-Json -Path $json -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         $errorVar.FullyQualifiedErrorId | Should -BeExactly $errorId
     }
@@ -190,7 +190,7 @@ Describe "Test-Json" -Tags "CI" {
         param ($json, $errorId)
 
         $errorVar = $null
-        Test-Json -JsonFile $json -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        Test-Json -Path $json -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         $errorVar.FullyQualifiedErrorId | Should -BeExactly $errorId
     }
@@ -217,7 +217,7 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Test-Json return all errors when check invalid Json file against a valid schema from string" {
         $errorVar = $null
-        Test-Json -JsonFile $invalidTypeInJson2Path -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        Test-Json -Path $invalidTypeInJson2Path -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should -Be 2
@@ -227,7 +227,7 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Test-Json return all errors when check invalid Json file against a valid schema from file" {
         $errorVar = $null
-        Test-Json -JsonFile $invalidTypeInJson2Path -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        Test-Json -Path $invalidTypeInJson2Path -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should -Be 2
