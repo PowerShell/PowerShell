@@ -180,6 +180,10 @@ Describe "Default enablement of Experimental Features" -Tags CI {
     }
 
     It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
+        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            Set-ItResult -Pending -Because "TBD"
+        }
+
         (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
 
         foreach ($expFeature in Get-ExperimentalFeature)

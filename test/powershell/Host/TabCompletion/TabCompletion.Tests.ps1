@@ -1213,6 +1213,9 @@ Verb-Noun -Param1 Hello ^
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
+            if (!$env:HOMEDRIVE) {
+                Set-ItResult -Skipped -Because "Homerdrive is not set"
+            }
             $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
