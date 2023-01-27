@@ -1,4 +1,3 @@
-# should I move the image name to the pool names variable group
 parameters:
   - name: pool
     default: 'windows-latest'
