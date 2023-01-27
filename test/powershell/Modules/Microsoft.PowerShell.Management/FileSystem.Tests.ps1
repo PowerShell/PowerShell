@@ -349,6 +349,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         ) {
             param ($cmdline, $expectedError)
 
+            if (Test-Elevated) {
+                Set-ItResult -Skipped -Because "Process must NOT be elevated"
+            }
+
             $scriptBlock = [scriptblock]::Create($cmdline)
             $scriptBlock | Should -Throw -ErrorId $expectedError
         }

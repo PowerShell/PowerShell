@@ -93,6 +93,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
     }
 
     It "Clear-Host does not injects data into PowerShell output stream" {
+        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+        }
+
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
     }
 
