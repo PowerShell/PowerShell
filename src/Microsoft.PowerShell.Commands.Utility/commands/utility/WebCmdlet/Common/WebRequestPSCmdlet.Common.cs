@@ -397,10 +397,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Virtual Properties
 
-        internal string _qualifiedOutFile;
-
-        //internal bool _shouldSaveToOutFile;
-
         #region Virtual Methods
 
         internal virtual void ValidateParameters()
@@ -534,8 +530,6 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(errorRecord);
                 }
             }
-
-            //_shouldSaveToOutFile = ShouldSaveToOutFile;
 
             // Output ??
             if (PassThru && !ShouldSaveToOutFile)
@@ -680,6 +674,8 @@ namespace Microsoft.PowerShell.Commands
         #region Helper Properties
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
+        
+        internal string _qualifiedOutFile;
 
         internal bool ShouldSaveToOutFile => !string.IsNullOrWhiteSpace(OutFile);
 
