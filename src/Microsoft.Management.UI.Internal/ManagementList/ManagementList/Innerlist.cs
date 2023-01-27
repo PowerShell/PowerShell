@@ -710,8 +710,16 @@ namespace Microsoft.Management.UI.Internal
 
         internal static string EscapeClipboardTableCellValue(string input)
         {
-            if (input == null || input.Length == 0 || !input.Contains('\t') && !input.Contains('\r') && !input.Contains('\n') && !input.Contains('"'))
+            if (input == null || input.Length == 0)
+            {
                 return input;
+            }
+
+            bool needsEscaping = input.Contains('\t') || input.Contains('\r') || input.Contains('\n') || input.Contains('"');
+            if (!needsEscaping)
+            {
+                return input;
+            }
 
             return $"\"{input.Replace("\"", "\"\"")}\"";
         }
