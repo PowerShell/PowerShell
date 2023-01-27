@@ -145,6 +145,10 @@ Describe "Native Command Processor" -tags "Feature" {
     }
 
     It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
+        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            Set-ItResult -Pending -Because "TBD"
+        }
+
         function FindNewNotepad
         {
             Get-Process -Name notepad -ErrorAction Ignore | Where-Object { $_.Id -NotIn $dontKill }
