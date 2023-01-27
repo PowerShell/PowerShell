@@ -9,6 +9,14 @@ Describe "Test-Json" -Tags "CI" {
 
         $missingSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
 
+        $validJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid.json
+
+        $invalidNodeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_node.json
+
+        $invalidTypeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type.json
+
+        $invalidTypeInJson2Path = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type_2.json
+
         $validSchemaJson = @"
             {
             'description': 'A person',
@@ -65,11 +73,6 @@ Describe "Test-Json" -Tags "CI" {
                 errorNode
             }
 "@
-
-        $validJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid.json
-        $invalidNodeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_node.json
-        $invalidTypeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type.json
-        $invalidTypeInJson2Path = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type_2.json
     }
 
     It "Missing JSON schema file doesn't exist" {
