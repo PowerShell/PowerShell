@@ -79,7 +79,7 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows) {
-        if (Test-Elevated) {
+        if (Test-IsElevated) {
             Set-ItResult -Skipped -Because "must NOT be run as admin"
         }
 

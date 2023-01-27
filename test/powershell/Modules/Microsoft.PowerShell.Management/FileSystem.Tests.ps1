@@ -349,7 +349,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         ) {
             param ($cmdline, $expectedError)
 
-            if (Test-Elevated) {
+            if (Test-IsElevated) {
                 Set-ItResult -Skipped -Because "Process must NOT be elevated"
             }
 

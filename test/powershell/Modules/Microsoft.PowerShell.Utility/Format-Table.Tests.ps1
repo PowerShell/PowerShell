@@ -6,7 +6,13 @@ Describe "Format-Table" -Tags "CI" {
             $outputRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'plaintext'
         }
-    }
+        $noConsole = $true
+        try {
+            if ([Console]::WindowHeight -ne 0) {
+                $noConsole = $false
+            }
+        } catch {
+        }
 
     AfterAll {
         if ($null -ne $PSStyle) {
@@ -805,7 +811,7 @@ A Name                                  B
             }
         }
 
-        It "-RepeatHeader should output the header at every screen full" -Skip:([Console]::WindowHeight -eq 0) {
+        It "-RepeatHeader should output the header at every screen full" -Skip:$noConsole {
             $numHeaders = 4
             $numObjects = [Console]::WindowHeight * $numHeaders
             $out = 1..$numObjects | ForEach-Object { @{foo=$_} } | Format-Table -RepeatHeader | Out-String
@@ -813,7 +819,7 @@ A Name                                  B
             ($lines | Select-String "Name\s*Value").Count | Should -Be ($numHeaders + 1)
         }
 
-        It "-RepeatHeader should output the header at every screen full for custom table" -Skip:([Console]::WindowHeight -eq 0) {
+        It "-RepeatHeader should output the header at every screen full for custom table" -Skip:$noConsole {
             $numHeaders = 4
             $numObjects = [Console]::WindowHeight * $numHeaders
             $out = 1..$numObjects | ForEach-Object { [pscustomobject]@{foo=$_;bar=$_;hello=$_;world=$_} } | Format-Table -Property hello, world -RepeatHeader | Out-String
