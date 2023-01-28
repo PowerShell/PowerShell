@@ -479,9 +479,8 @@ namespace System.Management.Automation.Security
             // Support fall-back debug hook for path exclusions on non-WOA platforms
             if (path != null)
             {
-                // Assume everything under SYSTEM32 is trusted, with a purposefully sloppy
-                // check so that we can actually put it in the filename during testing.
-                if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
+                // Assume everything under SYSTEM32 is trusted
+                if (path.StartsWith("$env:windir\system32", StringComparison.OrdinalIgnoreCase))
                 {
                     return SystemEnforcementMode.None;
                 }
