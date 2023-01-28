@@ -11,6 +11,8 @@ Describe "Test-Json" -Tags "CI" {
 
         $validJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid.json
 
+        $missingJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
+
         $invalidNodeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_node.json
 
         $invalidTypeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type.json
@@ -79,6 +81,10 @@ Describe "Test-Json" -Tags "CI" {
         Test-Path -LiteralPath $missingSchemaJsonPath | Should -BeFalse
     }
 
+    It "Missing JSON file doesn't exist" {
+        Test-Path -LiteralPath $missingJsonPath | Should -BeFalse
+    }
+
     It "Json is valid" {
         Test-Json -Json $validJson | Should -BeTrue
     }
@@ -137,7 +143,7 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Test-Json throw if a schema from string is invalid" {
         { Test-Json -Json $validJson -Schema $invalidSchemaJson -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
-        { Test-Json -Path $validJsonPath -SchemaFile $invalidSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Path $validJsonPath -Schema $invalidSchemaJson -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json throw if a schema from file is invalid" {
@@ -148,6 +154,10 @@ Describe "Test-Json" -Tags "CI" {
     It "Test-Json throw if a path to a schema from file is invalid" {
         { Test-Json -Json $validJson -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
         { Test-Json -Path $validJsonPath -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Test-Json throw if a path from file is invalid" {
+        { Test-Json -Path $missingJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from string" -TestCases @(
