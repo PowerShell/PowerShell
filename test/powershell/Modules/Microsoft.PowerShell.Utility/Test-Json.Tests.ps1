@@ -3,21 +3,23 @@
 
 Describe "Test-Json" -Tags "CI" {
     BeforeAll {
-        $validSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid_schema_reference.json
+        $assetsPath = Join-Path $PSScriptRoot -ChildPath assets
 
-        $invalidSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_schema_reference.json
+        $validSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_reference.json
 
-        $missingSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
+        $invalidSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_schema_reference.json
 
-        $validJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid.json
+        $missingSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
 
-        $missingJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
+        $validJsonPath = Join-Path -Path $assetsPath -ChildPath valid.json
 
-        $invalidNodeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_node.json
+        $missingJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
 
-        $invalidTypeInJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type.json
+        $invalidNodeInJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_node.json
 
-        $invalidTypeInJson2Path = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_type_2.json
+        $invalidTypeInJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_type.json
+
+        $invalidTypeInJson2Path = Join-Path -Path $assetsPath -ChildPath invalid_type_2.json
 
         $validSchemaJson = @"
             {
