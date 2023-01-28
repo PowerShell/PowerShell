@@ -232,7 +232,7 @@ Describe "Test-Json" -Tags "CI" {
         $errorVar = $null
         Test-Json -Path $invalidTypeInJson2Path -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
-        # '$invalidTypeInJson2' contains two errors in property types.
+        # '$invalidTypeInJson2Path' contains two errors in property types.
         $errorVar.Count | Should -Be 2
         $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
         $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
@@ -242,7 +242,7 @@ Describe "Test-Json" -Tags "CI" {
         $errorVar = $null
         Test-Json -Path $invalidTypeInJson2Path -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
-        # '$invalidTypeInJson2' contains two errors in property types.
+        # '$invalidTypeInJson2Path' contains two errors in property types.
         $errorVar.Count | Should -Be 2
         $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
         $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
