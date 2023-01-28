@@ -1865,6 +1865,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
         }
 
+        It "Invoke-WebRequest -Resume requires -OutFile" {
+            { Invoke-WebRequest -Resume -Uri $resumeUri -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
             $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
