@@ -706,16 +706,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-WebRequest should fail if -OutFile is empty" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -OutFile ''"
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        { Invoke-WebRequest -Uri $uri -OutFile ''} | Should -Throw -ErrorId $errorId
     }
 
     It "Invoke-WebRequest should fail if -OutFile is null" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -OutFile $null"
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "MissingArgument,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        { Invoke-WebRequest -Uri $uri -OutFile $null} | Should -Throw -ErrorId $errorId
     }
 
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
@@ -2406,16 +2404,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-RestMethod should fail if -OutFile is empty" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -OutFile ''"
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        { Invoke-RestMethod -Uri $uri -OutFile ''} | Should -Throw -ErrorId $errorId
     }
 
     It "Invoke-RestMethod should fail if -OutFile is null" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -OutFile $null"
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "MissingArgument,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        { Invoke-RestMethod -Uri $uri -OutFile $null} | Should -Throw -ErrorId $errorId
     }
 
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
