@@ -1964,7 +1964,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ContentHelper.IsJson(contentType))
                 {
-	                JsonNode jsonNode = JsonNode.Parse(error);
+                    JsonNode jsonNode = JsonNode.Parse(error);
                     JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
                     string jsonString = jsonNode.ToJsonString(options);
 
