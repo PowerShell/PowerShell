@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Showing help information for current actived cmdlet.
+        /// Showing help information for current active cmdlet.
         /// </summary>
         public void OpenHelpWindow()
         {

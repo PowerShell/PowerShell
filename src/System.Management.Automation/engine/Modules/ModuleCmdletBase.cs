@@ -4608,7 +4608,7 @@ namespace Microsoft.PowerShell.Commands
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
         /// <remarks>
-        /// When fixing up an assembly file, this method loads the resovled assembly if it's in the process of actually loading a module.
+        /// When fixing up an assembly file, this method loads the resolved assembly if it's in the process of actually loading a module.
         /// Read the comments in the method for the detailed information.
         /// </remarks>
         /// <param name="moduleName">Name of the module that we are processing, used for caching purpose when we need to load an assembly.</param>

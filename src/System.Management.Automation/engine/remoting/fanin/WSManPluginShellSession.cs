@@ -770,7 +770,7 @@ namespace System.Management.Automation.Remoting
         internal void Stop(
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
-            // stop the command..command will be stoped if we raise ClosingEvent on
+            // stop the command..command will be stopped if we raise ClosingEvent on
             // transport manager.
             transportMgr.PerformStop();
             WSManPluginInstance.ReportWSManOperationComplete(requestDetails, null);

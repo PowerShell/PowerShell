@@ -3226,7 +3226,7 @@ namespace System.Management.Automation
         private bool _debugFlag = false;
 
         /// <summary>
-        /// Debug tell the command system to provide Programmer/Support type messages to understand what is really occuring
+        /// Debug tell the command system to provide Programmer/Support type messages to understand what is really occurring
         /// and give the user the opportunity to stop or debug the situation.
         /// </summary>
         /// <remarks>

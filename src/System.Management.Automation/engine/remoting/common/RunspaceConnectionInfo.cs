@@ -1375,7 +1375,7 @@ namespace System.Management.Automation.Runspaces
         private string _appName = s_defaultAppName;
         private Uri _connectionUri = new Uri(LocalHostUriString);          // uri of this connection
         private PSCredential _credential;    // credentials to be used for this connection
-        private string _shellUri = DefaultShellUri;            // shell thats specified by the user
+        private string _shellUri = DefaultShellUri;            // shell that's specified by the user
         private string _thumbPrint;
         private AuthenticationMechanism _proxyAuthentication;
         private PSCredential _proxyCredential;
