@@ -3654,9 +3654,15 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
             $testCases = @(
                 #region INVOKE-WEBREQUEST
                 @{
+                    Name                          = 'Validate error for Invoke-WebRequest -InFile null'
+                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile $null}
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
+
+                @{
                     Name                          = 'Validate error for Invoke-WebRequest -InFile ""'
                     ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile ""}
-                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
                 }
 
                 @{
@@ -3674,13 +3680,19 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
 
                 #region INVOKE-RESTMETHOD
                 @{
-                    Name                          = "Validate error for Invoke-RestMethod -InFile ''"
-                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile ''}
-                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                    Name                          = "Validate error for Invoke-RestMethod -InFile null"
+                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile $null}
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
                 }
 
                 @{
-                    Name                          = "Validate error for Invoke-RestMethod -InFile <null>"
+                    Name                          = "Validate error for Invoke-RestMethod -InFile ''"
+                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile ''}
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
+
+                @{
+                    Name                          = "Validate error for Invoke-RestMethod -InFile"
                     ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile}
                     ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
                 }

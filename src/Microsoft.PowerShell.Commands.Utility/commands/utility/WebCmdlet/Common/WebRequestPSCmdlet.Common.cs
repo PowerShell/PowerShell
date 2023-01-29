@@ -358,6 +358,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the InFile property.
         /// </summary>
         [Parameter]
+        [ValidateNotNullOrEmpty]
         public virtual string InFile { get; set; }
 
         /// <summary>
