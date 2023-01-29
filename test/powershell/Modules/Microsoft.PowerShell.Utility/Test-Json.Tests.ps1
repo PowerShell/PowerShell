@@ -115,6 +115,11 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -Path $validJsonPath -SchemaFile $validSchemaJsonPath | Should -BeTrue
     }
 
+    It "Json is valid when passed from pipeline" {
+        $isValidJson = "{'name': 'Ashley', 'age': 25}" | Test-Json
+        $isValidJson | Should -BeTrue
+    }
+
     It "Json is invalid" {
         Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should -BeFalse
     }

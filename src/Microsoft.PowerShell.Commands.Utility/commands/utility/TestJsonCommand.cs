@@ -99,11 +99,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                if (Json != null)
-                {
-                    _json = Json;
-                }
-                else if (Path != null)
+                if (Path != null)
                 {
                     try
                     {
@@ -192,6 +188,11 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             bool result = true;
+
+            if (Json != null)
+            {
+                _json = Json;
+            }
 
             try
             {
