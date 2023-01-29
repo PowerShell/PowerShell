@@ -1930,41 +1930,65 @@ namespace Microsoft.PowerShell.Commands
 
         private static string FormatErrorMessage(string error, string contentType)
         {
-            if (ContentHelper.IsXml(contentType))
-            {
-                StringBuilder stringBuilder = new StringBuilder();
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(error);
+            bool converted = false;
+            string formattedError = null;
 
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
-                settings.OmitXmlDeclaration = true;
-                settings.Encoding = ContentHelper.GetDefaultEncoding();
-                if (doc.FirstChild is XmlDeclaration)
+            try
+            {
+                if (ContentHelper.IsXml(contentType))
                 {
-                    XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
-                    settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(error);
+
+                    XmlWriterSettings settings = new XmlWriterSettings();
+                    settings.Indent = true;
+                    settings.NewLineOnAttributes = true;
+                    settings.OmitXmlDeclaration = true;
+                    settings.Encoding = ContentHelper.GetDefaultEncoding();
+                    if (doc.FirstChild is XmlDeclaration)
+                    {
+                        XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                        settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                    }
+
+                    XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+                    doc.Save(xmlWriter);
+                    string xmlString = stringBuilder.ToString();
+
+                    if (xmlString.Length > 0)
+                    {
+                        converted = true;
+                        formattedError = xmlString;
+                    }
                 }
+                else if (ContentHelper.IsJson(contentType))
+                {
+	                JsonNode jsonNode = JsonNode.Parse(error);
+                    JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+                    string jsonString = jsonNode.ToJsonString(options);
 
-                XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
-                doc.Save(xmlWriter);
-
-                return Environment.NewLine + stringBuilder.ToString();
+                    if (jsonString.Length > 0)
+                    {
+                        converted = true;
+                        formattedError = jsonString;
+                    }
+                }
             }
-            else if (ContentHelper.IsJson(contentType))
+            catch
             {
-	            JsonNode jsonNode = JsonNode.Parse(error);
-                JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-
-                return Environment.NewLine + jsonNode.ToJsonString(options);
+                // Ignore errors
             }
-            else
+            
+            if (converted is false)
             {
                 // Remove HTML tags making it easier to read
-                return System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
+                formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
             }
+
+            return formattedError;
         }
+
         #endregion Helper Methods
     }
 }
