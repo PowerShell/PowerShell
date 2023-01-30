@@ -751,8 +751,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                         contenttype = 'application/xml'
                         body = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>418</Code><Message>I am a teapot!!!</Message></Error>'
                         statuscode = 418
+                        responsephrase = "I am a teapot"
                     }
-           expectederror = "`n<Error>`n    <Code>418</Code>`n    <Message>I am a teapot!!!</Message>`n</Error>"
+           expectederror = "`n<Error>`n  <Code>418</Code>`n  <Message>I am a teapot!!!</Message>`n</Error>"
         }
 
         @{ type = "Json"
@@ -760,6 +761,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                         contenttype = 'application/json'
                         body = '{"error":{"code":"418", "message":"I am a teapot!!!"}}'
                         statuscode = 418
+                        responsephrase = "I am a teapot"
                     }
            expectederror = "`n{`n  `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
         }
