@@ -8098,7 +8098,10 @@ namespace System.Management.Automation.Internal
 
                 // Directories don't normally have alternate streams, so this is not an exceptional state.
                 // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
-                if (error == NativeMethods.ERROR_HANDLE_EOF)
+                // If the file system (such as FAT32) does not support alternate streams, then 
+                // ERROR_INVALID_PARAMETER is returned by FindFirstStreamW. See documentation:
+                // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirststreamw
+                if (error == NativeMethods.ERROR_HANDLE_EOF || error == NativeMethods.ERROR_INVALID_PARAMETER)
                 {
                     return alternateStreams;
                 }
@@ -8135,7 +8138,9 @@ namespace System.Management.Automation.Internal
 
                 int lastError = Marshal.GetLastWin32Error();
                 if (lastError != NativeMethods.ERROR_HANDLE_EOF)
+                {
                     throw new Win32Exception(lastError);
+                }
             }
             finally { handle.Dispose(); }
 
