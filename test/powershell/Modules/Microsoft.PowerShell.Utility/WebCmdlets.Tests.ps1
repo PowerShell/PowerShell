@@ -2406,7 +2406,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     ) {
         param ($value)
         $uri = Get-WebListenerUrl -Test 'Get'
-        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         { Invoke-RestMethod -Uri $uri -OutFile $value} | Should -Throw -ErrorId $errorId
     }
 
