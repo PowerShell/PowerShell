@@ -704,16 +704,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
-    It "Invoke-WebRequest should fail if -OutFile is empty" {
+    It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
+        @{ Name = "empty"; Value = [string]::Empty }
+        @{ Name = "null"; Value = $null }
+    ) {
+        param ($value)
         $uri = Get-WebListenerUrl -Test 'Get'
         $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        { Invoke-WebRequest -Uri $uri -OutFile ''} | Should -Throw -ErrorId $errorId
-    }
-
-    It "Invoke-WebRequest should fail if -OutFile is null" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        { Invoke-WebRequest -Uri $uri -OutFile $null} | Should -Throw -ErrorId $errorId
+        { Invoke-WebRequest -Uri $uri -OutFile $value} | Should -Throw -ErrorId $errorId
     }
 
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
@@ -2402,16 +2400,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
-    It "Invoke-RestMethod should fail if -OutFile is empty" {
+    It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
+        @{ Name = "empty"; Value = [string]::Empty }
+        @{ Name = "null"; Value = $null }
+    ) {
+        param ($value)
         $uri = Get-WebListenerUrl -Test 'Get'
-        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        { Invoke-RestMethod -Uri $uri -OutFile ''} | Should -Throw -ErrorId $errorId
-    }
-
-    It "Invoke-RestMethod should fail if -OutFile is null" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        { Invoke-RestMethod -Uri $uri -OutFile $null} | Should -Throw -ErrorId $errorId
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        { Invoke-RestMethod -Uri $uri -OutFile $value} | Should -Throw -ErrorId $errorId
     }
 
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
