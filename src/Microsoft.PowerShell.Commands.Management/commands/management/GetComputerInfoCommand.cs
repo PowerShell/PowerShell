@@ -3055,7 +3055,7 @@ namespace Microsoft.PowerShell.Commands
         public ulong? OsFreeSpaceInPagingFiles { get; internal set; }
 
         /// <summary>
-        /// Array of fiel paths to the operating system's paging files.
+        /// Array of file paths to the operating system's paging files.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] OsPagingFiles { get; internal set; }

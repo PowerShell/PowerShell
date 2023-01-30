@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly PromptHandler _prompt = null;
 
         /// <summary>
-        /// Conter for the # of lines written when prompting is on.
+        /// Counter for the # of lines written when prompting is on.
         /// </summary>
         private long _linesWritten = 0;
 
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _disableLineWrittenEvent = false;
 
         /// <summary>
-        /// Refecence to the PSHostUserInterface interface we use.
+        /// Reference to the PSHostUserInterface interface we use.
         /// </summary>
         private readonly PSHostUserInterface _console = null;
 

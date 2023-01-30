@@ -4490,7 +4490,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Attempts to fix up the debugger stop invocation information so that
         /// the correct stack and source can be displayed in the debugger, for
-        /// cases where the debugged runspace is called inside a parent sccript,
+        /// cases where the debugged runspace is called inside a parent script,
         /// such as with script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo"></param>
@@ -4761,7 +4761,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Attempts to fix up the debugger stop invocation information so that
         /// the correct stack and source can be displayed in the debugger, for
-        /// cases where the debugged runspace is called inside a parent sccript,
+        /// cases where the debugged runspace is called inside a parent script,
         /// such as with script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo">Invocation information from debugger stop.</param>
@@ -5646,7 +5646,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// End monitoring a runspace on the target degbugger.
+        /// End monitoring a runspace on the target debugger.
         /// </summary>
         /// <param name="debugger">Target debugger.</param>
         /// <param name="runspaceInfo">PSMonitorRunspaceInfo.</param>

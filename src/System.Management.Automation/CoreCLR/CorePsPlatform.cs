@@ -213,7 +213,7 @@ namespace System.Management.Automation
         private static string s_tempHome = null;
 
         /// <summary>
-        /// Get the 'HOME' environment variable or create a temporary home diretory if the environment variable is not set.
+        /// Get the 'HOME' environment variable or create a temporary home directory if the environment variable is not set.
         /// </summary>
         private static string GetHomeOrCreateTempHome()
         {

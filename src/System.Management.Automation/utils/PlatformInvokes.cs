@@ -487,7 +487,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Retrieves the current process token.
-        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter.
+        /// This function exists just for backward compatibility. It is preferred to use the other override that takes 'SafeHandle' as parameter.
         /// </summary>
         /// <param name="processHandle">Process handle.</param>
         /// <param name="desiredAccess">Token access.</param>

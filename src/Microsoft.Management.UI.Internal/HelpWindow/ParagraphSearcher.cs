@@ -202,10 +202,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns true if the run is the fiorst run of the paragraph.
+        /// Returns true if the run is the first run of the paragraph.
         /// </summary>
         /// <param name="run">Run to check.</param>
-        /// <returns>True if the run is the fiorst run of the paragraph.</returns>
+        /// <returns>True if the run is the first run of the paragraph.</returns>
         private static bool IsFirstRun(Run run)
         {
             Paragraph paragraph = GetParagraph(run);

@@ -348,7 +348,7 @@ namespace System.Management.Automation
         public const string Build = "Build";
 
         /// <summary>
-        /// Finalize an interruptable activity. Makes pending changes permanent.
+        /// Finalize an interruptible activity. Makes pending changes permanent.
         /// </summary>
         public const string Complete = "Complete";
 

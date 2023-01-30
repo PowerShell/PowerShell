@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
                         long id = _countEntriesAdded;
                         for (long i = 0; i <= count - 1;)
                         {
-                            // if buffersize is changed,we have to loop from max entry to min entry thats not cleared
+                            // if buffersize is changed,we have to loop from max entry to min entry that's not cleared
                             if (_capacity != DefaultHistorySize)
                             {
                                 if (_countEntriesAdded > _capacity)
