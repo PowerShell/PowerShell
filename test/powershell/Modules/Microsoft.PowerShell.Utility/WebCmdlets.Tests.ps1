@@ -745,6 +745,33 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
+    It "Validate Invoke-WebRequest returns <type> errors in exception" -TestCases @(
+        @{ type = "XML"
+           query = @{
+                        contenttype = 'application/xml'
+                        body = '<?xml version="1.0" encoding="UTF-8"?><Error><Code>418</Code><Message>I am a teapot!!!</Message></Error>'
+                        statuscode = 418
+                    }
+           expectederror = "`n<Error>`n    <Code>418</Code>`n    <Message>I am a teapot!!!</Message>`n</Error>"
+        }
+
+        @{ type = "Json"
+           query = @{
+                        contenttype = 'application/json'
+                        body = '{"error":{"code":"418", "message":"I am a teapot!!!"}}'
+                        statuscode = 418
+                    }
+            expectederror = "`n{`n    `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
+        }
+    ) {
+        param($type, $query)
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error.ErrorDetails.Message | Should -Be $expectederror
+    }
+
     It "Validate Invoke-WebRequest returns empty RelationLink property if there is no Link Header" {
         $uri = $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri'"
