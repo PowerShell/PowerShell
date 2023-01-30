@@ -753,7 +753,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                         statuscode = 418
                         responsephrase = "I am a teapot"
                     }
-           expectederror = "`n<Error>`n  <Code>418</Code>`n  <Message>I am a teapot!!!</Message>`n</Error>"
+           expectederror = $IsWindows ? "`r`n<Error>`r`n  <Code>418</Code>`r`n  <Message>I am a teapot!!!</Message>`r`n</Error>" : "`n<Error>`n  <Code>418</Code>`n  <Message>I am a teapot!!!</Message>`n</Error>"
         }
 
         @{ type = "Json"
@@ -763,7 +763,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                         statuscode = 418
                         responsephrase = "I am a teapot"
                     }
-           expectederror = "`n{`n  `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
+           expectederror = $IsWindows ? "`r`n{`r`n  `"error`": {`r`n    `"code`": `"418`",`r`n    `"message`": `"I am a teapot!!!`"`r`n  }`r`n}" : "`n{`n  `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
         }
     ) {
         param($query, $expectederror)
