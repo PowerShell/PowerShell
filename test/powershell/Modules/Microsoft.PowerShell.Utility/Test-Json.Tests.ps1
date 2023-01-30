@@ -128,7 +128,7 @@ Describe "Test-Json" -Tags "CI" {
         ($invalidTypeInJson2 | Test-Json -Schema $validSchemaJson -ErrorAction SilentlyContinue) | Should -BeFalse
 
         Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
-        ($invalidNodeInJson | Test-Json $validSchemaJson -ErrorAction SilentlyContinue) | Should -BeFalse
+        ($invalidNodeInJson | Test-Json -Schema $validSchemaJson -ErrorAction SilentlyContinue) | Should -BeFalse
     }
 
     It "Json is invalid against a valid schema from file" {
