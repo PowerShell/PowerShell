@@ -761,7 +761,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                         body = '{"error":{"code":"418", "message":"I am a teapot!!!"}}'
                         statuscode = 418
                     }
-           expectederror = "`n{`n    `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
+           expectederror = "`n{`n  `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
         }
     ) {
         param($type, $query)
