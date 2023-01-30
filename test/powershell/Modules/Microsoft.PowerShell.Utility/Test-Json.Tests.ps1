@@ -89,14 +89,17 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Json is valid" {
         Test-Json -Json $validJson | Should -BeTrue
+        ($validJson | Test-Json) | Should -BeTrue
     }
 
     It "Json is valid against a valid schema from string" {
         Test-Json -Json $validJson -Schema $validSchemaJson | Should -BeTrue
+        ($validJson | Test-Json -Schema $validSchemaJson) | Should -BeTrue
     }
 
     It "Json is valid against a valid schema from file" {
         Test-Json -Json $validJson -SchemaFile $validSchemaJsonPath | Should -BeTrue
+        ($validJson | Test-Json -SchemaFile $validSchemaJsonPath) | Should -BeTrue
     }
 
     It "Json file specified using -Path is valid" {
@@ -115,23 +118,25 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -Path $validJsonPath -SchemaFile $validSchemaJsonPath | Should -BeTrue
     }
 
-    It "Json is valid when passed from pipeline" {
-        $isValidJson = "{'name': 'Ashley', 'age': 25}" | Test-Json
-        $isValidJson | Should -BeTrue
-    }
-
     It "Json is invalid" {
         Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should -BeFalse
+        ($invalidNodeInJson | Test-Json -ErrorAction SilentlyContinue) | Should -BeFalse
     }
 
     It "Json is invalid against a valid schema from string" {
         Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
+        ($invalidTypeInJson2 | Test-Json -Schema $validSchemaJson -ErrorAction SilentlyContinue) | Should -BeFalse
+
         Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
+        ($invalidNodeInJson | Test-Json $validSchemaJson -ErrorAction SilentlyContinue) | Should -BeFalse
     }
 
     It "Json is invalid against a valid schema from file" {
         Test-Json -Json $invalidTypeInJson2 -SchemaFile $validSchemaJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
+        ($invalidTypeInJson2 | Test-Json -SchemaFile $validSchemaJsonPath -ErrorAction SilentlyContinue) | Should -BeFalse
+
         Test-Json -Json $invalidNodeInJson -SchemaFile $validSchemaJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
+        ($invalidNodeInJson | Test-Json -SchemaFile $validSchemaJsonPath -ErrorAction SilentlyContinue) | Should -BeFalse
     }
 
     It "Json file is invalid against a valid schema from file" {
