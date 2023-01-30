@@ -1959,7 +1959,7 @@ namespace Microsoft.PowerShell.Commands
                     if (xmlString.Length > 0)
                     {
                         converted = true;
-                        formattedError = xmlString;
+                        formattedError = Environment.NewLine + xmlString;
                     }
                 }
                 else if (ContentHelper.IsJson(contentType))
@@ -1971,7 +1971,7 @@ namespace Microsoft.PowerShell.Commands
                     if (jsonString.Length > 0)
                     {
                         converted = true;
-                        formattedError = jsonString;
+                        formattedError = Environment.NewLine + jsonString;
                     }
                 }
             }
