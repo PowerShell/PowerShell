@@ -766,7 +766,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
            expectederror = "`n{`n  `"error`": {`n    `"code`": `"418`",`n    `"message`": `"I am a teapot!!!`"`n  }`n}"
         }
     ) {
-        param($type, $query)
+        param($query, $expectederror)
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
