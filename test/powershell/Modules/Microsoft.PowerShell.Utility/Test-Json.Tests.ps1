@@ -4,22 +4,10 @@
 Describe "Test-Json" -Tags "CI" {
     BeforeAll {
         $assetsPath = Join-Path $PSScriptRoot -ChildPath assets
-
         $validSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_reference.json
-
         $invalidSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_schema_reference.json
-
         $missingSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
-
-        $validJsonPath = Join-Path -Path $assetsPath -ChildPath valid.json
-
         $missingJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
-
-        $invalidNodeInJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_node.json
-
-        $invalidTypeInJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_type.json
-
-        $invalidTypeInJson2Path = Join-Path -Path $assetsPath -ChildPath invalid_type_2.json
 
         $validSchemaJson = @"
             {
@@ -77,6 +65,16 @@ Describe "Test-Json" -Tags "CI" {
                 errorNode
             }
 "@
+
+        $validJsonPath = 'TestDrive:/validJson.json'
+        $invalidNodeInJsonPath = 'TestDrive:/invalidNodeInJson.json'
+        $invalidTypeInJsonPath = 'TestDrive:/invalidTypeInJson.json'
+        $invalidTypeInJson2Path = 'TestDrive:/invalidTypeInJson2.json'
+
+        Set-Content -Path $validJsonPath -Value $validJson
+        Set-Content -Path $invalidNodeInJsonPath -Value $invalidNodeInJson
+        Set-Content -Path $invalidTypeInJsonPath -Value $invalidTypeInJson
+        Set-Content -Path $invalidTypeInJson2Path -Value $invalidTypeInJson2
     }
 
     It "Missing JSON schema file doesn't exist" {
