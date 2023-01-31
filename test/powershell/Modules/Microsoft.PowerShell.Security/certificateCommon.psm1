@@ -239,9 +239,6 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 
 function Install-TestCertificates
 {
-    Write-Verbose -Verbose "Installing test certificates"
-    Write-Verbose -Verbose "Listing PSDrives before installing certificates"
-    Get-PSDrive | Out-String | Write-Verbose -Verbose
     $script:certLocation = New-GoodCertificate
     $script:certLocation | Should -Not -BeNullOrEmpty | Out-Null
 
@@ -251,24 +248,7 @@ function Install-TestCertificates
     $script:badCertLocation = New-BadCertificate
     $script:badCertLocation | Should -Not -BeNullOrEmpty | Out-Null
 
-    if ($IsCoreCLR -and $IsWindows)
-    {
-        # PKI module is not available for PowerShell, so we need to use Windows PowerShell to import the cert
-        $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
-
-        $command = @"
-Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | ForEach-Object PSPath
-Import-PfxCertificate $script:certServerLocation -CertStoreLocation cert:\CurrentUser\My | ForEach-Object PSPath
-Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
-"@
-        $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
-        $certPaths.Count | Should -Be 3 | Out-Null
-
-        $script:importedCert = Get-ChildItem $certPaths[0]
-        $script:importedServerCert = Get-ChildItem $certPaths[1]
-        $script:testBadCert  = Get-ChildItem $certPaths[2]
-    }
-    elseif ($IsWindows)
+    if ($IsWindows)
     {
         $script:importedCert = Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My
         $script:testBadCert = Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My
