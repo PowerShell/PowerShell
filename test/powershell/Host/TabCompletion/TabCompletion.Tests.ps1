@@ -2102,7 +2102,7 @@ dir -Recurse `
 
     Context "Tab completion help test" {
         BeforeAll {
-            if ([System.Management.Automation.Platform]::IsWindows) {
+            if ($IsWindows) {
                 $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
             } else {
                 $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
@@ -2111,23 +2111,36 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
-            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
+            $helpName = "about_Splatting"
+            $helpFileName = "${helpName}.help.txt"
+            $inputScript = "get-help about_spla"
+            $culture = "en-US"
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot $culture
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME $culture
+            $expectedCompletionCount = 0
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
-            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
-            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
+            $userHelpPath = Join-Path $aboutHelpPathUserScope $helpFileName
+            $userScopeHelp = Test-Path $userHelpPath
+            if ($userScopeHelp) {
+                $expectedCompletionCount++
+            } else {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                if (Test-Path $userHelpPath) {
+                    $expectedCompletionCount++
+                }
             }
 
-            # If help content is present on both scopes, expect 2 or else expect 1 completion.
-            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+            $allUserScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersScope $helpFileName)
+            if ($allUserScopeHelpPath) {
+                $expectedCompletionCount++
+            }
 
-            $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $inputScript.Length
             $res.CompletionMatches | Should -HaveCount $expectedCompletions
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
         }
+
         It 'Should complete about help topic regardless of culture' {
             try
             {
@@ -2137,7 +2150,7 @@ dir -Recurse `
 
                 $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
                 $res.CompletionMatches | Should -HaveCount 1
-                $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+                $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
             }
             finally
             {
