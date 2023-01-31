@@ -3668,9 +3668,15 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
                 }
 
                 @{
-                    Name                          = "Validate error for Invoke-WebRequest -InFile  $TestDrive\content.txt"
-                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile  $TestDrive\content.txt}
+                    Name                          = "Validate error for Invoke-WebRequest -InFile $TestDrive\content.txt"
+                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile $TestDrive\content.txt}
                     ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
+
+                @{
+                    Name                          = "Validate error for Invoke-WebRequest -InFile $TestDrive"
+                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile $TestDrive}
+                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
                 }
                 #endregion
 
@@ -3694,9 +3700,15 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
                 }
 
                 @{
-                    Name                          = "Validate error for Invoke-RestMethod -InFile  $TestDrive\content.txt"
+                    Name                          = "Validate error for Invoke-RestMethod -InFile $TestDrive\content.txt"
                     ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile $TestDrive\content.txt}
                     ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
+
+                @{
+                    Name                          = "Validate error for Invoke-RestMethod -InFile $TestDrive"
+                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile $TestDrive}
+                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
                 }
                 #endregion
             )
