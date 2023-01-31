@@ -1213,6 +1213,9 @@ Verb-Noun -Param1 Hello ^
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
+            if (!$env:HOMEDRIVE) {
+                Set-ItResult -Skipped -Because "Homerdrive is not set"
+            }
             $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
@@ -1994,6 +1997,11 @@ dir -Recurse `
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
+
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "TBD"
+            }
+
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0

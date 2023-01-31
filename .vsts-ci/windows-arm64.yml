@@ -39,13 +39,18 @@ pr:
     - .spelling
 
 variables:
-  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  POWERSHELL_TELEMETRY_OPTOUT: 1
+  - name: GIT_CONFIG_PARAMETERS
+    value: "'core.autocrlf=false'"
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  __SuppressAnsiEscapeSequences: 1
-  NugetSecurityAnalysisWarningLevel: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name: __SuppressAnsiEscapeSequences
+    value: 1
+  - group: PoolNames
 
 resources:
 - repo: self
@@ -56,6 +61,9 @@ stages:
   displayName: Build for Windows
   jobs:
   - template: templates/ci-build.yml
+    parameters:
+      pool: $(armPool)
+      PoolType: 1esHosted
 
 - stage: TestWin
   displayName: Test for Windows
@@ -64,20 +72,24 @@ stages:
     parameters:
       purpose: UnelevatedPesterTests
       tagSet: CI
+      pool: $(armPool)
 
   - template: templates/windows-test.yml
     parameters:
       purpose: ElevatedPesterTests
       tagSet: CI
+      pool: $(armPool)
 
   - template: templates/windows-test.yml
     parameters:
       purpose: UnelevatedPesterTests
       tagSet: Others
+      pool: $(armPool)
 
   - template: templates/windows-test.yml
     parameters:
       purpose: ElevatedPesterTests
       tagSet: Others
+      pool: $(armPool)
 
   - template: templates/verify-xunit.yml

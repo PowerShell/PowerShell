@@ -355,6 +355,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         ) {
             param ($cmdline, $expectedError)
 
+            if (Test-IsElevated) {
+                Set-ItResult -Skipped -Because "Process must NOT be elevated"
+            }
+
             $scriptBlock = [scriptblock]::Create($cmdline)
             $scriptBlock | Should -Throw -ErrorId $expectedError
         }
@@ -1557,6 +1561,9 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "runas.exe /trustlevel:0x20000 is not supported on ARM64"
+        }
 
         # The expected error is returned when there is a empty directory with the user does not have authorization to is deleted.
         # It cannot have 'System. 'Hidden' or 'ReadOnly' attribute as well as -Force should not be used.
