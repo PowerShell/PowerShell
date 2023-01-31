@@ -101,15 +101,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Path != null)
                 {
-                    try
-                    {
-                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path);
-                        _json = File.ReadAllText(Path);
-                    }
-                    catch (AggregateException ae)
-                    {
-                        ae.Handle(UnwrapException);
-                    }
+                    resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path);
+                    _json = File.ReadAllText(resolvedpath);
                 }
             }
             catch (Exception e) when (
