@@ -66,10 +66,10 @@ Describe "Test-Json" -Tags "CI" {
             }
 "@
 
-        $validJsonPath = 'TestDrive:/validJson.json'
-        $invalidNodeInJsonPath = 'TestDrive:/invalidNodeInJson.json'
-        $invalidTypeInJsonPath = 'TestDrive:/invalidTypeInJson.json'
-        $invalidTypeInJson2Path = 'TestDrive:/invalidTypeInJson2.json'
+        $validJsonPath = Join-Path -Path $TestDrive -ChildPath 'validJson.json'
+        $invalidNodeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidNodeInJson.json'
+        $invalidTypeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidTypeInJson.json'
+        $invalidTypeInJson2Path = Join-Path -Path $TestDrive -ChildPath 'invalidTypeInJson2.json'
 
         Set-Content -Path $validJsonPath -Value $validJson
         Set-Content -Path $invalidNodeInJsonPath -Value $invalidNodeInJson
