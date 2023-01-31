@@ -885,21 +885,6 @@ Describe 'Table color tests' -Tag 'CI' {
     BeforeAll {
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
-
-        function NormalizeCRLF {
-            param ($inputString)
-
-            if($helpObj.Synopsis.Contains("`r`n"))
-            {
-                $helpObjText = ($helpObj.Synopsis).replace("`r`n", [System.Environment]::NewLine).trim()
-            }
-            else
-            {
-                $helpObjText = ($helpObj.Synopsis).replace("`n", [System.Environment]::NewLine).trim()
-            }
-
-            return $helpObjText
-        }
     }
 
     AfterAll {
@@ -907,14 +892,15 @@ Describe 'Table color tests' -Tag 'CI' {
     }
 
     It 'Table header should use TableHeader' {
-        $expected = @"
-        $($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)
-        $($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)
-          1
-"@
-        $expected = $expected.replace("`r`n", [System.Environment]::NewLine).trim()
+        $expected = @(
+        ""
+        "$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)"
+        "$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)"
+        "  1"
+        ""
+        )
 
-        $actual = ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim().replace("`r`n", [System.Environment]::NewLine).trim()
+        $actual = [pscustomobject]@{foo = 1} | Format-Table | Out-String -Stream
 
         $actual | Should -BeExactly $expected
     }
