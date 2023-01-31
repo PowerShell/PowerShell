@@ -30,7 +30,8 @@ Describe 'Native command byte piping tests' -Tags 'CI' {
     }
 
     It 'Output behavior falls back when stderr is redirected to stdout' {
-        testexe -writebytes FF 2>&1 | testexe -readbytes | Should -BeExactly 'EF', 'BF', 'BD', '0D', '0A'
+        $newLine = [Environment]::NewLine.ToCharArray().ForEach{ '{0:X2}' -f [int]$_ }
+        testexe -writebytes FF 2>&1 | testexe -readbytes | Should -BeExactly @('EF', 'BF', 'BD'; $newLine)
     }
 
     It 'Bytes are retained when using SMA.PowerShell' {
