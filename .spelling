@@ -1286,6 +1286,7 @@ System.Runtime.CompilerServices.Unsafe
 TabExpansion
 PSv2
 System.Data.SqlClient
+Microsoft.CSharp
  - CHANGELOG.md
 aavdberg
 asrosent
