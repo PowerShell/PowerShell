@@ -45,7 +45,7 @@ Describe "Validate start of console host" -Tag CI {
 
     It "PSReadLine should not be auto-loaded when screen reader status is active" -Skip:(-not $IsWindows) {
         if (Test-IsWindowsArm64) {
-            Set-ItResult -Pending -Because "TBD, PSReadline loads on ARM64"
+            Set-ItResult -Pending -Because "Needs investigation, PSReadline loads on ARM64"
         }
 
         $output = & "$PSHOME/pwsh" -noprofile -noexit -c "Get-Module PSReadLine; exit"
