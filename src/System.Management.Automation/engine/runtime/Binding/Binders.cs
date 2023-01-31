@@ -2038,7 +2038,7 @@ namespace System.Management.Automation.Language
             // First, check for enums/primitives and compiler-defined attributes.
             if (type.IsPrimitive
                 || type.IsEnum
-                || type.IsDefined(typeof(System.Runtime.CompilerServices.IsReadOnlyAttribute), inherit: false))
+                || type.IsDefined(typeof(IsReadOnlyAttribute), inherit: false))
             {
                 return false;
             }
@@ -4622,7 +4622,7 @@ namespace System.Management.Automation.Language
             var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
             if (defaultMember != null)
             {
-                return (InvokeIndexer(target, indexes, value, errorSuggestion, defaultMember.MemberName)).WriteToDebugLog(this);
+                return InvokeIndexer(target, indexes, value, errorSuggestion, defaultMember.MemberName).WriteToDebugLog(this);
             }
 
             return errorSuggestion ?? CannotIndexTarget(target, indexes, value).WriteToDebugLog(this);
@@ -4676,15 +4676,28 @@ namespace System.Management.Automation.Language
                     target.PSGetTypeRestriction());
             }
 
+            // For set-index operation on 'DataRow' and 'DataRowView', we unwrap its argument value if it's appropriate.
+            // We treat those 2 types specially because their indexers accepts 'object' in its siganature, but actaully
+            // checks for the data type internally, and thus will fail if the argument is wrapped in PSObject.
+            Type targetType = setter.DeclaringType;
+            bool unwrapArgIfNeed = targetType == typeof(DataRow) || targetType == typeof(DataRowView);
+
             Expression[] indexExprs = new Expression[paramLength];
             for (int i = 0; i < paramLength; ++i)
             {
                 var parameterType = setterParams[i].ParameterType;
                 var argument = (i == paramLength - 1) ? value : indexes[i];
 
-                indexExprs[i] = parameterType.IsByRefLike
-                    ? PSConvertBinder.ConvertToByRefLikeTypeViaCasting(argument, parameterType)
-                    : PSGetIndexBinder.ConvertIndex(argument, parameterType);
+                if (unwrapArgIfNeed && parameterType == typeof(object) && argument.LimitType == typeof(PSObject))
+                {
+                    indexExprs[i] = Expression.Call(CachedReflectionInfo.PSObject_Base, argument.Expression.Cast(typeof(PSObject)));
+                }
+                else
+                {
+                    indexExprs[i] = parameterType.IsByRefLike
+                        ? PSConvertBinder.ConvertToByRefLikeTypeViaCasting(argument, parameterType)
+                        : PSGetIndexBinder.ConvertIndex(argument, parameterType);
+                }
 
                 if (indexExprs[i] == null)
                 {
