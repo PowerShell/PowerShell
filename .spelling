@@ -1589,3 +1589,5 @@ centos-7
 Security.types.ps1xml
  - ADOPTERS.md
 MicrosoftPowerBIMgmt
+ - tools/clearlyDefined/readme.md
+ClearlyDefined
