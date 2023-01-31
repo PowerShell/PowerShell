@@ -60,6 +60,7 @@ namespace TestExe
 
             return exitCode;
         }
+
         private static void WriteBytes(ReadOnlySpan<string> args)
         {
             using Stream stdout = Console.OpenStandardOutput();
