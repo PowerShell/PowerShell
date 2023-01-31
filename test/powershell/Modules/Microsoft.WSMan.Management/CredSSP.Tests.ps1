@@ -113,7 +113,7 @@ Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
     ) {
         param ($cmdline, $cmd)
 
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "WSManCredSSP results in InvalidOperationException on ARM64."
         }
 

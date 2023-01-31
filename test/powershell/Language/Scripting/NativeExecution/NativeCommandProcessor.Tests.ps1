@@ -145,7 +145,7 @@ Describe "Native Command Processor" -tags "Feature" {
     }
 
     It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "TBD"
         }
 

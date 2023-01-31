@@ -9,7 +9,7 @@ Describe "Get-HotFix Tests" -Tag CI {
         if (!$IsWindows) {
             $skip = $true
         }
-        elseif ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        elseif (Test-IsWindowsArm64) {
             # Win32Exception: Failed to load required native library 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\wminet_utils.dll'.
             Write-Verbose "needed provider not on ARM64, skipping tests" -Verbose
             $PSDefaultParameterValues["it:skip"] = $true

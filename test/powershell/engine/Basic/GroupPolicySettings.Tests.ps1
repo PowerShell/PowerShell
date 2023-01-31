@@ -57,7 +57,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
         }
 
         It 'Module logging policy test' {
-            if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
             }
 
@@ -107,7 +107,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
         }
 
         It 'ScriptBlock logging policy test' {
-            if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
             }
 

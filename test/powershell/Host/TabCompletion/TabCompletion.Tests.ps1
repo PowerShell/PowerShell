@@ -1998,7 +1998,7 @@ dir -Recurse `
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
 
-            if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "TBD"
             }
 

@@ -1555,7 +1555,7 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "runas.exe /trustlevel:0x20000 is not supported on ARM64"
         }
 

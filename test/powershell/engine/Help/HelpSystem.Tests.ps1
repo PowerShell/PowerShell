@@ -69,7 +69,7 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
 Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
 
     It "Help doesn't fail when strict mode is on" {
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -408,7 +408,7 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -417,7 +417,7 @@ Describe "help function uses full view by default" -Tags "CI" {
     }
 
     It "help should return full view even with -Full switch" {
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -426,7 +426,7 @@ Describe "help function uses full view by default" -Tags "CI" {
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
-        if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+        if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 

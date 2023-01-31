@@ -54,7 +54,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         }
 
         It 'Does not get truncated or split when redirected' {
-            if ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) {
+            if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "IOException: The handle is invalid."
             }
 
