@@ -1284,7 +1284,6 @@ namespace System.Management.Automation.Runspaces
                                         return ""${errorColor}$($err.Exception.Message)${resetcolor}""
                                     }
 
-                                    $myinv = $err.InvocationInfo
                                     if ($ErrorView -eq 'DetailedView') {
                                         $message = Get-Error | Out-String
                                         return ""${errorColor}${message}${resetcolor}""
@@ -1303,10 +1302,6 @@ namespace System.Management.Automation.Runspaces
                                         $posmsg = $myinv.PositionMessage
                                     }
 
-                                    if ($posmsg -ne '') {
-                                        $posmsg = $newline + $posmsg
-                                    }
-
                                     if ($err.PSMessageDetails) {
                                         $posmsg = ' : ' +  $err.PSMessageDetails + $posmsg
                                     }
@@ -1319,6 +1314,9 @@ namespace System.Management.Automation.Runspaces
                                     }
 
                                     $indent = 4
+                                    if ($posmsg -ne '') {
+                                        $posmsg = $newline + $posmsg
+                                    }
 
                                     $errorCategoryMsg = $err.ErrorCategory_Message
 
