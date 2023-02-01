@@ -223,10 +223,11 @@ stages:
     pool:
       name: PowerShell1ES
       demands:
-      - ImageOverride -equals PSMMS2019-PS-Native-Secure
+      - ImageOverride -equals PSMMS2019-Secure
     steps:
     - download: current
-      artifact: release
+      artifact: results
+      patterns: '**/*.zip'
 
     - pwsh: |
         Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)/results"
