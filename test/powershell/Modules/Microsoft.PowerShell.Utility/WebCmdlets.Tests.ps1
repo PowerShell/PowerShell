@@ -893,7 +893,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
-        
+
         It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect respects -MaximumRedirection on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
             param($redirectType, $redirectedMethod)
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3' -Query @{type = $redirectType}
@@ -1854,6 +1854,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-WebRequest -Resume requires -OutFile" {
             { Invoke-WebRequest -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
+        It "Invoke-WebRequest -Resume should fail if -OutFile folder" {
+            { Invoke-WebRequest -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
@@ -3496,6 +3501,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-RestMethod -Resume requires -OutFile" {
             { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+        It "Invoke-RestMethod -Resume should fail if -OutFile folder" {
+            { Invoke-RestMethod -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Invoke-RestMethod -Resume Downloads the whole file when the file does not exist" {
