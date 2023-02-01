@@ -235,7 +235,7 @@ stages:
         $downloadedArtifacts
         $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
         $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
-        $downloadedArtifacts | Where-Object { $_.Name -like 'PowerShell*-symbols*.zip'} | ForEach-Object {
+        $downloadedArtifacts | Where-Object { $_.Name -like 'PowerShell*-symbols*-signed.zip'} | ForEach-Object {
           $destFolder = New-Item -Path "$expandedRoot/$($_.BaseName)/" -ItemType Directory -Verbose
           Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
           Get-ChildItem -Path $destFolder -Recurse -Filter '*.ni.pdb' | ForEach-Object {
