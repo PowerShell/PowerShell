@@ -2,6 +2,7 @@ jobs:
 - job: sign_linux_builds
   displayName: Sign all linux builds
   condition: succeeded()
+  timeoutInMinutes: 90
   pool:
     name: PowerShell1ES
     demands:
