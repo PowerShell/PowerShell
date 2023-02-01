@@ -2137,7 +2137,7 @@ dir -Recurse `
             }
 
             $res = TabExpansion2 -inputScript $inputScript -cursorColumn $inputScript.Length
-            $res.CompletionMatches | Should -HaveCount $expectedCompletions
+            $res.CompletionMatches | Should -HaveCount $expectedCompletionCount
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
         }
 
@@ -2147,6 +2147,7 @@ dir -Recurse `
                 ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
                 $OriginalCulture = [cultureinfo]::CurrentCulture
                 [cultureinfo]::CurrentCulture="da-DK"
+                $helpName = "about_Splatting"
 
                 $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
                 $res.CompletionMatches | Should -HaveCount 1

@@ -85,8 +85,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             if (-not (Install-TestCertificates) ) {
                 $SetupFailure = $true
             } else {
-                $SetupFailure = $false
                 Push-Location Cert:\
+                $SetupFailure = $false
             }
         }
         else
