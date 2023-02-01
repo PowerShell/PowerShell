@@ -2365,7 +2365,7 @@ function MyFunction ($param1, $param2)
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
-        if ($IsWindows) {
+        if ($IsWindows -and -not (Test-IsWinWow64)) {
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace
