@@ -532,14 +532,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Output ??
-            if (PassThru && !ShouldSaveToOutFile)
+            if (PassThru.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
-            if (Resume.IsPresent && !ShouldSaveToOutFile)
+            if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
@@ -674,7 +674,7 @@ namespace Microsoft.PowerShell.Commands
         
         internal string _qualifiedOutFile;
 
-        internal bool ShouldSaveToOutFile => !string.IsNullOrWhiteSpace(OutFile);
+        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
 
         internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
 
