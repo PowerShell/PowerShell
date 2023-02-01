@@ -4477,7 +4477,7 @@ end {
         internal static readonly SessionStateVariableEntry[] BuiltInVariables;
 
         /// <summary>
-        /// Returns a new array of alias entries everytime it's called. This
+        /// Returns a new array of alias entries every time it's called. This
         /// can't be static because the elements may be mutated in different session
         /// state objects so each session state must have a copy of the entry.
         /// </summary>

@@ -879,7 +879,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to retrieve helpinfo by removing the prefix from the noun portion of a command name.
         /// Import-Module and Import-PSSession supports changing the name of a command
-        /// by suppling a custom prefix. In those cases, the help content is stored by using the
+        /// by supplying a custom prefix. In those cases, the help content is stored by using the
         /// original command name (without prefix) as the key.
         ///
         /// This method retrieves the help content by suppressing the prefix and then making a copy
@@ -950,13 +950,21 @@ namespace System.Management.Automation
 
             // Add snapin qualified type name for this command at the top..
             // this will enable customizations of the help object.
-            helpInfo.FullHelp.TypeNames.Insert(0, string.Create(CultureInfo.InvariantCulture, $"MamlCommandHelpInfo#{mshSnapInId}#{cmdletName}"));
+            helpInfo.FullHelp.TypeNames.Insert(
+                index: 0,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"MamlCommandHelpInfo#{mshSnapInId}#{cmdletName}"));
 
             if (!string.IsNullOrEmpty(mshSnapInId))
             {
                 key = mshSnapInId + "\\" + key;
                 // Add snapin name to the typenames of this object
-                helpInfo.FullHelp.TypeNames.Insert(1, string.Create(CultureInfo.InvariantCulture, $"MamlCommandHelpInfo#{mshSnapInId}"));
+                helpInfo.FullHelp.TypeNames.Insert(
+                    index: 1,
+                    string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"MamlCommandHelpInfo#{mshSnapInId}"));
             }
 
             AddCache(key, helpInfo);

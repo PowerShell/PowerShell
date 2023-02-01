@@ -75,7 +75,8 @@ namespace System.Management.Automation.Remoting
 
         internal static string CreateDataPacket(byte[] data, DataPriorityType streamType, Guid psGuid)
         {
-            string result = string.Format(CultureInfo.InvariantCulture,
+            string result = string.Format(
+                CultureInfo.InvariantCulture,
                 "<{0} {1}='{2}' {3}='{4}'>{5}</{0}>",
                 PS_OUT_OF_PROC_DATA_TAG,
                 PS_OUT_OF_PROC_STREAM_ATTRIBUTE,
@@ -131,7 +132,8 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static string CreatePSGuidPacket(string element, Guid psGuid)
         {
-            string result = string.Format(CultureInfo.InvariantCulture,
+            string result = string.Format(
+                CultureInfo.InvariantCulture,
                 "<{0} {1}='{2}' />",
                 element,
                 PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,

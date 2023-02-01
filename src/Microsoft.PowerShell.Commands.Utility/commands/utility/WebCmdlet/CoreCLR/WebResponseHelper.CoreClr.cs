@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
             return headers;
         }
 
-        internal static string GetProtocol(HttpResponseMessage response) => string.Format(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");
+        internal static string GetProtocol(HttpResponseMessage response) => string.Create(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");
 
         internal static int GetStatusCode(HttpResponseMessage response) => (int)response.StatusCode;
 
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool IsText(HttpResponseMessage response)
         {
             // ContentType may not exist in response header.
-            string contentType = response.Content.Headers.ContentType?.MediaType;
+            string contentType = ContentHelper.GetContentType(response);
             return ContentHelper.IsText(contentType);
         }
     }

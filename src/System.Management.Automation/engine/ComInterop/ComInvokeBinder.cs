@@ -392,7 +392,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Create a stub for the target of the optimized lopop.
+        /// Create a stub for the target of the optimized loop.
         /// </summary>
         /// <returns></returns>
         private Expression MakeIDispatchInvokeTarget()

@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual Uri Uri { get; set; }
 
-        #endregion
+        #endregion URI
 
         #region HTTP Version
 
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         [HttpVersionCompletions]
         public virtual Version HttpVersion { get; set; }
 
-        #endregion
+        #endregion HTTP Version
 
         #region Session
         /// <summary>
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("SV")]
         public virtual string SessionVariable { get; set; }
 
-        #endregion
+        #endregion Session
 
         #region Authorization and Credentials
 
@@ -199,13 +199,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SecureString Token { get; set; }
 
-        /// <summary>
-        /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
-        /// </summary>
-        [Parameter]
-        public virtual SwitchParameter AllowInsecureRedirect { get; set; }
-
-        #endregion
+        #endregion Authorization and Credentials
 
         #region Headers
 
@@ -235,9 +229,24 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual IDictionary Headers { get; set; }
 
-        #endregion
+        /// <summary>
+        /// Gets or sets the SkipHeaderValidation property.
+        /// </summary>
+        /// <remarks>
+        /// This property adds headers to the request's header collection without validation.
+        /// </remarks>
+        [Parameter]
+        public virtual SwitchParameter SkipHeaderValidation { get; set; }
+
+        #endregion Headers
 
         #region Redirect
+
+        /// <summary>
+        /// Gets or sets the AllowInsecureRedirect property used to follow HTTP redirects from HTTPS.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter AllowInsecureRedirect { get; set; }
 
         /// <summary>
         /// Gets or sets the RedirectMax property.
@@ -254,13 +263,28 @@ namespace Microsoft.PowerShell.Commands
         public virtual int MaximumRetryCount { get; set; }
 
         /// <summary>
+        /// Gets or sets the PreserveAuthorizationOnRedirect property.
+        /// </summary>
+        /// <remarks>
+        /// This property overrides compatibility with web requests on Windows.
+        /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
+        /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
+        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
+        /// we'll detect requests with an Authorization header and automatically strip
+        /// the header when the first redirect occurs. This switch turns off this logic for
+        /// edge cases where the authorization header needs to be preserved across redirects.
+        /// </remarks>
+        [Parameter]
+        public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
+
+        /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
         [ValidateRange(1, int.MaxValue)]
         public virtual int RetryIntervalSec { get; set; } = 5;
 
-        #endregion
+        #endregion Redirect
 
         #region Method
 
@@ -294,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
-        #endregion
+        #endregion Method
 
         #region NoProxy
 
@@ -305,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "StandardMethodNoProxy")]
         public virtual SwitchParameter NoProxy { get; set; }
 
-        #endregion
+        #endregion NoProxy
 
         #region Proxy
 
@@ -331,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "CustomMethod")]
         public virtual SwitchParameter ProxyUseDefaultCredentials { get; set; }
 
-        #endregion
+        #endregion Proxy
 
         #region Input
 
@@ -366,6 +390,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the InFile property.
         /// </summary>
         [Parameter]
+        [ValidateNotNullOrEmpty]
         public virtual string InFile { get; set; }
 
         /// <summary>
@@ -373,7 +398,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string _originalFilePath;
 
-        #endregion
+        #endregion Input
 
         #region Output
 
@@ -381,6 +406,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the OutFile property.
         /// </summary>
         [Parameter]
+        [ValidateNotNullOrEmpty]
         public virtual string OutFile { get; set; }
 
         /// <summary>
@@ -401,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter SkipHttpErrorCheck { get; set; }
 
-        #endregion
+        #endregion Output
 
         #endregion Virtual Properties
 
@@ -752,7 +778,7 @@ namespace Microsoft.PowerShell.Commands
                     encodedValue = WebUtility.UrlEncode(value.ToString());
                 }
 
-                bodyBuilder.AppendFormat("{0}={1}", encodedKey, encodedValue);
+                bodyBuilder.Append($"{encodedKey}={encodedValue}");
             }
 
             return bodyBuilder.ToString();
@@ -776,14 +802,14 @@ namespace Microsoft.PowerShell.Commands
         private string GetBasicAuthorizationHeader()
         {
             var password = new NetworkCredential(null, Credential.Password).Password;
-            string unencoded = string.Format($"{Credential.UserName}:{password}");
+            string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential.UserName}:{password}");
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
-            return string.Format($"Basic {Convert.ToBase64String(bytes)}");
+            return string.Create(CultureInfo.InvariantCulture, $"Basic {Convert.ToBase64String(bytes)}");
         }
 
         private string GetBearerAuthorizationHeader()
         {
-            return string.Format($"Bearer {new NetworkCredential(string.Empty, Token).Password}");
+            return string.Create(CultureInfo.InvariantCulture, $"Bearer {new NetworkCredential(string.Empty, Token).Password}");
         }
 
         private void ProcessAuthentication()
@@ -798,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Diagnostics.Assert(false, string.Format($"Unrecognized Authentication value: {Authentication}"));
+                Diagnostics.Assert(false, string.Create(CultureInfo.InvariantCulture, $"Unrecognized Authentication value: {Authentication}"));
             }
         }
 
@@ -833,30 +859,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-        /// <summary>
-        /// Gets or sets the PreserveAuthorizationOnRedirect property.
-        /// </summary>
-        /// <remarks>
-        /// This property overrides compatibility with web requests on Windows.
-        /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
-        /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
-        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
-        /// we'll detect requests with an Authorization header and automatically strip
-        /// the header when the first redirect occurs. This switch turns off this logic for
-        /// edge cases where the authorization header needs to be preserved across redirects.
-        /// </remarks>
-        [Parameter]
-        public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
-
-        /// <summary>
-        /// Gets or sets the SkipHeaderValidation property.
-        /// </summary>
-        /// <remarks>
-        /// This property adds headers to the request's header collection without validation.
-        /// </remarks>
-        [Parameter]
-        public virtual SwitchParameter SkipHeaderValidation { get; set; }
-
         #region Abstract Methods
 
         /// <summary>
@@ -1107,9 +1109,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (Form is not null)
             {
-                // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
-                WebSession.ContentHeaders.Clear();
-
                 var formData = new MultipartFormDataContent();
                 foreach (DictionaryEntry formEntry in Form)
                 {
@@ -1119,55 +1118,48 @@ namespace Microsoft.PowerShell.Commands
 
                 SetRequestContent(request, formData);
             }
-            // coerce body into a usable form
             else if (Body is not null)
             {
+                // Coerce body into a usable form
                 object content = Body;
 
-                // make sure we're using the base object of the body, not the PSObject wrapper
-                PSObject psBody = Body as PSObject;
-                if (psBody is not null)
+                // Make sure we're using the base object of the body, not the PSObject wrapper
+                if (Body is PSObject psBody)
                 {
                     content = psBody.BaseObject;
                 }
 
-                if (content is FormObject form)
+                switch (content)
                 {
-                    SetRequestContent(request, form.Fields);
-                }
-                else if (content is IDictionary dictionary && request.Method != HttpMethod.Get)
-                {
-                    SetRequestContent(request, dictionary);
-                }
-                else if (content is XmlNode xmlNode)
-                {
-                    SetRequestContent(request, xmlNode);
-                }
-                else if (content is Stream stream)
-                {
-                    SetRequestContent(request, stream);
-                }
-                else if (content is byte[] bytes)
-                {
-                    SetRequestContent(request, bytes);
-                }
-                else if (content is MultipartFormDataContent multipartFormDataContent)
-                {
-                    WebSession.ContentHeaders.Clear();
-                    SetRequestContent(request, multipartFormDataContent);
-                }
-                else
-                {
-                    SetRequestContent(
-                        request,
-                        (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
+                    case FormObject form:
+                        SetRequestContent(request, form.Fields);
+                        break;
+                    case IDictionary dictionary when request.Method != HttpMethod.Get:
+                        SetRequestContent(request, dictionary);
+                        break;
+                    case XmlNode xmlNode:
+                        SetRequestContent(request, xmlNode);
+                        break;
+                    case Stream stream:
+                        SetRequestContent(request, stream);
+                        break;
+                    case byte[] bytes:
+                        SetRequestContent(request, bytes);
+                        break;
+                    case MultipartFormDataContent multipartFormDataContent:
+                        SetRequestContent(request, multipartFormDataContent);
+                        break;
+                    default:
+                        SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
+                        break;
                 }
             }
-            else if (InFile is not null) // copy InFile data
+            else if (InFile is not null)
             {
+                // Copy InFile data
                 try
                 {
-                    // open the input file
+                    // Open the input file
                     SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
                 }
                 catch (UnauthorizedAccessException)
@@ -1592,24 +1584,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
+        internal void SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(content);
 
-            if (content is null)
-            {
-                return 0;
-            }
-
-            var byteArrayContent = new ByteArrayContent(content);
+            ByteArrayContent byteArrayContent = new(content);
             request.Content = byteArrayContent;
-
-            return byteArrayContent.Headers.ContentLength.Value;
         }
 
         /// <summary>
@@ -1617,19 +1602,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, string content)
+        internal void SetRequestContent(HttpRequestMessage request, string content)
         {
             ArgumentNullException.ThrowIfNull(request);
-
-            if (content is null)
-            {
-                return 0;
-            }
+            ArgumentNullException.ThrowIfNull(content);
             
             Encoding encoding = null;
             if (ContentType is not null)
@@ -1649,7 +1629,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!SkipHeaderValidation)
                     {
-                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
                         ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
@@ -1657,20 +1637,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
-            var byteArrayContent = new ByteArrayContent(bytes);
+            ByteArrayContent byteArrayContent = new(bytes);
             request.Content = byteArrayContent;
-
-            return byteArrayContent.Headers.ContentLength.Value;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
+        internal void SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             ArgumentNullException.ThrowIfNull(request);
-
-            if (xmlNode is null)
-            {
-                return 0;
-            }
+            ArgumentNullException.ThrowIfNull(xmlNode);
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
@@ -1685,10 +1659,9 @@ namespace Microsoft.PowerShell.Commands
                 bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml, encoding: null);
             }
 
-            var byteArrayContent = new ByteArrayContent(bytes);
-            request.Content = byteArrayContent;
+            ByteArrayContent byteArrayContent = new(bytes);
 
-            return byteArrayContent.Headers.ContentLength.Value;
+            request.Content = byteArrayContent;
         }
 
         /// <summary>
@@ -1696,21 +1669,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
+        internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             ArgumentNullException.ThrowIfNull(request);
-
             ArgumentNullException.ThrowIfNull(contentStream);
 
-            var streamContent = new StreamContent(contentStream);
+            StreamContent streamContent = new(contentStream);
             request.Content = streamContent;
-
-            return streamContent.Headers.ContentLength.Value;
         }
 
         /// <summary>
@@ -1718,30 +1687,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
-        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
             ArgumentNullException.ThrowIfNull(request);
-
             ArgumentNullException.ThrowIfNull(multipartContent);
+            
+            // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
+            WebSession.ContentHeaders.Clear();
 
             request.Content = multipartContent;
-
-            return multipartContent.Headers.ContentLength.Value;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
+        internal void SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(request);
-
             ArgumentNullException.ThrowIfNull(content);
 
             string body = FormatDictionary(content);
-            return SetRequestContent(request, body);
+            SetRequestContent(request, body);
         }
 
         internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)

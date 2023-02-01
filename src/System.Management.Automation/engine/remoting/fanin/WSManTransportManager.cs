@@ -925,7 +925,9 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
-                    string base64EncodedDataInXml = string.Format(CultureInfo.InvariantCulture, "<{0} xmlns=\"{1}\">{2}</{0}>",
+                    string base64EncodedDataInXml = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "<{0} xmlns=\"{1}\">{2}</{0}>",
                         WSManNativeApi.PS_CONNECT_XML_TAG,
                         WSManNativeApi.PS_XML_NAMESPACE,
                         Convert.ToBase64String(additionalData));
@@ -1096,7 +1098,9 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
-                    string base64EncodedDataInXml = string.Format(CultureInfo.InvariantCulture, "<{0} xmlns=\"{1}\">{2}</{0}>",
+                    string base64EncodedDataInXml = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "<{0} xmlns=\"{1}\">{2}</{0}>",
                         WSManNativeApi.PS_CREATION_XML_TAG,
                         WSManNativeApi.PS_XML_NAMESPACE,
                         Convert.ToBase64String(additionalData));
@@ -1398,17 +1402,27 @@ namespace System.Management.Automation.Remoting.Client
             if (string.IsNullOrEmpty(connectionUri.Query))
             {
                 // if there is no query string already, create one..see RFC 3986
-                connectionStr = string.Create(CultureInfo.InvariantCulture, $"{connectionStr.TrimEnd('/')}?PSVersion={PSVersionInfo.PSVersion}{additionalUriSuffixString}");
+                connectionStr = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0}?PSVersion={1}{2}",
                     // Trimming the last '/' as this will allow WSMan to
                     // properly apply URLPrefix.
                     // Ex: http://localhost?PSVersion=2.0 will be converted
                     // to http://localhost:<port>/<urlprefix>?PSVersion=2.0
                     // by WSMan
+                    connectionStr.TrimEnd('/'),
+                    PSVersionInfo.PSVersion,
+                    additionalUriSuffixString);
             }
             else
             {
                 // if there is already a query string, append using & .. see RFC 3986
-                connectionStr = string.Create(CultureInfo.InvariantCulture, $"{connectionStr};PSVersion={PSVersionInfo.PSVersion}{additionalUriSuffixString}");
+                connectionStr = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0};PSVersion={1}{2}",
+                    connectionStr,
+                    PSVersionInfo.PSVersion,
+                    additionalUriSuffixString);
             }
 
             WSManNativeApi.BaseWSManAuthenticationCredentials authCredentials;

@@ -38,7 +38,7 @@ namespace System.Management.Automation
     internal abstract class Adapter
     {
         /// <summary>
-        /// Tracer for this and derivate classes.
+        /// Tracer for this and derivative classes.
         /// </summary>
         [TraceSource("ETS", "Extended Type System")]
         protected static PSTraceSource tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
@@ -1826,7 +1826,7 @@ namespace System.Management.Automation
             }
 
             // We are going to put all the remaining arguments into an array
-            // and convert them to the propper type, if necessary to be the
+            // and convert them to the proper type, if necessary to be the
             // one argument for this last parameter
             int remainingArgumentCount = arguments.Length - parametersLength + 1;
             if (remainingArgumentCount == 1 && arguments[arguments.Length - 1] == null)
@@ -1878,7 +1878,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Auxiliary method in MethodInvoke to set newArguments[index] with the propper value.
+        /// Auxiliary method in MethodInvoke to set newArguments[index] with the proper value.
         /// </summary>
         /// <param name="methodName">Used for the MethodException that might be thrown.</param>
         /// <param name="arguments">The complete array of arguments.</param>

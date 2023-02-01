@@ -98,7 +98,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Gets the managed type that an object needs to be coverted to in order for it to be able
+        /// Gets the managed type that an object needs to be converted to in order for it to be able
         /// to be represented as a Variant.
         ///
         /// In general, there is a many-to-many mapping between Type and VarEnum. However, this method
@@ -429,7 +429,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the COM Variant type that argument should be marshaled as for a call to COM.
+        /// Get the COM Variant type that argument should be marshalled as for a call to COM.
         /// </summary>
         private VariantBuilder GetVariantBuilder(Type argumentType)
         {

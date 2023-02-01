@@ -704,6 +704,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
+    It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
+        @{ Name = "empty"; Value = [string]::Empty }
+        @{ Name = "null"; Value = $null }
+    ) {
+        param ($value)
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        { Invoke-WebRequest -Uri $uri -OutFile $value} | Should -Throw -ErrorId $errorId
+    }
+
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
         #Validate that exception is not thrown when response headers are missing Content-Type.
         $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = ''}
@@ -893,7 +903,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
-        
+
         It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect respects -MaximumRedirection on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
             param($redirectType, $redirectedMethod)
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3' -Query @{type = $redirectType}
@@ -2390,6 +2400,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
+    It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
+        @{ Name = "empty"; Value = [string]::Empty }
+        @{ Name = "null"; Value = $null }
+    ) {
+        param ($value)
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $errorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        { Invoke-RestMethod -Uri $uri -OutFile $value} | Should -Throw -ErrorId $errorId
+    }
+
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
         #Validate that exception is not thrown when response headers are missing Content-Type.
         $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = ''}
@@ -3630,9 +3650,15 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
             $testCases = @(
                 #region INVOKE-WEBREQUEST
                 @{
+                    Name                          = 'Validate error for Invoke-WebRequest -InFile null'
+                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile $null}
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
+
+                @{
                     Name                          = 'Validate error for Invoke-WebRequest -InFile ""'
                     ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile ""}
-                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
                 }
 
                 @{
@@ -3642,29 +3668,47 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
                 }
 
                 @{
-                    Name                          = "Validate error for Invoke-WebRequest -InFile  $TestDrive\content.txt"
-                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile  $TestDrive\content.txt}
+                    Name                          = "Validate error for Invoke-WebRequest -InFile $TestDrive\content.txt"
+                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile $TestDrive\content.txt}
                     ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
+
+                @{
+                    Name                          = "Validate error for Invoke-WebRequest -InFile $TestDrive"
+                    ScriptBlock                   = {Invoke-WebRequest -Uri $uri -Method Post -InFile $TestDrive}
+                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
                 }
                 #endregion
 
                 #region INVOKE-RESTMETHOD
                 @{
-                    Name                          = "Validate error for Invoke-RestMethod -InFile ''"
-                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile ''}
-                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                    Name                          = "Validate error for Invoke-RestMethod -InFile null"
+                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile $null}
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
                 }
 
                 @{
-                    Name                          = "Validate error for Invoke-RestMethod -InFile <null>"
+                    Name                          = "Validate error for Invoke-RestMethod -InFile ''"
+                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile ''}
+                    ExpectedFullyQualifiedErrorId = 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
+
+                @{
+                    Name                          = "Validate error for Invoke-RestMethod -InFile"
                     ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile}
                     ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
                 }
 
                 @{
-                    Name                          = "Validate error for Invoke-RestMethod -InFile  $TestDrive\content.txt"
+                    Name                          = "Validate error for Invoke-RestMethod -InFile $TestDrive\content.txt"
                     ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile $TestDrive\content.txt}
                     ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
+
+                @{
+                    Name                          = "Validate error for Invoke-RestMethod -InFile $TestDrive"
+                    ScriptBlock                   = {Invoke-RestMethod -Uri $uri -Method Post -InFile $TestDrive}
+                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
                 }
                 #endregion
             )
