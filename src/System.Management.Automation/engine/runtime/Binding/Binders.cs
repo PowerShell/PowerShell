@@ -4677,8 +4677,8 @@ namespace System.Management.Automation.Language
             }
 
             // For set-index operation on 'DataRow' and 'DataRowView', we unwrap its argument value if it's appropriate.
-            // We treat those 2 types specially because their indexers accepts 'object' in its siganature, but actaully
-            // checks for the data type internally, and thus will fail if the argument is wrapped in PSObject.
+            // We treat those 2 types specially because their indexers accept 'object' arguments in the signatures, but
+            // actually check the data type internally and will fail if the argument is wrapped in PSObject.
             Type targetType = setter.DeclaringType;
             bool unwrapArgIfNeed = targetType == typeof(DataRow) || targetType == typeof(DataRowView);
 
