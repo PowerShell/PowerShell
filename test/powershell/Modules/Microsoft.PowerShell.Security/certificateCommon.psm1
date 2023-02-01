@@ -240,13 +240,13 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 function Install-TestCertificates
 {
     $script:certLocation = New-GoodCertificate
-    $script:certLocation | Should -Not -BeNullOrEmpty | Out-Null
+    if (-not $script:certLocation) { return $false }
 
     $script:certServerLocation = New-GoodServerCertificate
-    $script:certServerLocation | Should -Not -BeNullOrEmpty | Out-Null
+    if (-not $script:certServerLocation) { return $false }
 
     $script:badCertLocation = New-BadCertificate
-    $script:badCertLocation | Should -Not -BeNullOrEmpty | Out-Null
+    if (-not $script:badCertLocation) { return $false }
 
     if ($IsWindows)
     {

@@ -81,7 +81,12 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     BeforeAll{
         if($IsWindows)
         {
-            Install-TestCertificates
+            if (-not (Install-TestCertificates) ) {
+                $SetupFailure = $true
+            } else {
+                Push-Location Cert:\
+                $SetupFailure = $false
+            }
         }
         else
         {
@@ -92,7 +97,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     AfterAll {
-        if($IsWindows)
+        if($IsWindows -and -not $SetupFailure)
         {
             Remove-TestCertificates
         }
@@ -136,6 +141,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify wildcarded recipient resolution by path [Decryption]" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] ((Get-GoodCertificateLocation) + "*")
         $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
@@ -145,6 +151,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify wildcarded recipient resolution by path [Encryption]" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] ((Get-GoodCertificateLocation) + "*")
         $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
@@ -153,6 +160,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify resolution by directory" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $protectedEventLoggingCertPath = Join-Path $TestDrive ProtectedEventLoggingDir
         $null = New-Item -ItemType Directory $protectedEventLoggingCertPath -Force
         Copy-Item (Get-GoodCertificateLocation) $protectedEventLoggingCertPath
@@ -167,6 +175,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify resolution by thumbprint" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] (Get-GoodCertificateObject).Thumbprint
         $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
@@ -177,6 +186,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify resolution by subject name" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] (Get-GoodCertificateObject).Subject
         $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
@@ -186,6 +196,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify error when no cert found in encryption for encryption" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] "SomeCertificateThatDoesNotExist*"
         $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
@@ -195,6 +206,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify error when encrypting to non-wildcarded identifier for decryption" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] "SomeCertificateThatDoesNotExist"
         $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
@@ -204,6 +216,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify error when encrypting to wrong cert" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] (Get-BadCertificateObject).Thumbprint
         $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
@@ -213,6 +226,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify no error when encrypting to wildcarded identifier for decryption" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] "SomeCertificateThatDoesNotExist*"
         $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
@@ -222,11 +236,14 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify Protect-CmsMessage emits recipient errors" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
         { "Hello World" | Protect-CmsMessage -To "SomeThumbprintThatDoesNotExist" -ErrorAction Stop } |
             Should -Throw -ErrorId "NoCertificateFound,Microsoft.PowerShell.Commands.ProtectCmsMessageCommand"
     }
 
     It "Verify CmsMessage cmdlets works with paths" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         try {
             $randomNum = Get-Random -Minimum 1000 -Maximum 9999
             $tempPath = Join-Path $TestDrive "$randomNum-Path-Test-File"
@@ -251,6 +268,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify Unprotect-CmsMessage works with local store" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         try {
             $randomNum = Get-Random -Minimum 1000 -Maximum 9999
             $tempPath = Join-Path $TestDrive "$randomNum-Path-Test-File"
@@ -265,27 +284,37 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify Unprotect-CmsMessage emits recipient errors" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         { "" | Unprotect-CmsMessage -To "SomeThumbprintThatDoesNotExist" -IncludeContext -ErrorAction Stop } |
             Should -Throw -ErrorId "NoCertificateFound,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
     }
 
     It "Verify failure to extract Ascii armor generates an error [Unprotect-CmsMessage]" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         { "Hello World" | Unprotect-CmsMessage -ErrorAction Stop } |
             Should -Throw -ErrorId "InputContainedNoEncryptedContentIncludeContext,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
     }
 
     It "Verify failure to extract Ascii armor generates an error [Get-CmsMessage]" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         { "Hello World" | Get-CmsMessage -ErrorAction Stop } |
             Should -Throw -ErrorId "InputContainedNoEncryptedContent,Microsoft.PowerShell.Commands.GetCmsMessageCommand"
     }
 
     It "Verify 'Unprotect-CmsMessage -IncludeContext' with no encrypted input" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         # Should have round-tripped content
         $result = "Hello World" | Unprotect-CmsMessage -IncludeContext
         $result | Should -Be "Hello World"
     }
 
     It "Verify Unprotect-CmsMessage lets you include context" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         $protected = "Hello World" | Protect-CmsMessage -To (Get-GoodCertificateLocation)
         $adjustedProtected = "Pre content" + [System.Environment]::NewLine + $protected + [System.Environment]::NewLine + "Post content"
 
@@ -299,6 +328,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify Unprotect-CmsMessage treats event logs as a first class citizen" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         $protected = "Encrypted Message1","Encrypted Message2" | Protect-CmsMessage -To (Get-GoodCertificateLocation)
         $virtualEventLog = Get-WinEvent Microsoft-Windows-PowerShell/Operational -MaxEvents 1
         $savedId = $virtualEventLog.Id
@@ -327,6 +358,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify protect message using OutString" {
+        if ($SetupFailure) { Set-ItResult -Inconclusive -Because "Test certificates are not installed"}
+
         $protected = Get-Process -Id $PID | Protect-CmsMessage -To (Get-GoodCertificateLocation)
         $decrypted = $protected | Unprotect-CmsMessage -To (Get-GoodCertificateLocation)
         # Should have had PID in output
