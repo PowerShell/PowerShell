@@ -2039,7 +2039,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         process.WaitForExit();
 #else
-                        if (_credential != null)
+                        if (_credential is not null)
                         {
                             // If we are running as a different user, we cannot use a job object, so just wait on the process
                             process.WaitForExit();
