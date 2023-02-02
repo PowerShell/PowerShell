@@ -67,11 +67,13 @@ Describe "Test-Json" -Tags "CI" {
 "@
 
         $validJsonPath = Join-Path -Path $TestDrive -ChildPath 'validJson.json'
+        $validLiteralJsonPath = Join-Path -Path $TestDrive -ChildPath "[valid]Json.json"
         $invalidNodeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidNodeInJson.json'
         $invalidTypeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidTypeInJson.json'
         $invalidTypeInJson2Path = Join-Path -Path $TestDrive -ChildPath 'invalidTypeInJson2.json'
 
         Set-Content -Path $validJsonPath -Value $validJson
+        Set-Content -LiteralPath $validLiteralJsonPath -Value $validJson
         Set-Content -Path $invalidNodeInJsonPath -Value $invalidNodeInJson
         Set-Content -Path $invalidTypeInJsonPath -Value $invalidTypeInJson
         Set-Content -Path $invalidTypeInJson2Path -Value $invalidTypeInJson2
@@ -106,6 +108,22 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Json file specified using -JsonFile is valid" {
         Test-Json -JsonFile $validJsonPath | Should -BeTrue
+    }
+
+    It "Json file specified using -LiteralPath is valid" {
+        Test-Json -LiteralPath $validLiteralJsonPath | Should -BeTrue
+    }
+
+    It "Json file specified using LiteralPath alias -PSPath is valid" {
+        Test-Json -PSPath $validLiteralJsonPath | Should -BeTrue
+    }
+
+    It "Json file specified using -Path from pipeline is valid" {
+        (Get-ChildItem -Path $validJsonPath -File | Test-Json) | Should -BeTrue
+    }
+
+    It "Json file specified using -LiteralPath from pipeline is valid" {
+        (Get-ChildItem -LiteralPath $validLiteralJsonPath -File | Test-Json) | Should -BeTrue
     }
 
     It "Json file is valid against a valid schema from string" {
@@ -168,6 +186,15 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Test-Json throw if a path from file is invalid" {
         { Test-Json -Path $missingJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Test-Json throw if a path from file using -Path is a literal path" {
+        { Test-Json -Path $validLiteralJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Json file throw if a path from file using -LiteralPath is a regular expression" {
+        { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "*Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "[a-z]Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from string" -TestCases @(

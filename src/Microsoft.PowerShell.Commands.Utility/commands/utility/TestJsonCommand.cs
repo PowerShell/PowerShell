@@ -23,9 +23,12 @@ namespace Microsoft.PowerShell.Commands
         private const string JsonStringParameterSet = "JsonString";
         private const string JsonStringWithSchemaStringParameterSet = "JsonStringWithSchemaString";
         private const string JsonStringWithSchemaFileParameterSet = "JsonStringWithSchemaFile";
-        private const string JsonFileParameterSet = "JsonFile";
-        private const string JsonFileWithSchemaStringParameterSet = "JsonFileWithSchemaString";
-        private const string JsonFileWithSchemaFileParameterSet = "JsonFileWithSchemaFile";
+        private const string JsonPathParameterSet = "JsonPath";
+        private const string JsonPathWithSchemaStringParameterSet = "JsonPathWithSchemaString";
+        private const string JsonPathWithSchemaFileParameterSet = "JsonPathWithSchemaFile";
+        private const string JsonLiteralPathParameterSet = "JsonLiteralPath";
+        private const string JsonLiteralPathWithSchemaStringParameterSet = "JsonLiteralPathWithSchemaString";
+        private const string JsonLiteralPathWithSchemaFileParameterSet = "JsonLiteralPathWithSchemaFile";
 
         /// <summary>
         /// Gets or sets JSON string to be validated.
@@ -38,11 +41,32 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets JSON file path to be validated.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = JsonFileParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = JsonPathParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = JsonPathWithSchemaStringParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = JsonPathWithSchemaFileParameterSet)]
         [Alias("JsonFile")]
         public string Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets JSON literal file path to be validated.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = JsonLiteralPathParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = JsonLiteralPathWithSchemaStringParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = JsonLiteralPathWithSchemaFileParameterSet)]
+        [Alias("PSPath", "LP")]
+        public string LiteralPath
+        {
+            get
+            {
+                return _isLiteralPath ? Path : null;
+            }
+
+            set
+            {
+                _isLiteralPath = true;
+                Path = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets schema to validate the JSON against.
@@ -53,7 +77,8 @@ namespace Microsoft.PowerShell.Commands
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonStringWithSchemaStringParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonFileWithSchemaStringParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonPathWithSchemaStringParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonLiteralPathWithSchemaStringParameterSet)]
         [ValidateNotNullOrEmpty]
         public string Schema { get; set; }
 
@@ -62,11 +87,12 @@ namespace Microsoft.PowerShell.Commands
         /// This is optional parameter.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonStringWithSchemaFileParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonFileWithSchemaFileParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonPathWithSchemaFileParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = JsonLiteralPathWithSchemaFileParameterSet)]
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
-        private string _json;
+        private bool _isLiteralPath;
         private JsonSchema _jschema;
 
         /// <summary>
@@ -96,32 +122,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string resolvedpath = string.Empty;
-
-            try
-            {
-                if (Path != null)
-                {
-                    resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path);
-                    _json = File.ReadAllText(resolvedpath);
-                }
-            }
-            catch (Exception e) when (
-
-                // Handle exceptions related to file access to provide more specific error message
-                // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
-                e is IOException ||
-                e is UnauthorizedAccessException ||
-                e is NotSupportedException ||
-                e is SecurityException)
-            {
-                Exception exception = new(
-                    string.Format(
-                        CultureInfo.CurrentUICulture,
-                        TestJsonCmdletStrings.JsonFileOpenFailure,
-                        resolvedpath),
-                    e);
-                ThrowTerminatingError(new ErrorRecord(exception, "JsonFileOpenFailure", ErrorCategory.OpenError, resolvedpath));
-            }
 
             try
             {
@@ -181,15 +181,44 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             bool result = true;
+            string resolvedPath = string.Empty;
+            string jsonToParse = string.Empty;
 
             if (Json != null)
             {
-                _json = Json;
+                jsonToParse = Json;
+            }
+
+            if (Path != null)
+            {
+                try
+                {
+                    resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
+                    jsonToParse = File.ReadAllText(resolvedPath);
+                }
+                catch (Exception e) when (
+
+                    // Handle exceptions related to file access to provide more specific error message
+                    // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
+                    e is IOException ||
+                    e is UnauthorizedAccessException ||
+                    e is NotSupportedException ||
+                    e is SecurityException ||
+                    e is SessionStateException)
+                {
+                    Exception exception = new(
+                        string.Format(
+                            CultureInfo.CurrentUICulture,
+                            TestJsonCmdletStrings.JsonFileOpenFailure,
+                            resolvedPath),
+                        e);
+                    ThrowTerminatingError(new ErrorRecord(exception, "JsonFileOpenFailure", ErrorCategory.OpenError, resolvedPath));
+                }
             }
 
             try
             {
-                var parsedJson = JToken.Parse(_json);
+                var parsedJson = JToken.Parse(jsonToParse);
 
                 if (_jschema != null)
                 {
@@ -214,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
                 result = false;
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
-                WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, _json));
+                WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, jsonToParse));
             }
 
             WriteObject(result);
