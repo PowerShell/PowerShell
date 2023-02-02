@@ -714,7 +714,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         Invoke-WebRequest -Uri $uri -OutFile $TestDrive
 
         Test-Path $outFile | Should -Be $true
-        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Length
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
@@ -2420,7 +2420,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-RestMethod -OutFile folder Downloads the file and names it" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $content = Invoke-RestMethod -Uri $uri
+        $content = Invoke-WebRequest -Uri $uri
         $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
 
         # ensure the file does not exist
