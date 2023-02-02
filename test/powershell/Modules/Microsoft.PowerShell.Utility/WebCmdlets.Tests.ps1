@@ -2428,7 +2428,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         Invoke-RestMethod -Uri $uri -OutFile $TestDrive
 
         Test-Path $outFile | Should -Be $true
-        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Length
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
     It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
