@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
-        private bool _isLiteralPath;
+        private bool _isLiteralPath = false;
         private JsonSchema _jschema;
 
         /// <summary>
