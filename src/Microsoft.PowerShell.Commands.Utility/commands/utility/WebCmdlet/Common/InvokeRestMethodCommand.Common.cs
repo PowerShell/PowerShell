@@ -139,7 +139,8 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(obj);
                 }
             }
-            else if (ShouldSaveToOutFile)
+            
+            if (ShouldSaveToOutFile)
             {
                 StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
