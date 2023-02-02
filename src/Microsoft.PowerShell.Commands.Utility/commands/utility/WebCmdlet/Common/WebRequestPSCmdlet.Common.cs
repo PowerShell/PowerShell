@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 if (_parseRelLink || _followRelLink)
                                 {
-                                    ParseLinkHeader(response, uri);
+                                    ParseLinkHeader(response);
                                 }
 
                                 ProcessResponse(response);
@@ -1691,8 +1691,9 @@ namespace Microsoft.PowerShell.Commands
             SetRequestContent(request, body);
         }
 
-        internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
+        internal void ParseLinkHeader(HttpResponseMessage response)
         {
+            Uri requestUri = response.RequestMessage.RequestUri;
             if (_relationLink is null)
             {
                 // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
