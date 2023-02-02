@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         private const int BUFFERSIZE = 16;
 
         /// <summary>
-        /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
+        /// For cases where a homogeneous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
         private readonly List<byte> _inputBuffer = new();
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _groupInput = true;
 
         /// <summary>
-        /// Keep track of prior input types to determine if we're given a heterogenous collection.
+        /// Keep track of prior input types to determine if we're given a heterogeneous collection.
         /// </summary>
         private Type _lastInputType;
 
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Random _idGenerator = new();
 
         private static string GetGroupLabel(Type inputType)
-            => string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{inputType.Name} ({inputType.FullName}) <{_idGenerator.Next():X8}>");
+            => string.Format("{0} ({1}) <{2:X8}>", inputType.Name, inputType.FullName, _idGenerator.Next());
 
         private void FlushInputBuffer()
         {

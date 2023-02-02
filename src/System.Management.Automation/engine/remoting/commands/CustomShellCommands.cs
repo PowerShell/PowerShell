@@ -544,9 +544,7 @@ else
                 string restartServiceTarget = StringUtil.Format(RemotingErrorIdStrings.RestartWSManServiceTarget, "WinRM");
 
                 string restartWSManRequiredForUI = StringUtil.Format(RemotingErrorIdStrings.RestartWSManRequiredShowUI,
-                    string.Format(CultureInfo.InvariantCulture,
-                        "Set-PSSessionConfiguration {0} -ShowSecurityDescriptorUI",
-                        shellName));
+                    string.Create(CultureInfo.InvariantCulture, $"Set-PSSessionConfiguration {shellName} -ShowSecurityDescriptorUI"));
 
                 // gather -WhatIf, -Confirm parameter data and pass it to the script block
                 bool whatIf = false;
