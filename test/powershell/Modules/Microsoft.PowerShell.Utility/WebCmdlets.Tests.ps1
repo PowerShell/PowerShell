@@ -704,6 +704,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
+    It "Invoke-WebRequest -OutFile folder Downloads the file and names it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
+        Invoke-WebRequest -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Length
+    }
+
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
         #Validate that exception is not thrown when response headers are missing Content-Type.
         $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = ''}
@@ -2393,6 +2406,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
         $jsonContent.headers.Host | Should -Be $uri.Authority
+    }
+
+    It "Invoke-RestMethod -OutFile folder Downloads the file and names it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-RestMethod -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
+        Invoke-RestMethod -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Length
     }
 
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
