@@ -202,7 +202,7 @@
     <value>Downloaded: {0} of {1}</value>
   </data>
    <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. The Resume switch can only be used on paths including a file name.</value>
+    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>

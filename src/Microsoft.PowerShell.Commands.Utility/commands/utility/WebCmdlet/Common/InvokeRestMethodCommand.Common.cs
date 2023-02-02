@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Directory.Exists(_qualifiedOutFile))
                 {
                     // Get file name from last segment of Uri
-                    _qualifiedOutFile = Path.Combine(_qualifiedOutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
+                    _qualifiedOutFile = Path.Join(_qualifiedOutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
                 }
 
                 StreamHelper.SaveStreamToFile(baseResponseStream, _qualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
