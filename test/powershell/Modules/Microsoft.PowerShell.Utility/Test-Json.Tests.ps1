@@ -114,8 +114,9 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -LiteralPath $validLiteralJsonPath | Should -BeTrue
     }
 
-    It "Json file specified using LiteralPath alias -PSPath is valid" {
+    It "Json file specified using LiteralPath aliases -PSPath and -LP is valid" {
         Test-Json -PSPath $validLiteralJsonPath | Should -BeTrue
+        Test-Json -LP $validLiteralJsonPath | Should -BeTrue
     }
 
     It "Json file specified using -Path from pipeline is valid" {
@@ -192,7 +193,7 @@ Describe "Test-Json" -Tags "CI" {
         { Test-Json -Path $validLiteralJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
-    It "Json file throw if a path from file using -LiteralPath is a regular expression" {
+    It "Json file throw if a path from file using -LiteralPath is a wildcard or regular expression" {
         { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "*Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
         { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "[a-z]Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
