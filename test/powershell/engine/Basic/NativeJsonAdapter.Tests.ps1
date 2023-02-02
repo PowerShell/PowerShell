@@ -5,7 +5,7 @@ Describe "Native commands will properly call a JSON adapter" -Tag "CI" {
     BeforeAll {
         # no useful overlap in commands, we have use specific commands for each platform
         $winCmd = "whoami"
-        $winArguments = "/USER","FO","CSV"
+        $winArguments = "/USER","/FO","CSV"
 
         $nixCmd = "hostname"
         $nixArguments = "-f"
@@ -19,13 +19,15 @@ Describe "Native commands will properly call a JSON adapter" -Tag "CI" {
         $cmd = $IsWindows ? $winCmd : $nixCmd
 
         # adapters
-        $psAdapterName = "hostname-json.ps1"
+        $nixPSAdapterName = "hostname-json.ps1"
+        $winPSAdapterName = "whoami-json.ps1"
         $winAdapterName = "whoami-json.bat"
         $nixAdapterName = "hostname-json.sh"
         $nativeAdapterName = $IsWindows ? $winAdapterName : $nixAdapterName
+        $scriptAdapterName = $IsWindows ? $winPSAdapterName : $nixPSAdapterName
 
         # path to the adapter
-        $psAdapterPath = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath $psAdapterName
+        $psAdapterPath = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath $scriptAdapterName
         $winAdapterPath = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath $winAdapterName
         $nixAdapterPath = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath $nixAdapterName
         $nativeAdapterPath = $IsWindows ? $winAdapterPath : $nixAdapterPath
