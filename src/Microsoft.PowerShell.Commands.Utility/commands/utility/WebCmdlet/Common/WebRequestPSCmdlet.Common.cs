@@ -1706,12 +1706,12 @@ namespace Microsoft.PowerShell.Commands
 
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
+            const string Pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
             if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
             {
                 foreach (string linkHeader in links)
                 {
-                    MatchCollection matchCollection = Regex.Matches(linkHeader, pattern);
+                    MatchCollection matchCollection = Regex.Matches(linkHeader, Pattern);
                     foreach (Match match in matchCollection)
                     {
                         if (match.Success)
