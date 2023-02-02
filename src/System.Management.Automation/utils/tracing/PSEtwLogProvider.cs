@@ -127,7 +127,7 @@ namespace System.Management.Automation.Tracing
                         if (newState == CommandState.Stopped ||
                             newState == CommandState.Terminated)
                         {
-                            // When state is stopped or termianted only log the CommandName
+                            // When state is stopped or terminated only log the CommandName
                             payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext, newState.ToString()));
                         }
                         else

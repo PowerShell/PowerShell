@@ -222,7 +222,7 @@
                 <RegistryValue Type="string" Name="InstallDir" Value="[VersionFolder]" KeyPath="yes"/>
               </RegistryKey>
             </Component>
-            <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
+            <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administrator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
             <Component Id="ExplorerContextMenu">
               <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>

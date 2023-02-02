@@ -2563,7 +2563,7 @@ namespace System.Management.Automation.Language
 
             // Make sure we didn't consume anything because we didn't find
             // any nested tokens (no variable or subexpression.)
-            Diagnostics.Assert(PeekChar() == c1, "We accidently consumed a character we shouldn't have.");
+            Diagnostics.Assert(PeekChar() == c1, "We accidentally consumed a character we shouldn't have.");
 
             return false;
         }

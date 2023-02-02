@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             // catch all exceptions here, we are going to report them via return value.
-            // Example of catched exception: one of conversions to Version failed.
+            // Example of caught exception: one of conversions to Version failed.
             catch (Exception e)
             {
                 return e;

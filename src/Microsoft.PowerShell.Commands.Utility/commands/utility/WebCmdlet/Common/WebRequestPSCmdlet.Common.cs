@@ -1574,7 +1574,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="content">A byte array containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, byte[] content)
@@ -1599,7 +1599,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="content">A String object containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, string content)
@@ -1678,7 +1678,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="contentStream">A Stream object containing the content data.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
@@ -1700,7 +1700,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
         /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property.</returns>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
@@ -1808,7 +1808,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var item in items)
                 {
-                    // Recruse, but do not enumerate the next level. IEnumerables will be treated as single values.
+                    // Recurse, but do not enumerate the next level. IEnumerables will be treated as single values.
                     AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
                 }
             }
