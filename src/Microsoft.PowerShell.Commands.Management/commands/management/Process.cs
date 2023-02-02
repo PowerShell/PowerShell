@@ -2039,21 +2039,29 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         process.WaitForExit();
 #else
-                        _waithandle = new ManualResetEvent(false);
-
-                        // Create and start the job object
-                        ProcessCollection jobObject = new();
-                        if (jobObject.AssignProcessToJobObject(process))
+                        if (_credential != null)
                         {
-                            // Wait for the job object to finish
-                            jobObject.WaitOne(_waithandle);
-                        }
-                        else if (!process.HasExited)
-                        {
-                            // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                            process.Exited += myProcess_Exited;
-                            process.EnableRaisingEvents = true;
+                            // If we are running as a different user, we cannot use a job object, so just wait on the process
                             process.WaitForExit();
+                        }
+                        else
+                        {
+                            _waithandle = new ManualResetEvent(false);
+
+                            // Create and start the job object
+                            ProcessCollection jobObject = new();
+                            if (jobObject.AssignProcessToJobObject(process))
+                            {
+                                // Wait for the job object to finish
+                                jobObject.WaitOne(_waithandle);
+                            }
+                            else if (!process.HasExited)
+                            {
+                                // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+                                process.Exited += myProcess_Exited;
+                                process.EnableRaisingEvents = true;
+                                process.WaitForExit();
+                            }
                         }
 #endif
                     }
