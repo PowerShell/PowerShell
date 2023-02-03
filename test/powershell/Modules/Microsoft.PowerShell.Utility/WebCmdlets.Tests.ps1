@@ -2496,8 +2496,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links <name>" -TestCases @(
-        $maxLinks = 5
-        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5}
         @{name = ''; uri = $originalUri}
         @{name = 'if the uri has no scheme'; uri = $originalUri.OriginalString.Split("//")[1]}
     ) {
@@ -2505,8 +2504,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
-        $result.Output.Count | Should -BeExactly $maxLinks
-        1..$maxLinks | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
+        $result.Output.Count | Should -BeExactly 5
+        1..5 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly limits to -MaximumRelLink" {
