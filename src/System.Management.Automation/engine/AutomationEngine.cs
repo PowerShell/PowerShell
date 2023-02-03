@@ -105,12 +105,22 @@ namespace System.Management.Automation
 
             if (errors.Length > 0)
             {
-                if (errors[0].IncompleteInput)
+                ParseException ex = errors[0].IncompleteInput
+                    ? new IncompleteParseException(errors[0].Message, errors[0].ErrorId)
+                    : new ParseException(errors);
+
+                if (addToHistory)
                 {
-                    throw new IncompleteParseException(errors[0].Message, errors[0].ErrorId);
+                    // Try associating the parsing error with the history item if we can.
+                    InvocationInfo invInfo = ex.ErrorRecord.InvocationInfo;
+                    LocalRunspace localRunspace = Context.CurrentRunspace as LocalRunspace;
+                    if (invInfo is not null && localRunspace is not null && localRunspace.History is not null)
+                    {
+                        invInfo.HistoryId = localRunspace.History.GetNextHistoryId();
+                    }
                 }
 
-                throw new ParseException(errors);
+                throw ex;
             }
 
             return new ScriptBlock(ast, isFilter: false);

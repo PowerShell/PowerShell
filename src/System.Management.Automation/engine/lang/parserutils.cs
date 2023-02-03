@@ -1973,6 +1973,22 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        internal static void UpdateExceptionErrorRecordHistoryId(RuntimeException exception, ExecutionContext context)
+        {
+            InvocationInfo invInfo = exception.ErrorRecord.InvocationInfo;
+            if (invInfo is null || invInfo.HistoryId != -1)
+            {
+                return;
+            }
+
+            if (context is null || context.CurrentCommandProcessor is null)
+            {
+                return;
+            }
+
+            invInfo.HistoryId = context.CurrentCommandProcessor.Command.MyInvocation.HistoryId;
+        }
     }
     #endregion InterpreterError
 
