@@ -795,8 +795,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present <name>" -TestCases @(
         $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
-        @{name = ''; uri = $originalUri}
-        @{name = 'and the uri has no scheme'; uri = $originalUri.OriginalString.Split("//")[1]}
+        @{name = '(URI with scheme)'; uri = $originalUri}
+        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
     ) {
         param($uri)
         $command = "Invoke-WebRequest -Uri '$uri'"
@@ -2496,16 +2496,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links <name>" -TestCases @(
-        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5}
-        @{name = ''; uri = $originalUri}
-        @{name = 'if the uri has no scheme'; uri = $originalUri.OriginalString.Split("//")[1]}
+        $maxLinks = 5
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        @{name = '(URI with scheme)'; uri = $originalUri}
+        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
     ) {
         param($uri)
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
-        $result.Output.Count | Should -BeExactly 5
-        1..5 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
+        $result.Output.Count | Should -BeExactly $maxLinks
+        1..$maxLinks | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly limits to -MaximumRelLink" {
