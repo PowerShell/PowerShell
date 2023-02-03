@@ -2496,12 +2496,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links <name>" -TestCases @(
+        $maxLinks = 5
         $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
         @{name = ''; uri = $originalUri}
         @{name = 'if the uri has no scheme'; uri = $originalUri.OriginalString.Split("//")[1]}
     ) {
         param($uri)
-        $maxLinks = 5
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
