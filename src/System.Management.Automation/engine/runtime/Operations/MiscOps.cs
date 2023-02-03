@@ -463,6 +463,20 @@ namespace System.Management.Automation
                             var ast = Parser.ParseInput(applicationInfo.JsonAdapter.Name, out tokenList, out errorList);
                             CommandBaseAst cmdAst = ast?.Find(a => a is CommandBaseAst, false) as CommandBaseAst;
                             CommandAst jsonCommandAst = ast?.Find(a => a is CommandAst, false) as CommandAst;
+
+                            // We want to not add the json adapter if the next element in the pipeline is the json adapter.
+                            // We peek at the next element of the pipeline to see if it is the json adapter, and
+                            // if it is, we will not add the adapter to the pipeline automatically.
+                            if (i + 1 < pipeElements.Length)
+                            {
+                                var nextCommand = pipeElementAsts[i + 1] as CommandAst;
+                                if (nextCommand != null && nextCommand.GetCommandName().Equals(applicationInfo.JsonAdapter.Name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    // The next element is the json adapter, so we will not add this one to the pipeline.
+                                    jsonCommandAst = null;
+                                }
+                            }
+
                             // Process the Json adapter and add it to the pipeline.
                             if (jsonCommandAst != null && errorList.Length == 0)
                             {
