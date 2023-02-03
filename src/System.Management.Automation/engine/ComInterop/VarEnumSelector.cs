@@ -455,7 +455,7 @@ namespace System.Management.Automation.ComInterop
                 if (elementType == typeof(object) || elementType == typeof(DBNull))
                 {
                     //no meaningful value to pass ByRef.
-                    //perhaps the calee will replace it with something.
+                    //perhaps the callee will replace it with something.
                     //need to pass as a variant reference
                     elementVarEnum = VarEnum.VT_VARIANT;
                 }

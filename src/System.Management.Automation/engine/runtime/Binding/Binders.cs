@@ -94,7 +94,7 @@ namespace System.Management.Automation.Language
             {
                 var effectiveArgType = Adapter.EffectiveArgumentType(obj.Value);
                 var methodInfo = effectiveArgType != typeof(object[])
-                    ? CachedReflectionInfo.PSInvokeMemberBinder_IsHomogenousArray.MakeGenericMethod(effectiveArgType.GetElementType())
+                    ? CachedReflectionInfo.PSInvokeMemberBinder_IsHomogeneousArray.MakeGenericMethod(effectiveArgType.GetElementType())
                     : CachedReflectionInfo.PSInvokeMemberBinder_IsHeterogeneousArray;
 
                 BindingRestrictions restrictions;
@@ -7372,7 +7372,7 @@ namespace System.Management.Automation.Language
 
         #region Runtime helpers
 
-        internal static bool IsHomogenousArray<T>(object[] args)
+        internal static bool IsHomogeneousArray<T>(object[] args)
         {
             if (args.Length == 0)
             {

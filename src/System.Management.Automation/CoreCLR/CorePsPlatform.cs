@@ -898,7 +898,7 @@ namespace System.Management.Automation
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-                // C bools are 1 byte and so must be marshaled as I1
+                // C bools are 1 byte and so must be marshalled as I1
 
                 [LibraryImport(psLib)]
                 internal static partial int GetErrorCategory(int errno);

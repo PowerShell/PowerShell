@@ -2129,7 +2129,7 @@ namespace System.Management.Automation
         {
             get
             {
-                // The debugger can be disbled if there are no breakpoints
+                // The debugger can be disabled if there are no breakpoints
                 // left and if we are not currently stepping in the debugger.
                 return _idToBreakpoint.IsEmpty &&
                        _currentDebuggerAction != DebuggerResumeAction.StepInto &&
@@ -3539,7 +3539,7 @@ namespace System.Management.Automation
                 else if ((command.Commands.Count > 0) &&
                          (command.Commands[0].CommandText.IndexOf(".EnterNestedPrompt()", StringComparison.OrdinalIgnoreCase) > 0))
                 {
-                    // Prevent a host EnterNestedPrompt() call from occuring in an active debugger.
+                    // Prevent a host EnterNestedPrompt() call from occurring in an active debugger.
                     // Host nested prompt makes no sense in this case and can cause host to stop responding depending on host implementation.
                     throw new PSNotSupportedException();
                 }

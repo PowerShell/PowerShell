@@ -5101,7 +5101,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                             // We don't use the Directory.EnumerateFiles() for Unix because the path
                             // may contain additional globbing patterns such as '[ab]'
-                            // which Directory.EnumerateFiles() processes, giving undesireable
+                            // which Directory.EnumerateFiles() processes, giving undesirable
                             // results in this context.
                             if (!File.Exists(result) && !Directory.Exists(result))
                             {

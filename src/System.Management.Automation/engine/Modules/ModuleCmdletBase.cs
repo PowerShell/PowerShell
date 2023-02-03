@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
-                //  - If the current module is a nested module, then the parent module will be specifeid.
+                //  - If the current module is a nested module, then the parent module will be specified.
                 //  - If the current module is a root module, then the parent module will not be specified.
                 string moduleName = parentModule?.Name ?? ModuleIntrinsics.GetModuleName(moduleSpecification.Name);
                 rootedPath = FixFileName(moduleName, moduleBase, moduleSpecification.Name, extension: null, canLoadAssembly: importingModule);

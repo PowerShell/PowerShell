@@ -348,7 +348,7 @@ else
             string localSDDL = GetLocalSddl();
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             string newPluginSbString = string.Format(CultureInfo.InvariantCulture,
                 newPluginSbFormat,
                 WSManNativeApi.ResourceURIPrefix, localSDDL, RemoteManagementUsersSID, InteractiveUsersSID);
@@ -2618,7 +2618,7 @@ else
                 removePluginSbFormat,
                 RemotingConstants.PSPluginDLLName);
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_removePluginSb = ScriptBlock.Create(removePluginScript);
             s_removePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -2834,7 +2834,7 @@ $args[0] | ForEach-Object {{
                 PSSessionConfigurationCommandUtilities.PSCustomShellTypeName,
                 RemotingConstants.PSPluginDLLName);
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_getPluginSb = ScriptBlock.Create(scriptToRun);
             s_getPluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -3258,7 +3258,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 RemotingConstants.PSPluginDLLName, localSDDL, RemoteManagementUsersSID, InteractiveUsersSID);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_setPluginSb = ScriptBlock.Create(setPluginScript);
             s_setPluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4208,7 +4208,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                 enablePluginSbFormat, setWSManConfigCommand, PSSessionConfigurationCommandBase.RemoteManagementUsersSID, PSSessionConfigurationCommandBase.InteractiveUsersSID);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_enablePluginSb = ScriptBlock.Create(enablePluginScript);
             s_enablePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4495,7 +4495,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
                 disablePluginSbFormat);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_disablePluginSb = ScriptBlock.Create(disablePluginScript);
             s_disablePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4902,7 +4902,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
                 RemotingConstants.MaxIdleTimeoutMS, RemotingConstants.PSPluginDLLName);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_enableRemotingSb = ScriptBlock.Create(enableRemotingScript);
             s_enableRemotingSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -5126,7 +5126,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             string disableRemotingScript = string.Format(CultureInfo.InvariantCulture, disablePSRemotingFormat, localSDDL);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_disableRemotingSb = ScriptBlock.Create(disableRemotingScript);
             s_disableRemotingSb.LanguageMode = PSLanguageMode.FullLanguage;
         }

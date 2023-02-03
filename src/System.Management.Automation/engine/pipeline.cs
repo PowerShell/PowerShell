@@ -1040,7 +1040,7 @@ namespace System.Management.Automation.Internal
             }
 
             // We want the value of PSDefaultParameterValues before possibly changing to the commands scopes.
-            // This ensures we use the value from the callers scope, not the callees scope.
+            // This ensures we use the value from the caller's scope, not the callee's scope.
             IDictionary psDefaultParameterValues =
                 firstcommandProcessor.Context.GetVariableValue(SpecialVariables.PSDefaultParameterValuesVarPath, false) as IDictionary;
 

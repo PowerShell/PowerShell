@@ -1478,7 +1478,7 @@ namespace System.Management.Automation
 
             do
             {
-                // Always assume no need to repeat the search for another interation
+                // Always assume no need to repeat the search for another iteration
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_
                 ErrorRecord errorRecordToPass = rte.ErrorRecord;

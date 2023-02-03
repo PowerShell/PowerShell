@@ -2434,7 +2434,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 // Specify the source only if this is for module loading.
-                // The source is used for porper cleaning of the assembly cache when a module is unloaded.
+                // The source is used for proper cleaning of the assembly cache when a module is unloaded.
                 Assembly asm = context.AddAssembly(ssae.Module?.Name, ssae.Name, ssae.FileName, out Exception error);
 
                 if (asm == null || error != null)
@@ -4753,7 +4753,7 @@ end {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd~", "Set-Location ~", isProductCode: true, languageMode: systemLanguageMode),
-            // Win8: 320909. Retaining the original definition to ensure backward compatability.
+            // Win8: 320909. Retaining the original definition to ensure backward compatibility.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
