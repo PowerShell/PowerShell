@@ -725,12 +725,11 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(command.ModuleName))
                 {
-                    if (_excludedModulePatterns is not null && _excludedModulePatterns.Count > 0)
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(command.ModuleName, _excludedModulePatterns, true))
                     {
-                        if (SessionStateUtilities.MatchesAnyWildcardPattern(command.ModuleName, _excludedModulePatterns, true))
-                        {
-                            break;
-                        }
+                        break;
                     }
 
                     if (_isFullyQualifiedModuleSpecified)
@@ -1302,12 +1301,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_excludedModulePatterns is not null && _excludedModulePatterns.Count > 0)
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(current.ModuleName, _excludedModulePatterns, true))
                     {
-                        if (SessionStateUtilities.MatchesAnyWildcardPattern(current.ModuleName, _excludedModulePatterns, true))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
 
                     if (_isFullyQualifiedModuleSpecified)
