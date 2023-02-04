@@ -1011,6 +1011,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="MissingNamespaceAlias" xml:space="preserve">
     <value>Missing namespace alias</value>
   </data>
+  <data name="MissingTypeAlias" xml:space="preserve">
+    <value>Missing type alias</value>
+  </data>
   <data name="MissingEqualsInUsingAlias" xml:space="preserve">
     <value>Missing '=' operator</value>
   </data>
