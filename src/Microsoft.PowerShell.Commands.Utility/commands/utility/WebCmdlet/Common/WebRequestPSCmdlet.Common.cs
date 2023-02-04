@@ -962,7 +962,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (WebSession.Certificates is not null)
             {
-                handler.SslOptions.ClientCertificates.AddRange(WebSession.Certificates);
+                handler.SslOptions.ClientCertificates = new X509CertificateCollection(WebSession.Certificates);
             }
 
             if (SkipCertificateCheck)
@@ -982,10 +982,10 @@ namespace Microsoft.PowerShell.Commands
 
             handler.SslOptions.EnabledSslProtocols = (SslProtocols)SslProtocol;
 
-            HttpClient httpClient = new(handler);
+            // Check timeout setting (in seconds)
+            handler.ConnectTimeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
 
-            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
+            HttpClient httpClient = new(handler);
 
             return httpClient;
         }

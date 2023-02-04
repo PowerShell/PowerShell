@@ -1408,6 +1408,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 ConvertFrom-Json
 
             $result.Status | Should -Be 'OK'
+            $result.Thumbprint | Should -Be $certificate.Thumbprint
         }
     }
 
@@ -2891,6 +2892,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result = Invoke-RestMethod -Uri $uri -Certificate $certificate -SkipCertificateCheck
 
             $result.Status | Should -Be 'OK'
+            $result.Thumbprint | Should -Be $certificate.Thumbprint
         }
     }
 
