@@ -182,7 +182,7 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json throw if a path from file is invalid" {
-        { Test-Json -Path $missingJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Path $missingJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json throw if a path from file using -Path is a literal path" {
@@ -190,8 +190,8 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Json file throw if a path from file using -LiteralPath is a wildcard or regular expression" {
-        { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "*Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
-        { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "[a-z]Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "JsonFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "*Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -LiteralPath (Join-Path -Path $TestDrive -ChildPath "[a-z]Json.json") -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from string" -TestCases @(

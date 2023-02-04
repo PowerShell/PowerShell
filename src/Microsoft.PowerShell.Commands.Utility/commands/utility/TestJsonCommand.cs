@@ -190,28 +190,50 @@ namespace Microsoft.PowerShell.Commands
 
             if (Path != null)
             {
-                try
-                {
-                    resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
-                    jsonToParse = File.ReadAllText(resolvedPath);
-                }
-                catch (Exception e) when (
+                resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
 
-                    // Handle exceptions related to file access to provide more specific error message
-                    // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
-                    e is IOException ||
-                    e is UnauthorizedAccessException ||
-                    e is NotSupportedException ||
-                    e is SecurityException ||
-                    e is SessionStateException)
+                if (!string.IsNullOrEmpty(resolvedPath) && System.IO.File.Exists(resolvedPath))
                 {
-                    Exception exception = new(
+                    try
+                    {
+                        jsonToParse = File.ReadAllText(resolvedPath);
+                    }
+                    catch (Exception e) when (
+
+                        // Handle exceptions related to file access to provide more specific error message
+                        // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
+                        e is IOException ||
+                        e is UnauthorizedAccessException ||
+                        e is NotSupportedException ||
+                        e is SecurityException)
+                    {
+                        Exception exception = new(
+                            string.Format(
+                                CultureInfo.CurrentUICulture,
+                                TestJsonCmdletStrings.JsonFileOpenFailure,
+                                resolvedPath),
+                            e);
+
+                        ThrowTerminatingError(new ErrorRecord(
+                            exception,
+                            "JsonFileOpenFailure",
+                            ErrorCategory.OpenError,
+                            resolvedPath));
+                    }
+                }
+                else
+                {
+                    ItemNotFoundException exception = new(
                         string.Format(
-                            CultureInfo.CurrentUICulture,
-                            TestJsonCmdletStrings.JsonFileOpenFailure,
-                            resolvedPath),
-                        e);
-                    ThrowTerminatingError(new ErrorRecord(exception, "JsonFileOpenFailure", ErrorCategory.OpenError, resolvedPath));
+                            SessionStateStrings.PathNotFound,
+                            resolvedPath)
+                        );
+
+                    ThrowTerminatingError(new ErrorRecord(
+                        exception,
+                        "FileNotFound",
+                        ErrorCategory.ObjectNotFound,
+                        resolvedPath));
                 }
             }
 
