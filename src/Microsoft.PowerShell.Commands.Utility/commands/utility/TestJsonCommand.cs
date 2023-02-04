@@ -192,11 +192,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
 
-                if (!string.IsNullOrEmpty(resolvedPath) && System.IO.File.Exists(resolvedPath))
-                {
-                    jsonToParse = File.ReadAllText(resolvedPath);
-                }
-                else
+                if (string.IsNullOrEmpty(resolvedPath) || !System.IO.File.Exists(resolvedPath))
                 {
                     ItemNotFoundException exception = new(
                         resolvedPath,
@@ -207,6 +203,8 @@ namespace Microsoft.PowerShell.Commands
                         exception.ErrorRecord,
                         exception));
                 }
+
+                jsonToParse = File.ReadAllText(resolvedPath);
             }
 
             try
