@@ -224,16 +224,13 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     ItemNotFoundException exception = new(
-                        string.Format(
-                            SessionStateStrings.PathNotFound,
-                            resolvedPath)
-                        );
+                        resolvedPath,
+                        "PathNotFound",
+                        SessionStateStrings.PathNotFound);
 
                     ThrowTerminatingError(new ErrorRecord(
-                        exception,
-                        "FileNotFound",
-                        ErrorCategory.ObjectNotFound,
-                        resolvedPath));
+                        exception.ErrorRecord,
+                        exception));
                 }
             }
 
