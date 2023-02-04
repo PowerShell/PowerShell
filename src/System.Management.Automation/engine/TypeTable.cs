@@ -1819,7 +1819,7 @@ namespace System.Management.Automation.Runspaces
                 _errors = new Collection<string>();
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     _errors.Add(info.GetString(key));
                 }
             }
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation.Runspaces
 
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     info.AddValue(key, _errors[index]);
                 }
             }
@@ -3036,7 +3036,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Issue appropriate errors and remove members as necessary if:
         ///     - The serialization settings do not fall into one of the combinations of the table below
-        ///     - If the serialization settings notes' values cannot be converted to the propper type
+        ///     - If the serialization settings notes' values cannot be converted to the proper type
         ///     - If serialization settings members are of the wrong member type
         ///     - DefaultDisplayPropertySet is not an PSPropertySet
         ///     - DefaultDisplayProperty is not an PSPropertyInfo
@@ -4732,15 +4732,9 @@ namespace System.Management.Automation.Runspaces
             PSHost host,
             out bool failToLoadFile)
         {
-            if (filePath == null)
-            {
-                throw new ArgumentNullException(nameof(filePath));
-            }
+            ArgumentNullException.ThrowIfNull(filePath);
 
-            if (errors == null)
-            {
-                throw new ArgumentNullException(nameof(errors));
-            }
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (isShared)
             {
@@ -4810,10 +4804,9 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors,
             bool isRemove)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
-            if (errors == null)
-                throw new ArgumentNullException(nameof(errors));
+            ArgumentNullException.ThrowIfNull(type);
+
+            ArgumentNullException.ThrowIfNull(errors);
 
             if (isShared)
             {

@@ -10,9 +10,9 @@
 // On the use of DangerousGetHandle: If the handle has been invalidated, then the API we pass it to will return an error.  These
 // handles should not be exposed to recycling attacks (because they are not exposed at all), but if they were, the worse they
 // could do is diddle with the console buffer.
-#pragma warning disable 1634, 1691
 
 using System;
+using System.Buffers;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+                return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
             }
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top},{Right},{Bottom}");
             }
         }
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "Size: {0}, Visible: {1}", Size, Visible);
+                return string.Create(CultureInfo.InvariantCulture, $"Size: {Size}, Visible: {Visible}");
             }
         }
 
@@ -1249,8 +1249,7 @@ namespace Microsoft.PowerShell
             {
                 if (firstLeftTrailingRow >= 0)
                 {
-                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                        firstLeftTrailingRow, contentsRegion.Left));
+                    throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{firstLeftTrailingRow}, {contentsRegion.Left}]"));
                 }
             }
             else
@@ -1265,8 +1264,7 @@ namespace Microsoft.PowerShell
                     if (leftExisting[r, 0].BufferCellType == BufferCellType.Leading ^
                             contents[r, contentsRegion.Left].BufferCellType == BufferCellType.Trailing)
                     {
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                            r, contentsRegion.Left));
+                        throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Left}]"));
                     }
                 }
             }
@@ -1275,8 +1273,7 @@ namespace Microsoft.PowerShell
             {
                 if (firstRightLeadingRow >= 0)
                 {
-                    throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                            firstRightLeadingRow, contentsRegion.Right));
+                    throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{firstRightLeadingRow}, {contentsRegion.Right}]"));
                 }
             }
             else
@@ -1291,8 +1288,7 @@ namespace Microsoft.PowerShell
                     if (rightExisting[r, 0].BufferCellType == BufferCellType.Leading ^
                             contents[r, contentsRegion.Right].BufferCellType == BufferCellType.Leading)
                     {
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]",
-                            r, contentsRegion.Right));
+                        throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {contentsRegion.Right}]"));
                     }
                 }
             }
@@ -1312,7 +1308,7 @@ namespace Microsoft.PowerShell
                         contents[r, c].Character != 0)
                     {
                         // trailing character is not 0
-                        throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]", r, c));
+                        throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
                     }
 
                     if (contents[r, c].BufferCellType == BufferCellType.Leading)
@@ -1327,7 +1323,7 @@ namespace Microsoft.PowerShell
                         {
                             // for a 2 cell character, either there is no trailing BufferCell or
                             // the trailing BufferCell's character is not 0
-                            throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]", r, c));
+                            throw PSTraceSource.NewArgumentException(string.Create(CultureInfo.InvariantCulture, $"contents[{r}, {c}]"));
                         }
                     }
                 }
@@ -1479,9 +1475,7 @@ namespace Microsoft.PowerShell
                         bSize.X++;
                         SMALL_RECT wRegion = writeRegion;
                         wRegion.Right++;
-                        // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                        // get the error code.
-#pragma warning disable 56523
+
                         result = NativeMethods.WriteConsoleOutput(
                             consoleHandle.DangerousGetHandle(),
                             characterBuffer,
@@ -1491,9 +1485,6 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                        // get the error code.
-#pragma warning disable 56523
                         result = NativeMethods.WriteConsoleOutput(
                             consoleHandle.DangerousGetHandle(),
                             characterBuffer,
@@ -1527,7 +1518,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm writes one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                            Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
@@ -1655,7 +1646,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm writes one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                            Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
@@ -1796,9 +1787,7 @@ namespace Microsoft.PowerShell
             readRegion.Top = (short)origin.Y;
             readRegion.Right = (short)(origin.X + bufferSize.X - 1);
             readRegion.Bottom = (short)(origin.Y + bufferSize.Y - 1);
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
+
             bool result = NativeMethods.ReadConsoleOutput(
                                         consoleHandle.DangerousGetHandle(),
                                         characterBuffer,
@@ -1982,7 +1971,7 @@ namespace Microsoft.PowerShell
                                 // to write is larger than bufferLimit. In that case, the algorithm reads one row
                                 // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                                 // to retry with a smaller bufferSize.X.
-                                Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                                Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                                 bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                                 continue;
                             }
@@ -2152,7 +2141,7 @@ namespace Microsoft.PowerShell
                             // to write is larger than bufferLimit. In that case, the algorithm reads one row
                             // at a time => bufferSize.Y == 1. Then, we can safely leave bufferSize.Y unchanged
                             // to retry with a smaller bufferSize.X.
-                            Dbg.Assert(bufferSize.Y == 1, string.Format(CultureInfo.InvariantCulture, "bufferSize.Y should be 1, but is {0}", bufferSize.Y));
+                            Dbg.Assert(bufferSize.Y == 1, string.Create(CultureInfo.InvariantCulture, $"bufferSize.Y should be 1, but is {bufferSize.Y}"));
                             bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                             continue;
                         }
@@ -2474,9 +2463,6 @@ namespace Microsoft.PowerShell
             DWORD result;
             StringBuilder consoleTitle = new StringBuilder((int)bufferSize);
 
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
             result = NativeMethods.GetConsoleTitle(consoleTitle, bufferSize);
             // If the result is zero, it may mean and error but it may also mean
             // that the window title has been set to null. Since we can't tell the
@@ -2561,42 +2547,54 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // Native WriteConsole doesn't support output buffer longer than 64K.
-            // We need to chop the output string if it is too long.
-            int cursor = 0; // This records the chopping position in output string
-            const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            // Native WriteConsole doesn't support output buffer longer than 64K, so we need to chop the output string if it is too long.
+            // This records the chopping position in output string.
+            int cursor = 0;
+            // This is 64K/4 - 1 to account for possible width of each character.
+            const int MaxBufferSize = 16383;
+            const int MaxStackAllocSize = 512;
+            ReadOnlySpan<char> outBuffer;
 
-            while (cursor < output.Length)
+            // In case that a new line is required, we try to write out the last chunk and the new-line string together,
+            // to avoid one extra call to 'WriteConsole' just for a new line string.
+            while (cursor + MaxBufferSize < output.Length)
             {
-                ReadOnlySpan<char> outBuffer;
+                outBuffer = output.Slice(cursor, MaxBufferSize);
+                cursor += MaxBufferSize;
+                WriteConsole(consoleHandle, outBuffer);
+            }
 
-                if (cursor + MaxBufferSize < output.Length)
+            outBuffer = output.Slice(cursor);
+            if (!newLine)
+            {
+                WriteConsole(consoleHandle, outBuffer);
+                return;
+            }
+
+            char[] rentedArray = null;
+            string lineEnding = Environment.NewLine;
+            int size = outBuffer.Length + lineEnding.Length;
+
+            // We expect the 'size' will often be small, and thus optimize that case with 'stackalloc'.
+            Span<char> buffer = size <= MaxStackAllocSize ? stackalloc char[size] : default;
+
+            try
+            {
+                if (buffer.IsEmpty)
                 {
-                    outBuffer = output.Slice(cursor, MaxBufferSize);
-                    cursor += MaxBufferSize;
-
-                    WriteConsole(consoleHandle, outBuffer);
+                    rentedArray = ArrayPool<char>.Shared.Rent(size);
+                    buffer = rentedArray.AsSpan().Slice(0, size);
                 }
-                else
-                {
-                    outBuffer = output.Slice(cursor);
-                    cursor = output.Length;
 
-                    if (newLine)
-                    {
-                        var endOfLine = Environment.NewLine.AsSpan();
-                        var endOfLineLength = endOfLine.Length;
-#pragma warning disable CA2014
-                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
-#pragma warning restore CA2014
-                        outBuffer.CopyTo(outBufferLine);
-                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
-                        WriteConsole(consoleHandle, outBufferLine);
-                    }
-                    else
-                    {
-                        WriteConsole(consoleHandle, outBuffer);
-                    }
+                outBuffer.CopyTo(buffer);
+                lineEnding.CopyTo(buffer.Slice(outBuffer.Length));
+                WriteConsole(consoleHandle, buffer);
+            }
+            finally
+            {
+                if (rentedArray is not null)
+                {
+                    ArrayPool<char>.Shared.Return(rentedArray);
                 }
             }
         }
@@ -2801,7 +2799,7 @@ namespace Microsoft.PowerShell
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
             // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogage pairs.
+            // for this range and we do not handle surrogate pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
             // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);

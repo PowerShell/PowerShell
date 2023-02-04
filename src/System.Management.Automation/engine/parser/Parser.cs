@@ -142,10 +142,7 @@ namespace System.Management.Automation.Language
         /// <returns>The <see cref="ScriptBlockAst"/> that represents the input script file.</returns>
         public static ScriptBlockAst ParseInput(string input, string fileName, out Token[] tokens, out ParseError[] errors)
         {
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
 
             Parser parser = new Parser();
             List<Token> tokenList = new List<Token>();
@@ -5201,13 +5198,6 @@ namespace System.Management.Automation.Language
 
                         assemblyFileName = workingDirectory + @"\" + assemblyFileName;
                     }
-
-#if !CORECLR
-                    if (!File.Exists(assemblyFileName))
-                    {
-                        GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                    }
-#endif
                 }
                 catch
                 {
@@ -5846,7 +5836,7 @@ namespace System.Management.Automation.Language
             // just look for pipelines as before.
             RuntimeHelpers.EnsureSufficientExecutionStack();
 
-            // First look for assignment, since PipelineRule once handled that and this supercedes that.
+            // First look for assignment, since PipelineRule once handled that and this supersedes that.
             // We may end up with an expression here as a result,
             // in which case we hang on to it to pass it into the first pipeline rule call.
             Token assignToken = null;
@@ -8140,7 +8130,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            Diagnostics.Assert(msgCorrespondsToString, string.Format("Parser error ID \"{0}\" must correspond to the error message \"{1}\"", errorId, errorMsg));
+            Diagnostics.Assert(msgCorrespondsToString, $"Parser error ID \"{errorId}\" must correspond to the error message \"{errorMsg}\"");
         }
 
         private static object[] arrayOfOneArg

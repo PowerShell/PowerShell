@@ -86,7 +86,7 @@ namespace System.Management.Automation
         internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
-            result.FullHelp.Properties["Category"].Value = newCategoryToUse;
+            result.FullHelp.Properties["Category"].Value = newCategoryToUse.ToString();
             return result;
         }
 

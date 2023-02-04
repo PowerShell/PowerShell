@@ -16,11 +16,6 @@ namespace System.Management.Automation.Subsystem.DSC
     public interface ICrossPlatformDsc : ISubsystem
     {
         /// <summary>
-        /// Subsystem kind.
-        /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.CrossPlatformDsc;
-
-        /// <summary>
         /// Default implementation. No function is required for this subsystem.
         /// </summary>
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;

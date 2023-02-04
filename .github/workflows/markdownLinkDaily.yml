@@ -9,13 +9,16 @@ on:
   # At 13:00 UTC every day.
   - cron:  '0 13 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     if: github.repository == 'PowerShell/PowerShell'
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v3
     - name: Check Links
       uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:

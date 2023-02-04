@@ -2072,15 +2072,30 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that the parameters's argument is not null, is not an empty string, and is not
-    /// an empty collection.
+    /// Validates that the parameters's argument is not null, is not an empty string or a
+    /// string with white-space characters only, and is not an empty collection.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNotNullOrEmptyAttribute : NullValidationAttributeBase
+    public abstract class ValidateNotNullOrAttributeBase : NullValidationAttributeBase
     {
+        /// <summary>
+        /// Used to check the type of string validation to perform.
+        /// </summary>
+        protected readonly bool _checkWhiteSpace;
+
+        /// <summary>
+        /// Validates that the parameters's argument is not null, is not an empty string or a
+        /// string with white-space characters only, and is not an empty collection.
+        /// </summary>
+        protected ValidateNotNullOrAttributeBase(bool checkWhiteSpace)
+        {
+            _checkWhiteSpace = checkWhiteSpace;
+        }
+
         /// <summary>
         /// Validates that the parameters's argument is not null, is not an empty string, and is
         /// not an empty collection. If argument is a collection, each argument is verified.
+        /// It can also validate that the parameters's argument is not a string that consists
+        /// only of white-space characters.
         /// </summary>
         /// <param name="arguments">The arguments to verify.</param>
         /// <param name="engineIntrinsics">
@@ -2100,7 +2115,17 @@ namespace System.Management.Automation
             }
             else if (arguments is string str)
             {
-                if (string.IsNullOrEmpty(str))
+                if (_checkWhiteSpace)
+                {
+                    if (string.IsNullOrWhiteSpace(str))
+                    {
+                        throw new ValidationMetadataException(
+                            "ArgumentIsEmptyOrWhiteSpace",
+                            null,
+                            Metadata.ValidateNotNullOrWhiteSpaceFailure);
+                    }
+                }
+                else if (string.IsNullOrEmpty(str))
                 {
                     throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -2131,7 +2156,17 @@ namespace System.Management.Automation
 
                         if (element is string elementAsString)
                         {
-                            if (string.IsNullOrEmpty(elementAsString))
+                            if (_checkWhiteSpace)
+                            {
+                                if (string.IsNullOrWhiteSpace(elementAsString))
+                                {
+                                    throw new ValidationMetadataException(
+                                        "ArgumentCollectionContainsEmptyOrWhiteSpace",
+                                        null,
+                                        Metadata.ValidateNotNullOrWhiteSpaceCollectionFailure);
+                                }
+                            }
+                            else if (string.IsNullOrEmpty(elementAsString))
                             {
                                 throw new ValidationMetadataException(
                                     "ArgumentCollectionContainsEmpty",
@@ -2160,6 +2195,42 @@ namespace System.Management.Automation
                         Metadata.ValidateNotNullOrEmptyCollectionFailure);
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Validates that the parameters's argument is not null, is not an empty string, and is
+    /// not an empty collection. If argument is a collection, each argument is verified.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNotNullOrEmptyAttribute : ValidateNotNullOrAttributeBase
+    {
+        /// <summary>
+        /// Validates that the parameters's argument is not null, is not an empty string, and is
+        /// not an empty collection. If argument is a collection, each argument is verified.
+        /// </summary>
+        public ValidateNotNullOrEmptyAttribute()
+            : base(checkWhiteSpace: false)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Validates that the parameters's argument is not null, is not an empty string, is not a string that
+    /// consists only of white-space characters, and is not an empty collection. If argument is a collection,
+    /// each argument is verified.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNotNullOrWhiteSpaceAttribute : ValidateNotNullOrAttributeBase
+    {
+        /// <summary>
+        /// Validates that the parameters's argument is not null, is not an empty string, is not a string that
+        /// consists only of white-space characters, and is not an empty collection. If argument is a collection,
+        /// each argument is verified.
+        /// </summary>
+        public ValidateNotNullOrWhiteSpaceAttribute()
+            : base(checkWhiteSpace: true)
+        {
         }
     }
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -732,7 +733,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a new collection of typenames without "Deserialization." prefix
-        /// in the typename. This will allow to map type info/format info of the orignal type
+        /// in the typename. This will allow to map type info/format info of the original type
         /// for deserialized objects.
         /// </summary>
         /// <param name="typeNames"></param>
@@ -1631,7 +1632,7 @@ namespace System.Management.Automation
                 instanceMetadata.Properties.Add(
                     new PSNoteProperty(
                         InternalDeserializer.CimModifiedProperties,
-                        string.Join(" ", namesOfModifiedProperties)));
+                        string.Join(' ', namesOfModifiedProperties)));
             }
         }
 
@@ -3456,7 +3457,7 @@ namespace System.Management.Automation
                 if ((modifiedPropertiesProperty != null) && (modifiedPropertiesProperty.Value != null))
                 {
                     string modifiedPropertiesString = modifiedPropertiesProperty.Value.ToString();
-                    foreach (string nameOfModifiedProperty in modifiedPropertiesString.Split(Utils.Separators.Space))
+                    foreach (string nameOfModifiedProperty in modifiedPropertiesString.Split(' '))
                     {
                         namesOfModifiedProperties.Add(nameOfModifiedProperty);
                     }
@@ -3668,7 +3669,7 @@ namespace System.Management.Automation
                     else if (IsKnownContainerTag(out ct))
                     {
                         s_trace.WriteLine("Found container node {0}", ct);
-                        baseObject = ReadKnownContainer(ct);
+                        baseObject = ReadKnownContainer(ct, dso.InternalTypeNames);
                     }
                     else if (IsNextElement(SerializationStrings.PSObjectTag))
                     {
@@ -3932,12 +3933,12 @@ namespace System.Management.Automation
             return ct != ContainerType.None;
         }
 
-        private object ReadKnownContainer(ContainerType ct)
+        private object ReadKnownContainer(ContainerType ct, ConsolidatedString InternalTypeNames)
         {
             switch (ct)
             {
                 case ContainerType.Dictionary:
-                    return ReadDictionary(ct);
+                    return ReadDictionary(ct, InternalTypeNames);
 
                 case ContainerType.Enumerable:
                 case ContainerType.List:
@@ -3987,18 +3988,80 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Utility class for ReadDictionary(), supporting ordered or non-ordered Dictionary methods.
+        /// </summary>
+        private class PSDictionary
+        {
+            private IDictionary dict;
+            private readonly bool _isOrdered;
+            private int _keyClashFoundIteration = 0;
+
+            public PSDictionary(bool isOrdered) {
+                _isOrdered = isOrdered;
+
+                // By default use a non case-sensitive comparer
+                if (_isOrdered) {
+                    dict = new OrderedDictionary(StringComparer.CurrentCultureIgnoreCase);
+                } else {
+                    dict = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+                }
+            }
+
+            public object DictionaryObject { get { return dict; } }
+
+            public void Add(object key, object value) {
+                // On the first collision, copy the hash table to one that uses the `key` object's default comparer.
+                if (_keyClashFoundIteration == 0 && dict.Contains(key))
+                {
+                    _keyClashFoundIteration++;
+                    IDictionary newDict = _isOrdered ? new OrderedDictionary(dict.Count) : new Hashtable(dict.Count);
+
+                    foreach (DictionaryEntry entry in dict) {
+                        newDict.Add(entry.Key, entry.Value);
+                    }
+
+                    dict = newDict;
+                }
+
+                // win8: 389060. If there are still collisions even with case-sensitive default comparer,
+                // use an IEqualityComparer that does object ref equality.
+                if (_keyClashFoundIteration == 1 && dict.Contains(key))
+                {
+                    _keyClashFoundIteration++;
+                    IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
+                    IDictionary newDict = _isOrdered ?
+                                            new OrderedDictionary(dict.Count, equalityComparer) :
+                                            new Hashtable(dict.Count, equalityComparer);
+
+                    foreach (DictionaryEntry entry in dict) {
+                        newDict.Add(entry.Key, entry.Value);
+                    }
+
+                    dict = newDict;
+                }
+
+                dict.Add(key, value);
+            }
+        }
+
+        /// <summary>
         /// Deserialize Dictionary.
         /// </summary>
         /// <returns></returns>
-        private object ReadDictionary(ContainerType ct)
+        private object ReadDictionary(ContainerType ct, ConsolidatedString InternalTypeNames)
         {
             Dbg.Assert(ct == ContainerType.Dictionary, "Unrecognized ContainerType enum");
 
             // We assume the hash table is a PowerShell hash table and hence uses
             // a case insensitive string comparer.  If we discover a key collision,
             // we'll revert back to the default comparer.
-            Hashtable table = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-            int keyClashFoundIteration = 0;
+
+            // Find whether original directory was ordered
+            bool isOrdered = InternalTypeNames.Count > 0 &&
+                (Deserializer.MaskDeserializationPrefix(InternalTypeNames[0]) == typeof(OrderedDictionary).FullName);
+
+            PSDictionary dictionary = new PSDictionary(isOrdered);
+
             if (ReadStartElementAndHandleEmpty(SerializationStrings.DictionaryTag))
             {
                 while (_reader.NodeType == XmlNodeType.Element)
@@ -4037,38 +4100,10 @@ namespace System.Management.Automation
 
                     object value = ReadOneObject();
 
-                    // On the first collision, copy the hash table to one that uses the default comparer.
-                    if (table.ContainsKey(key) && (keyClashFoundIteration == 0))
-                    {
-                        keyClashFoundIteration++;
-                        Hashtable newHashTable = new Hashtable();
-                        foreach (DictionaryEntry entry in table)
-                        {
-                            newHashTable.Add(entry.Key, entry.Value);
-                        }
-
-                        table = newHashTable;
-                    }
-
-                    // win8: 389060. If there are still collisions even with case-sensitive default comparer,
-                    // use an IEqualityComparer that does object ref equality.
-                    if (table.ContainsKey(key) && (keyClashFoundIteration == 1))
-                    {
-                        keyClashFoundIteration++;
-                        IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
-                        Hashtable newHashTable = new Hashtable(equalityComparer);
-                        foreach (DictionaryEntry entry in table)
-                        {
-                            newHashTable.Add(entry.Key, entry.Value);
-                        }
-
-                        table = newHashTable;
-                    }
-
                     try
                     {
                         // Add entry to hashtable
-                        table.Add(key, value);
+                        dictionary.Add(key, value);
                     }
                     catch (ArgumentException e)
                     {
@@ -4081,7 +4116,7 @@ namespace System.Management.Automation
                 ReadEndElement();
             }
 
-            return table;
+            return dictionary.DictionaryObject;
         }
 
         #endregion known containers
@@ -5898,10 +5933,7 @@ namespace System.Management.Automation
         public PSPrimitiveDictionary(Hashtable other)
             : base(StringComparer.OrdinalIgnoreCase)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             foreach (DictionaryEntry entry in other)
             {
@@ -6491,7 +6523,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If originalHash contains PSVersionTable, then just returns the Cloned copy of
-        /// the original hash. Othewise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
+        /// the original hash. Otherwise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
         /// to the clone and returns.
         /// </summary>
         /// <param name="originalHash"></param>
@@ -6593,7 +6625,6 @@ namespace Microsoft.PowerShell
     ///       - PropertySerializationSet=<empty>
     ///     - TargetTypeForDeserialization=DeserializingTypeConverter
     ///   - Add a field of that type in unit tests / S.M.A.Test.SerializationTest+RehydratedType
-    ///     (testsrc\admintest\monad\DRT\engine\UnitTests\SerializationTest.cs)
     /// -->
     public sealed class DeserializingTypeConverter : PSTypeConverter
     {

@@ -125,7 +125,7 @@ Function Remove-Destination([string] $Destination) {
         if ($IsWinEnv -and ($Destination -eq $PSHOME)) {
             # handle the case where the updated folder is currently in use
             Get-ChildItem -Recurse -File -Path $PSHOME | ForEach-Object {
-                if ($_.extension -eq "old") {
+                if ($_.extension -eq ".old") {
                     Remove-Item $_
                 } else {
                     Move-Item $_.fullname "$($_.fullname).old"

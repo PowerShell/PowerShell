@@ -45,15 +45,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             string name,
             List<ParameterViewModel> parameters)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name");
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
-            if (parameters == null)
-            {
-                throw new ArgumentNullException("parameters");
-            }
+            ArgumentNullException.ThrowIfNull(parameters);
 
             parameters.Sort(Compare);
 
@@ -144,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     if (((bool?)parameter.Value) == true)
                     {
-                        builder.AppendFormat("-{0} ", parameter.Name);
+                        builder.Append($"-{parameter.Name} ");
                     }
 
                     continue;
@@ -172,7 +166,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "(", ")");
                 }
 
-                builder.AppendFormat("-{0} {1} ", parameter.Name, parameterValueString);
+                builder.Append($"-{parameter.Name} {parameterValueString} ");
             }
 
             return builder.ToString().Trim();
@@ -232,12 +226,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Gets the delimited poarameter if it needs delimitation and is not delimited.
+        /// Gets the delimited parameter if it needs delimitation and is not delimited.
         /// </summary>
         /// <param name="parameterValue">Value needing delimitation.</param>
         /// <param name="openDelimiter">Open delimitation.</param>
         /// <param name="closeDelimiter">Close delimitation.</param>
-        /// <returns>The delimited poarameter if it needs delimitation and is not delimited.</returns>
+        /// <returns>The delimited parameter if it needs delimitation and is not delimited.</returns>
         private static string GetDelimitedParameter(string parameterValue, string openDelimiter, string closeDelimiter)
         {
             string parameterValueTrimmed = parameterValue.Trim();

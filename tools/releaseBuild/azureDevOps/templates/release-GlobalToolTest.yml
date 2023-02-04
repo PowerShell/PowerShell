@@ -12,6 +12,9 @@ jobs:
   pool:
     # test
     vmImage: ${{ parameters.imageName }}
+  variables:
+    - group: DotNetPrivateBuildAccess
+
   steps:
     - checkout: self
       clean: true
@@ -57,6 +60,9 @@ jobs:
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
       displayName: Install .NET
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         $branch = $ENV:BUILD_SOURCEBRANCH
@@ -78,6 +84,9 @@ jobs:
         Get-ChildItem -Path $toolPath
 
       displayName: Install global tool
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
@@ -138,3 +147,6 @@ jobs:
             write-verbose -verbose "Got expected year: $dateYear"
         }
       displayName: Basic validation
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

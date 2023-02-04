@@ -540,7 +540,6 @@ namespace System.Management.Automation
                 foreach (var kv in hashtableAst.KeyValuePairs)
                 {
                     string name = null;
-                    string typeName = null;
                     if (kv.Item1 is StringConstantExpressionAst stringConstantExpressionAst)
                     {
                         name = stringConstantExpressionAst.Value;
@@ -554,32 +553,46 @@ namespace System.Management.Automation
                         name = nameValue.ToString();
                     }
 
-                    if (name != null)
+                    if (name is not null)
                     {
-                        object value = null;
                         if (kv.Item2 is PipelineAst pipelineAst && pipelineAst.GetPureExpression() is ExpressionAst expression)
                         {
-                            switch (expression)
+                            object value;
+                            if (expression is ConstantExpressionAst constant)
                             {
-                                case ConstantExpressionAst constantExpression:
-                                    value = constantExpression.Value;
-                                    break;
-                                default:
-                                    typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
-                                    if (typeName == null)
-                                    {
-                                        if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
-                                        {
-                                            value = safeValue;
-                                        }
-                                    }
+                                value = constant.Value;
+                            }
+                            else
+                            {
+                                _ = SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out value);
+                            }
 
-                                    break;
+                            PSTypeName valueType;
+                            if (value is null)
+                            {
+                                valueType = new PSTypeName("System.Object");
+                            }
+                            else
+                            {
+                                valueType = new PSTypeName(value.GetType());
+                            }
+
+                            properties.Add(new PSMemberNameAndType(name, valueType, value));
+                        }
+                        else
+                        {
+                            bool foundAnyTypes = false;
+                            foreach (var item in InferTypes(kv.Item2))
+                            {
+                                foundAnyTypes = true;
+                                properties.Add(new PSMemberNameAndType(name, item));
+                            }
+
+                            if (!foundAnyTypes)
+                            {
+                                properties.Add(new PSMemberNameAndType(name, new PSTypeName("System.Object")));
                             }
                         }
-
-                        var pstypeName = value != null ? new PSTypeName(value.GetType()) : new PSTypeName(typeName ?? "System.Object");
-                        properties.Add(new PSMemberNameAndType(name, pstypeName, value));
                     }
                 }
 
@@ -936,6 +949,11 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitReturnStatement(ReturnStatementAst returnStatementAst)
         {
+            if (returnStatementAst.Pipeline is null)
+            {
+                return TypeInferenceContext.EmptyPSTypeNameArray;
+            }
+
             return returnStatementAst.Pipeline.Accept(this);
         }
 
@@ -1288,7 +1306,7 @@ namespace System.Management.Automation
 
                 if (i > 0)
                 {
-                    inferredTypes.AddRange(InferTypes(parentPipeline.PipelineElements[i - 1]));
+                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(parentPipeline.PipelineElements[i - 1])));
                 }
             }
         }
@@ -1828,7 +1846,7 @@ namespace System.Management.Automation
             // We don't need to handle drive qualified variables, we can usually get those values
             // without needing to "guess" at the type.
             var astVariablePath = variableExpressionAst.VariablePath;
-            if (!astVariablePath.IsVariable)
+            if (!astVariablePath.IsVariable || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.Null))
             {
                 // Not a variable - the caller should have already tried going to session state
                 // to get the item and hence it's type, but that must have failed.  Don't try again.
@@ -1931,7 +1949,7 @@ namespace System.Management.Automation
                 }
                 else if (parent is not null)
                 {
-                    AddInferredTypesForDollarUnderbar(parent, inferredTypes);
+                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(parent)));
                 }
 
                 return;
@@ -1943,6 +1961,23 @@ namespace System.Management.Automation
                 var isThis = astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This);
                 if (!isThis || (_context.CurrentTypeDefinitionAst == null && _context.CurrentThisType == null))
                 {
+                    if (SpecialVariables.AllScopeVariables.TryGetValue(astVariablePath.UserPath, out Type knownType))
+                    {
+                        if (knownType == typeof(object))
+                        {
+                            if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var psType))
+                            {
+                                inferredTypes.Add(psType);
+                            }
+                        }
+                        else
+                        {
+                            inferredTypes.Add(new PSTypeName(knownType));
+                        }
+
+                        return;
+                    }
+
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
                         if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
@@ -2072,42 +2107,6 @@ namespace System.Management.Automation
             if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var evalTypeName))
             {
                 inferredTypes.Add(evalTypeName);
-            }
-        }
-
-        private void AddInferredTypesForDollarUnderbar(Ast parentExpression, List<PSTypeName> results)
-        {
-            foreach (var result in InferTypes(parentExpression))
-            {
-                if (result.Type != null)
-                {
-                    // Assume (because we're looking at $_ and we're inside a script block that is an
-                    // argument to some command) that the type we're getting is actually unrolled.
-                    // This might not be right in all cases, but with our simple analysis, it's
-                    // right more often than it's wrong.
-                    if (result.Type.IsArray)
-                    {
-                        results.Add(new PSTypeName(result.Type.GetElementType()));
-                        continue;
-                    }
-
-                    if (result.Type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(result.Type))
-                    {
-                        // We can't deduce much from IEnumerable, but we can if it's generic.
-                        var enumerableInterfaces = result.Type.GetInterfaces();
-                        foreach (var t in enumerableInterfaces)
-                        {
-                            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                            {
-                                results.Add(new PSTypeName(t.GetGenericArguments()[0]));
-                            }
-                        }
-
-                        continue;
-                    }
-                }
-
-                results.Add(result);
             }
         }
 
@@ -2288,6 +2287,16 @@ namespace System.Management.Automation
             bool foundAny = false;
             foreach (var psType in targetTypes)
             {
+                if (psType is PSSyntheticTypeName syntheticType)
+                {
+                    foreach (var member in syntheticType.Members)
+                    {
+                        yield return member.PSTypeName;
+                    }
+
+                    continue;
+                }
+
                 var type = psType.Type;
                 if (type != null)
                 {
@@ -2363,7 +2372,7 @@ namespace System.Management.Automation
         /// The potentially enumerable types to infer enumerated type from.
         /// </param>
         /// <returns>The enumerated item types.</returns>
-        private static IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
+        internal static IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
         {
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
             {

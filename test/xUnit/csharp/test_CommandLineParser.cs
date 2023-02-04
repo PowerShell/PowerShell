@@ -331,7 +331,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.SocketServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -348,7 +348,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.ServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -365,7 +365,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.NamedPipeServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
@@ -382,7 +382,7 @@ namespace PSTests.Parallel
             Assert.False(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
+            Assert.False(cpp.ShowBanner);
             Assert.True(cpp.SSHServerMode);
             Assert.Null(cpp.ErrorMessage);
         }

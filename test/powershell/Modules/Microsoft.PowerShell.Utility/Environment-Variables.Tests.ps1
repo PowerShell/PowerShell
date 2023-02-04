@@ -20,6 +20,10 @@ Describe "Environment-Variables" -Tags "CI" {
 
     It "Should have the correct HOME" {
         if ($IsWindows) {
+            if (!$ENV:HOMEPATH) {
+                Set-ItResult -Skipped -Because "Homepath is not set"
+            }
+
             # \Windows\System32 is found as $env:HOMEPATH for temporary profiles
             $expected = "\Users", "\Windows"
             Split-Path $ENV:HOMEPATH -Parent | Should -BeIn $expected

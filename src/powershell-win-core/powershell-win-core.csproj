@@ -29,7 +29,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\..\LICENSE.txt;..\..\ThirdPartyNotices.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.admx;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.adml;..\..\assets\GroupPolicy\InstallPSCorePolicyDefinitions.ps1">
+    <Content Include="..\..\LICENSE.txt;..\..\ThirdPartyNotices.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1;..\..\assets\MicrosoftUpdate\RegisterMicrosoftUpdate.ps1;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.admx;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.adml;..\..\assets\GroupPolicy\InstallPSCorePolicyDefinitions.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         #endregion Command Line Parameters
 
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
+                WriteObject(string.Create(CultureInfo.InvariantCulture, $"<?xml version=\"1.0\" encoding=\"{Encoding.UTF8.WebName}\"?>"));
                 WriteObject("<Objects>");
             }
         }
@@ -803,9 +803,9 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #region Select-Xml
-    ///<summary>
-    ///This cmdlet is used to search an xml document based on the XPath Query.
-    ///</summary>
+    /// <summary>
+    /// This cmdlet is used to search an xml document based on the XPath Query.
+    /// </summary>
     [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097031")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet

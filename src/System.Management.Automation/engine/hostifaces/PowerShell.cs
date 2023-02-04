@@ -6157,15 +6157,9 @@ namespace System.Management.Automation
 
         internal PowerShellStopper(ExecutionContext context, PowerShell powerShell)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
-            if (powerShell == null)
-            {
-                throw new ArgumentNullException(nameof(powerShell));
-            }
+            ArgumentNullException.ThrowIfNull(powerShell);
 
             _powerShell = powerShell;
 

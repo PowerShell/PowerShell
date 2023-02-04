@@ -317,6 +317,12 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
             }
          }
+
+         It "Copy-Item can copy 0 byte length file" {
+            $zeroLengthFile = New-Item -Path (Join-Path $TestDrive "zeroLengthFile.txt") -ItemType File -Force
+            Copy-Item -Path $zeroLengthFile -Destination "$TestDrive\zeroLengthFile2.txt" -Force
+            "$TestDrive\zeroLengthFile2.txt" | Should -Exist
+         }
     }
 
     Context "Validate behavior when access is denied" {
@@ -348,6 +354,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = $fqaccessdenied}
         ) {
             param ($cmdline, $expectedError)
+
+            if (Test-IsElevated) {
+                Set-ItResult -Skipped -Because "Process must NOT be elevated"
+            }
 
             $scriptBlock = [scriptblock]::Create($cmdline)
             $scriptBlock | Should -Throw -ErrorId $expectedError
@@ -599,6 +609,24 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
+        }
+
+        It 'New-Item can create hardlink with relative path' {
+            try {
+                Push-Location $TestDrive
+                1 > 1.txt
+                New-Item -ItemType HardLink -Path 2.txt -Target 1.txt -ErrorAction Stop
+                $hl = Get-Item -Path .\2.txt -ErrorAction Stop
+                $hl.LinkType | Should -BeExactly "HardLink"
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        It 'New-Item will fail to forcibly create hardlink to itself' {
+            $i = New-Item -ItemType File -Path "$TestDrive\file.txt" -Force -ErrorAction Ignore
+            { New-Item -ItemType HardLink -Path $i -Target $i -Force -ErrorAction Stop } | Should -Throw -ErrorId "TargetIsSameAsLink,Microsoft.PowerShell.Commands.NewItemCommand"
         }
     }
 
@@ -1533,6 +1561,9 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "runas.exe /trustlevel:0x20000 is not supported on ARM64"
+        }
 
         # The expected error is returned when there is a empty directory with the user does not have authorization to is deleted.
         # It cannot have 'System. 'Hidden' or 'ReadOnly' attribute as well as -Force should not be used.

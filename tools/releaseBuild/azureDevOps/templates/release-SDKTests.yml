@@ -11,6 +11,7 @@ jobs:
     vmImage: ${{ parameters.imageName }}
   variables:
   - group: AzDevOpsArtifacts
+  - group: DotNetPrivateBuildAccess
   steps:
     - checkout: self
       clean: true
@@ -95,6 +96,9 @@ jobs:
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
       displayName: Install .NET
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
@@ -131,6 +135,9 @@ jobs:
         dotnet test /property:RELEASE_VERSION=$releaseVersion --test-adapter-path:. "--logger:xunit;LogFilePath=$(System.DefaultWorkingDirectory)/test-hosting.xml"
 
       displayName: Restore and execute tests
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - task: PublishTestResults@2
       displayName: 'Publish Test Results **\test-hosting.xml'

@@ -4,8 +4,14 @@ on:
   issue_comment:
     types: [created, edited]
 
+permissions:
+  contents: read
+
 jobs:
   reminder:
+    permissions:
+      issues: write  # for agrc/create-reminder-action to set reminders on issues
+      pull-requests: write  # for agrc/create-reminder-action to set reminders on PRs
     runs-on: ubuntu-latest
 
     steps:

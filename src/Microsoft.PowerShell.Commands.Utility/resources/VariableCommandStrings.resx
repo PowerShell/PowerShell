@@ -129,12 +129,6 @@
   <data name="NewVariableTarget" xml:space="preserve">
     <value>Name: {0} Value: {1}</value>
   </data>
-  <data name="AddVariableAction" xml:space="preserve">
-    <value>Add variable</value>
-  </data>
-  <data name="AddVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
-  </data>
   <data name="RemoveVariableAction" xml:space="preserve">
     <value>Remove variable</value>
   </data>

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// Defines the authorization policy that controls the way scripts
-    /// (and other command types) are handled by Monad.  This authorization
+    /// (and other command types) are handled by PowerShell.  This authorization
     /// policy enforces one of four levels, as defined by the 'ExecutionPolicy'
     /// value in one of the following locations:
     ///
@@ -40,14 +40,14 @@ namespace Microsoft.PowerShell
     ///    signed, and by a trusted publisher.  If you haven't made a trust decision
     ///    on the publisher yet, prompting is done as in AllSigned mode.
     /// AllSigned - All .ps1 and .ps1xml files must be digitally signed.  If
-    ///    signed and executed, Monad prompts to determine if files from the
+    ///    signed and executed, PowerShell prompts to determine if files from the
     ///    signing publisher should be run or not.
     /// RemoteSigned - Only .ps1 and .ps1xml files originating from the internet
-    ///    must be digitally signed.  If remote, signed, and executed, Monad
+    ///    must be digitally signed.  If remote, signed, and executed, PowerShell
     ///    prompts to determine if files from the signing publisher should be
     ///    run or not.  This is the default setting.
     /// Unrestricted - No files must be signed.  If a file originates from the
-    ///    internet, Monad provides a warning prompt to alert the user.  To
+    ///    internet, PowerShell provides a warning prompt to alert the user.  To
     ///    suppress this warning message, right-click on the file in File Explorer,
     ///    select "Properties," and then "Unblock."  Requires Shell.
     /// Bypass - No files must be signed, and internet origin is not verified.
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            // WLDP and Applocker takes priority over powershell exeuction policy.
+            // WLDP and Applocker takes priority over powershell execution policy.
             // See if they want to bypass the authorization manager
             if (_executionPolicy == ExecutionPolicy.Bypass)
             {

@@ -435,8 +435,8 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHeterogeneousArray =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), StaticFlags);
 
-        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), StaticFlags);
+        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogeneousArray =
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogeneousArray), StaticFlags);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), StaticFlags);
@@ -1149,7 +1149,7 @@ namespace System.Management.Automation.Language
 
         internal ParameterExpression NewTemp(Type type, string name)
         {
-            return Expression.Variable(type, string.Format(CultureInfo.InvariantCulture, "{0}{1}", name, _tempCounter++));
+            return Expression.Variable(type, string.Create(CultureInfo.InvariantCulture, $"{name}{_tempCounter++}"));
         }
 
         internal static Type GetTypeConstraintForMethodResolution(ExpressionAst expr)
@@ -2278,26 +2278,25 @@ namespace System.Management.Automation.Language
             switch (context)
             {
                 case CaptureAstContext.AssignmentWithResultPreservation:
+                    result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
+
+                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out, in which case
+                    // we write to the oldPipe. This can happen in cases like:
+                    //     $(1;2;return 3)
+                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
+                    break;
                 case CaptureAstContext.AssignmentWithoutResultPreservation:
                     result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
                     // Clear the temporary pipe in case of exception, if we are not required to preserve the results
-                    if (context == CaptureAstContext.AssignmentWithoutResultPreservation)
+                    var catchExprs = new List<Expression>
                     {
-                        var catchExprs = new List<Expression>
-                                         {
-                                             Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
-                                             Expression.Rethrow(),
-                                             Expression.Constant(null, typeof(object))
-                                         };
+                        Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
+                        Expression.Rethrow(),
+                        Expression.Constant(null, typeof(object))
+                    };
 
-                        catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
-                    }
-
-                    // PipelineResult might get skipped in some circumstances due to a FlowControlException thrown out, in which case
-                    // we write to the oldPipe. This can happen in cases like:
-                    //     $(1;2;return 3)
-                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
+                    catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
                     break;
                 case CaptureAstContext.Condition:
                     result = DynamicExpression.Dynamic(PSPipelineResultToBoolBinder.Get(), typeof(bool), resultList);
@@ -2813,12 +2812,6 @@ namespace System.Management.Automation.Language
                     assemblyFileName = Path.GetDirectoryName(scriptFileName) + "\\" + assemblyFileName;
                 }
 
-#if !CORECLR
-                if (!File.Exists(assemblyFileName))
-                {
-                    Microsoft.CodeAnalysis.GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                }
-#endif
                 if (File.Exists(assemblyFileName))
                 {
                     assembly = Assembly.LoadFrom(assemblyFileName);

@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal static class NativeMethod
+    internal static partial class NativeMethod
     {
         // Internal code to SHEmptyRecycleBin
         internal enum RecycleFlags : uint
@@ -247,8 +247,8 @@ namespace Microsoft.PowerShell.Commands
             SHERB_NOSOUND = 0x00000004
         }
 
-        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
-        internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
+        [LibraryImport("Shell32.dll", StringMarshalling = StringMarshalling.Utf16, EntryPoint = "SHEmptyRecycleBinW")]
+        internal static partial uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }
 }
 #endif

@@ -487,7 +487,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Retrieves the current process token.
-        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter.
+        /// This function exists just for backward compatibility. It is preferred to use the other override that takes 'SafeHandle' as parameter.
         /// </summary>
         /// <param name="processHandle">Process handle.</param>
         /// <param name="desiredAccess">Token access.</param>
@@ -677,16 +677,6 @@ namespace System.Management.Automation
         public static extern uint ResumeThread(IntPtr threadHandle);
 
         internal static readonly uint RESUME_THREAD_FAILED = System.UInt32.MaxValue; // (DWORD)-1
-
-        [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern System.IntPtr CreateFileW(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-            UInt32 dwDesiredAccess,
-            UInt32 dwShareMode,
-            SECURITY_ATTRIBUTES lpSecurityAttributes,
-            UInt32 dwCreationDisposition,
-            UInt32 dwFlagsAndAttributes,
-            System.IntPtr hTemplateFile);
 
 #endif
 

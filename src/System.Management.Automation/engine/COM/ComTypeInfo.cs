@@ -203,7 +203,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
         {
             IntPtr pTypeAttr;
@@ -218,7 +217,6 @@ namespace System.Management.Automation
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
         {
             IntPtr pFuncDesc;
