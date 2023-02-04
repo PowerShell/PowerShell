@@ -129,7 +129,4 @@
   <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
     <value>Can not open JSON schema file: {0}</value>
   </data>
-  <data name="JsonFileOpenFailure" xml:space="preserve">
-    <value>Can not open JSON file: {0}</value>
-  </data>
 </root>

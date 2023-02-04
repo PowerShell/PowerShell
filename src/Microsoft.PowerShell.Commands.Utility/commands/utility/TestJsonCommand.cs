@@ -194,32 +194,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(resolvedPath) && System.IO.File.Exists(resolvedPath))
                 {
-                    try
-                    {
-                        jsonToParse = File.ReadAllText(resolvedPath);
-                    }
-                    catch (Exception e) when (
-
-                        // Handle exceptions related to file access to provide more specific error message
-                        // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
-                        e is IOException ||
-                        e is UnauthorizedAccessException ||
-                        e is NotSupportedException ||
-                        e is SecurityException)
-                    {
-                        Exception exception = new(
-                            string.Format(
-                                CultureInfo.CurrentUICulture,
-                                TestJsonCmdletStrings.JsonFileOpenFailure,
-                                resolvedPath),
-                            e);
-
-                        ThrowTerminatingError(new ErrorRecord(
-                            exception,
-                            "JsonFileOpenFailure",
-                            ErrorCategory.OpenError,
-                            resolvedPath));
-                    }
+                    jsonToParse = File.ReadAllText(resolvedPath);
                 }
                 else
                 {
