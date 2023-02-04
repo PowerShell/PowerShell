@@ -982,10 +982,10 @@ namespace Microsoft.PowerShell.Commands
 
             handler.SslOptions.EnabledSslProtocols = (SslProtocols)SslProtocol;
 
-            // Check timeout setting (in seconds)
-            handler.ConnectTimeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
-
             HttpClient httpClient = new(handler);
+
+            // Check timeout setting (in seconds)
+            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
 
             return httpClient;
         }
