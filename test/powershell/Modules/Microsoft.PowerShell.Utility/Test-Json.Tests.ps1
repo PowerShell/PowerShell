@@ -106,10 +106,6 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -Path $validJsonPath | Should -BeTrue
     }
 
-    It "Json file specified using -JsonFile is valid" {
-        Test-Json -JsonFile $validJsonPath | Should -BeTrue
-    }
-
     It "Json file specified using -LiteralPath is valid" {
         Test-Json -LiteralPath $validLiteralJsonPath | Should -BeTrue
     }
