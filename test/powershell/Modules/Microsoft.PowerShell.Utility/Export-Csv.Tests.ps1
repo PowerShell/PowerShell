@@ -76,7 +76,7 @@ Describe "Export-Csv" -Tags "CI" {
         $results[0].P1 | Should -BeExactly "first"
     }
 
-    It "Does not include headers when CSV is imported with headers and exported using -NoHeader" {
+    It "Does not include headers imported with headers and exported using -NoHeader" {
         $P1 | Export-Csv -Path $testCsv
         (Import-Csv -Path $testCsv) | Export-Csv -Path $testCsv -NoHeader
         $results = Get-Content -Path $testCsv
