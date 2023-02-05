@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         public QuoteKind UseQuotes { get; set; } = QuoteKind.Always;
 
         /// <summary>
-        /// Gets or sets property that writes headerless csv file.
+        /// Gets or sets property that writes csv file with no headers.
         /// </summary>
         [Parameter]
         public SwitchParameter NoHeader { get; set; }
