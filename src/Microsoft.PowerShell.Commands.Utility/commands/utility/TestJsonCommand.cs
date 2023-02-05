@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
 
-                if (string.IsNullOrEmpty(resolvedPath) || !System.IO.File.Exists(resolvedPath))
+                if (!System.IO.File.Exists(resolvedPath))
                 {
                     ItemNotFoundException exception = new(
                         resolvedPath,
