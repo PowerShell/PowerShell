@@ -91,6 +91,11 @@ Describe "ConvertTo-Csv" -Tags "CI" {
         $result | Should -Not -Match ([regex]::Escape('#TYPE'))
     }
 
+    It "Does not include headers with -NoHeader" {
+        $result = $testObject | ConvertTo-Csv -NoHeader
+        $result | Should -MatchExactly '"Hello","World"'
+    }
+
     It "Does not support -UseQuotes and -QuoteFields at the same time" {
         { $testObject | ConvertTo-Csv -UseQuotes Always -QuoteFields "TestFieldName" } |
             Should -Throw -ErrorId "CannotSpecifyQuoteFieldsAndUseQuotes,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
