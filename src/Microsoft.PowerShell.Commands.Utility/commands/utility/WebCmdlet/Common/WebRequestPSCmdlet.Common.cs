@@ -1353,7 +1353,6 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
-                    req.Dispose();
                     req = GetRequest(currentUri);
                     FillRequestStream(req);
                 }
