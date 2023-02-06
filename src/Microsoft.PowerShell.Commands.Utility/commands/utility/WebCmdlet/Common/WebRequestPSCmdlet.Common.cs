@@ -1260,6 +1260,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WebSession.MaximumRedirection--;
                     }
+
                     // For selected redirects that used POST, GET must be used with the
                     // redirected Location.
                     // Since GET is the default; POST only occurs when -Method POST is used.
@@ -1270,6 +1271,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
+
                     // Continue to handle redirection
                     using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                     {
