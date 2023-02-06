@@ -20,6 +20,8 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(bool))]
     public class TestJsonCommand : PSCmdlet
     {
+        #region Parameter Set Names
+
         private const string JsonStringParameterSet = "JsonString";
         private const string JsonStringWithSchemaStringParameterSet = "JsonStringWithSchemaString";
         private const string JsonStringWithSchemaFileParameterSet = "JsonStringWithSchemaFile";
@@ -29,6 +31,10 @@ namespace Microsoft.PowerShell.Commands
         private const string JsonLiteralPathParameterSet = "JsonLiteralPath";
         private const string JsonLiteralPathWithSchemaStringParameterSet = "JsonLiteralPathWithSchemaString";
         private const string JsonLiteralPathWithSchemaFileParameterSet = "JsonLiteralPathWithSchemaFile";
+
+        #endregion
+
+        #region Parameters
 
         /// <summary>
         /// Gets or sets JSON string to be validated.
@@ -91,6 +97,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
+        #endregion
+
+        #region Private Members
+
         private bool _isLiteralPath = false;
         private JsonSchema _jschema;
 
@@ -114,6 +124,10 @@ namespace Microsoft.PowerShell.Commands
 
             return true;
         }
+
+        #endregion
+
+        #region Protected Members
 
         /// <summary>
         /// Prepare a JSON schema.
@@ -239,5 +253,7 @@ namespace Microsoft.PowerShell.Commands
 
             WriteObject(result);
         }
+
+        #endregion
     }
 }
