@@ -620,8 +620,6 @@ namespace Microsoft.PowerShell.Commands
                     X509Certificate certificate = (X509Certificate)tbCert;
                     WebSession.AddCertificate(certificate);
                 }
-
-                store.Close();
             }
 
             if (Certificate is not null)
