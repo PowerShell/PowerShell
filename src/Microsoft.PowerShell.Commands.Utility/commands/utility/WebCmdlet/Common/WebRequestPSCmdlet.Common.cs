@@ -1470,20 +1470,15 @@ namespace Microsoft.PowerShell.Commands
                                     HttpResponseException httpEx = new(message, response);
                                     ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                     string detailMsg = string.Empty;
-                                    StreamReader reader = null;
+                                    using StreamReader reader = new(StreamHelper.GetResponseStream(response));
                                     try
                                     {
-                                        reader = new StreamReader(StreamHelper.GetResponseStream(response));
                                         // remove HTML tags making it easier to read
                                         detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
                                     }
                                     catch (Exception)
                                     {
                                         // catch all
-                                    }
-                                    finally
-                                    {
-                                        reader?.Dispose();
                                     }
 
                                     if (!string.IsNullOrEmpty(detailMsg))
