@@ -605,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CertificateThumbprint is not null)
             {
-                X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
+                using X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
                 X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
                 X509Certificate2Collection tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
