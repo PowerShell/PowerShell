@@ -1232,7 +1232,6 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
-
             ArgumentNullException.ThrowIfNull(request);
 
             // Add 1 to account for the first request.
@@ -1243,7 +1242,7 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 // Track the current URI being used by various requests and re-requests.
-                var currentUri = req.RequestUri;
+                Uri currentUri = req.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
