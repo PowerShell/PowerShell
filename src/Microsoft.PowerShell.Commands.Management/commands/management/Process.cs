@@ -2014,7 +2014,55 @@ namespace Microsoft.PowerShell.Commands
             string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
             if (!ShouldProcess(targetMessage)) { return; }
 
-            Process process = Start(startInfo);
+            Process process = null;
+
+#if !UNIX
+            ProcessCollection jobObject = null;
+            bool? jobAssigned = null;
+#endif
+            if (startInfo.UseShellExecute)
+            {
+                process = StartWithShellExecute(startInfo);
+            }
+            else
+            {
+#if UNIX
+                process = new Process() { StartInfo = startInfo };
+                SetupInputOutputRedirection(process);
+                process.Start();
+                if (process.StartInfo.RedirectStandardOutput)
+                {
+                    process.BeginOutputReadLine();
+                }
+
+                if (process.StartInfo.RedirectStandardError)
+                {
+                    process.BeginErrorReadLine();
+                }
+
+                if (process.StartInfo.RedirectStandardInput)
+                {
+                    WriteToStandardInput(process);
+                }
+#else
+                using ProcessInformation processInfo = StartWithCreateProcess(startInfo);
+                process = Process.GetProcessById(processInfo.ProcessId);
+
+                // Starting a process as another user might make it impossible
+                // to get the process handle from the S.D.Process object. Use
+                // the ALL_ACCESS token from CreateProcess here to setup the
+                // job object assignment early if -Wait was specified.
+                // https://github.com/PowerShell/PowerShell/issues/17033
+                if (Wait)
+                {
+                    jobObject = new();
+                    jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
+                }
+
+                // Resume the process now that is has been set up.
+                processInfo.Resume();
+#endif
+            }
 
             if (PassThru.IsPresent)
             {
@@ -2039,29 +2087,21 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         process.WaitForExit();
 #else
-                        if (_credential is not null)
+                        _waithandle = new ManualResetEvent(false);
+
+                        // Create and start the job object. This may have
+                        // already been done in StartWithCreateProcess.
+                        jobObject ??= new();
+                        if (jobAssigned == true || (jobAssigned is null && jobObject.AssignProcessToJobObject(process.SafeHandle)))
                         {
-                            // If we are running as a different user, we cannot use a job object, so just wait on the process
-                            process.WaitForExit();
+                            // Wait for the job object to finish
+                            jobObject.WaitOne(_waithandle);
                         }
                         else
                         {
-                            _waithandle = new ManualResetEvent(false);
-
-                            // Create and start the job object
-                            ProcessCollection jobObject = new();
-                            if (jobObject.AssignProcessToJobObject(process))
-                            {
-                                // Wait for the job object to finish
-                                jobObject.WaitOne(_waithandle);
-                            }
-                            else if (!process.HasExited)
-                            {
-                                // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                                process.Exited += myProcess_Exited;
-                                process.EnableRaisingEvents = true;
-                                process.WaitForExit();
-                            }
+                            // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+                            // A Remote session is in it's own job and nested job support was only added in Windows 8/Server 2012.
+                            process.WaitForExit();
                         }
 #endif
                     }
@@ -2105,11 +2145,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
-        /// <summary>
-        /// When Process exits the wait handle is set.
-        /// </summary>
-        private void myProcess_Exited(object sender, System.EventArgs e) => _waithandle?.Set();
-
         private string ResolveFilePath(string path)
         {
             string filepath = PathUtils.ResolveFilePath(path, this);
@@ -2135,41 +2170,6 @@ namespace Microsoft.PowerShell.Commands
                     processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
                 }
             }
-        }
-
-        private Process Start(ProcessStartInfo startInfo)
-        {
-            Process process = null;
-            if (startInfo.UseShellExecute)
-            {
-                process = StartWithShellExecute(startInfo);
-            }
-            else
-            {
-#if UNIX
-                process = new Process() { StartInfo = startInfo };
-                SetupInputOutputRedirection(process);
-                process.Start();
-                if (process.StartInfo.RedirectStandardOutput)
-                {
-                    process.BeginOutputReadLine();
-                }
-
-                if (process.StartInfo.RedirectStandardError)
-                {
-                    process.BeginErrorReadLine();
-                }
-
-                if (process.StartInfo.RedirectStandardInput)
-                {
-                    WriteToStandardInput(process);
-                }
-#else
-                process = StartWithCreateProcess(startInfo);
-#endif
-            }
-
-            return process;
         }
 
 #if UNIX
@@ -2421,10 +2421,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This method will be used on all windows platforms, both full desktop and headless SKUs.
         /// </summary>
-        private Process StartWithCreateProcess(ProcessStartInfo startinfo)
+        private ProcessInformation StartWithCreateProcess(ProcessStartInfo startinfo)
         {
             ProcessNativeMethods.STARTUPINFO lpStartupInfo = new();
-            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new();
+            ProcessNativeMethods.PROCESS_INFORMATION lpProcessInformation = new();
             int error = 0;
             GCHandle pinnedEnvironmentBlock = new();
             IntPtr AddressOfEnvironmentBlock = IntPtr.Zero;
@@ -2471,7 +2471,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.SecureStringToCoTaskMemUnicode(startinfo.Password);
-                        flag = ProcessNativeMethods.CreateProcessWithLogonW(startinfo.UserName, startinfo.Domain, password, logonFlags, null, cmdLine, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
+                        flag = ProcessNativeMethods.CreateProcessWithLogonW(startinfo.UserName, startinfo.Domain, password, logonFlags, null, cmdLine, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, ref lpProcessInformation);
                         if (!flag)
                         {
                             error = Marshal.GetLastWin32Error();
@@ -2527,7 +2527,7 @@ namespace Microsoft.PowerShell.Commands
 
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new();
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new();
-                flag = ProcessNativeMethods.CreateProcess(null, cmdLine, lpProcessAttributes, lpThreadAttributes, true, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
+                flag = ProcessNativeMethods.CreateProcess(null, cmdLine, lpProcessAttributes, lpThreadAttributes, true, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, ref lpProcessInformation);
                 if (!flag)
                 {
                     error = Marshal.GetLastWin32Error();
@@ -2540,11 +2540,7 @@ namespace Microsoft.PowerShell.Commands
 
             Label_03AE:
 
-                // At this point, we should have a suspended process.  Get the .Net Process object, resume the process, and return.
-                Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
-                ProcessNativeMethods.ResumeThread(lpProcessInformation.hThread);
-
-                return result;
+                return new ProcessInformation(lpProcessInformation);
             }
             finally
             {
@@ -2558,7 +2554,6 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 lpStartupInfo.Dispose();
-                lpProcessInformation.Dispose();
             }
         }
 #endif
@@ -2611,10 +2606,12 @@ namespace Microsoft.PowerShell.Commands
         /// Start API assigns the process to the JobObject and starts monitoring
         /// the child processes hosted by the process created by Start-Process cmdlet.
         /// </summary>
-        internal bool AssignProcessToJobObject(Process process)
+        internal bool AssignProcessToJobObject(SafeProcessHandle process)
         {
             // Add the process to the job object
-            bool result = NativeMethods.AssignProcessToJobObject(_jobObjectHandle, process.Handle);
+            bool result = Interop.Windows.AssignProcessToJobObject(
+                _jobObjectHandle.DangerousGetHandle(),
+                process.DangerousGetHandle());
             return result;
         }
 
@@ -2657,6 +2654,44 @@ namespace Microsoft.PowerShell.Commands
                 waitHandleToUse.WaitOne();
             }
         }
+    }
+
+    /// <summary>
+    /// ProcessInformation is a helper class that wraps the native PROCESS_INFORMATION structure
+    /// returned by CreateProcess or CreateProcessWithLogon. It ensures the process and thread
+    /// HANDLEs are disposed once it's not needed.
+    /// </summary>
+    internal sealed class ProcessInformation : IDisposable
+    {
+        public SafeProcessHandle Process { get; }
+
+        public SafeProcessHandle Thread { get; }
+
+        public Int32 ProcessId { get; }
+
+        public Int32 ThreadId { get; }
+
+        internal ProcessInformation(ProcessNativeMethods.PROCESS_INFORMATION info)
+        {
+            Process = new(info.hProcess, true);
+            Thread = new(info.hThread, true);
+            ProcessId = info.dwProcessId;
+            ThreadId = info.dwThreadId;
+        }
+
+        public void Resume()
+        {
+            ProcessNativeMethods.ResumeThread(Thread.DangerousGetHandle());
+        }
+
+        public void Dispose()
+        {
+            Process.Dispose();
+            Thread.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        ~ProcessInformation() => Dispose();
     }
 
     /// <summary>
@@ -2704,7 +2739,7 @@ namespace Microsoft.PowerShell.Commands
             IntPtr environmentBlock,
             [MarshalAs(UnmanagedType.LPWStr)] string lpCurrentDirectory,
             STARTUPINFO lpStartupInfo,
-            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation);
+            ref PROCESS_INFORMATION lpProcessInformation);
 
         [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -2717,7 +2752,7 @@ namespace Microsoft.PowerShell.Commands
             IntPtr lpEnvironment,
             [MarshalAs(UnmanagedType.LPWStr)] string lpCurrentDirectory,
             STARTUPINFO lpStartupInfo,
-            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation);
+            ref PROCESS_INFORMATION lpProcessInformation);
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern uint ResumeThread(IntPtr threadHandle);
@@ -2735,6 +2770,15 @@ namespace Microsoft.PowerShell.Commands
         {
             LOGON_NETCREDENTIALS_ONLY = 2,
             LOGON_WITH_PROFILE = 1
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess;
+            public IntPtr hThread;
+            public int dwProcessId;
+            public int dwThreadId;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2840,57 +2884,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal static class SafeNativeMethods
-    {
-        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
-        public static extern bool CloseHandle(IntPtr handle);
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal class PROCESS_INFORMATION
-        {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public int dwProcessId;
-            public int dwThreadId;
-
-            public PROCESS_INFORMATION()
-            {
-                this.hProcess = IntPtr.Zero;
-                this.hThread = IntPtr.Zero;
-            }
-
-            /// <summary>
-            /// Dispose.
-            /// </summary>
-            public void Dispose()
-            {
-                Dispose(true);
-            }
-
-            /// <summary>
-            /// Dispose.
-            /// </summary>
-            /// <param name="disposing"></param>
-            private void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    if (this.hProcess != IntPtr.Zero)
-                    {
-                        CloseHandle(this.hProcess);
-                        this.hProcess = IntPtr.Zero;
-                    }
-
-                    if (this.hThread != IntPtr.Zero)
-                    {
-                        CloseHandle(this.hThread);
-                        this.hThread = IntPtr.Zero;
-                    }
-                }
-            }
-        }
-    }
-
     [SuppressUnmanagedCodeSecurity]
     internal sealed class SafeJobHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
@@ -2902,7 +2895,7 @@ namespace Microsoft.PowerShell.Commands
 
         protected override bool ReleaseHandle()
         {
-            return SafeNativeMethods.CloseHandle(base.handle);
+            return Interop.Windows.CloseHandle(base.handle);
         }
     }
 #endif
@@ -2971,7 +2964,7 @@ namespace Microsoft.PowerShell.Commands
             base.GetObjectData(info, context);
 
             ArgumentNullException.ThrowIfNull(info);
-            
+
             info.AddValue("ProcessName", _processName);
         }
         #endregion Serialization
