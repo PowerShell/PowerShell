@@ -1536,7 +1536,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implementing ^C, after start the BeginGetResponse.
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
