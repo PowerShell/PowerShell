@@ -1294,11 +1294,8 @@ namespace Microsoft.PowerShell.Commands
                     using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
                     {
                         FillRequestStream(requestWithoutRange);
-                        long requestContentLength = 0;
-                        if (requestWithoutRange.Content is not null)
-                        {
-                            requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
-                        }
+
+                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
 
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
