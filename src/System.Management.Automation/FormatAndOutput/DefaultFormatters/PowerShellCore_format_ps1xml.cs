@@ -1300,6 +1300,9 @@ namespace System.Management.Automation.Runspaces
                                     }
                                     elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
                                         $posmsg = $myinv.PositionMessage
+                                        if ($posmsg -ne '') {
+                                            $posmsg = $newline + $posmsg
+                                        }
                                     }
 
                                     if ($err.PSMessageDetails) {
@@ -1314,9 +1317,6 @@ namespace System.Management.Automation.Runspaces
                                     }
 
                                     $indent = 4
-                                    if ($posmsg -ne '') {
-                                        $posmsg = $newline + $posmsg
-                                    }
 
                                     $errorCategoryMsg = $err.ErrorCategory_Message
 
