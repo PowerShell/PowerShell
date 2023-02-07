@@ -132,6 +132,10 @@ function ExecuteRedirectRequest {
         [string]
         $Method = 'GET',
 
+        [ValidateSet('POST')]
+        [string]
+        $CustomMethod,
+
         [switch]
         $PreserveAuthorizationOnRedirect,
 
@@ -146,6 +150,8 @@ function ExecuteRedirectRequest {
         if ($Cmdlet -eq 'Invoke-WebRequest') {
             if ($MaximumRedirection -gt 0) {
                 $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method -MaximumRedirection:$MaximumRedirection
+            } elseif ($CustomMethod) {
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -CustomMethod $CustomMethod
             } else {
                 $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
             }
@@ -953,6 +959,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             param($redirectType, $redirectedMethod)
             $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
             $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Uri $uri -Method 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been removed.
+            $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+            # ensure POST was changed to GET for selected redirections and remains as POST for others.
+            $response.Content.Method | Should -Be $redirectedMethod
+        }
+
+        It "Validates Invoke-WebRequest -PreserveAuthorizationOnRedirect -CustomMethod POST keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+
+            $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Uri $uri -CustomMethod 'POST'
 
             $response.Error | Should -BeNullOrEmpty
             # ensure user-agent is present (i.e., no false positives )
