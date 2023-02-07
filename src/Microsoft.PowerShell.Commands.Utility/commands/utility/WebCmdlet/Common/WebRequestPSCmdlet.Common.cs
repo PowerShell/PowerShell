@@ -1410,11 +1410,7 @@ namespace Microsoft.PowerShell.Commands
                             FillRequestStream(request);
                             try
                             {
-                                long requestContentLength = 0;
-                                if (request.Content is not null)
-                                {
-                                    requestContentLength = request.Content.Headers.ContentLength.Value;
-                                }
+                                long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
 
                                 string reqVerboseMsg = string.Format(
                                     CultureInfo.CurrentCulture,
