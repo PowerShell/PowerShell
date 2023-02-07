@@ -963,7 +963,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             # ensure user-agent is present (i.e., no false positives )
             $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-            # ensure Authorization header has been removed.
+            # ensure Authorization header has been preserved.
             $response.Content.Headers."Authorization" | Should -BeExactly 'test'
             # ensure POST was changed to GET for selected redirections and remains as POST for others.
             $response.Content.Method | Should -Be $redirectedMethod
@@ -978,7 +978,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             # ensure user-agent is present (i.e., no false positives )
             $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-            # ensure Authorization header has been removed.
+            # ensure Authorization header has been preserved.
             $response.Content.Headers."Authorization" | Should -BeExactly 'test'
             # ensure POST was changed to GET for selected redirections and remains as POST for others.
             $response.Content.Method | Should -Be $redirectedMethod
@@ -2682,7 +2682,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been removed.
+        # ensure Authorization header has been preserved.
         $response.Content.Headers."Authorization" | Should -BeExactly 'test'
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
         $response.Content.Method | Should -Be $redirectedMethod
