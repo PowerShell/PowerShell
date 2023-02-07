@@ -13,15 +13,16 @@ steps:
 
 - pwsh: |
     Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-    Install-AzCopy
-  displayName: Install AzCopy
-
-- pwsh: |
-    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
     $azcopy = Find-AzCopy
+    Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey)
+    & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
+
+    & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/* $(System.ArtifactsDirectory) --recursive
+
   displayName: Download Azure Artifacts
+  env:
+    AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
 
 - pwsh: |
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name
