@@ -1271,10 +1271,8 @@ namespace Microsoft.PowerShell.Commands
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
 
                     // Continue to handle redirection
-                    using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
-                    {
-                        response = GetResponse(client, redirectRequest, handleRedirect);
-                    }
+                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                    response = GetResponse(client, redirectRequest, handleRedirect);
                 }
 
                 // Request again without the Range header because the server indicated the range was not satisfiable.
