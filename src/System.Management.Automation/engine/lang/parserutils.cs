@@ -1982,7 +1982,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (context is null || context.CurrentCommandProcessor is null)
+            if (context?.CurrentCommandProcessor is null)
             {
                 return;
             }

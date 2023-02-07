@@ -114,7 +114,7 @@ namespace System.Management.Automation
                     // Try associating the parsing error with the history item if we can.
                     InvocationInfo invInfo = ex.ErrorRecord.InvocationInfo;
                     LocalRunspace localRunspace = Context.CurrentRunspace as LocalRunspace;
-                    if (invInfo is not null && localRunspace is not null && localRunspace.History is not null)
+                    if (invInfo is not null && localRunspace?.History is not null)
                     {
                         invInfo.HistoryId = localRunspace.History.GetNextHistoryId();
                     }
