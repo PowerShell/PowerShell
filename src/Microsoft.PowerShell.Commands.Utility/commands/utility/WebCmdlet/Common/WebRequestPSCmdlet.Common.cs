@@ -1262,10 +1262,11 @@ namespace Microsoft.PowerShell.Commands
                     // For selected redirects that used POST, GET must be used with the
                     // redirected Location.
                     // Since GET is the default; POST only occurs when -Method POST is used.
-                    if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
+                    if (req.Method == HttpMethod.Post && IsRedirectToGet(response.StatusCode))
                     {
                         // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                         Method = WebRequestMethod.Get;
+                        CustomMethod = null;
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
