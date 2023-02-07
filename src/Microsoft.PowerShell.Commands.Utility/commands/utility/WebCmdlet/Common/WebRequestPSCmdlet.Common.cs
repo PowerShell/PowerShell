@@ -1259,9 +1259,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WebSession.MaximumRedirection--;
                     }
-                    // For selected redirects that used POST, GET must be used with the
-                    // redirected Location.
-                    // Since GET is the default; POST only occurs when -Method POST is used.
+
+                    // For selected redirects, GET must be used with the redirected Location.
                     if (req.Method == HttpMethod.Post && IsRedirectToGet(response.StatusCode))
                     {
                         // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
