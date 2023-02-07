@@ -1266,7 +1266,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                         Method = WebRequestMethod.Get;
-                        CustomMethod = null;
+                        CustomMethod = string.Empty;
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
