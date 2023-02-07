@@ -93,7 +93,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     It "Does not include headers with -NoHeader" {
         $result = $testObject | ConvertTo-Csv -NoHeader
-        $result | Should -MatchExactly '"Hello","World"'
+        $result | Should -BeExactly '"Hello","World"'
     }
 
     It "Does not support -UseQuotes and -QuoteFields at the same time" {

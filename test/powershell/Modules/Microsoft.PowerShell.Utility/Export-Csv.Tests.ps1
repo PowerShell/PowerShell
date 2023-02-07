@@ -71,7 +71,7 @@ Describe "Export-Csv" -Tags "CI" {
     It "Does not include headers with -NoHeader when exported and can imported with headers" {
         $P1 | Export-Csv -Path $testCsv -NoHeader
         $results = Get-Content -Path $testCsv
-        $results | Should -MatchExactly "first"
+        $results | Should -BeExactly '"first"'
         $results = Import-Csv -Path $testCsv -Header "P1"
         $results[0].P1 | Should -BeExactly "first"
     }
@@ -80,7 +80,7 @@ Describe "Export-Csv" -Tags "CI" {
         $P1 | Export-Csv -Path $testCsv
         (Import-Csv -Path $testCsv) | Export-Csv -Path $testCsv -NoHeader
         $results = Get-Content -Path $testCsv
-        $results | Should -MatchExactly "first"
+        $results | Should -BeExactly '"first"'
     }
 
     It "Includes type information when -IncludeTypeInformation is supplied" {
