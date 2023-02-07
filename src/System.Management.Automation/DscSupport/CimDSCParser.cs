@@ -1086,7 +1086,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}\\{3}", moduleName, moduleVersion, className, resourceName);
+            return string.Create(CultureInfo.InvariantCulture, $"{moduleName}\\{moduleVersion}\\{className}\\{resourceName}");
         }
 
         /// <summary>
@@ -1125,7 +1125,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
         {
             List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new();
-            var moduleQualifiedName = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            var moduleQualifiedName = string.Create(CultureInfo.InvariantCulture, $"{module.Name}\\{module.Version}");
             foreach (var dscClassCacheEntry in ClassCache)
             {
                 if (dscClassCacheEntry.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
@@ -2019,7 +2019,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             string moduleString = moduleToImport.Version == null
                                 ? moduleToImport.Name
-                                : string.Format(CultureInfo.CurrentCulture, "<{0}, {1}>", moduleToImport.Name, moduleToImport.Version);
+                                : string.Create(CultureInfo.CurrentCulture, $"<{moduleToImport.Name}, {moduleToImport.Version}>");
 
                             errorList.Add(new ParseError(scriptExtent, "ModuleNotFoundDuringParse",
                                 string.Format(CultureInfo.CurrentCulture, ParserStrings.ModuleNotFoundDuringParse, moduleString)));
@@ -2339,7 +2339,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static void GenerateMofForAst(TypeDefinitionAst typeAst, StringBuilder sb, List<object> embeddedInstanceTypes)
         {
             var className = typeAst.Name;
-            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
+            sb.Append(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
 
             if (typeAst.Attributes.Any(static a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
             {
@@ -2532,14 +2532,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
+                string mofAttr = MapAttributesToMof(enumNames, attributes, embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, attributes, embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
+                sb.Append(
+                    CultureInfo.InvariantCulture,
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
@@ -3047,7 +3045,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             var className = type.Name;
             // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
-            sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
+            sb.Append(CultureInfo.InvariantCulture, $"[ClassVersion(\"1.0.0\"), FriendlyName(\"{className}\")]\nclass {className}");
 
             if (type.GetCustomAttributes<DscResourceAttribute>().Any())
             {
@@ -3087,21 +3085,21 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 // TODO - validate type and name
-                bool isArrayType;
-                string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
+                string mofType = MapTypeToMofType(
+                    memberType,
+                    member.Name,
+                    className,
+                    out bool isArrayType,
+                    out string embeddedInstanceType,
                     embeddedInstanceTypes);
+
+                var enumNames = memberType.IsEnum ? Enum.GetNames(memberType) : null;
+                string mofAttr = MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                var enumNames = memberType.IsEnum
-                    ? Enum.GetNames(memberType)
-                    : null;
-                sb.AppendFormat(CultureInfo.InvariantCulture,
-                    "    {0}{1} {2}{3};\n",
-                    MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType),
-                    mofType,
-                    member.Name,
-                    arrayAffix);
+                sb.Append(
+                    CultureInfo.InvariantCulture,
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 

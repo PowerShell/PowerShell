@@ -2129,7 +2129,7 @@ namespace System.Management.Automation
         {
             get
             {
-                // The debugger can be disbled if there are no breakpoints
+                // The debugger can be disabled if there are no breakpoints
                 // left and if we are not currently stepping in the debugger.
                 return _idToBreakpoint.IsEmpty &&
                        _currentDebuggerAction != DebuggerResumeAction.StepInto &&
@@ -3539,7 +3539,7 @@ namespace System.Management.Automation
                 else if ((command.Commands.Count > 0) &&
                          (command.Commands[0].CommandText.IndexOf(".EnterNestedPrompt()", StringComparison.OrdinalIgnoreCase) > 0))
                 {
-                    // Prevent a host EnterNestedPrompt() call from occuring in an active debugger.
+                    // Prevent a host EnterNestedPrompt() call from occurring in an active debugger.
                     // Host nested prompt makes no sense in this case and can cause host to stop responding depending on host implementation.
                     throw new PSNotSupportedException();
                 }
@@ -4490,7 +4490,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Attempts to fix up the debugger stop invocation information so that
         /// the correct stack and source can be displayed in the debugger, for
-        /// cases where the debugged runspace is called inside a parent sccript,
+        /// cases where the debugged runspace is called inside a parent script,
         /// such as with script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo"></param>
@@ -4761,7 +4761,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Attempts to fix up the debugger stop invocation information so that
         /// the correct stack and source can be displayed in the debugger, for
-        /// cases where the debugged runspace is called inside a parent sccript,
+        /// cases where the debugged runspace is called inside a parent script,
         /// such as with script Invoke-Command cases.
         /// </summary>
         /// <param name="debugStopInvocationInfo">Invocation information from debugger stop.</param>
@@ -5301,10 +5301,9 @@ namespace System.Management.Automation
             for (int lineNumber = start; lineNumber <= _lines.Length && lineNumber < start + count; lineNumber++)
             {
                 WriteLine(
-                    lineNumber == invocationInfo.ScriptLineNumber ?
-                    string.Format(CultureInfo.CurrentCulture, "{0,5}:* {1}", lineNumber, _lines[lineNumber - 1])
-                    :
-                    string.Format(CultureInfo.CurrentCulture, "{0,5}:  {1}", lineNumber, _lines[lineNumber - 1]),
+                    lineNumber == invocationInfo.ScriptLineNumber
+                        ? string.Format(CultureInfo.CurrentCulture, "{0,5}:* {1}", lineNumber, _lines[lineNumber - 1])
+                        : string.Format(CultureInfo.CurrentCulture, "{0,5}:  {1}", lineNumber, _lines[lineNumber - 1]),
                     host,
                     output);
 
@@ -5647,7 +5646,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// End monitoring a runspace on the target degbugger.
+        /// End monitoring a runspace on the target debugger.
         /// </summary>
         /// <param name="debugger">Target debugger.</param>
         /// <param name="runspaceInfo">PSMonitorRunspaceInfo.</param>

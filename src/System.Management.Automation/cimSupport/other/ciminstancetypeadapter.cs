@@ -238,16 +238,11 @@ namespace Microsoft.PowerShell.Cim
         {
             if (!string.IsNullOrEmpty(namespaceName))
             {
-                string fullTypeName = string.Format(CultureInfo.InvariantCulture,
-                                        "Microsoft.Management.Infrastructure.CimInstance#{0}/{1}",
-                                        namespaceName,
-                                        className);
+                string fullTypeName = string.Create(CultureInfo.InvariantCulture, $"Microsoft.Management.Infrastructure.CimInstance#{namespaceName}/{className}");
                 typeNamesWithNamespace.Add(fullTypeName);
             }
 
-            typeNamesWithoutNamespace.Add(string.Format(CultureInfo.InvariantCulture,
-                                     "Microsoft.Management.Infrastructure.CimInstance#{0}",
-                                     className));
+            typeNamesWithoutNamespace.Add(string.Create(CultureInfo.InvariantCulture, $"Microsoft.Management.Infrastructure.CimInstance#{className}"));
         }
 
         private static List<CimClass> GetInheritanceChain(CimInstance cimInstance)

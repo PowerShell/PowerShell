@@ -1295,8 +1295,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1411,8 +1411,8 @@ namespace System.Management.Automation
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1724,14 +1724,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1909,14 +1909,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -3226,7 +3226,7 @@ namespace System.Management.Automation
         private bool _debugFlag = false;
 
         /// <summary>
-        /// Debug tell the command system to provide Programmer/Support type messages to understand what is really occuring
+        /// Debug tell the command system to provide Programmer/Support type messages to understand what is really occurring
         /// and give the user the opportunity to stop or debug the situation.
         /// </summary>
         /// <remarks>

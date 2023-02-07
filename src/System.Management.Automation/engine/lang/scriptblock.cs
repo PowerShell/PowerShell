@@ -1359,7 +1359,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {

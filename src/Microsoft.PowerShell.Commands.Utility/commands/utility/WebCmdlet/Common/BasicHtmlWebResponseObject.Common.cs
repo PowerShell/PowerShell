@@ -33,9 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response)
-            : this(response, null)
-        { }
+        public BasicHtmlWebResponseObject(HttpResponseMessage response) : this(response, null) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
@@ -43,8 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream)
-            : base(response, contentStream)
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream) : base(response, contentStream)
         {
             EnsureHtmlParser();
             InitializeContent();

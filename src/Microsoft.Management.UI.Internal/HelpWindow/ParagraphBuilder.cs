@@ -12,8 +12,8 @@ namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
     /// Builds a paragraph based on Text + Bold + Highlight information.
-    /// Bold are the segments of thexct that should be bold, and Highlight are
-    /// the segments of thext that should be highlighted (like search results).
+    /// Bold are the segments of the text that should be bold, and Highlight are
+    /// the segments of the text that should be highlighted (like search results).
     /// </summary>
     internal class ParagraphBuilder : INotifyPropertyChanged
     {
@@ -77,12 +77,12 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Called after all the AddText calls have been made to build the paragraph
         /// based on the current text.
-        /// This method goes over 3 collections simultaneouslly:
+        /// This method goes over 3 collections simultaneously:
         ///    1) characters in this.textBuilder
         ///    2) spans in this.boldSpans
         ///    3) spans in this.highlightedSpans
         /// And adds the minimal number of Inlines to the paragraph so that all
-        /// characters that should be bold and/or highlighed are.
+        /// characters that should be bold and/or highlighted are.
         /// </summary>
         internal void BuildParagraph()
         {
@@ -234,11 +234,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// This is an auxiliar method in BuildParagraph to move the current bold or highlighed spans
+        /// This is an auxiliar method in BuildParagraph to move the current bold or highlighted spans
         /// according to the <paramref name="caracterPosition"/>
-        /// The current bold and higlighed span should be ending ahead of the current position.
+        /// The current bold and highlighted span should be ending ahead of the current position.
         /// Moves <paramref name="currentSpanIndex"/> and <paramref name="currentSpan"/> to the
-        /// propper span in <paramref name="allSpans"/> according to the <paramref name="caracterPosition"/>
+        /// proper span in <paramref name="allSpans"/> according to the <paramref name="caracterPosition"/>
         /// This is an auxiliar method in BuildParagraph.
         /// </summary>
         /// <param name="currentSpanIndex">Current index within <paramref name="allSpans"/>.</param>
@@ -264,7 +264,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // there is no span ending ahead of current position, so
-            // we set the current span to null to prevent unecessary comparisons against the currentSpan
+            // we set the current span to null to prevent unnecessary comparisons against the currentSpan
             currentSpan = null;
         }
 
@@ -290,7 +290,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Called internally to notify when a proiperty changed.
+        /// Called internally to notify when a property changed.
         /// </summary>
         /// <param name="propertyName">Property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
@@ -303,7 +303,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// A text span used to mark bold and highlighed segments.
+        /// A text span used to mark bold and highlighted segments.
         /// </summary>
         internal struct TextSpan
         {
