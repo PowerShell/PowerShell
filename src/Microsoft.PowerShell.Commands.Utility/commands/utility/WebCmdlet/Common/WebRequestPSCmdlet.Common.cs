@@ -1831,22 +1831,24 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ContentHelper.IsXml(contentType))
                 {
-                    StringBuilder stringBuilder = new StringBuilder();
                     XmlDocument doc = new XmlDocument();
                     doc.LoadXml(error);
 
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Indent = true;
-                    settings.NewLineOnAttributes = true;
-                    settings.OmitXmlDeclaration = true;
-                    settings.Encoding = ContentHelper.GetDefaultEncoding();
+                    XmlWriterSettings settings = new XmlWriterSettings {
+                        Indent = true,
+                        NewLineOnAttributes = true,
+                        OmitXmlDeclaration = true,
+                        Encoding = ContentHelper.GetDefaultEncoding()
+                    };
+
                     if (doc.FirstChild is XmlDeclaration)
                     {
                         XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                         settings.Encoding = Encoding.GetEncoding(decl.Encoding);
                     }
 
-                    XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    using XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
                     doc.Save(xmlWriter);
                     string xmlString = stringBuilder.ToString();
 
