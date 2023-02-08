@@ -1968,7 +1968,7 @@ namespace System.Management.Automation
             ///
             /// If a hash matches, we ignore the possibility of a
             /// collision. If the hash is acceptable, collisions will
-            /// be infrequent and we'll just log an occasionaly script
+            /// be infrequent and we'll just log an occasional script
             /// that isn't really suspicious.
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
@@ -2514,6 +2514,11 @@ namespace System.Management.Automation
             if (_commandRuntime.IsInformationActionSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
+            }
+
+            if (_commandRuntime.IsProgressActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Progress, _commandRuntime.ProgressPreference);
             }
 
             if (_commandRuntime.IsWhatIfFlagSet)

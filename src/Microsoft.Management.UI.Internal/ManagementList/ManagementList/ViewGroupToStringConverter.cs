@@ -35,7 +35,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             string name = (!string.IsNullOrEmpty(cvg.Name.ToString())) ? cvg.Name.ToString() : UICultureResources.GroupTitleNone;
-            string display = string.Format(CultureInfo.CurrentCulture, "{0} ({1})", name, cvg.ItemCount);
+            string display = string.Create(CultureInfo.CurrentCulture, $"{name} ({cvg.ItemCount})");
 
             return display;
         }

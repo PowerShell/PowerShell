@@ -837,6 +837,12 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
     }
 
+    it 'Should prefer the default parameterset when completing positional parameters' {
+        $ScriptInput = 'Get-ChildItem | Where-Object '
+        $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+        $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
@@ -1207,6 +1213,9 @@ Verb-Noun -Param1 Hello ^
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
+            if (!$env:HOMEDRIVE) {
+                Set-ItResult -Skipped -Because "Homerdrive is not set"
+            }
             $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
@@ -1620,8 +1629,8 @@ dir -Recurse `
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 6
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -1988,6 +1997,11 @@ dir -Recurse `
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
+
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "TBD"
+            }
+
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
@@ -2411,7 +2425,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
         @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
         @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
-        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\plugin"; parameter = "-proc"; expected = "ProcessIdleTimeoutSec"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
     ) {

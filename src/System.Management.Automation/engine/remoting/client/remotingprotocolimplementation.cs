@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Clubing negotiation packet + runspace creation and then doing transportManager.ConnectAsync().
+        /// Clubbing negotiation packet + runspace creation and then doing transportManager.ConnectAsync().
         /// This will save us 2 network calls by doing all the work in one network call.
         /// </summary>
         private void HandleNegotiationSendingStateChange()

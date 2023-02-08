@@ -2247,13 +2247,13 @@ function Get-PSImplicitRemotingSessionOption
             RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
             if (runspaceConnectionInfo != null)
             {
-                result.AppendFormat(null, "-Culture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString()));
-                result.AppendFormat(null, "-UICulture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString()));
+                result.Append(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString())}' ");
+                result.Append(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString())}' ");
 
-                result.AppendFormat(null, "-CancelTimeOut {0} ", runspaceConnectionInfo.CancelTimeout);
-                result.AppendFormat(null, "-IdleTimeOut {0} ", runspaceConnectionInfo.IdleTimeout);
-                result.AppendFormat(null, "-OpenTimeOut {0} ", runspaceConnectionInfo.OpenTimeout);
-                result.AppendFormat(null, "-OperationTimeOut {0} ", runspaceConnectionInfo.OperationTimeout);
+                result.Append(null, $"-CancelTimeOut {runspaceConnectionInfo.CancelTimeout} ");
+                result.Append(null, $"-IdleTimeOut {runspaceConnectionInfo.IdleTimeout} ");
+                result.Append(null, $"-OpenTimeOut {runspaceConnectionInfo.OpenTimeout} ");
+                result.Append(null, $"-OperationTimeOut {runspaceConnectionInfo.OperationTimeout} ");
             }
 
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
@@ -2275,33 +2275,18 @@ function Get-PSImplicitRemotingSessionOption
 
                 if (wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.HasValue)
                 {
-                    result.AppendFormat(
-                        CultureInfo.InvariantCulture,
-                        "-MaximumReceivedDataSizePerCommand {0} ",
-                        wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value);
+                    result.Append(CultureInfo.InvariantCulture, $"-MaximumReceivedDataSizePerCommand {wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.Value} ");
                 }
 
                 if (wsmanConnectionInfo.MaximumReceivedObjectSize.HasValue)
                 {
-                    result.AppendFormat(
-                        CultureInfo.InvariantCulture,
-                        "-MaximumReceivedObjectSize {0} ",
-                        wsmanConnectionInfo.MaximumReceivedObjectSize.Value);
+                    result.Append(CultureInfo.InvariantCulture, $"-MaximumReceivedObjectSize {wsmanConnectionInfo.MaximumReceivedObjectSize.Value} ");
                 }
 
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-MaximumRedirection {0} ",
-                    wsmanConnectionInfo.MaximumConnectionRedirectionCount);
+                result.Append(CultureInfo.InvariantCulture, $"-MaximumRedirection {wsmanConnectionInfo.MaximumConnectionRedirectionCount} ");
 
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-ProxyAccessType {0} ",
-                    wsmanConnectionInfo.ProxyAccessType.ToString());
-                result.AppendFormat(
-                    CultureInfo.InvariantCulture,
-                    "-ProxyAuthentication {0} ",
-                    wsmanConnectionInfo.ProxyAuthentication.ToString());
+                result.Append(CultureInfo.InvariantCulture, $"-ProxyAccessType {wsmanConnectionInfo.ProxyAccessType} ");
+                result.Append(CultureInfo.InvariantCulture, $"-ProxyAuthentication {wsmanConnectionInfo.ProxyAuthentication} ");
                 result.Append(this.GenerateProxyCredentialParameter(wsmanConnectionInfo));
             }
 
@@ -2604,15 +2589,13 @@ function Get-PSImplicitRemotingSession
                     CodeGeneration.EscapeSingleQuotedStringContent(connectionInfo.AppName),
                     connectionInfo.UseDefaultWSManPort ?
                         string.Empty :
-                        string.Format(CultureInfo.InvariantCulture,
-                            "-Port {0} ", connectionInfo.Port),
+                        string.Create(CultureInfo.InvariantCulture, $"-Port {connectionInfo.Port} "),
                     isSSLSpecified ? "-useSSL" : string.Empty);
             }
             else
             {
-                return string.Format(CultureInfo.InvariantCulture,
-                    "-connectionUri '{0}'",
-                    CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString()));
+                string connectionString = CodeGeneration.EscapeSingleQuotedStringContent(GetConnectionString());
+                return string.Create(CultureInfo.InvariantCulture, $"-connectionUri '{connectionString}'");
             }
         }
 
@@ -2740,7 +2723,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
     $clientSideParameters = @{}
 
-    $parametersToLeaveRemote = 'ErrorAction', 'WarningAction', 'InformationAction'
+    $parametersToLeaveRemote = 'ErrorAction', 'WarningAction', 'InformationAction', 'ProgressAction'
 
     Modify-PSImplicitRemotingParameters $clientSideParameters $PSBoundParameters 'AsJob'
     if ($proxyForCmdlet)

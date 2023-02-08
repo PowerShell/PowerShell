@@ -7448,9 +7448,9 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy the TernaryExpressionAst instance.
         /// </summary>
-        /// <return>
-        /// Retirns a copy of the ast.
-        /// </return>
+        /// <returns>
+        /// Returns a copy of the ast.
+        /// </returns>
         public override Ast Copy()
         {
             ExpressionAst newCondition = CopyElement(this.Condition);
@@ -8898,7 +8898,7 @@ namespace System.Management.Automation.Language
                 if (!TypeName.FullName.Contains('`'))
                 {
                     var newTypeName = new TypeName(Extent,
-                        string.Format(CultureInfo.InvariantCulture, "{0}`{1}", TypeName.FullName, GenericArguments.Count));
+                        string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}`{GenericArguments.Count}"));
                     generic = newTypeName.GetReflectionType();
                 }
             }
@@ -8925,7 +8925,7 @@ namespace System.Management.Automation.Language
                     if (!TypeName.FullName.Contains('`'))
                     {
                         var newTypeName = new TypeName(Extent,
-                            string.Format(CultureInfo.InvariantCulture, "{0}Attribute`{1}", TypeName.FullName, GenericArguments.Count));
+                            string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}Attribute`{GenericArguments.Count}"));
                         generic = newTypeName.GetReflectionType();
                     }
                 }

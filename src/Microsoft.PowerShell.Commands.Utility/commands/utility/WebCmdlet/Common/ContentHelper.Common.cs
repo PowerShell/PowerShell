@@ -15,17 +15,10 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Internal Methods
 
-        internal static string GetContentType(HttpResponseMessage response)
-        {
-            // ContentType may not exist in response header.  Return null if not.
-            return response.Content.Headers.ContentType?.MediaType;
-        }
+        // ContentType may not exist in response header.  Return null if not.
+        internal static string GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
 
-        internal static Encoding GetDefaultEncoding()
-        {
-            Encoding encoding = Encoding.UTF8;
-            return encoding;    
-        }
+        internal static Encoding GetDefaultEncoding() => Encoding.UTF8;
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)
         {
@@ -36,8 +29,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int statusCode = WebResponseHelper.GetStatusCode(response);
                 string statusDescription = WebResponseHelper.GetStatusDescription(response);
-                raw.AppendFormat("{0} {1} {2}", protocol, statusCode, statusDescription);
-                raw.AppendLine();
+                raw.AppendLine($"{protocol} {statusCode} {statusDescription}");
             }
 
             HttpHeaders[] headerCollections =
@@ -56,12 +48,9 @@ namespace Microsoft.PowerShell.Commands
                 foreach (var header in headerCollection)
                 {
                     // Headers may have multiple entries with different values
-                    foreach (var headerValue in header.Value)
+                    foreach (string headerValue in header.Value)
                     {
-                        raw.Append(header.Key);
-                        raw.Append(": ");
-                        raw.Append(headerValue);
-                        raw.AppendLine();
+                        raw.AppendLine($"{header.Key}: {headerValue}");
                     }
                 }
             }
@@ -95,31 +84,35 @@ namespace Microsoft.PowerShell.Commands
         private static bool CheckIsJson(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return false;
+            }
 
-            // the correct type for JSON content, as specified in RFC 4627
+            // The correct type for JSON content, as specified in RFC 4627
             bool isJson = contentType.Equals("application/json", StringComparison.OrdinalIgnoreCase);
 
-            // add in these other "javascript" related types that
+            // Add in these other "javascript" related types that
             // sometimes get sent down as the mime type for JSON content
             isJson |= contentType.Equals("text/json", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("text/x-javascript", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/javascript", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("text/javascript", StringComparison.OrdinalIgnoreCase);
+                   || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
+                   || contentType.Equals("text/x-javascript", StringComparison.OrdinalIgnoreCase)
+                   || contentType.Equals("application/javascript", StringComparison.OrdinalIgnoreCase)
+                   || contentType.Equals("text/javascript", StringComparison.OrdinalIgnoreCase);
 
-            return (isJson);
+            return isJson;
         }
 
         private static bool CheckIsText(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return false;
+            }
 
-            // any text, xml or json types are text
+            // Any text, xml or json types are text
             bool isText = contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
-            || CheckIsXml(contentType)
-            || CheckIsJson(contentType);
+                        || CheckIsXml(contentType)
+                        || CheckIsJson(contentType);
 
             // Further content type analysis is available on Windows
             if (Platform.IsWindows && !isText)
@@ -145,30 +138,34 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (isText);
+            return isText;
         }
 
         private static bool CheckIsXml(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return false;
+            }
 
             // RFC 3023: Media types with the suffix "+xml" are XML
-            bool isXml = (contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
-            || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase));
-
-            isXml |= contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
-            return (isXml);
+            bool isXml = contentType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
+                       || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
+                       || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase)
+                       || contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
+            
+            return isXml;
         }
 
         private static string GetContentTypeSignature(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
+            {
                 return null;
+            }
 
             string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
-            return (sig);
+            return sig;
         }
 
         #endregion Private Helper Methods

@@ -1097,14 +1097,14 @@ namespace System.Management.Automation.Help
 #if UNIX
         private static bool ExpandArchive(string source, string destination)
         {
-            bool sucessfulDecompression = false;
+            bool successfulDecompression = false;
 
             try
             {
                 using (ZipArchive zipArchive = ZipFile.Open(source, ZipArchiveMode.Read))
                 {
                     zipArchive.ExtractToDirectory(destination);
-                    sucessfulDecompression = true;
+                    successfulDecompression = true;
                 }
             }
             catch (ArgumentException) { }
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation.Help
             catch (UnauthorizedAccessException) { }
             catch (ObjectDisposedException) { }
 
-            return sucessfulDecompression;
+            return successfulDecompression;
         }
 #endif
 
@@ -1137,9 +1137,9 @@ namespace System.Management.Automation.Help
             }
 
             string sourceDirectory = Path.GetDirectoryName(srcPath);
-            bool sucessfulDecompression = false;
+            bool successfulDecompression = false;
 #if UNIX
-            sucessfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
+            successfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
 #else
             // Cabinet API doesn't handle the trailing back slash
             if (!sourceDirectory.EndsWith('\\'))
@@ -1152,9 +1152,9 @@ namespace System.Management.Automation.Help
                 destPath += "\\";
             }
 
-            sucessfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
+            successfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
 #endif
-            if (!sucessfulDecompression)
+            if (!successfulDecompression)
             {
                 throw new UpdatableHelpSystemException("UnableToExtract", StringUtil.Format(HelpDisplayStrings.UnzipFailure),
                     ErrorCategory.InvalidOperation, null, null);

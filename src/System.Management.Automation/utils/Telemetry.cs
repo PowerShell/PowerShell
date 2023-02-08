@@ -661,6 +661,11 @@ namespace Microsoft.PowerShell.Telemetry
         /// <param name="moduleVersion">The module version to report. The default value is the anonymous version '0.0.0.0'.</param>
         internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = AnonymousVersion)
         {
+            if (!CanSendTelemetry)
+            {
+                return;
+            }
+
             try
             {
                 string allowedModuleName = GetModuleName(moduleName);

@@ -19,7 +19,7 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
-$dotnetAzureFeed = $env:__DONET_RUNTIME_FEED ?? $dotnetMetadata.Sdk.azureFeed
+$dotnetAzureFeed = if (-not $env:__DONET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
 $dotnetAzureFeedSecret = $env:__DONET_RUNTIME_FEED_KEY
 $dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
@@ -138,6 +138,7 @@ function Get-EnvironmentInformation
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
         $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages", "${env:NUGET_PACKAGES}"}
+        $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
     }
     else
     {
@@ -529,7 +530,7 @@ Fix steps:
         if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
             Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
+            if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
                 ## when 'Microsoft.NET.Sdk.WindowsDesktop' is used.
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
@@ -731,7 +732,7 @@ function Restore-PSPackage
         }
         else {
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if ($Options.Runtime -like 'win7-*' -and !$Options.ForMinimalSize) {
+            if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$Options.ForMinimalSize) {
                 $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
             }
         }
@@ -1343,7 +1344,7 @@ function Start-PSPester {
         $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
-    Write-Verbose $command
+    Write-Verbose $command -Verbose
 
     $script:nonewline = $true
     $script:inerror = $false
@@ -1600,9 +1601,15 @@ function script:Start-UnelevatedProcess
         [string]$process,
         [string[]]$arguments
     )
+
     if (-not $environment.IsWindows)
     {
         throw "Start-UnelevatedProcess is currently not supported on non-Windows platforms"
+    }
+
+    if (-not $environment.OSArchitecture -eq 'arm64')
+    {
+        throw "Start-UnelevatedProcess is currently not supported on arm64 platforms"
     }
 
     runas.exe /trustlevel:0x20000 "$process $arguments"

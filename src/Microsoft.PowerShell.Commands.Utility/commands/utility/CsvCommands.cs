@@ -32,9 +32,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
-        ///<summary>
-        ///Culture switch for csv conversion
-        ///</summary>
+        /// <summary>
+        /// Culture switch for csv conversion
+        /// </summary>
         [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
 
@@ -586,9 +586,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public SwitchParameter UseCulture { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// Gets or sets header property to customize the names.
-        ///</summary>
+        /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -785,9 +785,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public char Delimiter { get; set; }
 
-        ///<summary>
-        ///Culture switch for csv conversion
-        ///</summary>
+        /// <summary>
+        /// Culture switch for csv conversion
+        /// </summary>
         [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
@@ -802,9 +802,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSObject[] InputObject { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// Gets or sets header property to customize the names.
-        ///</summary>
+        /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
@@ -1151,7 +1151,7 @@ namespace Microsoft.PowerShell.Commands
                     temp = temp.Substring(4);
                 }
 
-                type = string.Format(System.Globalization.CultureInfo.InvariantCulture, "#TYPE {0}", temp);
+                type = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"#TYPE {temp}");
             }
 
             return type;
