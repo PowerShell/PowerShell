@@ -952,8 +952,16 @@ Describe "WindowStyle argument" -Tag Feature {
 
         if ($IsWindows)
         {
-            $ExitCodeBadCommandLineParameter = 64
-            Add-Type -Name User32 -Namespace Test -MemberDefinition @"
+            $sessionId = Get-Process -Id $PID | Select-Object -Property SessionId
+
+            if ($sessionId -eq 0) {
+                $PSDefaultParameterValues["it:skip"] = $true
+                Write-Warning "This test requires a non-default session ID."
+            }
+            else {
+
+                $ExitCodeBadCommandLineParameter = 64
+                Add-Type -Name User32 -Namespace Test -MemberDefinition @"
 public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
@@ -987,6 +995,7 @@ public enum ShowWindowCommands : int
     Maximized = 3,
 }
 "@
+            }
         }
     }
 
