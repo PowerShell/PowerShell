@@ -56,6 +56,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            // By default, a JSON Schema implementation isn't supposed to automatically fetch content.
+            // Instead JsonSchema.Net has been set up with a registry so that users can pre-register
+            // any schemas they may need to resolve.
+            // However, pre-registering schemas doesn't make sense in the context of a Powershell command,
+            // and automatically fetching referenced URIs is likely the preferred behavior.  To do that,
+            // this property must be set with a method to retrieve and deserialize the content.
+            // For more information, see https://json-everything.net/json-schema#automatic-resolution
             SchemaRegistry.Global.Fetch = static uri =>
             {
                 try
@@ -65,8 +72,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         case "http":
                         case "https":
-                            text = new HttpClient().GetStringAsync(uri).Result;
-                            break;
+                            {
+                                using var client = new HttpClient();
+                                text = client.GetStringAsync(uri).Result;
+                                break;
+                            }
                         case "file":
                             var filename = Uri.UnescapeDataString(uri.AbsolutePath);
                             text = File.ReadAllText(filename);
@@ -158,9 +168,8 @@ namespace Microsoft.PowerShell.Commands
 
                             if (validationResults.Message != null)
                             {
-                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                                var message = $"{validationResults.Message} at {validationResults.InstanceLocation}";
-                                errorRecord.ErrorDetails = new ErrorDetails(message);
+                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
+                                errorRecord.ErrorDetails = new ErrorDetails(typeof(TestJsonCommand).Assembly, "TestJsonCmdletStrings", "InvalidJsonAgainstSchema", validationResults.Message, validationResults.InstanceLocation);
                                 WriteError(errorRecord);
                             }
 
@@ -173,9 +182,8 @@ namespace Microsoft.PowerShell.Commands
                                         continue;
                                     }
 
-                                    ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                                    var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
-                                    errorRecord.ErrorDetails = new ErrorDetails(message);
+                                    ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
+                                    errorRecord.ErrorDetails = new ErrorDetails(typeof(TestJsonCommand).Assembly, "TestJsonCmdletStrings", "InvalidJsonAgainstSchema", nestedResult.Message, nestedResult.InstanceLocation);
                                     WriteError(errorRecord);
                                 }
                             }
