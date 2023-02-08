@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CertificateThumbprint is not null)
             {
-                X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
+                using X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
                 X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
                 X509Certificate2Collection tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
@@ -1227,7 +1227,6 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
-
             ArgumentNullException.ThrowIfNull(request);
 
             // Add 1 to account for the first request.
@@ -1238,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 // Track the current URI being used by various requests and re-requests.
-                var currentUri = req.RequestUri;
+                Uri currentUri = req.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
@@ -1264,12 +1263,10 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
+
                     // Continue to handle redirection
-                    using (client = GetHttpClient(handleRedirect))
-                    using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
-                    {
-                        response = GetResponse(client, redirectRequest, handleRedirect);
-                    }
+                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                    response = GetResponse(client, redirectRequest, handleRedirect);
                 }
 
                 // Request again without the Range header because the server indicated the range was not satisfiable.
@@ -1291,11 +1288,8 @@ namespace Microsoft.PowerShell.Commands
                     using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
                     {
                         FillRequestStream(requestWithoutRange);
-                        long requestContentLength = 0;
-                        if (requestWithoutRange.Content is not null)
-                        {
-                            requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
-                        }
+
+                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
 
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
@@ -1408,11 +1402,7 @@ namespace Microsoft.PowerShell.Commands
                             FillRequestStream(request);
                             try
                             {
-                                long requestContentLength = 0;
-                                if (request.Content is not null)
-                                {
-                                    requestContentLength = request.Content.Headers.ContentLength.Value;
-                                }
+                                long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
 
                                 string reqVerboseMsg = string.Format(
                                     CultureInfo.CurrentCulture,
@@ -1467,13 +1457,14 @@ namespace Microsoft.PowerShell.Commands
                                     StreamReader reader = null;
                                     try
                                     {
-                                        reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        // remove HTML tags making it easier to read
+                                        reader = new(StreamHelper.GetResponseStream(response));
+
+                                        // Remove HTML tags making it easier to read
                                         detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
                                     }
-                                    catch (Exception)
+                                    catch
                                     {
-                                        // catch all
+                                        // Catch all
                                     }
                                     finally
                                     {
@@ -1546,7 +1537,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implementing ^C, after start the BeginGetResponse.
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
