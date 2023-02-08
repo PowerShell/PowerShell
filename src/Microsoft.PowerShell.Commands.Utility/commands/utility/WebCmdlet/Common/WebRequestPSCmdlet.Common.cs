@@ -1831,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ContentHelper.IsXml(contentType))
                 {
-                    XmlDocument doc = new XmlDocument();
+                    XmlDocument doc = new();
                     doc.LoadXml(error);
 
                     XmlWriterSettings settings = new XmlWriterSettings {
@@ -1846,7 +1846,7 @@ namespace Microsoft.PowerShell.Commands
                         settings.Encoding = Encoding.GetEncoding(decl.Encoding);
                     }
 
-                    StringBuilder stringBuilder = new StringBuilder();
+                    StringBuilder stringBuilder = new();
                     using XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
                     doc.Save(xmlWriter);
                     string xmlString = stringBuilder.ToString();
