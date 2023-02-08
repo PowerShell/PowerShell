@@ -13,6 +13,12 @@ Describe 'Native command byte piping tests' -Tags 'CI' {
             $PSDefaultParameterValues['It:Skip'] = $true
             return
         }
+
+        # Without this the test would otherwise be hard coded to a specific set
+        # of [Console]::OutputEncoding/$OutputEncoding settings.
+        $mangledFFByte = $OutputEncoding.GetBytes(
+            [Console]::OutputEncoding.GetString(0xFF) + [Environment]::NewLine).
+            ForEach{ '{0:X2}' -f [int]$_ }
     }
 
     AfterAll {
@@ -30,8 +36,7 @@ Describe 'Native command byte piping tests' -Tags 'CI' {
     }
 
     It 'Output behavior falls back when stderr is redirected to stdout' {
-        $newLine = [Environment]::NewLine.ToCharArray().ForEach{ '{0:X2}' -f [int]$_ }
-        testexe -writebytes FF 2>&1 | testexe -readbytes | Should -BeExactly @('EF', 'BF', 'BD'; $newLine)
+        testexe -writebytes FF 2>&1 | testexe -readbytes | Should -BeExactly $mangledFFByte
     }
 
     It 'Bytes are retained when using SMA.PowerShell' {
