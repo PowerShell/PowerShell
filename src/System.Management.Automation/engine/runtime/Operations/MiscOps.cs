@@ -1266,7 +1266,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                if (!(exception is RuntimeException rte))
+                if (exception is not RuntimeException rte)
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1622,6 +1622,9 @@ namespace System.Management.Automation
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, funcContext.CurrentPosition);
             }
+
+            // Update the history id if needed to associate the exception with the right history item.
+            InterpreterError.UpdateExceptionErrorRecordHistoryId(rte, funcContext._executionContext);
 
             var context = funcContext._executionContext;
             var outputPipe = funcContext._outputPipe;
