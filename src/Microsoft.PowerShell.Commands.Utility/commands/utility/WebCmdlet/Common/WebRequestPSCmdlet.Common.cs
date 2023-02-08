@@ -1837,8 +1837,7 @@ namespace Microsoft.PowerShell.Commands
                     XmlWriterSettings settings = new XmlWriterSettings {
                         Indent = true,
                         NewLineOnAttributes = true,
-                        OmitXmlDeclaration = true,
-                        Encoding = ContentHelper.GetDefaultEncoding()
+                        OmitXmlDeclaration = true
                     };
 
                     if (doc.FirstChild is XmlDeclaration)
