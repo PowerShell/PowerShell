@@ -1850,10 +1850,7 @@ namespace Microsoft.PowerShell.Commands
                     doc.Save(xmlWriter);
                     string xmlString = stringBuilder.ToString();
 
-                    if (xmlString.Length > 0)
-                    {
-                        formattedError = Environment.NewLine + xmlString;
-                    }
+                    formattedError = Environment.NewLine + xmlString;
                 }
                 else if (ContentHelper.IsJson(contentType))
                 {
@@ -1861,10 +1858,7 @@ namespace Microsoft.PowerShell.Commands
                     JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
                     string jsonString = jsonNode.ToJsonString(options);
 
-                    if (jsonString.Length > 0)
-                    {
-                        formattedError = Environment.NewLine + jsonString;
-                    }
+                    formattedError = Environment.NewLine + jsonString;
                 }
             }
             catch
@@ -1872,7 +1866,7 @@ namespace Microsoft.PowerShell.Commands
                 // Ignore errors
             }
             
-            if (formattedError is null)
+            if (string.IsNullOrEmpty(formattedError))
             {
                 // Remove HTML tags making it easier to read
                 formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
