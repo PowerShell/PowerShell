@@ -2146,11 +2146,53 @@ dir -Recurse `
             {
                 ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
                 $OriginalCulture = [cultureinfo]::CurrentCulture
-                [cultureinfo]::CurrentCulture="da-DK"
+                $defaultCulture = "en-US"
+                $culture = "da-DK"
+                [cultureinfo]::CurrentCulture = $culture
                 $helpName = "about_Splatting"
+                $helpFileName = "${helpName}.help.txt"
+
+                $aboutHelpPathUserScope = Join-Path $userHelpRoot $culture
+                $aboutHelpPathAllUsersScope = Join-Path $PSHOME $culture
+                $expectedCompletionCount = 0
+
+                ## If help content does not exist, tab completion will not work. So update it first.
+                $userHelpPath = Join-Path $aboutHelpPathUserScope $helpFileName
+                $userScopeHelp = Test-Path $userHelpPath
+                if ($userScopeHelp) {
+                    $expectedCompletionCount++
+                } else {
+                    Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                    if (Test-Path $userHelpPath) {
+                        $expectedCompletionCount++
+                    }
+                    else {
+                        $aboutHelpPathUserScope = Join-Path $userHelpRoot $defaultCulture
+                        $aboutHelpPathAllUsersScope = Join-Path $PSHOME $defaultCulture
+                        $userHelpDefaultPath = Join-Path $aboutHelpPathUserScope $helpFileName
+                        $userDefaultScopeHelp = Test-Path $userHelpDefaultPath
+
+                        if ($userDefaultScopeHelp) {
+                            $expectedCompletionCount++
+                        }
+                    }
+                }
+
+                $allUserScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersScope $helpFileName)
+                if ($allUserScopeHelpPath) {
+                    $expectedCompletionCount++
+                }
+                else {
+                    $aboutHelpPathAllUsersDefaultScope = Join-Path $PSHOME $defaultCulture
+                    $allUsersDefaultScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersDefaultScope $helpFileName)
+
+                    if ($allUsersDefaultScopeHelpPath) {
+                        $expectedCompletionCount++
+                    }
+                }
 
                 $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-                $res.CompletionMatches | Should -HaveCount 1
+                $res.CompletionMatches | Should -HaveCount $expectedCompletionCount
                 $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
             }
             finally
