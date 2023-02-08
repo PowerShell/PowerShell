@@ -1460,9 +1460,10 @@ namespace Microsoft.PowerShell.Commands
                                     HttpResponseException httpEx = new(message, response);
                                     ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                     string detailMsg = string.Empty;
+                                    StreamReader reader = null;
                                     try
                                     {
-                                        using StreamReader reader = new(StreamHelper.GetResponseStream(response));
+                                        reader = new(StreamHelper.GetResponseStream(response));
 
                                         // Remove HTML tags making it easier to read
                                         detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
@@ -1470,6 +1471,10 @@ namespace Microsoft.PowerShell.Commands
                                     catch
                                     {
                                         // Catch all
+                                    }
+                                    finally
+                                    {
+                                        reader?.Dispose();
                                     }
 
                                     if (!string.IsNullOrEmpty(detailMsg))
