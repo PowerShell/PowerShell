@@ -1977,7 +1977,7 @@ namespace System.Management.Automation
         internal static void UpdateExceptionErrorRecordHistoryId(RuntimeException exception, ExecutionContext context)
         {
             InvocationInfo invInfo = exception.ErrorRecord.InvocationInfo;
-            if (invInfo is null || invInfo.HistoryId != -1)
+            if (invInfo is not { HistoryId: -1 })
             {
                 return;
             }
