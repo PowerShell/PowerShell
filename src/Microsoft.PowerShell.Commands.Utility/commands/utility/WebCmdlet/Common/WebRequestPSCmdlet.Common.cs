@@ -1824,7 +1824,6 @@ namespace Microsoft.PowerShell.Commands
 
         private static string FormatErrorMessage(string error, string contentType)
         {
-            bool converted = false;
             string formattedError = null;
 
             try
@@ -1853,7 +1852,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (xmlString.Length > 0)
                     {
-                        converted = true;
                         formattedError = Environment.NewLine + xmlString;
                     }
                 }
@@ -1865,7 +1863,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (jsonString.Length > 0)
                     {
-                        converted = true;
                         formattedError = Environment.NewLine + jsonString;
                     }
                 }
@@ -1875,7 +1872,7 @@ namespace Microsoft.PowerShell.Commands
                 // Ignore errors
             }
             
-            if (converted is false)
+            if (formattedError is null)
             {
                 // Remove HTML tags making it easier to read
                 formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
