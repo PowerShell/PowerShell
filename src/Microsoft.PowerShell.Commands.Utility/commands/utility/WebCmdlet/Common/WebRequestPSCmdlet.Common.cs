@@ -1870,7 +1870,5 @@ namespace Microsoft.PowerShell.Commands
             WebRequestMethod.Trace => HttpMethod.Trace,
             _ => new HttpMethod(method.ToString().ToUpperInvariant())
         };
-
-        
     }
 }
