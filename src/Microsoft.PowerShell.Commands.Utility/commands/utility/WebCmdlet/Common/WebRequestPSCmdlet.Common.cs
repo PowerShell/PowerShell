@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
         /// This property overrides compatibility with web requests on Windows.
         /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
         /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
-        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
+        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR. To provide compatibility,
         /// we'll detect requests with an Authorization header and automatically strip
         /// the header when the first redirect occurs. This switch turns off this logic for
         /// edge cases where the authorization header needs to be preserved across redirects.
@@ -576,24 +576,24 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void PrepareSession()
         {
-            // make sure we have a valid WebRequestSession object to work with
+            // Make sure we have a valid WebRequestSession object to work with
             WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
             {
-                // save the session back to the PS environment if requested
+                // Save the session back to the PS environment if requested
                 PSVariableIntrinsics vi = SessionState.PSVariable;
                 vi.Set(SessionVariable, WebSession);
             }
 
-            // handle credentials
+            // Handle credentials
             if (Credential is not null && Authentication == WebAuthenticationType.None)
             {
-                // get the relevant NetworkCredential
+                // Get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
                 WebSession.Credentials = netCred;
 
-                // supplying a credential overrides the UseDefaultCredentials setting
+                // Supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
             else if ((Credential is not null || Token is not null) && Authentication != WebAuthenticationType.None)
@@ -629,10 +629,10 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.AddCertificate(Certificate);
             }
 
-            // handle the user agent
+            // Handle the user agent
             if (UserAgent is not null)
             {
-                // store the UserAgent string
+                // Store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
 
@@ -659,7 +659,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
 
-            // store the other supplied headers
+            // Store the other supplied headers
             if (Headers is not null)
             {
                 foreach (string key in Headers.Keys)
@@ -725,7 +725,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 uri = uriBuilder.Uri;
-                // set body to null to prevent later FillRequestStream
+
+                // Set body to null to prevent later FillRequestStream
                 Body = null;
             }
 
@@ -913,18 +914,16 @@ namespace Microsoft.PowerShell.Commands
 
         #region Virtual Methods
 
-        // NOTE: Only pass true for handleRedirect if the original request has an authorization header
-        // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
             handler.CookieContainer = WebSession.Cookies;
             handler.AutomaticDecompression = DecompressionMethods.All;
 
-            // set the credentials used by this request
+            // Set the credentials used by this request
             if (WebSession.UseDefaultCredentials)
             {
-                // the UseDefaultCredentials flag overrides other supplied credentials
+                // The UseDefaultCredentials flag overrides other supplied credentials
                 handler.UseDefaultCredentials = true;
             }
             else if (WebSession.Credentials is not null)
@@ -977,7 +976,7 @@ namespace Microsoft.PowerShell.Commands
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
-            // create the base WebRequest object
+            // Create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
 
             if (HttpVersion is not null)
@@ -985,7 +984,7 @@ namespace Microsoft.PowerShell.Commands
                 request.Version = HttpVersion;
             }
 
-            // pull in session data
+            // Pull in session data
             if (WebSession.Headers.Count > 0)
             {
                 WebSession.ContentHeaders.Clear();
@@ -1072,13 +1071,11 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            // set the content type
+            // Set the request content type
             if (ContentType is not null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-                // request
             }
-            // ContentType is null
             else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
@@ -1499,7 +1496,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode)) // Indicate "HttpClientHandler.AllowAutoRedirect is false"
+                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
