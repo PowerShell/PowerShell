@@ -120,11 +120,11 @@ namespace Microsoft.PowerShell.Commands
                     
                     bool convertSuccess = false;
 
+                    // Default to try json first since it's more common
                     if (returnType == RestReturnType.Json)
                     {
                         convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
-                    // default to try xml first since it's more common
                     else
                     {
                         convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
@@ -216,10 +216,9 @@ namespace Microsoft.PowerShell.Commands
                     while (!reader.EOF)
                     {
                         // If node is Element and it's the 'Item' or 'Entry' node, emit that node.
-                        if ((reader.NodeType == XmlNodeType.Element) &&
-                            (string.Equals("Item", reader.Name, StringComparison.OrdinalIgnoreCase) ||
-                             string.Equals("Entry", reader.Name, StringComparison.OrdinalIgnoreCase))
-                           )
+                        if (reader.NodeType == XmlNodeType.Element 
+                           && (string.Equals("Item", reader.Name, StringComparison.OrdinalIgnoreCase)
+                           || string.Equals("Entry", reader.Name, StringComparison.OrdinalIgnoreCase)))
                         {
                             // This one will do reader.Read() internally
                             XmlNode result = workingDocument.ReadNode(reader);
@@ -232,7 +231,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException) { }
+            catch (XmlException) 
+            { 
+                // Catch XmlException
+            }
             finally
             {
                 responseStream.Seek(0, SeekOrigin.Begin);

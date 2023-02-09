@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (extensionKey != null)
                                 {
                                     string perceivedType = extensionKey.GetValue("PerceivedType") as string;
-                                    isText = (perceivedType == "text");
+                                    isText = perceivedType == "text";
                                 }
                             }
                         }

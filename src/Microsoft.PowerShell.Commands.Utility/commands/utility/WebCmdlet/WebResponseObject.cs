@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         public HttpResponseMessage BaseResponse { get; set; }
 
         /// <summary>
-        /// Gets or protected sets the response body content.
+        /// Gets or sets the response body content.
         /// </summary>
         public byte[] Content { get; protected set; }
 
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<string, IEnumerable<string>> _headers = null;
 
         /// <summary>
-        /// Gets or protected sets the full response content.
+        /// Gets or sets the full response content.
         /// </summary>
         /// <value>
         /// Full response content, including the HTTP status line, headers, and body.
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public long RawContentLength => RawContentStream is null ? -1 : RawContentStream.Length;
 
         /// <summary>
-        /// Gets or protected sets the response body content as a <see cref="MemoryStream"/>.
+        /// Gets or sets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
         public MemoryStream RawContentStream { get; protected set; }
 
@@ -150,7 +150,8 @@ namespace Microsoft.PowerShell.Commands
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
                 RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault());
             }
-            // set the position of the content stream to the beginning
+
+            // Set the position of the content stream to the beginning
             RawContentStream.Position = 0;
         }
 
