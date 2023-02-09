@@ -664,13 +664,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in Headers.Keys)
                 {
-                    var value = Headers[key];
+                    object value = Headers[key];
 
                     // null is not valid value for header.
                     // We silently ignore header if value is null.
                     if (value is not null)
                     {
-                        // add the header value (or overwrite it if already present)
+                        // Add the header value (or overwrite it if already present)
                         WebSession.Headers[key] = value.ToString();
                     }
                 }
@@ -962,7 +962,7 @@ namespace Microsoft.PowerShell.Commands
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
             // Create the base WebRequest object
-            var request = new HttpRequestMessage(httpMethod, requestUri);
+            HttpRequestMessage request = new(httpMethod, requestUri);
 
             if (HttpVersion is not null)
             {
@@ -973,7 +973,7 @@ namespace Microsoft.PowerShell.Commands
             if (WebSession.Headers.Count > 0)
             {
                 WebSession.ContentHeaders.Clear();
-                foreach (var entry in WebSession.Headers)
+                foreach (KeyValuePair<string, string> entry in WebSession.Headers)
                 {
                     if (HttpKnownHeaderNames.ContentHeaders.Contains(entry.Key))
                     {
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
             if (TransferEncoding is not null)
             {
                 request.Headers.TransferEncodingChunked = true;
-                var headerValue = new TransferCodingHeaderValue(TransferEncoding);
+                TransferCodingHeaderValue headerValue = new(TransferEncoding);
                 if (!request.Headers.TransferEncoding.Contains(headerValue))
                 {
                     request.Headers.TransferEncoding.Add(headerValue);
@@ -1037,7 +1037,7 @@ namespace Microsoft.PowerShell.Commands
             // If not, create a Range to request the entire file.
             if (Resume.IsPresent)
             {
-                var fileInfo = new FileInfo(QualifiedOutFile);
+                FileInfo fileInfo = new(QualifiedOutFile);
                 if (fileInfo.Exists)
                 {
                     request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
@@ -1073,7 +1073,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Form is not null)
             {
-                var formData = new MultipartFormDataContent();
+                MultipartFormDataContent formData = new();
                 foreach (DictionaryEntry formEntry in Form)
                 {
                     // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
@@ -1147,7 +1147,7 @@ namespace Microsoft.PowerShell.Commands
                 request.Content.Headers.Clear();
             }
 
-            foreach (var entry in WebSession.ContentHeaders)
+            foreach (KeyValuePair<string, string> entry in WebSession.ContentHeaders)
             {
                 if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
@@ -1163,7 +1163,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (FormatException ex)
                         {
-                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
                             ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                             ThrowTerminatingError(er);
                         }
@@ -1575,7 +1575,7 @@ namespace Microsoft.PowerShell.Commands
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    var mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
+                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
@@ -1764,11 +1764,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
         private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
-            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            ContentDispositionHeaderValue contentDisposition = new("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
-            var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
+            StringContent result = new(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 
             return result;
@@ -1781,11 +1781,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream">The <see cref="Stream"/> to use for the <see cref="StreamContent"/></param>
         private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
-            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            ContentDispositionHeaderValue contentDisposition = new("form-data");
+
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
-            var result = new StreamContent(stream);
+            StreamContent result = new(stream);
             result.Headers.ContentDisposition = contentDisposition;
             result.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
@@ -1799,7 +1800,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
         private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
-            var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
 
