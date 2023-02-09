@@ -1749,7 +1749,7 @@ namespace Microsoft.PowerShell.Commands
             // Treat the value as a collection and enumerate it if enumeration is true
             if (enumerate && fieldValue is IEnumerable items)
             {
-                foreach (var item in items)
+                foreach (object item in items)
                 {
                     // Recurse, but do not enumerate the next level. IEnumerables will be treated as single values.
                     AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
