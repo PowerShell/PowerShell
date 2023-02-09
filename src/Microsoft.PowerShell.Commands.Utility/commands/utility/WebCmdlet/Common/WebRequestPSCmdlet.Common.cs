@@ -930,7 +930,6 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-
         
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
