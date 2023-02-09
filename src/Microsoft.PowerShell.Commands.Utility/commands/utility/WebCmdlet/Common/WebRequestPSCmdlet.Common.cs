@@ -613,8 +613,7 @@ namespace Microsoft.PowerShell.Commands
                 X509Certificate2Collection tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
                 if (tbCollection.Count == 0)
                 {
-                    CryptographicException ex = new(WebCmdletStrings.ThumbprintNotFound);
-                    throw ex;
+                    throw new CryptographicException(WebCmdletStrings.ThumbprintNotFound);
                 }
 
                 foreach (X509Certificate2 tbCert in tbCollection)
