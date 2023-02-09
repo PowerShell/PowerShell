@@ -468,16 +468,16 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
-        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
-
-        internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
-
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
         /// <summary>
         /// Determines whether writing to a file should Resume and append rather than overwrite.
         /// </summary>
         internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
+
+        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
+
+        internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
 
         #endregion Helper Properties
 
