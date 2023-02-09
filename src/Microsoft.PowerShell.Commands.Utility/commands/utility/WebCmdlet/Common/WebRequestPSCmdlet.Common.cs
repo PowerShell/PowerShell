@@ -1274,6 +1274,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Continue to handle redirection
                     using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                    response.Dispose();
                     response = GetResponse(client, redirectRequest, handleRedirect);
                 }
 
@@ -1308,7 +1309,8 @@ namespace Microsoft.PowerShell.Commands
                         
                         WriteVerbose(reqVerboseMsg);
 
-                        return GetResponse(client, requestWithoutRange, handleRedirect);
+                        response.Dispose();
+                        response = GetResponse(client, requestWithoutRange, handleRedirect);
                     }
                 }
 
@@ -1421,7 +1423,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request, handleRedirect);
+                                using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(
