@@ -1584,10 +1584,7 @@ namespace Microsoft.PowerShell.Commands
                 _ => string.Empty
             };
 
-            if (string.IsNullOrEmpty(errorMessage))
-            {
-                Diagnostics.Assert(false, "Unreachable code.");
-            }
+            Diagnostics.Assert(!string.IsNullOrEmpty(errorMessage), "error message should not be null or empty");
 
             return errorMessage;
         }
