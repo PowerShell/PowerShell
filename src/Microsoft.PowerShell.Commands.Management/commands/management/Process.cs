@@ -1584,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands
                 _ => string.Empty
             };
 
-            Diagnostics.Assert(!string.IsNullOrEmpty(errorMessage), "error message should not be null or empty");
+            Diagnostics.Assert(!string.IsNullOrEmpty(errorMessage), "Error message should not be null or empty.");
 
             return errorMessage;
         }
