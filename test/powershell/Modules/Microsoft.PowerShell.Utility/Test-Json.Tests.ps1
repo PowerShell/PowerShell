@@ -110,7 +110,7 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from string" -TestCases @(
-        @{ name = "type"; json = $invalidTypeInJson; errorId = "InvalidJsonAgainstSchemaDetails,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        @{ name = "type"; json = $invalidTypeInJson; errorId = "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand" }
         @{ name = "node"; json = $invalidNodeInJson; errorId = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
     ) {
         param ($json, $errorId)
@@ -122,7 +122,7 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from file" -TestCases @(
-        @{ name = "type"; json = $invalidTypeInJson; errorId = "InvalidJsonAgainstSchemaDetails,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        @{ name = "type"; json = $invalidTypeInJson; errorId = "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand" }
         @{ name = "node"; json = $invalidNodeInJson; errorId = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
     ) {
         param ($json, $errorId)
@@ -139,8 +139,8 @@ Describe "Test-Json" -Tags "CI" {
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should -Be 2
-        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetails,Microsoft.PowerShell.Commands.TestJsonCommand"
-        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetails,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json return all errors when check invalid Json against a valid schema from file" {
@@ -149,8 +149,8 @@ Describe "Test-Json" -Tags "CI" {
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should -Be 2
-        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetails,Microsoft.PowerShell.Commands.TestJsonCommand"
-        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetails,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It 'Test-Json recognizes non-object types: <name>' -TestCases @(
