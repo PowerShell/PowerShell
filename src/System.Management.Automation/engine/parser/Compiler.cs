@@ -435,8 +435,8 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHeterogeneousArray =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), StaticFlags);
 
-        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), StaticFlags);
+        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogeneousArray =
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogeneousArray), StaticFlags);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), StaticFlags);

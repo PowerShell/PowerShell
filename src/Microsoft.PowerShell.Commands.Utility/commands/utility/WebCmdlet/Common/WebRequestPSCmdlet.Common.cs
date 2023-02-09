@@ -17,6 +17,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -269,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         /// This property overrides compatibility with web requests on Windows.
         /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
         /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
-        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
+        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR. To provide compatibility,
         /// we'll detect requests with an Authorization header and automatically strip
         /// the header when the first redirect occurs. This switch turns off this logic for
         /// edge cases where the authorization header needs to be preserved across redirects.
@@ -582,24 +584,24 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void PrepareSession()
         {
-            // make sure we have a valid WebRequestSession object to work with
+            // Make sure we have a valid WebRequestSession object to work with
             WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
             {
-                // save the session back to the PS environment if requested
+                // Save the session back to the PS environment if requested
                 PSVariableIntrinsics vi = SessionState.PSVariable;
                 vi.Set(SessionVariable, WebSession);
             }
 
-            // handle credentials
+            // Handle credentials
             if (Credential is not null && Authentication == WebAuthenticationType.None)
             {
-                // get the relevant NetworkCredential
+                // Get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
                 WebSession.Credentials = netCred;
 
-                // supplying a credential overrides the UseDefaultCredentials setting
+                // Supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
             else if ((Credential is not null || Token is not null) && Authentication != WebAuthenticationType.None)
@@ -613,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CertificateThumbprint is not null)
             {
-                X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
+                using X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
                 X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
                 X509Certificate2Collection tbCollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByThumbprint, CertificateThumbprint, false);
@@ -635,10 +637,10 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.AddCertificate(Certificate);
             }
 
-            // handle the user agent
+            // Handle the user agent
             if (UserAgent is not null)
             {
-                // store the UserAgent string
+                // Store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
 
@@ -665,7 +667,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
 
-            // store the other supplied headers
+            // Store the other supplied headers
             if (Headers is not null)
             {
                 foreach (string key in Headers.Keys)
@@ -731,7 +733,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 uri = uriBuilder.Uri;
-                // set body to null to prevent later FillRequestStream
+
+                // Set body to null to prevent later FillRequestStream
                 Body = null;
             }
 
@@ -919,8 +922,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Virtual Methods
 
-        // NOTE: Only pass true for handleRedirect if the original request has an authorization header
-        // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             SocketsHttpHandler handler = new();
@@ -1090,13 +1091,11 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            // set the content type
+            // Set the request content type
             if (ContentType is not null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-                // request
             }
-            // ContentType is null
             else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
@@ -1250,7 +1249,6 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
-
             ArgumentNullException.ThrowIfNull(request);
 
             // Add 1 to account for the first request.
@@ -1261,7 +1259,7 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 // Track the current URI being used by various requests and re-requests.
-                var currentUri = req.RequestUri;
+                Uri currentUri = req.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
@@ -1279,6 +1277,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WebSession.MaximumRedirection--;
                     }
+
                     // For selected redirects that used POST, GET must be used with the
                     // redirected Location.
                     // Since GET is the default; POST only occurs when -Method POST is used.
@@ -1289,12 +1288,11 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
+
                     // Continue to handle redirection
-                    using (client = GetHttpClient(handleRedirect))
-                    using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
-                    {
-                        response = GetResponse(client, redirectRequest, handleRedirect);
-                    }
+                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                    response.Dispose();
+                    response = GetResponse(client, redirectRequest, handleRedirect);
                 }
 
                 // Request again without the Range header because the server indicated the range was not satisfiable.
@@ -1316,11 +1314,8 @@ namespace Microsoft.PowerShell.Commands
                     using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
                     {
                         FillRequestStream(requestWithoutRange);
-                        long requestContentLength = 0;
-                        if (requestWithoutRange.Content is not null)
-                        {
-                            requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
-                        }
+
+                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
 
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
@@ -1331,7 +1326,8 @@ namespace Microsoft.PowerShell.Commands
                         
                         WriteVerbose(reqVerboseMsg);
 
-                        return GetResponse(client, requestWithoutRange, handleRedirect);
+                        response.Dispose();
+                        response = GetResponse(client, requestWithoutRange, handleRedirect);
                     }
                 }
 
@@ -1433,11 +1429,7 @@ namespace Microsoft.PowerShell.Commands
                             FillRequestStream(request);
                             try
                             {
-                                long requestContentLength = 0;
-                                if (request.Content is not null)
-                                {
-                                    requestContentLength = request.Content.Headers.ContentLength.Value;
-                                }
+                                long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
 
                                 string reqVerboseMsg = string.Format(
                                     CultureInfo.CurrentCulture,
@@ -1448,7 +1440,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request, handleRedirect);
+                                using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(
@@ -1493,12 +1485,11 @@ namespace Microsoft.PowerShell.Commands
                                     try
                                     {
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        // remove HTML tags making it easier to read
-                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
+                                        detailMsg = FormatErrorMessage(reader.ReadToEnd(), contentType);
                                     }
-                                    catch (Exception)
+                                    catch
                                     {
-                                        // catch all
+                                        // Catch all
                                     }
                                     finally
                                     {
@@ -1571,7 +1562,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implementing ^C, after start the BeginGetResponse.
+        /// To implement ^C.
         /// </summary>
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
@@ -1585,7 +1576,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, byte[] content)
@@ -1603,7 +1594,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, string content)
@@ -1670,7 +1661,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
@@ -1688,7 +1679,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
         /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
@@ -1795,7 +1786,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var item in items)
                 {
-                    // Recruse, but do not enumerate the next level. IEnumerables will be treated as single values.
+                    // Recurse, but do not enumerate the next level. IEnumerables will be treated as single values.
                     AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
                 }
             }
@@ -1849,6 +1840,60 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+
+        private static string FormatErrorMessage(string error, string contentType)
+        {
+            string formattedError = null;
+
+            try
+            {
+                if (ContentHelper.IsXml(contentType))
+                {
+                    XmlDocument doc = new();
+                    doc.LoadXml(error);
+
+                    XmlWriterSettings settings = new XmlWriterSettings {
+                        Indent = true,
+                        NewLineOnAttributes = true,
+                        OmitXmlDeclaration = true
+                    };
+
+                    if (doc.FirstChild is XmlDeclaration)
+                    {
+                        XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                        settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                    }
+
+                    StringBuilder stringBuilder = new();
+                    using XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+                    doc.Save(xmlWriter);
+                    string xmlString = stringBuilder.ToString();
+
+                    formattedError = Environment.NewLine + xmlString;
+                }
+                else if (ContentHelper.IsJson(contentType))
+                {
+                    JsonNode jsonNode = JsonNode.Parse(error);
+                    JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+                    string jsonString = jsonNode.ToJsonString(options);
+
+                    formattedError = Environment.NewLine + jsonString;
+                }
+            }
+            catch
+            {
+                // Ignore errors
+            }
+            
+            if (string.IsNullOrEmpty(formattedError))
+            {
+                // Remove HTML tags making it easier to read
+                formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
+            }
+
+            return formattedError;
+        }
+
         #endregion Helper Methods
     }
 }

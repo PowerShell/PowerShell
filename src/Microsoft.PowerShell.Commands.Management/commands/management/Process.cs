@@ -21,8 +21,6 @@ using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Win32.SafeHandles;
-using DWORD = System.UInt32;
-using FileNakedHandle = System.IntPtr;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -519,14 +517,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = NameWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InputObjectWithUserNameParameterSet, Mandatory = true)]
-        public SwitchParameter IncludeUserName
-        {
-            get { return _includeUserName; }
-
-            set { _includeUserName = value; }
-        }
-
-        private bool _includeUserName = false;
+        public SwitchParameter IncludeUserName { get; set; }
 
         /// <summary>
         /// To display the modules of a process.
@@ -744,7 +735,10 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 int error;
-                if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { return null; }
+                if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler))
+                {
+                    return null;
+                }
 
                 // Set the default length to be 256, so it will be sufficient for most cases.
                 int tokenInfoLength = 256;
@@ -757,7 +751,10 @@ namespace Microsoft.PowerShell.Commands
                         Marshal.FreeHGlobal(tokenUserInfo);
                         tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
 
-                        if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { return null; }
+                        if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                        {
+                            return null;
+                        }
                     }
                     else
                     {
@@ -1165,7 +1162,10 @@ namespace Microsoft.PowerShell.Commands
                             SafeGetProcessName(process),
                             SafeGetProcessId(process));
 
-                if (!ShouldProcess(targetString)) { continue; }
+                if (!ShouldProcess(targetString))
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -1323,7 +1323,10 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (ph != IntPtr.Zero) { Win32Native.CloseHandle(ph); }
+                if (ph != IntPtr.Zero)
+                {
+                    Win32Native.CloseHandle(ph);
+                }
             }
 
             return false;
@@ -1483,7 +1486,10 @@ namespace Microsoft.PowerShell.Commands
                             SafeGetProcessName(process),
                             SafeGetProcessId(process));
 
-                if (!ShouldProcess(targetMessage)) { continue; }
+                if (!ShouldProcess(targetMessage))
+                {
+                    continue;
+                }
 
                 // Sometimes Idle process has processid zero,so handle that because we cannot attach debugger to it.
                 if (process.Id == 0)
@@ -1498,7 +1504,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // If the process has exited, we skip it. If the process is from a remote
                     // machine, then we generate a non-terminating error.
-                    if (process.HasExited) { continue; }
+                    if (process.HasExited)
+                    {
+                        continue;
+                    }
                 }
                 catch (NotSupportedException ex)
                 {
@@ -1549,8 +1558,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (CimException e)
                     {
-                        string message = e.Message;
-                        if (!string.IsNullOrEmpty(message)) { message = message.Trim(); }
+                        string message = e.Message?.Trim();
 
                         var errorRecord = new ErrorRecord(
                                 new InvalidOperationException(StringUtil.Format(ProcessResources.DebuggerError, message)),
@@ -1566,16 +1574,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static string MapReturnCodeToErrorMessage(int returnCode)
         {
-            string errorMessage = string.Empty;
-            switch (returnCode)
+            string errorMessage = returnCode switch
             {
-                case 2: errorMessage = ProcessResources.AttachDebuggerReturnCode2; break;
-                case 3: errorMessage = ProcessResources.AttachDebuggerReturnCode3; break;
-                case 8: errorMessage = ProcessResources.AttachDebuggerReturnCode8; break;
-                case 9: errorMessage = ProcessResources.AttachDebuggerReturnCode9; break;
-                case 21: errorMessage = ProcessResources.AttachDebuggerReturnCode21; break;
-                default: Diagnostics.Assert(false, "Unreachable code."); break;
-            }
+                2 => ProcessResources.AttachDebuggerReturnCode2,
+                3 => ProcessResources.AttachDebuggerReturnCode3,
+                8 => ProcessResources.AttachDebuggerReturnCode8,
+                9 => ProcessResources.AttachDebuggerReturnCode9,
+                21 => ProcessResources.AttachDebuggerReturnCode21,
+                _ => string.Empty
+            };
+
+            Diagnostics.Assert(!string.IsNullOrEmpty(errorMessage), "Error message should not be null or empty.");
 
             return errorMessage;
         }
@@ -2006,13 +2015,19 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
-                if (Verb != null) { startInfo.Verb = Verb; }
+                if (Verb != null)
+                {
+                    startInfo.Verb = Verb;
+                }
 
                 startInfo.WindowStyle = _windowstyle;
             }
 
             string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
-            if (!ShouldProcess(targetMessage)) { return; }
+            if (!ShouldProcess(targetMessage))
+            {
+                return;
+            }
 
             Process process = Start(startInfo);
 
@@ -2039,21 +2054,29 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         process.WaitForExit();
 #else
-                        _waithandle = new ManualResetEvent(false);
-
-                        // Create and start the job object
-                        ProcessCollection jobObject = new();
-                        if (jobObject.AssignProcessToJobObject(process))
+                        if (_credential is not null)
                         {
-                            // Wait for the job object to finish
-                            jobObject.WaitOne(_waithandle);
-                        }
-                        else if (!process.HasExited)
-                        {
-                            // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                            process.Exited += myProcess_Exited;
-                            process.EnableRaisingEvents = true;
+                            // If we are running as a different user, we cannot use a job object, so just wait on the process
                             process.WaitForExit();
+                        }
+                        else
+                        {
+                            _waithandle = new ManualResetEvent(false);
+
+                            // Create and start the job object
+                            ProcessCollection jobObject = new();
+                            if (jobObject.AssignProcessToJobObject(process))
+                            {
+                                // Wait for the job object to finish
+                                jobObject.WaitOne(_waithandle);
+                            }
+                            else if (!process.HasExited)
+                            {
+                                // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+                                process.Exited += myProcess_Exited;
+                                process.EnableRaisingEvents = true;
+                                process.WaitForExit();
+                            }
                         }
 #endif
                     }
@@ -2963,7 +2986,7 @@ namespace Microsoft.PowerShell.Commands
             base.GetObjectData(info, context);
 
             ArgumentNullException.ThrowIfNull(info);
-            
+
             info.AddValue("ProcessName", _processName);
         }
         #endregion Serialization

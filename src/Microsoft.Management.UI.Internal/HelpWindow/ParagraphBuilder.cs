@@ -12,8 +12,8 @@ namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
     /// Builds a paragraph based on Text + Bold + Highlight information.
-    /// Bold are the segments of thexct that should be bold, and Highlight are
-    /// the segments of thext that should be highlighted (like search results).
+    /// Bold are the segments of the text that should be bold, and Highlight are
+    /// the segments of the text that should be highlighted (like search results).
     /// </summary>
     internal class ParagraphBuilder : INotifyPropertyChanged
     {
@@ -264,7 +264,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // there is no span ending ahead of current position, so
-            // we set the current span to null to prevent unecessary comparisons against the currentSpan
+            // we set the current span to null to prevent unnecessary comparisons against the currentSpan
             currentSpan = null;
         }
 
