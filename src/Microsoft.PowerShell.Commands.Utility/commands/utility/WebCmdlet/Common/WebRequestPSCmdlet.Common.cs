@@ -914,8 +914,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Virtual Methods
 
-        // NOTE: Only pass true for handleRedirect if the original request has an authorization header
-        // and PreserveAuthorizationOnRedirect is NOT set.
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
