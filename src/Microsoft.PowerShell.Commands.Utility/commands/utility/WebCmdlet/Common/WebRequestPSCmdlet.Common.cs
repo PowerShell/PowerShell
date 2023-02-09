@@ -16,6 +16,8 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1463,10 +1465,8 @@ namespace Microsoft.PowerShell.Commands
                                     StreamReader reader = null;
                                     try
                                     {
-                                        reader = new(StreamHelper.GetResponseStream(response));
-
-                                        // Remove HTML tags making it easier to read
-                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
+                                        reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                                        detailMsg = FormatErrorMessage(reader.ReadToEnd(), contentType);
                                     }
                                     catch
                                     {
@@ -1821,6 +1821,60 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+
+        private static string FormatErrorMessage(string error, string contentType)
+        {
+            string formattedError = null;
+
+            try
+            {
+                if (ContentHelper.IsXml(contentType))
+                {
+                    XmlDocument doc = new();
+                    doc.LoadXml(error);
+
+                    XmlWriterSettings settings = new XmlWriterSettings {
+                        Indent = true,
+                        NewLineOnAttributes = true,
+                        OmitXmlDeclaration = true
+                    };
+
+                    if (doc.FirstChild is XmlDeclaration)
+                    {
+                        XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                        settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                    }
+
+                    StringBuilder stringBuilder = new();
+                    using XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+                    doc.Save(xmlWriter);
+                    string xmlString = stringBuilder.ToString();
+
+                    formattedError = Environment.NewLine + xmlString;
+                }
+                else if (ContentHelper.IsJson(contentType))
+                {
+                    JsonNode jsonNode = JsonNode.Parse(error);
+                    JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+                    string jsonString = jsonNode.ToJsonString(options);
+
+                    formattedError = Environment.NewLine + jsonString;
+                }
+            }
+            catch
+            {
+                // Ignore errors
+            }
+            
+            if (string.IsNullOrEmpty(formattedError))
+            {
+                // Remove HTML tags making it easier to read
+                formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
+            }
+
+            return formattedError;
+        }
+
         #endregion Helper Methods
     }
 }
