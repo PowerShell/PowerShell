@@ -1559,10 +1559,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (CimException e)
                     {
                         string message = e.Message;
-                        if (!string.IsNullOrEmpty(message))
-                        {
-                            message = message.Trim();
-                        }
+                        message = message?.Trim();
 
                         var errorRecord = new ErrorRecord(
                                 new InvalidOperationException(StringUtil.Format(ProcessResources.DebuggerError, message)),
