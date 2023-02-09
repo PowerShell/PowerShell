@@ -20,6 +20,18 @@ $script:netCoreRuntime = 'net7.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
+class R2RVerification {
+    [ValidateSet('NoR2R','R2R','SdkOnly')]
+    [string]
+    $R2RState = 'R2R'
+
+    [string]
+    $Architecture = 'x64'
+
+    [string]
+    $OperatingSystem = 'Windows'
+}
+
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
@@ -326,6 +338,11 @@ function Start-PSPackage {
                     PackageSourcePath = $Source
                     PackageVersion = $Version
                     Force = $Force
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = "R2R"
+                        OperatingSystem = "Windows"
+                        Architecture = "x64"
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -352,6 +369,11 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         PackageVersion = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = SdkOnly
+                            OperatingSystem = "Windows"
+                            Architecture = "x64"
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -379,6 +401,9 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         PackageVersion = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = NoR2R
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -1682,15 +1707,52 @@ function New-StagingFolder
         [Parameter(Mandatory)]
         [string]
         $StagingPath,
+
         [Parameter(Mandatory)]
         [string]
         $PackageSourcePath,
+
         [string]
-        $Filter = '*'
+        $Filter = '*',
+
+        [R2RVerification]
+        $R2RVerification = [R2RVerification]::new()
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
     Copy-Item -Recurse $PackageSourcePath $StagingPath -Filter $Filter
+
+    $smaPath = Join-Path $StagingPath 'System.Management.Automation.dll'
+    $smaInfo = Get-PEInfo -Path $smaPath
+    switch($R2RVerification.R2RState) {
+        'R2R' {
+            if (!$smaInfo.CrossGen -or $smaInfo.Architecture -ne $R2RVerification.Architecture -or $smaInfo.OS -ne $R2RVerification.OperatingSystem) {
+                throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actualy ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
+            }
+            $mismatchedCrossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+            Get-PEInfo |
+                Where-Object { $_.CrossGen -and $_.OS -ne $R2RVerification.OperatingSystem -and $_.Architecture -ne $R2RVerification.Architecture })
+            if ($mismatchedCrossGenedFiles.Count -gt 0) {
+                foreach($file in $mismatchedCrossGenedFiles) {
+                    Write-Warning "Misconfigured ReadyToRun file found.  Expected $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actual ($($file.OS) $($file.Architecture) ) "
+                }
+                throw "Unexpected ReadyToRun files found."
+            }
+        }
+        'NoR2R' {
+            $crossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+            Get-PEInfo |
+                Where-Object { $_.CrossGen })
+            if ($crossGenedFiles.Count -gt 0) {
+                throw "Unexpected ReadyToRun files found: $($crossGenedFiles | ForEach-Object { $_.Path })"
+            }
+        }
+        'SdkOnly' {
+            if($smaInfo.CrossGen) {
+                throw "System.Management.Automation.dll should not be ReadyToRun"
+            }
+        }
+    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -1718,7 +1780,9 @@ function New-ZipPackage
 
         [switch] $Force,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [R2RVerification] $R2RVerification = [R2RVerification]::new()
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1745,7 +1809,7 @@ function New-ZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
-            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
@@ -4821,6 +4885,79 @@ function Test-PackageManifest {
                     Status       = [PackageManifestResultStatus]::MissingFromManifest
                 }
                 Write-Output $result
+            }
+        }
+    }
+}
+
+# Get the PE information for a file
+function Get-PEInfo {
+    [CmdletBinding()]
+    param([Parameter(ValueFromPipeline = $true)][string] $File)
+    BEGIN {
+        # retrieved from ILCompiler.PEWriter.MachineOSOverride
+        enum MachineOSOverride {
+            Windows = 0
+            SunOS = 6546
+            NetBSD = 6547
+            Apple = 17988
+            Linux = 31609
+            FreeBSD = 44484
+        }
+
+        # The information we want
+        class PsPeInfo {
+            [string]$File
+            [bool]$CrossGen
+            [MachineOSOverride]$OS
+            [System.Reflection.PortableExecutable.Machine]$Architecture
+            [System.Reflection.PortableExecutable.CorFlags]$Flags
+        }
+
+    }
+    PROCESS {
+        $filePath = (get-item $file).fullname
+        $CrossGenFlag = 4
+        try {
+            $stream = [System.IO.FileStream]::new($FilePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
+            $peReader = [System.Reflection.PortableExecutable.PEReader]::new($stream)
+            $flags = $peReader.PEHeaders.CorHeader.Flags
+            if (-not $flags) {
+                throw "Null Flags"
+            }
+            $machine = $peReader.PEHeaders.CoffHeader.Machine
+            if (-not $machine) {
+                throw "Null Machine"
+            }
+        } catch {
+            $er = [system.management.automation.errorrecord]::new(([InvalidOperationException]::new($_)), "Get-PEInfo:InvalidOperation", "InvalidOperation", $filePath)
+            $PSCmdlet.WriteError($er)
+            return
+        } finally {
+            if ($peReader) {
+                $peReader.Dispose()
+            }
+        }
+
+        [ushort]$r2rOsArch = $machine
+
+        $RealOS = "unknown"
+        $realarch = "unknown"
+        foreach ($os in [enum]::GetValues([MachineOSOverride])) {
+            foreach ($architecture in [Enum]::GetValues([System.Reflection.PortableExecutable.Machine])) {
+                if (([ushort]$architecture -BXOR [ushort]$os) -eq [ushort]$r2rOsArch) {
+                    $realOS = $os
+                    $realArch = $architecture
+
+                    [PsPeInfo]@{
+                        File         = $File
+                        OS           = $realos
+                        Architecture = $realarch
+                        CrossGen     = [bool]($flags -band $CrossGenFlag)
+                        Flags        = $flags
+                    }
+                    return
+                }
             }
         }
     }
