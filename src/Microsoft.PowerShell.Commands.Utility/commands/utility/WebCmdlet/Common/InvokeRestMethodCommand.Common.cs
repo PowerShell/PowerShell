@@ -232,7 +232,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException) { }
+            catch (XmlException) 
+            {
+                // Catch XmlException
+            }
             finally
             {
                 responseStream.Seek(0, SeekOrigin.Begin);
