@@ -821,6 +821,331 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, string.Create(CultureInfo.InvariantCulture, $"Unrecognized Authentication value: {Authentication}"));
             }
         }
+        
+        /// <summary>
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
+        /// </summary>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
+        /// <param name="content">A byte array containing the content data.</param>
+        /// <remarks>
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
+        /// it should be called one time maximum on a given request.
+        /// </remarks>
+        internal void SetRequestContent(HttpRequestMessage request, byte[] content)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(content);
+
+            ByteArrayContent byteArrayContent = new(content);
+            request.Content = byteArrayContent;
+        }
+
+        /// <summary>
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
+        /// </summary>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
+        /// <param name="content">A String object containing the content data.</param>
+        /// <remarks>
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
+        /// it should be called one time maximum on a given request.
+        /// </remarks>
+        internal void SetRequestContent(HttpRequestMessage request, string content)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(content);
+            
+            Encoding encoding = null;
+            if (ContentType is not null)
+            {
+                // If Content-Type contains the encoding format (as CharSet), use this encoding format
+                // to encode the Body of the WebRequest sent to the server. Default Encoding format
+                // would be used if Charset is not supplied in the Content-Type property.
+                try
+                {
+                    var mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
+                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
+                    {
+                        encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
+                    }
+                }
+                catch (Exception ex) when (ex is FormatException || ex is ArgumentException)
+                {
+                    if (!SkipHeaderValidation)
+                    {
+                        ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
+                    }
+                }
+            }
+
+            byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
+            ByteArrayContent byteArrayContent = new(bytes);
+            request.Content = byteArrayContent;
+        }
+
+        internal void SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(xmlNode);
+
+            byte[] bytes = null;
+            XmlDocument doc = xmlNode as XmlDocument;
+            if (doc?.FirstChild is XmlDeclaration)
+            {
+                XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                Encoding encoding = Encoding.GetEncoding(decl.Encoding);
+                bytes = StreamHelper.EncodeToBytes(doc.OuterXml, encoding);
+            }
+            else
+            {
+                bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml, encoding: null);
+            }
+
+            ByteArrayContent byteArrayContent = new(bytes);
+
+            request.Content = byteArrayContent;
+        }
+
+        /// <summary>
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
+        /// </summary>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
+        /// <param name="contentStream">A Stream object containing the content data.</param>
+        /// <remarks>
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
+        /// it should be called one time maximum on a given request.
+        /// </remarks>
+        internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(contentStream);
+
+            StreamContent streamContent = new(contentStream);
+            request.Content = streamContent;
+        }
+
+        /// <summary>
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
+        /// </summary>
+        /// <param name="request">The WebRequest who's content is to be set.</param>
+        /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
+        /// <remarks>
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
+        /// it should be called one time maximum on a given request.
+        /// </remarks>
+        internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(multipartContent);
+            
+            // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
+            WebSession.ContentHeaders.Clear();
+
+            request.Content = multipartContent;
+        }
+
+        internal void SetRequestContent(HttpRequestMessage request, IDictionary content)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentNullException.ThrowIfNull(content);
+
+            string body = FormatDictionary(content);
+            SetRequestContent(request, body);
+        }
+
+        internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
+        {
+            if (_relationLink is null)
+            {
+                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+            else
+            {
+                _relationLink.Clear();
+            }
+
+            // We only support the URL in angle brackets and `rel`, other attributes are ignored
+            // user can still parse it themselves via the Headers property
+            const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
+            if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
+            {
+                foreach (string linkHeader in links)
+                {
+                    MatchCollection matchCollection = Regex.Matches(linkHeader, pattern);
+                    foreach (Match match in matchCollection)
+                    {
+                        if (match.Success)
+                        {
+                            string url = match.Groups["url"].Value;
+                            string rel = match.Groups["rel"].Value;
+                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
+                            {
+                                Uri absoluteUri = new(requestUri, url);
+                                _relationLink.Add(rel, absoluteUri.AbsoluteUri);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds content to a <see cref="MultipartFormDataContent"/>. Object type detection is used to determine if the value is string, File, or Collection.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use.</param>
+        /// <param name="fieldValue">The Field Value to use.</param>
+        /// <param name="formData">The <see cref="MultipartFormDataContent"/> to update.</param>
+        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
+        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        {
+            ArgumentNullException.ThrowIfNull(formData);
+
+            // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.
+            // Before processing the field name and value we need to ensure we are working with the base objects and not the PSObject wrappers.
+
+            // Unwrap fieldName PSObjects
+            if (fieldName is PSObject namePSObject)
+            {
+                fieldName = namePSObject.BaseObject;
+            }
+
+            // Unwrap fieldValue PSObjects
+            if (fieldValue is PSObject valuePSObject)
+            {
+                fieldValue = valuePSObject.BaseObject;
+            }
+
+            // Treat a single FileInfo as a FileContent
+            if (fieldValue is FileInfo file)
+            {
+                formData.Add(GetMultipartFileContent(fieldName: fieldName, file: file));
+                return;
+            }
+
+            // Treat Strings and other single values as a StringContent.
+            // If enumeration is false, also treat IEnumerables as StringContents.
+            // String implements IEnumerable so the explicit check is required.
+            if (!enumerate || fieldValue is string || fieldValue is not IEnumerable)
+            {
+                formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
+                return;
+            }
+
+            // Treat the value as a collection and enumerate it if enumeration is true
+            if (enumerate && fieldValue is IEnumerable items)
+            {
+                foreach (var item in items)
+                {
+                    // Recurse, but do not enumerate the next level. IEnumerables will be treated as single values.
+                    AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StringContent"/> from the supplied field name and field value. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the objects to strings.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/></param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
+        private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
+        {
+            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+
+            var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
+            result.Headers.ContentDisposition = contentDisposition;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StreamContent"/> from the supplied field name and <see cref="Stream"/>. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the fieldname to a string.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
+        /// <param name="stream">The <see cref="Stream"/> to use for the <see cref="StreamContent"/></param>
+        private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
+        {
+            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+
+            var result = new StreamContent(stream);
+            result.Headers.ContentDisposition = contentDisposition;
+            result.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StreamContent"/> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)"/> to create the <see cref="StreamContent"/> and then sets the file name.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
+        /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
+        private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
+        {
+            var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            
+            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
+
+            return result;
+        }
+
+        private static string FormatErrorMessage(string error, string contentType)
+        {
+            string formattedError = null;
+
+            try
+            {
+                if (ContentHelper.IsXml(contentType))
+                {
+                    XmlDocument doc = new();
+                    doc.LoadXml(error);
+
+                    XmlWriterSettings settings = new XmlWriterSettings {
+                        Indent = true,
+                        NewLineOnAttributes = true,
+                        OmitXmlDeclaration = true
+                    };
+
+                    if (doc.FirstChild is XmlDeclaration)
+                    {
+                        XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
+                        settings.Encoding = Encoding.GetEncoding(decl.Encoding);
+                    }
+
+                    StringBuilder stringBuilder = new();
+                    using XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
+                    doc.Save(xmlWriter);
+                    string xmlString = stringBuilder.ToString();
+
+                    formattedError = Environment.NewLine + xmlString;
+                }
+                else if (ContentHelper.IsJson(contentType))
+                {
+                    JsonNode jsonNode = JsonNode.Parse(error);
+                    JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+                    string jsonString = jsonNode.ToJsonString(options);
+
+                    formattedError = Environment.NewLine + jsonString;
+                }
+            }
+            catch
+            {
+                // Ignore errors
+            }
+            
+            if (string.IsNullOrEmpty(formattedError))
+            {
+                // Remove HTML tags making it easier to read
+                formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
+            }
+
+            return formattedError;
+        }
 
         #endregion Helper Methods
 
@@ -1551,333 +1876,5 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
         #endregion Overrides
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
-        /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set.</param>
-        /// <param name="content">A byte array containing the content data.</param>
-        /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
-        /// it should be called one time maximum on a given request.
-        /// </remarks>
-        internal void SetRequestContent(HttpRequestMessage request, byte[] content)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-            ArgumentNullException.ThrowIfNull(content);
-
-            ByteArrayContent byteArrayContent = new(content);
-            request.Content = byteArrayContent;
-        }
-
-        /// <summary>
-        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
-        /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set.</param>
-        /// <param name="content">A String object containing the content data.</param>
-        /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
-        /// it should be called one time maximum on a given request.
-        /// </remarks>
-        internal void SetRequestContent(HttpRequestMessage request, string content)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-            ArgumentNullException.ThrowIfNull(content);
-            
-            Encoding encoding = null;
-            if (ContentType is not null)
-            {
-                // If Content-Type contains the encoding format (as CharSet), use this encoding format
-                // to encode the Body of the WebRequest sent to the server. Default Encoding format
-                // would be used if Charset is not supplied in the Content-Type property.
-                try
-                {
-                    var mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
-                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
-                    {
-                        encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
-                    }
-                }
-                catch (Exception ex) when (ex is FormatException || ex is ArgumentException)
-                {
-                    if (!SkipHeaderValidation)
-                    {
-                        ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                        ThrowTerminatingError(er);
-                    }
-                }
-            }
-
-            byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
-            ByteArrayContent byteArrayContent = new(bytes);
-            request.Content = byteArrayContent;
-        }
-
-        internal void SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-            ArgumentNullException.ThrowIfNull(xmlNode);
-
-            byte[] bytes = null;
-            XmlDocument doc = xmlNode as XmlDocument;
-            if (doc?.FirstChild is XmlDeclaration)
-            {
-                XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
-                Encoding encoding = Encoding.GetEncoding(decl.Encoding);
-                bytes = StreamHelper.EncodeToBytes(doc.OuterXml, encoding);
-            }
-            else
-            {
-                bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml, encoding: null);
-            }
-
-            ByteArrayContent byteArrayContent = new(bytes);
-
-            request.Content = byteArrayContent;
-        }
-
-        /// <summary>
-        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
-        /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set.</param>
-        /// <param name="contentStream">A Stream object containing the content data.</param>
-        /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
-        /// it should be called one time maximum on a given request.
-        /// </remarks>
-        internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-            ArgumentNullException.ThrowIfNull(contentStream);
-
-            StreamContent streamContent = new(contentStream);
-            request.Content = streamContent;
-        }
-
-        /// <summary>
-        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
-        /// </summary>
-        /// <param name="request">The WebRequest who's content is to be set.</param>
-        /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
-        /// <remarks>
-        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
-        /// it should be called one time maximum on a given request.
-        /// </remarks>
-        internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-            ArgumentNullException.ThrowIfNull(multipartContent);
-            
-            // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
-            WebSession.ContentHeaders.Clear();
-
-            request.Content = multipartContent;
-        }
-
-        internal void SetRequestContent(HttpRequestMessage request, IDictionary content)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-            ArgumentNullException.ThrowIfNull(content);
-
-            string body = FormatDictionary(content);
-            SetRequestContent(request, body);
-        }
-
-        internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
-        {
-            if (_relationLink is null)
-            {
-                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
-                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            }
-            else
-            {
-                _relationLink.Clear();
-            }
-
-            // We only support the URL in angle brackets and `rel`, other attributes are ignored
-            // user can still parse it themselves via the Headers property
-            const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
-            if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
-            {
-                foreach (string linkHeader in links)
-                {
-                    MatchCollection matchCollection = Regex.Matches(linkHeader, pattern);
-                    foreach (Match match in matchCollection)
-                    {
-                        if (match.Success)
-                        {
-                            string url = match.Groups["url"].Value;
-                            string rel = match.Groups["rel"].Value;
-                            if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
-                            {
-                                Uri absoluteUri = new(requestUri, url);
-                                _relationLink.Add(rel, absoluteUri.AbsoluteUri);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Adds content to a <see cref="MultipartFormDataContent"/>. Object type detection is used to determine if the value is string, File, or Collection.
-        /// </summary>
-        /// <param name="fieldName">The Field Name to use.</param>
-        /// <param name="fieldValue">The Field Value to use.</param>
-        /// <param name="formData">The <see cref="MultipartFormDataContent"/>> to update.</param>
-        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
-        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
-        {
-            ArgumentNullException.ThrowIfNull(formData);
-
-            // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.
-            // Before processing the field name and value we need to ensure we are working with the base objects and not the PSObject wrappers.
-
-            // Unwrap fieldName PSObjects
-            if (fieldName is PSObject namePSObject)
-            {
-                fieldName = namePSObject.BaseObject;
-            }
-
-            // Unwrap fieldValue PSObjects
-            if (fieldValue is PSObject valuePSObject)
-            {
-                fieldValue = valuePSObject.BaseObject;
-            }
-
-            // Treat a single FileInfo as a FileContent
-            if (fieldValue is FileInfo file)
-            {
-                formData.Add(GetMultipartFileContent(fieldName: fieldName, file: file));
-                return;
-            }
-
-            // Treat Strings and other single values as a StringContent.
-            // If enumeration is false, also treat IEnumerables as StringContents.
-            // String implements IEnumerable so the explicit check is required.
-            if (!enumerate || fieldValue is string || fieldValue is not IEnumerable)
-            {
-                formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
-                return;
-            }
-
-            // Treat the value as a collection and enumerate it if enumeration is true
-            if (enumerate && fieldValue is IEnumerable items)
-            {
-                foreach (var item in items)
-                {
-                    // Recurse, but do not enumerate the next level. IEnumerables will be treated as single values.
-                    AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets a <see cref="StringContent"/> from the supplied field name and field value. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the objects to strings.
-        /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/></param>
-        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
-        private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
-        {
-            var contentDisposition = new ContentDispositionHeaderValue("form-data");
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
-
-            var result = new StringContent(LanguagePrimitives.ConvertTo<string>(fieldValue));
-            result.Headers.ContentDisposition = contentDisposition;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets a <see cref="StreamContent"/> from the supplied field name and <see cref="Stream"/>. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the fieldname to a string.
-        /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
-        /// <param name="stream">The <see cref="Stream"/> to use for the <see cref="StreamContent"/></param>
-        private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
-        {
-            var contentDisposition = new ContentDispositionHeaderValue("form-data");
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
-
-            var result = new StreamContent(stream);
-            result.Headers.ContentDisposition = contentDisposition;
-            result.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets a <see cref="StreamContent"/> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)"/> to create the <see cref="StreamContent"/> and then sets the file name.
-        /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
-        /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
-        private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
-        {
-            var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
-
-            return result;
-        }
-
-        private static string FormatErrorMessage(string error, string contentType)
-        {
-            string formattedError = null;
-
-            try
-            {
-                if (ContentHelper.IsXml(contentType))
-                {
-                    XmlDocument doc = new();
-                    doc.LoadXml(error);
-
-                    XmlWriterSettings settings = new XmlWriterSettings {
-                        Indent = true,
-                        NewLineOnAttributes = true,
-                        OmitXmlDeclaration = true
-                    };
-
-                    if (doc.FirstChild is XmlDeclaration)
-                    {
-                        XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
-                        settings.Encoding = Encoding.GetEncoding(decl.Encoding);
-                    }
-
-                    StringBuilder stringBuilder = new();
-                    using XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, settings);
-                    doc.Save(xmlWriter);
-                    string xmlString = stringBuilder.ToString();
-
-                    formattedError = Environment.NewLine + xmlString;
-                }
-                else if (ContentHelper.IsJson(contentType))
-                {
-                    JsonNode jsonNode = JsonNode.Parse(error);
-                    JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-                    string jsonString = jsonNode.ToJsonString(options);
-
-                    formattedError = Environment.NewLine + jsonString;
-                }
-            }
-            catch
-            {
-                // Ignore errors
-            }
-            
-            if (string.IsNullOrEmpty(formattedError))
-            {
-                // Remove HTML tags making it easier to read
-                formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
-            }
-
-            return formattedError;
-        }
-
-        #endregion Helper Methods
     }
 }
