@@ -1829,7 +1829,20 @@ namespace Microsoft.PowerShell.Commands
                 (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
             );
         }
-        
+
+        private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
+        {
+            WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
+            WebRequestMethod.Delete => HttpMethod.Delete,
+            WebRequestMethod.Head => HttpMethod.Head,
+            WebRequestMethod.Patch => HttpMethod.Patch,
+            WebRequestMethod.Post => HttpMethod.Post,
+            WebRequestMethod.Put => HttpMethod.Put,
+            WebRequestMethod.Options => HttpMethod.Options,
+            WebRequestMethod.Trace => HttpMethod.Trace,
+            _ => new HttpMethod(method.ToString().ToUpperInvariant())
+        };
+
         #endregion Helper Methods
     }
 
@@ -1861,17 +1874,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-        private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
-        {
-            WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
-            WebRequestMethod.Delete => HttpMethod.Delete,
-            WebRequestMethod.Head => HttpMethod.Head,
-            WebRequestMethod.Patch => HttpMethod.Patch,
-            WebRequestMethod.Post => HttpMethod.Post,
-            WebRequestMethod.Put => HttpMethod.Put,
-            WebRequestMethod.Options => HttpMethod.Options,
-            WebRequestMethod.Trace => HttpMethod.Trace,
-            _ => new HttpMethod(method.ToString().ToUpperInvariant())
-        };
+
     }
 }
