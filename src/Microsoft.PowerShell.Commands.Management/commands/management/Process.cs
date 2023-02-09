@@ -1558,8 +1558,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (CimException e)
                     {
-                        string message = e.Message;
-                        message = message?.Trim();
+                        string message = e.Message?.Trim();
 
                         var errorRecord = new ErrorRecord(
                                 new InvalidOperationException(StringUtil.Format(ProcessResources.DebuggerError, message)),
@@ -1575,27 +1574,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static string MapReturnCodeToErrorMessage(int returnCode)
         {
-            string errorMessage = string.Empty;
-            switch (returnCode)
+            string errorMessage = returnCode switch
             {
-                case 2:
-                    errorMessage = ProcessResources.AttachDebuggerReturnCode2;
-                    break;
-                case 3:
-                    errorMessage = ProcessResources.AttachDebuggerReturnCode3;
-                    break;
-                case 8:
-                    errorMessage = ProcessResources.AttachDebuggerReturnCode8;
-                    break;
-                case 9:
-                    errorMessage = ProcessResources.AttachDebuggerReturnCode9;
-                    break;
-                case 21:
-                    errorMessage = ProcessResources.AttachDebuggerReturnCode21;
-                    break;
-                default:
-                    Diagnostics.Assert(false, "Unreachable code.");
-                    break;
+                2 => ProcessResources.AttachDebuggerReturnCode2,
+                3 => ProcessResources.AttachDebuggerReturnCode3,
+                8 => ProcessResources.AttachDebuggerReturnCode8,
+                9 => ProcessResources.AttachDebuggerReturnCode9,
+                21 => ProcessResources.AttachDebuggerReturnCode21,
+                _ => string.Empty
+            };
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                Diagnostics.Assert(false, "Unreachable code.");
             }
 
             return errorMessage;
@@ -2998,7 +2989,7 @@ namespace Microsoft.PowerShell.Commands
             base.GetObjectData(info, context);
 
             ArgumentNullException.ThrowIfNull(info);
-            
+
             info.AddValue("ProcessName", _processName);
         }
         #endregion Serialization
