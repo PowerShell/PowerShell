@@ -823,6 +823,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Helper Methods
+
+        #region Abstract Methods
+
+        /// <summary>
+        /// Read the supplied WebResponse object and push the resulting output into the pipeline.
+        /// </summary>
+        /// <param name="response">Instance of a WebResponse object to be processed.</param>
+        internal abstract void ProcessResponse(HttpResponseMessage response);
+
+        #endregion Abstract Methods
     }
 
     // TODO: Merge Partials
@@ -853,15 +863,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-        #region Abstract Methods
-
-        /// <summary>
-        /// Read the supplied WebResponse object and push the resulting output into the pipeline.
-        /// </summary>
-        /// <param name="response">Instance of a WebResponse object to be processed.</param>
-        internal abstract void ProcessResponse(HttpResponseMessage response);
-
-        #endregion Abstract Methods
 
         /// <summary>
         /// Cancellation token source.
