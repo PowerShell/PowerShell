@@ -768,17 +768,15 @@ namespace Microsoft.PowerShell.Commands
 
         private ErrorRecord GetValidationError(string msg, string errorId)
         {
-            var ex = new ValidationMetadataException(msg);
-            var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
-            return error;
+            ValidationMetadataException ex = new(msg);
+            return new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
         }
 
         private ErrorRecord GetValidationError(string msg, string errorId, params object[] args)
         {
             msg = string.Format(CultureInfo.InvariantCulture, msg, args);
-            var ex = new ValidationMetadataException(msg);
-            var error = new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
-            return error;
+            ValidationMetadataException ex = new(msg);
+            return new ErrorRecord(ex, errorId, ErrorCategory.InvalidArgument, this);
         }
 
         private string GetBasicAuthorizationHeader()
