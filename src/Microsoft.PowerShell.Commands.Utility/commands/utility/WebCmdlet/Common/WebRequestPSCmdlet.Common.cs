@@ -481,6 +481,16 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Helper Properties
 
+        #region Abstract Methods
+
+        /// <summary>
+        /// Read the supplied WebResponse object and push the resulting output into the pipeline.
+        /// </summary>
+        /// <param name="response">Instance of a WebResponse object to be processed.</param>
+        internal abstract void ProcessResponse(HttpResponseMessage response);
+
+        #endregion Abstract Methods
+
         #region Virtual Methods
 
         internal virtual void ValidateParameters()
@@ -1641,16 +1651,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Helper Methods
-
-        #region Abstract Methods
-
-        /// <summary>
-        /// Read the supplied WebResponse object and push the resulting output into the pipeline.
-        /// </summary>
-        /// <param name="response">Instance of a WebResponse object to be processed.</param>
-        internal abstract void ProcessResponse(HttpResponseMessage response);
-
-        #endregion Abstract Methods
 
         #region Overrides
 
