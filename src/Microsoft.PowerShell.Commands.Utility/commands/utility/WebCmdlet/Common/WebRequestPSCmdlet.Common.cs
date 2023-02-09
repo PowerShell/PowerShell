@@ -737,19 +737,10 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(uri);
 
-            if (!uri.IsAbsoluteUri)
-            {
-                uri = new Uri("http://" + uri.OriginalString);
-            }
-
-            return uri;
+            return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
         }
 
-        private string QualifyFilePath(string path)
-        {
-            string resolvedFilePath = PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
-            return resolvedFilePath;
-        }
+        private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
 
         private static string FormatDictionary(IDictionary content)
         {
@@ -767,11 +758,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = string.Empty;
-                if (value is not null)
-                {
-                    encodedValue = WebUtility.UrlEncode(value.ToString());
-                }
+                string encodedValue = value is null ? string.Empty : WebUtility.UrlEncode(value.ToString());
 
                 bodyBuilder.Append($"{encodedKey}={encodedValue}");
             }
