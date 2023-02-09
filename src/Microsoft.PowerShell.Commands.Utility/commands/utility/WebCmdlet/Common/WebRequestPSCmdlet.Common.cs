@@ -464,6 +464,23 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Virtual Properties
 
+        #region Helper Properties
+
+        internal string QualifiedOutFile => QualifyFilePath(OutFile);
+
+        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
+
+        internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
+
+        internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
+
+        /// <summary>
+        /// Determines whether writing to a file should Resume and append rather than overwrite.
+        /// </summary>
+        internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
+
+        #endregion Helper Properties
+
         #region Virtual Methods
 
         internal virtual void ValidateParameters()
@@ -1178,23 +1195,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Virtual Methods
-
-        #region Helper Properties
-
-        internal string QualifiedOutFile => QualifyFilePath(OutFile);
-
-        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
-
-        internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
-
-        internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
-
-        /// <summary>
-        /// Determines whether writing to a file should Resume and append rather than overwrite.
-        /// </summary>
-        internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
-
-        #endregion Helper Properties
 
         #region Helper Methods
         private Uri PrepareUri(Uri uri)
