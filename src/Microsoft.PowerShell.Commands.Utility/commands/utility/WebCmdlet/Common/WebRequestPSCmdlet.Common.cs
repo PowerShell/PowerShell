@@ -1205,45 +1205,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        // Returns true if the status code is one of the supported redirection codes.
-        private static bool IsRedirectCode(HttpStatusCode code)
-        {
-            int intCode = (int)code;
-            return
-            (
-                (intCode >= 300 && intCode < 304) ||
-                intCode == 307 ||
-                intCode == 308
-            );
-        }
-
-        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
-        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
-        private static bool IsRedirectToGet(HttpStatusCode code)
-        {
-            return
-            (
-                code == HttpStatusCode.Found ||
-                code == HttpStatusCode.Moved ||
-                code == HttpStatusCode.Redirect ||
-                code == HttpStatusCode.RedirectMethod ||
-                code == HttpStatusCode.SeeOther ||
-                code == HttpStatusCode.Ambiguous ||
-                code == HttpStatusCode.MultipleChoices
-            );
-        }
-
-        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
-        private bool ShouldRetry(HttpStatusCode code)
-        {
-            int intCode = (int)code;
-
-            return
-            (
-                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
-            );
-        }
-
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             ArgumentNullException.ThrowIfNull(client);
@@ -1830,6 +1791,45 @@ namespace Microsoft.PowerShell.Commands
             return formattedError;
         }
 
+        // Returns true if the status code is one of the supported redirection codes.
+        private static bool IsRedirectCode(HttpStatusCode code)
+        {
+            int intCode = (int)code;
+            return
+            (
+                (intCode >= 300 && intCode < 304) ||
+                intCode == 307 ||
+                intCode == 308
+            );
+        }
+
+        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
+        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
+        private static bool IsRedirectToGet(HttpStatusCode code)
+        {
+            return
+            (
+                code == HttpStatusCode.Found ||
+                code == HttpStatusCode.Moved ||
+                code == HttpStatusCode.Redirect ||
+                code == HttpStatusCode.RedirectMethod ||
+                code == HttpStatusCode.SeeOther ||
+                code == HttpStatusCode.Ambiguous ||
+                code == HttpStatusCode.MultipleChoices
+            );
+        }
+
+        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
+        private bool ShouldRetry(HttpStatusCode code)
+        {
+            int intCode = (int)code;
+
+            return
+            (
+                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+            );
+        }
+        
         #endregion Helper Methods
     }
 
