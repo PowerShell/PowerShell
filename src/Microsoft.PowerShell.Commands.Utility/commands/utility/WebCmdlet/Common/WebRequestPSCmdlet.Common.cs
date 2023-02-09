@@ -685,6 +685,459 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        
+        internal virtual HttpClient GetHttpClient(bool handleRedirect)
+        {
+            HttpClientHandler handler = new();
+            handler.CookieContainer = WebSession.Cookies;
+            handler.AutomaticDecompression = DecompressionMethods.All;
+
+            // Set the credentials used by this request
+            if (WebSession.UseDefaultCredentials)
+            {
+                // The UseDefaultCredentials flag overrides other supplied credentials
+                handler.UseDefaultCredentials = true;
+            }
+            else if (WebSession.Credentials is not null)
+            {
+                handler.Credentials = WebSession.Credentials;
+            }
+
+            if (NoProxy)
+            {
+                handler.UseProxy = false;
+            }
+            else if (WebSession.Proxy is not null)
+            {
+                handler.Proxy = WebSession.Proxy;
+            }
+
+            if (WebSession.Certificates is not null)
+            {
+                handler.ClientCertificates.AddRange(WebSession.Certificates);
+            }
+
+            if (SkipCertificateCheck)
+            {
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            }
+
+            // This indicates GetResponse will handle redirects.
+            if (handleRedirect || WebSession.MaximumRedirection == 0)
+            {
+                handler.AllowAutoRedirect = false;
+            }
+            else if (WebSession.MaximumRedirection > 0)
+            {
+                handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
+            }
+
+            handler.SslProtocols = (SslProtocols)SslProtocol;
+
+            HttpClient httpClient = new(handler);
+
+            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
+            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
+
+            return httpClient;
+        }
+
+        internal virtual HttpRequestMessage GetRequest(Uri uri)
+        {
+            Uri requestUri = PrepareUri(uri);
+            HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
+
+            // Create the base WebRequest object
+            var request = new HttpRequestMessage(httpMethod, requestUri);
+
+            if (HttpVersion is not null)
+            {
+                request.Version = HttpVersion;
+            }
+
+            // Pull in session data
+            if (WebSession.Headers.Count > 0)
+            {
+                WebSession.ContentHeaders.Clear();
+                foreach (var entry in WebSession.Headers)
+                {
+                    if (HttpKnownHeaderNames.ContentHeaders.Contains(entry.Key))
+                    {
+                        WebSession.ContentHeaders.Add(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        if (SkipHeaderValidation)
+                        {
+                            request.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                        }
+                        else
+                        {
+                            request.Headers.Add(entry.Key, entry.Value);
+                        }
+                    }
+                }
+            }
+
+            // Set 'Transfer-Encoding: chunked' if 'Transfer-Encoding' is specified
+            if (WebSession.Headers.ContainsKey(HttpKnownHeaderNames.TransferEncoding))
+            {
+                request.Headers.TransferEncodingChunked = true;
+            }
+
+            // Set 'User-Agent' if WebSession.Headers doesn't already contain it
+            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out string userAgent))
+            {
+                WebSession.UserAgent = userAgent;
+            }
+            else
+            {
+                if (SkipHeaderValidation)
+                {
+                    request.Headers.TryAddWithoutValidation(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
+                }
+                else
+                {
+                    request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
+                }
+            }
+
+            // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.
+            if (DisableKeepAlive)
+            {
+                request.Headers.Add(HttpKnownHeaderNames.Connection, "Close");
+            }
+
+            // Set 'Transfer-Encoding'
+            if (TransferEncoding is not null)
+            {
+                request.Headers.TransferEncodingChunked = true;
+                var headerValue = new TransferCodingHeaderValue(TransferEncoding);
+                if (!request.Headers.TransferEncoding.Contains(headerValue))
+                {
+                    request.Headers.TransferEncoding.Add(headerValue);
+                }
+            }
+
+            // If the file to resume downloading exists, create the Range request header using the file size.
+            // If not, create a Range to request the entire file.
+            if (Resume.IsPresent)
+            {
+                var fileInfo = new FileInfo(QualifiedOutFile);
+                if (fileInfo.Exists)
+                {
+                    request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
+                    _resumeFileSize = fileInfo.Length;
+                }
+                else
+                {
+                    request.Headers.Range = new RangeHeaderValue(0, null);
+                }
+            }
+
+            return request;
+        }
+
+        internal virtual void FillRequestStream(HttpRequestMessage request)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+
+            // Set the request content type
+            if (ContentType is not null)
+            {
+                WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
+            }
+            else if (request.Method == HttpMethod.Post)
+            {
+                // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
+                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
+                if (string.IsNullOrEmpty(contentType))
+                {
+                    WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = "application/x-www-form-urlencoded";
+                }
+            }
+
+            if (Form is not null)
+            {
+                var formData = new MultipartFormDataContent();
+                foreach (DictionaryEntry formEntry in Form)
+                {
+                    // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
+                    AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
+                }
+
+                SetRequestContent(request, formData);
+            }
+            else if (Body is not null)
+            {
+                // Coerce body into a usable form
+                object content = Body;
+
+                // Make sure we're using the base object of the body, not the PSObject wrapper
+                if (Body is PSObject psBody)
+                {
+                    content = psBody.BaseObject;
+                }
+
+                switch (content)
+                {
+                    case FormObject form:
+                        SetRequestContent(request, form.Fields);
+                        break;
+                    case IDictionary dictionary when request.Method != HttpMethod.Get:
+                        SetRequestContent(request, dictionary);
+                        break;
+                    case XmlNode xmlNode:
+                        SetRequestContent(request, xmlNode);
+                        break;
+                    case Stream stream:
+                        SetRequestContent(request, stream);
+                        break;
+                    case byte[] bytes:
+                        SetRequestContent(request, bytes);
+                        break;
+                    case MultipartFormDataContent multipartFormDataContent:
+                        SetRequestContent(request, multipartFormDataContent);
+                        break;
+                    default:
+                        SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
+                        break;
+                }
+            }
+            else if (InFile is not null)
+            {
+                // Copy InFile data
+                try
+                {
+                    // Open the input file
+                    SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    string msg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.AccessDenied, _originalFilePath);
+
+                    throw new UnauthorizedAccessException(msg);
+                }
+            }
+
+            // For other methods like Put where empty content has meaning, we need to fill in the content
+            if (request.Content is null)
+            {
+                // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
+                if (request.Method == HttpMethod.Get && ContentType is null)
+                {
+                    return;
+                }
+
+                request.Content = new StringContent(string.Empty);
+                request.Content.Headers.Clear();
+            }
+
+            foreach (var entry in WebSession.ContentHeaders)
+            {
+                if (!string.IsNullOrWhiteSpace(entry.Value))
+                {
+                    if (SkipHeaderValidation)
+                    {
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Returns true if the status code is one of the supported redirection codes.
+        private static bool IsRedirectCode(HttpStatusCode code)
+        {
+            int intCode = (int)code;
+            return
+            (
+                (intCode >= 300 && intCode < 304) ||
+                intCode == 307 ||
+                intCode == 308
+            );
+        }
+
+        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
+        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
+        private static bool IsRedirectToGet(HttpStatusCode code)
+        {
+            return
+            (
+                code == HttpStatusCode.Found ||
+                code == HttpStatusCode.Moved ||
+                code == HttpStatusCode.Redirect ||
+                code == HttpStatusCode.RedirectMethod ||
+                code == HttpStatusCode.SeeOther ||
+                code == HttpStatusCode.Ambiguous ||
+                code == HttpStatusCode.MultipleChoices
+            );
+        }
+
+        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
+        private bool ShouldRetry(HttpStatusCode code)
+        {
+            int intCode = (int)code;
+
+            return
+            (
+                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
+            );
+        }
+
+        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
+        {
+            ArgumentNullException.ThrowIfNull(client);
+            ArgumentNullException.ThrowIfNull(request);
+
+            // Add 1 to account for the first request.
+            int totalRequests = WebSession.MaximumRetryCount + 1;
+            HttpRequestMessage req = request;
+            HttpResponseMessage response = null;
+
+            do
+            {
+                // Track the current URI being used by various requests and re-requests.
+                Uri currentUri = req.RequestUri;
+
+                _cancelToken = new CancellationTokenSource();
+                response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+
+                if (handleRedirect
+                    && WebSession.MaximumRedirection is not 0
+                    && IsRedirectCode(response.StatusCode)
+                    && response.Headers.Location is not null)
+                {
+                    _cancelToken.Cancel();
+                    _cancelToken = null;
+
+                    // If explicit count was provided, reduce it for this redirection.
+                    if (WebSession.MaximumRedirection > 0)
+                    {
+                        WebSession.MaximumRedirection--;
+                    }
+
+                    // For selected redirects that used POST, GET must be used with the
+                    // redirected Location.
+                    // Since GET is the default; POST only occurs when -Method POST is used.
+                    if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
+                    {
+                        // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
+                        Method = WebRequestMethod.Get;
+                    }
+
+                    currentUri = new Uri(request.RequestUri, response.Headers.Location);
+
+                    // Continue to handle redirection
+                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                    response.Dispose();
+                    response = GetResponse(client, redirectRequest, handleRedirect);
+                }
+
+                // Request again without the Range header because the server indicated the range was not satisfiable.
+                // This happens when the local file is larger than the remote file.
+                // If the size of the remote file is the same as the local file, there is nothing to resume.
+                if (Resume.IsPresent
+                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                    && (response.Content.Headers.ContentRange.HasLength
+                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
+                {
+                    _cancelToken.Cancel();
+
+                    WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
+
+                    // Disable the Resume switch so the subsequent calls to GetResponse() and FillRequestStream()
+                    // are treated as a standard -OutFile request. This also disables appending local file.
+                    Resume = new SwitchParameter(false);
+
+                    using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
+                    {
+                        FillRequestStream(requestWithoutRange);
+
+                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
+
+                        string reqVerboseMsg = string.Format(
+                            CultureInfo.CurrentCulture,
+                            WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                            requestWithoutRange.Version,
+                            requestWithoutRange.Method,
+                            requestContentLength);
+                        
+                        WriteVerbose(reqVerboseMsg);
+
+                        response.Dispose();
+                        response = GetResponse(client, requestWithoutRange, handleRedirect);
+                    }
+                }
+
+                _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
+
+                // When MaximumRetryCount is not specified, the totalRequests is 1.
+                if (totalRequests > 1 && ShouldRetry(response.StatusCode))
+                {
+                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+
+                    // If the status code is 429 get the retry interval from the Headers.
+                    // Ignore broken header and its value.
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    {
+                        try 
+                        {
+                            IEnumerator<string> enumerator = retryAfter.GetEnumerator();
+                            if (enumerator.MoveNext())
+                            {
+                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                            }
+                        }
+                        catch
+                        {
+                            // Ignore broken header.
+                        }
+                    }
+                    
+                    string retryMessage = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.RetryVerboseMsg,
+                        retryIntervalInSeconds,
+                        response.StatusCode);
+
+                    WriteVerbose(retryMessage);
+
+                    _cancelToken = new CancellationTokenSource();
+                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    _cancelToken.Cancel();
+                    _cancelToken = null;
+
+                    req.Dispose();
+                    req = GetRequest(currentUri);
+                    FillRequestStream(req);
+                }
+
+                totalRequests--;
+            }
+            while (totalRequests > 0 && !response.IsSuccessStatusCode);
+
+            return response;
+        }
+
+        internal virtual void UpdateSession(HttpResponseMessage response)
+        {
+            ArgumentNullException.ThrowIfNull(response);
+        }
+
         #endregion Virtual Methods
 
         #region Helper Properties
@@ -1237,462 +1690,6 @@ namespace Microsoft.PowerShell.Commands
             WebRequestMethod.Trace => HttpMethod.Trace,
             _ => new HttpMethod(method.ToString().ToUpperInvariant())
         };
-
-        #region Virtual Methods
-
-        internal virtual HttpClient GetHttpClient(bool handleRedirect)
-        {
-            HttpClientHandler handler = new();
-            handler.CookieContainer = WebSession.Cookies;
-            handler.AutomaticDecompression = DecompressionMethods.All;
-
-            // Set the credentials used by this request
-            if (WebSession.UseDefaultCredentials)
-            {
-                // The UseDefaultCredentials flag overrides other supplied credentials
-                handler.UseDefaultCredentials = true;
-            }
-            else if (WebSession.Credentials is not null)
-            {
-                handler.Credentials = WebSession.Credentials;
-            }
-
-            if (NoProxy)
-            {
-                handler.UseProxy = false;
-            }
-            else if (WebSession.Proxy is not null)
-            {
-                handler.Proxy = WebSession.Proxy;
-            }
-
-            if (WebSession.Certificates is not null)
-            {
-                handler.ClientCertificates.AddRange(WebSession.Certificates);
-            }
-
-            if (SkipCertificateCheck)
-            {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            }
-
-            // This indicates GetResponse will handle redirects.
-            if (handleRedirect || WebSession.MaximumRedirection == 0)
-            {
-                handler.AllowAutoRedirect = false;
-            }
-            else if (WebSession.MaximumRedirection > 0)
-            {
-                handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
-            }
-
-            handler.SslProtocols = (SslProtocols)SslProtocol;
-
-            HttpClient httpClient = new(handler);
-
-            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
-
-            return httpClient;
-        }
-
-        internal virtual HttpRequestMessage GetRequest(Uri uri)
-        {
-            Uri requestUri = PrepareUri(uri);
-            HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
-
-            // Create the base WebRequest object
-            var request = new HttpRequestMessage(httpMethod, requestUri);
-
-            if (HttpVersion is not null)
-            {
-                request.Version = HttpVersion;
-            }
-
-            // Pull in session data
-            if (WebSession.Headers.Count > 0)
-            {
-                WebSession.ContentHeaders.Clear();
-                foreach (var entry in WebSession.Headers)
-                {
-                    if (HttpKnownHeaderNames.ContentHeaders.Contains(entry.Key))
-                    {
-                        WebSession.ContentHeaders.Add(entry.Key, entry.Value);
-                    }
-                    else
-                    {
-                        if (SkipHeaderValidation)
-                        {
-                            request.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
-                        }
-                        else
-                        {
-                            request.Headers.Add(entry.Key, entry.Value);
-                        }
-                    }
-                }
-            }
-
-            // Set 'Transfer-Encoding: chunked' if 'Transfer-Encoding' is specified
-            if (WebSession.Headers.ContainsKey(HttpKnownHeaderNames.TransferEncoding))
-            {
-                request.Headers.TransferEncodingChunked = true;
-            }
-
-            // Set 'User-Agent' if WebSession.Headers doesn't already contain it
-            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out string userAgent))
-            {
-                WebSession.UserAgent = userAgent;
-            }
-            else
-            {
-                if (SkipHeaderValidation)
-                {
-                    request.Headers.TryAddWithoutValidation(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
-                }
-                else
-                {
-                    request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
-                }
-            }
-
-            // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.
-            if (DisableKeepAlive)
-            {
-                request.Headers.Add(HttpKnownHeaderNames.Connection, "Close");
-            }
-
-            // Set 'Transfer-Encoding'
-            if (TransferEncoding is not null)
-            {
-                request.Headers.TransferEncodingChunked = true;
-                var headerValue = new TransferCodingHeaderValue(TransferEncoding);
-                if (!request.Headers.TransferEncoding.Contains(headerValue))
-                {
-                    request.Headers.TransferEncoding.Add(headerValue);
-                }
-            }
-
-            // If the file to resume downloading exists, create the Range request header using the file size.
-            // If not, create a Range to request the entire file.
-            if (Resume.IsPresent)
-            {
-                var fileInfo = new FileInfo(QualifiedOutFile);
-                if (fileInfo.Exists)
-                {
-                    request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
-                    _resumeFileSize = fileInfo.Length;
-                }
-                else
-                {
-                    request.Headers.Range = new RangeHeaderValue(0, null);
-                }
-            }
-
-            return request;
-        }
-
-        internal virtual void FillRequestStream(HttpRequestMessage request)
-        {
-            ArgumentNullException.ThrowIfNull(request);
-
-            // Set the request content type
-            if (ContentType is not null)
-            {
-                WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-            }
-            else if (request.Method == HttpMethod.Post)
-            {
-                // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
-                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
-                if (string.IsNullOrEmpty(contentType))
-                {
-                    WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = "application/x-www-form-urlencoded";
-                }
-            }
-
-            if (Form is not null)
-            {
-                var formData = new MultipartFormDataContent();
-                foreach (DictionaryEntry formEntry in Form)
-                {
-                    // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
-                    AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
-                }
-
-                SetRequestContent(request, formData);
-            }
-            else if (Body is not null)
-            {
-                // Coerce body into a usable form
-                object content = Body;
-
-                // Make sure we're using the base object of the body, not the PSObject wrapper
-                if (Body is PSObject psBody)
-                {
-                    content = psBody.BaseObject;
-                }
-
-                switch (content)
-                {
-                    case FormObject form:
-                        SetRequestContent(request, form.Fields);
-                        break;
-                    case IDictionary dictionary when request.Method != HttpMethod.Get:
-                        SetRequestContent(request, dictionary);
-                        break;
-                    case XmlNode xmlNode:
-                        SetRequestContent(request, xmlNode);
-                        break;
-                    case Stream stream:
-                        SetRequestContent(request, stream);
-                        break;
-                    case byte[] bytes:
-                        SetRequestContent(request, bytes);
-                        break;
-                    case MultipartFormDataContent multipartFormDataContent:
-                        SetRequestContent(request, multipartFormDataContent);
-                        break;
-                    default:
-                        SetRequestContent(request, (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
-                        break;
-                }
-            }
-            else if (InFile is not null)
-            {
-                // Copy InFile data
-                try
-                {
-                    // Open the input file
-                    SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    string msg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.AccessDenied, _originalFilePath);
-
-                    throw new UnauthorizedAccessException(msg);
-                }
-            }
-
-            // For other methods like Put where empty content has meaning, we need to fill in the content
-            if (request.Content is null)
-            {
-                // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
-                if (request.Method == HttpMethod.Get && ContentType is null)
-                {
-                    return;
-                }
-
-                request.Content = new StringContent(string.Empty);
-                request.Content.Headers.Clear();
-            }
-
-            foreach (var entry in WebSession.ContentHeaders)
-            {
-                if (!string.IsNullOrWhiteSpace(entry.Value))
-                {
-                    if (SkipHeaderValidation)
-                    {
-                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            request.Content.Headers.Add(entry.Key, entry.Value);
-                        }
-                        catch (FormatException ex)
-                        {
-                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                            ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                            ThrowTerminatingError(er);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Returns true if the status code is one of the supported redirection codes.
-        private static bool IsRedirectCode(HttpStatusCode code)
-        {
-            int intCode = (int)code;
-            return
-            (
-                (intCode >= 300 && intCode < 304) ||
-                intCode == 307 ||
-                intCode == 308
-            );
-        }
-
-        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
-        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
-        private static bool IsRedirectToGet(HttpStatusCode code)
-        {
-            return
-            (
-                code == HttpStatusCode.Found ||
-                code == HttpStatusCode.Moved ||
-                code == HttpStatusCode.Redirect ||
-                code == HttpStatusCode.RedirectMethod ||
-                code == HttpStatusCode.SeeOther ||
-                code == HttpStatusCode.Ambiguous ||
-                code == HttpStatusCode.MultipleChoices
-            );
-        }
-
-        // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
-        private bool ShouldRetry(HttpStatusCode code)
-        {
-            int intCode = (int)code;
-
-            return
-            (
-                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
-            );
-        }
-
-        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
-        {
-            ArgumentNullException.ThrowIfNull(client);
-            ArgumentNullException.ThrowIfNull(request);
-
-            // Add 1 to account for the first request.
-            int totalRequests = WebSession.MaximumRetryCount + 1;
-            HttpRequestMessage req = request;
-            HttpResponseMessage response = null;
-
-            do
-            {
-                // Track the current URI being used by various requests and re-requests.
-                Uri currentUri = req.RequestUri;
-
-                _cancelToken = new CancellationTokenSource();
-                response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
-
-                if (handleRedirect
-                    && WebSession.MaximumRedirection is not 0
-                    && IsRedirectCode(response.StatusCode)
-                    && response.Headers.Location is not null)
-                {
-                    _cancelToken.Cancel();
-                    _cancelToken = null;
-
-                    // If explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
-                    {
-                        WebSession.MaximumRedirection--;
-                    }
-
-                    // For selected redirects that used POST, GET must be used with the
-                    // redirected Location.
-                    // Since GET is the default; POST only occurs when -Method POST is used.
-                    if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
-                    {
-                        // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
-                        Method = WebRequestMethod.Get;
-                    }
-
-                    currentUri = new Uri(request.RequestUri, response.Headers.Location);
-
-                    // Continue to handle redirection
-                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
-                    response.Dispose();
-                    response = GetResponse(client, redirectRequest, handleRedirect);
-                }
-
-                // Request again without the Range header because the server indicated the range was not satisfiable.
-                // This happens when the local file is larger than the remote file.
-                // If the size of the remote file is the same as the local file, there is nothing to resume.
-                if (Resume.IsPresent
-                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                    && (response.Content.Headers.ContentRange.HasLength
-                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
-                {
-                    _cancelToken.Cancel();
-
-                    WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
-
-                    // Disable the Resume switch so the subsequent calls to GetResponse() and FillRequestStream()
-                    // are treated as a standard -OutFile request. This also disables appending local file.
-                    Resume = new SwitchParameter(false);
-
-                    using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
-                    {
-                        FillRequestStream(requestWithoutRange);
-
-                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
-
-                        string reqVerboseMsg = string.Format(
-                            CultureInfo.CurrentCulture,
-                            WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                            requestWithoutRange.Version,
-                            requestWithoutRange.Method,
-                            requestContentLength);
-                        
-                        WriteVerbose(reqVerboseMsg);
-
-                        response.Dispose();
-                        response = GetResponse(client, requestWithoutRange, handleRedirect);
-                    }
-                }
-
-                _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
-
-                // When MaximumRetryCount is not specified, the totalRequests is 1.
-                if (totalRequests > 1 && ShouldRetry(response.StatusCode))
-                {
-                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
-
-                    // If the status code is 429 get the retry interval from the Headers.
-                    // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
-                    {
-                        try 
-                        {
-                            IEnumerator<string> enumerator = retryAfter.GetEnumerator();
-                            if (enumerator.MoveNext())
-                            {
-                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
-                            }
-                        }
-                        catch
-                        {
-                            // Ignore broken header.
-                        }
-                    }
-                    
-                    string retryMessage = string.Format(
-                        CultureInfo.CurrentCulture,
-                        WebCmdletStrings.RetryVerboseMsg,
-                        retryIntervalInSeconds,
-                        response.StatusCode);
-
-                    WriteVerbose(retryMessage);
-
-                    _cancelToken = new CancellationTokenSource();
-                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
-                    _cancelToken.Cancel();
-                    _cancelToken = null;
-
-                    req.Dispose();
-                    req = GetRequest(currentUri);
-                    FillRequestStream(req);
-                }
-
-                totalRequests--;
-            }
-            while (totalRequests > 0 && !response.IsSuccessStatusCode);
-
-            return response;
-        }
-
-        internal virtual void UpdateSession(HttpResponseMessage response)
-        {
-            ArgumentNullException.ThrowIfNull(response);
-        }
-
-        #endregion Virtual Methods
 
         #region Overrides
 
