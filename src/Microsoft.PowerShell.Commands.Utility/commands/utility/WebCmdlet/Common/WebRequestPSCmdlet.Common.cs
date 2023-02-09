@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
-    public abstract partial class WebRequestPSCmdlet : PSCmdlet
+    public abstract class WebRequestPSCmdlet : PSCmdlet
     {
         #region Fields
 
@@ -1846,8 +1846,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Helper Methods
     }
 
-    // TODO: Merge Partials
-
     /// <summary>
     /// Exception class for webcmdlets to enable returning HTTP error response.
     /// </summary>
@@ -1867,13 +1865,5 @@ namespace Microsoft.PowerShell.Commands
         /// HTTP error response.
         /// </summary>
         public HttpResponseMessage Response { get; }
-    }
-
-    /// <summary>
-    /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
-    /// </summary>
-    public abstract partial class WebRequestPSCmdlet : PSCmdlet
-    {
-
     }
 }
