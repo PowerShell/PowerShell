@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
         /// This property overrides compatibility with web requests on Windows.
         /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
         /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
-        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
+        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR. To provide compatibility,
         /// we'll detect requests with an Authorization header and automatically strip
         /// the header when the first redirect occurs. This switch turns off this logic for
         /// edge cases where the authorization header needs to be preserved across redirects.
@@ -576,24 +576,24 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void PrepareSession()
         {
-            // make sure we have a valid WebRequestSession object to work with
+            // Make sure we have a valid WebRequestSession object to work with
             WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
             {
-                // save the session back to the PS environment if requested
+                // Save the session back to the PS environment if requested
                 PSVariableIntrinsics vi = SessionState.PSVariable;
                 vi.Set(SessionVariable, WebSession);
             }
 
-            // handle credentials
+            // Handle credentials
             if (Credential is not null && Authentication == WebAuthenticationType.None)
             {
-                // get the relevant NetworkCredential
+                // Get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
                 WebSession.Credentials = netCred;
 
-                // supplying a credential overrides the UseDefaultCredentials setting
+                // Supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
             else if ((Credential is not null || Token is not null) && Authentication != WebAuthenticationType.None)
@@ -629,10 +629,10 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.AddCertificate(Certificate);
             }
 
-            // handle the user agent
+            // Handle the user agent
             if (UserAgent is not null)
             {
-                // store the UserAgent string
+                // Store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
 
@@ -659,7 +659,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
 
-            // store the other supplied headers
+            // Store the other supplied headers
             if (Headers is not null)
             {
                 foreach (string key in Headers.Keys)
@@ -725,7 +725,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 uri = uriBuilder.Uri;
-                // set body to null to prevent later FillRequestStream
+                
+                // Set body to null to prevent later FillRequestStream
                 Body = null;
             }
 
