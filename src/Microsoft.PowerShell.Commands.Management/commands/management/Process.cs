@@ -21,8 +21,6 @@ using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Win32.SafeHandles;
-using DWORD = System.UInt32;
-using FileNakedHandle = System.IntPtr;
 
 namespace Microsoft.PowerShell.Commands
 {
