@@ -98,19 +98,9 @@ namespace Microsoft.PowerShell.Commands
         internal CancellationTokenSource _cancelToken = null;
 
         /// <summary>
-        /// Parse Rel Links.
-        /// </summary>
-        internal bool _parseRelLink = false;
-
-        /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
         internal bool _followRelLink = false;
-
-        /// <summary>
-        /// Automatically follow Rel Links.
-        /// </summary>
-        internal Dictionary<string, string> _relationLink = null;
 
         /// <summary>
         /// Maximum number of Rel Links to follow.
@@ -118,15 +108,25 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
-        /// The remote endpoint returned a 206 status code indicating successful resume.
+        /// Parse Rel Links.
         /// </summary>
-        private bool _resumeSuccess = false;
+        internal bool _parseRelLink = false;
+
+        /// <summary>
+        /// Automatically follow Rel Links.
+        /// </summary>
+        internal Dictionary<string, string> _relationLink = null;
 
         /// <summary>
         /// The current size of the local file being resumed.
         /// </summary>
         private long _resumeFileSize = 0;
-        
+
+        /// <summary>
+        /// The remote endpoint returned a 206 status code indicating successful resume.
+        /// </summary>
+        private bool _resumeSuccess = false;
+
         #endregion Fields
 
         #region Virtual Properties
