@@ -743,8 +743,8 @@ namespace Microsoft.PowerShell.Telemetry
         /// <summary>
         /// Send additional information about an experimental feature as it is used.
         /// </summary>
-        /// <param name="detail">The name of the experimental feature.</param>
-        /// <param name="featureName">The details of the experimental feature.</param>
+        /// <param name="featureName">The name of the experimental feature.</param>
+        /// <param name="detail">The details about the experimental feature use.</param>
         internal static void SendExperimentalUseData(string featureName, string detail)
         {
             if (!CanSendTelemetry)
@@ -971,6 +971,5 @@ namespace Microsoft.PowerShell.Telemetry
             CanSendTelemetry = false;
             return id;
         }
-
     }
 }
