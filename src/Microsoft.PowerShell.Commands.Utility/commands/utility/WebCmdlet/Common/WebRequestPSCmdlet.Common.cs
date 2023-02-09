@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 uri = uriBuilder.Uri;
-                
+
                 // Set body to null to prevent later FillRequestStream
                 Body = null;
             }
@@ -922,10 +922,10 @@ namespace Microsoft.PowerShell.Commands
             handler.CookieContainer = WebSession.Cookies;
             handler.AutomaticDecompression = DecompressionMethods.All;
 
-            // set the credentials used by this request
+            // Set the credentials used by this request
             if (WebSession.UseDefaultCredentials)
             {
-                // the UseDefaultCredentials flag overrides other supplied credentials
+                // The UseDefaultCredentials flag overrides other supplied credentials
                 handler.UseDefaultCredentials = true;
             }
             else if (WebSession.Credentials is not null)
@@ -978,7 +978,7 @@ namespace Microsoft.PowerShell.Commands
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
-            // create the base WebRequest object
+            // Create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
 
             if (HttpVersion is not null)
@@ -986,7 +986,7 @@ namespace Microsoft.PowerShell.Commands
                 request.Version = HttpVersion;
             }
 
-            // pull in session data
+            // Pull in session data
             if (WebSession.Headers.Count > 0)
             {
                 WebSession.ContentHeaders.Clear();
@@ -1073,11 +1073,10 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            // set the content type
+            // Set the request content type
             if (ContentType is not null)
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
-                // request
             }
             // ContentType is null
             else if (request.Method == HttpMethod.Post)
