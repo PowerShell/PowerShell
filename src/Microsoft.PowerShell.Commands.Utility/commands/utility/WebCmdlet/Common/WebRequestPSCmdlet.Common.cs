@@ -90,6 +90,45 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
+        #region Fields
+
+        /// <summary>
+        /// Cancellation token source.
+        /// </summary>
+        internal CancellationTokenSource _cancelToken = null;
+
+        /// <summary>
+        /// Parse Rel Links.
+        /// </summary>
+        internal bool _parseRelLink = false;
+
+        /// <summary>
+        /// Automatically follow Rel Links.
+        /// </summary>
+        internal bool _followRelLink = false;
+
+        /// <summary>
+        /// Automatically follow Rel Links.
+        /// </summary>
+        internal Dictionary<string, string> _relationLink = null;
+
+        /// <summary>
+        /// Maximum number of Rel Links to follow.
+        /// </summary>
+        internal int _maximumFollowRelLink = int.MaxValue;
+
+        /// <summary>
+        /// The remote endpoint returned a 206 status code indicating successful resume.
+        /// </summary>
+        private bool _resumeSuccess = false;
+
+        /// <summary>
+        /// The current size of the local file being resumed.
+        /// </summary>
+        private long _resumeFileSize = 0;
+        
+        #endregion Fields
+
         #region Virtual Properties
 
         #region URI
@@ -1822,42 +1861,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
-
-        /// <summary>
-        /// Cancellation token source.
-        /// </summary>
-        internal CancellationTokenSource _cancelToken = null;
-
-        /// <summary>
-        /// Parse Rel Links.
-        /// </summary>
-        internal bool _parseRelLink = false;
-
-        /// <summary>
-        /// Automatically follow Rel Links.
-        /// </summary>
-        internal bool _followRelLink = false;
-
-        /// <summary>
-        /// Automatically follow Rel Links.
-        /// </summary>
-        internal Dictionary<string, string> _relationLink = null;
-
-        /// <summary>
-        /// Maximum number of Rel Links to follow.
-        /// </summary>
-        internal int _maximumFollowRelLink = int.MaxValue;
-
-        /// <summary>
-        /// The remote endpoint returned a 206 status code indicating successful resume.
-        /// </summary>
-        private bool _resumeSuccess = false;
-
-        /// <summary>
-        /// The current size of the local file being resumed.
-        /// </summary>
-        private long _resumeFileSize = 0;
-
         private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
         {
             WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
