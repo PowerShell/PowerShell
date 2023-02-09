@@ -1076,7 +1076,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
             }
-            // ContentType is null
             else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
