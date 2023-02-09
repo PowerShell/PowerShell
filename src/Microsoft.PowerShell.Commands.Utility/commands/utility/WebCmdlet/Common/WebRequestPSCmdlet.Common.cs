@@ -1612,84 +1612,6 @@ namespace Microsoft.PowerShell.Commands
         internal abstract void ProcessResponse(HttpResponseMessage response);
 
         #endregion Abstract Methods
-    }
-
-    // TODO: Merge Partials
-
-    /// <summary>
-    /// Exception class for webcmdlets to enable returning HTTP error response.
-    /// </summary>
-    public sealed class HttpResponseException : HttpRequestException
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
-        /// </summary>
-        /// <param name="message">Message for the exception.</param>
-        /// <param name="response">Response from the HTTP server.</param>
-        public HttpResponseException(string message, HttpResponseMessage response) : base(message, inner: null, response.StatusCode)
-        {
-            Response = response;
-        }
-
-        /// <summary>
-        /// HTTP error response.
-        /// </summary>
-        public HttpResponseMessage Response { get; }
-    }
-
-    /// <summary>
-    /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
-    /// </summary>
-    public abstract partial class WebRequestPSCmdlet : PSCmdlet
-    {
-
-        /// <summary>
-        /// Cancellation token source.
-        /// </summary>
-        internal CancellationTokenSource _cancelToken = null;
-
-        /// <summary>
-        /// Parse Rel Links.
-        /// </summary>
-        internal bool _parseRelLink = false;
-
-        /// <summary>
-        /// Automatically follow Rel Links.
-        /// </summary>
-        internal bool _followRelLink = false;
-
-        /// <summary>
-        /// Automatically follow Rel Links.
-        /// </summary>
-        internal Dictionary<string, string> _relationLink = null;
-
-        /// <summary>
-        /// Maximum number of Rel Links to follow.
-        /// </summary>
-        internal int _maximumFollowRelLink = int.MaxValue;
-
-        /// <summary>
-        /// The remote endpoint returned a 206 status code indicating successful resume.
-        /// </summary>
-        private bool _resumeSuccess = false;
-
-        /// <summary>
-        /// The current size of the local file being resumed.
-        /// </summary>
-        private long _resumeFileSize = 0;
-
-        private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
-        {
-            WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
-            WebRequestMethod.Delete => HttpMethod.Delete,
-            WebRequestMethod.Head => HttpMethod.Head,
-            WebRequestMethod.Patch => HttpMethod.Patch,
-            WebRequestMethod.Post => HttpMethod.Post,
-            WebRequestMethod.Put => HttpMethod.Put,
-            WebRequestMethod.Options => HttpMethod.Options,
-            WebRequestMethod.Trace => HttpMethod.Trace,
-            _ => new HttpMethod(method.ToString().ToUpperInvariant())
-        };
 
         #region Overrides
 
@@ -1870,5 +1792,85 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
         #endregion Overrides
+    }
+
+    // TODO: Merge Partials
+
+    /// <summary>
+    /// Exception class for webcmdlets to enable returning HTTP error response.
+    /// </summary>
+    public sealed class HttpResponseException : HttpRequestException
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpResponseException"/> class.
+        /// </summary>
+        /// <param name="message">Message for the exception.</param>
+        /// <param name="response">Response from the HTTP server.</param>
+        public HttpResponseException(string message, HttpResponseMessage response) : base(message, inner: null, response.StatusCode)
+        {
+            Response = response;
+        }
+
+        /// <summary>
+        /// HTTP error response.
+        /// </summary>
+        public HttpResponseMessage Response { get; }
+    }
+
+    /// <summary>
+    /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
+    /// </summary>
+    public abstract partial class WebRequestPSCmdlet : PSCmdlet
+    {
+
+        /// <summary>
+        /// Cancellation token source.
+        /// </summary>
+        internal CancellationTokenSource _cancelToken = null;
+
+        /// <summary>
+        /// Parse Rel Links.
+        /// </summary>
+        internal bool _parseRelLink = false;
+
+        /// <summary>
+        /// Automatically follow Rel Links.
+        /// </summary>
+        internal bool _followRelLink = false;
+
+        /// <summary>
+        /// Automatically follow Rel Links.
+        /// </summary>
+        internal Dictionary<string, string> _relationLink = null;
+
+        /// <summary>
+        /// Maximum number of Rel Links to follow.
+        /// </summary>
+        internal int _maximumFollowRelLink = int.MaxValue;
+
+        /// <summary>
+        /// The remote endpoint returned a 206 status code indicating successful resume.
+        /// </summary>
+        private bool _resumeSuccess = false;
+
+        /// <summary>
+        /// The current size of the local file being resumed.
+        /// </summary>
+        private long _resumeFileSize = 0;
+
+        private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
+        {
+            WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
+            WebRequestMethod.Delete => HttpMethod.Delete,
+            WebRequestMethod.Head => HttpMethod.Head,
+            WebRequestMethod.Patch => HttpMethod.Patch,
+            WebRequestMethod.Post => HttpMethod.Post,
+            WebRequestMethod.Put => HttpMethod.Put,
+            WebRequestMethod.Options => HttpMethod.Options,
+            WebRequestMethod.Trace => HttpMethod.Trace,
+            _ => new HttpMethod(method.ToString().ToUpperInvariant())
+        };
+
+        
     }
 }
