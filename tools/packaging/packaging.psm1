@@ -523,6 +523,7 @@ function Start-PSPackage {
                 }
             }
             "tar-arm" {
+                $peArch = ConvertTo-PEArchitecture -Architecture 'arm'
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
@@ -533,7 +534,7 @@ function Start-PSPackage {
                     R2RVerification = [R2RVerification]@{
                         R2RState = 'R2R'
                         OperatingSystem = "Linux"
-                        Architecture = "arm"
+                        Architecture = $peArch
                     }
                 }
 
