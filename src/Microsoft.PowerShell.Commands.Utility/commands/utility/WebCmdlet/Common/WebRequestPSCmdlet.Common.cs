@@ -1421,7 +1421,6 @@ namespace Microsoft.PowerShell.Commands
             return bodyBuilder.ToString();
         }
 
-
         private ErrorRecord GetValidationError(string msg, string errorId)
         {
             var ex = new ValidationMetadataException(msg);
