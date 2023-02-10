@@ -93,6 +93,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
     }
 
     It "Clear-Host does not injects data into PowerShell output stream" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+        }
+
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
     }
 
@@ -996,6 +1000,10 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
+
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+        }
 
         try {
             $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru

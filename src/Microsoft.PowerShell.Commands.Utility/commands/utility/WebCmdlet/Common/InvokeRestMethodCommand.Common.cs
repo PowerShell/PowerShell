@@ -26,32 +26,6 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the parameter Method.
-        /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
-        public override WebRequestMethod Method
-        {
-            get => base.Method;
-
-            set => base.Method = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the parameter CustomMethod.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
-        [Alias("CM")]
-        [ValidateNotNullOrEmpty]
-        public override string CustomMethod
-        {
-            get => base.CustomMethod;
-
-            set => base.CustomMethod = value.ToUpperInvariant();
-        }
-
-        /// <summary>
         /// Enable automatic following of rel links.
         /// </summary>
         [Parameter]
@@ -142,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Format(System.Globalization.CultureInfo.InvariantCulture, "Content encoding: {0}", encodingVerboseName));
+                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
                     
                     bool convertSuccess = false;
 
@@ -258,7 +232,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException) { }
+            catch (XmlException) 
+            {
+                // Catch XmlException
+            }
             finally
             {
                 responseStream.Seek(0, SeekOrigin.Begin);
@@ -331,12 +308,7 @@ namespace Microsoft.PowerShell.Commands
                     converted = true;
                 }
             }
-            catch (ArgumentException ex)
-            {
-                exRef = ex;
-                obj = null;
-            }
-            catch (InvalidOperationException ex)
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
                 exRef = ex;
                 obj = null;

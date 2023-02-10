@@ -589,7 +589,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
+    /// Provides helper functions to facilitate calling managed code from a native PowerShell host.
     /// </summary>
     public static unsafe class PowerShellUnsafeAssemblyLoad
     {

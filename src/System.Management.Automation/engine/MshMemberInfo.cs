@@ -3365,8 +3365,7 @@ namespace System.Management.Automation
                                     break;
                                 default:
                                     Diagnostics.Assert(false,
-                                        string.Format(CultureInfo.InvariantCulture,
-                                            "PSInternalMemberSet cannot process {0}", name));
+                                        string.Create(CultureInfo.InvariantCulture, $"PSInternalMemberSet cannot process {name}"));
                                     break;
                             }
                         }

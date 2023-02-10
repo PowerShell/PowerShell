@@ -127,9 +127,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class with a collection of error messages.
         /// </summary>
         /// <param name="errors">The collection of error messages.</param>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors",
-            Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
-        public ParseException(Language.ParseError[] errors)
+        public ParseException(ParseError[] errors)
         {
             ArgumentNullException.ThrowIfNull(errors);
 

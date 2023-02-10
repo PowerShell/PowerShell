@@ -922,7 +922,7 @@ namespace System.Management.Automation
         {
             return FromStream == RedirectionStream.All
                        ? "*>&1"
-                       : string.Format(CultureInfo.InvariantCulture, "{0}>&1", (int)FromStream);
+                       : string.Create(CultureInfo.InvariantCulture, $"{(int)FromStream}>&1");
         }
 
         // private RedirectionStream ToStream { get; set; }
@@ -1031,11 +1031,13 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}> {1}",
-                                 FromStream == RedirectionStream.All
-                                     ? "*"
-                                     : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
-                                 File);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}> {1}",
+                FromStream == RedirectionStream.All
+                    ? "*"
+                    : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
+                File);
         }
 
         internal string File { get; }
@@ -1264,7 +1266,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                if (!(exception is RuntimeException rte))
+                if (exception is not RuntimeException rte)
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1476,7 +1478,7 @@ namespace System.Management.Automation
 
             do
             {
-                // Always assume no need to repeat the search for another interation
+                // Always assume no need to repeat the search for another iteration
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_
                 ErrorRecord errorRecordToPass = rte.ErrorRecord;
@@ -1620,6 +1622,9 @@ namespace System.Management.Automation
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, funcContext.CurrentPosition);
             }
+
+            // Update the history id if needed to associate the exception with the right history item.
+            InterpreterError.UpdateExceptionErrorRecordHistoryId(rte, funcContext._executionContext);
 
             var context = funcContext._executionContext;
             var outputPipe = funcContext._outputPipe;

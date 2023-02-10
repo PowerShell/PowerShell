@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
+                WriteObject(string.Create(CultureInfo.InvariantCulture, $"<?xml version=\"1.0\" encoding=\"{Encoding.UTF8.WebName}\"?>"));
                 WriteObject("<Objects>");
             }
         }

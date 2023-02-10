@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 // the solution is to:
                 //
                 //     - First attempt to copy the entire security descriptor as we did in V1.
-                //       This ensures backward compatability for administrator scripts that currently
+                //       This ensures backward compatibility for administrator scripts that currently
                 //       work.
                 //     - If the attempt fails due to a PrivilegeNotHeld exception, try again with
                 //       an estimate of the minimum required subset. This is an estimate, since the
