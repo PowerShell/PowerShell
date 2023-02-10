@@ -795,6 +795,10 @@ function Restore-PSPackage
             $RestoreArguments += "quiet"
         }
 
+        if ($Options.Runtime -like 'win*') {
+            $RestoreArguments += "/property:EnableWindowsTargeting=True"
+        }
+
         if ($InteractiveAuth) {
             $RestoreArguments += "--interactive"
         }

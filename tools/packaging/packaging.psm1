@@ -54,7 +54,6 @@ function Start-PSPackage {
 
         # Generate windows downlevel package
         [ValidateSet("win7-x86", "win7-x64", "win-arm", "win-arm64")]
-        [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
         [ValidateSet('osx-x64', 'osx-arm64')]
