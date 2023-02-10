@@ -344,7 +344,7 @@ function Start-PSPackage {
                     Force = $Force
                 }
 
-                if ($architecture -in 'x86', 'x64', 'arm') {
+                if ($architecture -in 'x86', 'x64', 'arm', 'arm64') {
                     $Arguments += @{ R2RVerification = [R2RVerification]@{
                             R2RState = 'R2R'
                             OperatingSystem = $peOS
