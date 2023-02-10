@@ -943,6 +943,7 @@ namespace System.Management.Automation
                     return;
                 }
 
+                List<string> actions = item.RecommendedActions;
                 if (item.Layout is FeedbackItem.DisplayLayout.Landscape)
                 {
                     // Add 4-space indentation and write the indicator.
@@ -950,25 +951,27 @@ namespace System.Management.Automation
                         .Append(textStyle).Append(s_actionIndicator).Append(ansiReset)
                         .Append(' ');
 
-                    // Then concatenate the action texts
-                    int count = 0;
-                    foreach (string action in item.RecommendedActions)
+                    // Then concatenate the action texts.
+                    for (int i = 0; i < actions.Count; i++)
                     {
-                        if (count > 0)
+                        string action = actions[i];
+                        if (i > 0)
                         {
                             output.Append(", ");
                         }
 
                         output.Append(actionStyle).Append(action).Append(ansiReset);
-                        count++;
                     }
 
                     output.AppendLine();
                 }
                 else
                 {
-                    foreach (string action in item.RecommendedActions)
+                    int lastIndex = actions.Count - 1;
+                    for (int i = 0; i < actions.Count; i++)
                     {
+                        string action = actions[i];
+
                         // Add 4-space indentation and write the indicator, then write the action.
                         output.Append(' ', 4)
                             .Append(textStyle).Append(s_actionIndicator).Append(ansiReset).Append(' ');
@@ -977,13 +980,18 @@ namespace System.Management.Automation
                         {
                             // If the action is a code snippet, properly render it with the right indentation.
                             RenderText(action, actionStyle, indent: 6, startOnNewLine: false);
+
+                            // Append an extra line unless it's the last action.
+                            if (i != lastIndex)
+                            {
+                                output.AppendLine();
+                            }
                         }
                         else
                         {
-                            output.Append(actionStyle).Append(action).Append(ansiReset);
+                            output.Append(actionStyle).Append(action).Append(ansiReset)
+                                .AppendLine();
                         }
-
-                        output.AppendLine();
                     }
                 }
             }
