@@ -936,7 +936,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-
+        
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
@@ -1822,7 +1822,7 @@ namespace Microsoft.PowerShell.Commands
             304 or (>= 400 and <= 599) => true,
             _ => false
         };
-        
+
         private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
         {
             WebRequestMethod.Default or WebRequestMethod.Get => HttpMethod.Get,
