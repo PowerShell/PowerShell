@@ -37,7 +37,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Gets the description message about this feedback.
         /// </summary>
-        public string Description { get; }
+        public string Header { get; }
 
         /// <summary>
         /// Gets the footer message about this feedback.
@@ -62,36 +62,36 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Initializes a feedback item.
         /// </summary>
-        /// <param name="description">The description message (must be not null or empty).</param>
+        /// <param name="header">The description message (must be not null or empty).</param>
         /// <param name="actions">The recommended actions to take (optional).</param>
-        public FeedbackItem(string description, List<string>? actions)
-            : this(description, actions, footer: null, DisplayLayout.Portrait)
+        public FeedbackItem(string header, List<string>? actions)
+            : this(header, actions, footer: null, DisplayLayout.Portrait)
         {
         }
 
         /// <summary>
         /// Initializes a feedback item.
         /// </summary>
-        /// <param name="description">The description message (must be not null or empty).</param>
+        /// <param name="header">The description message (must be not null or empty).</param>
         /// <param name="actions">The recommended actions to take (optional).</param>
         /// <param name="layout">The layout for displaying the actions.</param>
-        public FeedbackItem(string description, List<string>? actions, DisplayLayout layout)
-            : this(description, actions, footer: null, layout)
+        public FeedbackItem(string header, List<string>? actions, DisplayLayout layout)
+            : this(header, actions, footer: null, layout)
         {
         }
 
         /// <summary>
         /// Initializes a feedback item.
         /// </summary>
-        /// <param name="description">The description message (must be not null or empty).</param>
+        /// <param name="header">The description message (must be not null or empty).</param>
         /// <param name="actions">The recommended actions to take (optional).</param>
         /// <param name="footer">The footer message (optional).</param>
         /// <param name="layout">The layout for displaying the actions.</param>
-        public FeedbackItem(string description, List<string>? actions, string? footer, DisplayLayout layout)
+        public FeedbackItem(string header, List<string>? actions, string? footer, DisplayLayout layout)
         {
-            Requires.NotNullOrEmpty(description, nameof(description));
+            Requires.NotNullOrEmpty(header, nameof(header));
 
-            Description = description;
+            Header = header;
             RecommendedActions = actions;
             Footer = footer;
             Layout = layout;
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         public Guid Id => _guid;
 
-        public string Name => "General";
+        public string Name => "general";
 
         public string Description => "The built-in general feedback source for command errors.";
 

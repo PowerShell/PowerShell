@@ -841,14 +841,16 @@ namespace System.Management.Automation
         {
             // Caption style is dimmed bright white with italic effect, used for fixed captions, such as '[' and ']'.
             string captionStyle = "\x1b[97;2;3m";
-            string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
-            string textStyle = PSStyle.Instance.Formatting.FeedbackMessage;
+            string italics = "\x1b[3m";
+            string nameStyle = PSStyle.Instance.Formatting.FeedbackName;
+            string textStyle = PSStyle.Instance.Formatting.FeedbackText;
             string actionStyle = PSStyle.Instance.Formatting.FeedbackAction;
             string ansiReset = PSStyle.Instance.Reset;
 
             if (!ui.SupportsVirtualTerminal)
             {
                 captionStyle = string.Empty;
+                italics = string.Empty;
                 nameStyle = string.Empty;
                 textStyle = string.Empty;
                 actionStyle = string.Empty;
@@ -862,7 +864,7 @@ namespace System.Management.Automation
             {
                 output.AppendLine();
                 output.Append(captionStyle).Append('[').Append(ansiReset)
-                    .Append(nameStyle).Append("\x1b[3m").Append(entry.Name).Append(ansiReset)
+                    .Append(nameStyle).Append(italics).Append(entry.Name).Append(ansiReset)
                     .Append(captionStyle).Append(']').Append(ansiReset);
 
                 FeedbackItem item = entry.Item;
@@ -870,10 +872,11 @@ namespace System.Management.Automation
 
                 do
                 {
-                    RenderText(item.Description, textStyle, indent: 2, startOnNewLine: true);
-                    RenderActions(item);
-                    RenderText(item.Footer, textStyle, indent: 2, startOnNewLine: true);
+                    RenderText(output, item.Header, textStyle, ansiReset, indent: 2, startOnNewLine: true);
+                    RenderActions(output, item, textStyle, actionStyle, ansiReset);
+                    RenderText(output, item.Footer, textStyle, ansiReset, indent: 2, startOnNewLine: true);
 
+                    // A feedback provider may return multiple feedback items, though that may be rare.
                     item = item.Next;
                 } while (item is not null && chkset.Add(item));
 
@@ -884,114 +887,114 @@ namespace System.Management.Automation
 
             // Feedback section ends with a new line.
             ui.WriteLine();
+        }
 
-            /*
-             * Helper function to render feedback message.
-             */
-            void RenderText(string text, string style, int indent, bool startOnNewLine)
+        /// <summary>
+        /// Helper function to render feedback message.
+        /// </summary>
+        internal static void RenderText(StringBuilder output, string text, string style, string ansiReset, int indent, bool startOnNewLine)
+        {
+            if (text is null)
             {
-                if (text is null)
-                {
-                    return;
-                }
-
-                if (startOnNewLine)
-                {
-                    // Start writing the text on the next line.
-                    output.AppendLine();
-                }
-
-                // Apply the style.
-                output.Append(style);
-
-                int count = 0;
-                var trimChars = "\r\n".AsSpan();
-                var span = text.AsSpan().Trim(trimChars);
-                while (true)
-                {
-                    int index = span.IndexOf('\n');
-                    var line = index is -1 ? span : span.Slice(0, index);
-
-                    if (startOnNewLine || count > 0)
-                    {
-                        output.Append(' ', indent);
-                    }
-
-                    output.Append(line.Trim(trimChars)).AppendLine();
-
-                    // Break out the loop if we are done with the last line.
-                    if (index is -1)
-                    {
-                        break;
-                    }
-
-                    // Point to the rest of feedback text.
-                    span = span.Slice(index + 1);
-                    count++;
-                }
-
-                output.Append(ansiReset);
+                return;
             }
 
-            /*
-             * Helper function to render feedback actions.
-             */
-            void RenderActions(FeedbackItem item)
+            if (startOnNewLine)
             {
-                if (item.RecommendedActions is null || item.RecommendedActions.Count is 0)
+                // Start writing the text on the next line.
+                output.AppendLine();
+            }
+
+            // Apply the style.
+            output.Append(style);
+
+            int count = 0;
+            var trimChars = "\r\n".AsSpan();
+            var span = text.AsSpan().Trim(trimChars);
+            while (true)
+            {
+                int index = span.IndexOf('\n');
+                var line = index is -1 ? span : span.Slice(0, index);
+
+                if (startOnNewLine || count > 0)
                 {
-                    return;
+                    output.Append(' ', indent);
                 }
 
-                List<string> actions = item.RecommendedActions;
-                if (item.Layout is FeedbackItem.DisplayLayout.Landscape)
+                output.Append(line.Trim(trimChars)).AppendLine();
+
+                // Break out the loop if we are done with the last line.
+                if (index is -1)
                 {
-                    // Add 4-space indentation and write the indicator.
-                    output.Append(' ', 4)
-                        .Append(textStyle).Append(s_actionIndicator).Append(ansiReset)
-                        .Append(' ');
+                    break;
+                }
 
-                    // Then concatenate the action texts.
-                    for (int i = 0; i < actions.Count; i++)
+                // Point to the rest of feedback text.
+                span = span.Slice(index + 1);
+                count++;
+            }
+
+            output.Append(ansiReset);
+        }
+
+        /// <summary>
+        /// Helper function to render feedback actions.
+        /// </summary>
+        internal static void RenderActions(StringBuilder output, FeedbackItem item, string textStyle, string actionStyle, string ansiReset)
+        {
+            if (item.RecommendedActions is null || item.RecommendedActions.Count is 0)
+            {
+                return;
+            }
+
+            List<string> actions = item.RecommendedActions;
+            if (item.Layout is FeedbackItem.DisplayLayout.Landscape)
+            {
+                // Add 4-space indentation and write the indicator.
+                output.Append(' ', 4)
+                    .Append(textStyle).Append(s_actionIndicator).Append(ansiReset)
+                    .Append(' ');
+
+                // Then concatenate the action texts.
+                for (int i = 0; i < actions.Count; i++)
+                {
+                    string action = actions[i];
+                    if (i > 0)
                     {
-                        string action = actions[i];
-                        if (i > 0)
-                        {
-                            output.Append(", ");
-                        }
-
-                        output.Append(actionStyle).Append(action).Append(ansiReset);
+                        output.Append(", ");
                     }
 
-                    output.AppendLine();
+                    output.Append(actionStyle).Append(action).Append(ansiReset);
                 }
-                else
+
+                output.AppendLine();
+            }
+            else
+            {
+                int lastIndex = actions.Count - 1;
+                for (int i = 0; i < actions.Count; i++)
                 {
-                    int lastIndex = actions.Count - 1;
-                    for (int i = 0; i < actions.Count; i++)
+                    string action = actions[i];
+
+                    // Add 4-space indentation and write the indicator, then write the action.
+                    output.Append(' ', 4)
+                        .Append(textStyle).Append(s_actionIndicator).Append(ansiReset).Append(' ');
+
+                    if (action.Contains('\n'))
                     {
-                        string action = actions[i];
+                        // If the action is a code snippet, properly render it with the right indentation.
+                        RenderText(output, action, actionStyle, ansiReset, indent: 6, startOnNewLine: false);
 
-                        // Add 4-space indentation and write the indicator, then write the action.
-                        output.Append(' ', 4)
-                            .Append(textStyle).Append(s_actionIndicator).Append(ansiReset).Append(' ');
-
-                        if (action.Contains('\n'))
+                        // Append an extra line unless it's the last action.
+                        if (i != lastIndex)
                         {
-                            // If the action is a code snippet, properly render it with the right indentation.
-                            RenderText(action, actionStyle, indent: 6, startOnNewLine: false);
-
-                            // Append an extra line unless it's the last action.
-                            if (i != lastIndex)
-                            {
-                                output.AppendLine();
-                            }
+                            output.AppendLine();
                         }
-                        else
-                        {
-                            output.Append(actionStyle).Append(action).Append(ansiReset)
-                                .AppendLine();
-                        }
+                    }
+                    else
+                    {
+                        output.Append(actionStyle).Append(action).Append(ansiReset)
+                            .AppendLine();
                     }
                 }
             }
