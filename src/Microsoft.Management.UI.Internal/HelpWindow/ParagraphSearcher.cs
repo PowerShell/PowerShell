@@ -43,8 +43,8 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The next highlight starting at the <paramref name="caretPosition"/>.</returns>
         internal Run MoveAndHighlightNextNextMatch(bool forward, TextPointer caretPosition)
         {
-            Debug.Assert(caretPosition != null, "a caret position is allways valid");
-            Debug.Assert(caretPosition.Parent != null && caretPosition.Parent is Run, "a caret PArent is allways a valid Run");
+            Debug.Assert(caretPosition != null, "a caret position is always valid");
+            Debug.Assert(caretPosition.Parent != null && caretPosition.Parent is Run, "a caret Parent is always a valid Run");
             Run caretRun = (Run)caretPosition.Parent;
 
             Run currentRun;
@@ -59,7 +59,7 @@ namespace Microsoft.Management.UI.Internal
             // It has to be in the end because if there is a match at the beginning of the file
             // and the caret has not been touched (so it is in the beginning of the file too)
             // we want to highlight this first match.
-            // Considering the caller allways set the caret to the end of the highlight
+            // Considering the caller always set the caret to the end of the highlight
             // The condition below works well for successive searchs
             // We also need to move to the adjacent run if the caret is at the first run and we
             // are moving backwards so that a search backwards when the first run is highlighted
@@ -78,7 +78,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (currentRun == null)
             {
-                // if we could not find a next highlight wrap arround
+                // if we could not find a next highlight wraparound
                 currentRun = ParagraphSearcher.GetFirstOrLastRun(caretRun, forward);
                 currentRun = ParagraphSearcher.GetNextMatch(currentRun, forward);
             }
@@ -86,7 +86,7 @@ namespace Microsoft.Management.UI.Internal
             this.currentHighlightedMatch = currentRun;
             if (this.currentHighlightedMatch != null)
             {
-                // restore the curent highligthed background to current highlighted
+                // restore the curent highlighted background to current highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.CurrentHighlightBrush;
             }
 
@@ -221,7 +221,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The first or last run in the paragraph containing <paramref name="caretRun"/>.</returns>
         private static Run GetFirstOrLastRun(Run caretRun, bool forward)
         {
-            Debug.Assert(caretRun != null, "a caret run is allways valid");
+            Debug.Assert(caretRun != null, "a caret run is always valid");
 
             Paragraph paragraph = GetParagraph(caretRun);
 

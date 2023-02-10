@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {
-            this._parseRelLink = true;
+            _parseRelLink = true;
         }
 
         /// <summary>

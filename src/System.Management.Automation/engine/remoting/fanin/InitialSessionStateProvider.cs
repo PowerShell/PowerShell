@@ -2983,7 +2983,7 @@ namespace System.Management.Automation.Remoting
 #endif
 
         // These are configuration options for WSMan (WinRM) endpoint configurations, that
-        // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
+        // appear in .pssc files, but are not part of PowerShell InitialSessionState.
         private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "GroupManagedServiceAccount",

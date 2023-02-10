@@ -97,7 +97,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                         // We only care about public types
                         TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
                         // The visibility mask is used to mask out the bits that contain the visibility.
-                        // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
+                        // The visibilities are not combinable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
                         TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
                         if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
                         {
