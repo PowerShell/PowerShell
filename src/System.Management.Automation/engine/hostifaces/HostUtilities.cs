@@ -10,8 +10,8 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Subsystem.Feedback;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -41,6 +41,8 @@ namespace System.Management.Automation
     public static class HostUtilities
     {
         #region Internal Access
+
+        private static readonly char s_actionIndicator = HostSupportUnicode() ? '\u2b9e' : '>';
 
         private static readonly string s_checkForCommandInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
@@ -73,6 +75,25 @@ namespace System.Management.Automation
         ";
 
         private static readonly List<Hashtable> s_suggestions = InitializeSuggestions();
+
+        private static bool HostSupportUnicode()
+        {
+            // Reference: https://github.com/zkat/supports-unicode/blob/main/src/lib.rs
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return Environment.GetEnvironmentVariable("WT_SESSION") is not null ||
+                    Environment.GetEnvironmentVariable("TERM_PROGRAM") is "vscode" ||
+                    Environment.GetEnvironmentVariable("ConEmuTask") is "{cmd:Cmder}" ||
+                    Environment.GetEnvironmentVariable("TERM") is "xterm-256color" or "alacritty";
+            }
+
+            string ctype = Environment.GetEnvironmentVariable("LC_ALL") ??
+                Environment.GetEnvironmentVariable("LC_CTYPE") ??
+                Environment.GetEnvironmentVariable("LANG") ??
+                string.Empty;
+
+            return ctype.EndsWith("UTF8") || ctype.EndsWith("UTF-8");
+        }
 
         private static List<Hashtable> InitializeSuggestions()
         {
@@ -808,6 +829,165 @@ namespace System.Management.Automation
         /// Open file event.
         /// </summary>
         public const string RemoteSessionOpenFileEvent = "PSISERemoteSessionOpenFile";
+
+        #endregion
+
+        #region Feedback Rendering
+
+        /// <summary>
+        /// Render the feedbacks to the specified host.
+        /// </summary>
+        public static void RenderFeedback(List<FeedbackResult> feedbacks, PSHostUserInterface ui)
+        {
+            // Caption style is dimmed bright white with italic effect, used for fixed captions, such as '[' and ']'.
+            string captionStyle = "\x1b[97;2;3m";
+            string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
+            string textStyle = PSStyle.Instance.Formatting.FeedbackMessage;
+            string actionStyle = PSStyle.Instance.Formatting.FeedbackAction;
+            string ansiReset = PSStyle.Instance.Reset;
+
+            if (!ui.SupportsVirtualTerminal)
+            {
+                captionStyle = string.Empty;
+                nameStyle = string.Empty;
+                textStyle = string.Empty;
+                actionStyle = string.Empty;
+                ansiReset = string.Empty;
+            }
+
+            var output = new StringBuilder();
+            var chkset = new HashSet<FeedbackItem>();
+
+            foreach (FeedbackResult entry in feedbacks)
+            {
+                output.AppendLine();
+                output.Append(captionStyle).Append('[').Append(ansiReset)
+                    .Append(nameStyle).Append("\x1b[3m").Append(entry.Name).Append(ansiReset)
+                    .Append(captionStyle).Append(']').Append(ansiReset);
+
+                FeedbackItem item = entry.Item;
+                chkset.Add(item);
+
+                do
+                {
+                    RenderText(item.Description, textStyle, indent: 2, startOnNewLine: true);
+                    RenderActions(item);
+                    RenderText(item.Footer, textStyle, indent: 2, startOnNewLine: true);
+
+                    item = item.Next;
+                } while (item is not null && chkset.Add(item));
+
+                ui.Write(output.ToString());
+                output.Clear();
+                chkset.Clear();
+            }
+
+            // Feedback section ends with a new line.
+            ui.WriteLine();
+
+            /*
+             * Helper function to render feedback message.
+             */
+            void RenderText(string text, string style, int indent, bool startOnNewLine)
+            {
+                if (text is null)
+                {
+                    return;
+                }
+
+                if (startOnNewLine)
+                {
+                    // Start writing the text on the next line.
+                    output.AppendLine();
+                }
+
+                // Apply the style.
+                output.Append(style);
+
+                int count = 0;
+                var trimChars = "\r\n".AsSpan();
+                var span = text.AsSpan().Trim(trimChars);
+                while (true)
+                {
+                    int index = span.IndexOf('\n');
+                    var line = index is -1 ? span : span.Slice(0, index);
+
+                    if (startOnNewLine || count > 0)
+                    {
+                        output.Append(' ', indent);
+                    }
+
+                    output.Append(line.Trim(trimChars)).AppendLine();
+
+                    // Break out the loop if we are done with the last line.
+                    if (index is -1)
+                    {
+                        break;
+                    }
+
+                    // Point to the rest of feedback text.
+                    span = span.Slice(index + 1);
+                    count++;
+                }
+
+                output.Append(ansiReset);
+            }
+
+            /*
+             * Helper function to render feedback actions.
+             */
+            void RenderActions(FeedbackItem item)
+            {
+                if (item.RecommendedActions is null || item.RecommendedActions.Count is 0)
+                {
+                    return;
+                }
+
+                if (item.Layout is FeedbackItem.DisplayLayout.Landscape)
+                {
+                    // Add 4-space indentation and write the indicator.
+                    output.Append(' ', 4)
+                        .Append(textStyle).Append(s_actionIndicator).Append(ansiReset)
+                        .Append(' ');
+
+                    // Then concatenate the action texts
+                    int count = 0;
+                    foreach (string action in item.RecommendedActions)
+                    {
+                        if (count > 0)
+                        {
+                            output.Append(", ");
+                        }
+
+                        output.Append(actionStyle).Append(action).Append(ansiReset);
+                        count++;
+                    }
+
+                    output.AppendLine();
+                }
+                else
+                {
+                    foreach (string action in item.RecommendedActions)
+                    {
+                        // Add 4-space indentation and write the indicator, then write the action.
+                        output.Append(' ', 4)
+                            .Append(textStyle).Append(s_actionIndicator).Append(ansiReset).Append(' ');
+
+                        if (action.Contains('\n'))
+                        {
+                            // If the action is a code snippet, properly render it with the right indentation.
+                            RenderText(action, actionStyle, indent: 6, startOnNewLine: false);
+                        }
+                        else
+                        {
+                            output.Append(actionStyle).Append(action).Append(ansiReset);
+                        }
+
+                        output.AppendLine();
+                    }
+                }
+            }
+        }
 
         #endregion
 

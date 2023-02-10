@@ -11,13 +11,14 @@ using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
     /// <summary>
     /// The class represents a result from a feedback provider.
     /// </summary>
-    public class FeedbackEntry
+    public class FeedbackResult
     {
         /// <summary>
         /// Gets the Id of the feedback provider.
@@ -30,15 +31,15 @@ namespace System.Management.Automation.Subsystem.Feedback
         public string Name { get; }
 
         /// <summary>
-        /// Gets the text of the feedback.
+        /// Gets the feedback item.
         /// </summary>
-        public string Text { get; }
+        public FeedbackItem Item { get; }
 
-        internal FeedbackEntry(Guid id, string name, string text)
+        internal FeedbackResult(Guid id, string name, FeedbackItem item)
         {
             Id = id;
             Name = name;
-            Text = text;
+            Item = item;
         }
     }
 
@@ -50,7 +51,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Collect the feedback from registered feedback providers using the default timeout.
         /// </summary>
-        public static List<FeedbackEntry>? GetFeedback(Runspace runspace)
+        public static List<FeedbackResult>? GetFeedback(Runspace runspace)
         {
             return GetFeedback(runspace, millisecondsTimeout: 300);
         }
@@ -58,7 +59,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Collect the feedback from registered feedback providers using the specified timeout.
         /// </summary>
-        public static List<FeedbackEntry>? GetFeedback(Runspace runspace, int millisecondsTimeout)
+        public static List<FeedbackResult>? GetFeedback(Runspace runspace, int millisecondsTimeout)
         {
             Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
 
@@ -110,9 +111,9 @@ namespace System.Management.Automation.Subsystem.Feedback
             }
 
             IFeedbackProvider? generalFeedback = null;
-            List<Task<FeedbackEntry?>>? tasks = null;
+            List<Task<FeedbackResult?>>? tasks = null;
             CancellationTokenSource? cancellationSource = null;
-            Func<object?, FeedbackEntry?>? callBack = null;
+            Func<object?, FeedbackResult?>? callBack = null;
 
             for (int i = 0; i < providers.Count; i++)
             {
@@ -126,7 +127,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
                 if (tasks is null)
                 {
-                    tasks = new List<Task<FeedbackEntry?>>(capacity: count);
+                    tasks = new List<Task<FeedbackResult?>>(capacity: count);
                     cancellationSource = new CancellationTokenSource();
                     callBack = GetCallBack(lastHistory.CommandLine, lastError, cancellationSource);
                 }
@@ -148,7 +149,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                     Task.Delay(millisecondsTimeout, cancellationSource!.Token));
             }
 
-            List<FeedbackEntry>? resultList = null;
+            List<FeedbackResult>? resultList = null;
             if (generalFeedback is not null)
             {
                 bool changedDefault = false;
@@ -162,11 +163,11 @@ namespace System.Management.Automation.Subsystem.Feedback
                         Runspace.DefaultRunspace = localRunspace;
                     }
 
-                    string? text = generalFeedback.GetFeedback(lastHistory.CommandLine, lastError, CancellationToken.None);
-                    if (text is not null)
+                    FeedbackItem? item = generalFeedback.GetFeedback(lastHistory.CommandLine, lastError, CancellationToken.None);
+                    if (item is not null)
                     {
-                        resultList ??= new List<FeedbackEntry>(count);
-                        resultList.Add(new FeedbackEntry(generalFeedback.Id, generalFeedback.Name, text));
+                        resultList ??= new List<FeedbackResult>(count);
+                        resultList.Add(new FeedbackResult(generalFeedback.Id, generalFeedback.Name, item));
                     }
                 }
                 finally
@@ -188,14 +189,14 @@ namespace System.Management.Automation.Subsystem.Feedback
                     waitTask.Wait();
                     cancellationSource!.Cancel();
 
-                    foreach (Task<FeedbackEntry?> task in tasks!)
+                    foreach (Task<FeedbackResult?> task in tasks!)
                     {
                         if (task.IsCompletedSuccessfully)
                         {
-                            FeedbackEntry? result = task.Result;
+                            FeedbackResult? result = task.Result;
                             if (result is not null)
                             {
-                                resultList ??= new List<FeedbackEntry>(count);
+                                resultList ??= new List<FeedbackResult>(count);
                                 resultList.Add(result);
                             }
                         }
@@ -212,7 +213,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         // A local helper function to avoid creating an instance of the generated delegate helper class
         // when no feedback provider is registered.
-        private static Func<object?, FeedbackEntry?> GetCallBack(
+        private static Func<object?, FeedbackResult?> GetCallBack(
             string commandLine,
             ErrorRecord lastError,
             CancellationTokenSource cancellationSource)
@@ -220,8 +221,8 @@ namespace System.Management.Automation.Subsystem.Feedback
             return state =>
             {
                 var provider = (IFeedbackProvider)state!;
-                var text = provider.GetFeedback(commandLine, lastError, cancellationSource.Token);
-                return text is null ? null : new FeedbackEntry(provider.Id, provider.Name, text);
+                var item = provider.GetFeedback(commandLine, lastError, cancellationSource.Token);
+                return item is null ? null : new FeedbackResult(provider.Id, provider.Name, item);
             };
         }
     }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Subsystem;
@@ -42,7 +43,7 @@ namespace PSTests.Sequential
 
         public string Description => _description;
 
-        public string GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token)
+        public FeedbackItem GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token)
         {
             if (_delay)
             {
@@ -51,7 +52,9 @@ namespace PSTests.Sequential
                 Thread.Sleep(2500);
             }
 
-            return $"{commandLine}+{errorRecord.FullyQualifiedErrorId}";
+            return new FeedbackItem(
+                "slow-feedback-caption",
+                new List<string> { $"{commandLine}+{errorRecord.FullyQualifiedErrorId}" });
         }
     }
 
@@ -95,7 +98,7 @@ namespace PSTests.Sequential
                 // Test the result from the 'General' feedback provider.
                 Assert.Single(feedbacks);
                 Assert.Equal("General", feedbacks[0].Name);
-                Assert.Contains(expectedCmd, feedbacks[0].Text);
+                Assert.Equal(expectedCmd, feedbacks[0].Item.RecommendedActions[0]);
 
                 // Expect the result from both 'General' and the 'slow' feedback providers.
                 // Same here -- the specified timeout is exaggerated to make the test reliable.
@@ -103,13 +106,13 @@ namespace PSTests.Sequential
                 feedbacks = FeedbackHub.GetFeedback(pwsh.Runspace, millisecondsTimeout: 4000);
                 Assert.Equal(2, feedbacks.Count);
 
-                FeedbackEntry entry1 = feedbacks[0];
+                FeedbackResult entry1 = feedbacks[0];
                 Assert.Equal("General", entry1.Name);
-                Assert.Contains(expectedCmd, entry1.Text);
+                Assert.Equal(expectedCmd, entry1.Item.RecommendedActions[0]);
 
-                FeedbackEntry entry2 = feedbacks[1];
+                FeedbackResult entry2 = feedbacks[1];
                 Assert.Equal("Slow", entry2.Name);
-                Assert.Equal("feedbacktest+CommandNotFoundException", entry2.Text);
+                Assert.Equal("feedbacktest+CommandNotFoundException", entry2.Item.RecommendedActions[0]);
             }
             finally
             {
