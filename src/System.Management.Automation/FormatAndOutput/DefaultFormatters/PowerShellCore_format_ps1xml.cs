@@ -1284,7 +1284,6 @@ namespace System.Management.Automation.Runspaces
                                         return ""${errorColor}$($err.Exception.Message)${resetcolor}""
                                     }
 
-                                    $myinv = $err.InvocationInfo
                                     if ($ErrorView -eq 'DetailedView') {
                                         $message = Get-Error | Out-String
                                         return ""${errorColor}${message}${resetcolor}""
@@ -1301,10 +1300,9 @@ namespace System.Management.Automation.Runspaces
                                     }
                                     elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
                                         $posmsg = $myinv.PositionMessage
-                                    }
-
-                                    if ($posmsg -ne '') {
-                                        $posmsg = $newline + $posmsg
+                                        if ($posmsg -ne '') {
+                                            $posmsg = $newline + $posmsg
+                                        }
                                     }
 
                                     if ($err.PSMessageDetails) {
