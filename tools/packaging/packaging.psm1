@@ -343,7 +343,7 @@ function Start-PSPackage {
                     PackageVersion = $Version
                     Force = $Force
                     R2RVerification = [R2RVerification]@{
-                        R2RState = "R2R"
+                        R2RState = 'R2R'
                         OperatingSystem = $peOS
                         Architecture = $peArch
                     }
@@ -374,7 +374,7 @@ function Start-PSPackage {
                         PackageVersion = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
-                            R2RState = SdkOnly
+                            R2RState = 'SdkOnly'
                             OperatingSystem = "Windows"
                             Architecture = "amd64"
                         }
@@ -392,7 +392,7 @@ function Start-PSPackage {
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
-                            R2RState = SdkOnly
+                            R2RState = 'SdkOnly'
                         }
                     }
 
@@ -409,7 +409,7 @@ function Start-PSPackage {
                         PackageVersion = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
-                            R2RState = NoR2R
+                            R2RState = 'NoR2R'
                         }
                     }
 
@@ -424,7 +424,7 @@ function Start-PSPackage {
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
-                            R2RState = NoR2R
+                            R2RState = 'NoR2R'
                         }
                     }
 
@@ -450,7 +450,7 @@ function Start-PSPackage {
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                     R2RVerification = [R2RVerification]@{
-                        R2RState = NoR2R
+                        R2RState = 'NoR2R'
                         Architecture = $r2rArchitecture
                     }
             }
@@ -524,7 +524,7 @@ function Start-PSPackage {
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
-                        R2RState = SdkOnly
+                        R2RState = 'SdkOnly'
                     }
                 }
 
@@ -541,7 +541,7 @@ function Start-PSPackage {
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
-                        R2RState = SdkOnly
+                        R2RState = 'SdkOnly'
                     }
                 }
 
@@ -558,7 +558,7 @@ function Start-PSPackage {
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
-                        R2RState = SdkOnly
+                        R2RState = 'SdkOnly'
                     }
                 }
 
