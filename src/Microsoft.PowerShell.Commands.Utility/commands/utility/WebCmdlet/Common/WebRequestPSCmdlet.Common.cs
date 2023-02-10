@@ -1211,16 +1211,16 @@ namespace Microsoft.PowerShell.Commands
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
-            HttpRequestMessage req = request;
+            HttpRequestMessage currentRequest = request;
             HttpResponseMessage response = null;
 
             do
             {
                 // Track the current URI being used by various requests and re-requests.
-                Uri currentUri = req.RequestUri;
+                Uri currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
-                response = client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (handleRedirect
                     && WebSession.MaximumRedirection is not 0
@@ -1236,13 +1236,12 @@ namespace Microsoft.PowerShell.Commands
                         WebSession.MaximumRedirection--;
                     }
 
-                    // For selected redirects that used POST, GET must be used with the
-                    // redirected Location.
-                    // Since GET is the default; POST only occurs when -Method POST is used.
-                    if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
+                    // For selected redirects, GET must be used with the redirected Location.
+                    if (currentRequest.Method == HttpMethod.Post && IsRedirectToGet(response.StatusCode))
                     {
                         // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                         Method = WebRequestMethod.Get;
+                        CustomMethod = string.Empty;
                     }
 
                     currentUri = new Uri(request.RequestUri, response.Headers.Location);
@@ -1327,9 +1326,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
-                    req.Dispose();
-                    req = GetRequest(currentUri);
-                    FillRequestStream(req);
+                    currentRequest.Dispose();
+                    currentRequest = GetRequest(currentUri);
+                    FillRequestStream(currentRequest);
                 }
 
                 totalRequests--;
