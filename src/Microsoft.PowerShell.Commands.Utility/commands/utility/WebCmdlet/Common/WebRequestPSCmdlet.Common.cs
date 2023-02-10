@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 if (_parseRelLink || _followRelLink)
                                 {
-                                    ParseLinkHeader(response, uri);
+                                    ParseLinkHeader(response);
                                 }
 
                                 ProcessResponse(response);
@@ -1596,8 +1596,9 @@ namespace Microsoft.PowerShell.Commands
             SetRequestContent(request, body);
         }
 
-        internal void ParseLinkHeader(HttpResponseMessage response, System.Uri requestUri)
+        internal void ParseLinkHeader(HttpResponseMessage response)
         {
+            Uri requestUri = response.RequestMessage.RequestUri;
             if (_relationLink is null)
             {
                 // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
@@ -1610,12 +1611,12 @@ namespace Microsoft.PowerShell.Commands
 
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
+            const string Pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
             if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
             {
                 foreach (string linkHeader in links)
                 {
-                    MatchCollection matchCollection = Regex.Matches(linkHeader, pattern);
+                    MatchCollection matchCollection = Regex.Matches(linkHeader, Pattern);
                     foreach (Match match in matchCollection)
                     {
                         if (match.Success)
