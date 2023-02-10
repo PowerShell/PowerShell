@@ -342,8 +342,18 @@ function Start-PSPackage {
                     PackageSourcePath = $Source
                     PackageVersion = $Version
                     Force = $Force
-                    R2RVerification = [R2RVerification]@{
-                        R2RState = 'R2R'
+                }
+
+                if ($architecture -in 'x86', 'x64') {
+                    $Arguments += @{ R2RVerification = [R2RVerification]@{
+                            R2RState = 'R2R'
+                            OperatingSystem = $peOS
+                            Architecture = $peArch
+                        }
+                    }
+                } else {
+                    $Arguments += @{ R2RVerification = [R2RVerification]@{
+                        R2RState = 'SdkOnly'
                         OperatingSystem = $peOS
                         Architecture = $peArch
                     }
@@ -449,10 +459,6 @@ function Start-PSPackage {
                     AssetsPath = "$RepoRoot\assets"
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
-                    R2RVerification = [R2RVerification]@{
-                        R2RState = 'NoR2R'
-                        Architecture = $r2rArchitecture
-                    }
             }
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
