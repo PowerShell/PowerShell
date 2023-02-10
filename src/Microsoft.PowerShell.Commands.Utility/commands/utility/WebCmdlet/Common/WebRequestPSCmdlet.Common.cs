@@ -1518,9 +1518,8 @@ namespace Microsoft.PowerShell.Commands
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
-            if (doc?.FirstChild is XmlDeclaration)
+            if (doc?.FirstChild is XmlDeclaration decl)
             {
-                XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);
                 bytes = StreamHelper.EncodeToBytes(doc.OuterXml, encoding);
             }
@@ -1740,9 +1739,8 @@ namespace Microsoft.PowerShell.Commands
                         OmitXmlDeclaration = true
                     };
 
-                    if (doc.FirstChild is XmlDeclaration)
+                    if (doc.FirstChild is XmlDeclaration decl)
                     {
-                        XmlDeclaration decl = doc.FirstChild as XmlDeclaration;
                         settings.Encoding = Encoding.GetEncoding(decl.Encoding);
                     }
 
