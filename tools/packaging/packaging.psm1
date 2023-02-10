@@ -1770,39 +1770,41 @@ function New-StagingFolder
     Copy-Item -Recurse $PackageSourcePath $StagingPath -Filter $Filter
 
     $smaPath = Join-Path $StagingPath 'System.Management.Automation.dll'
-    $smaInfo = Get-PEInfo -File $smaPath
-    switch($R2RVerification.R2RState) {
-        $null {
-            Write-Verbose "Skipping R2R verification" -Verbose
-        }
-        'R2R' {
-            Write-Verbose "Verifying R2R was done..." -Verbose
-            if (!$smaInfo.CrossGen -or $smaInfo.Architecture -ne $R2RVerification.Architecture -or $smaInfo.OS -ne $R2RVerification.OperatingSystem) {
-                throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actualy ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
+    if ($R2RVerification) {
+        $smaInfo = Get-PEInfo -File $smaPath
+        switch ($R2RVerification.R2RState) {
+            $null {
+                Write-Verbose "Skipping R2R verification" -Verbose
             }
-            $mismatchedCrossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
-                Get-PEInfo |
-                    Where-Object { $_.CrossGen -and $_.OS -ne $R2RVerification.OperatingSystem -and $_.Architecture -ne $R2RVerification.Architecture })
-            if ($mismatchedCrossGenedFiles.Count -gt 0) {
-                foreach($file in $mismatchedCrossGenedFiles) {
-                    Write-Warning "Misconfigured ReadyToRun file found.  Expected $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actual ($($file.OS) $($file.Architecture) ) "
+            'R2R' {
+                Write-Verbose "Verifying R2R was done..." -Verbose
+                if (!$smaInfo.CrossGen -or $smaInfo.Architecture -ne $R2RVerification.Architecture -or $smaInfo.OS -ne $R2RVerification.OperatingSystem) {
+                    throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actualy ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
                 }
-                throw "Unexpected ReadyToRun files found."
+                $mismatchedCrossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+                    Get-PEInfo |
+                    Where-Object { $_.CrossGen -and $_.OS -ne $R2RVerification.OperatingSystem -and $_.Architecture -ne $R2RVerification.Architecture })
+                if ($mismatchedCrossGenedFiles.Count -gt 0) {
+                    foreach ($file in $mismatchedCrossGenedFiles) {
+                        Write-Warning "Misconfigured ReadyToRun file found.  Expected $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actual ($($file.OS) $($file.Architecture) ) "
+                    }
+                    throw "Unexpected ReadyToRun files found."
+                }
             }
-        }
-        'NoR2R' {
-            Write-Verbose "Verifying no R2R was done..." -Verbose
-            $crossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
-                Get-PEInfo |
+            'NoR2R' {
+                Write-Verbose "Verifying no R2R was done..." -Verbose
+                $crossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+                    Get-PEInfo |
                     Where-Object { $_.CrossGen })
-            if ($crossGenedFiles.Count -gt 0) {
-                throw "Unexpected ReadyToRun files found: $($crossGenedFiles | ForEach-Object { $_.Path })"
+                if ($crossGenedFiles.Count -gt 0) {
+                    throw "Unexpected ReadyToRun files found: $($crossGenedFiles | ForEach-Object { $_.Path })"
+                }
             }
-        }
-        'SdkOnly' {
-            Write-Verbose "Verifying no R2R was done on SMA..." -Verbose
-            if($smaInfo.CrossGen) {
-                throw "System.Management.Automation.dll should not be ReadyToRun"
+            'SdkOnly' {
+                Write-Verbose "Verifying no R2R was done on SMA..." -Verbose
+                if ($smaInfo.CrossGen) {
+                    throw "System.Management.Automation.dll should not be ReadyToRun"
+                }
             }
         }
     }
@@ -1933,6 +1935,8 @@ function New-PdbZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
+
+            # We should NOT R2R verify the PDB zip
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -Filter *.pdb
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
