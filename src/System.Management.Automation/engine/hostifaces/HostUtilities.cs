@@ -911,6 +911,8 @@ namespace System.Management.Automation
             int count = 0;
             var trimChars = "\r\n".AsSpan();
             var span = text.AsSpan().Trim(trimChars);
+
+            // This loop renders the text with minimal allocation.
             while (true)
             {
                 int index = span.IndexOf('\n');
