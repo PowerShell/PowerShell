@@ -344,7 +344,7 @@ function Start-PSPackage {
                     Force = $Force
                 }
 
-                if ($architecture -in 'x86', 'x64') {
+                if ($architecture -in 'x86', 'x64', 'arm') {
                     $Arguments += @{ R2RVerification = [R2RVerification]@{
                             R2RState = 'R2R'
                             OperatingSystem = $peOS
@@ -4976,7 +4976,7 @@ function Get-PEInfo {
             $peReader = [System.Reflection.PortableExecutable.PEReader]::new($stream)
             $flags = $peReader.PEHeaders.CorHeader.Flags
             if (-not $flags) {
-                throw "Null Flags"
+                Write-Warning "$filePath is not a managed assembly"
             }
             $machine = $peReader.PEHeaders.CoffHeader.Machine
             if (-not $machine) {
