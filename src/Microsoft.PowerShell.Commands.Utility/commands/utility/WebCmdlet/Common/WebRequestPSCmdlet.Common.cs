@@ -1178,7 +1178,7 @@ namespace Microsoft.PowerShell.Commands
                 request.Content.Headers.Clear();
             }
 
-            foreach (KeyValuePair<string, string>  entry in WebSession.ContentHeaders)
+            foreach (KeyValuePair<string, string> entry in WebSession.ContentHeaders)
             {
                 if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
