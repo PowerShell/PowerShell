@@ -570,7 +570,9 @@ function Start-PSPackage {
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
-                        R2RState = 'SdkOnly'
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "amd64"
                     }
                 }
 
