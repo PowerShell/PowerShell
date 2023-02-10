@@ -353,9 +353,10 @@ function Start-PSPackage {
                     }
                 } else {
                     $Arguments += @{ R2RVerification = [R2RVerification]@{
-                        R2RState = 'SdkOnly'
-                        OperatingSystem = $peOS
-                        Architecture = $peArch
+                            R2RState = 'SdkOnly'
+                            OperatingSystem = $peOS
+                            Architecture = $peArch
+                        }
                     }
                 }
 
