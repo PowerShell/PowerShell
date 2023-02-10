@@ -531,7 +531,9 @@ function Start-PSPackage {
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
-                        R2RState = 'SdkOnly'
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "arm"
                     }
                 }
 
@@ -548,7 +550,9 @@ function Start-PSPackage {
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
-                        R2RState = 'SdkOnly'
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "arm64"
                     }
                 }
 
