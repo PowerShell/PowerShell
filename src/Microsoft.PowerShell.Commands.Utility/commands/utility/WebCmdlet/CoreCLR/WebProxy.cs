@@ -38,12 +38,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(destination);
 
-            if (destination.IsLoopback)
-            {
-                return destination;
-            }
-
-            return _proxyAddress;
+            return destination.IsLoopback ? destination : _proxyAddress;
         }
 
         public bool IsBypassed(Uri host) => host.IsLoopback;

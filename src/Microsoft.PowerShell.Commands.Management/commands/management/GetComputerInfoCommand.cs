@@ -1190,7 +1190,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// A Nullable<typeparamref name="T"/> enum object. If the value
-        /// is convertable to a valid enum value, the returned object's
+        /// is convertible to a valid enum value, the returned object's
         /// value will contain the converted value, otherwise the returned
         /// object will be null.
         /// </returns>

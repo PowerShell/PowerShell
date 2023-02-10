@@ -5750,7 +5750,7 @@ namespace System.Management.Automation.Language
             // just look for pipelines as before.
             RuntimeHelpers.EnsureSufficientExecutionStack();
 
-            // First look for assignment, since PipelineRule once handled that and this supercedes that.
+            // First look for assignment, since PipelineRule once handled that and this supersedes that.
             // We may end up with an expression here as a result,
             // in which case we hang on to it to pass it into the first pipeline rule call.
             Token assignToken = null;

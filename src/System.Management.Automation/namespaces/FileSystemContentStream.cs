@@ -709,7 +709,7 @@ namespace Microsoft.PowerShell.Commands
             // We've reached the end of file or end of line.
             if (_currentLineContent.Length > 0)
             {
-                // Add the block read to the ouptut array list, trimming a trailing delimiter, if present.
+                // Add the block read to the output array list, trimming a trailing delimiter, if present.
                 // Note: If -Tail was specified, we get here in the course of 2 distinct passes:
                 //  - Once while reading backward simply to determine the appropriate *start position* for later forward reading, ignoring the content of the blocks read (in reverse).
                 //  - Then again during forward reading, for regular output processing; it is only then that trimming the delimiter is necessary.

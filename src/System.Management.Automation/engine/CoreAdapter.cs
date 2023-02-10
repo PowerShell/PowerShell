@@ -2230,7 +2230,7 @@ namespace System.Management.Automation
             // be thrown when converting arguments to the ByRef-like parameter types.
             //
             // So when reaching here, we only care about (1) if the method return type is
-            // BeRef-like; (2) if it's a constrcutor of a ByRef-like type.
+            // BeRef-like; (2) if it's a constructor of a ByRef-like type.
 
             if (method is ConstructorInfo ctor)
             {
