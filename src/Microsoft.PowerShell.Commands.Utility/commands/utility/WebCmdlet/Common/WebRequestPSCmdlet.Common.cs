@@ -1460,7 +1460,6 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, byte[] content)
         {
-            ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
 
             ByteArrayContent byteArrayContent = new(content);
@@ -1478,7 +1477,6 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, string content)
         {
-            ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
             
             Encoding encoding = null;
@@ -1513,7 +1511,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal void SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
-            ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(xmlNode);
 
             byte[] bytes = null;
@@ -1544,7 +1541,6 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
-            ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(contentStream);
 
             StreamContent streamContent = new(contentStream);
@@ -1562,7 +1558,6 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
-            ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
             
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
@@ -1573,7 +1568,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal void SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
-            ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
 
             string body = FormatDictionary(content);
