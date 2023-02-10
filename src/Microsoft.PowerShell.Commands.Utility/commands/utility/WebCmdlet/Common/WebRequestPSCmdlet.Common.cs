@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            var password = new NetworkCredential(null, Credential.Password).Password;
+            string password = new NetworkCredential(null, Credential.Password).Password;
             string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential.UserName}:{password}");
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
             return string.Create(CultureInfo.InvariantCulture, $"Basic {Convert.ToBase64String(bytes)}");
@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBearerAuthorizationHeader()
         {
-            return string.Create(CultureInfo.InvariantCulture, $"Bearer {new NetworkCredential(string.Empty, Token).Password}");
+            return string.Create(CultureInfo.InvariantCulture, $"Bearer {new NetworkCredential(null, Token).Password}");
         }
 
         private void ProcessAuthentication()
