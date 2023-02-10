@@ -5032,6 +5032,7 @@ function ConvertTo-PEArchitecture {
         switch ($Architecture) {
             "x86" { "I386" }
             "x64" { "AMD64" }
+            "arm" { "ArmThumb2" }
             default { $Architecture }
         }
     }
