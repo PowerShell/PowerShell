@@ -4962,9 +4962,9 @@ function Get-PEInfo {
         class PsPeInfo {
             [string]$File
             [bool]$CrossGen
-            [MachineOSOverride]$OS
+            [Nullable[MachineOSOverride]]$OS
             [System.Reflection.PortableExecutable.Machine]$Architecture
-            [System.Reflection.PortableExecutable.CorFlags]$Flags
+            [Nullable[System.Reflection.PortableExecutable.CorFlags]]$Flags
         }
 
     }
@@ -4994,7 +4994,7 @@ function Get-PEInfo {
 
         [ushort]$r2rOsArch = $machine
 
-        $RealOS = "unknown"
+        $RealOS = $null
         $realarch = "unknown"
         foreach ($os in [enum]::GetValues([MachineOSOverride])) {
             foreach ($architecture in [Enum]::GetValues([System.Reflection.PortableExecutable.Machine])) {
