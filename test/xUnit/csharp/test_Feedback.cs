@@ -79,35 +79,35 @@ namespace PSTests.Sequential
                 .Invoke(input: null, settings);
             pwsh.Commands.Clear();
 
-            // Run a command 'feedbacktest', so as to trigger the 'General' feedback.
+            // Run a command 'feedbacktest', so as to trigger the 'general' feedback.
             pwsh.AddScript("feedbacktest").Invoke(input: null, settings);
             pwsh.Commands.Clear();
 
             try
             {
                 // Register the slow feedback provider.
-                // The 'General' feedback provider is built-in and registered by default.
+                // The 'general' feedback provider is built-in and registered by default.
                 SubsystemManager.RegisterSubsystem(SubsystemKind.FeedbackProvider, MyFeedback.SlowFeedback);
 
-                // Expect the result from 'General' only because the 'slow' one cannot finish before the specified timeout.
+                // Expect the result from 'general' only because the 'slow' one cannot finish before the specified timeout.
                 // The specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
                 var feedbacks = FeedbackHub.GetFeedback(pwsh.Runspace, millisecondsTimeout: 1500);
                 string expectedCmd = Path.Combine(".", "feedbacktest");
 
-                // Test the result from the 'General' feedback provider.
+                // Test the result from the 'general' feedback provider.
                 Assert.Single(feedbacks);
-                Assert.Equal("General", feedbacks[0].Name);
+                Assert.Equal("general", feedbacks[0].Name);
                 Assert.Equal(expectedCmd, feedbacks[0].Item.RecommendedActions[0]);
 
-                // Expect the result from both 'General' and the 'slow' feedback providers.
+                // Expect the result from both 'general' and the 'slow' feedback providers.
                 // Same here -- the specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
                 feedbacks = FeedbackHub.GetFeedback(pwsh.Runspace, millisecondsTimeout: 4000);
                 Assert.Equal(2, feedbacks.Count);
 
                 FeedbackResult entry1 = feedbacks[0];
-                Assert.Equal("General", entry1.Name);
+                Assert.Equal("general", entry1.Name);
                 Assert.Equal(expectedCmd, entry1.Item.RecommendedActions[0]);
 
                 FeedbackResult entry2 = feedbacks[1];
