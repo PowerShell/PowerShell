@@ -4944,6 +4944,16 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
+            if (itemAst is StringConstantExpressionAst stringAst
+                && (string.IsNullOrWhiteSpace(stringAst.Value) || (stringAst.Value[0] is '[' or ']' or ',')))
+            {
+                ReportError(ExtentFromFirstOf(stringAst, itemToken),
+                    nameof(ParserStrings.InvalidValueForUsingItemName),
+                    ParserStrings.InvalidValueForUsingItemName,
+                    stringAst.Value);
+                return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(stringAst, itemToken)));
+            }
+
             if (itemAst is not StringConstantExpressionAst
                 && (kind != UsingStatementKind.Module || itemAst is not HashtableAst))
             {
