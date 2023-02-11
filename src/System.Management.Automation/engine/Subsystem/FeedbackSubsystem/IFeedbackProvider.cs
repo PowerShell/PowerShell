@@ -55,12 +55,12 @@ namespace System.Management.Automation.Subsystem.Feedback
         public DisplayLayout Layout { get; }
 
         /// <summary>
-        /// Gets the next feedback item, if there is one.
+        /// Gets or sets the next feedback item, if there is one.
         /// </summary>
         public FeedbackItem? Next { get; set; }
 
         /// <summary>
-        /// Initializes a feedback item.
+        /// Initializes a new instance of the <see cref="FeedbackItem"/> class.
         /// </summary>
         /// <param name="header">The description message (must be not null or empty).</param>
         /// <param name="actions">The recommended actions to take (optional).</param>
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         }
 
         /// <summary>
-        /// Initializes a feedback item.
+        /// Initializes a new instance of the <see cref="FeedbackItem"/> class.
         /// </summary>
         /// <param name="header">The description message (must be not null or empty).</param>
         /// <param name="actions">The recommended actions to take (optional).</param>
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         }
 
         /// <summary>
-        /// Initializes a feedback item.
+        /// Initializes a new instance of the <see cref="FeedbackItem"/> class.
         /// </summary>
         /// <param name="header">The description message (must be not null or empty).</param>
         /// <param name="actions">The recommended actions to take (optional).</param>
@@ -111,7 +111,10 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Gets feedback based on the given commandline and error record.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="commandLine">The command line that was just executed.</param>
+        /// <param name="lastError">The error that was triggerd by the command line.</param>
+        /// <param name="token">The cancellation token to cancel the operation.</param>
+        /// <returns>The feedback item.</returns>
         FeedbackItem? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token);
     }
 
@@ -226,9 +229,6 @@ namespace System.Management.Automation.Subsystem.Feedback
             }
         }
 
-        /// <summary>
-        /// Gets feedback based on the given commandline and error record.
-        /// </summary>
         public FeedbackItem? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token)
         {
             if (Platform.IsWindows || lastError.FullyQualifiedErrorId != "CommandNotFoundException")

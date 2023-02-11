@@ -837,6 +837,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Render the feedbacks to the specified host.
         /// </summary>
+        /// <param name="feedbacks">The feedback results.</param>
+        /// <param name="ui">The host to render to.</param>
         public static void RenderFeedback(List<FeedbackResult> feedbacks, PSHostUserInterface ui)
         {
             // Caption style is dimmed bright white with italic effect, used for fixed captions, such as '[' and ']'.
@@ -878,7 +880,8 @@ namespace System.Management.Automation
 
                     // A feedback provider may return multiple feedback items, though that may be rare.
                     item = item.Next;
-                } while (item is not null && chkset.Add(item));
+                }
+                while (item is not null && chkset.Add(item));
 
                 ui.Write(output.ToString());
                 output.Clear();
@@ -892,6 +895,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper function to render feedback message.
         /// </summary>
+        /// <param name="output">The output string builder to write to.</param>
+        /// <param name="text">The text to be rendered.</param>
+        /// <param name="style">The style to be used.</param>
+        /// <param name="ansiReset">The ANSI code to reset.</param>
+        /// <param name="indent">The number of spaces for indentation.</param>
+        /// <param name="startOnNewLine">Indicates whether to start writing from a new line.</param>
         internal static void RenderText(StringBuilder output, string text, string style, string ansiReset, int indent, bool startOnNewLine)
         {
             if (text is null)
@@ -942,6 +951,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper function to render feedback actions.
         /// </summary>
+        /// <param name="output">The output string builder to write to.</param>
+        /// <param name="item">The feedback item to be rendered.</param>
+        /// <param name="textStyle">The style used for feedback messages.</param>
+        /// <param name="actionStyle">The style used for feedback actions.</param>
+        /// <param name="ansiReset">The ANSI code to reset.</param>
         internal static void RenderActions(StringBuilder output, FeedbackItem item, string textStyle, string actionStyle, string ansiReset)
         {
             if (item.RecommendedActions is null || item.RecommendedActions.Count is 0)
