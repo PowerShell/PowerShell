@@ -1458,8 +1458,7 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
 
-            ByteArrayContent byteArrayContent = new(content);
-            request.Content = byteArrayContent;
+            request.Content = new ByteArrayContent(content);
         }
 
         /// <summary>
@@ -1502,8 +1501,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             byte[] bytes = StreamHelper.EncodeToBytes(content, encoding);
-            ByteArrayContent byteArrayContent = new(bytes);
-            request.Content = byteArrayContent;
+            request.Content = new ByteArrayContent(bytes);
         }
 
         internal void SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
@@ -1523,9 +1521,7 @@ namespace Microsoft.PowerShell.Commands
                 bytes = StreamHelper.EncodeToBytes(xmlNode.OuterXml, encoding: null);
             }
 
-            ByteArrayContent byteArrayContent = new(bytes);
-
-            request.Content = byteArrayContent;
+            request.Content = new ByteArrayContent(bytes);
         }
 
         /// <summary>
@@ -1542,8 +1538,7 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(contentStream);
 
-            StreamContent streamContent = new(contentStream);
-            request.Content = streamContent;
+            request.Content = new StreamContent(contentStream);
         }
 
         /// <summary>
