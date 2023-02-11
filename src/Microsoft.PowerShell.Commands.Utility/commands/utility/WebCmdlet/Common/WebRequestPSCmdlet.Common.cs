@@ -1116,13 +1116,8 @@ namespace Microsoft.PowerShell.Commands
             else if (Body is not null)
             {
                 // Coerce body into a usable form
-                object content = Body;
-
                 // Make sure we're using the base object of the body, not the PSObject wrapper
-                if (Body is PSObject psBody)
-                {
-                    content = psBody.BaseObject;
-                }
+                object content = Body is PSObject psBody ? psBody.BaseObject : Body;
 
                 switch (content)
                 {
