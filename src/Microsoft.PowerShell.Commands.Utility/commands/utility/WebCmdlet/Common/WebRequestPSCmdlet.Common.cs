@@ -1444,12 +1444,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes the specified content to the request's RequestStream.
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A byte array containing the content data.</param>
         /// <remarks>
-        /// Because this function writes content data into the request's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, byte[] content)
@@ -1461,12 +1461,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes the specified content to the request's RequestStream.
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="content">A String object containing the content data.</param>
         /// <remarks>
-        /// Because this function writes content data into the request's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, string content)
@@ -1524,12 +1524,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes the specified content to the request's RequestStream.
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="contentStream">A Stream object containing the content data.</param>
         /// <remarks>
-        /// Because this function writes content data into the request's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, Stream contentStream)
@@ -1541,12 +1541,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes the specified content to the request's RequestStream.
+        /// Sets the ContentLength property of the request and writes the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
         /// <param name="request">The WebRequest who's content is to be set.</param>
         /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
         /// <remarks>
-        /// Because this function writes content data into the request's stream,
+        /// Because this function sets the request's ContentLength property and writes content data into the request's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
         internal void SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
