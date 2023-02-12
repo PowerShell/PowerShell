@@ -176,7 +176,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 7.0.1 - MIT
+Microsoft.Extensions.ObjectPool 7.0.2 - MIT
 
 
 (c) Microsoft Corporation
@@ -265,7 +265,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.PowerShell.Native 7.3.1 - MIT
+Microsoft.PowerShell.Native 7.3.2 - MIT
 
 
 (c) Microsoft Corporation
