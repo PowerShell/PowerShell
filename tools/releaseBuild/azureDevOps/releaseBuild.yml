@@ -215,14 +215,14 @@ stages:
       #       - sign_windows_fxdependent_release
       #       - sign_windows_fxdependentWinDesktop_release
 
-  - stage: SignFiles
-    dependsOn: ['windows', 'linux', 'macos']
-    jobs:
-    - template: templates/signBuildFiles.yml
-      parameters:
-        binLocation: ''
-        buildPrefixName: ''
-        addWindowsModules: ''
+  #- stage: SignFiles
+  #  dependsOn: ['windows', 'linux', 'macos']
+  #  jobs:
+  #  - template: templates/signBuildFiles.yml
+  #    parameters:
+  #      binLocation: ''
+  #      buildPrefixName: ''
+  #      addWindowsModules: ''
 
   - stage: compliance
     dependsOn: ['windows']
