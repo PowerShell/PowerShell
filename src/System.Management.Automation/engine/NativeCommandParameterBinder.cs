@@ -201,7 +201,7 @@ namespace System.Management.Automation
                 }
                 catch
                 {
-                    // The value is not convertable send back Legacy
+                    // The value is not convertible send back Legacy
                     return NativeArgumentPassingStyle.Legacy;
                 }
             }

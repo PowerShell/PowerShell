@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
@@ -40,14 +40,13 @@
     <PackageReference Include="System.DirectoryServices" Version="7.0.0" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
     <PackageReference Include="System.Management" Version="7.0.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="7.0.0-preview.2.22152.2" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.3.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0-preview.2" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.2.0" />
   </ItemGroup>
@@ -86,10 +85,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
-    <Compile Remove="engine\ExtraAdapter.cs" />
-    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\COM\**\*.cs" />
     <Compile Remove="engine\ComInterop\**\*.cs" />
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\Interop\Windows\**\*.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
@@ -97,4 +97,7 @@
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
+    <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
 </Project>

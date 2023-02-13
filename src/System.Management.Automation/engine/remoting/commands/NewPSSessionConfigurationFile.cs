@@ -1866,12 +1866,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (isExample)
             {
-                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}",
-                    resourceString, nl, key, value, nl, nl);
+                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}",
-                resourceString, nl, key, value, nl, nl);
+            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
         }
 
         /// <summary>
@@ -1882,7 +1880,10 @@ namespace Microsoft.PowerShell.Commands
         internal static string QuoteName(object name)
         {
             if (name == null)
+            {
                 return "''";
+            }
+
             return "'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(name.ToString()) + "'";
         }
 

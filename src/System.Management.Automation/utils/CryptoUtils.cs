@@ -43,7 +43,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint PUBLICKEYBLOB = 0x00000006;
 
-        /// <summmary>
+        /// <summary>
         /// PUBLICKEYBLOB header length.
         /// </summary>
         public const int PUBLICKEYBLOB_HEADER_LEN = 20;
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint SIMPLEBLOB = 0x00000001;
 
-        /// <summmary>
+        /// <summary>
         /// SIMPLEBLOB header length.
         /// </summary>
         public const int SIMPLEBLOB_HEADER_LEN = 12;
@@ -97,10 +97,7 @@ namespace System.Management.Automation.Internal
 
         private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (offset > blob.Length)
             {
@@ -123,10 +120,7 @@ namespace System.Management.Automation.Internal
 
         private static RSAParameters GetParametersFromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (offset > blob.Length)
             {
@@ -175,10 +169,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiPublicKeyBlob(RSA rsa)
         {
-            if (rsa == null)
-            {
-                throw new ArgumentNullException(nameof(rsa));
-            }
+            ArgumentNullException.ThrowIfNull(rsa);
 
             RSAParameters p = rsa.ExportParameters(false);
             int keyLength = p.Modulus.Length;   // in bytes
@@ -221,10 +212,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] FromCapiSimpleKeyBlob(byte[] blob)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (blob.Length < SIMPLEBLOB_HEADER_LEN)
             {
@@ -237,10 +225,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiSimpleKeyBlob(byte[] encryptedKey)
         {
-            if (encryptedKey == null)
-            {
-                throw new ArgumentNullException(nameof(encryptedKey));
-            }
+            ArgumentNullException.ThrowIfNull(encryptedKey);
 
             // formulate the PUBLICKEYSTRUCT
             byte[] blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];

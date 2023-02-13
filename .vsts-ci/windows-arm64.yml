@@ -1,0 +1,95 @@
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+    - test/perf/*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - tools/cgmanifest.json
+    - LICENSE.txt
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
+
+variables:
+  - name: GIT_CONFIG_PARAMETERS
+    value: "'core.autocrlf=false'"
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name: __SuppressAnsiEscapeSequences
+    value: 1
+  - group: PoolNames
+
+resources:
+- repo: self
+  clean: true
+
+stages:
+- stage: BuildWin
+  displayName: Build for Windows
+  jobs:
+  - template: templates/ci-build.yml
+    parameters:
+      pool: $(armPool)
+      PoolType: 1esHosted
+
+- stage: TestWin
+  displayName: Test for Windows
+  jobs:
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: CI
+      pool: $(armPool)
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: CI
+      pool: $(armPool)
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: Others
+      pool: $(armPool)
+
+  - template: templates/windows-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: Others
+      pool: $(armPool)
+
+  - template: templates/verify-xunit.yml

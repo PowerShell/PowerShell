@@ -396,3 +396,7 @@ function Get-WsManSupport {
     }
     return $false
 }
+
+function Test-IsWindowsArm64 {
+    return $IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64
+}

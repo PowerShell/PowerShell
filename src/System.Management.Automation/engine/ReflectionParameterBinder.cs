@@ -207,6 +207,12 @@ namespace System.Management.Automation
                     v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
                     ((CommonParameters)o).InformationAction = (ActionPreference)v;
                 });
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ProgressAction"),
+                (o, v) =>
+                {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).ProgressAction = (ActionPreference)v;
+                });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Verbose"), static (o, v) => ((CommonParameters)o).Verbose = (SwitchParameter)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Debug"), static (o, v) => ((CommonParameters)o).Debug = (SwitchParameter)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorVariable"), static (o, v) => ((CommonParameters)o).ErrorVariable = (string)v);

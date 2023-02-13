@@ -195,10 +195,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override string GetPropertyTypeName(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException(nameof(adaptedProperty));
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
@@ -220,10 +217,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override object GetPropertyValue(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException(nameof(adaptedProperty));
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
@@ -244,16 +238,11 @@ namespace Microsoft.PowerShell.Cim
         {
             if (!string.IsNullOrEmpty(namespaceName))
             {
-                string fullTypeName = string.Format(CultureInfo.InvariantCulture,
-                                        "Microsoft.Management.Infrastructure.CimInstance#{0}/{1}",
-                                        namespaceName,
-                                        className);
+                string fullTypeName = string.Create(CultureInfo.InvariantCulture, $"Microsoft.Management.Infrastructure.CimInstance#{namespaceName}/{className}");
                 typeNamesWithNamespace.Add(fullTypeName);
             }
 
-            typeNamesWithoutNamespace.Add(string.Format(CultureInfo.InvariantCulture,
-                                     "Microsoft.Management.Infrastructure.CimInstance#{0}",
-                                     className));
+            typeNamesWithoutNamespace.Add(string.Create(CultureInfo.InvariantCulture, $"Microsoft.Management.Infrastructure.CimInstance#{className}"));
         }
 
         private static List<CimClass> GetInheritanceChain(CimInstance cimInstance)
@@ -375,10 +364,7 @@ namespace Microsoft.PowerShell.Cim
         /// <param name="value"></param>
         public override void SetPropertyValue(PSAdaptedProperty adaptedProperty, object value)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException(nameof(adaptedProperty));
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             if (!IsSettable(adaptedProperty))
             {

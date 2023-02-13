@@ -30,7 +30,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// </summary>
-    public static partial class CompletionCompleters
+    public static class CompletionCompleters
     {
         static CompletionCompleters()
         {
@@ -1617,7 +1617,9 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (bestMatchSet is null || bestMatchSet.Position > positionInParameterSet)
+                    if (bestMatchSet is null
+                        || bestMatchSet.Position > positionInParameterSet
+                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
                     {
                         bestMatchParam = param;
                         bestMatchSet = parameterSetData;
@@ -2026,7 +2028,7 @@ namespace System.Management.Automation
             string parameterName = parameter.Name;
 
             // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
-            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // This allows for editors and other tools using CompleteInput with Script/AST definitions to get values from RegisteredArgumentCompleters to better match the console experience.
             // See issue https://github.com/PowerShell/PowerShell/issues/10567
             string actualCommandName = string.IsNullOrEmpty(commandName)
                         ? commandAst.GetCommandName()
@@ -2699,7 +2701,7 @@ namespace System.Management.Automation
             WildcardPattern resultClassNamePattern = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             result.AddRange(resultClassNames
                 .Where(resultClassNamePattern.IsMatch)
-                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", pseudoboundClassName, x))));
+                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Create(CultureInfo.InvariantCulture, $"{pseudoboundClassName} -> {x}"))));
         }
 
         private static void NativeCompletionCimMethodName(
@@ -4616,7 +4618,7 @@ namespace System.Management.Automation
                             }
                             catch (Exception)
                             {
-                                // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
+                                // The object at the specified path is not accessible, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
                                 continue;
                             }
@@ -4739,47 +4741,48 @@ namespace System.Management.Automation
             public string remark;
         }
 
-        private const int MAX_PREFERRED_LENGTH = -1;
-        private const int NERR_Success = 0;
-        private const int ERROR_MORE_DATA = 234;
-        private const int STYPE_DISKTREE = 0;
-        private const int STYPE_MASK = 0x000000FF;
-
         private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
 
-        [LibraryImport("Netapi32.dll", StringMarshalling = StringMarshalling.Utf16)]
-        private static partial int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,
-                                               out uint entriesRead, out uint totalEntries, ref uint resumeHandle);
-
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
 #if UNIX
             return new List<string>();
 #else
-            IntPtr shBuf;
-            uint numEntries;
+            nint shBuf = nint.Zero;
+            uint numEntries = 0;
             uint totalEntries;
             uint resumeHandle = 0;
-            int result = NetShareEnum(machine, 1, out shBuf,
-                                        MAX_PREFERRED_LENGTH, out numEntries, out totalEntries,
-                                        ref resumeHandle);
+            int result = Interop.Windows.NetShareEnum(
+                machine,
+                level: 1,
+                out shBuf,
+                Interop.Windows.MAX_PREFERRED_LENGTH,
+                out numEntries,
+                out totalEntries,
+                ref resumeHandle);
 
             var shares = new List<string>();
-            if (result == NERR_Success || result == ERROR_MORE_DATA)
+            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
-                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
+                    nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
                     SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
-                    if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
+                    if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                    {
                         continue;
+                    }
+
                     if (ignoreHidden && shareInfo.netname.EndsWith('$'))
+                    {
                         continue;
+                    }
+
                     shares.Add(shareInfo.netname);
                 }
             }
@@ -6508,7 +6511,7 @@ namespace System.Management.Automation
                     if (i != 0) tooltip.Append(", ");
                     tooltip.Append(GenericArgumentCount == 1
                                        ? "T"
-                                       : string.Format(CultureInfo.InvariantCulture, "T{0}", i + 1));
+                                       : string.Create(CultureInfo.InvariantCulture, $"T{i + 1}"));
                 }
 
                 tooltip.Append(']');

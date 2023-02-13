@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -66,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.3.1"
+          "Version": "4.4.0"
         }
       },
       "DevelopmentDependency": false
@@ -76,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.3.1"
+          "Version": "4.4.0"
         }
       },
       "DevelopmentDependency": false
@@ -86,7 +85,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.NetAnalyzers",
-          "Version": "6.0.0"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": true
@@ -106,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.0"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -176,7 +175,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.Native",
-          "Version": "7.3.0"
+          "Version": "7.3.2"
         }
       },
       "DevelopmentDependency": false
@@ -246,7 +245,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Newtonsoft.Json",
-          "Version": "13.0.1"
+          "Version": "13.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -1401,5 +1400,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }

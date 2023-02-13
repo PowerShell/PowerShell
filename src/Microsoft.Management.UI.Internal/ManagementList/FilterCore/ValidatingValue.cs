@@ -165,10 +165,7 @@ namespace Microsoft.Management.UI.Internal
         {
             castValue = default(T);
 
-            if (rawValue == null)
-            {
-                throw new ArgumentNullException("rawValue");
-            }
+            ArgumentNullException.ThrowIfNull(rawValue);
 
             if (typeof(T).IsEnum)
             {

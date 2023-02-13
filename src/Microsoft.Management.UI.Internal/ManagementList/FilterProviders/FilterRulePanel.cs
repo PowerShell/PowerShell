@@ -154,15 +154,9 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterRulePanelItemContentTemplate(Type type, DataTemplate dataTemplate)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
+            ArgumentNullException.ThrowIfNull(type);
 
-            if (dataTemplate == null)
-            {
-                throw new ArgumentNullException("dataTemplate");
-            }
+            ArgumentNullException.ThrowIfNull(dataTemplate);
 
             this.filterRuleTemplateSelector.TemplateDictionary.Add(new KeyValuePair<Type, DataTemplate>(type, dataTemplate));
         }
@@ -176,10 +170,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterRulePanelItemContentTemplate(Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
+            ArgumentNullException.ThrowIfNull(type);
 
             this.filterRuleTemplateSelector.TemplateDictionary.Remove(type);
         }

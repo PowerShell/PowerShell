@@ -52,10 +52,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterExpressionAndOperatorNode(IEnumerable<FilterExpressionNode> children)
         {
-            if (children == null)
-            {
-                throw new ArgumentNullException("children");
-            }
+            ArgumentNullException.ThrowIfNull(children);
 
             this.children.AddRange(children);
         }

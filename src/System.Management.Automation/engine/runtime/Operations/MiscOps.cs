@@ -922,7 +922,7 @@ namespace System.Management.Automation
         {
             return FromStream == RedirectionStream.All
                        ? "*>&1"
-                       : string.Format(CultureInfo.InvariantCulture, "{0}>&1", (int)FromStream);
+                       : string.Create(CultureInfo.InvariantCulture, $"{(int)FromStream}>&1");
         }
 
         // private RedirectionStream ToStream { get; set; }
@@ -1031,11 +1031,13 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}> {1}",
-                                 FromStream == RedirectionStream.All
-                                     ? "*"
-                                     : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
-                                 File);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}> {1}",
+                FromStream == RedirectionStream.All
+                    ? "*"
+                    : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
+                File);
         }
 
         internal string File { get; }
@@ -1210,10 +1212,10 @@ namespace System.Management.Automation
         /// After file redirection is done, we need to call 'DoComplete' on the pipeline processor,
         /// so that 'EndProcessing' of Out-File can be called to wrap up the file write operation.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// 'StartStepping' is called after creating the pipeline processor.
         /// 'Step' is called when an object is added to the pipe created with the pipeline processor.
-        /// </remark>
+        /// </remarks>
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
@@ -1264,7 +1266,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                if (!(exception is RuntimeException rte))
+                if (exception is not RuntimeException rte)
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1476,7 +1478,7 @@ namespace System.Management.Automation
 
             do
             {
-                // Always assume no need to repeat the search for another interation
+                // Always assume no need to repeat the search for another iteration
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_
                 ErrorRecord errorRecordToPass = rte.ErrorRecord;
@@ -1620,6 +1622,9 @@ namespace System.Management.Automation
             {
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, funcContext.CurrentPosition);
             }
+
+            // Update the history id if needed to associate the exception with the right history item.
+            InterpreterError.UpdateExceptionErrorRecordHistoryId(rte, funcContext._executionContext);
 
             var context = funcContext._executionContext;
             var outputPipe = funcContext._outputPipe;
@@ -2777,10 +2782,8 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(enumerator != null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+
+            ArgumentNullException.ThrowIfNull(expression);
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
 
