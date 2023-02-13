@@ -50,7 +50,7 @@ You can download and install a PowerShell package for any of the following platf
 | Platform                 | Downloads (stable)      | Downloads (preview)           | How to Install                |
 | -------------------------| ------------------------| ----------------------------- | ------------------------------|
 | Arch Linux               |                         |                               | [Instructions][in-archlinux]  |
-| Kali Linux               | [.deb][rl-ubuntu16]     | [.deb][pv-deb]           | [Instructions][in-kali]       |
+| Kali Linux               | [.deb][rl-deb.    ]     | [.deb][pv-deb].               | [Instructions][in-kali]       |
 | Many Linux distributions | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]          |                               |
 
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
@@ -73,6 +73,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/PowerShell-7.3.0-win-x86.msi
+[rl-deb]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-ubuntu22]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
