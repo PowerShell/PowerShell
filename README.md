@@ -34,7 +34,6 @@ You can download and install a PowerShell package for any of the following platf
 | [Ubuntu 20.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu20]     | [.deb][pv-deb]        | [Instructions][in-ubuntu20]   |
 | [Ubuntu 18.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu18]     | [.deb][pv-deb]        | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux] | [.deb][lts-deb] | N/A  | N/A | [Instructions][in-ubuntu16] |
-| [Debian 9][corefx-linux]                   | [.deb][lts-deb]         | [.deb][rl-debian9]      | [.deb][pv-deb]        | [Instructions][in-deb9]       |
 | [Debian 10][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian10]     | [.deb][pv-deb]        | [Instructions][in-deb9]       |
 | [Debian 11][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian11]     | [.deb][pv-deb]        |                               |
 | [CentOS 7][corefx-linux]                   | [.rpm][lts-rh]          | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-centos]     |
@@ -77,7 +76,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-ubuntu22]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell_7.3.0-1.deb_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0/powershell-7.3.0-1.rh.x86_64.rpm
