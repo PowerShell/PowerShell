@@ -33,6 +33,7 @@ You can download and install a PowerShell package for any of the following platf
 | [Ubuntu 22.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu22]     | [.deb][pv-deb]        | [Instructions](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.3#ubuntu)   |
 | [Ubuntu 20.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu20]     | [.deb][pv-deb]        | [Instructions][in-ubuntu20]   |
 | [Ubuntu 18.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu18]     | [.deb][pv-deb]        | [Instructions][in-ubuntu18]   |
+| [Ubuntu 16.04][corefx-linux] | [.deb][lts-deb] | N/A  | N/A | [Instructions][in-ubuntu16] |
 | [Debian 9][corefx-linux]                   | [.deb][lts-deb]         | [.deb][rl-debian9]      | [.deb][pv-deb]        | [Instructions][in-deb9]       |
 | [Debian 10][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian10]     | [.deb][pv-deb]        | [Instructions][in-deb9]       |
 | [Debian 11][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian11]     | [.deb][pv-deb]        |                               |
