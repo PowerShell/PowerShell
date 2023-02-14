@@ -24,7 +24,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         public enum DisplayLayout
         {
             /// <summary>
-            /// Display each recommended action in a row.
+            /// Display one recommended action per row.
             /// </summary>
             Portrait,
 

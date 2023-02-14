@@ -932,7 +932,7 @@ namespace System.Management.Automation
                     output.Append(' ', indent);
                 }
 
-                output.Append(line.Trim(trimChars)).AppendLine();
+                output.Append(line.Trim('\r')).AppendLine();
 
                 // Break out the loop if we are done with the last line.
                 if (index is -1)
