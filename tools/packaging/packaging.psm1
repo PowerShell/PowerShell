@@ -1786,7 +1786,7 @@ function New-StagingFolder
             'R2R' {
                 Write-Verbose "Verifying R2R was done..." -Verbose
                 if (!$smaInfo.CrossGen -or $smaInfo.Architecture -ne $R2RVerification.Architecture -or $smaInfo.OS -ne $R2RVerification.OperatingSystem) {
-                    throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actualy ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
+                    throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actually ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
                 }
                 $mismatchedCrossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
                     Get-PEInfo |
