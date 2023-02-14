@@ -75,7 +75,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Configuration name should be in the transcript header" -Skip (Test-IsWinWow64) {
+    It "Configuration name should be in the transcript header" -Skip:(Test-IsWinWow64) {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
