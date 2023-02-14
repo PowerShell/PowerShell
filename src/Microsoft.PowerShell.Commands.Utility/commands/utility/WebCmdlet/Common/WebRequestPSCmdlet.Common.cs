@@ -351,6 +351,12 @@ namespace Microsoft.PowerShell.Commands
 
         private string _custommethod;
 
+        /// <summary>
+        /// Gets or sets the PreserveHttpMethodOnRedirect property.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter PreserveHttpMethodOnRedirect { get; set; }
+
         #endregion Method
 
         #region NoProxy
@@ -509,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
                 bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
                                                    && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
-                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect;
+                bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
                 using (HttpClient client = GetHttpClient(handleRedirect))
                 {
@@ -1239,9 +1245,8 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
-                    if (currentRequest.Method == HttpMethod.Post && IsRedirectToGet(response.StatusCode))
+                    if (RequestRequiresForceGet(response.StatusCode, currentRequest.Method) && !PreserveHttpMethodOnRedirect)
                     {
-                        // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                         Method = WebRequestMethod.Get;
                         CustomMethod = string.Empty;
                     }
@@ -1713,7 +1718,7 @@ namespace Microsoft.PowerShell.Commands
         private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
             StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
-            
+
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
 
@@ -1773,43 +1778,34 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Returns true if the status code is one of the supported redirection codes.
-        private static bool IsRedirectCode(HttpStatusCode code)
+        private static bool IsRedirectCode(HttpStatusCode statusCode) => statusCode switch
         {
-            int intCode = (int)code;
-            return
-            (
-                (intCode >= 300 && intCode < 304) ||
-                intCode == 307 ||
-                intCode == 308
-            );
-        }
+            HttpStatusCode.Found
+            or HttpStatusCode.Moved
+            or HttpStatusCode.MultipleChoices
+            or HttpStatusCode.PermanentRedirect
+            or HttpStatusCode.SeeOther
+            or HttpStatusCode.TemporaryRedirect => true,
+            _ => false
+        };
 
-        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
-        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
-        private static bool IsRedirectToGet(HttpStatusCode code)
+        // Returns true if the status code is a redirection code and the action requires switching to GET on redirection.
+        // See https://learn.microsoft.com/en-us/dotnet/api/system.net.httpstatuscode
+        private static bool RequestRequiresForceGet(HttpStatusCode statusCode, HttpMethod requestMethod) => statusCode switch
         {
-            return
-            (
-                code == HttpStatusCode.Found ||
-                code == HttpStatusCode.Moved ||
-                code == HttpStatusCode.Redirect ||
-                code == HttpStatusCode.RedirectMethod ||
-                code == HttpStatusCode.SeeOther ||
-                code == HttpStatusCode.Ambiguous ||
-                code == HttpStatusCode.MultipleChoices
-            );
-        }
+            HttpStatusCode.Found
+            or HttpStatusCode.Moved
+            or HttpStatusCode.MultipleChoices => requestMethod == HttpMethod.Post,
+            HttpStatusCode.SeeOther => requestMethod != HttpMethod.Get && requestMethod != HttpMethod.Head,
+            _ => false
+        };
 
         // Returns true if the status code shows a server or client error and MaximumRetryCount > 0
-        private bool ShouldRetry(HttpStatusCode code)
+        private static bool ShouldRetry(HttpStatusCode statusCode) => (int)statusCode switch
         {
-            int intCode = (int)code;
-
-            return
-            (
-                (intCode == 304 || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0
-            );
-        }
+            304 or (>= 400 and <= 599) => true,
+            _ => false
+        };
 
         private static HttpMethod GetHttpMethod(WebRequestMethod method) => method switch
         {
