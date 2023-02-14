@@ -71,12 +71,14 @@ Describe "Test-Json" -Tags "CI" {
         $invalidNodeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidNodeInJson.json'
         $invalidTypeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidTypeInJson.json'
         $invalidTypeInJson2Path = Join-Path -Path $TestDrive -ChildPath 'invalidTypeInJson2.json'
+        $invalidEmptyJsonPath = Join-Path -Path $TestDrive -ChildPath 'emptyJson.json'
 
         Set-Content -Path $validJsonPath -Value $validJson
         Set-Content -LiteralPath $validLiteralJsonPath -Value $validJson
         Set-Content -Path $invalidNodeInJsonPath -Value $invalidNodeInJson
         Set-Content -Path $invalidTypeInJsonPath -Value $invalidTypeInJson
         Set-Content -Path $invalidTypeInJson2Path -Value $invalidTypeInJson2
+        New-Item -Path $invalidEmptyJsonPath -ItemType File
     }
 
     It "Missing JSON schema file doesn't exist" {
@@ -164,6 +166,10 @@ Describe "Test-Json" -Tags "CI" {
     It "Json file is invalid against a valid schema from string" {
         Test-Json -Path $invalidTypeInJson2Path -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
         Test-Json -Path $invalidNodeInJsonPath -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
+    }
+
+    It "Json file is invalid against an empty file" {
+        Test-Json -Path $invalidEmptyJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
     }
 
     It "Test-Json throw if a schema from string is invalid" {

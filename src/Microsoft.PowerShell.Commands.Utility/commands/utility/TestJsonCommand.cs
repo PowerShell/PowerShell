@@ -194,7 +194,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             bool result = true;
-            string resolvedPath = string.Empty;
             string jsonToParse = string.Empty;
 
             if (Json != null)
@@ -202,53 +201,58 @@ namespace Microsoft.PowerShell.Commands
                 jsonToParse = Json;
             }
 
-            if (Path != null)
+            else if (Path != null)
             {
-                resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
+                string resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
 
-                if (!System.IO.File.Exists(resolvedPath))
+                if (!File.Exists(resolvedPath))
                 {
                     ItemNotFoundException exception = new(
-                        resolvedPath,
+                        Path,
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                    ThrowTerminatingError(new ErrorRecord(
-                        exception.ErrorRecord,
-                        exception));
+                    ThrowTerminatingError(exception.ErrorRecord);
                 }
 
                 jsonToParse = File.ReadAllText(resolvedPath);
             }
 
-            try
+            if (string.IsNullOrWhiteSpace(jsonToParse))
             {
-                var parsedJson = JToken.Parse(jsonToParse);
-
-                if (_jschema != null)
+                result = false;
+            }
+            else
+            {
+                try
                 {
-                    var errorMessages = _jschema.Validate(parsedJson);
-                    if (errorMessages != null && errorMessages.Count != 0)
+                    var parsedJson = JToken.Parse(jsonToParse);
+
+                    if (_jschema != null)
                     {
-                        result = false;
-
-                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
-
-                        foreach (var message in errorMessages)
+                        var errorMessages = _jschema.Validate(parsedJson);
+                        if (errorMessages != null && errorMessages.Count != 0)
                         {
-                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                            errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
-                            WriteError(errorRecord);
+                            result = false;
+
+                            Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
+
+                            foreach (var message in errorMessages)
+                            {
+                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                                errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
+                                WriteError(errorRecord);
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception exc)
-            {
-                result = false;
+                catch (Exception exc)
+                {
+                    result = false;
 
-                Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
-                WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, jsonToParse));
+                    Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
+                    WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, jsonToParse));
+                }
             }
 
             WriteObject(result);
