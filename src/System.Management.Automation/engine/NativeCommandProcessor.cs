@@ -1776,7 +1776,7 @@ namespace System.Management.Automation
             }
 
             stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(stdOutSource);
-            stdOutDrainer.BeginReadChucks();
+            stdOutDrainer.BeginReadChunks();
         }
 
         private void decrementRefCount()

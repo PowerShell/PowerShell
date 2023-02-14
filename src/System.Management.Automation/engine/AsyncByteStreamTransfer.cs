@@ -43,7 +43,7 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
 
     public Task EOF => _readToBufferTask ?? Task.CompletedTask;
 
-    public void BeginReadChucks()
+    public void BeginReadChunks()
     {
         _readToBufferTask = Task.Run(ReadBufferAsync);
     }
