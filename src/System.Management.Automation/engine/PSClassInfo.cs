@@ -62,9 +62,7 @@ namespace System.Management.Automation
         internal PSClassMemberInfo(string name, string memberType, string defaultValue)
         {
             if (string.IsNullOrEmpty(name))
-            {
                 throw new ArgumentNullException(nameof(name));
-            }
 
             this.Name = name;
             this.TypeName = memberType;

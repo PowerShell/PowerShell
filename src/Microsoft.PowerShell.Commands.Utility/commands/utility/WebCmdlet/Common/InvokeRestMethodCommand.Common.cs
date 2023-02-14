@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static RestReturnType CheckReturnType(HttpResponseMessage response)
         {
-            ArgumentNullException.ThrowIfNull(response);
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             RestReturnType rt = RestReturnType.Detect;
             string contentType = ContentHelper.GetContentType(response);

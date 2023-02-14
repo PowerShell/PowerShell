@@ -62,9 +62,7 @@ namespace Microsoft.Management.UI.Internal
         /// </remarks>
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            ArgumentNullException.ThrowIfNull(values);
-
-            if (values.Length != 1)
+            if (values == null || values.Length != 1)
             {
                 throw new ArgumentNullException("values");
             }

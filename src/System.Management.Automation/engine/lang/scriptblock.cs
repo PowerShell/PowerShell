@@ -1138,9 +1138,10 @@ namespace System.Management.Automation
         /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
-            ArgumentNullException.ThrowIfNull(command);
-
-            ArgumentNullException.ThrowIfNull(command.MyInvocation, nameof(command));
+            if (command == null || command.MyInvocation == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
 
             Begin(command.MyInvocation.ExpectingInput, command.commandRuntime);
         }

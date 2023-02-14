@@ -835,7 +835,10 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < args.Length; i++)
             {
-                ArgumentNullException.ThrowIfNull(args[i], CommandLineParameterParserStrings.NullElementInArgs);
+                if (args[i] is null)
+                {
+                    throw new ArgumentNullException(nameof(args), CommandLineParameterParserStrings.NullElementInArgs);
+                }
             }
 
             // Indicates that we've called this method on this instance, and that when it's done, the state variables

@@ -149,8 +149,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             uint operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
-
-            ArgumentNullException.ThrowIfNull(cimSession, string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, nameof(cimSession)));
+            if (cimSession == null)
+            {
+                throw new ArgumentNullException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, nameof(cimSession)));
+            }
 
             this.TargetComputerName = cimSession.ComputerName;
             CimSessionProxy proxy = CreateSessionProxy(cimSession, operationTimeout);

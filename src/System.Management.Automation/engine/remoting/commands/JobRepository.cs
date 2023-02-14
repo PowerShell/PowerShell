@@ -19,7 +19,10 @@ namespace System.Management.Automation
         /// <param name="item">Object to add.</param>
         public void Add(T item)
         {
-            ArgumentNullException.ThrowIfNull(item, _identifier);
+            if (item == null)
+            {
+                throw new ArgumentNullException(_identifier);
+            }
 
             lock (_syncObject)
             {
@@ -42,7 +45,10 @@ namespace System.Management.Automation
         /// <param name="item">Object to remove.</param>
         public void Remove(T item)
         {
-            ArgumentNullException.ThrowIfNull(item, _identifier);
+            if (item == null)
+            {
+                throw new ArgumentNullException(_identifier);
+            }
 
             lock (_syncObject)
             {

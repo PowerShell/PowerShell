@@ -214,7 +214,10 @@ namespace Microsoft.Management.UI.Internal
         {
             ArgumentNullException.ThrowIfNull(element);
 
-            ArgumentNullException.ThrowIfNull(parent, nameof(element));
+            if (parent == null)
+            {
+                throw new ArgumentNullException("element");
+            }
 
             ContentControl parentContentControl = parent as ContentControl;
 
@@ -367,7 +370,10 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static T FindVisualAncestor<T>(this DependencyObject @object) where T : class
         {
-            ArgumentNullException.ThrowIfNull(@object, nameof(@object));
+            if (@object == null)
+            {
+                throw new ArgumentNullException("object");
+            }
 
             DependencyObject parent = VisualTreeHelper.GetParent(@object);
 

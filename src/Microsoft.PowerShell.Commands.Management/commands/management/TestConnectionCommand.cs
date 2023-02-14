@@ -575,12 +575,10 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ArgumentNullException.ThrowIfNull(replyResult);
-
                 WriteObject(new PingMtuStatus(
                     Source,
                     resolvedTargetName,
-                    replyResult,
+                    replyResult ?? throw new ArgumentNullException(nameof(replyResult)),
                     CurrentMTUSize));
             }
         }

@@ -278,9 +278,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                ArgumentNullException.ThrowIfNull(value);
-
-                _parameterNames = value;
+                _parameterNames = value ?? throw new ArgumentNullException(nameof(value));
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
