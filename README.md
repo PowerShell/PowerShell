@@ -30,10 +30,10 @@ You can download and install a PowerShell package for any of the following platf
 | -------------------------------------------| ------------------------| ------------------------| ----------------------| ------------------------------|
 | [Windows (x64)][corefx-win]                | [.msi][lts-windows-64]  | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
 | [Windows (x86)][corefx-win]                | [.msi][lts-windows-86]  | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
-| [Ubuntu 22.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu22]     | [.deb][pv-deb]        | [Instructions](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.3#ubuntu)   |
-| [Ubuntu 20.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu20]     | [.deb][pv-deb]        | [Instructions][in-ubuntu20]   |
-| [Ubuntu 18.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu18]     | [.deb][pv-deb]        | [Instructions][in-ubuntu18]   |
-| [Ubuntu 16.04][corefx-linux] | [.deb][lts-deb] | N/A  | N/A | [Instructions][in-ubuntu16] |
+| [Ubuntu 22.04/Linux Mint 21.x][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu22]     | [.deb][pv-deb]        | [Instructions][in-ubuntu22]   |
+| [Ubuntu 20.04/Linux Mint 20.x][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu20]     | [.deb][pv-deb]        | [Instructions][in-ubuntu20]   |
+| [Ubuntu 18.04/Linux Mint 19.x][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu18]     | [.deb][pv-deb]        | [Instructions][in-ubuntu18]   |
+| [Ubuntu 16./Linux Mint 18.x][corefx-linux] | [.deb][lts-deb] | N/A  | N/A | [Instructions][in-ubuntu16] |
 | [Debian 10][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian10]     | [.deb][pv-deb]        | [Instructions][in-deb9]       |
 | [Debian 11][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian11]     | [.deb][pv-deb]        |                               |
 | [CentOS 7][corefx-linux]                   | [.rpm][lts-rh]          | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-centos]     |
@@ -113,6 +113,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1604
 [in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1804
 [in-ubuntu20]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-2004
+[in-ubuntu22]: https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.3#ubuntu
 [in-deb9]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-9
 [in-deb10]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-10
 [in-centos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#centos-7
