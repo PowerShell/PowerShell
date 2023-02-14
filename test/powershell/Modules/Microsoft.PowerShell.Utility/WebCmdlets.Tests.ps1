@@ -1060,7 +1060,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
 
             $result = ExecuteWebCommand -command $command
-            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $result.Error.FullyQualifiedErrorId | Should -Be "InsecureRedirection,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
     }
 
@@ -2781,7 +2781,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "InsecureRedirection,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     #endregion Redirect tests

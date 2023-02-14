@@ -572,7 +572,15 @@ namespace Microsoft.PowerShell.Commands
                                     // Disable writing to the OutFile.
                                     OutFile = null;
                                 }
-
+                                
+                                // Detect insecure redirection
+                                if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
+                                {
+                                        ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
+                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
+                                        ThrowTerminatingError(er);
+                                }
+                                
                                 if (ShouldCheckHttpStatus && !_isSuccess)
                                 {
                                     string message = string.Format(
