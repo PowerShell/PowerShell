@@ -181,8 +181,8 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="inputTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         public PredictionContext(Ast inputAst, Token[] inputTokens)
         {
-            ArgumentNullException.ThrowIfNull(inputAst);
-            ArgumentNullException.ThrowIfNull(inputTokens);
+            Requires.NotNull(inputAst, nameof(inputAst));
+            Requires.NotNull(inputTokens, nameof(inputTokens));
 
             var cursor = inputAst.Extent.EndScriptPosition;
             var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);

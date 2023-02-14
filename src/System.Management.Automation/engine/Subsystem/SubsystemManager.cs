@@ -131,7 +131,7 @@ namespace System.Management.Automation.Subsystem
         /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(Type subsystemType)
         {
-            ArgumentNullException.ThrowIfNull(subsystemType);
+            Requires.NotNull(subsystemType, nameof(subsystemType));
 
             if (s_subSystemTypeMap.TryGetValue(subsystemType, out SubsystemInfo? subsystemInfo))
             {
@@ -180,7 +180,7 @@ namespace System.Management.Automation.Subsystem
             where TConcreteSubsystem : class, ISubsystem
             where TImplementation : class, TConcreteSubsystem
         {
-            ArgumentNullException.ThrowIfNull(proxy);
+            Requires.NotNull(proxy, nameof(proxy));
 
             RegisterSubsystem(GetSubsystemInfo(typeof(TConcreteSubsystem)), proxy);
         }
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="proxy">An instance of the implementation.</param>
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
-            ArgumentNullException.ThrowIfNull(proxy);
+            Requires.NotNull(proxy, nameof(proxy));
 
             SubsystemInfo info = GetSubsystemInfo(kind);
             if (!info.SubsystemType.IsAssignableFrom(proxy.GetType()))
