@@ -16,10 +16,10 @@ internal abstract class BytePipe
 {
     public abstract Stream GetStream();
 
-    internal AsyncByteStreamDrainer Bind(BytePipe bytePipe)
+    internal AsyncByteStreamTransfer Bind(BytePipe bytePipe)
     {
         Debug.Assert(bytePipe is not null);
-        return new AsyncByteStreamDrainer(
+        return new AsyncByteStreamTransfer(
             bytePipe,
             (bytes, _) => GetStream().Write(bytes),
             callbackArg: null,

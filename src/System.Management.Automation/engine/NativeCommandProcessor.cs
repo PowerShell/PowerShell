@@ -766,7 +766,7 @@ namespace System.Management.Automation
             }
         }
 
-        private AsyncByteStreamDrainer _stdOutByteDrainer;
+        private AsyncByteStreamTransfer _stdOutByteTransfer;
 
         private void InitOutputQueue()
         {
@@ -807,7 +807,7 @@ namespace System.Management.Automation
                             _nativeProcessOutputQueue,
                             stdOutDestination,
                             stdOutSource,
-                            out _stdOutByteDrainer);
+                            out _stdOutByteTransfer);
 
                     }
                 }
@@ -819,9 +819,9 @@ namespace System.Management.Automation
             if (blocking)
             {
                 if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                    && _stdOutByteDrainer is not null)
+                    && _stdOutByteTransfer is not null)
                 {
-                    _stdOutByteDrainer.EOF.GetAwaiter().GetResult();
+                    _stdOutByteTransfer.EOF.GetAwaiter().GetResult();
                     return null;
                 }
 
@@ -849,7 +849,7 @@ namespace System.Management.Automation
             else
             {
                 if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                    && _stdOutByteDrainer is not null)
+                    && _stdOutByteTransfer is not null)
                 {
                     return null;
                 }
@@ -1236,7 +1236,7 @@ namespace System.Management.Automation
                         _inputWriter.Stop();
                     }
 
-                    _stdOutByteDrainer?.Dispose();
+                    _stdOutByteTransfer?.Dispose();
                     KillProcess(_nativeProcess);
                 }
             }
@@ -1724,7 +1724,7 @@ namespace System.Management.Automation
         private bool _isXmlCliError;
         private readonly string _processFileName;
 
-        private readonly AsyncByteStreamDrainer _stdOutDrainer;
+        private readonly AsyncByteStreamTransfer _stdOutDrainer;
 
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
             : this(process, queue, null, null, out _)
@@ -1736,7 +1736,7 @@ namespace System.Management.Automation
             BlockingCollection<ProcessOutputObject> queue,
             BytePipe stdOutDestination,
             BytePipe stdOutSource,
-            out AsyncByteStreamDrainer stdOutDrainer)
+            out AsyncByteStreamTransfer stdOutDrainer)
         {
             Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
             _refCount = 0;

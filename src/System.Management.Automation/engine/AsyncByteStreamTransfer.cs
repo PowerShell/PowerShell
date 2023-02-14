@@ -14,7 +14,7 @@ namespace System.Management.Automation;
 /// Represents the transfer of bytes from one <see cref="Stream" /> to another
 /// asynchronously.
 /// </summary>
-internal sealed class AsyncByteStreamDrainer : IDisposable
+internal sealed class AsyncByteStreamTransfer : IDisposable
 {
     private const int DefaultBufferSize = 1024;
 
@@ -32,7 +32,7 @@ internal sealed class AsyncByteStreamDrainer : IDisposable
 
     private Task? _readToBufferTask;
 
-    public AsyncByteStreamDrainer(BytePipe bytePipe, SpanAction<byte, object?> callback, object? callbackArg, Action completedCallback)
+    public AsyncByteStreamTransfer(BytePipe bytePipe, SpanAction<byte, object?> callback, object? callbackArg, Action completedCallback)
     {
         _bytePipe = bytePipe;
         _callback = callback;
