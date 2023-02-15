@@ -235,14 +235,22 @@ stages:
         $downloadedArtifacts
         $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
         $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
-        $downloadedArtifacts | Where-Object { $_.Name -like 'PowerShell*-symbols*-signed.zip'} | ForEach-Object {
+
+        $downloadedArtifacts | Where-Object { $_.Name -notlike 'PowerShell*-symbols*signed.zip'} | ForEach-Object {
           $destFolder = New-Item -Path "$expandedRoot/$($_.BaseName)/" -ItemType Directory -Verbose
           Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
-          Get-ChildItem -Path $destFolder -Recurse -Filter '*.ni.pdb' | ForEach-Object {
-            $runtimeFolder = New-Item -Path "$symbolsRoot/$($destFolder.BaseName)/" -ItemType Directory -Verbose
-            Copy-Item -Path $_.FullName -Destination $runtimeFolder -Verbose
+
+          $symbolsZipFile = Join-Path -Path $destFolder -ChildPath "symbols.zip"
+          $symbolZipFileContents = New-Item -Path $destFolder/"Symbols-$($_.BaseName)" -ItemType Directory -Verbose
+          Expand-Archive -Path $symbolsZipFile -DestinationPath $symbolZipFileContents -Force
+
+          $symbolsToPublish = New-Item -Path $symbolsRoot/($_.BaseName) -ItemType Directory -Verbose
+
+          Get-ChildItem -Path $symbolZipFileContents -Recurse -Filter '*.pdb' | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination $symbolsToPublish -Verbose
           }
         }
+
         Write-Verbose -Verbose "Enumerating $symbolsRoot"
         Get-ChildItem -Path $symbolsRoot -Recurse
         $vstsCommandString = "vso[task.setvariable variable=SymbolsPath]$symbolsRoot"
@@ -252,7 +260,7 @@ stages:
     - task: PublishSymbols@2
       inputs:
         symbolsFolder: '$(SymbolsPath)'
-        searchPattern: '**/*.ni.pdb'
+        searchPattern: '**/*.pdb'
         indexSources: false
         publishSymbols: true
         symbolServerType: teamServices
