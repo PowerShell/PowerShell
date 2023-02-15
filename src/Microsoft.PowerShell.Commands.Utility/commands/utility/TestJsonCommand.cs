@@ -220,39 +220,38 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrWhiteSpace(jsonToParse))
             {
-                result = false;
+                WriteObject(false);
+                return;
             }
-            else
+
+            try
             {
-                try
+                var parsedJson = JToken.Parse(jsonToParse);
+
+                if (_jschema != null)
                 {
-                    var parsedJson = JToken.Parse(jsonToParse);
-
-                    if (_jschema != null)
+                    var errorMessages = _jschema.Validate(parsedJson);
+                    if (errorMessages != null && errorMessages.Count != 0)
                     {
-                        var errorMessages = _jschema.Validate(parsedJson);
-                        if (errorMessages != null && errorMessages.Count != 0)
+                        result = false;
+
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
+
+                        foreach (var message in errorMessages)
                         {
-                            result = false;
-
-                            Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
-
-                            foreach (var message in errorMessages)
-                            {
-                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                                errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
-                                WriteError(errorRecord);
-                            }
+                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                            errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
+                            WriteError(errorRecord);
                         }
                     }
                 }
-                catch (Exception exc)
-                {
-                    result = false;
+            }
+            catch (Exception exc)
+            {
+                result = false;
 
-                    Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
-                    WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, jsonToParse));
-                }
+                Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
+                WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, jsonToParse));
             }
 
             WriteObject(result);
