@@ -753,8 +753,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-WebRequest default ContentType for CustomMethod <method>" -TestCases @(
-        @{method = POST}
-        @{method = PUT}
+        @{method = "POST"}
+        @{method = "PUT"}
     ) {
         param($method)
 
