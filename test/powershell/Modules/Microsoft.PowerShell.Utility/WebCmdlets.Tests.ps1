@@ -761,6 +761,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonResult.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"
     }
 
+    It "Validate Invoke-WebRequest default ContentType for CustomMethod PUT" {
+        $uri = Get-WebListenerUrl -Test 'Put'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod PUT -Body 'testparam=testvalue'"
+        $result = ExecuteWebCommand -command $command
+        $jsonResult = $result.Output.Content | ConvertFrom-Json
+        $jsonResult.form.testparam | Should -Be "testvalue"
+        $jsonResult.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"
+    }
+
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
@@ -2512,6 +2521,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
         $uri = Get-WebListenerUrl -Test 'Post'
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.form.testparam | Should -Be "testvalue"
+        $result.Output.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"
+    }
+
+    It "Validate Invoke-RestMethod default ContentType for CustomMethod PUT" {
+        $uri = Get-WebListenerUrl -Test 'Put'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod PUT -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should -Be "testvalue"
         $result.Output.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"
