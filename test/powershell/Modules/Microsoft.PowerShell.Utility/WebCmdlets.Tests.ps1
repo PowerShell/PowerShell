@@ -2514,9 +2514,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" -TestCases @(
-        @{method = POST}
-        @{method = PUT}
+    It "Validate Invoke-RestMethod default ContentType for CustomMethod <method>" -TestCases @(
+        @{method = "POST"}
+        @{method = "PUT"}
     ) {
         param($method)
         $uri = Get-WebListenerUrl -Test $method
