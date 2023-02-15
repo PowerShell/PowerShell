@@ -27,8 +27,6 @@ pr:
     - release*
     - feature*
   paths:
-    # file extension filters are not supported when this was written.
-    # This really should be /src/**/*.csproj
     include:
     - .vsts-ci/windows/*
     - assets/wix/*
