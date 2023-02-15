@@ -28,7 +28,7 @@ pr:
     - feature*
   paths:
     include:
-    - .vsts-ci/windows/*
+    - .vsts-ci/windows/*.yml
     - assets/wix/*
     - build.psm1
     - global.json
