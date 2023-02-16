@@ -18,11 +18,11 @@ steps:
   # Diagnostics is not critical it passes every time it runs
   continueOnError: true
 
-- template: cloneToOfficialPath.yml
-
 - template: SetVersionVariables.yml
   parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+- template: cloneToOfficialPath.yml
 
 - pwsh: |
     $zipFileFilter = '$(unsignedBuildArtifactName)'
