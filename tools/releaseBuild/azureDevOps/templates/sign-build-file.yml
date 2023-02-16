@@ -53,7 +53,7 @@ steps:
     }
 
   displayName: Expand zip packages
-  condition: eq($(ArtifactPlatform), 'windows')
+  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
     $tarPackageName = ${{ parameters.unsignedBuildArtifactName }}
@@ -78,7 +78,7 @@ steps:
     Write-Verbose -Verbose "File permisions after expanding"
     Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
   displayName: Expand tar.gz packages
-  condition: eq($(ArtifactPlatform), 'linux')
+  condition: eq(variables['ArtifactPlatform'], 'linux')
 
 - template: cloneToOfficialPath.yml
 
@@ -278,7 +278,7 @@ steps:
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
   displayName: ${{ parameters.runtime }} - Upload signed files to artifacts
-  condition: eq($(ArtifactPlatform), 'linux')
+  condition: eq(variables['ArtifactPlatform'], 'linux')
 
 - pwsh: |
       $uploadFolder = '$(BinPath)'
@@ -290,6 +290,6 @@ steps:
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
   displayName: ${{ parameters.runtime }} - Upload signed files to artifacts
-  condition: eq($(ArtifactPlatform), 'windows')
+  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
