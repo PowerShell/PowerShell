@@ -319,13 +319,7 @@ stages:
             signedBuildArtifactName: '-symbols-win-fxdependentWinDesktop-signed.zip'
             signedArtifactContainer: results
       steps:
-      - template: sign-build-file.yml
-
-    - template: templates/signBuildFiles.yml
-      parameters:
-        binLocation: ''
-        buildPrefixName: ''
-        addWindowsModules: ''
+      - template: templates/sign-build-file.yml
 
   - stage: compliance
     dependsOn: ['windows']
