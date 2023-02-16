@@ -12,7 +12,6 @@ jobs:
 - job: sign_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
   displayName: Package Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
-  dependsOn: ${{ parameters.parentJob }}
   pool:
     name: PowerShell1ES
     demands:

@@ -326,8 +326,95 @@ stages:
     jobs:
       - template: templates/compliance.yml
 
-  - stage: nuget_and_json
+  - stage: mac_packaging
     dependsOn: ['SignFiles']
+    jobs:
+    - template: templates/mac-package-build.yml
+      parameters:
+        buildArchitecture: x64
+
+    - template: templates/mac-package-build.yml
+      parameters:
+        buildArchitecture: arm64
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: deb
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: rpm
+        uploadDisplayName: Upload and Sign
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: alpine
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: fxdependent
+
+  - stage: linux_packaging
+    dependsOn: ['SignFiles']
+    jobs:
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: deb
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: rpm
+        uploadDisplayName: Upload and Sign
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: alpine
+
+    - template: templates/linux-packaging.yml
+      parameters:
+        buildName: fxdependent
+
+  - stage: win_packaging
+    dependsOn: ['SignFiles']
+    jobs:
+    - template: templates/windows-packaging.yml
+      parameters:
+        Architecture: x64
+        parentJob: build_windows_x64_release
+
+    - template: templates/windows-packaging.yml
+      parameters:
+        Architecture: x64
+        BuildConfiguration: minSize
+        parentJob: build_windows_x64_minSize
+
+    - template: templates/windows-packaging.yml
+      parameters:
+        Architecture: x86
+        parentJob: build_windows_x86_release
+
+    - template: templates/windows-packaging.yml
+      parameters:
+        Architecture: arm
+        parentJob: build_windows_arm_release
+
+    - template: templates/windows-packaging.yml
+      parameters:
+        Architecture: arm64
+        parentJob: build_windows_arm64_release
+
+    - template: templates/windows-packaging.yml
+      parameters:
+        Architecture: fxdependent
+        parentJob: build_windows_fxdependent_release
+
+  - stage: package_signing
+    dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
+    jobs:
+    - template: templates/windows-package-signing.yml
+
+  - stage: nuget_and_json
+    dependsOn: ['package_signing']
     jobs:
       - template: templates/nuget.yml
 
