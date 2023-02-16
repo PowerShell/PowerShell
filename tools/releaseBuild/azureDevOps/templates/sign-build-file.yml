@@ -19,7 +19,7 @@ steps:
   continueOnError: true
 
 - checkout: self
-    clean: true
+  clean: true
 
 - template: SetVersionVariables.yml
   parameters:
