@@ -1,13 +1,6 @@
-parameters:
-  runtime: linux-arm64
-  unsignedBuildArtifactContainer: pwshLinuxBuild.tar.gz
-  unsignedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
-  signedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
-  signedArtifactContainer: authenticode-signed
-
 steps:
 - pwsh: |
-    $platform = '${{ parameters.runtime }}' -match '^linux' ? 'linux' : 'windows'
+    $platform = '$(runtime)' -match '^linux' ? 'linux' : 'windows'
     $vstsCommandString = "vso[task.setvariable variable=ArtifactPlatform]$platform"
     Write-Host ("sending " + $vstsCommandString)
     Write-Host "##$vstsCommandString"
@@ -15,8 +8,8 @@ steps:
 
 - task: DownloadBuildArtifacts@1
   inputs:
-    artifactName: '${{ parameters.unsignedBuildArtifactContainer }}'
-    itemPattern: '${{ parameters.unsignedBuildArtifactName }}'
+    artifactName: '$(unsignedBuildArtifactContainer)'
+    itemPattern: '$(unsignedBuildArtifactName)'
     downloadPath: '$(System.ArtifactsDirectory)'
 
 - pwsh: |
@@ -30,8 +23,8 @@ steps:
       ReleaseTagVar: $(ReleaseTagVar)
 
 - pwsh: |
-    $zipFileFilter = ${{ parameters.unsignedBuildArtifactName }}
-    $zipFilePath = Get-ChildItem -Path '$(System.ArtifactsDirectory)\${{ parameters.unsignedBuildArtifactName }}' -recurse
+    $zipFileFilter = '$(unsignedBuildArtifactName)'
+    $zipFilePath = Get-ChildItem -Path '$(System.ArtifactsDirectory)\$(unsignedBuildArtifactName)' -recurse
 
     if ($zipFilePath.Count -ne 1) {
       Write-Verbose "zip filename" -verbose
@@ -60,7 +53,7 @@ steps:
   condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
-    $tarPackageName = ${{ parameters.unsignedBuildArtifactName }}
+    $tarPackageName = $(unsignedBuildArtifactName)
     $tarPackagePath = Join-Path $(Build.ArtifactStagingDirectory) $tarPackageName $tarPackageName
     $expandedPathFolderName = $tarPackageName -replace '.tar.gz', ''
     $expandedFolderPath = Join-Path $(Build.ArtifactStagingDirectory) $expandedFolderName
@@ -271,12 +264,12 @@ steps:
 
 - pwsh: |
       $uploadFolder = '$(BinPath)'
-      $containerName = ${{ parameters.signedArtifactContainer }}
+      $containerName = '$(signedArtifactContainer)'
 
       Write-Verbose -Verbose "File permissions after signing"
       Get-ChildItem $uploadFolder\pwsh | Select-Object -Property 'unixmode', 'size', 'name'
 
-      $uploadTarFilePath = ${{ parameters.signedBuildArtifactName }}
+      $uploadTarFilePath = $(signedBuildArtifactName)
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
       tar -czvf $uploadTarFilePath -C $uploadFolder *
 
@@ -286,9 +279,9 @@ steps:
 
 - pwsh: |
       $uploadFolder = '$(BinPath)'
-      $containerName = ${{ parameters.signedArtifactContainer }}
+      $containerName = '$(signedArtifactContainer)'
 
-      $uploadZipFilePath = ${{ parameters.signedBuildArtifactName }}
+      $uploadZipFilePath = $(signedBuildArtifactName)
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
       Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath
 
