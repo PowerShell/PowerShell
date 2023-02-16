@@ -215,14 +215,117 @@ stages:
       #       - sign_windows_fxdependent_release
       #       - sign_windows_fxdependentWinDesktop_release
 
-  #- stage: SignFiles
-  #  dependsOn: ['windows', 'linux', 'macos']
-  #  jobs:
-  #  - template: templates/signBuildFiles.yml
-  #    parameters:
-  #      binLocation: ''
-  #      buildPrefixName: ''
-  #      addWindowsModules: ''
+  - stage: SignFiles
+    dependsOn: ['windows', 'linux', 'macos']
+    jobs:
+    - template: templates/mac-file-signing.yml
+      parameters:
+        buildArchitecture: x64
+
+    - template: templates/mac-file-signing.yml
+      parameters:
+        buildArchitecture: arm64
+
+    - job: SignFilesWinLinux
+      pool:
+        name: PowerShell1ES
+        demands:
+        - ImageOverride -equals PSMMS2019-Secure
+      displayName: Sign Files for windows and linux
+      strategy:
+        matrix:
+          linux-x64:
+            runtime: linux-x64
+            unsignedBuildArtifactContainer: pwshLinuxBuild.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
+            signedBuildArtifactName: pwshLinuxBuild.tar.gz
+            signedArtifactContainer: authenticode-signed
+          linux-x64-Alpine:
+            runtime: linux-x64-Alpine
+            unsignedBuildArtifactContainer: pwshLinuxBuildAlpine.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
+            signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
+            signedArtifactContainer: authenticode-signed
+          linux-arm32:
+            runtime: linux-arm32
+            unsignedBuildArtifactContainer: pwshLinuxBuildArm32.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuildArm32.tar.gz
+            signedBuildArtifactName: pwshLinuxBuildArm32.tar.gz
+            signedArtifactContainer: authenticode-signed
+          linux-arm64:
+            runtime: linux-arm64
+            unsignedBuildArtifactContainer: pwshLinuxBuildArm64.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
+            signedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
+            signedArtifactContainer: authenticode-signed
+          linux-fxd:
+            runtime: linux-fxd
+            unsignedBuildArtifactContainer: pwshLinuxBuildFxdependent.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuildFxdependent.tar.gz
+            signedBuildArtifactName: pwshLinuxBuildFxdependent.tar.gz
+            signedArtifactContainer: authenticode-signed
+          linux-mariner:
+            runtime: linux-mariner
+            unsignedBuildArtifactContainer: pwshMarinerBuildArm64.tar.gz
+            unsignedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
+            signedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
+            signedArtifactContainer: authenticode-signed
+          linux-minsize:
+            runtime: linux-minsize
+            unsignedBuildArtifactContainer: pwshLinuxBuildMinSize.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuildMinSize.tar.gz
+            signedBuildArtifactName: pwshLinuxBuildMinSize.tar.gz
+            signedArtifactContainer: authenticode-signed
+          win-x64:
+            runtime: win-x64
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-x64.zip'
+            signedBuildArtifactName: '-symbols-win-x64-signed.zip'
+            signedArtifactContainer: results
+          win-x86:
+            runtime: win-x86
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-x86.zip'
+            signedBuildArtifactName: '-symbols-win-x86-signed.zip'
+            signedArtifactContainer: results
+          win-arm32:
+            runtime: win-arm32
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-arm32.zip'
+            signedBuildArtifactName: '-symbols-win-arm32-signed.zip'
+            signedArtifactContainer: results
+          win-arm64:
+            runtime: win-arm64
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-arm64.zip'
+            signedBuildArtifactName: '-symbols-win-arm64-signed.zip'
+            signedArtifactContainer: results
+          win-x64-gc:
+            runtime: win-x64-gc
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-x64-gc.zip'
+            signedBuildArtifactName: '-symbols-win-x64-gc-signed.zip'
+            signedArtifactContainer: results
+          win-fxdependent:
+            runtime: win-fxdependent
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-fxdependent.zip'
+            signedBuildArtifactName: '-symbols-win-fxdependent-signed.zip'
+            signedArtifactContainer: results
+          win-fxdependent:
+            runtime: win-fxdependentWinDesktop
+            unsignedBuildArtifactContainer: results
+            unsignedBuildArtifactName: '*-symbols-win-fxdependentWinDesktop.zip'
+            signedBuildArtifactName: '-symbols-win-fxdependentWinDesktop-signed.zip'
+            signedArtifactContainer: results
+      steps:
+      - template: sign-build-file.yml
+
+    - template: templates/signBuildFiles.yml
+      parameters:
+        binLocation: ''
+        buildPrefixName: ''
+        addWindowsModules: ''
 
   - stage: compliance
     dependsOn: ['windows']
@@ -230,7 +333,7 @@ stages:
       - template: templates/compliance.yml
 
   - stage: nuget_and_json
-    dependsOn: ['windows','linux','macOS']
+    dependsOn: ['SignFiles']
     jobs:
       - template: templates/nuget.yml
 
