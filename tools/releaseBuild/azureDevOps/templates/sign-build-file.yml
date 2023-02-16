@@ -25,6 +25,10 @@ steps:
   # Diagnostics is not critical it passes every time it runs
   continueOnError: true
 
+- template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
 - pwsh: |
     $zipFileFilter = ${{ parameters.unsignedBuildArtifactName }}
     $zipFilePath = Get-ChildItem -Path '$(System.ArtifactsDirectory)\${{ parameters.unsignedBuildArtifactName }}' -recurse
