@@ -312,7 +312,7 @@ stages:
             unsignedBuildArtifactName: '*-symbols-win-fxdependent.zip'
             signedBuildArtifactName: '-symbols-win-fxdependent-signed.zip'
             signedArtifactContainer: results
-          win-fxdependent:
+          win-fxdependentWinDesktop:
             runtime: win-fxdependentWinDesktop
             unsignedBuildArtifactContainer: results
             unsignedBuildArtifactName: '*-symbols-win-fxdependentWinDesktop.zip'
