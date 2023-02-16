@@ -6,7 +6,7 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: Set artifact platform
 
-- task: DownloadBuildArtifacts@1
+- task: DownloadPipelineArtifact@2
   inputs:
     artifactName: '$(unsignedBuildArtifactContainer)'
     itemPattern: '$(unsignedBuildArtifactName)'
