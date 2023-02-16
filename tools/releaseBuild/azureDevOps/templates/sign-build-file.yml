@@ -18,6 +18,8 @@ steps:
   # Diagnostics is not critical it passes every time it runs
   continueOnError: true
 
+- template: cloneToOfficialPath.yml
+
 - template: SetVersionVariables.yml
   parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -53,10 +55,10 @@ steps:
   condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
-    $tarPackageName = $(unsignedBuildArtifactName)
-    $tarPackagePath = Join-Path $(Build.ArtifactStagingDirectory) $tarPackageName $tarPackageName
+    $tarPackageName = '$(unsignedBuildArtifactName)'
+    $tarPackagePath = Join-Path '$(Build.ArtifactStagingDirectory)' $tarPackageName $tarPackageName
     $expandedPathFolderName = $tarPackageName -replace '.tar.gz', ''
-    $expandedFolderPath = Join-Path $(Build.ArtifactStagingDirectory) $expandedFolderName
+    $expandedFolderPath = Join-Path '$(Build.ArtifactStagingDirectory)' $expandedFolderName
 
     Write-Verbose -Verbose -Message "Expanding $tarPackagePath/$tarPackageName to $expandedFolderPath"
 
@@ -73,11 +75,9 @@ steps:
     }
 
     Write-Verbose -Verbose "File permisions after expanding"
-    Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+    Get-ChildItem -Path '$(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh' | Select-Object -Property 'unixmode', 'size', 'name'
   displayName: Expand tar.gz packages
   condition: eq(variables['ArtifactPlatform'], 'linux')
-
-- template: cloneToOfficialPath.yml
 
 - template: insert-nuget-config-azfeed.yml
   parameters:
@@ -96,7 +96,7 @@ steps:
 - template: shouldSign.yml
 
 - pwsh: |
-    $fullSymbolsFolder = $(BinPath)
+    $fullSymbolsFolder = '$(BinPath)'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
 
     Get-ChildItem -Recurse $fullSymbolsFolder | out-string | Write-Verbose -Verbose
@@ -249,10 +249,10 @@ steps:
   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
 - pwsh: |
-    Import-Module $(PowerShellRoot)/build.psm1 -Force
-    Import-Module $(PowerShellRoot)/tools/packaging -Force
+    Import-Module '$(PowerShellRoot)/build.psm1' -Force
+    Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartySigned'
-    $BuildPath = Join-Path $(BinPath)
+    $BuildPath = Join-Path '$(BinPath)'
 
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     if ($env:BuildConfiguration -eq 'minSize') {
@@ -281,7 +281,7 @@ steps:
       $uploadFolder = '$(BinPath)'
       $containerName = '$(signedArtifactContainer)'
 
-      $uploadZipFilePath = $(signedBuildArtifactName)
+      $uploadZipFilePath = '$(signedBuildArtifactName)'
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
       Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath
 
