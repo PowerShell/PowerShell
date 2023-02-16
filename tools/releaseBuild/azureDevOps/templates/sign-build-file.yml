@@ -10,10 +10,9 @@ steps:
   inputs:
     artifactName: '$(unsignedBuildArtifactContainer)'
     itemPattern: '$(unsignedBuildArtifactName)'
-    downloadPath: '$(System.ArtifactsDirectory)'
 
 - pwsh: |
-    Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
   displayName: 'Capture Downloaded Artifacts'
   # Diagnostics is not critical it passes every time it runs
   continueOnError: true
@@ -31,6 +30,11 @@ steps:
     $zipFileFilter = '$(unsignedBuildArtifactName)'
     $zipFilePath = Get-ChildItem -Path '$(System.ArtifactsDirectory)\$(unsignedBuildArtifactName)' -recurse
 
+    if (-not (Test-Path $zipFilePath))
+    {
+        throw "zip file not found: $zipfilePath"
+    }
+
     if ($zipFilePath.Count -ne 1) {
       Write-Verbose "zip filename" -verbose
       $zipFilePath | Out-String | Write-Verbose -Verbose
@@ -38,7 +42,7 @@ steps:
     }
 
     $expandedFolderName = [System.io.path]::GetFileNameWithoutExtension($zipfilePath)
-    $expandedFolderPath = Join-Path $(Build.ArtifactStagingDirectory) $expandedFolderName
+    $expandedFolderPath = Join-Path '$(Pipeline.Workspace)' 'expanded' $expandedFolderName
 
     Write-Verbose -Verbose -Message "Expaning $zipFilePath to $expandedFolderPath"
 
@@ -59,9 +63,14 @@ steps:
 
 - pwsh: |
     $tarPackageName = '$(unsignedBuildArtifactName)'
-    $tarPackagePath = Join-Path '$(Build.ArtifactStagingDirectory)' $tarPackageName $tarPackageName
+    $tarPackagePath = Join-Path '$(Pipeline.Workspace)' $tarPackageName $tarPackageName
     $expandedPathFolderName = $tarPackageName -replace '.tar.gz', ''
-    $expandedFolderPath = Join-Path '$(Build.ArtifactStagingDirectory)' $expandedPathFolderName
+    $expandedFolderPath = Join-Path '$(Pipeline.Workspace)' 'expanded' $expandedPathFolderName
+
+    if (-not (Test-Path $tarPackagePath))
+    {
+        throw "zip file not found: $zipfilePath"
+    }
 
     Write-Verbose -Verbose -Message "Expanding $tarPackagePath to $expandedFolderPath"
 
@@ -78,7 +87,7 @@ steps:
     }
 
     Write-Verbose -Verbose "File permisions after expanding"
-    Get-ChildItem -Path '$(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh' | Select-Object -Property 'unixmode', 'size', 'name'
+    Get-ChildItem -Path '$(Pipeline.Workspace)/pwshLinuxBuild/pwsh' | Select-Object -Property 'unixmode', 'size', 'name'
   displayName: Expand tar.gz packages
   condition: eq(variables['ArtifactPlatform'], 'linux')
 
