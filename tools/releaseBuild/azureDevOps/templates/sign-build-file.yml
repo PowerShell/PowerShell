@@ -18,6 +18,9 @@ steps:
   # Diagnostics is not critical it passes every time it runs
   continueOnError: true
 
+- checkout: self
+    clean: true
+
 - template: SetVersionVariables.yml
   parameters:
       ReleaseTagVar: $(ReleaseTagVar)
