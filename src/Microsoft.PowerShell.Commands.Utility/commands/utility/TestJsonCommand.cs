@@ -200,7 +200,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 jsonToParse = Json;
             }
-
             else if (Path != null)
             {
                 string resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
