@@ -58,9 +58,9 @@ steps:
     $tarPackageName = '$(unsignedBuildArtifactName)'
     $tarPackagePath = Join-Path '$(Build.ArtifactStagingDirectory)' $tarPackageName $tarPackageName
     $expandedPathFolderName = $tarPackageName -replace '.tar.gz', ''
-    $expandedFolderPath = Join-Path '$(Build.ArtifactStagingDirectory)' $expandedFolderName
+    $expandedFolderPath = Join-Path '$(Build.ArtifactStagingDirectory)' $expandedPathFolderName
 
-    Write-Verbose -Verbose -Message "Expanding $tarPackagePath/$tarPackageName to $expandedFolderPath"
+    Write-Verbose -Verbose -Message "Expanding $tarPackagePath to $expandedFolderPath"
 
     New-Item -Path $expandedFolderPath -ItemType Directory
     tar -xf $tarPackagePath -C $expandedFolderPath
