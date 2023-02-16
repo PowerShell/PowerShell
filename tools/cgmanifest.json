@@ -105,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "5.0.10"
+          "Version": "5.0.17"
         }
       },
       "DevelopmentDependency": false
@@ -205,7 +205,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "6.0.1"
+          "Version": "6.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -225,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Newtonsoft.Json",
-          "Version": "13.0.1"
+          "Version": "13.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -465,7 +465,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.DiagnosticSource",
-          "Version": "5.0.0"
+          "Version": "5.0.1"
         }
       },
       "DevelopmentDependency": false
