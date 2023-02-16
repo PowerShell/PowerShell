@@ -4,7 +4,6 @@ parameters:
 jobs:
   - job: MacFileSigningJob_${{ parameters.buildArchitecture }}
     displayName: macOS File signing ${{ parameters.buildArchitecture }}
-    dependsOn: macos.build_macOS_${{ parameters.buildArchitecture }}
     condition: succeeded()
     pool:
       name: PowerShell1ES
