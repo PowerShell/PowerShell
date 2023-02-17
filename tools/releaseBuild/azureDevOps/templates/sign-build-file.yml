@@ -55,11 +55,15 @@ steps:
     New-Item -Path $expandedFolderPath -ItemType Directory
     Expand-Archive -Path $zipFilePath -DestinationPath $expandedFolderPath
 
-    if (-not (Test-Path $expandedFolderPath\pwsh.exe) ) {
-      throw 'tar.gz did not expand as expected'
+    $symbolsFolderPath = Join-Path '$(Pipeline.Workspace)' 'symbols'
+    New-Item -Path $symbolsFolderPath -ItemType Directory
+    Expand-Archive -Path $expandedFolderPath\symbols.zip -DestinationPath $symbolsFolderPath
+
+    if (-not (Test-Path $symbolsFolderPath\pwsh.exe) ) {
+      throw 'symbols zip did not expand as expected'
     }
     else {
-      $vstsCommandString = "vso[task.setvariable variable=BinPath]$expandedFolderPath"
+      $vstsCommandString = "vso[task.setvariable variable=BinPath]$symbolsFolderPath"
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
     }
@@ -99,7 +103,7 @@ steps:
     }
 
     Write-Verbose -Verbose "File permisions after expanding"
-    Get-ChildItem -Path "$expandedPathFolderName/pwsh" | Select-Object -Property 'unixmode', 'size', 'name'
+    Get-ChildItem -Path "$expandedFolderPath/pwsh" | Select-Object -Property 'unixmode', 'size', 'name'
   displayName: Expand tar.gz packages
   condition: eq(variables['ArtifactPlatform'], 'linux')
 
