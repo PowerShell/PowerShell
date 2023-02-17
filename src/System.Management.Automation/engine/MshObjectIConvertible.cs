@@ -26,6 +26,7 @@ namespace System.Management.Automation
         /// Otherwise, the result is the type code of the base object,
         /// as determined by the base object's implementation of <see cref="System.IConvertible"/>.
         /// </remarks>
+        /// <returns>Returns <see cref="System.TypeCode"/> of the PSObject.</returns>
         public TypeCode GetTypeCode()
         {
             object obj = PSObject.Base(this);

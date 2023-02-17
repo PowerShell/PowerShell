@@ -7,6 +7,7 @@ using Xunit;
 
 namespace PSTests.Parallel
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1121:UseBuiltInTypeAlias", Justification = "Intentionally not using built-in alias.")]
     public static class PSObjectIConvertibleTests
     {
         [Fact]
