@@ -238,6 +238,20 @@ stages:
         demands:
         - ImageOverride -equals PSMMS2019-Secure
       displayName: Sign files
+
+      variables:
+      - group: ESRP
+      - name: runCodesignValidationInjection
+        value: false
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
+      - name: repoFolder
+        value: PowerShell
+      - name: repoRoot
+        value: $(Agent.BuildDirectory)\$(repoFolder)
+      - name: complianceRepoFolder
+        value: compliance
+
       strategy:
         matrix:
           linux-x64:
