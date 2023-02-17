@@ -237,7 +237,7 @@ stages:
         name: PowerShell1ES
         demands:
         - ImageOverride -equals PSMMS2019-Secure
-      displayName: Sign Files for windows and linux
+      displayName: Sign files
       strategy:
         matrix:
           linux-x64:
@@ -249,7 +249,7 @@ stages:
           linux-x64-Alpine:
             runtime: linux-x64-Alpine
             unsignedBuildArtifactContainer: pwshLinuxBuildAlpine.tar.gz
-            unsignedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
             signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
             signedArtifactContainer: authenticode-signed
           linux-arm32:
@@ -267,7 +267,7 @@ stages:
           linux-fxd:
             runtime: linux-fxd
             unsignedBuildArtifactContainer: pwshLinuxBuildFxdependent.tar.gz
-            unsignedBuildArtifactName: pwshLinuxBuildFxdependent.tar.gz
+            unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
             signedBuildArtifactName: pwshLinuxBuildFxdependent.tar.gz
             signedArtifactContainer: authenticode-signed
           linux-mariner:

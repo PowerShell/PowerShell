@@ -55,15 +55,11 @@ steps:
     New-Item -Path $expandedFolderPath -ItemType Directory
     Expand-Archive -Path $zipFilePath -DestinationPath $expandedFolderPath
 
-    $symbolsFolderPath = Join-Path '$(Pipeline.Workspace)' 'symbols'
-    New-Item -Path $symbolsFolderPath -ItemType Directory
-    Expand-Archive -Path $expandedFolderPath\symbols.zip -DestinationPath $symbolsFolderPath
-
-    if (-not (Test-Path $symbolsFolderPath\pwsh.exe) ) {
-      throw 'symbols zip did not expand as expected'
+    if (-not (Test-Path $expandedFolderPath\pwsh.exe) ) {
+      throw 'zip did not expand as expected'
     }
     else {
-      $vstsCommandString = "vso[task.setvariable variable=BinPath]$symbolsFolderPath"
+      $vstsCommandString = "vso[task.setvariable variable=BinPath]$expandedFolderPath"
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
     }
@@ -214,7 +210,7 @@ steps:
         **\*.exe
       useMinimatch: true
       shouldSign: $(SHOULD_SIGN)
-      displayName: ${{ parameters.runtime }} - Authenticode
+      displayName: Authenticode sign our binaries
 
 - pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
