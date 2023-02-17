@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +27,6 @@ using System.Xml;
 
 namespace Microsoft.PowerShell.Commands
 {
-#nullable enable
     /// <summary>
     /// The valid values for the -Authentication parameter for Invoke-RestMethod and Invoke-WebRequest.
     /// </summary>
@@ -1844,5 +1845,4 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public HttpResponseMessage Response { get; }
     }
-#nullable restore
 }
