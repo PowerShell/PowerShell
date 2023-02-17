@@ -103,6 +103,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_relative)
                     {
+                        string basePathCache = string.Empty;
+                        string resolvedPathCache = string.Empty;
                         foreach (PathInfo currentPath in result)
                         {
                             // When result path and base path is on different PSDrive
@@ -116,8 +118,18 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
+                            int leafIndex = currentPath.Path.LastIndexOf(currentPath.Provider.ItemSeparator);
+                            string basePath = currentPath.Path.Substring(0, leafIndex);
+                            if (basePath == basePathCache)
+                            {
+                                WriteObject(string.Concat(resolvedPathCache, currentPath.Path.AsSpan(leafIndex + 1)), enumerateCollection: false);
+                                continue;
+                            }
+
+                            basePathCache = basePath;
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
+
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
@@ -125,6 +137,9 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
+
+                            leafIndex = adjustedPath.LastIndexOf(currentPath.Provider.ItemSeparator);
+                            resolvedPathCache = adjustedPath.Substring(0, leafIndex + 1);
 
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
