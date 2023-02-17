@@ -19,6 +19,7 @@ steps:
 
 - checkout: self
   clean: true
+  path: $(repoFolder)
 
 - template: SetVersionVariables.yml
   parameters:
@@ -116,6 +117,7 @@ steps:
 
 - checkout: ComplianceRepo
   clean: true
+  path: $(complianceRepoFolder)
 
 - template: shouldSign.yml
 

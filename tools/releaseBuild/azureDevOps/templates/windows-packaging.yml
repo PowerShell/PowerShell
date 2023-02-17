@@ -13,7 +13,7 @@ jobs:
   displayName: Package Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
-    name: PowerShell1ES
+    name: $(windowsPool)
     demands:
     - ImageOverride -equals PSMMS2019-Secure
   variables:

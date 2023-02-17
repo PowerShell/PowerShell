@@ -51,6 +51,7 @@ variables:
     value: spdx:2.2
   - name: BUILDSECMON_OPT_IN
     value: true
+  - group: PoolNames
 
 stages:
   - stage: prep
@@ -234,7 +235,7 @@ stages:
 
     - job: SignFilesWinLinux
       pool:
-        name: PowerShell1ES
+        name: $(windowsPool)
         demands:
         - ImageOverride -equals PSMMS2019-Secure
       displayName: Sign files
@@ -442,7 +443,7 @@ stages:
       - job: release_json
         displayName: Create and Upload release.json
         pool:
-          name: PowerShell1ES
+          name: $(windowsPool)
           demands:
           - ImageOverride -equals PSMMS2019-Secure
         steps:
