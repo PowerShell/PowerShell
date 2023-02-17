@@ -182,7 +182,7 @@ steps:
       Write-Verbose -verbose "copying $pattern to $destinationFolder"
       Copy-Item -Path $pattern -Destination $destinationFolder -Recurse -verbose
     }
-  displayName: '${{ parameters.runtime }} - Prepare files to be signed'
+  displayName: 'Prepare files to be signed'
 
 - template: EsrpSign.yml@ComplianceRepo
   parameters:
@@ -241,7 +241,7 @@ steps:
       Copy-Item -Path $_ -Destination $targetDirectory
     }
 
-  displayName: ${{ parameters.runtime }} - Create ThirdParty Signing Folder
+  displayName: Create ThirdParty Signing Folder
   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
 - template: EsrpSign.yml@ComplianceRepo
@@ -257,7 +257,7 @@ steps:
 
 - pwsh: |
     Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartySigned\*'
-  displayName: ${{ parameters.runtime }} - Capture ThirdParty Signed files
+  displayName: Capture ThirdParty Signed files
   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
 - pwsh: |
@@ -271,7 +271,7 @@ steps:
       ## Remove XML files when making a min-size package.
       Remove-Item "$BuildPath/*.xml" -Force
     }
-  displayName: ${{ parameters.runtime }} - Merge ThirdParty signed files with Build
+  displayName: Merge ThirdParty signed files with Build
   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
 - pwsh: |
@@ -286,7 +286,7 @@ steps:
       tar -czvf $uploadTarFilePath -C $uploadFolder *
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
-  displayName: ${{ parameters.runtime }} - Upload signed files to artifacts
+  displayName: Upload signed files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'linux')
 
 - pwsh: |
@@ -298,7 +298,7 @@ steps:
       Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
-  displayName: ${{ parameters.runtime }} - Upload signed files to artifacts
+  displayName: Upload signed files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
