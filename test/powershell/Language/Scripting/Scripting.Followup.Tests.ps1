@@ -134,4 +134,35 @@ public class NullStringTest {
         $result = & $powershell -noprofile -c '[System.Text.Encoding]::GetEncoding("IBM437").WebName'
         $result | Should -BeExactly "ibm437"
     }
+
+    It 'Can set DataRow with PSObject through adapter and indexer' {
+        $dataTable = [Data.DataTable]::new()
+        $null = $dataTable.Columns.Add('Date', [DateTime])
+        $row = $dataTable.Rows.Add((Get-Date))
+
+        $date1 = Get-Date
+        $row.Date = $date1
+        $row.Date.Ticks | Should -Be $date1.Ticks
+
+        $date2 = Get-Date
+        $row['Date'] = $date2
+        $row.Date.Ticks | Should -Be $date2.Ticks
+    }
+
+    It 'Can set DataRowView with PSObject through adapter and indexer' {
+        $dataTable = [Data.DataTable]::new()
+        $null = $dataTable.Columns.Add('Date', [DateTime])
+        $dataTable.Rows.Add((Get-Date))
+
+        $dataView = [System.Data.DataView]::new($dataTable)
+        $rowView = $dataView[0]
+
+        $date1 = Get-Date
+        $rowView.Date = $date1
+        $rowView.Date.Ticks | Should -Be $date1.Ticks
+
+        $date2 = Get-Date
+        $rowView['Date'] = $date2
+        $rowView.Date.Ticks | Should -Be $date2.Ticks
+    }
 }
