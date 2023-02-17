@@ -27,7 +27,8 @@ steps:
 - template: cloneToOfficialPath.yml
 
 - pwsh: |
-    $zipFileFilter = '$(unsignedBuildArtifactName)' -replace '**/', ''
+    $zipFileFilter = '$(unsignedBuildArtifactName)'
+    $zipFileFilter = $zipFileFilter.Replace('**/', '')
 
     Write-Verbose -Verbose -Message "zipFileFilter = $zipFileFilter"
 
@@ -98,7 +99,7 @@ steps:
     }
 
     Write-Verbose -Verbose "File permisions after expanding"
-    Get-ChildItem -Path '$(Pipeline.Workspace)/pwshLinuxBuild/pwsh' | Select-Object -Property 'unixmode', 'size', 'name'
+    Get-ChildItem -Path "$expandedPathFolderName/pwsh" | Select-Object -Property 'unixmode', 'size', 'name'
   displayName: Expand tar.gz packages
   condition: eq(variables['ArtifactPlatform'], 'linux')
 
