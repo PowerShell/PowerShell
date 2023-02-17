@@ -865,9 +865,9 @@ namespace System.Management.Automation
             foreach (FeedbackResult entry in feedbacks)
             {
                 output.AppendLine();
-                output.Append(captionStyle).Append('[').Append(ansiReset)
-                    .Append(nameStyle).Append(italics).Append(entry.Name).Append(ansiReset)
-                    .Append(captionStyle).Append(']').Append(ansiReset);
+                output.Append($"{captionStyle}[{ansiReset}")
+                    .Append($"{nameStyle}{italics}{entry.Name}{ansiReset}")
+                    .Append($"{captionStyle}]{ansiReset}");
 
                 FeedbackItem item = entry.Item;
                 chkset.Add(item);
@@ -932,7 +932,7 @@ namespace System.Management.Automation
                     output.Append(' ', indent);
                 }
 
-                output.Append(line.Trim('\r')).AppendLine();
+                output.Append(line.TrimEnd('\r')).AppendLine();
 
                 // Break out the loop if we are done with the last line.
                 if (index is -1)
@@ -967,9 +967,7 @@ namespace System.Management.Automation
             if (item.Layout is FeedbackItem.DisplayLayout.Landscape)
             {
                 // Add 4-space indentation and write the indicator.
-                output.Append(' ', 4)
-                    .Append(textStyle).Append(s_actionIndicator).Append(ansiReset)
-                    .Append(' ');
+                output.Append($"    {textStyle}{s_actionIndicator}{ansiReset} ");
 
                 // Then concatenate the action texts.
                 for (int i = 0; i < actions.Count; i++)
@@ -993,8 +991,7 @@ namespace System.Management.Automation
                     string action = actions[i];
 
                     // Add 4-space indentation and write the indicator, then write the action.
-                    output.Append(' ', 4)
-                        .Append(textStyle).Append(s_actionIndicator).Append(ansiReset).Append(' ');
+                    output.Append($"    {textStyle}{s_actionIndicator}{ansiReset} ");
 
                     if (action.Contains('\n'))
                     {
