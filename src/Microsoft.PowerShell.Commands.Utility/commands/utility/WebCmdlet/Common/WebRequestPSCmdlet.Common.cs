@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands
                 using (HttpClient client = GetHttpClient(handleRedirect))
                 {
                     int followedRelLink = 0;
-                    Uri uri = Uri!;
+                    Uri? uri = Uri;
                     do
                     {
                         if (followedRelLink > 0)
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
                             string linkVerboseMsg = string.Format(
                                 CultureInfo.CurrentCulture,
                                 WebCmdletStrings.FollowingRelLinkVerboseMsg,
-                                uri.AbsoluteUri);
+                                uri?.AbsoluteUri);
 
                             WriteVerbose(linkVerboseMsg);
                         }
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None || Credential is not null || UseDefaultCredentials) && Uri!.Scheme != "https")
+            if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None || Credential is not null || UseDefaultCredentials) && Uri?.Scheme != "https")
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired, "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
@@ -1003,9 +1003,9 @@ namespace Microsoft.PowerShell.Commands
             return httpClient;
         }
 
-        internal virtual HttpRequestMessage GetRequest(Uri uri)
+        internal virtual HttpRequestMessage GetRequest(Uri? uri)
         {
-            Uri requestUri = PrepareUri(uri);
+            Uri? requestUri = PrepareUri(uri);
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
             // Create the base WebRequest object
@@ -1227,7 +1227,7 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 // Track the current URI being used by various requests and re-requests.
-                Uri currentUri = currentRequest.RequestUri!;
+                Uri? currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
@@ -1355,7 +1355,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Virtual Methods
 
         #region Helper Methods
-        private Uri PrepareUri(Uri uri)
+        private Uri PrepareUri(Uri? uri)
         {
             uri = CheckProtocol(uri);
 
@@ -1383,7 +1383,7 @@ namespace Microsoft.PowerShell.Commands
             return uri;
         }
 
-        private static Uri CheckProtocol(Uri uri)
+        private static Uri CheckProtocol(Uri? uri)
         {
             ArgumentNullException.ThrowIfNull(uri);
 
@@ -1586,7 +1586,10 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ParseLinkHeader(HttpResponseMessage response)
         {
-            Uri requestUri = response.RequestMessage?.RequestUri!;
+            Uri? requestUri = response.RequestMessage?.RequestUri;
+
+            ArgumentNullException.ThrowIfNull(requestUri);
+
             if (_relationLink is null)
             {
                 // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
