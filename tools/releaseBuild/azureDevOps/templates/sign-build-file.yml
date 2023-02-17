@@ -27,8 +27,13 @@ steps:
 - template: cloneToOfficialPath.yml
 
 - pwsh: |
-    $zipFileFilter = '$(unsignedBuildArtifactName)'
-    $zipFilePath = Get-ChildItem -Path '$(System.ArtifactsDirectory)\$(unsignedBuildArtifactName)' -recurse
+    $zipFileFilter = '$(unsignedBuildArtifactName)' -replace '**/', ''
+
+    Write-Verbose -Verbose -Message "zipFileFilter = $zipFileFilter"
+
+    Write-Verbose -Verbose -Message "Looking for $(Pipeline.Workspace)\$(unsignedBuildArtifactName)"
+
+    $zipFilePath = Get-ChildItem -Path '$(Pipeline.Workspace)\$(unsignedBuildArtifactName)' -recurse
 
     if (-not (Test-Path $zipFilePath))
     {
@@ -63,13 +68,19 @@ steps:
 
 - pwsh: |
     $tarPackageName = '$(unsignedBuildArtifactName)'
-    $tarPackagePath = Join-Path '$(Pipeline.Workspace)' $tarPackageName $tarPackageName
+
+    Write-Verbose -Verbose -Message "tarPackageName = $tarPackageName"
+
+    $tarPackagePath = Join-Path '$(Pipeline.Workspace)' $tarPackageName
+
+    Write-Verbose -Verbose -Message "Looking for: $tarPackagePath"
+
     $expandedPathFolderName = $tarPackageName -replace '.tar.gz', ''
     $expandedFolderPath = Join-Path '$(Pipeline.Workspace)' 'expanded' $expandedPathFolderName
 
     if (-not (Test-Path $tarPackagePath))
     {
-        throw "zip file not found: $zipfilePath"
+        throw "tar file not found: $tarPackagePath"
     }
 
     Write-Verbose -Verbose -Message "Expanding $tarPackagePath to $expandedFolderPath"
