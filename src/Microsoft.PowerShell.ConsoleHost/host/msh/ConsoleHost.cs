@@ -3000,7 +3000,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-#endregion aux classes
+        #endregion aux classes
 
         /// <summary>
         /// By declaring runspace as ObjectRef&lt;Runspace&gt; we are able to hide the real runspace with

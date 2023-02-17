@@ -11,7 +11,6 @@ using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
