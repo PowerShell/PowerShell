@@ -45,7 +45,7 @@ namespace System.Management.Automation
     /// </remarks>
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
     [Serializable]
-    public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
+    public partial class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
         #region constructors
 
