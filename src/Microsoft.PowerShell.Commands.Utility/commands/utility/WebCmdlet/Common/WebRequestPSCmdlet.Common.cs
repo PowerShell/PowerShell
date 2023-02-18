@@ -437,6 +437,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string _originalFilePath;
 
+        /// <summary>
+        /// True if the web session was created specifically by this request
+        /// </summary>
+        private bool _noWebSession;
+
         #endregion Input
 
         #region Output
@@ -578,15 +583,15 @@ namespace Microsoft.PowerShell.Commands
                                     // Disable writing to the OutFile.
                                     OutFile = null;
                                 }
-                                
+
                                 // Detect insecure redirection
                                 if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                                 {
-                                        ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
-                                        ThrowTerminatingError(er);
+                                    ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
+                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
+                                    ThrowTerminatingError(er);
                                 }
-                                
+
                                 if (ShouldCheckHttpStatus && !_isSuccess)
                                 {
                                     string message = string.Format(
@@ -837,7 +842,11 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // Make sure we have a valid WebRequestSession object to work with
-            WebSession ??= new WebRequestSession();
+            _noWebSession = WebSession is null;
+            if (_noWebSession)
+            {
+                WebSession = new WebRequestSession();
+            }
 
             if (SessionVariable is not null)
             {
@@ -894,6 +903,10 @@ namespace Microsoft.PowerShell.Commands
                 // Store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
+            if (MyInvocation.BoundParameters.ContainsKey("NoProxy"))
+            {
+                WebSession.NoProxy = NoProxy.IsPresent;
+            }
 
             if (Proxy is not null)
             {
@@ -909,14 +922,25 @@ namespace Microsoft.PowerShell.Commands
                     // UseDefaultCredentials will overwrite the supplied credentials.
                     webProxy.UseDefaultCredentials = true;
                 }
-
-                WebSession.Proxy = webProxy;
+                // We don't want to update the WebSession unless the proxies are different
+                // as that will require us to create a new HttpClientHandler and lose connection
+                // persistence
+                if (!webProxy.Equals(WebSession.Proxy))
+                {
+                    WebSession.Proxy = webProxy;
+                }
+            }
+            if (MyInvocation.BoundParameters.ContainsKey("SslProtocol"))
+            {
+                WebSession.SslProtocol = SslProtocol;
             }
 
             if (MaximumRedirection > -1)
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
+
+            WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
 
             // Store the other supplied headers
             if (Headers is not null)
@@ -943,57 +967,76 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-        
+
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            HttpClientHandler handler = new();
-            handler.CookieContainer = WebSession.Cookies;
-            handler.AutomaticDecompression = DecompressionMethods.All;
-
-            // Set the credentials used by this request
-            if (WebSession.UseDefaultCredentials)
-            {
-                // The UseDefaultCredentials flag overrides other supplied credentials
-                handler.UseDefaultCredentials = true;
-            }
-            else if (WebSession.Credentials is not null)
-            {
-                handler.Credentials = WebSession.Credentials;
-            }
-
-            if (NoProxy)
-            {
-                handler.UseProxy = false;
-            }
-            else if (WebSession.Proxy is not null)
-            {
-                handler.Proxy = WebSession.Proxy;
-            }
-
-            if (WebSession.Certificates is not null)
-            {
-                handler.ClientCertificates.AddRange(WebSession.Certificates);
-            }
-
-            if (SkipCertificateCheck)
-            {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            }
+            var handler = WebSession.Handler;
 
             // This indicates GetResponse will handle redirects.
             if (handleRedirect || WebSession.MaximumRedirection == 0)
             {
-                handler.AllowAutoRedirect = false;
+                WebSession.AllowAutoRedirect = false;
             }
             else if (WebSession.MaximumRedirection > 0)
             {
-                handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
+                WebSession.MaxAutomaticRedirections = WebSession.MaximumRedirection;
             }
+            if (handler is not null && WebSession.Changed)
+            {
+                WriteWarning("WebSession properties changed: new Http connection will be required");
+                handler.Dispose();
+                handler = null;
+            }
+            if (handler is null)
+            {
+                WebSession.Handler = handler = new();
 
-            handler.SslProtocols = (SslProtocols)SslProtocol;
+                // Note: None of the handler properties can be set after the handler has been used
+                // therefore; all such options are ignored if using an existing session where the
+                // handler has already been initialized
 
-            HttpClient httpClient = new(handler);
+                handler.CookieContainer = WebSession.Cookies;
+                handler.AutomaticDecompression = DecompressionMethods.All;
+
+                // Set the credentials used by this request
+                if (WebSession.UseDefaultCredentials)
+                {
+                    // The UseDefaultCredentials flag overrides other supplied credentials
+                    handler.UseDefaultCredentials = true;
+                }
+                else if (WebSession.Credentials is not null)
+                {
+                    handler.Credentials = WebSession.Credentials;
+                }
+
+                if (WebSession.NoProxy)
+                {
+                    handler.UseProxy = false;
+                }
+                else if (WebSession.Proxy is not null)
+                {
+                    handler.Proxy = WebSession.Proxy;
+                }
+
+                if (WebSession.Certificates is not null)
+                {
+                    handler.ClientCertificates.AddRange(WebSession.Certificates);
+                }
+
+                if (WebSession.SkipCertificateCheck)
+                {
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                }
+                handler.AllowAutoRedirect = WebSession.AllowAutoRedirect;
+                if (WebSession.AllowAutoRedirect && WebSession.MaximumRedirection > 0)
+                {
+                    handler.MaxAutomaticRedirections = WebSession.MaxAutomaticRedirections;
+                }
+                handler.SslProtocols = (SslProtocols)WebSession.SslProtocol;
+            }
+            // Only dispose the httpClientHandler if we are not trying to use a persistent one
+            HttpClient httpClient = new(handler, _noWebSession && string.IsNullOrEmpty(SessionVariable));
 
             // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
             httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
@@ -1287,7 +1330,7 @@ namespace Microsoft.PowerShell.Commands
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
                             requestContentLength);
-                        
+
                         WriteVerbose(reqVerboseMsg);
 
                         response.Dispose();
@@ -1304,9 +1347,9 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
                     {
-                        try 
+                        try
                         {
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
@@ -1319,7 +1362,7 @@ namespace Microsoft.PowerShell.Commands
                             // Ignore broken header.
                         }
                     }
-                    
+
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
@@ -1389,7 +1432,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
-        
+
         private static string FormatDictionary(IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(content);
@@ -1486,7 +1529,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
-            
+
             Encoding encoding = null;
             if (ContentType is not null)
             {
@@ -1566,7 +1609,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
-            
+
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
             WebSession.ContentHeaders.Clear();
 
@@ -1681,7 +1724,6 @@ namespace Microsoft.PowerShell.Commands
         private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-            
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
@@ -1736,7 +1778,8 @@ namespace Microsoft.PowerShell.Commands
                     XmlDocument doc = new();
                     doc.LoadXml(error);
 
-                    XmlWriterSettings settings = new XmlWriterSettings {
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
                         Indent = true,
                         NewLineOnAttributes = true,
                         OmitXmlDeclaration = true
@@ -1767,7 +1810,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Ignore errors
             }
-            
             if (string.IsNullOrEmpty(formattedError))
             {
                 // Remove HTML tags making it easier to read
