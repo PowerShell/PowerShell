@@ -51,7 +51,6 @@ namespace Microsoft.PowerShell.Commands
                     _changed = true;
                     _cookies = value;
                 }
-
             }
         }
 
@@ -69,7 +68,6 @@ namespace Microsoft.PowerShell.Commands
                     _changed = true;
                     _useDefaultCredentials = value;
                 }
-
             }
         }
 
@@ -184,19 +182,20 @@ namespace Microsoft.PowerShell.Commands
         public WebRequestSession()
         {
             _changed = true;
-            // build the headers collection
+
+            // Build the headers collection
             Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             ContentHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            // build the cookie jar
+            // Build the cookie jar
             _cookies = new CookieContainer();
 
-            // initialize the credential and certificate caches
+            // Initialize the credential and certificate caches
             _useDefaultCredentials = false;
             _credentials = null;
             _certificates = null;
 
-            // setup the default UserAgent
+            // Setup the default UserAgent
             UserAgent = PSUserAgent.UserAgent;
 
             _proxy = null;
@@ -205,15 +204,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Caches the HttpClientHandler in the session to support persistent HTTP connections
+        /// Gets or sets the cached HttpClientHandler in the session to support persistent HTTP connections.
         /// </summary>
         internal HttpClientHandler Handler
         {
             get => _handler; set
             {
+                // Once a handler has been created, it's assumed that it was created from the session properties.
                 _handler = value;
-                // Once a handler has been created, it's assumed that it was created from the session
-                // properties
                 _changed = false;
             }
         }
@@ -269,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// True if the properties that require a new handler to be created have been updated
+        /// Gets a value indicating whether a new handler must be created.
         /// </summary>
         internal bool Changed { get => _changed; }
     }

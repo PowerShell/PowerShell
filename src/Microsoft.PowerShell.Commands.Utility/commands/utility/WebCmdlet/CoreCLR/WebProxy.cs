@@ -24,12 +24,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return false;
             }
+            
             return Equals(obj as WebProxy);
         }
 
         public override int GetHashCode()
         {
-            return this._proxyAddress.GetHashCode() * 17 + this._credentials.GetHashCode();
+            return (this._proxyAddress.GetHashCode() * 17) + this._credentials.GetHashCode();
         }
 
         public bool Equals(WebProxy other)
@@ -38,11 +39,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 return false;
             }
+
             // _proxyAddress cannot be null as it is set in the constructor            
             return other._credentials == _credentials
                 && _proxyAddress.Equals(other._proxyAddress)
                 && BypassProxyOnLocal == other.BypassProxyOnLocal;
-
         }
 
         public ICredentials Credentials
@@ -69,6 +70,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         public bool IsBypassed(Uri host) => host.IsLoopback;
-
     }
 }
