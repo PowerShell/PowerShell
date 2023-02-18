@@ -1390,7 +1390,7 @@ namespace Microsoft.PowerShell.Commands
             return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
         }
 
-        private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
+        private string QualifyFilePath(string? path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
         
         private static string FormatDictionary(IDictionary content)
         {
