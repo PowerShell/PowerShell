@@ -1281,7 +1281,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         FillRequestStream(requestWithoutRange);
 
-                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength!.Value;
+                        long? requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength;
 
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
