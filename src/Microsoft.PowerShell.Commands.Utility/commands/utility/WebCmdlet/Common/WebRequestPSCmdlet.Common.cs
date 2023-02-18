@@ -540,7 +540,7 @@ namespace Microsoft.PowerShell.Commands
                             FillRequestStream(request);
                             try
                             {
-                                long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength!.Value;
+                                long? requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength;
 
                                 string reqVerboseMsg = string.Format(
                                     CultureInfo.CurrentCulture,
