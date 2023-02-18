@@ -843,10 +843,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Make sure we have a valid WebRequestSession object to work with
             _noWebSession = WebSession is null;
-            if (_noWebSession)
-            {
-                WebSession = new WebRequestSession();
-            }
+            WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
             {

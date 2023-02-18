@@ -42,65 +42,25 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Cookies property.
         /// </summary>
-        public CookieContainer Cookies
-        {
-            get => _cookies; set
-            {
-                if (value != _cookies)
-                {
-                    _changed = true;
-                    _cookies = value;
-                }
-            }
-        }
+        public CookieContainer Cookies { get => _cookies; set => SetClassVar(ref _cookies, value); }
 
         #region Credentials
 
         /// <summary>
         /// Gets or sets the UseDefaultCredentials property.
         /// </summary>
-        public bool UseDefaultCredentials
-        {
-            get => _useDefaultCredentials; set
-            {
-                if (value != _useDefaultCredentials)
-                {
-                    _changed = true;
-                    _useDefaultCredentials = value;
-                }
-            }
-        }
+        public bool UseDefaultCredentials { get => _useDefaultCredentials; set => SetStructVar(ref _useDefaultCredentials, value); }
 
         /// <summary>
         /// Gets or sets the Credentials property.
         /// </summary>
-        public ICredentials Credentials
-        {
-            get => _credentials; set
-            {
-                if (value != _credentials)
-                {
-                    _changed = true;
-                    _credentials = value;
-                }
-            }
-        }
+        public ICredentials Credentials { get => _credentials; set => SetClassVar(ref _credentials, value); }
 
         /// <summary>
         /// Gets or sets the Certificates property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public X509CertificateCollection Certificates
-        {
-            get => _certificates; set
-            {
-                if (value != _certificates)
-                {
-                    _certificates = value;
-                    _changed = true;
-                }
-            }
-        }
+        public X509CertificateCollection Certificates { get => _certificates; set => SetClassVar(ref _certificates, value); }
 
         #endregion
 
@@ -109,47 +69,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string UserAgent { get; set; }
 
-        internal bool NoProxy
-        {
-            get => _noProxy; set
-            {
-                if (value != _noProxy)
-                {
-                    _changed = true;
-                    _noProxy = value;
-                }
-            }
-        }
+        internal bool NoProxy { get => _noProxy; set => SetStructVar(ref _noProxy, value); }
 
         /// <summary>
         /// Gets or sets the Proxy property.
         /// </summary>
-        public IWebProxy Proxy
-        {
-            get => _proxy; set
-            {
-                if (value != _proxy)
-                {
-                    _changed = true;
-                    _proxy = value;
-                }
-            }
-        }
+        public IWebProxy Proxy { get => _proxy; set => SetClassVar(ref _proxy, value); }
 
         /// <summary>
         /// Gets or sets the RedirectMax property.
         /// </summary>
-        public int MaximumRedirection
-        {
-            get => _maximumRedirection; set
-            {
-                if (value != _maximumRedirection)
-                {
-                    _changed = true;
-                    _maximumRedirection = value;
-                }
-            }
-        }
+        public int MaximumRedirection { get => _maximumRedirection; set => SetStructVar(ref _maximumRedirection, value); }
 
         /// <summary>
         /// Gets or sets the count of retries for request failures.
@@ -164,17 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the SslProtocol for the session.
         /// </summary>
-        public WebSslProtocol SslProtocol
-        {
-            get => _sslProtocol; set
-            {
-                if (value != _sslProtocol)
-                {
-                    _changed = true;
-                    _sslProtocol = value;
-                }
-            }
-        }
+        public WebSslProtocol SslProtocol { get => _sslProtocol; set => SetStructVar(ref _sslProtocol, value); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebRequestSession"/> class.
@@ -204,6 +124,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets a value indicating whether a new handler must be created.
+        /// </summary>
+        internal bool Changed => _changed;
+
+        /// <summary>
         /// Gets or sets the cached HttpClientHandler in the session to support persistent HTTP connections.
         /// </summary>
         internal HttpClientHandler Handler
@@ -216,41 +141,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal bool SkipCertificateCheck
-        {
-            get => _skipCertificateCheck; set
-            {
-                if (value != _skipCertificateCheck)
-                {
-                    _changed = true;
-                    _skipCertificateCheck = value;
-                }
-            }
-        }
+        internal bool SkipCertificateCheck { get => _skipCertificateCheck; set => SetStructVar(ref _skipCertificateCheck, value); }
 
-        internal bool AllowAutoRedirect
-        {
-            get => _allowAutoRedirect; set
-            {
-                if (value != _allowAutoRedirect)
-                {
-                    _changed = true;
-                    _allowAutoRedirect = value;
-                }
-            }
-        }
+        internal bool AllowAutoRedirect { get => _allowAutoRedirect; set => SetStructVar(ref _allowAutoRedirect, value); }
 
-        internal int MaxAutomaticRedirections
-        {
-            get => _maxAutomaticRedirections; set
-            {
-                if (value != _maxAutomaticRedirections)
-                {
-                    _changed = true;
-                    _maxAutomaticRedirections = value;
-                }
-            }
-        }
+        internal int MaxAutomaticRedirections { get => _maxAutomaticRedirections; set => SetStructVar(ref _maxAutomaticRedirections, value); }
 
         /// <summary>
         /// Add a X509Certificate to the Certificates collection.
@@ -266,9 +161,22 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Gets a value indicating whether a new handler must be created.
-        /// </summary>
-        internal bool Changed { get => _changed; }
+        private void SetClassVar<T>(ref T oldValue, T newValue) where T : class
+        {
+            if (oldValue != newValue)
+            {
+                _changed = true;
+                oldValue = newValue;
+            }
+        }
+
+        private void SetStructVar<T>(ref T oldValue, T newValue) where T : struct
+        {
+            if (!oldValue.Equals(newValue))
+            {
+                _changed = true;
+                oldValue = newValue;
+            }
+        }
     }
 }
