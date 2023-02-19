@@ -568,8 +568,7 @@ namespace Microsoft.PowerShell.Commands
                                 // This happens when the local file is the same size as the remote file.
                                 if (Resume.IsPresent
                                     && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                                    && response.Content.Headers.ContentRange!.HasLength
-                                    && response.Content.Headers.ContentRange.Length == _resumeFileSize)
+                                    && response.Content.Headers.ContentRange?.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
                                     WriteVerbose(string.Format(
@@ -1266,8 +1265,7 @@ namespace Microsoft.PowerShell.Commands
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
                 if (Resume.IsPresent
                     && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                    && (response.Content.Headers.ContentRange!.HasLength
-                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
+                    && response.Content.Headers.ContentRange?.Length != _resumeFileSize)
                 {
                     _cancelToken?.Cancel();
 
