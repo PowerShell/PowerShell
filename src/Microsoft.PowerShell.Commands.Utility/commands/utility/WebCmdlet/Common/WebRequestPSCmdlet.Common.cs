@@ -1429,8 +1429,8 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            string password = new NetworkCredential(string.Empty, Credential!.Password).Password;
-            string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential.UserName}:{password}");
+            string password = new NetworkCredential(string.Empty, Credential?.Password).Password;
+            string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential?.UserName}:{password}");
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
             return string.Create(CultureInfo.InvariantCulture, $"Basic {Convert.ToBase64String(bytes)}");
         }
