@@ -2921,7 +2921,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                // Restore the langauge mode, but not if it was altered by the startup script itself.
+                // Restore the language mode, but not if it was altered by the startup script itself.
                 if (initializedRunspace.SessionStateProxy.LanguageMode == PSLanguageMode.FullLanguage)
                 {
                     initializedRunspace.SessionStateProxy.LanguageMode = originalLanguageMode;
