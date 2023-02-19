@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Helper Properties
 
-        internal string QualifiedOutFile => QualifyFilePath(OutFile!);
+        internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
