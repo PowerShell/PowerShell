@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
             return Equals(obj as WebProxy);
         }
 
-        public override int GetHashCode() => (_proxyAddress.GetHashCode() * 17) + _credentials.GetHashCode();
+        public override int GetHashCode() => (_proxyAddress.GetHashCode() * 17) + (_credentials?.GetHashCode() ?? 0);
 
         public bool Equals(WebProxy other)
         {

@@ -900,35 +900,43 @@ namespace Microsoft.PowerShell.Commands
                 // Store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
-            if (MyInvocation.BoundParameters.ContainsKey("NoProxy"))
+            // Proxy and NoProxy parameters are mutually exclusive
+            // If NoProxy is provided, WebSession will turn off the proxy
+            // and if Proxy is provided NoProxy will be turned off
+            if (NoProxy.IsPresent)
             {
-                WebSession.NoProxy = NoProxy.IsPresent;
+                WebSession.NoProxy = true;
             }
-
-            if (Proxy is not null)
+            else
             {
-                WebProxy webProxy = new(Proxy);
-                webProxy.BypassProxyOnLocal = false;
-                if (ProxyCredential is not null)
+                if (Proxy is not null)
                 {
-                    webProxy.Credentials = ProxyCredential.GetNetworkCredential();
-                }
-                else if (ProxyUseDefaultCredentials)
-                {
-                    // If both ProxyCredential and ProxyUseDefaultCredentials are passed,
-                    // UseDefaultCredentials will overwrite the supplied credentials.
-                    webProxy.UseDefaultCredentials = true;
-                }
-                // We don't want to update the WebSession unless the proxies are different
-                // as that will require us to create a new HttpClientHandler and lose connection
-                // persistence
-                if (!webProxy.Equals(WebSession.Proxy))
-                {
-                    WebSession.Proxy = webProxy;
+                    WebProxy webProxy = new(Proxy);
+                    webProxy.BypassProxyOnLocal = false;
+                    if (ProxyCredential is not null)
+                    {
+                        webProxy.Credentials = ProxyCredential.GetNetworkCredential();
+                    }
+                    else if (ProxyUseDefaultCredentials)
+                    {
+                        // If both ProxyCredential and ProxyUseDefaultCredentials are passed,
+                        // UseDefaultCredentials will overwrite the supplied credentials.
+                        webProxy.UseDefaultCredentials = true;
+                    }
+                    // We don't want to update the WebSession unless the proxies are different
+                    // as that will require us to create a new HttpClientHandler and lose connection
+                    // persistence
+                    if (!webProxy.Equals(WebSession.Proxy))
+                    {
+                        WebSession.Proxy = webProxy;
+                    }
                 }
             }
             if (MyInvocation.BoundParameters.ContainsKey("SslProtocol"))
             {
+                // SslProtocol parameter is a struct and we only want to switch back to the default
+                // if it is explicitly provided on the command line. Otherwise we keep the value in
+                // the WebSession from any previous invocation.
                 WebSession.SslProtocol = SslProtocol;
             }
 
@@ -980,6 +988,9 @@ namespace Microsoft.PowerShell.Commands
             }
             if (handler is not null && WebSession.Changed)
             {
+                // None of the handler properties can be set after the handler has been used.
+                // Any options that are different to those used to construct the handler
+                // will cause the handler to be reconstructed.
                 WriteWarning("WebSession properties changed: new Http connection will be required");
                 handler.Dispose();
                 handler = null;
@@ -987,10 +998,6 @@ namespace Microsoft.PowerShell.Commands
             if (handler is null)
             {
                 WebSession.Handler = handler = new();
-
-                // Note: None of the handler properties can be set after the handler has been used
-                // therefore; all such options are ignored if using an existing session where the
-                // handler has already been initialized
 
                 handler.CookieContainer = WebSession.Cookies;
                 handler.AutomaticDecompression = DecompressionMethods.All;
