@@ -69,12 +69,32 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string UserAgent { get; set; }
 
-        internal bool NoProxy { get => _noProxy; set { SetStructVar(ref _noProxy, value); if (_noProxy) { Proxy = null; } } }
+        internal bool NoProxy
+        {
+            get => _noProxy; set
+            {
+                SetStructVar(ref _noProxy, value);
+                if (_noProxy)
+                {
+                    Proxy = null;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets the Proxy property.
         /// </summary>
-        public IWebProxy Proxy { get => _proxy; set { SetClassVar(ref _proxy, value); if (_proxy is not null) { NoProxy = false; } } }
+        public IWebProxy Proxy
+        {
+            get => _proxy; set
+            {
+                SetClassVar(ref _proxy, value);
+                if (_proxy is not null)
+                {
+                    NoProxy = false;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets the RedirectMax property.
