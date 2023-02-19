@@ -1123,7 +1123,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (DictionaryEntry formEntry in Form)
                 {
                     // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
-                    AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value!, formData: formData, enumerate: true);
+                    AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
                 }
 
                 SetRequestContent(request, formData);
@@ -1630,7 +1630,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use.</param>
         /// <param name="formData">The <see cref="MultipartFormDataContent"/> to update.</param>
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
-        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        private void AddMultipartContent(object fieldName, object? fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             ArgumentNullException.ThrowIfNull(formData);
 
@@ -1681,7 +1681,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/></param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
-        private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
+        private static StringContent GetMultipartStringContent(object fieldName, object? fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
             
