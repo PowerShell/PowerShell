@@ -61,7 +61,7 @@ namespace System.Management.Automation.Tracing
     /// Transfer
     ///   A log entry to record a transfer event.
     ///   Context: "Transfer"
-    ///   The playload is two, space separated string guids, the first being the
+    ///   The payload is two, space separated string guids, the first being the
     ///   parent activityid followed by the new activityid.
     ///   Example: (19E1025:3:10) [Transfer] {de168a71-6bb9-47e4-8712-bc02506d98be} {ab0077f6-c042-4728-be76-f688cfb1b054}
     ///

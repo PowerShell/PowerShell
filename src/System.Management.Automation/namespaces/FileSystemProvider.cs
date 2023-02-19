@@ -4823,7 +4823,7 @@ namespace Microsoft.PowerShell.Commands
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
-            // If op == null,  SafeInvokeCommand.Invoke throwns an error.
+            // If op == null,  SafeInvokeCommand.Invoke throws an error.
             if (op["ExceptionThrown"] != null)
             {
                 // If an error is thrown on the remote session, it is written via SafeInvokeCommand.Invoke.
@@ -6957,7 +6957,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 {
                     string action = FileSystemProviderStrings.ClearContentActionFile;
-                    string resource = StringUtil.Format(FileSystemProviderStrings.ClearContentesourceTemplate, path);
+                    string resource = StringUtil.Format(FileSystemProviderStrings.ClearContentResourceTemplate, path);
 
                     if (!ShouldProcess(resource, action))
                         return;
@@ -7975,7 +7975,7 @@ namespace Microsoft.PowerShell.Commands
 
                 var mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
                 mountPoint.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
-                mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null endo
+                mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null end
                 mountPoint.SubstituteNameOffset = 0;
                 mountPoint.SubstituteNameLength = (ushort)mountPointBytes.Length;
                 mountPoint.PrintNameOffset = (ushort)(mountPointBytes.Length + 2); // 2 as unicode null take 2 bytes.

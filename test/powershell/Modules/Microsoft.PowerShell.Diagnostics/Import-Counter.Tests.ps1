@@ -228,7 +228,7 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
         SetScriptVars $testDrive 0 $false
     }
 
-    $performatTestCases = @(
+    $performantTestCases = @(
         @{
             Name = "Can import all samples from known sample sets"
             UseKnownSamples = $true
@@ -248,7 +248,7 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
         }
     )
 
-    foreach ($testCase in $performatTestCases)
+    foreach ($testCase in $performantTestCases)
     {
         RunPerFileTypeTests $testCase
     }
@@ -365,7 +365,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
     }
 
     Context "Import tests" {
-        $performatTestCases = @(
+        $performantTestCases = @(
             @{
                 Name = "Can import all samples"
             }
@@ -452,7 +452,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
             }
         )
 
-        foreach ($testCase in $performatTestCases)
+        foreach ($testCase in $performantTestCases)
         {
             RunPerFileTypeTests $testCase
         }

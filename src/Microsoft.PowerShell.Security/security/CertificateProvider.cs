@@ -1666,13 +1666,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if ((keyProvInfo.dwFlags & (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_MACHINE_KEYSET) != 0)
                 {
-                    cngKeyFlag = (uint)SMASecurity.NativeMethods.NCryptDeletKeyFlag.NCRYPT_MACHINE_KEY_FLAG;
+                    cngKeyFlag = (uint)SMASecurity.NativeMethods.NCryptDeleteKeyFlag.NCRYPT_MACHINE_KEY_FLAG;
                 }
 
                 if (hWnd == IntPtr.Zero ||
                     (keyProvInfo.dwFlags & (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_SILENT) != 0)
                 {
-                    cngKeyFlag |= (uint)SMASecurity.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG;
+                    cngKeyFlag |= (uint)SMASecurity.NativeMethods.NCryptDeleteKeyFlag.NCRYPT_SILENT_FLAG;
                 }
 
                 int stat = 0;
@@ -1698,7 +1698,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowErrorRemoting(stat);
                     }
 
-                    if ((cngKeyFlag & (uint)SMASecurity.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG) != 0)
+                    if ((cngKeyFlag & (uint)SMASecurity.NativeMethods.NCryptDeleteKeyFlag.NCRYPT_SILENT_FLAG) != 0)
                     {
                         unsafe
                         {
@@ -2781,8 +2781,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True on success, false otherwise.</returns>
         internal static bool CertIsSSLServerAuthentication(X509Certificate2 cert)
         {
-            X509ExtensionCollection extentionList = cert.Extensions;
-            foreach (var extension in extentionList)
+            X509ExtensionCollection extensionList = cert.Extensions;
+            foreach (var extension in extensionList)
             {
                 if (extension is X509EnhancedKeyUsageExtension eku)
                 {

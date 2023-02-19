@@ -1493,7 +1493,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// DisconnectedOn property applies to disconnnected runspaces.
+        /// DisconnectedOn property applies to disconnected runspaces.
         /// This property is publicly exposed only through Runspace class.
         /// </summary>
         internal DateTime? DisconnectedOn
@@ -1503,7 +1503,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// ExpiresOn property applies to disconnnected runspaces.
+        /// ExpiresOn property applies to disconnected runspaces.
         /// This property is publicly exposed only through Runspace class.
         /// </summary>
         internal DateTime? ExpiresOn
@@ -2210,7 +2210,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
+            // Create a local ssh process (client) that connects to a remote sshd process (server) using a 'powershell' subsystem.
             //
             // Local ssh invoked as:
             //   windows:

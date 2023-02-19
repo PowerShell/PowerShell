@@ -186,7 +186,7 @@
   <data name="ClearContentActionFile" xml:space="preserve">
     <value>Clear Content</value>
   </data>
-  <data name="ClearContentesourceTemplate" xml:space="preserve">
+  <data name="ClearContentResourceTemplate" xml:space="preserve">
     <value>Item: {0}</value>
   </data>
   <data name="ItemNotFound" xml:space="preserve">

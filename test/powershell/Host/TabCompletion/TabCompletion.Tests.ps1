@@ -623,7 +623,7 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
     }
 
-    Context "Format cmdlet's View paramter completion" {
+    Context "Format cmdlet's View parameter completion" {
         BeforeAll {
             $viewDefinition = @'
 <?xml version="1.0" encoding="utf-8"?>
@@ -1127,7 +1127,7 @@ Verb-Noun -Param1 Hello ^
                 @{ inputStr = 'remove-psdrive fun'; expected = 'Function'; setup = $null }
                 @{ inputStr = 'get-psprovider ali'; expected = 'Alias'; setup = $null }
                 @{ inputStr = 'Get-PSDrive -PSProvider Variable '; expected = 'Variable'; setup = $null }
-                @{ inputStr = 'Get-Command Get-Chil'; expected = 'Get-ChildItem'; setup = $null }
+                @{ inputStr = 'Get-Command Get-Child'; expected = 'Get-ChildItem'; setup = $null }
                 @{ inputStr = 'Get-Variable psver'; expected = 'PSVersionTable'; setup = $null }
                 @{ inputStr = 'Get-Help get-c*ditem'; expected = 'Get-ChildItem'; setup = $null }
                 @{ inputStr = 'Trace-Command e'; expected = 'ETS'; setup = $null }

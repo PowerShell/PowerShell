@@ -621,7 +621,7 @@ Will return a response crafted from the query string. The following four fields 
 
 ```powershell
 $Query = @{
-    statsucode = 200
+    statuscode = 200
     responsephrase = 'OK'
     contenttype = 'application/json'
     body = '{"key1": "value1"}'

@@ -2828,7 +2828,7 @@ namespace System.Management.Automation
             {
                 if (processMissingMandatory)
                 {
-                    // If the host interface wasn't specified or we were instructed not to prmopt, then throw
+                    // If the host interface wasn't specified or we were instructed not to prompt, then throw
                     // an exception instead
                     if ((Context.EngineHostInterface == null) || (!promptForMandatory))
                     {
@@ -3247,7 +3247,7 @@ namespace System.Management.Automation
         /// - If parameter supports ValueFromPipeline
         ///     - attempt to bind input value using type coercion
         /// - If parameter support ValueFromPipelineByPropertyName
-        ///     - attempt to bind the vlue of the property with the matching name using type coercion
+        ///     - attempt to bind the value of the property with the matching name using type coercion
         /// </remarks>
         private bool BindPipelineParametersPrivate(PSObject inputToOperateOn)
         {

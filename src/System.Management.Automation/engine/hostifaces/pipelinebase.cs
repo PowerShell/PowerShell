@@ -332,7 +332,7 @@ namespace System.Management.Automation.Runspaces
             RaisePipelineStateEvents();
 
             // A pipeline can be stopped before it is started. See NotStarted
-            // case in above switch statement. This is done to allow stoping a pipeline
+            // case in above switch statement. This is done to allow stopping a pipeline
             // in another thread before it has been started.
             lock (SyncRoot)
             {
@@ -367,7 +367,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
         /// <returns>An array of zero or more result objects.</returns>
-        /// <remarks>Caller of synchronous exectute should not close
+        /// <remarks>Caller of synchronous execute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
         ///
@@ -401,7 +401,7 @@ namespace System.Management.Automation.Runspaces
             }
             else if (PipelineStateInfo.State == PipelineState.Failed && PipelineStateInfo.Reason != null)
             {
-                // If this is an error pipe for a hosting applicationand we are logging,
+                // If this is an error pipe for a hosting application and we are logging,
                 // then log the error.
                 if (this.Runspace.GetExecutionContext.EngineHostInterface.UI.IsTranscribing)
                 {
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Runspaces
         internal Thread NestedPipelineExecutionThread { get; set; }
 
         /// <summary>
-        /// Check if anyother pipeline is executing.
+        /// Check if another pipeline is executing.
         /// In case of nested pipeline, checks that it is called
         /// from currently executing pipeline's thread.
         /// </summary>

@@ -51,7 +51,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (this.currentHighlightedMatch != null)
             {
-                // restore the curent highlighted background to plain highlighted
+                // restore the current highlighted background to plain highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.HighlightBrush;
             }
 
@@ -60,7 +60,7 @@ namespace Microsoft.Management.UI.Internal
             // and the caret has not been touched (so it is in the beginning of the file too)
             // we want to highlight this first match.
             // Considering the caller always set the caret to the end of the highlight
-            // The condition below works well for successive searchs
+            // The condition below works well for successive searches
             // We also need to move to the adjacent run if the caret is at the first run and we
             // are moving backwards so that a search backwards when the first run is highlighted
             // and the caret is at the beginning will wrap to the end
@@ -86,7 +86,7 @@ namespace Microsoft.Management.UI.Internal
             this.currentHighlightedMatch = currentRun;
             if (this.currentHighlightedMatch != null)
             {
-                // restore the curent highlighted background to current highlighted
+                // restore the current highlighted background to current highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.CurrentHighlightBrush;
             }
 
@@ -147,7 +147,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the run of an inline. Inlines in a ParagrahBuilder are either a Run or a Bold
+        /// Gets the run of an inline. Inlines in a ParagraphBuilder are either a Run or a Bold
         /// which contains a Run.
         /// </summary>
         /// <param name="inline">Inline to get the run from.</param>
@@ -197,7 +197,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Bold parentBold = run.Parent as Bold;
             Paragraph parentParagraph = (parentBold != null ? parentBold.Parent : run.Parent) as Paragraph;
-            Debug.Assert(parentParagraph != null, "the documents we are saerching are built with ParagraphBuilder, which builds the document like this");
+            Debug.Assert(parentParagraph != null, "the documents we are searching are built with ParagraphBuilder, which builds the document like this");
             return parentParagraph;
         }
 
@@ -214,7 +214,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the first or lasr run in the paragraph containing <paramref name="caretRun"/>.
+        /// Gets the first or last run in the paragraph containing <paramref name="caretRun"/>.
         /// </summary>
         /// <param name="caretRun">Run containing the caret.</param>
         /// <param name="forward">True for first false for last.</param>

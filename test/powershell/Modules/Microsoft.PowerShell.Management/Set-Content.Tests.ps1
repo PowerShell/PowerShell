@@ -25,7 +25,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $result | Should -Be "$file1"
         }
     }
-    Context "Set-Content/Get-Content should set/get the content of an exisiting file" {
+    Context "Set-Content/Get-Content should set/get the content of an existing file" {
         BeforeAll {
           New-Item -Path $filePath1 -ItemType File -Force
         }

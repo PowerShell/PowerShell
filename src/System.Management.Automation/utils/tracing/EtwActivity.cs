@@ -378,7 +378,7 @@ namespace System.Management.Automation.Tracing
 
         /// <summary>
         /// Wraps a callback with one object param and one ElapsedEventArgs object
-        /// This is menat to be used in System.Timers.Timer scenarios.
+        /// This is meant to be used in System.Timers.Timer scenarios.
         /// </summary>
         /// <param name="callback"></param>
         /// <returns></returns>

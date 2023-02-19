@@ -256,8 +256,8 @@ bool function()`n{`n}
         }
 
         It 'Can convert input from a fileinfo object to vt100 encoded string' {
-            $ouputFromFileInfo = $mdFile | ConvertFrom-Markdown -AsVT100EncodedString
-            $ouputFromFileInfo.VT100EncodedString | Should -BeExactly $expectedStringFromFile
+            $outputFromFileInfo = $mdFile | ConvertFrom-Markdown -AsVT100EncodedString
+            $outputFromFileInfo.VT100EncodedString | Should -BeExactly $expectedStringFromFile
         }
 
         It 'Can convert input from a literal path to vt100 encoded string' {
@@ -277,7 +277,7 @@ bool function()`n{`n}
         }
 
         It "Gets an error if path does not exist" {
-            { ConvertFrom-Markdown -Path DoestnotExist -ErrorAction Stop } | Should -Throw -ErrorId 'FileNotFound,Microsoft.PowerShell.Commands.ConvertFromMarkdownCommand'
+            { ConvertFrom-Markdown -Path DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId 'FileNotFound,Microsoft.PowerShell.Commands.ConvertFromMarkdownCommand'
         }
 
         It "Gets an error if input object type is not correct" {
@@ -309,7 +309,7 @@ bool function()`n{`n}
             )
         }
 
-        It "No error if thrown when empty content is provided for mardown element : <Type>" -TestCases $testCases {
+        It "No error if thrown when empty content is provided for markdown element : <Type>" -TestCases $testCases {
             param($Type, $Markdown, $ExpectedOutput)
 
             $resultObj = ConvertFrom-Markdown -InputObject $Markdown -AsVT100EncodedString

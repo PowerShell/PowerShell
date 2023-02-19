@@ -436,7 +436,7 @@ namespace System.Management.Automation.Runspaces
 
                                 // processDebugPreference would point to null if debug preference is enabled for all app domains.
                                 // If processDebugPreference is not null then it means that user has selected specific
-                                // appdomins for which the debug preference has to be enabled.
+                                // appdomains for which the debug preference has to be enabled.
                                 if (processDebugPreference != null)
                                 {
                                     List<string> cachedAppDomainNames = null;
@@ -478,7 +478,7 @@ namespace System.Management.Automation.Runspaces
 
                                     // processDebugPreference would point to null if debug preference is enabled for all app domains.
                                     // If processDebugPreference is not null then it means that user has selected specific
-                                    // appdomins for which the debug preference has to be enabled.
+                                    // appdomains for which the debug preference has to be enabled.
                                     if (processDebugPreference != null)
                                     {
                                         List<string> cachedAppDomainNames = null;

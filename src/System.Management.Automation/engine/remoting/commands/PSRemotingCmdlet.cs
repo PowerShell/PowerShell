@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
         protected const string SSHHostParameterSet = "SSHHost";
 
         /// <summary>
-        /// SSH host parmeter set supporting hash connection parameters.
+        /// SSH host parameter set supporting hash connection parameters.
         /// </summary>
         protected const string SSHHostHashParameterSet = "SSHHostHashParam";
 
@@ -3325,7 +3325,7 @@ namespace Microsoft.PowerShell.Commands
             // Forward event
             RaiseRunspaceDebugStopEvent(PipelineRunspace);
 
-            // Signal remote session to remain stopped in debuger
+            // Signal remote session to remain stopped in debugger
             args.SuspendRemote = true;
         }
 

@@ -85,7 +85,7 @@ jobs:
 
       if('$(VPackPublishOverride)' -ne '' -and '$(VPackPublishOverride)' -ne 'None' )
       {
-        Write-Host "Using VPackPublishOverride varabile"
+        Write-Host "Using VPackPublishOverride variable"
         $vpackVersion = '$(VPackPublishOverride)'
       }
 

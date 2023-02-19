@@ -61,7 +61,7 @@ namespace System.Management.Automation.Remoting
             this.transportMgr = transportMgr;
 
             transportMgr.PrepareCalled += this.HandlePrepareFromTransportManager;
-            transportMgr.WSManTransportErrorOccured += this.HandleTransportError;
+            transportMgr.WSManTransportErrorOccurred += this.HandleTransportError;
         }
 
         public void Dispose()
@@ -306,7 +306,7 @@ namespace System.Management.Automation.Remoting
         }
 
         // handle transport manager related errors
-        internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs eventArgs)
+        internal void HandleTransportError(object sender, TransportErrorOccurredEventArgs eventArgs)
         {
             Exception reasonForClose = null;
             if (eventArgs != null)
@@ -345,7 +345,7 @@ namespace System.Management.Automation.Remoting
                 shutDownContext = null;
             }
 
-            transportMgr.WSManTransportErrorOccured -= this.HandleTransportError;
+            transportMgr.WSManTransportErrorOccurred -= this.HandleTransportError;
 
             // We should not use request details again after so releasing the resource.
             // Remember not to free this memory as this memory is allocated and owned by WSMan.

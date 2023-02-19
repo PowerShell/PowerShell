@@ -178,7 +178,7 @@ Describe "Measure-Object" -Tags "CI" {
             $actual.Maximum | Should -Be $expected
         }
 
-        It "Should be able to return all the statitics for given values" {
+        It "Should be able to return all the statistics for given values" {
             $result = 1..10  | Measure-Object -AllStats
             $result.Count    | Should -Be 10
             $result.Average  | Should -Be 5.5

@@ -56,7 +56,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
         $psDriveName = "PsTestDriveName"
     }
 
-    Context "Valdiate New-PSDrive Cmdlet Parameters" {
+    Context "Validate New-PSDrive Cmdlet Parameters" {
         AfterEach {
             Remove-PSDrive -Name $psDriveName -Force -ErrorAction SilentlyContinue
         }
@@ -89,7 +89,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
         }
     }
 
-    Context "Valdiate Get-PSDrive Cmdlet Parameters" {
+    Context "Validate Get-PSDrive Cmdlet Parameters" {
         BeforeEach {
             New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot > $null
         }
@@ -114,7 +114,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
         }
     }
 
-    Context "Valdiate Remove-PSDrive Cmdlet Parameters" {
+    Context "Validate Remove-PSDrive Cmdlet Parameters" {
         BeforeEach {
             New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot > $null
         }

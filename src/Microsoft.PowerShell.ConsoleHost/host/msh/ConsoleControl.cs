@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal enum ConsoleBreakSignal : uint
         {
-            // These correspond to the CRTL_XXX_EVENT #defines in public/sdk/inc/wincon.h
+            // These correspond to the CTRL_XXX_EVENT #defines in public/sdk/inc/wincon.h
 
             CtrlC = 0,
             CtrlBreak = 1,
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell
                 {
                     int err = Marshal.GetLastWin32Error();
 
-                    HostException e = CreateHostException(err, "RetreiveInputConsoleHandle",
+                    HostException e = CreateHostException(err, "RetrieveInputConsoleHandle",
                                                             ErrorCategory.ResourceUnavailable,
                                                             ConsoleControlStrings.GetInputModeExceptionTemplate);
                     throw e;
@@ -596,7 +596,7 @@ namespace Microsoft.PowerShell
                 {
                     int err = Marshal.GetLastWin32Error();
 
-                    HostException e = CreateHostException(err, "RetreiveActiveScreenBufferConsoleHandle",
+                    HostException e = CreateHostException(err, "RetrieveActiveScreenBufferConsoleHandle",
                         ErrorCategory.ResourceUnavailable, ConsoleControlStrings.GetActiveScreenBufferHandleExceptionTemplate);
                     throw e;
                 }
@@ -759,14 +759,14 @@ namespace Microsoft.PowerShell
                 control.dwCtrlWakeupMask = (1 << TAB);
             }
 
-            DWORD charsReaded = 0;
+            DWORD charsRead = 0;
 
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),
                     editBuffer,
                     (DWORD)charactersToRead,
-                    out charsReaded,
+                    out charsRead,
                     ref control);
             keyState = control.dwControlKeyState;
             if (!result)
@@ -781,12 +781,12 @@ namespace Microsoft.PowerShell
                 throw e;
             }
 
-            if (charsReaded > (uint)charactersToRead)
+            if (charsRead > (uint)charactersToRead)
             {
-                charsReaded = (uint)charactersToRead;
+                charsRead = (uint)charactersToRead;
             }
 
-            return editBuffer.Slice(0, (int)charsReaded).ToString();
+            return editBuffer.Slice(0, (int)charsRead).ToString();
         }
 
         /// <summary>

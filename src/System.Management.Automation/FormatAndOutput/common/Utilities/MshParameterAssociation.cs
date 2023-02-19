@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Helper method to handle PSComputerName and PSShowComputerName properties from
-        /// the formating objects. If PSShowComputerName exists and is false, removes
+        /// the formatting objects. If PSShowComputerName exists and is false, removes
         /// PSComputerName from the display.
         ///
         /// PSShowComputerName is an internal property..so this property is always

@@ -520,7 +520,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Indicate the kind of the ErrorStatement. e.g. Kind == Switch means that this error statment is generated
+        /// Indicate the kind of the ErrorStatement. e.g. Kind == Switch means that this error statement is generated
         /// when parsing a switch statement.
         /// </summary>
         public Token Kind { get; }
@@ -798,7 +798,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that uses explicitly named begin/process/end blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="attributes">The set of attributes for the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
@@ -835,7 +835,7 @@ namespace System.Management.Automation.Language
         /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="attributes">The set of attributes for the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
@@ -912,7 +912,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that uses explicitly named begin/process/end blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
@@ -938,7 +938,7 @@ namespace System.Management.Automation.Language
         /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
@@ -1016,7 +1016,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that does not use explicitly named blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="statements">
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that does not use explicitly named blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="statements">
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that does not use explicitly named blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="attributes">The attributes for the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="statements">
@@ -2433,7 +2433,7 @@ namespace System.Management.Automation.Language
         /// This method is used when we call Invoke-Command targeting a PSv2 remote machine. In that case, we might need to call this method
         /// to process the script block text, since $using prefix cannot be recognized by PSv2.
         /// </summary>
-        /// <param name="orderedUsingVar">A sorted enumerator of using variable asts, ascendingly sorted based on StartOffSet.</param>
+        /// <param name="orderedUsingVar">A sorted enumerator of using variable asts, ascending sorted based on StartOffSet.</param>
         /// <returns>
         /// The text of the ParameterAst with $using variable being replaced with a new variable name.
         /// </returns>
@@ -4586,7 +4586,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Construct a do/while statement.
         /// </summary>
-        /// <param name="extent">The extent of the do/while statment from the label or do keyword to the closing curly brace.</param>
+        /// <param name="extent">The extent of the do/while statement from the label or do keyword to the closing curly brace.</param>
         /// <param name="label">The optionally null label.</param>
         /// <param name="condition">The condition tested on each iteration of the loop.</param>
         /// <param name="body">The body executed on each iteration of the loop.</param>
@@ -6730,7 +6730,7 @@ namespace System.Management.Automation.Language
             var paramAsts = ConfigurationBuildInParameters.Select(static paramAst => (ParameterAst)paramAst.Copy()).ToList();
 
             // the parameters defined in the configuration keyword will be combined with above parameters
-            // it will be used to construct $ArgsToBody in the set-item created function boby using below statement
+            // it will be used to construct $ArgsToBody in the set-item created function body using below statement
             //         $toBody = @{}+$PSBoundParameters
             //         $toBody.Remove(""OutputPath"")
             //         $toBody.Remove(""ConfigurationData"")
@@ -6748,11 +6748,11 @@ namespace System.Management.Automation.Language
             var pipeLineAst = new PipelineAst(this.Extent, cmdAst, background: false);
             var funcStatements = ConfigurationExtraParameterStatements.Select(static statement => (StatementAst)statement.Copy()).ToList();
             funcStatements.Add(pipeLineAst);
-            var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
+            var statementBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
 
             var funcBody = new ScriptBlockAst(Body.Extent,
                 CustomAttributes?.Select(static att => (AttributeAst)att.Copy()).ToList(),
-                paramBlockAst, statmentBlockAst, false, true);
+                paramBlockAst, statementBlockAst, false, true);
             var funcBodyExp = new ScriptBlockExpressionAst(this.Extent, funcBody);
 
             #region "Construct Set-Item pipeline"
@@ -7740,7 +7740,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The scriptblockexpression that has a keyword applied to it. This property is nerver null.
+        /// The scriptblockexpression that has a keyword applied to it. This property is never null.
         /// </summary>
         public StatementBlockAst Body { get; }
 

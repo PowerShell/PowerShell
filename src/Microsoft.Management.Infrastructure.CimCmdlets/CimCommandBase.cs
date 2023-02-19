@@ -222,7 +222,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// A given parameter's value was set by cmdlet caller,
         /// check and change the status of parameter set,
-        /// throw exception if confliction occurred
+        /// throw exception if conflict occurred
         /// </para>
         /// </summary>
         /// <param name="parameterName"></param>

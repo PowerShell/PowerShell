@@ -281,7 +281,7 @@ namespace System.Management.Automation.Language
             var commandName = commandAst.CommandElements[0] as StringConstantExpressionAst;
             if (commandName != null && s_hashOfPessimizingCmdlets.Contains(commandName.Value))
             {
-                // TODO: psuedo-bind the command invocation to figure out the variable and only force that variable to be unoptimized
+                // TODO: pseudo-bind the command invocation to figure out the variable and only force that variable to be unoptimized
                 _disableOptimizations = true;
             }
 
@@ -986,7 +986,7 @@ namespace System.Management.Automation.Language
 
         public object VisitParameter(ParameterAst parameterAst)
         {
-            // Nothing to do now, we've already allocated parameters in the first pass looking for all variable naems.
+            // Nothing to do now, we've already allocated parameters in the first pass looking for all variable names.
             Diagnostics.Assert(false, "Code is unreachable");
             return null;
         }

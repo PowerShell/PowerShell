@@ -129,7 +129,7 @@ echo Argument 4 is: ^<%4^>
 
         # save the passing style
         $passingStyle = $PSNativeCommandArgumentPassing
-        # explicitely set the passing style to Windows
+        # explicitly set the passing style to Windows
         $PSNativeCommandArgumentPassing = "Windows"
     }
 
@@ -188,7 +188,7 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
         # spaces need to be quoted with '"' characters when they are passed to the
         # native command (or to bash or sh on Linux).
         #
-        # This test checks that the proper quoting is occuring by passing arguments
+        # This test checks that the proper quoting is occurring by passing arguments
         # to the testexe native command and looking at how it got the arguments.
         It "Should handle quoted spaces correctly (ArgumentList=${PSNativeCommandArgumentPassing})" {
             $a = 'a"b c"d'

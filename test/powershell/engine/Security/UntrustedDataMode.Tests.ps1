@@ -295,7 +295,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 throw "No Exception!"
             } catch {
 
-                ## Syntax 'data global:var { }' is not supported at the time writting the tests here
+                ## Syntax 'data global:var { }' is not supported at the time writing the tests here
                 ## If this test fail, then maybe this syntax is supported now, and in that case, please
                 ## enable the test 'Data Section - "data global:var"' in $testCases above
                 $_.FullyQualifiedErrorId | Should -Be "ParseException"

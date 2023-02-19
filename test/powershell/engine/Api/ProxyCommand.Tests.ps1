@@ -158,14 +158,14 @@ End {{
 }}
 "@
 
-        $cmdletBindig = [ProxyCommand]::GetCmdletBindingAttribute($cmdMetadata)
+        $cmdletBinding = [ProxyCommand]::GetCmdletBindingAttribute($cmdMetadata)
         $params = [ProxyCommand]::GetParamBlock($cmdMetadata)
         $dynamicParams = [ProxyCommand]::GetDynamicParam($cmdMetadata)
         $begin = [ProxyCommand]::GetBegin($cmdMetadata)
         $process = [ProxyCommand]::GetProcess($cmdMetadata)
         $end = [ProxyCommand]::GetEnd($cmdMetadata)
 
-        $funcBody = $template -f $cmdletBindig, $params, $dynamicParams, $begin, $process, $end
+        $funcBody = $template -f $cmdletBinding, $params, $dynamicParams, $begin, $process, $end
         $bodySB = [scriptblock]::Create($funcBody)
         Set-Item -Path function:\MyProxyTest -Value $bodySB
 

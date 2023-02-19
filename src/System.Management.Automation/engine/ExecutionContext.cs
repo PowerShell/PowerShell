@@ -401,7 +401,7 @@ namespace System.Management.Automation
         /// Helper for setting the untrusted value of an assignment to either a 'Global:' variable, or a 'Script:' variable in a module scope.
         /// </summary>
         /// <remarks>
-        /// This method is for tracking assignment to global variables and module script scope varaibles in ConstrainedLanguage mode. Those variables
+        /// This method is for tracking assignment to global variables and module script scope variables in ConstrainedLanguage mode. Those variables
         /// can go across boundaries between ConstrainedLanguage and FullLanguage, and make it easy for a trusted script to use data from an untrusted
         /// environment. Therefore, in ConstrainedLanguage mode, we need to mark the value objects assigned to those variables as untrusted.
         /// </remarks>
@@ -1289,7 +1289,7 @@ namespace System.Management.Automation
             //  3. Path of the nested module 'Test.Isolated.Init.dll' now has been resolved by the step 2 (assembly.Location).
             //     Now it's time to actually load this binary module for processing in the method 'LoadBinaryModule', which
             //     will make a call to this method with the resolved assembly file path.
-            // At this poin, we will have to query the cache first, instead of calling 'LoadAssembly' directly, to make sure
+            // At this pion, we will have to query the cache first, instead of calling 'LoadAssembly' directly, to make sure
             // that the assembly instance loaded in the custom ALC in step 2 gets returned back. Otherwise, the same assembly
             // file will be loaded in the default ALC because 'Assembly.LoadFrom' is used in 'LoadAssembly' and that API will
             // always load an assembly file to the default ALC, and that will break this scenario.

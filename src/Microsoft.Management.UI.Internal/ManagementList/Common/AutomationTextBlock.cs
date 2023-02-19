@@ -15,7 +15,7 @@ namespace Microsoft.Management.UI.Internal
     [Description("Provides a System.Windows.Controls.TextBlock control that is always visible in the automation tree.")]
     public class AutomationTextBlock : TextBlock
     {
-        #region Structors
+        #region Structures
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AutomationTextBlock" /> class.
@@ -27,7 +27,7 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion
 
-        #region Overides
+        #region Overrides
 
         /// <summary>
         /// Returns the <see cref="System.Windows.Automation.Peers.AutomationPeer"/> implementations for this control.

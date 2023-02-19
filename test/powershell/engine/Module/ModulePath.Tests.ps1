@@ -124,13 +124,13 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
     It "keep non-pshome module path derived from PowerShell instance parent" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
         ## non-pshome module path derived from another PowerShell instance should be preserved
-        $customeModules = Join-Path -Path $TestDrive -ChildPath 'CustomModules'
-        $env:PSModulePath = $fakePSHomeModuleDir, $customeModules -join ([System.IO.Path]::PathSeparator)
+        $customModules = Join-Path -Path $TestDrive -ChildPath 'CustomModules'
+        $env:PSModulePath = $fakePSHomeModuleDir, $customModules -join ([System.IO.Path]::PathSeparator)
         $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
         $paths = $newModulePath -split [System.IO.Path]::PathSeparator
         $paths.Count | Should -Be 5
         $paths -contains $fakePSHomeModuleDir | Should -BeTrue
-        $paths -contains $customeModules | Should -BeTrue
+        $paths -contains $customModules | Should -BeTrue
     }
 
     It 'Ensures $PSHOME\Modules is inserted correctly when launched from a different version of PowerShell' -Skip:(!($IsCoreCLR -and $IsWindows) -or $skipNoPwsh) {

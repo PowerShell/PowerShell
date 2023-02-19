@@ -208,7 +208,7 @@ namespace System.Management.Automation
         /// <remarks>It is redundant to have a method named StartJob
         /// on a job class. However, this is done so as to avoid
         /// an FxCop violation "CA1716:IdentifiersShouldNotMatchKeywords"
-        /// Stop and Resume are reserved keyworks in C# and hence cannot
+        /// Stop and Resume are reserved keywords in C# and hence cannot
         /// be used as method names. Therefore to be consistent it has
         /// been decided to use *Job in the name of the methods</remarks>
         public abstract void StartJob();
@@ -1983,7 +1983,7 @@ namespace System.Management.Automation
                 }
 
                 // If not all jobs are finished, one child job may be suspending, even though this job did not finish.
-                // At this point, we know finishedChildJobsCountNew != childJobsCount and finishChildJobsCount + suspendedChilJobsCout != childJobsCount
+                // At this point, we know finishedChildJobsCountNew != childJobsCount and finishChildJobsCount + suspendedChildJobsCount != childJobsCount
                 if (suspendingChildJobsCount + suspendedChildJobsCount + finishedChildJobsCountNew == childJobsCount)
                 {
                     tracer.WriteMessage(traceClassName, ": JobState is suspending, all child jobs are in suspending state.");
@@ -2176,7 +2176,7 @@ namespace System.Management.Automation
         /// Gets the information for serialization.
         /// </summary>
         /// <param name="info">The standard SerializationInfo.</param>
-        /// <param name="context">The standard StreaminContext.</param>
+        /// <param name="context">The standard StreamingContext.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             ArgumentNullException.ThrowIfNull(info);

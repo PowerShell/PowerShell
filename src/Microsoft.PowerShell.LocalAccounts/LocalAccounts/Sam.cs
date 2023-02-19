@@ -59,8 +59,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             Name        = 0x0001,   // NOT changeable through Set-LocalGroup
             Description = 0x0002,
 
-            AllSetable  = Description,
-            AllReadable = AllSetable | Name
+            AllSettable  = Description,
+            AllReadable = AllSettable | Name
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             LastLogon               = 0x0800,   // CANNOT be set by cmdlet
 
             // All properties that can be set through Set-LocalUser
-            AllSetable              = AccountExpires
+            AllSettable              = AccountExpires
                                         | Description
                                         | FullName
                                         | PasswordChangeableDate
@@ -99,10 +99,10 @@ namespace System.Management.Automation.SecurityAccountsManager
                                         | PasswordRequired,
 
             // Properties that can be set by Create-LocalUser
-            AllCreateable           = AllSetable | Name | Enabled,
+            AllCreatable           = AllSettable | Name | Enabled,
 
             // Properties that can be read by e.g., Get-LocalUser
-            AllReadable             = AllCreateable | PasswordLastSet | LastLogon
+            AllReadable             = AllCreatable | PasswordLastSet | LastLogon
         }
 
         private enum PasswordExpiredState
@@ -277,7 +277,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             /// being used.
             /// </summary>
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public string TypeNamne
+            public string TypeName
             {
                 get { return type.ToString(); }
             }
@@ -1261,7 +1261,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 // operations depend on it.
                 userInfo.SID = RidToSid(domainHandle, relativeId);
 
-                SetUserData(userHandle, userInfo, UserProperties.AllCreateable, password, PasswordExpiredState.NotExpired, setPasswordNeverExpires);
+                SetUserData(userHandle, userInfo, UserProperties.AllCreatable, password, PasswordExpiredState.NotExpired, setPasswordNeverExpires);
 
                 return MakeLocalUserObject(new SamRidEnumeration
                                             {

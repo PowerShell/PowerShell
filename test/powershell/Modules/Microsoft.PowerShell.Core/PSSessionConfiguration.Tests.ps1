@@ -31,7 +31,7 @@ try
             # An endpoint for this instance of PowerShell does not exist.
             #
             # -SkipNetworkProfileCheck is used in case Docker or another application
-            # has created a publich virtual network profile on the system
+            # has created a public virtual network profile on the system
             Enable-PSRemoting -SkipNetworkProfileCheck
             $endpointCreated = $true
         }
@@ -462,7 +462,7 @@ namespace PowershellTestConfigNamespace
                 BeforeAll {
                     if ($IsNotSkipped)
                     {
-                        $TestSessionConfigName = "TestRegisterPSSesionConfig"
+                        $TestSessionConfigName = "TestRegisterPSSessionConfig"
                         Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                     }
                 }
@@ -531,7 +531,7 @@ namespace PowershellTestConfigNamespace
                 BeforeAll {
                     if ($IsNotSkipped)
                     {
-                        $TestSessionConfigName = "TestSetPSSesionConfig"
+                        $TestSessionConfigName = "TestSetPSSessionConfig"
                         Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                     }
                 }
@@ -720,8 +720,8 @@ namespace PowershellTestConfigNamespace
 
                     # The scope of the test is to validate that a valid SessionConfigurationFile can be validated
                     # The test does not register the session configuration from the created session configuration file.
-                    # The existance of the files supplied as input to TypesToProcess, FormatsToProcess, ScriptsToProcess
-                    # are not validated while creating a valid session configurtation file.
+                    # The existence of the files supplied as input to TypesToProcess, FormatsToProcess, ScriptsToProcess
+                    # are not validated while creating a valid session configuration file.
                     # The Test only validates that the supplied data can be successfully used to create a valid Session configuration file.
                     TypesToProcess = '$env:SystemDrive\SampleTypesFile.ps1xml'
                     FormatsToProcess = '$env:SystemDrive\SampleFormatsFile.ps1xml'
@@ -755,31 +755,31 @@ namespace PowershellTestConfigNamespace
             $configFilePath = Join-Path $TestDrive "SamplePSSessionConfigurationFile.pssc"
 
             $updatedFunctionDefn = @()
-            foreach($currentDefination in $parmMap.FunctionDefinitions)
+            foreach($currentDefinition in $parmMap.FunctionDefinitions)
             {
                 $createdFunctionDefn = @{}
-                foreach($currentDefinationKey in $currentDefination.Keys)
+                foreach($currentDefinitionKey in $currentDefinition.Keys)
                 {
-                    if($currentDefinationKey -eq "ScriptBlock")
+                    if($currentDefinitionKey -eq "ScriptBlock")
                     {
-                        $value = [ScriptBlock]::Create($currentDefination[$currentDefinationKey])
+                        $value = [ScriptBlock]::Create($currentDefinition[$currentDefinitionKey])
                     }
                     else
                     {
-                        $value = $currentDefination[$currentDefinationKey]
+                        $value = $currentDefinition[$currentDefinitionKey]
                     }
-                    $createdFunctionDefn.Add($currentDefinationKey, $value)
+                    $createdFunctionDefn.Add($currentDefinitionKey, $value)
                 }
             $updatedFunctionDefn += $createdFunctionDefn
             }
 
             $updatedVariableDefn = @()
-            foreach($currentDefination in $parmMap.VariableDefinitions)
+            foreach($currentDefinition in $parmMap.VariableDefinitions)
             {
                 $createdVariableDefn = @{}
-                foreach($currentDefinationKey in $currentDefination.Keys)
+                foreach($currentDefinitionKey in $currentDefinition.Keys)
                 {
-                    $createdVariableDefn.Add($currentDefinationKey, $currentDefination[$currentDefinationKey])
+                    $createdVariableDefn.Add($currentDefinitionKey, $currentDefinition[$currentDefinitionKey])
                 }
             $updatedVariableDefn += $createdVariableDefn
             }

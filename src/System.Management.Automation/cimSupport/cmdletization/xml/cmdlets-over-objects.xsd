@@ -24,7 +24,7 @@ Licensed under the MIT License.
   <!ENTITY powerShellParameterSetRegex "[^,;]{1,100}">
 ]>
 <!--
- csharpIdentifierRegex based on C# Language Specification 3.0, section 2.4.2 Idenfifiers
+ csharpIdentifierRegex based on C# Language Specification 3.0, section 2.4.2 Identifiers
  - the C# spec allows \p{Pc}\p{Cf}\p{Mn}\{Mc} in csharpIdentifierOtherCharacterRegex, 
    but those characters classes seem risky wrt code injection attacks, so they were
    removed above.  
@@ -242,7 +242,7 @@ Licensed under the MIT License.
           CmdletAdapter attribute specifies which .NET class is responsible for translating
           cmdlet invocations into queries and method invocations.  
           
-          If this attribute is ommited, then by default the cmdlets are translated into WMI queries and method invocations. 
+          If this attribute is omitted, then by default the cmdlets are translated into WMI queries and method invocations. 
           
           The class specified here has to be derived from Microsoft.PowerShell.Cmdletization.CmdletAdapter class.
         </xsd:documentation>
@@ -342,7 +342,7 @@ Licensed under the MIT License.
       <xsd:documentation xml:lang="en-us">
         GetCmdlet element defines cmdlet metadata for the cmdlet that queries for object instances.
         
-        If GetCmdlet element is ommited, then the default verb (&quot;Get&quot;) and noun (based on &lt;DefaultNoun&gt; element) are going to be used.
+        If GetCmdlet element is omitted, then the default verb (&quot;Get&quot;) and noun (based on &lt;DefaultNoun&gt; element) are going to be used.
         
         GetCmdlet element is typically used for one of the following items:
         - To allow the Get cmdlet to have different GetCmdletParameters than other cmdlets (for example to make all parameters optional for Get cmdlet, but make some parameters mandatory for other cmdlets)
@@ -388,7 +388,7 @@ Licensed under the MIT License.
         <xsd:documentation xml:lang="en-us">
           Noun attribute specifies the noun of the cmdlet.
           
-          If the Noun attribute is ommited, then contents of the DefaultNoun element are used.
+          If the Noun attribute is omitted, then contents of the DefaultNoun element are used.
           
           Noun attribute is equivalent to the nounName parameter of System.Management.Automation.CmdletAttribute constructor.
         </xsd:documentation>
@@ -460,7 +460,7 @@ Licensed under the MIT License.
             <xsd:documentation xml:lang="en-us">
               CmdletParameterSet attribute specifies the name of a cmdlet parameter set associated with the static method.
               
-              If CmdletParameterSet is ommited, then the name of the cmdlet parameter set is auto-generated based on the name of the method.
+              If CmdletParameterSet is omitted, then the name of the cmdlet parameter set is auto-generated based on the name of the method.
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
@@ -736,7 +736,7 @@ Licensed under the MIT License.
               
               Example of a wildcard: "foo*" (matches all strings beginning with "foo")
               
-              If AllowGlobbing attribute is ommited then its value is based on the type of the filtered property.
+              If AllowGlobbing attribute is omitted then its value is based on the type of the filtered property.
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
@@ -790,7 +790,7 @@ Licensed under the MIT License.
               CmdletParameterSets attribute is a whitespace-separated list of names of parameter sets,
               that the cmdlet parameter should belong to.
               
-              If this parameter is ommited, then the cmdlet parameter belongs to all parameter sets.
+              If this parameter is omitted, then the cmdlet parameter belongs to all parameter sets.
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
@@ -850,7 +850,7 @@ Licensed under the MIT License.
         <xsd:documentation xml:lang="en-us">
           PSName attribute specifies the name of a cmdlet parameter.
           
-          If PSName attribute is ommited then it is based on the contents of PropertyName or ParameterName or OptionName attribute (whichever one is applicable).
+          If PSName attribute is omitted then it is based on the contents of PropertyName or ParameterName or OptionName attribute (whichever one is applicable).
           
           Example:
             &lt;Property PropertyName=&quot;Name&quot;&gt;
@@ -871,7 +871,7 @@ Licensed under the MIT License.
         <xsd:documentation xml:lang="en-us">
           Position attribute specifies position of the cmdlet parameter.
           
-          If Position attribute is ommited, then the cmdlet parameter cannot be used positionally - the user always has to explicitly specify the name of the parameter.
+          If Position attribute is omitted, then the cmdlet parameter cannot be used positionally - the user always has to explicitly specify the name of the parameter.
           
           System may change relative parameter positions to guarantee that cmdlet parameters defined by GetCmdletParameters element are always
           before cmdlet parameters defined under Method element. 

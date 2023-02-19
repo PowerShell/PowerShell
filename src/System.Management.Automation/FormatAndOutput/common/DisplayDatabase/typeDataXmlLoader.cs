@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">Database instance to load the formatting data into.</param>
         /// <param name="expressionFactory">Expression factory to validate the script block.</param>
-        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
+        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full language mode)?</param>
         /// <param name="isForHelp">True when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// It assumes that the XML document has been successfully loaded.
         /// </summary>
         /// <param name="doc">XML document to load from, cannot be null.</param>
-        /// <param name="db">Instance of the databaseto load into.</param>
+        /// <param name="db">Instance of the database to load into.</param>
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
             if (doc == null)
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Load row enties, set the defaultDefinition of the TableControlBody.
+        /// Load row entries, set the defaultDefinition of the TableControlBody.
         /// </summary>
         /// <param name="tableBody"></param>
         /// <param name="rowEntries"></param>
@@ -911,7 +911,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lved.itemDefinitionList.Add(lvid);
             }
 
-            // we must have at least a definition in th elist
+            // we must have at least a definition in the list
             if (lved.itemDefinitionList.Count == 0)
             {
                 // Error: At least one list view item must be specified.

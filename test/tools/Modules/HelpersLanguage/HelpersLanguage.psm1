@@ -65,7 +65,7 @@ function ShouldBeParseError
         [int[]]$expectedOffsets,
         # This is a temporary solution after moving type creation from parse time to runtime
         [switch]$SkipAndCheckRuntimeError,
-        # for test coverarage purpose, tests validate columnNumber or offset
+        # for test coverage purpose, tests validate columnNumber or offset
         [switch]$CheckColumnNumber
     )
 
@@ -100,9 +100,9 @@ function ShouldBeParseError
                 $errorId = $err.ErrorId
             }
             It "Error Id (iteration:$i)" { $errorId | Should -Be $expectedErrors[$i] }
-            $acutalPostion = $err.Extent.StartScriptPosition.Offset
-            if ( $CheckColumnNumber ) { $acutalPostion = $err.Extent.StartScriptPosition.ColumnNumber }
-            It "Error position (iteration:$i)" -Pending:$SkipAndCheckRuntimeError { $acutalPostion | Should -Be $expectedOffsets[$i] }
+            $actualPosition = $err.Extent.StartScriptPosition.Offset
+            if ( $CheckColumnNumber ) { $actualPosition = $err.Extent.StartScriptPosition.ColumnNumber }
+            It "Error position (iteration:$i)" -Pending:$SkipAndCheckRuntimeError { $actualPosition | Should -Be $expectedOffsets[$i] }
        }
     }
 }

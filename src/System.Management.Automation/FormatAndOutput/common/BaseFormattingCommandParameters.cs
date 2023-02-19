@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// Class to derive from to pass shepe specific data.
+    /// Class to derive from to pass shape specific data.
     /// </summary>
     internal abstract class ShapeSpecificParameters
     {

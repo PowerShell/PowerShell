@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
         private void HandleSSHError(PSRemotingTransportException ex)
         {
             RaiseErrorHandler(
-                new TransportErrorOccuredEventArgs(
+                new TransportErrorOccurredEventArgs(
                     ex,
                     TransportMethodEnum.CloseShellOperationEx));
 

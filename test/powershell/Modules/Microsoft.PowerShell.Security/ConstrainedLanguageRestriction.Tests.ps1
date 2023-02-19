@@ -598,7 +598,7 @@ try
             try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                New-Variable -Name NewVarialbeAllScopeNotSupported -Value bar -Option AllScope
+                New-Variable -Name NewVariableAllScopeNotSupported -Value bar -Option AllScope
                 throw "No Exception!"
             }
             catch

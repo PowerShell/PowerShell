@@ -68,7 +68,7 @@ jobs:
       Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild -ItemType Directory
       tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
-      Write-Verbose -Verbose "File permisions after expanding"
+      Write-Verbose -Verbose "File permissions after expanding"
       Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
 
       Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildMinSize.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize"

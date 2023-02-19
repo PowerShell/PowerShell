@@ -52,7 +52,7 @@ Describe "PSCommand API tests" -Tag "CI" {
             try {
                 $otherShell = [powershell]::Create('CurrentRunspace')
 
-                # We manually create a CmdletInfo here (with an unresolable command) to verify that CmdletInfo's are cloned.
+                # We manually create a CmdletInfo here (with an unresolvable command) to verify that CmdletInfo's are cloned.
                 $cmdlet = [System.Management.Automation.CmdletInfo]::new('un-resolvable', [Microsoft.PowerShell.Commands.OutStringCommand])
                 $null = $otherShell.AddCommand($cmdlet).AddParameter("InputObject", 'test').AddParameter("Stream")
 

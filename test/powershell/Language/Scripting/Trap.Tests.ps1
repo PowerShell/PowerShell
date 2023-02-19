@@ -9,7 +9,7 @@ Describe "Test trap" -Tags "CI" {
             $a -join "," | Should -BeExactly "hello,trapped"
         }
 
-        It "Line after exception should NOT be continued and both inner and outter traps should be triggered" {
+        It "Line after exception should NOT be continued and both inner and outer traps should be triggered" {
             $a = . {trap {"outer trap"; continue;}; . {trap {"inner trap"; break;}; "hello"; throw "exception"; "world"}}
             $a.Length | Should -Be 3
             $a -join "," | Should -BeExactly "hello,inner trap,outer trap"

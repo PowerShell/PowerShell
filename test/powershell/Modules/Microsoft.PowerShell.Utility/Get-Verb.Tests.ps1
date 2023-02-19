@@ -15,14 +15,14 @@ Describe "Get-Verb" -Tags "CI" {
         (Get-Verb -Group Common).Group | Sort-Object -Unique | Should -Be Common
     }
 
-    It "Should not return duplicate Verbs with Verb paramater" {
+    It "Should not return duplicate Verbs with Verb parameter" {
         $dups = Get-Verb -verb Add,ad*,a*
         $unique = $dups |
             Select-Object -Property * -Unique
         $dups.Count | Should -Be $unique.Count
     }
 
-    It "Should not return duplicate Verbs with Group paramater" {
+    It "Should not return duplicate Verbs with Group parameter" {
         $dupVerbs = Get-Verb -Group Data,Data
         $uniqueVerbs = $dupVerbs |
             Select-Object -Property * -Unique

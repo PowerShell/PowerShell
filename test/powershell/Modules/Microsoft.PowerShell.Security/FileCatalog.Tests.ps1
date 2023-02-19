@@ -366,7 +366,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $pathHashValue = $result.PathItems["DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1"]
             ($catalogHashValue -eq $pathHashValue) | Should -BeFalse
 
-            # By Skipping the file with modifed contents validation will pass
+            # By Skipping the file with modified contents validation will pass
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "UserConfigProviderModVersion1.psm1"
             $result.Status | Should -Be "Valid"
         }

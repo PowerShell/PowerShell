@@ -4,7 +4,7 @@
 <!--
    Unlike JIT, GC is largely single threaded and the times correlate very well with PerfView where we can drill down into each GC
    generation in the region graph in WPA.
-   We use bascially the GC Start/Stop events where the GC Start event has also the generation traced which enables us to create
+   We use basically the GC Start/Stop events where the GC Start event has also the generation traced which enables us to create
    regions for each GC type.
    GC suspensions work a bit different were I use the GCSuspendEE_V1 as start and GCRestartEEEnd as end event. This allows us
    to capture in principle also the time where the suspension or resumption itself takes. An abnormally long time would indicate

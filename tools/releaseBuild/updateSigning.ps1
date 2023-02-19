@@ -18,7 +18,7 @@ if ($SkipPwshExe) {
 $signingXml = [xml] $xmlContent
 
 # Get any variables to updating 'signType' in the XML
-# Define a varabile named `<signTypeInXml>SignType' in VSTS to updating that signing type
+# Define a variable named `<signTypeInXml>SignType' in VSTS to updating that signing type
 # Example:  $env:AuthenticodeSignType='newvalue'
 #      will cause all files with the 'Authenticode' signtype to be updated with the 'newvalue' signtype
 $signTypes = @{}

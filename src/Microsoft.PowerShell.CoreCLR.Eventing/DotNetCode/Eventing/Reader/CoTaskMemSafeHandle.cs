@@ -52,7 +52,7 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         //
-        // DONT compare CoTaskMemSafeHandle with CoTaskMemSafeHandle.Zero
+        // DON'T compare CoTaskMemSafeHandle with CoTaskMemSafeHandle.Zero
         // use IsInvalid instead. Zero is provided where a NULL handle needed
         //
 

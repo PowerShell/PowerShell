@@ -1,7 +1,7 @@
 trigger: none
 
 # needed to disable CI trigger and allow manual trigger
-# when the branch is same as pipline source, the latest build from the source is used.
+# when the branch is same as pipeline source, the latest build from the source is used.
 # all environment used are for manual tasks and approvals.
 
 resources:

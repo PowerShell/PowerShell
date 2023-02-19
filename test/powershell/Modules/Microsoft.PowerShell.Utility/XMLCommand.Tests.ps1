@@ -85,7 +85,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$results[2] | Should -BeExactly $dict[2]
     }
 
-	It "Import Hashtable from exported non-ordered case-sentitive dictionary object" {
+	It "Import Hashtable from exported non-ordered case-sensitive dictionary object" {
 		$dict = New-Object hashtable
 		$dict['Larry'] = 'Poik!'
 		$dict['Curly'] = 'Nyuk!'

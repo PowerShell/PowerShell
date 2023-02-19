@@ -2207,7 +2207,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // Look for any runspaces with debuggers and set to setp mode.
+            // Look for any runspaces with debuggers and set to step mode.
             if ((nestedType & EnableNestedType.NestedRunspace) == EnableNestedType.NestedRunspace)
             {
                 SetRunspaceListToStep(true);

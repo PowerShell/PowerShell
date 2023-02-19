@@ -205,7 +205,7 @@ class PSLogItem
         <#
         MMM dd HH:MM:SS machinename id[PID]: (commitid:TID:CHANNEL) [EventName] Message
         Expecting split to return
-        0: Month (abreviated)
+        0: Month (abbreviated)
         1: DD
         2: HH:MM:SS
         3: hostname
@@ -691,7 +691,7 @@ class LogItemBuilder
             $this.item = $null
             if ($this.sb.Length -gt 0)
             {
-                # rewrite the message wtih the multiple log lines
+                # rewrite the message with the multiple log lines
                 $result.Message = $this.sb.ToString()
                 $this.sb.Clear()
             }

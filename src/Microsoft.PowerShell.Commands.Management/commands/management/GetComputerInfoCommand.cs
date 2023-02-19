@@ -2429,7 +2429,7 @@ namespace Microsoft.PowerShell.Commands
         public string BiosStatus { get; internal set; }
 
         /// <summary>
-        /// Major elease of the System BIOS.
+        /// Major release of the System BIOS.
         /// </summary>
         public ushort? BiosSystemBiosMajorVersion { get; internal set; }
 
@@ -2756,7 +2756,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] CsRoles { get; internal set; }
 
         /// <summary>
-        /// Statis pf the computer system.
+        /// Status pf the computer system.
         /// </summary>
         public string CsStatus { get; internal set; }
 

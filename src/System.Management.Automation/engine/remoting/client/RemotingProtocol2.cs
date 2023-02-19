@@ -1039,7 +1039,7 @@ namespace System.Management.Automation.Internal
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         ///
-        /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
+        /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccurred
         /// event.
         /// </summary>
         /// <remarks>
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs e)
+        internal void HandleTransportError(object sender, TransportErrorOccurredEventArgs e)
         {
             // notify associated powershell about the error and close transport manager
             PSInvocationStateInfo stateInfo = new PSInvocationStateInfo(PSInvocationState.Failed, e.Exception);
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation.Internal
         /// <param name="inDisconnectMode">Boolean.</param>
         private void SetupTransportManager(bool inDisconnectMode)
         {
-            TransportManager.WSManTransportErrorOccured += HandleTransportError;
+            TransportManager.WSManTransportErrorOccurred += HandleTransportError;
             TransportManager.ReconnectCompleted += HandleReconnectCompleted;
             TransportManager.ConnectCompleted += HandleConnectCompleted;
             TransportManager.DelayStreamRequestProcessed += HandleDelayStreamRequestProcessed;

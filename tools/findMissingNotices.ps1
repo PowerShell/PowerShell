@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# This script is used to completely rebuild the cgmanifgest.json file,
+# This script is used to completely rebuild the cgmanifest.json file,
 # which is used to generate the notice file.
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
@@ -242,7 +242,7 @@ function Get-CGRegistrations {
         $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
 
         # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
-        # the exisitng CG contains the registration, because if the existing CG contains the registration,
+        # the existing CG contains the registration, because if the existing CG contains the registration,
         # that might be the only reason it is in the TPN.
         if (!$RegistrationTable.ContainsKey($target)) {
             $DevelopmentDependency = $false

@@ -58,7 +58,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
         It "Should return two items at the root of the provider" {
             (Get-Item -Path cert:\*).Count | Should -Be 2
         }
-        It "Should be able to get multiple items explictly" {
+        It "Should be able to get multiple items explicitly" {
             (Get-Item cert:\LocalMachine , cert:\CurrentUser).Count | Should -Be 2
         }
         It "Should return PathNotFound when getting a non-existant certificate store" {
@@ -106,7 +106,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
     }
 
     Context "Get-Item tests" {
-        It "Should be able to get certifate by path: <path>" -TestCases $currentUserMyLocations {
+        It "Should be able to get certificate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
@@ -114,7 +114,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert | Should -Not -Be null
             $cert.Thumbprint | Should -Be $expectedThumbprint
         }
-        It "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
+        It "Should be able to get DnsNameList of certificate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedName = (Get-GoodCertificateObject).DnsNameList
@@ -131,7 +131,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert.DnsNameList[2].Unicode | Should -Be $expectedName[2].Unicode
             $cert.DnsNameList[2].Punycode | Should -Be $expectedEncodedName[2].Punycode
         }
-        it "Should be able to get EnhancedKeyUsageList of certifate by path: <path>" -TestCases $currentUserMyLocations {
+        it "Should be able to get EnhancedKeyUsageList of certificate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedOid = (Get-GoodCertificateObject).EnhancedKeyUsageList[0].ObjectId

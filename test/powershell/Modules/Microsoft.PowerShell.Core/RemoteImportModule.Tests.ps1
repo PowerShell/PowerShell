@@ -88,8 +88,8 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
 #        @{ test = "cimsession"             ; parameters = @{Name="TestImport";CimSession=$cimsession}},
         @{ test = "minimumversion"         ; parameters = @{Name="TestImport";PSSession=$pssession;MinimumVersion="1.0";Force=$true}},
         @{ test = "requiredversion"        ; parameters = @{Name="TestImport";PSSession=$pssession;RequiredVersion="1.2.3"}},
-        @{ test = "maxiumversion"          ; parameters = @{Name="TestImport";PSSession=$pssession;MaximumVersion="2.0"}},
-        @{ test = "invalid miniumversion"  ; parameters = @{Name="TestImport";PSSession=$pssession;MinimumVersion="2.0"};
+        @{ test = "maximumversion"          ; parameters = @{Name="TestImport";PSSession=$pssession;MaximumVersion="2.0"}},
+        @{ test = "invalid minimumversion"  ; parameters = @{Name="TestImport";PSSession=$pssession;MinimumVersion="2.0"};
             errorid = "Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand,Microsoft.PowerShell.Commands.ImportModuleCommand"},
         @{ test = "invalid maximumversion" ; parameters = @{Name="TestImport";PSSession=$pssession;MaximumVersion="1.0"};
             errorid = "Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand,Microsoft.PowerShell.Commands.ImportModuleCommand"},

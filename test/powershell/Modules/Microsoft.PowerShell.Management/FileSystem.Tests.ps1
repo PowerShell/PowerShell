@@ -691,7 +691,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             # The test depends on the files created in previous test:
             #New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse -Name
-            $ci.Count | Should -BeExactly 7 # returns 10 - unexpectly recurce in link-alpha\link-Beta. See https://github.com/PowerShell/PowerShell/issues/11614
+            $ci.Count | Should -BeExactly 7 # returns 10 - unexpectedly recurse in link-alpha\link-Beta. See https://github.com/PowerShell/PowerShell/issues/11614
         }
         It "Get-ChildItem will recurse into symlinks given -FollowSymlink, avoiding link loops" {
             New-Item -ItemType Directory -Path $gammaDir
@@ -708,7 +708,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             # New-Item -ItemType SymbolicLink -Path $uponeLink -Value $betaDir
             # New-Item -ItemType SymbolicLink -Path $uptwoLink -Value $alphaDir
             # New-Item -ItemType SymbolicLink -Path $omegaLink -Value $omegaDir
-            $ci = Get-ChildItem -Path $alphaDir -FollowSymlink -Recurse -WarningVariable w -WarningAction SilentlyContinue -Name # unexpectly dead cycle. See https://github.com/PowerShell/PowerShell/issues/11614
+            $ci = Get-ChildItem -Path $alphaDir -FollowSymlink -Recurse -WarningVariable w -WarningAction SilentlyContinue -Name # unexpectedly dead cycle. See https://github.com/PowerShell/PowerShell/issues/11614
             $ci.Count | Should -BeExactly 13
             $w.Count | Should -BeExactly 3
         }
@@ -1069,7 +1069,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         Remove-Item -Path * -Recurse -Force -ErrorAction SilentlyContinue
     }
 
-    Context "Valdiate New-Item parameters" {
+    Context "Validate New-Item parameters" {
         BeforeEach {
             #remove every file so that New-Item can be validated
             Remove-Item -Path * -Recurse -Force -ErrorAction SilentlyContinue
@@ -1100,7 +1100,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
     }
 
-    Context "Valdiate Get-Item parameters" {
+    Context "Validate Get-Item parameters" {
         It "Verify Force" {
             $result = Get-Item -Path $testFile -Force
             $result.Name | Should -BeExactly $testFile
@@ -1137,7 +1137,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
     }
 
-    Context "Valdiate Move-Item parameters" {
+    Context "Validate Move-Item parameters" {
         BeforeAll {
             $altTestFile = "movedFile.txt"
         }
@@ -1175,7 +1175,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
     }
 
-    Context "Valdiate Rename-Item parameters" {
+    Context "Validate Rename-Item parameters" {
         BeforeAll {
             $newFile = "NewName.txt"
         }
@@ -1195,7 +1195,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
     }
 
-    Context "Valdiate Remove-Item parameters" {
+    Context "Validate Remove-Item parameters" {
         It "Verify WhatIf" {
             Remove-Item $testFile -WhatIf
             $result = Get-Item $testFile
@@ -1247,7 +1247,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
     }
 
-    Context "Valdiate Set-Content parameters" {
+    Context "Validate Set-Content parameters" {
         It "Validate Array Input for Path and Value" {
             Set-Content -Path @($testFile,$testFile2) -Value @($testContent,$testContent2)
             $content1 = Get-Content $testFile
@@ -1299,7 +1299,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
     }
 
-    Context "Valdiate Get-Content parameters" {
+    Context "Validate Get-Content parameters" {
         BeforeEach {
             Set-Content -Path $testFile -Value $testContent
             Set-Content -Path $testFile2 -Value $testContent2
@@ -1458,7 +1458,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         }
     }
 
-    Context "Valdiate Set-Location Cmdlets Parameters" {
+    Context "Validate Set-Location Cmdlets Parameters" {
         It "Without Passthru Doesn't Return a Path" {
             $result = Set-Location -Path $level1_0
             $result | Should -BeNullOrEmpty
@@ -1481,7 +1481,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         }
     }
 
-    Context "Valdiate Push-Location and Pop-Location Cmdlets Parameters" {
+    Context "Validate Push-Location and Pop-Location Cmdlets Parameters" {
         It "Verify Push + Path" {
             Push-Location -Path $level1_0
             Push-Location -Path $level2_0

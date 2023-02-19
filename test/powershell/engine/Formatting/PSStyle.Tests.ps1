@@ -312,7 +312,7 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
         $strDec.ToString("PlainText") | Should -Be $word
     }
 
-    It "String intput to Out-String should be intact with OutputRendering='<OutputRendering>'" -TestCases @(
+    It "String input to Out-String should be intact with OutputRendering='<OutputRendering>'" -TestCases @(
         @{ OutputRendering = 'Ansi'; ContainsAnsi = $true }
         @{ OutputRendering = 'Host'; ContainsAnsi = $false }
         @{ OutputRendering = 'PlainText'; ContainsAnsi = $false }

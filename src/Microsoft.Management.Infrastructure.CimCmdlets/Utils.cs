@@ -390,14 +390,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
             if (value != null)
             {
-                string trimed = value.Trim();
+                string trimmed = value.Trim();
                 // The first character should be contained in set: [A-Za-z_]
                 // Inner characters should be contained in set: [A-Za-z0-9_]
                 Regex regex = new(@"^[a-zA-Z_][a-zA-Z0-9_]*\z");
-                if (regex.IsMatch(trimed))
+                if (regex.IsMatch(trimmed))
                 {
                     DebugHelper.WriteLogEx("A valid name: {0}={1}", 0, parameterName, value);
-                    return trimed;
+                    return trimmed;
                 }
             }
 
@@ -406,7 +406,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Validate given arry argument contains all valid name (for -SelectProperties).
+        /// Validate given array argument contains all valid name (for -SelectProperties).
         /// * is valid for this case.
         /// </summary>
         /// <param name="parameterName"></param>

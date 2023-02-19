@@ -1400,7 +1400,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
     }
 }
 
-Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
+Describe "WinCompat importing should check availability of built-in modules" -Tag "CI" {
     BeforeAll {
         if (-not $IsWindows ) {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

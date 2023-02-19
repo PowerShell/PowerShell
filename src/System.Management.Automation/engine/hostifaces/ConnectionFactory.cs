@@ -177,7 +177,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates a RunspacePool
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
-        /// pool. The minimum pool size is set to <paramref name="minPoolSoze"/>.
+        /// pool. The minimum pool size is set to <paramref name="minPoolSize"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspaces that exist in this
@@ -300,7 +300,7 @@ namespace System.Management.Automation.Runspaces
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to
-        /// <paramref name="minPoolSoze"/>.
+        /// <paramref name="minPoolSize"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspace that should exist in this
@@ -332,7 +332,7 @@ namespace System.Management.Automation.Runspaces
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to
-        /// <paramref name="minPoolSoze"/>.
+        /// <paramref name="minPoolSize"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspace that should exist in this
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Runspaces
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to
-        /// <paramref name="minPoolSoze"/>.
+        /// <paramref name="minPoolSize"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspace that should exist in this
@@ -413,7 +413,7 @@ namespace System.Management.Automation.Runspaces
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to
-        /// <paramref name="minPoolSoze"/>.
+        /// <paramref name="minPoolSize"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspace that should exist in this

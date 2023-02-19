@@ -658,5 +658,5 @@ function Install-SSHRemoting
         }
     }
 
-    Write-Error "Platform not supported.  Only Windows and Ubuntu plaforms are currently supported."
+    Write-Error "Platform not supported.  Only Windows and Ubuntu platforms are currently supported."
 }

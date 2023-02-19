@@ -4,7 +4,7 @@ trigger: none
 pr: none
 
 schedules:
-  # Chrontab format, see https://en.wikipedia.org/wiki/Cron
+  # Crontab format, see https://en.wikipedia.org/wiki/Cron
   # this is in UTC
   - cron: '0 13 * * *'
     branches:

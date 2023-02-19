@@ -342,7 +342,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         It "Copy folder to remote session recursively works even if the target directory does not exist." {
             $testObject = CreateTestDirectory -setReadOnlyAttribute
             $destinationFolderPath = GetDestinationFolderPath
-            $destinationFolderPath = Join-Path $destinationFolderPath "FoderThatDoesNotExist"
+            $destinationFolderPath = Join-Path $destinationFolderPath "FolderThatDoesNotExist"
             Copy-Item -Path $testObject.SourceDirectory -ToSession $s -Destination $destinationFolderPath -Recurse -Force
 
             foreach ($file in $testObject.Files)
@@ -609,7 +609,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
                 FromSession = $true
             }
             @{
-                Path = "$env:SystemDrive\nonexistdir\*"
+                Path = "$env:SystemDrive\nonexistentdir\*"
                 Destination = "$env:SystemDrive\psTest"
                 ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
                 FromSession = $true
@@ -642,7 +642,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
                 ExpectedFullyQualifiedErrorId = "CopyItemRemoteDestinationIsNullOrEmpty,Microsoft.PowerShell.Commands.CopyItemCommand"
             }
             @{
-                Path = "$env:SystemDrive\nonexistdir\*"
+                Path = "$env:SystemDrive\nonexistentdir\*"
                 Destination = "$env:SystemDrive\psTest"
                 ExpectedFullyQualifiedErrorId = "PathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
             }

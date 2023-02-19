@@ -28,7 +28,7 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion
 
-        #region Structors
+        #region Structures
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtendedFrameworkElementAutomationPeer" /> class.

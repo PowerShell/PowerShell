@@ -298,7 +298,7 @@
         "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -TarX64 -TarArm -TarArm64 -TarMinSize",
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu18.04/Dockerfile",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
-        "DockerImageName": "ps-ubunutu-18-04",
+        "DockerImageName": "ps-ubuntu-18-04",
         "BinaryBucket": "release",
         "EnableFeature": [ "ArtifactAsFolder" ]
     },

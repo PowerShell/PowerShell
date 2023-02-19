@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell
         private static extern int SetEnv(string name, string value, bool overwrite);
 
         /// <summary>
-        /// The `sysctl` BSD sycall used to get system information on macOS.
+        /// The `sysctl` BSD syscall used to get system information on macOS.
         /// </summary>
         /// <param name="mib">The Management Information Base name, used to query information.</param>
         /// <param name="mibLength">The length of the MIB name.</param>

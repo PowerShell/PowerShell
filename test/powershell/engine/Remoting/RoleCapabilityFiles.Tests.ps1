@@ -4,7 +4,7 @@
 ## PowerShell Remoting Endpoint Role Capability Files Tests
 ##
 
-Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tests" -Tags "Feature" {
+Describe "Remote session configuration RoleDefinition RoleCapabilityFiles key tests" -Tags "Feature" {
 
     BeforeAll {
 
@@ -49,7 +49,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'CouldNotFindRoleCapabilityFile'
     }
 
-    It "Verifies incorrect role capability file extenstion error" {
+    It "Verifies incorrect role capability file extension error" {
 
         New-PSSessionConfigurationFile -Path $PSSessionConfigFile -RoleDefinitions @{
             Administrators = @{ RoleCapabilityFiles = "$BadRoleCapFile" }

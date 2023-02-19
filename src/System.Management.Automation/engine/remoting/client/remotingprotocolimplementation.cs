@@ -86,7 +86,7 @@ namespace System.Management.Automation.Remoting
                 cryptoHelper);
 
             _transportManager.DataReceived += DispatchInputQueueData;
-            _transportManager.WSManTransportErrorOccured += HandleTransportError;
+            _transportManager.WSManTransportErrorOccurred += HandleTransportError;
             _transportManager.CloseCompleted += HandleCloseComplete;
             _transportManager.DisconnectCompleted += HandleDisconnectComplete;
             _transportManager.ReconnectCompleted += HandleReconnectComplete;
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal override void CreateAsync()
         {
-            // errors are reported through WSManTransportErrorOccured event on
+            // errors are reported through WSManTransportErrorOccurred event on
             // the transport manager.
             _transportManager.CreateCompleted += HandleCreateComplete;
             _transportManager.CreateAsync();
@@ -391,13 +391,13 @@ namespace System.Management.Automation.Remoting
 
                 // clear our current close complete & Error handlers
                 _transportManager.CloseCompleted -= HandleCloseComplete;
-                _transportManager.WSManTransportErrorOccured -= HandleTransportError;
+                _transportManager.WSManTransportErrorOccurred -= HandleTransportError;
 
                 // perform other steps only after transport manager is closed.
                 _transportManager.CloseCompleted += HandleTransportCloseCompleteForRedirection;
                 // Handle errors happened while redirecting differently..We need to reset the
                 // original handlers in this case.
-                _transportManager.WSManTransportErrorOccured += HandleTransportErrorForRedirection;
+                _transportManager.WSManTransportErrorOccurred += HandleTransportErrorForRedirection;
 
                 _transportManager.PrepareForRedirection();
             }
@@ -406,23 +406,23 @@ namespace System.Management.Automation.Remoting
         private void HandleTransportCloseCompleteForRedirection(object source, EventArgs args)
         {
             _transportManager.CloseCompleted -= HandleTransportCloseCompleteForRedirection;
-            _transportManager.WSManTransportErrorOccured -= HandleTransportErrorForRedirection;
+            _transportManager.WSManTransportErrorOccurred -= HandleTransportErrorForRedirection;
 
             // reattach the close complete and error handlers
             _transportManager.CloseCompleted += HandleCloseComplete;
-            _transportManager.WSManTransportErrorOccured += HandleTransportError;
+            _transportManager.WSManTransportErrorOccurred += HandleTransportError;
 
             PerformURIRedirectionStep2(_redirectUri);
         }
 
-        private void HandleTransportErrorForRedirection(object sender, TransportErrorOccuredEventArgs e)
+        private void HandleTransportErrorForRedirection(object sender, TransportErrorOccurredEventArgs e)
         {
             _transportManager.CloseCompleted -= HandleTransportCloseCompleteForRedirection;
-            _transportManager.WSManTransportErrorOccured -= HandleTransportErrorForRedirection;
+            _transportManager.WSManTransportErrorOccurred -= HandleTransportErrorForRedirection;
 
             // reattach the close complete and error handlers
             _transportManager.CloseCompleted += HandleCloseComplete;
-            _transportManager.WSManTransportErrorOccured += HandleTransportError;
+            _transportManager.WSManTransportErrorOccurred += HandleTransportError;
 
             HandleTransportError(sender, e);
         }
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs e)
+        internal void HandleTransportError(object sender, TransportErrorOccurredEventArgs e)
         {
             Dbg.Assert(e != null, "HandleTransportError expects non-null eventargs");
             // handle uri redirections
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Remoting
                     // However instead of forwarding them to Runspace/pipeline here, an
                     // event is raised in state machine which verified that state is
                     // suitable for accepting these messages. if state is suitable statemachine
-                    // will call DoMessageForwading which will forward the messages appropriately
+                    // will call DoMessageForwarding which will forward the messages appropriately
                     RemoteSessionStateMachineEventArgs msgRcvArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.MessageReceived, null);
                     if (StateMachine.CanByPassRaiseEvent(msgRcvArg))
                     {

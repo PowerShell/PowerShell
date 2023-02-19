@@ -20,7 +20,7 @@ if(Test-Path $dotNetPath)
 Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
 Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
 
-# import the windows specific functcion only in Windows PowerShell or on Windows
+# import the windows specific function only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
 {
     Import-Module (Join-Path $PSScriptRoot 'WindowsCI.psm1') -Scope Global
@@ -228,7 +228,7 @@ function Invoke-CITest
 
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
-    # To work-around it, we exlude all categories, but 'CI' from the list
+    # To work-around it, we exclude all categories, but 'CI' from the list
     switch ($TagSet) {
         'CI' {
             Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
@@ -356,7 +356,7 @@ function Invoke-CITest
                 $arguments['Path'] = $testFiles
             }
 
-            $title = "Pester Experimental >levated - $featureName"
+            $title = "Pester Experimental >Elevated - $featureName"
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
@@ -462,10 +462,10 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
     $releaseTag = $metadata.NextReleaseTag
-    if($env:BUILD_BUILID)
+    if($env:BUILD_BUILDID)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
+        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILDID
     }
     return $releaseTag
 }
@@ -523,15 +523,15 @@ function Invoke-CIFinish
             }
 
             # Set a variable, both in the current process and in AzDevOps for the packaging stage to get the release tag
-            $env:CI_FINISH_RELASETAG=$preReleaseVersion
-            $vstsCommandString = "vso[task.setvariable variable=CI_FINISH_RELASETAG]$preReleaseVersion"
+            $env:CI_FINISH_RELEASETAG=$preReleaseVersion
+            $vstsCommandString = "vso[task.setvariable variable=CI_FINISH_RELEASETAG]$preReleaseVersion"
             Write-Verbose -Message "$vstsCommandString" -Verbose
             Write-Host -Object "##$vstsCommandString"
         }
 
         if ($Stage -contains "Package") {
             Restore-PSOptions -PSOptionsPath "${buildFolder}/psoptions.json"
-            $preReleaseVersion = $env:CI_FINISH_RELASETAG
+            $preReleaseVersion = $env:CI_FINISH_RELEASETAG
 
             # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
             switch -regex ($Runtime){
@@ -564,8 +564,8 @@ function Invoke-CIFinish
             if ($runPackageTest) {
                 # the packaging tests find the MSI package using env:PSMsiX64Path
                 $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
-                $architechture = $Runtime.Split('-')[1]
-                $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
+                $architecture = $Runtime.Split('-')[1]
+                $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architecture -MsiLocationPath $env:PSMsiX64Path
                 Write-Verbose "exe Path: $exePath" -Verbose
                 $artifacts.Add($exePath)
                 $env:PSExePath = $exePath

@@ -76,7 +76,7 @@ try
             }
 
             # A security error should be thrown
-            $expectedError.FullyQualifiedErrorId | Should -BeExactly "Modules_CannotExportMembersAccrossLanguageBoundaries,Microsoft.PowerShell.Commands.ExportModuleMemberCommand"
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "Modules_CannotExportMembersAcrossLanguageBoundaries,Microsoft.PowerShell.Commands.ExportModuleMemberCommand"
 
             # PrivateAddTypeAndRun private function should not be exposed
             $result = Get-Command -Name T1TestModule_System32\PrivateAddTypeAndRun 2> $null
@@ -389,7 +389,7 @@ try
             $module.ExportedCommands["NestedPubFnF"] | Should -Not -BeNullOrEmpty
         }
 
-        It "Verifies that an imported module that dot sources and exports via wilcard is detected and disallowed" {
+        It "Verifies that an imported module that dot sources and exports via wildcard is detected and disallowed" {
 
             try
             {
@@ -600,7 +600,7 @@ try
                 # Directly import nested TrustedImportModule_System32 module.
                 # This makes TrustedImportModule_System32 functions visible but should not use the existing loaded module
                 # since all functions are visible, but instead should re-load the module with the correct language context,
-                # ensuring only explictly exported functions are visible.
+                # ensuring only explicitly exported functions are visible.
                 Import-Module -Name $scriptModuleImportName
 
                 # Public functions should be available in the session
@@ -801,7 +801,7 @@ try
             $script:moduleFileName = Join-Path $TestDrive ($moduleName + ".psm1")
         }
 
-        It "Verifes that trusted module file exports no functions in system lockdown" {
+        It "Verifies that trusted module file exports no functions in system lockdown" {
 
             CreateModuleNames "ImportTrustedModuleWithNoFnExport_System32"
             @'
@@ -1475,7 +1475,7 @@ try
             catch { }
         }
 
-        It "Verfies that Export-ModuleMember does not throw error with context-less scriptblock" {
+        It "Verifies that Export-ModuleMember does not throw error with context-less scriptblock" {
 
             $scriptBlockCreator = [TestScriptBlockCreate]::new()
             $testScriptBlock = $scriptBlockCreator.CreateScriptBlock()

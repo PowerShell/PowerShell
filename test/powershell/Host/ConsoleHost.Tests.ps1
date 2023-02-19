@@ -4,7 +4,7 @@ using namespace System.Diagnostics
 
 # Minishell (Singleshell) is a powershell concept.
 # Its primary use-case is when somebody executes a scriptblock in the new powershell process.
-# The objects are automatically marshelled to the child process and
+# The objects are automatically marshalled to the child process and
 # back to the parent session, so users can avoid custom
 # serialization to pass objects between two processes.
 

@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
         private const string hashkey_endtime_lc = "endtime";
         private const string hashkey_userid_lc = "userid";
         private const string hashkey_data_lc = "data";
-        private const string hashkey_supress_lc = "suppresshashfilter";
+        private const string hashkey_suppress_lc = "suppresshashfilter";
 
         /// <summary>
         /// BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here.
@@ -977,7 +977,7 @@ namespace Microsoft.PowerShell.Commands
                         added = HandleContextHashValue(hash[key]);
                         break;
 
-                    case hashkey_supress_lc:
+                    case hashkey_suppress_lc:
                         break;
                     default:
                         {
@@ -1187,7 +1187,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // Build xpath for <Suppress>
                 //
-                Hashtable suppresshash = hash[hashkey_supress_lc] as Hashtable;
+                Hashtable suppresshash = hash[hashkey_suppress_lc] as Hashtable;
                 if (suppresshash != null)
                 {
                     xpathStringSuppress = BuildXPathFromHashTable(suppresshash);

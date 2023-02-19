@@ -3252,12 +3252,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is the pretty formated error record associated with the reason of failure.
+        /// This is the pretty formatted error record associated with the reason of failure.
         /// </summary>
         private ErrorRecord _failureErrorRecord;
 
         /// <summary>
-        /// This is the pretty formated error record associated with the reason of failure.
+        /// This is the pretty formatted error record associated with the reason of failure.
         /// This is set if Job state is Failed and Reason has a exception.
         /// </summary>
         internal ErrorRecord FailureErrorRecord
@@ -3595,7 +3595,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When a progress message is raised in the underlying PowerShell
-        /// add it to the jobs progress tream.
+        /// add it to the jobs progress stream.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="eventArgs">Arguments describing this event.</param>
@@ -3647,7 +3647,7 @@ namespace System.Management.Automation
         protected void StopAggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
             // Get the pipeline associated with this helper and register for appropriate events
-            RemoveAggreateCallbacksFromHelper(helper);
+            RemoveAggregateCallbacksFromHelper(helper);
 
             Pipeline pipeline = helper.Pipeline;
             pipeline.Dispose();
@@ -3661,7 +3661,7 @@ namespace System.Management.Automation
         /// job must be created to pass back to user for connection.
         /// </summary>
         /// <param name="helper">Helper class.</param>
-        protected void RemoveAggreateCallbacksFromHelper(ExecutionCmdletHelper helper)
+        protected void RemoveAggregateCallbacksFromHelper(ExecutionCmdletHelper helper)
         {
             // Remove old data output callbacks from pipeline so new callbacks can be added.
             Pipeline pipeline = helper.Pipeline;
@@ -4478,7 +4478,7 @@ namespace System.Management.Automation
                 if (helper.Pipeline.PipelineStateInfo.State == PipelineState.Disconnected)
                 {
                     // Remove data callbacks from the old helper.
-                    RemoveAggreateCallbacksFromHelper(helper);
+                    RemoveAggregateCallbacksFromHelper(helper);
 
                     // Create new helper used to create the new Disconnected PSRemoting job.
                     disconnectedJobHelpers.Add(new DisconnectedJobOperation(helper.Pipeline));

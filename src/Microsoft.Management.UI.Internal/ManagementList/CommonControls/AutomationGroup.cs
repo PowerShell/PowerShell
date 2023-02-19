@@ -7,7 +7,7 @@ using System.Windows.Controls;
 namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
-    /// Represents a decorator that is always visible in the automation tree, indicating that its descendents belong to a logical group.
+    /// Represents a decorator that is always visible in the automation tree, indicating that its descendants belong to a logical group.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class AutomationGroup : ContentControl

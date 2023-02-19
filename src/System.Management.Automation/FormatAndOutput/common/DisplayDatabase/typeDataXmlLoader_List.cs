@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                // we must have at least a definition in th elist
+                // we must have at least a definition in the list
                 if (lved.itemDefinitionList.Count == 0)
                 {
                     // Error at XPath {0} in file {1}: At least one list view item must be specified.

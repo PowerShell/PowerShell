@@ -212,9 +212,9 @@ namespace System.Management.Automation
         #region private members
 
         /// <summary>
-        /// Stringize a non-IEnum argument to a native command, adding quotes
+        /// Stringify a non-IEnum argument to a native command, adding quotes
         /// and trailing spaces as appropriate. An array gets added as multiple arguments
-        /// each of which will be stringized.
+        /// each of which will be stringified.
         /// </summary>
         /// <param name="context">Execution context instance.</param>
         /// <param name="parameter">The parameter associated with the operation.</param>

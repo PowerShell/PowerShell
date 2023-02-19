@@ -225,7 +225,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Read the 'Zone.Identifier' alternate data stream to determin SecurityZone of the file.
+        /// Read the 'Zone.Identifier' alternate data stream to determine SecurityZone of the file.
         /// </summary>
         private static SecurityZone ReadFromZoneIdentifierDataStream(string filePath)
         {

@@ -391,7 +391,7 @@ namespace System.Management.Automation
         /// <remarks>helpInfos is not null or empty.</remarks>
         private IEnumerable<HelpInfo> ForwardHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            // findout if this helpInfo needs to be processed further..
+            // find out if this helpInfo needs to be processed further..
             if (helpInfo.ForwardHelpCategory == HelpCategory.None && string.IsNullOrEmpty(helpInfo.ForwardTarget))
             {
                 // this helpInfo is final...so store this in result

@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private EnumerableExpansion GetExpansionState(PSObject so)
         {
-            // if the command line swtich has been specified, use this as an override
+            // if the command line switch has been specified, use this as an override
             if (_parameters != null && _parameters.expansion.HasValue)
             {
                 return _parameters.expansion.Value;
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             FormatEntry fe = new FormatEntry();
             cve.formatValueList.Add(fe);
 
-            // Formating system writes newline before each object
+            // Formatting system writes newline before each object
             // so no need to add newline here like:
             //     fe.formatValueList.Add(new FormatNewLine());
             fed.formatEntryInfo = cve;
@@ -475,7 +475,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Write a payplad object by properly wrapping it into
+        /// Write a payload object by properly wrapping it into
         /// a FormatEntry object.
         /// </summary>
         /// <param name="so">Object to process.</param>

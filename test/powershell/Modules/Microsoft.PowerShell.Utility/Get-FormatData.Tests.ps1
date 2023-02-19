@@ -25,7 +25,7 @@ Describe "Get-FormatData" -Tags "CI" {
             if ($IsWindows) {
                 $expectedCount = 4
             } else {
-                # UnixStat addes extra one
+                # UnixStat adds extra one
                 $expectedCount = 5
             }
 

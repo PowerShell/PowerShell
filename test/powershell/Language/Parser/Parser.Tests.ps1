@@ -634,7 +634,7 @@ foo``u{2195}abc
         { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i in $files ;$count' } | Should -Throw -ErrorId "ParseException"
     }
 
-    It "Test that if an exception is thrown from the try block it will be caught in the appropropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
+    It "Test that if an exception is thrown from the try block it will be caught in the appropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
         $result = ExecuteCommand '
             try {
                 try { throw [ArgumentException]::new() }

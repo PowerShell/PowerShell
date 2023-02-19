@@ -956,7 +956,7 @@ namespace System.Management.Automation
     /// Adapts only static methods and SystemProperties of a
     /// ManagementClass object.
     /// </summary>
-    internal class ManagementClassApdapter : BaseWMIAdapter
+    internal class ManagementClassAdapter : BaseWMIAdapter
     {
         protected override void AddAllProperties<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members)
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
     /// Deals with ManagementObject objects.
     /// This class do not adapt static methods.
     /// </summary>
-    internal class ManagementObjectAdapter : ManagementClassApdapter
+    internal class ManagementObjectAdapter : ManagementClassAdapter
     {
         protected override void AddAllProperties<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members)

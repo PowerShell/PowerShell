@@ -200,7 +200,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Gets the text from a property of type PSObject[] where the first object has a text property.
         /// </summary>
-        /// <param name="psObj">Objhect to get text from.</param>
+        /// <param name="psObj">Object to get text from.</param>
         /// <param name="propertyText">Property with PSObject[] containing text.</param>
         /// <returns>The text from a property of type PSObject[] where the first object has a text property.</returns>
         private static string GetTextFromArray(PSObject psObj, string propertyText)
@@ -248,12 +248,12 @@ namespace Microsoft.Management.UI.Internal
         /// Splits the string adding indentation before each line.
         /// </summary>
         /// <param name="str">String to add indentation to.</param>
-        /// <param name="numberOfIdents">Number of indentations.</param>
+        /// <param name="numberOfIndents">Number of indentations.</param>
         /// <returns>The string indented.</returns>
-        private static string AddIndent(string str, int numberOfIdents)
+        private static string AddIndent(string str, int numberOfIndents)
         {
             StringBuilder indent = new StringBuilder();
-            indent.Append(' ', numberOfIdents * HelpParagraphBuilder.IndentSize);
+            indent.Append(' ', numberOfIndents * HelpParagraphBuilder.IndentSize);
             return HelpParagraphBuilder.AddIndent(str, indent.ToString());
         }
 
@@ -416,22 +416,22 @@ namespace Microsoft.Management.UI.Internal
                         parameterNameOptionalCloseBrace = "]";
                     }
 
-                    string paramterPrefix = string.Format(
+                    string parameterPrefix = string.Format(
                         CultureInfo.CurrentCulture,
                         "{0}{1}-",
                         parameterOptionalOpenBrace,
                         parameterNameOptionalOpenBrace);
 
-                    this.AddText(paramterPrefix, false);
+                    this.AddText(parameterPrefix, false);
                     this.AddText(parameterName, true);
 
-                    string paramterSuffix = string.Format(
+                    string parameterSuffix = string.Format(
                         CultureInfo.CurrentCulture,
                         "{0} {1}{2} ",
                         parameterNameOptionalCloseBrace,
                         parameterType,
                         parameterOptionalCloseBrace);
-                    this.AddText(paramterSuffix, false);
+                    this.AddText(parameterSuffix, false);
                 }
 
                 string commonParametersText = string.Format(
@@ -911,7 +911,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="setting">True if it should add the segment.</param>
         /// <param name="sectionTitle">Title of the section.</param>
-        /// <param name="inputOrOutputProperty">Property with the outter object.</param>
+        /// <param name="inputOrOutputProperty">Property with the outer object.</param>
         /// <param name="inputOrOutputInnerProperty">Property with the inner object.</param>
         private void AddInputOrOutputEntries(bool setting, string sectionTitle, string inputOrOutputProperty, string inputOrOutputInnerProperty)
         {

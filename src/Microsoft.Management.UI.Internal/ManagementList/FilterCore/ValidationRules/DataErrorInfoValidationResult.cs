@@ -37,7 +37,7 @@ namespace Microsoft.Management.UI.Internal
         private static readonly DataErrorInfoValidationResult valid = new DataErrorInfoValidationResult(true, null, string.Empty);
 
         /// <summary>
-        /// Geta an instance of DataErrorInfoValidationResult that corresponds
+        /// Get an instance of DataErrorInfoValidationResult that corresponds
         /// to a valid result.
         /// </summary>
         public static new DataErrorInfoValidationResult ValidResult

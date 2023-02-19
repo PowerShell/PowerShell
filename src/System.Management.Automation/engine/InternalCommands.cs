@@ -1256,7 +1256,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Implements a cmdlet that applys a script block
+    /// Implements a cmdlet that applies a script block
     /// to each element of the pipeline. If the result of that
     /// application is true, then the current pipeline object
     /// is passed on, otherwise it is dropped.

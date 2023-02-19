@@ -47,7 +47,7 @@ Describe "FormatHex" -tags "CI" {
         $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsMacOS -or (-not $certProviderAvailable))
     }
 
-    Context "InputObject Paramater" {
+    Context "InputObject Parameter" {
         BeforeAll {
             enum TestEnum {
                 TestOne = 1; TestTwo = 2; TestThree = 3; TestFour = 4

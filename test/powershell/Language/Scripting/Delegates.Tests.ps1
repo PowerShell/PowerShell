@@ -80,7 +80,7 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
         ($gl + 1) | Should -BeExactly (lineno)
     }
 
-    #multiple args, differnt return type
+    #multiple args, different return type
     For($i = 2; $i -le 9; $i++)
     {
         $str = 'System.Func`{0}' -f $i

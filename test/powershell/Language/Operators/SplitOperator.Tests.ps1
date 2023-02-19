@@ -43,7 +43,7 @@ Describe "Split Operator" -Tags CI {
             $res[0] | Should -Be "a b c d"
         }
 
-        It "Binary split operator can work with different delimeter than split string" {
+        It "Binary split operator can work with different delimiter than split string" {
             $res = "a b c d" -split " ",8
             $res.count | Should -Be 4
             $res[0] | Should -Be "a"

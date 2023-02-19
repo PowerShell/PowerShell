@@ -178,7 +178,7 @@ function Get-ChangeLog
         ## but not reachable from the last release tag. Instead, we need to exclude the commits that were cherry-picked,
         ## and only include the commits that are not in the last release into the change log.
 
-        # Find the commits that were only in the orginal master, excluding those that were cherry-picked to release branch.
+        # Find the commits that were only in the original master, excluding those that were cherry-picked to release branch.
         $new_commits_from_other_parent = git --no-pager log --first-parent --cherry-pick --right-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
         # Find the commits that were only in the release branch, excluding those that were cherry-picked from master branch.
         $new_commits_from_last_release = git --no-pager log --first-parent --cherry-pick --left-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
@@ -433,7 +433,7 @@ function Get-NewOfficalPackage
         # get the package references
         $packages=$csprojXml.Project.ItemGroup.PackageReference
 
-        # check to see if there is a newer package for each refernce
+        # check to see if there is a newer package for each reference
         foreach ($package in $packages)
         {
             # Get the name of the package

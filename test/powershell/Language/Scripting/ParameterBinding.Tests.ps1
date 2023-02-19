@@ -505,7 +505,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         Get-TestCmdlet -MyParameter @{ a = 42 } | Should -BeExactly 'hashtable'
     }
 
-    It 'Parameter pasing is consuming enumerators' {
+    It 'Parameter passing is consuming enumerators' {
         $a = 1..4
         $b = $a.getenumerator()
         $null = $b.MoveNext()

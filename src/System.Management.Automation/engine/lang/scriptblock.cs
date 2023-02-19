@@ -392,7 +392,7 @@ namespace System.Management.Automation
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects.</returns>
-        /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred.</exception>
+        /// <exception cref="RuntimeException">Thrown if a script runtime exception occurred.</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement.</exception>
         public Collection<PSObject> Invoke(params object[] args) =>
             DoInvoke(dollarUnder: AutomationNull.Value, input: AutomationNull.Value, args);
@@ -513,7 +513,7 @@ namespace System.Management.Automation
         /// <param name="args">The arguments to pass to this scriptblock.</param>
         /// <returns>The object(s) generated during the execution of the
         /// script block. They may or may not be wrapped in PSObject. It's up to the caller to check.</returns>
-        /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred.</exception>
+        /// <exception cref="RuntimeException">Thrown if a script runtime exception occurred.</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement.</exception>
         public object InvokeReturnAsIs(params object[] args)
             => DoInvokeReturnAsIs(

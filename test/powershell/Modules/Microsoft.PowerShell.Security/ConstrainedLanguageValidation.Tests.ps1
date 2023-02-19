@@ -48,7 +48,7 @@ try
             $err.FullyQualifiedErrorId | Should -BeExactly "Modules_ImportPSFileNotAllowedInConstrainedLanguage,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
 
-        It "Verifies that ps1 script file can be imported in FullLangauge mode" {
+        It "Verifies that ps1 script file can be imported in FullLanguage mode" {
 
             { Import-Module -Name $scriptFilePath } | Should -Not -Throw
         }

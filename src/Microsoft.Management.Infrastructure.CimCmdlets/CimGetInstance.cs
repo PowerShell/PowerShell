@@ -82,7 +82,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
             string nameSpace;
-            List<CimSessionProxy> proxys = new();
+            List<CimSessionProxy> proxies = new();
             bool isGetCimInstanceCommand = cmdlet is GetCimInstanceCommand;
             CimInstance targetCimInstance = null;
             switch (cmdlet.ParameterSetName)
@@ -97,7 +97,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
 
-                        proxys.Add(proxy);
+                        proxies.Add(proxy);
                     }
 
                     break;
@@ -112,7 +112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
 
-                        proxys.Add(proxy);
+                        proxies.Add(proxy);
                     }
 
                     break;
@@ -128,7 +128,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             SetPreProcess(proxy, cmdlet as GetCimInstanceCommand);
                         }
 
-                        proxys.Add(proxy);
+                        proxies.Add(proxy);
                     }
 
                     break;
@@ -145,7 +145,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         string query = CreateQuery(cmdlet);
                         DebugHelper.WriteLogEx(@"Query = {0}", 1, query);
-                        foreach (CimSessionProxy proxy in proxys)
+                        foreach (CimSessionProxy proxy in proxies)
                         {
                             proxy.QueryInstancesAsync(nameSpace,
                                 ConstValue.GetQueryDialectWithDefault(GetQueryDialect(cmdlet)),
@@ -154,7 +154,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
                     else
                     {
-                        foreach (CimSessionProxy proxy in proxys)
+                        foreach (CimSessionProxy proxy in proxies)
                         {
                             proxy.EnumerateInstancesAsync(nameSpace, GetClassName(cmdlet));
                         }
@@ -166,7 +166,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         CimInstance instance = GetCimInstanceParameter(cmdlet);
                         nameSpace = ConstValue.GetNamespace(instance.CimSystemProperties.Namespace);
-                        foreach (CimSessionProxy proxy in proxys)
+                        foreach (CimSessionProxy proxy in proxies)
                         {
                             proxy.GetInstanceAsync(nameSpace, instance);
                         }
@@ -176,7 +176,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.QueryComputerSet:
                 case CimBaseCommand.QuerySessionSet:
                     nameSpace = ConstValue.GetNamespace(GetNamespace(cmdlet));
-                    foreach (CimSessionProxy proxy in proxys)
+                    foreach (CimSessionProxy proxy in proxies)
                     {
                         proxy.QueryInstancesAsync(nameSpace,
                             ConstValue.GetQueryDialectWithDefault(GetQueryDialect(cmdlet)),
@@ -186,7 +186,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
                 case CimBaseCommand.ResourceUriSessionSet:
                 case CimBaseCommand.ResourceUriComputerSet:
-                    foreach (CimSessionProxy proxy in proxys)
+                    foreach (CimSessionProxy proxy in proxies)
                     {
                         proxy.EnumerateInstancesAsync(GetNamespace(cmdlet), GetClassName(cmdlet));
                     }

@@ -676,7 +676,7 @@ namespace System.Management.Automation
                 }
             } while (current != topLevelParent);
 
-            Diagnostics.Assert(false, "Unreachable Code. Top level parent is eitehr ScriptBlockAst or FunctionDefinitionAst, so it should return within the loop for sure.");
+            Diagnostics.Assert(false, "Unreachable Code. Top level parent is either ScriptBlockAst or FunctionDefinitionAst, so it should return within the loop for sure.");
             // I don't think it's reachable, but if it happens, just assume there are UsingExpressions in different scopes.
             return true;
         }

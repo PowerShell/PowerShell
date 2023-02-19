@@ -243,7 +243,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         }
     }
 
-    It 'allowes [ordered] attribute inside methods' {
+    It 'allows [ordered] attribute inside methods' {
         class A
         {
             $h

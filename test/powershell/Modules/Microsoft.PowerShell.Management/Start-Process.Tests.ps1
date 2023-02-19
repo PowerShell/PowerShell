@@ -198,7 +198,7 @@ Describe "Start-Process" -Tags "Feature" {
             Get-Content -LiteralPath $outputFile | Should -BeExactly "1;$userName"
 
             # Check that:
-            # 1. Environment variables is resetted (TestEnvVariable is removed)
+            # 1. Environment variables is reset (TestEnvVariable is removed)
             # 2. Environment variables comes from current user profile
             Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
             Get-Content -LiteralPath $outputFile | Should -BeExactly ";$userName"

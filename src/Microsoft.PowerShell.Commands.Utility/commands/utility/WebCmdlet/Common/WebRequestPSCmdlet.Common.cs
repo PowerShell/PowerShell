@@ -1121,7 +1121,7 @@ namespace Microsoft.PowerShell.Commands
                 MultipartFormDataContent formData = new();
                 foreach (DictionaryEntry formEntry in Form)
                 {
-                    // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
+                    // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerating top level IEnumerables.
                     AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
                 }
 

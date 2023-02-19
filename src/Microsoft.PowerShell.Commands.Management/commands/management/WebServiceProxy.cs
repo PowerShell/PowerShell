@@ -395,8 +395,8 @@ namespace Microsoft.PowerShell.Commands
             // generate the hashcode of the CodeCompileUnit
             _sourceHash = codegenerator.ToString().GetHashCode();
 
-            // if the sourcehash matches the hashcode in the cache,the proxy hasnt changed and so
-            // return the instance of th eproxy in the cache
+            // if the sourcehash matches the hashcode in the cache,the proxy hasn't changed and so
+            // return the instance of the proxy in the cache
             if (s_srccodeCache.ContainsKey(_sourceHash))
             {
                 object obj;

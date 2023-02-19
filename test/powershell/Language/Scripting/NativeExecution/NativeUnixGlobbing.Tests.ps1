@@ -103,7 +103,7 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
         }
         Invoke-Expression "Invoke-Echo -quotedArg:$arg" | Should -BeExactly "-quotedArg:*"
 
-        # When specifing a space after the parameter, the space is removed when splatting.
+        # When specifying a space after the parameter, the space is removed when splatting.
         # This behavior is debatable, but it's worth adding this test anyway to detect
         # a change in behavior.
         Invoke-Expression "Invoke-Echo -quotedArg: $arg" | Should -BeExactly "-quotedArg:*"

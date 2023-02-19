@@ -1906,7 +1906,7 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
         {
-            Diagnostics.Assert(FoundError, "an error should have been reported elsewhere, making this redunant");
+            Diagnostics.Assert(FoundError, "an error should have been reported elsewhere, making this redundant");
             ReportError(attributeAst,
                 nameof(ParserStrings.AttributeNotSupportedInDataSection),
                 ParserStrings.AttributeNotSupportedInDataSection);

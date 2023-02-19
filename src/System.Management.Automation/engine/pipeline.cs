@@ -661,7 +661,7 @@ namespace System.Management.Automation.Internal
 
             // If a terminating error occurred, report it now.
             // This pipeline could have been stopped asynchronously, by 'Ctrl+c' manually or
-            // 'PowerShell.Stop' programatically. We need to check and see if that's the case.
+            // 'PowerShell.Stop' programmatically. We need to check and see if that's the case.
             // An example:
             // - 'Start-Sleep' is running in this pipeline, and 'pipelineProcessor.Stop' gets
             //   called on a different thread, which sets a 'PipelineStoppedException' object

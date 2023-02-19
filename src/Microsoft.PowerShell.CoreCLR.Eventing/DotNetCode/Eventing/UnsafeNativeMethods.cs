@@ -43,7 +43,7 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_BAD_PATHNAME = 0xA1;
         internal const int ERROR_ALREADY_EXISTS = 0xB7;
         internal const int ERROR_ENVVAR_NOT_FOUND = 0xCB;
-        internal const int ERROR_FILENAME_EXCED_RANGE = 0xCE;  // filename too long
+        internal const int ERROR_FILENAME_EXCEED_RANGE = 0xCE;  // filename too long
         internal const int ERROR_PIPE_BUSY = 0xE7;  // 231
         internal const int ERROR_NO_DATA = 0xE8;  // 232
         internal const int ERROR_PIPE_NOT_CONNECTED = 0xE9;  // 233

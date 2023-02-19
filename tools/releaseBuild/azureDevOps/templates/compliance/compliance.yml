@@ -48,7 +48,7 @@ jobs:
       optionsPE: '1|2|3|4'
       # disable history management
       optionsHMENABLE: 0
-      # Excluclusion access database
+      # Exclusion access database
       optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
       # Terms Exclusion xml file
       optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml

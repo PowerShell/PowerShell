@@ -138,7 +138,7 @@ Describe "Command Discovery tests" -Tags "CI" {
 
             $shouldNotExecuteCases = @(
                 @{command = 'subFolder\[test1].ps1' ; testName = 'Relative path that where module qualified syntax overlaps'; ExpectedErrorId = 'CouldNotAutoLoadModule'}
-                @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matctching multiple files'}
+                @{command = '.\[12].ps1' ; testName = 'relative path with bracket wildcard matching multiple files'}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1') ; testName = 'fully qualified path with bracket wildcard matching multiple files'}
             )
 
@@ -185,8 +185,8 @@ Describe "Command Discovery tests" -Tags "CI" {
                 @{command = (Join-Path ${TestDrive}  -ChildPath '?[tb]est1?.ps1'); expectedCommand = '[test1].ps1'; expectedCommandCount =1 ; name = '''.\?[tb]est1?.ps1'' by fully qualified path'}
                 @{command = '.\[test1].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =1; name = '''.\[test1].ps1'''}
                 @{command = (Join-Path ${TestDrive}  -ChildPath '[test1].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =1 ; name = '''.\[test1].ps1'' by fully qualified path'}
-                @{command = '.\[12].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =0; name = 'relative path with bracket wildcard matctching multiple files'}
-                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =0 ; name = 'fully qualified path with bracket wildcard matctching multiple files'}
+                @{command = '.\[12].ps1'; expectedCommand = '1.ps1'; expectedCommandCount =0; name = 'relative path with bracket wildcard matching multiple files'}
+                @{command = (Join-Path ${TestDrive}  -ChildPath '[12].ps1'); expectedCommand = '1.ps1'; expectedCommandCount =0 ; name = 'fully qualified path with bracket wildcard matching multiple files'}
             )
 
             Push-Location ${TestDrive}\

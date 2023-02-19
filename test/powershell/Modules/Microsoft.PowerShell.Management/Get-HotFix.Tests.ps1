@@ -51,7 +51,7 @@ Describe "Get-HotFix Tests" -Tag CI {
         elseif ($qfe.Count -gt 0) {
             $description = $qfe[0].Description
             $testQfes = $qfe | Where-Object { $_.Description -eq $description }
-            $hotfixes = Get-HotFix -Desscription $description
+            $hotfixes = Get-HotFix -Description $description
         }
 
         # if no applicable qfes are found on test system, this test will still

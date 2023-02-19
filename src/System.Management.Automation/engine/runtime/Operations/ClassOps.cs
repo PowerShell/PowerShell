@@ -237,7 +237,7 @@ namespace System.Management.Automation.Internal
             {
                 // '_boundScriptBlock.Value' for a thread will live until
                 //  - the thread is gone, OR
-                //  - the dyanmic assembly holding this wrapper instance is GC collected.
+                //  - the dynamic assembly holding this wrapper instance is GC collected.
                 // We don't hold on the SessionState object, so that GC can collect it as appropriate.
                 _boundScriptBlock.Value.SessionStateInternal = null;
             }
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Internal
             {
                 // '_boundScriptBlock.Value' for a thread will live until
                 //  - the thread is gone, OR
-                //  - the dyanmic assembly holding this wrapper instance is GC collected.
+                //  - the dynamic assembly holding this wrapper instance is GC collected.
                 // We don't hold on the SessionState object, so that GC can collect it as appropriate.
                 _boundScriptBlock.Value.SessionStateInternal = null;
             }

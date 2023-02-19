@@ -37,7 +37,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $PSNativeCommandUseErrorActionPreference = $true
         }
 
-        It 'Non-zero exit code throws teminating error for $ErrorActionPreference = ''Stop''' {
+        It 'Non-zero exit code throws terminating error for $ErrorActionPreference = ''Stop''' {
             $ErrorActionPreference = 'Stop'
 
             { testexe -returncode 1 } | Should -Throw -ErrorId 'ProgramExitedWithNonZeroCode'
@@ -47,7 +47,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $error[0].TargetObject | Should -BeExactly $exePath
         }
 
-        It 'Non-zero exit code outputs a non-teminating error for $ErrorActionPreference = ''Continue''' {
+        It 'Non-zero exit code outputs a non-terminating error for $ErrorActionPreference = ''Continue''' {
             $ErrorActionPreference = 'Continue'
 
             $stderr = testexe -returncode 1 2>&1
@@ -70,7 +70,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $stderr[1].Exception.Message | Should -BeExactly "Program `"$exeName`" ended with non-zero exit code: 1."
         }
 
-        It 'Non-zero exit code generates a non-teminating error for $ErrorActionPreference = ''SilentlyContinue''' {
+        It 'Non-zero exit code generates a non-terminating error for $ErrorActionPreference = ''SilentlyContinue''' {
             $ErrorActionPreference = 'SilentlyContinue'
 
             testexe -returncode 1 > $null

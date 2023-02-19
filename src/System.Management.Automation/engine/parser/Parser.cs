@@ -759,7 +759,7 @@ namespace System.Management.Automation.Language
             }
 
             var data = hashtable as Hashtable;
-            Diagnostics.Assert((data != null), "IsConstantValueVisitor.IsConstant() should return false when the specified HashtableAst is not a avalid Hashtable");
+            Diagnostics.Assert((data != null), "IsConstantValueVisitor.IsConstant() should return false when the specified HashtableAst is not a valid Hashtable");
             result = data;
             return true;
         }
@@ -3991,7 +3991,7 @@ namespace System.Management.Automation.Language
                     }
                 }
                 // commandast
-                // elements: instancename/dynamickeyword/hashtable or scripblockexpress
+                // elements: instancename/dynamickeyword/hashtable or scriptblockexpress
                 if (body == null)
                 {
                     // Failed to read the statement body

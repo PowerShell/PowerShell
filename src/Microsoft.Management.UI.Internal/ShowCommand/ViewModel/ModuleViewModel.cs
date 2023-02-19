@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="filterPattern">Pattern corresponding to filter.</param>
         /// <param name="commandName">Command name string.</param>
         /// <param name="filter">Filter string.</param>
-        /// <returns>True if coparisonText matches str or pattern.</returns>
+        /// <returns>True if comparisonText matches str or pattern.</returns>
         private static bool Matches(WildcardPattern filterPattern, string commandName, string filter)
         {
             if (filterPattern != null)

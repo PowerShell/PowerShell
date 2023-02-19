@@ -56,20 +56,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
-            List<CimSessionProxy> proxys = new();
+            List<CimSessionProxy> proxies = new();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:
                     foreach (string computerName in computerNames)
                     {
-                        proxys.Add(CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet));
+                        proxies.Add(CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet));
                     }
 
                     break;
                 case CimBaseCommand.CimInstanceSessionSet:
                     foreach (CimSession session in GetCimSession(cmdlet))
                     {
-                        proxys.Add(CreateSessionProxy(session, cmdlet));
+                        proxies.Add(CreateSessionProxy(session, cmdlet));
                     }
 
                     break;
@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     }
 
                     string target = cmdlet.CimInstance.ToString();
-                    foreach (CimSessionProxy proxy in proxys)
+                    foreach (CimSessionProxy proxy in proxies)
                     {
                         if (!cmdlet.ShouldProcess(target, action))
                         {

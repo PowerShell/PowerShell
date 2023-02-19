@@ -742,7 +742,7 @@ namespace System.Management.Automation.Remoting.Client
                                 PSRemotingErrorId.IPCErrorProcessingServerData,
                                 RemotingErrorIdStrings.IPCErrorProcessingServerData,
                                 exception.Message);
-                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                        RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
                     }
                 }
             }
@@ -808,7 +808,7 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessReportedError,
                 RemotingErrorIdStrings.IPCServerProcessReportedError,
                 data);
-            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.Unknown));
+            RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.Unknown));
         }
 
         #endregion
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void OnCloseTimeOutTimerElapsed(object source)
         {
             PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCCloseTimedOut, RemotingErrorIdStrings.IPCCloseTimedOut);
-            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
+            RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
         }
 
         #endregion
@@ -1163,7 +1163,7 @@ namespace System.Management.Automation.Remoting.Client
                 PSRemotingTransportException psrte = new PSRemotingTransportException(w32e, RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
                     w32e.Message);
                 psrte.ErrorCode = w32e.HResult;
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
+                TransportErrorOccurredEventArgs eventargs = new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
                 RaiseErrorHandler(eventargs);
                 return;
             }
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation.Remoting.Client
                 PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCExceptionLaunchingProcess,
                 RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
                     e.Message);
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
+                TransportErrorOccurredEventArgs eventargs = new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.CreateShellEx);
                 RaiseErrorHandler(eventargs);
                 return;
             }
@@ -1373,7 +1373,7 @@ namespace System.Management.Automation.Remoting.Client
             var psrte = new PSRemotingTransportException(
                 PSRemotingErrorId.IPCServerProcessExited,
                 exitErrorMsg);
-            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
+            RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, transportMethod));
         }
 
         #endregion
@@ -1451,7 +1451,7 @@ namespace System.Management.Automation.Remoting.Client
                             PSRemotingErrorId.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.HyperVSocketTransportProcessEnded);
-                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                        RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
                         break;
                     }
 
@@ -1487,7 +1487,7 @@ namespace System.Management.Automation.Remoting.Client
                     PSRemotingErrorId.IPCServerProcessReportedError,
                     RemotingErrorIdStrings.IPCServerProcessReportedError,
                     RemotingErrorIdStrings.HyperVSocketTransportProcessEnded);
-                RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
             }
         }
 
@@ -1758,7 +1758,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (!_connectionEstablished)
             {
-                // If the connection is not yet estalished then clean up any existing connection state.
+                // If the connection is not yet established then clean up any existing connection state.
                 CloseConnection();
             }
         }
@@ -1866,7 +1866,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void HandleSSHError(PSRemotingTransportException psrte)
         {
-            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
+            RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
             CloseConnection();
         }
 
@@ -2024,7 +2024,7 @@ namespace System.Management.Automation.Remoting.Client
                             PSRemotingErrorId.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.NamedPipeTransportProcessEnded);
-                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                        RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
                         break;
                     }
 
@@ -2256,7 +2256,7 @@ namespace System.Management.Automation.Remoting.Client
                 catch (IOException e)
                 {
                     RaiseErrorHandler(
-                        new TransportErrorOccuredEventArgs(
+                        new TransportErrorOccurredEventArgs(
                             new PSRemotingTransportException(RemotingErrorIdStrings.NamedPipeTransportProcessEnded, e), TransportMethodEnum.CloseShellOperationEx));
                 }
             }
@@ -2382,7 +2382,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             PSRemotingTransportException psrte = new PSRemotingTransportException(RemotingErrorIdStrings.IPCSignalTimedOut);
-            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+            RaiseErrorHandler(new TransportErrorOccurredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
         }
 
         private void StopSignalTimerAndDecrementOperations()
@@ -2505,7 +2505,7 @@ namespace System.Management.Automation.Remoting.Server
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
 
-            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            this.WSManTransportErrorOccurred += (object sender, TransportErrorOccurredEventArgs e) => 
             {
                 string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
                 _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));
@@ -2612,14 +2612,14 @@ namespace System.Management.Automation.Remoting.Server
             _powershellInstanceId = powershellInstanceId;
             this.TypeTable = typeTableToUse;
 
-            this.WSManTransportErrorOccured += HandleWSManTransportError;
+            this.WSManTransportErrorOccurred += HandleWSManTransportError;
         }
 
         #endregion
 
         #region Private Methods
 
-        private void HandleWSManTransportError(object sender, TransportErrorOccuredEventArgs e)
+        private void HandleWSManTransportError(object sender, TransportErrorOccurredEventArgs e)
         {
             _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, e.Exception.TransportMessage));
         }

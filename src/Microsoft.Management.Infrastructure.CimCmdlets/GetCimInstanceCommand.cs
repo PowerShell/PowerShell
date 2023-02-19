@@ -369,7 +369,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// The following is the definition of the input parameter "Shallow".
         /// If the switch is set to True, only instance of the class identified by
         /// Namespace + ClassName will be returned. If the switch is not set, instances
-        /// of the above class and of all of its descendents will be returned (the
+        /// of the above class and of all of its descendants will be returned (the
         /// enumeration will cascade the class inheritance hierarchy).
         /// </para>
         /// </summary>

@@ -514,8 +514,8 @@ namespace Microsoft.PowerShell.Commands
             if (expressionResults.Count > 1)
             {
                 ErrorRecord errorRecord = new(
-                    PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.MutlipleExpandProperties, ExpandProperty),
-                    "MutlipleExpandProperties",
+                    PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.MultipleExpandProperties, ExpandProperty),
+                    "MultipleExpandProperties",
                     ErrorCategory.InvalidArgument,
                     inputObject);
                 throw new SelectObjectException(errorRecord);

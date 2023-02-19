@@ -96,7 +96,7 @@ Describe "Split-Path" -Tags "CI" {
 	Split-Path -Parent "\\server1\share1"        | Should -BeExactly "${dirSep}${dirSep}server1"
     }
 
-    It 'Does not split a drive leter'{
+    It 'Does not split a drive letter'{
     Split-Path -Path 'C:\' | Should -BeNullOrEmpty
     }
 }

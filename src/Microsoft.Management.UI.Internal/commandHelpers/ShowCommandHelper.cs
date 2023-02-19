@@ -409,7 +409,7 @@ Function PSGetSerializedShowCommandInfo
 
         #region public Dispose
         /// <summary>
-        /// Dispose method in IDisposeable.
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -942,7 +942,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Called from CallMethodThatShowsDialog as the thtead start when there is no host window.
+        /// Called from CallMethodThatShowsDialog as the thread start when there is no host window.
         /// </summary>
         private void PlainInvokeAndShowDialog()
         {

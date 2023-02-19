@@ -220,7 +220,7 @@ Describe "Tests conversion of deserialized types to original type using object p
         }
     }
 
-    Context 'Type conversion and parameter binding of deserialized Powershell class with a defualt constructor and a constructor' {
+    Context 'Type conversion and parameter binding of deserialized Powershell class with a default constructor and a constructor' {
         BeforeAll {
             class PSClass2 {
                 [string] $name = "default"

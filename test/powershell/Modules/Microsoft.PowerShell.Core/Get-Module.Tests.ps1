@@ -235,16 +235,16 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     Context "Module analysis shouldn't load assembly" {
         BeforeAll {
             $tempModulePath = Join-Path $TestDrive "TempModules"
-            $testModuleDir = Join-Path $tempModulePath "MyModuelTest"
-            $moduleManifest = Join-Path $testModuleDir "MyModuelTest.psd1"
-            $assemblyPath = Join-Path $testModuleDir "MyModuelTestCommandAssembly.dll"
+            $testModuleDir = Join-Path $tempModulePath "MyModuleTest"
+            $moduleManifest = Join-Path $testModuleDir "MyModuleTest.psd1"
+            $assemblyPath = Join-Path $testModuleDir "MyModuleTestCommandAssembly.dll"
 
             $null = New-Item $testModuleDir -ItemType Directory -ErrorAction SilentlyContinue
             if (-not (Test-Path $moduleManifest))
             {
                 Set-Content $moduleManifest -Value @'
     @{
-        RootModule = 'MyModuelTestCommandAssembly.dll'
+        RootModule = 'MyModuleTestCommandAssembly.dll'
         ModuleVersion = '0.0.1'
         GUID = '5776ed43-1607-4e64-be76-acacdf8e9c8c'
         FunctionsToExport = @()
@@ -258,7 +258,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
     using System.Management.Automation;
 
     [Cmdlet("Get", "Test")]
-    public class MyModuelTestCommand : PSCmdlet
+    public class MyModuleTestCommand : PSCmdlet
     {
         protected override void ProcessRecord()
         {
@@ -275,7 +275,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         It "'Get-Module -ListAvailable' should not load the module assembly" {
             ## $fullName should be null and thus the result should just be the module's name.
             $result = & "$PSHOME/pwsh" -noprofile -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
-            $result | Should -BeExactly "MyModuelTest"
+            $result | Should -BeExactly "MyModuleTest"
         }
     }
 }

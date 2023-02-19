@@ -526,7 +526,7 @@ namespace System.Management.Automation
         /// part of the pattern should match
         /// any string, including an empty string.
         /// </summary>
-        protected abstract void AppendAsterix();
+        protected abstract void AppendAsterisk();
 
         /// <summary>
         /// Called from <see cref="Parse"/> method to indicate that the next
@@ -667,7 +667,7 @@ namespace System.Management.Automation
                 {
                     if (c == '*' && !previousCharacterIsAnEscape)
                     {
-                        parser.AppendAsterix();
+                        parser.AppendAsterisk();
                     }
                     else if (c == '?' && !previousCharacterIsAnEscape)
                     {
@@ -808,7 +808,7 @@ namespace System.Management.Automation
             AppendLiteralCharacter(_regexPattern, c);
         }
 
-        protected override void AppendAsterix()
+        protected override void AppendAsterisk()
         {
             _regexPattern.Append(".*");
         }
@@ -1170,7 +1170,7 @@ namespace System.Management.Automation
             }
         }
 
-        private sealed class AsterixElement : PatternElement
+        private sealed class AsteriskElement : PatternElement
         {
             public override void ProcessStringCharacter(
                             char currentStringCharacter,
@@ -1220,9 +1220,9 @@ namespace System.Management.Automation
                 _patternElements.Add(new LiteralCharacterElement(c));
             }
 
-            protected override void AppendAsterix()
+            protected override void AppendAsterisk()
             {
-                _patternElements.Add(new AsterixElement());
+                _patternElements.Add(new AsteriskElement());
             }
 
             protected override void AppendQuestionMark()
@@ -1307,7 +1307,7 @@ namespace System.Management.Automation
             _result.Append(c);
         }
 
-        protected override void AppendAsterix()
+        protected override void AppendAsterisk()
         {
             _result.Append('*');
         }

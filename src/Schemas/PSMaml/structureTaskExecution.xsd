@@ -72,7 +72,7 @@
           <restriction base="string">
             <enumeration value="Ctrl"/>
             <enumeration value="Alt"/>
-            <enumeration value="Shft"/>
+            <enumeration value="Shift"/>
             <enumeration value="None"/>
           </restriction>
         </simpleType>

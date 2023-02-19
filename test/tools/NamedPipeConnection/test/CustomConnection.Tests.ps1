@@ -43,7 +43,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
         }
     }
 
-    It 'Verifies that New-NamedPipeSession succeeds in connectiong to Pwsh process' -Skip:(!$IsWindows) {
+    It 'Verifies that New-NamedPipeSession succeeds in connecting to Pwsh process' -Skip:(!$IsWindows) {
         $script:session = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 10 -Name CustomNPConnection -ErrorAction Stop
 
         # Verify created PSSession

@@ -62,7 +62,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         }
 
         It 'Check for restricted commands' {
-            { {Get-Date}.CheckRestrictedLangauge($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
+            { {Get-Date}.CheckRestrictedLanguage($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
         }
 
         It 'Check for allowed commands and variables' {

@@ -4,7 +4,7 @@ param(
     [Parameter(HelpMessage="Artifact folder to find compliance files in.")]
     [string[]]
     $ArtifactFolder,
-    [Parameter(HelpMessage="VSTS Variable to set path to complinance Files.")]
+    [Parameter(HelpMessage="VSTS Variable to set path to compliance Files.")]
     [string]
     $VSTSVariableName
 )
@@ -49,7 +49,7 @@ foreach($folder in $ArtifactFolder)
         $compliancePath = Join-Path -Path $parent -ChildPath 'compliance'
     }
 
-    # Extract complance files to individual folder to avoid overwriting files.
+    # Extract compliance files to individual folder to avoid overwriting files.
     $unzipPath = Join-Path -Path $compliancePath -ChildPath $name
     Write-Host "Symbols-zip: $filename ; unzipPath: $unzipPath"
     Expand-Archive -Path $fileName -DestinationPath $unzipPath

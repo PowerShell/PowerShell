@@ -31,7 +31,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
-    #region TransportErrorOccuredEventArgs
+    #region TransportErrorOccurredEventArgs
 
     /// <summary>
     /// Transport method for error reporting.
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Event arguments passed to TransportErrorOccurred handlers.
     /// </summary>
-    public sealed class TransportErrorOccuredEventArgs : EventArgs
+    public sealed class TransportErrorOccurredEventArgs : EventArgs
     {
         /// <summary>
         /// Constructor.
@@ -118,7 +118,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="m">
         /// The transport method that raised the error.
         /// </param>
-        public TransportErrorOccuredEventArgs(
+        public TransportErrorOccurredEventArgs(
             PSRemotingTransportException e,
             TransportMethodEnum m)
         {
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Remoting
 
         #region EventHandlers
 
-        internal event EventHandler<TransportErrorOccuredEventArgs> WSManTransportErrorOccured;
+        internal event EventHandler<TransportErrorOccurredEventArgs> WSManTransportErrorOccurred;
         /// <summary>
         /// Event that is raised when a remote object is available. The event is raised
         /// from a WSMan transport thread. Since this thread can hold on to a HTTP
@@ -316,8 +316,8 @@ namespace System.Management.Automation.Remoting
                 s_baseTracer.WriteLine("Exception processing data. {0}", exception.Message);
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
                 RaiseErrorHandler(eventargs);
                 return;
             }
@@ -417,9 +417,9 @@ namespace System.Management.Automation.Remoting
         /// Raise the error handlers.
         /// </summary>
         /// <param name="eventArgs"></param>
-        public virtual void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public virtual void RaiseErrorHandler(TransportErrorOccurredEventArgs eventArgs)
         {
-            WSManTransportErrorOccured.SafeInvoke(this, eventArgs);
+            WSManTransportErrorOccurred.SafeInvoke(this, eventArgs);
         }
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         ///
-        /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
+        /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccurred
         /// event.
         /// </summary>
         internal event EventHandler<CreateCompleteEventArgs> CreateCompleted;
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         ///
-        /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
+        /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccurred
         /// event.
         /// </summary>
         /// <remarks>
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Indicated successful completion of a connect operation on transport
         ///
-        /// Errors are reported through WSManTransportErrorOccured
+        /// Errors are reported through WSManTransportErrorOccurred
         /// event.
         /// </summary>
         internal event EventHandler<EventArgs> ConnectCompleted;
@@ -547,7 +547,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Indicated successful completion of a disconnect operation on transport
         ///
-        /// Errors are reported through WSManTransportErrorOccured
+        /// Errors are reported through WSManTransportErrorOccurred
         /// event.
         /// </summary>
         internal event EventHandler<EventArgs> DisconnectCompleted;
@@ -555,7 +555,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Indicated successful completion of a reconnect operation on transport
         ///
-        /// Errors are reported through WSManTransportErrorOccured
+        /// Errors are reported through WSManTransportErrorOccurred
         /// event.
         /// </summary>
         internal event EventHandler<EventArgs> ReconnectCompleted;
@@ -563,7 +563,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Indicates that the transport/command is ready for a disconnect operation.
         ///
-        /// Errors are reported through WSManTransportErrorOccured event.
+        /// Errors are reported through WSManTransportErrorOccurred event.
         /// </summary>
         internal event EventHandler<EventArgs> ReadyForDisconnect;
 
@@ -708,7 +708,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // PSRemotingTransportException need not be wrapped in another PSRemotingTransportException.
                 tracer.WriteLine("Exception processing data. {0}", pte.Message);
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(pte,
+                TransportErrorOccurredEventArgs eventargs = new TransportErrorOccurredEventArgs(pte,
                                     TransportMethodEnum.ReceiveShellOutputEx);
                 EnqueueAndStartProcessingThread(null, eventargs, null);
 
@@ -722,7 +722,7 @@ namespace System.Management.Automation.Remoting.Client
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message);
-                TransportErrorOccuredEventArgs eventargs = new TransportErrorOccuredEventArgs(e,
+                TransportErrorOccurredEventArgs eventargs = new TransportErrorOccurredEventArgs(e,
                                     TransportMethodEnum.ReceiveShellOutputEx);
                 EnqueueAndStartProcessingThread(null, eventargs, null);
                 return;
@@ -751,7 +751,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Error containing transport exception.
         /// </param>
         internal void EnqueueAndStartProcessingThread(RemoteDataObject<PSObject> remoteObject,
-            TransportErrorOccuredEventArgs transportErrorArgs,
+            TransportErrorOccurredEventArgs transportErrorArgs,
             object privateData)
         {
             if (isClosed)
@@ -915,8 +915,8 @@ namespace System.Management.Automation.Remoting.Client
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
                 RaiseErrorHandler(eventargs);
                 return;
             }
@@ -985,7 +985,7 @@ namespace System.Management.Automation.Remoting.Client
             // only one of the following 2 should be present..
             // anyway transportException takes precedence over remoteObject.
             internal RemoteDataObject<PSObject> remoteObject;
-            internal TransportErrorOccuredEventArgs transportError;
+            internal TransportErrorOccurredEventArgs transportError;
             // Used by ServicePendingCallbacks to give the control to derived classes for
             // processing data that the base class does not understand.
             internal object privateData;
@@ -1255,7 +1255,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Reconnects a previously disconnected commandTM. Implemented by WSMan transport
-        /// Note that there is not explicit disconnect on commandTM. It is implicity disconnected
+        /// Note that there is not explicit disconnect on commandTM. It is implicitly disconnected
         /// when disconnect is called on sessionTM . The TM's also dont maintain specific connection state
         /// This is done by DSHandlers.
         /// </summary>
@@ -1316,7 +1316,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <summary>
         /// Sends an object from the server end. The object is fragmented and each fragment is sent
         /// separately. The call blocks until all the fragments are sent to the client. If there
-        /// is a failure sending any of the fragments WSManTransportErrorOccured event is raised.
+        /// is a failure sending any of the fragments WSManTransportErrorOccurred event is raised.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
@@ -1423,7 +1423,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <summary>
         /// Sends an object to the server end. The object is fragmented and each fragment is sent
         /// separately. The call blocks until all the fragments are sent to the client. If there
-        /// is a failure sending any of the fragments WSManTransportErrorOccured event is raised.
+        /// is a failure sending any of the fragments WSManTransportErrorOccurred event is raised.
         /// </summary>
         /// <param name="psObjectData"></param>
         /// <param name="flush">
@@ -1458,7 +1458,7 @@ namespace System.Management.Automation.Remoting.Server
             ThreadPool.QueueUserWorkItem(new WaitCallback(
                 (object state) =>
                 {
-                    TransportErrorOccuredEventArgs eventArgs = new TransportErrorOccuredEventArgs(e,
+                    TransportErrorOccurredEventArgs eventArgs = new TransportErrorOccurredEventArgs(e,
                         TransportMethodEnum.Unknown);
                     RaiseErrorHandler(eventArgs);
                 }));

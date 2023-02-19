@@ -114,7 +114,7 @@ namespace System.Management.Automation.Internal
         private void populateDelegates()
         {
             // if a delegate is re-located by a garbage collection, it will not affect
-            // the underlaying managed callback, so Alloc is used to add a reference
+            // the underlying managed callback, so Alloc is used to add a reference
             // to the delegate, allowing relocation of the delegate, but preventing
             // disposal. Using GCHandle without pinning reduces fragmentation potential
             // of the managed heap.

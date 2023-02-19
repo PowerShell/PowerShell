@@ -133,10 +133,10 @@ public class SMAAttributeTest$guid : PSCmdlet
     ) {
         param($sourceCode, $sourceType, $sourceNS, $sourceUsingNS, $sourceRunType, $sourceDefaultNSRunType, $expectedResult, $sourceLanguage)
 
-        # Add-Type show parse and compile errors and then finish with an terminationg error.
+        # Add-Type show parse and compile errors and then finish with an terminating error.
         # Catch non-termination information error.
         { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
-        # Catch final terminationg error.
+        # Catch final terminating error.
         { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
         $returnedTypes = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
@@ -201,13 +201,13 @@ public class AttributeTest$guid : PSCmdlet
     }
 
     It "Can report C# parse and compile errors" {
-        # Add-Type show parse and compile errors and then finish with an terminationg error.
+        # Add-Type show parse and compile errors and then finish with an terminating error.
         # We test only for '-MemberDefinition' because '-Path' uses the same code path.
         # In the tests the error is that 'using System.Text;' is missing.
         #
         # Catch non-termination information error.
         { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
-        # Catch final terminationg error.
+        # Catch final terminating error.
         { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
         # Catch non-termination information error for CompilerOptions.

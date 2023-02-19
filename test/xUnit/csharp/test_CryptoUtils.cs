@@ -8,7 +8,7 @@ using Xunit;
 
 namespace PSTests.Parallel
 {
-    public static class CryptoUntilsTests
+    public static class CryptoUtilsTests
     {
         [Fact]
         public static void TestSessionKeyExchange()

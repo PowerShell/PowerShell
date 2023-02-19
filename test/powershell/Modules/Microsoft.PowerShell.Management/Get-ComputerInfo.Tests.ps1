@@ -273,7 +273,7 @@ $signature = @"
 [return: MarshalAs(UnmanagedType.Bool)]
 public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
 "@
-        Add-Type -MemberDefinition $signature -Name "Win32PhyicallyInstalledMemory" -Namespace Win32Functions -PassThru
+        Add-Type -MemberDefinition $signature -Name "Win32PhysicallyInstalledMemory" -Namespace Win32Functions -PassThru
     }
 
     function Get-PhysicallyInstalledSystemMemoryCore
@@ -283,7 +283,7 @@ $signature = @"
 [return: MarshalAs(UnmanagedType.Bool)]
 public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
 "@
-        Add-Type -MemberDefinition $signature -Name "Win32PhyicallyInstalledMemory" -Namespace Win32Functions -PassThru
+        Add-Type -MemberDefinition $signature -Name "Win32PhysicallyInstalledMemory" -Namespace Win32Functions -PassThru
     }
 
     function Get-PowerDeterminePlatformRole
@@ -529,7 +529,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
     function Get-OsServerLevel
     {
-        # translated from cmldet logic (1) RegistryInfo.GetServerLevels; and (2) os.GetOtherInfo()
+        # translated from cmdlet logic (1) RegistryInfo.GetServerLevels; and (2) os.GetOtherInfo()
         $subkey = 'Software\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels'
         $regKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($subkey)
         $serverLevels = @{}

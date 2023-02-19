@@ -601,7 +601,7 @@ Describe "Help failure cases" -Tags Feature {
 
         # under some conditions this does not throw, so include what we actually got
         $helpTopic = [guid]::NewGuid().ToString("N")
-        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectantly found for $helpTopic"
+        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectedly found for $helpTopic"
     }
 }
 

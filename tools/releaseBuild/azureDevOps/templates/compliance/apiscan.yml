@@ -9,7 +9,7 @@ jobs:
         value: fromBranch
       # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
       - group: PS-PS-APIScan
-      # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
+      # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organization scoped PAT with 'Symbols' Read permission.
       # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
       - group: symbols
       - name: branchCounterKey
@@ -40,8 +40,8 @@ jobs:
       retryCountOnTaskFailure: 2
       displayName: 'Bootstrap'
       env:
-        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         Import-Module .\build.psm1 -force

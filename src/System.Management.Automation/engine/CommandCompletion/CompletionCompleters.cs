@@ -6667,7 +6667,7 @@ namespace System.Management.Automation
 
                     // If it's already included, skip it.
                     // This may happen when an accelerator name is the same as the short name of the type it represents,
-                    // and aslo that type has more than one accelerator names. For example:
+                    // and also that type has more than one accelerator names. For example:
                     //    "float"  -> System.Single
                     //    "single" -> System.Single
                     if (typeAlreadyIncluded) { continue; }

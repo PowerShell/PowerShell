@@ -5119,7 +5119,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class for identifying types which are treated as KnownType by Monad.
-    /// A KnownType is guranteed to be available on machine on which monad is
+    /// A KnownType is guaranteed to be available on machine on which monad is
     /// running.
     /// </summary>
     internal static class KnownTypes

@@ -2253,7 +2253,7 @@ namespace System.Management.Automation
 #endif
 
                 // Signal thread to process command.
-                Dbg.Assert(!_commandCompleteEvent.IsSet, "Command complete event shoulds always be non-signaled here.");
+                Dbg.Assert(!_commandCompleteEvent.IsSet, "Command complete event should always be non-signaled here.");
                 Dbg.Assert(!startInvokeEvent.IsSet, "The event should always be in non-signaled state here.");
                 startInvokeEvent.Set();
 

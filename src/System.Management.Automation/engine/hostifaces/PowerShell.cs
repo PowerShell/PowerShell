@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// </summary>
         Running = 1,
         /// <summary>
-        /// PowerShell is stoping execution.
+        /// PowerShell is stopping execution.
         /// </summary>
         Stopping = 2,
         /// <summary>
@@ -4225,7 +4225,7 @@ namespace System.Management.Automation
                 SetHadErrors(_worker.CurrentlyRunningPipeline.HadErrors);
             }
 
-            // win281312: Usig temporary variables to avoid thread
+            // win281312: Using temporary variables to avoid thread
             // synchronization issues between Dispose and transition
             // to Terminal States (Completed/Failed/Stopped)
             PowerShellAsyncResult tempInvokeAsyncResult;
@@ -4275,7 +4275,7 @@ namespace System.Management.Automation
                 InvocationStateInfo = copyStateInfo;
             }
 
-            bool isExceptionOccured = false;
+            bool isExceptionOccurred = false;
             switch (InvocationStateInfo.State)
             {
                 case PSInvocationState.Running:
@@ -4318,14 +4318,14 @@ namespace System.Management.Automation
                     {
                         // need to release asyncresults if there is an
                         // exception from the eventhandlers.
-                        isExceptionOccured = true;
+                        isExceptionOccurred = true;
                         SetHadErrors(true);
                         throw;
                     }
                     finally
                     {
                         // takes care exception occurred with invokeAsyncResult
-                        if (isExceptionOccured && (tempStopAsyncResult != null))
+                        if (isExceptionOccurred && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
                         }
@@ -4366,14 +4366,14 @@ namespace System.Management.Automation
                     {
                         // need to release asyncresults if there is an
                         // exception from the eventhandlers.
-                        isExceptionOccured = true;
+                        isExceptionOccurred = true;
                         SetHadErrors(true);
                         throw;
                     }
                     finally
                     {
                         // takes care exception occurred with invokeAsyncResult
-                        if (isExceptionOccured && (tempStopAsyncResult != null))
+                        if (isExceptionOccurred && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
                         }
@@ -5061,7 +5061,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="isSyncCall">
         /// true if pipeline to be stopped synchronously,
-        /// false otherewise.
+        /// false otherwise.
         /// </param>
         /// <param name="callback">
         /// Valid for asynchronous stop

@@ -23,7 +23,7 @@ if [ ! -f $1 ]; then
     exit 1
 fi
 
-# Verifiying OS as iconutil is needed."
+# Verifying OS as iconutil is needed."
 if [ $(lowercase $(uname)) != "darwin" ]; then
     echo "Unsupported platform. Please run under macOS."
     exit 1

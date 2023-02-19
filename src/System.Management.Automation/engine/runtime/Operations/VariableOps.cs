@@ -215,7 +215,7 @@ namespace System.Management.Automation
 
         internal static PSReference GetVariableAsRef(VariablePath variablePath, ExecutionContext executionContext, Type staticType)
         {
-            Diagnostics.Assert(variablePath.IsVariable, "calller to verify varpath is a variable.");
+            Diagnostics.Assert(variablePath.IsVariable, "caller to verify varpath is a variable.");
 
             SessionStateInternal sessionState = executionContext.EngineSessionState;
             CommandOrigin origin = sessionState.CurrentScope.ScopeOrigin;

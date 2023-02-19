@@ -249,7 +249,7 @@ namespace System.Management.Automation
                         // WinBlue: 545315 Online help links are broken with localized help
                         // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
                         // Split the string based on <s> (space). We decided to go with this approach as
-                        // UX localization authors use spaces. Correctly extracting only the wellformed URI
+                        // UX localization authors use spaces. Correctly extracting only the well formed URI
                         // is out-of-scope for this fix.
                         string[] tempUriSplitArray = uriString.Split(' ');
                         uriString = tempUriSplitArray[0];
@@ -316,7 +316,7 @@ namespace System.Management.Automation
                             // WinBlue: 545315 Online help links are broken with localized help
                             // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
                             // Split the string based on <s> (space). We decided to go with this approach as
-                            // UX localization authors use spaces. Correctly extracting only the wellformed URI
+                            // UX localization authors use spaces. Correctly extracting only the well formed URI
                             // is out-of-scope for this fix.
                             string[] tempUriSplitArray = uriString.Split(' ');
                             uriString = tempUriSplitArray[0];

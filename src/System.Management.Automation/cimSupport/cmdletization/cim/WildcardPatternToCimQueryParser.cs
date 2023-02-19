@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        protected override void AppendAsterix()
+        protected override void AppendAsterisk()
         {
             _result.Append('%');
         }

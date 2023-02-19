@@ -19,7 +19,7 @@ namespace Microsoft.Management.UI.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public partial class ScalableImageSource : Freezable
     {
-        #region Structors
+        #region Structures
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Microsoft.Management.UI.Internal.ScalableImageSource" /> class.

@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Field used for the CommonParameters parameter.
         /// </summary>
-        private ParameterSetViewModel comonParameters;
+        private ParameterSetViewModel commonParameters;
 
         /// <summary>
         /// The ShowCommandCommandInfo this model is based on.
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public ParameterSetViewModel CommonParameters
         {
-            get { return this.comonParameters; }
+            get { return this.commonParameters; }
         }
 
         /// <summary>
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="module">Module to which the CommandViewModel will belong to.</param>
         /// <param name="commandInfo">Will showing command.</param>
-        /// <param name="noCommonParameters">True to ommit displaying common parameter.</param>
+        /// <param name="noCommonParameters">True to omit displaying common parameter.</param>
         /// <exception cref="ArgumentNullException">If commandInfo is null</exception>
         /// <exception cref="RuntimeException">
         /// If could not create the CommandViewModel. For instance the ShowCommandCommandInfo corresponding to
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             List<ParameterViewModel> commonParametersList = commonParametersTable.Values.ToList<ParameterViewModel>();
-            returnValue.comonParameters = new ParameterSetViewModel(string.Empty, commonParametersList);
+            returnValue.commonParameters = new ParameterSetViewModel(string.Empty, commonParametersList);
 
             returnValue.parameterSets.Sort(returnValue.Compare);
 
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Compares source and target by being the default parameter set and then by name.
         /// </summary>
-        /// <param name="source">Source paremeterset.</param>
+        /// <param name="source">Source parameterset.</param>
         /// <param name="target">Target parameterset.</param>
         /// <returns>0 if they are the same, -1 if source is smaller, 1 if source is larger.</returns>
         private int Compare(ParameterSetViewModel source, ParameterSetViewModel target)

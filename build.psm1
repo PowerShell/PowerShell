@@ -19,9 +19,9 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
-$dotnetAzureFeed = if (-not $env:__DONET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
-$dotnetAzureFeedSecret = $env:__DONET_RUNTIME_FEED_KEY
-$dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
+$dotnetAzureFeed = if (-not $env:__DOTNET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
+$dotnetAzureFeedSecret = $env:__DOTNET_RUNTIME_FEED_KEY
+$dotnetSDKVersionOverride = $dotnetMetadata.Sdk.sdkImageOverride
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -228,7 +228,7 @@ if ( -not $env:PSModulePath.Contains($TestModulePath) ) {
     .Synopsis
         Tests if a version is preview
     .EXAMPLE
-        Test-IsPreview -version '6.1.0-sometthing' # returns true
+        Test-IsPreview -version '6.1.0-something' # returns true
         Test-IsPreview -version '6.1.0' # returns false
 #>
 function Test-IsPreview
@@ -253,7 +253,7 @@ function Test-IsPreview
     .Synopsis
         Tests if a version is a Release Candidate
     .EXAMPLE
-        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-something' # returns false
         Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
         Test-IsReleaseCandidate -version '6.1.0' # returns false
 #>
@@ -1128,7 +1128,7 @@ function Publish-CustomConnectionTestModule
     if (! (Test-Path -Path $refPath)) {
         $null = New-Item -Path $refPath -ItemType Directory -Force
     }
-    Copy-Item -Path $smapath -Destination $refPath -Force
+    Copy-Item -Path $smaPath -Destination $refPath -Force
 
     Find-DotNet
 
@@ -1620,7 +1620,7 @@ function Publish-TestResults
         }
         $tempFilePath = Join-Path -Path $tempPath -ChildPath $fileName
 
-        # NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
+        # NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn't work with Azure DevOps)
         # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
         # Azure DevOps Reporting is so messed up for NUnit V2 and doesn't follow their own spec
         # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
@@ -2107,8 +2107,8 @@ function Start-PSBootstrap {
 
     Push-Location $PSScriptRoot/tools
 
-    if ($dotnetSDKVersionOveride) {
-        $Version = $dotnetSDKVersionOveride
+    if ($dotnetSDKVersionOverride) {
+        $Version = $dotnetSDKVersionOverride
     }
 
     try {
@@ -2136,7 +2136,7 @@ function Start-PSBootstrap {
                 if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
 
                 # Install dependencies
-                # change the fontend from apt-get to noninteractive
+                # change the frontend from apt-get to noninteractive
                 $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
                 $env:DEBIAN_FRONTEND='noninteractive'
                 try {
@@ -2445,8 +2445,8 @@ function Find-Dotnet {
     $originalPath = $env:PATH
     $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
-    $chosenDotNetVersion = if($dotnetSDKVersionOveride) {
-        $dotnetSDKVersionOveride
+    $chosenDotNetVersion = if($dotnetSDKVersionOverride) {
+        $dotnetSDKVersionOverride
     }
     else {
         $dotnetCLIRequiredVersion
@@ -3333,10 +3333,10 @@ function New-TestPackage
     Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
     Write-Verbose -Message "Copied test directory"
 
-    # Copy assests folder to package root for wix related tests.
+    # Copy assets folder to package root for wix related tests.
     $assetsPath = Join-Path $PSScriptRoot 'assets'
     Copy-Item $assetsPath -Recurse -Destination $packageRoot -Force
-    Write-Verbose -Message "Copied assests directory"
+    Write-Verbose -Message "Copied assets directory"
 
     # Create expected folder structure for resx files in package root.
     $srcRootForResx = New-Item -Path "$packageRoot/src" -Force -ItemType Directory

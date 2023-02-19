@@ -86,7 +86,7 @@ Describe "Adapter Tests" -tags "CI" {
 
         It "Calls CodeMethod with void result" {
 
-            class TestCodeMethodInvokationWithVoidReturn {
+            class TestCodeMethodInvocationWithVoidReturn {
                 [int] $CallCounter
 
                 static [int] IntMethodCM([PSObject] $self) {
@@ -98,14 +98,14 @@ Describe "Adapter Tests" -tags "CI" {
                 }
 
                 static [Reflection.MethodInfo] GetMethodInfo([string] $name) {
-                    return [TestCodeMethodInvokationWithVoidReturn].GetMethod($name)
+                    return [TestCodeMethodInvocationWithVoidReturn].GetMethod($name)
                 }
             }
 
-            Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName IntMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('IntMethodCM'))
-            Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName VoidMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('VoidMethodCM'))
+            Update-TypeData -Force -TypeName TestCodeMethodInvocationWithVoidReturn -MemberType CodeMethod -MemberName IntMethod -Value ([TestCodeMethodInvocationWithVoidReturn]::GetMethodInfo('IntMethodCM'))
+            Update-TypeData -Force -TypeName TestCodeMethodInvocationWithVoidReturn -MemberType CodeMethod -MemberName VoidMethod -Value ([TestCodeMethodInvocationWithVoidReturn]::GetMethodInfo('VoidMethodCM'))
             try {
-                $o = [TestCodeMethodInvokationWithVoidReturn]::new()
+                $o = [TestCodeMethodInvocationWithVoidReturn]::new()
                 $o.CallCounter | Should -Be 0
                 $o.VoidMethod()
                 $o.CallCounter | Should -Be 1
@@ -113,7 +113,7 @@ Describe "Adapter Tests" -tags "CI" {
                 $o.IntMethod() | Should -Be 1
             }
             finally {
-                Remove-TypeData TestCodeMethodInvokationWithVoidReturn
+                Remove-TypeData TestCodeMethodInvocationWithVoidReturn
             }
         }
 

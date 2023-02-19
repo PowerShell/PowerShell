@@ -499,7 +499,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Use this constructor carefully. This will not write data into internal
         /// streams. Instead this will make the SerializedDataStream call the
-        /// callback whenever a fragmented data is available. It is upto the caller
+        /// callback whenever a fragmented data is available. It is up to the caller
         /// to figure out what to do with the data.
         /// </summary>
         /// <param name="fragmentSize">

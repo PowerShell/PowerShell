@@ -34,7 +34,7 @@ namespace Microsoft.WSMan.Management
         private XmlNamespaceManager nameSpaceManger;
 
         /// <summary>
-        /// Session of the WsMan sserver.
+        /// Session of the WsMan server.
         /// </summary>
         private readonly IWSManSession serverSession;
 

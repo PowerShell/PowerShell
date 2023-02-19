@@ -286,7 +286,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
     It "Select-Object -ExpandProperty should yield errors if multiple dynamic (DLR) properties match" {
         $dynObj = [TestDynamic]::new()
         $e = { $results = $dynObj, $dynObj | Select-Object -ExpandProperty *Prop -ErrorAction Stop } |
-            Should -Throw -PassThru -ErrorId "MutlipleExpandProperties,Microsoft.PowerShell.Commands.SelectObjectCommand"
+            Should -Throw -PassThru -ErrorId "MultipleExpandProperties,Microsoft.PowerShell.Commands.SelectObjectCommand"
         $e.CategoryInfo | Should -Match "PSArgumentException"
     }
 }

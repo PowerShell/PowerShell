@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Class factory for output context.
         /// </summary>
         /// <param name="parentContext">Parent context in the stack.</param>
-        /// <param name="formatInfoData">Fromat info data received from the pipeline.</param>
+        /// <param name="formatInfoData">Format info data received from the pipeline.</param>
         /// <returns></returns>
         private FormatMessagesContextManager.OutputContext CreateOutputContext(
                                         FormatMessagesContextManager.OutputContext parentContext,

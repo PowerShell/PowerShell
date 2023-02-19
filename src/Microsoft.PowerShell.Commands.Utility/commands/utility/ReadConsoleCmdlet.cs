@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // The current object might itself be a collection, like a string array, as in read/console "foo","bar","baz"
                         // If it is, then the PSObject ToString() will take care of it.  We could go on unwrapping collections
-                        // forever, but it's a pretty common use case to see a varags confused with an array.
+                        // forever, but it's a pretty common use case to see a varargs confused with an array.
 
                         string element = (string)LanguagePrimitives.ConvertTo(e.Current, typeof(string), CultureInfo.InvariantCulture);
 

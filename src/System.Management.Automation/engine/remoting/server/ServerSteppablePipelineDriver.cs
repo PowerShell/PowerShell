@@ -233,7 +233,7 @@ namespace System.Management.Automation
         internal int TotalObjectsProcessed { get; set; }
 
         /// <summary>
-        /// Starts the exectution.
+        /// Starts the execution.
         /// </summary>
         internal void Start()
         {

@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Executes a pipeline in the console when we are running asnyc.
+        /// Executes a pipeline in the console when we are running async.
         /// </summary>
         /// <param name="tempPipeline">
         /// The pipeline to execute.

@@ -692,10 +692,10 @@ namespace Microsoft.PowerShell.Commands.Internal
             int errorCode = Win32Native.RegDeleteValue(_hkey, name);
 
             //
-            // From windows 2003 server, if the name is too long we will get error code ERROR_FILENAME_EXCED_RANGE
+            // From windows 2003 server, if the name is too long we will get error code ERROR_FILENAME_EXCEED_RANGE
             // This still means the name doesn't exist. We need to be consistent with previous OS.
             //
-            if (errorCode == Win32Native.ERROR_FILE_NOT_FOUND || errorCode == Win32Native.ERROR_FILENAME_EXCED_RANGE)
+            if (errorCode == Win32Native.ERROR_FILE_NOT_FOUND || errorCode == Win32Native.ERROR_FILENAME_EXCEED_RANGE)
             {
                 if (throwOnMissingValue)
                 {

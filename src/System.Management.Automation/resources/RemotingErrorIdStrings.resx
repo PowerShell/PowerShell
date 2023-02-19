@@ -446,13 +446,13 @@
   <data name="DisconnectShellExFailed" xml:space="preserve">
     <value>Failed to disconnect from the remote server {0}.</value>
   </data>
-  <data name="DisconnectShellExCallBackErrr" xml:space="preserve">
+  <data name="DisconnectShellExCallBackErr" xml:space="preserve">
     <value>Disconnecting from the remote server failed with the following error message : {0}</value>
   </data>
   <data name="ReconnectShellExFailed" xml:space="preserve">
     <value>Reconnecting to the remote server failed.</value>
   </data>
-  <data name="ReconnectShellExCallBackErrr" xml:space="preserve">
+  <data name="ReconnectShellExCallBackErr" xml:space="preserve">
     <value>Reconnecting to the remote server {0} failed with the following error message : {1}</value>
   </data>
   <data name="IPCTransportConnectError" xml:space="preserve">

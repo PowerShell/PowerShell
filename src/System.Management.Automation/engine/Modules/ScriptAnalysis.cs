@@ -311,7 +311,7 @@ namespace System.Management.Automation
                 // sal Foo-Bar7 Foo-Bar
                 // sal -Value Foo-Bar -Name Foo-Bar8
 
-                var boundParameters = DoPsuedoParameterBinding(commandAst, commandName);
+                var boundParameters = DoPseudoParameterBinding(commandAst, commandName);
 
                 var name = boundParameters["Name"] as string;
                 if (!string.IsNullOrEmpty(name))
@@ -341,7 +341,7 @@ namespace System.Management.Automation
                 // Import-Module -Name Module6,
                 //    Module7 -Global
 
-                var boundParameters = DoPsuedoParameterBinding(commandAst, commandName);
+                var boundParameters = DoPseudoParameterBinding(commandAst, commandName);
 
                 List<string> commandsToPostFilter = new List<string>();
 
@@ -381,7 +381,7 @@ namespace System.Management.Automation
                 //    -Alias Exported-AliasModuleMember
                 // & $script:ExportModuleMember -Function (...)
 
-                var boundParameters = DoPsuedoParameterBinding(commandAst, commandName);
+                var boundParameters = DoPseudoParameterBinding(commandAst, commandName);
 
                 Action<string> onEachFunction = exportedCommandName =>
                 {
@@ -461,7 +461,7 @@ namespace System.Management.Automation
         //
         // It also only populates the bound parameters for a limited set of parameters needed
         // for module analysis.
-        private static Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
+        private static Hashtable DoPseudoParameterBinding(CommandAst commandAst, string commandName)
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 

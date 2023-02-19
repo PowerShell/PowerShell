@@ -40,7 +40,7 @@ function Install-ChocolateyPackage
 
     if($executable)
     {
-        Write-Verbose "Verifing $Executable is in path..." -Verbose
+        Write-Verbose "Verifying $Executable is in path..." -Verbose
         $exeSource = $null
         $exeSource = Get-ChildItem -Path "$env:ProgramFiles\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         if(!$exeSource)

@@ -234,20 +234,20 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// This is an auxiliar method in BuildParagraph to move the current bold or highlighted spans
-        /// according to the <paramref name="caracterPosition"/>
+        /// This is an auxiliary method in BuildParagraph to move the current bold or highlighted spans
+        /// according to the <paramref name="characterPosition"/>
         /// The current bold and highlighted span should be ending ahead of the current position.
         /// Moves <paramref name="currentSpanIndex"/> and <paramref name="currentSpan"/> to the
-        /// proper span in <paramref name="allSpans"/> according to the <paramref name="caracterPosition"/>
-        /// This is an auxiliar method in BuildParagraph.
+        /// proper span in <paramref name="allSpans"/> according to the <paramref name="characterPosition"/>
+        /// This is an auxiliary method in BuildParagraph.
         /// </summary>
         /// <param name="currentSpanIndex">Current index within <paramref name="allSpans"/>.</param>
         /// <param name="currentSpan">Current span within <paramref name="allSpans"/>.</param>
-        /// <param name="caracterPosition">Character position. This comes from a position within this.textBuilder.</param>
+        /// <param name="characterPosition">Character position. This comes from a position within this.textBuilder.</param>
         /// <param name="allSpans">The collection of spans. This is either this.boldSpans or this.highlightedSpans.</param>
-        private static void MoveSpanToPosition(ref int currentSpanIndex, ref TextSpan? currentSpan, int caracterPosition, List<TextSpan> allSpans)
+        private static void MoveSpanToPosition(ref int currentSpanIndex, ref TextSpan? currentSpan, int characterPosition, List<TextSpan> allSpans)
         {
-            if (currentSpan == null || caracterPosition <= currentSpan.Value.End)
+            if (currentSpan == null || characterPosition <= currentSpan.Value.End)
             {
                 return;
             }
@@ -255,7 +255,7 @@ namespace Microsoft.Management.UI.Internal
             for (int newBoldIndex = currentSpanIndex + 1; newBoldIndex < allSpans.Count; newBoldIndex++)
             {
                 TextSpan newBoldSpan = allSpans[newBoldIndex];
-                if (caracterPosition <= newBoldSpan.End)
+                if (characterPosition <= newBoldSpan.End)
                 {
                     currentSpanIndex = newBoldIndex;
                     currentSpan = newBoldSpan;

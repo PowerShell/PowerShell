@@ -70,11 +70,11 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Export-Alias As CSV With Multiline Description"{
-		Export-Alias $fulltestpath abcd01 -As CSV -Description "My Aliases\nYour Aliases\nEveryones Aliases" -PassThru
+		Export-Alias $fulltestpath abcd01 -As CSV -Description "My Aliases\nYour Aliases\nEveryone's Aliases" -PassThru
 		$fulltestpath | Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
 		$fulltestpath | Should -FileContentMatchExactly "My Aliases"
 		$fulltestpath | Should -FileContentMatchExactly "Your Aliases"
-		$fulltestpath | Should -FileContentMatchExactly "Everyones Aliases"
+		$fulltestpath | Should -FileContentMatchExactly "Everyone's Aliases"
     }
 
 	It "Export-Alias As Script"{
@@ -83,11 +83,11 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Export-Alias As Script With Multiline Description"{
-		Export-Alias $fulltestpath abcd01 -As Script -Description "My Aliases\nYour Aliases\nEveryones Aliases" -PassThru
+		Export-Alias $fulltestpath abcd01 -As Script -Description "My Aliases\nYour Aliases\nEveryone's Aliases" -PassThru
 		$fulltestpath | Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
 		$fulltestpath | Should -FileContentMatchExactly "My Aliases"
 		$fulltestpath | Should -FileContentMatchExactly "Your Aliases"
-		$fulltestpath | Should -FileContentMatchExactly "Everyones Aliases"
+		$fulltestpath | Should -FileContentMatchExactly "Everyone's Aliases"
     }
 
 	It "Export-Alias for Force Test"{

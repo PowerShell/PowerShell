@@ -431,7 +431,7 @@ Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
                 expectedResult = 'Error:1'
             },
             @{
-                testName       = 'Verifies WarningVarible common parameter'
+                testName       = 'Verifies WarningVariable common parameter'
                 scriptBlock    = { 1..1 | ForEach-Object -Parallel { Write-Warning "Warning:$_" } -WarningVariable global:actualVariable }
                 expectedResult = 'Warning:1'
             },

@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         public DateTime EndExecutionTime { get; private set; }
 
         /// <summary>
-        /// The time it took to execute the associeated pipeline.
+        /// The time it took to execute the associated pipeline.
         /// </summary>
         public TimeSpan Duration => EndExecutionTime - StartExecutionTime;
 
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ReallocateBufferIfNeeded()
         {
-            // Get current value of histoysize variable
+            // Get current value of historysize variable
             int historySize = GetHistorySize();
 
             if (historySize == _capacity)

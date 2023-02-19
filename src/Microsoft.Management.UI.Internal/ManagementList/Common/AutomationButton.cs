@@ -28,7 +28,7 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion
 
-        #region Overides
+        #region Overrides
 
         /// <summary>
         /// Returns the <see cref="System.Windows.Automation.Peers.AutomationPeer"/> implementations for this control.

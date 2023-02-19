@@ -1843,7 +1843,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// This stream do not perform close operations on the buffer.
-        /// It is upto the user to close the buffers as and when needed.
+        /// It is up to the user to close the buffers as and when needed.
         /// However this method notifies the buffer by decrementing the
         /// ref count.
         /// </summary>

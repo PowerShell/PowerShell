@@ -574,7 +574,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     //  BUG: 610329. Pipeline execution happens in a new thread. For
                     //  Console applications SetThreadUILanguage(0) must be called
-                    //  inorder for the native MUI loader to load the resources correctly.
+                    //  in order for the native MUI loader to load the resources correctly.
                     //  ConsoleHost already does this in its entry point..but the same
                     //  call is not performed in the Pipeline execution threads causing
                     //  cmdlets that load native resources show unreadable messages on

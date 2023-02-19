@@ -853,7 +853,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The pseudo binding failed with parameter set confliction.
+        /// The pseudo binding failed with parameter set conflict.
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="defaultParameterSetFlag"></param>
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation.Language
                 if (matchingParameter == null)
                 {
                     // The parameter cannot be found. The reason could be:
-                    // 1. It's a bynamic parameter, and we cannot retrieve the ParameterMetadata for it
+                    // 1. It's a dynamic parameter, and we cannot retrieve the ParameterMetadata for it
                     //    at this point, since it's pseudo binding.
                     // 2. The spelling of this parameter is wrong.
                     // We can simply ignore this parameter, but the issue is what to do with the argument
@@ -1733,7 +1733,7 @@ namespace System.Management.Automation.Language
                     //   on the attempt with the (default set + no coercion), we should fall back to the (all valid set + with coercion) to preserve possibilities.
                     //   Example:
                     //           Add-Member notep<tab>
-                    //   We need presever the -MemberType along with the -NotePropertyName in this case.
+                    //   We need preserve the -MemberType along with the -NotePropertyName in this case.
                     //
                     // So the algorithm for positional binding is:
                     // - With bindingType == ParameterCompletion

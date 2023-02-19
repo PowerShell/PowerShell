@@ -330,12 +330,12 @@ Describe 'get-help other tests' -Tags "CI" {
         It $x.Synopsis { $x.Synopsis | Should -BeExactly "This is function help for helpFunc2" }
     }
 
-    Context 'get-help psuedo file' {
+    Context 'get-help pseudo file' {
 
     $script = @'
         ###########################################
         #
-        # Psuedo-Copyright header comment
+        # Pseudo-Copyright header comment
         #
         ###########################################
 
@@ -499,7 +499,7 @@ Describe 'get-help other tests' -Tags "CI" {
             Get-Help func9
         }
         $x = Get-Help helpFunc9
-        It 'help is on the outer functon' { $x.Synopsis | Should -BeExactly 'Help on helpFunc9, not func9' }
+        It 'help is on the outer function' { $x.Synopsis | Should -BeExactly 'Help on helpFunc9, not func9' }
         $x = helpFunc9
         It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
     }

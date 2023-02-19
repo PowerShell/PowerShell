@@ -377,7 +377,7 @@ namespace Microsoft.WSMan.Management
             // Get the wsman host name to find the session object
             string host = GetHostName(path);
 
-            // Chks the WinRM Service
+            // Checks the WinRM Service
             if (IsPathLocalMachine(host))
             {
                 if (!IsWSManServiceRunning())
@@ -1221,7 +1221,7 @@ namespace Microsoft.WSMan.Management
                                         WSManStringLiterals.containerShell,
                                         adjustedChileName);
 
-                                warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemWarnigForPPQ"), pathForGlobalQuota));
+                                warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemWarningForPPQ"), pathForGlobalQuota));
                             }
                         }
 
@@ -3431,7 +3431,7 @@ namespace Microsoft.WSMan.Management
                 throw new InvalidOperationException("InvalidPath");
             }
 
-            // Chks the WinRM Service
+            // Checks the WinRM Service
             if (IsPathLocalMachine(host) && (!IsWSManServiceRunning()))
             {
                 AssertError("WinRMServiceError", false);
@@ -3882,7 +3882,7 @@ namespace Microsoft.WSMan.Management
                 return false;
             }
 
-            // Chks the WinRM Service
+            // Checks the WinRM Service
             if (IsPathLocalMachine(host))
             {
                 if (!IsWSManServiceRunning())

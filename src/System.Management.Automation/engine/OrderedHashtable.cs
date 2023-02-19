@@ -225,7 +225,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the data needed to seralize the Hashtable.
+        /// Returns the data needed to serialize the Hashtable.
         /// </summary>
         /// <param name="info">The serialization info.</param>
         /// <param name="context">The serialization context.</param>

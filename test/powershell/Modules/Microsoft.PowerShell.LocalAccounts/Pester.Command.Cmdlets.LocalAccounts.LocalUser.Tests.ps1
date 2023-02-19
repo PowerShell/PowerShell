@@ -188,7 +188,7 @@ try {
             VerifyFailingTest $sb "InvalidName,Microsoft.PowerShell.Commands.NewLocalUserCommand"
         }
 
-        It "Errors on name collison" {
+        It "Errors on name collision" {
             $sb = {
                 New-LocalUser TestUserNew1 -NoPassword
                 New-LocalUser TestUserNew1 -NoPassword
@@ -491,7 +491,7 @@ try {
                 Get-LocalUser @("TestUserGet1", "TestUserGetNameThatDoesntExist1", "TestUserGetNameThatDoesntExist2") -ErrorAction Stop -ErrorVariable outErr -OutVariable outOut | Out-Null
             }
             Catch {
-                # Ignore the execption
+                # Ignore the exception
             }
             $outErr.Count -eq 1 | Should -BeTrue
             $outErr[0].ErrorRecord.CategoryInfo.Reason -match "UserNotFound" | Should -BeTrue
@@ -904,14 +904,14 @@ try {
             VerifyFailingTest $sb "AmbiguousParameterSet,Microsoft.PowerShell.Commands.RenameLocalUserCommand"
         }
 
-        It "Errors on nonexistant user name" {
+        It "Errors on nonexistent user name" {
             $sb = {
                 Rename-LocalUser -Name TestUserRenameThatDoesntExist -NewName TestUserRenameThatDoesntExist2
             }
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.RenameLocalUserCommand"
         }
 
-        It "Errors on nonexistant user SID" {
+        It "Errors on nonexistent user SID" {
             $sb = {
                 Remove-LocalUser -SID $user1SID
                 Rename-LocalUser -SID $user1SID -NewName TestUserRename2
@@ -919,7 +919,7 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.RenameLocalUserCommand"
         }
 
-        It "Errors on rename of user to existing user, name collison" {
+        It "Errors on rename of user to existing user, name collision" {
             $sb = {
                 New-LocalUser TestUserRename4 -NoPassword
                 Rename-LocalUser -Name TestUserRename1 -NewName TestUserRename4

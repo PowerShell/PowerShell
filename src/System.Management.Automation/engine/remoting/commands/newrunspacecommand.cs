@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
         /// cmdlet. The cmdlet will not exit until it has completed
         /// creating all the runspaces (basically the runspaces its
         /// waiting on OpenAsync is made available). However, when a stop
-        /// signal is sent, CloseAsyn needs to be called to close all the
+        /// signal is sent, CloseAsync needs to be called to close all the
         /// pending runspaces.
         /// </summary>
         /// <remarks>This is called from a separate thread so need to worry

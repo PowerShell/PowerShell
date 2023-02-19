@@ -652,7 +652,7 @@ Exception StackTrace: {2}</value>
  StackTrace: {3}</value>
 </data>
 <data name="PS_PROVIDEReventE_A_CREATE_COMMAND_REMOTESESSION" xml:space="preserve">
-    <value>Shell Context {0}. Request Id {1}. Creating a commonad session for running a command.</value>
+    <value>Shell Context {0}. Request Id {1}. Creating a command session for running a command.</value>
 </data>
 <data name="PS_PROVIDEReventE_A_STOP_COMMAND" xml:space="preserve">
     <value>Shell Context {0} Command Context {1} Request Id {2}. Stopping command.</value>

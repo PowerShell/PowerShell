@@ -84,7 +84,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Helper Methods
 
         /// <summary>
-        /// Constructs a WSManTransportErrorOccuredEventArgs instance from the supplied data.
+        /// Constructs a WSManTransportErrorOccurredEventArgs instance from the supplied data.
         /// </summary>
         /// <param name="wsmanAPIHandle">
         /// WSMan API handle to use to get error messages from WSMan error id(s)
@@ -105,9 +105,9 @@ namespace System.Management.Automation.Remoting.Client
         /// Arguments to pass to the resource
         /// </param>
         /// <returns>
-        /// An instance of WSManTransportErrorOccuredEventArgs
+        /// An instance of WSManTransportErrorOccurredEventArgs
         /// </returns>
-        internal static TransportErrorOccuredEventArgs ConstructTransportErrorEventArgs(IntPtr wsmanAPIHandle,
+        internal static TransportErrorOccurredEventArgs ConstructTransportErrorEventArgs(IntPtr wsmanAPIHandle,
             WSManClientSessionTransportManager wsmanSessionTM,
             WSManNativeApi.WSManError errorStruct,
             TransportMethodEnum transportMethodReportingError,
@@ -166,8 +166,8 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             e.ErrorCode = errorStruct.errorCode;
-            TransportErrorOccuredEventArgs eventargs =
-                new TransportErrorOccuredEventArgs(e, transportMethodReportingError);
+            TransportErrorOccurredEventArgs eventargs =
+                new TransportErrorOccurredEventArgs(e, transportMethodReportingError);
             return eventargs;
         }
 
@@ -985,7 +985,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (_wsManShellOperationHandle == IntPtr.Zero)
             {
-                TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(WSManAPIData.WSManAPIHandle,
+                TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(WSManAPIData.WSManAPIHandle,
                     this,
                     new WSManNativeApi.WSManError(),
                     TransportMethodEnum.ConnectShellEx,
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (_wsManShellOperationHandle == IntPtr.Zero)
                 {
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(WSManAPIData.WSManAPIHandle,
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(WSManAPIData.WSManAPIHandle,
                         this,
                         new WSManNativeApi.WSManError(),
                         TransportMethodEnum.CreateShellEx,
@@ -1252,7 +1252,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Adjusts for any variations in different protocol versions. Following changes are considered
         /// - In V2, default max envelope size is 150KB while in V3 it has been changed to 500KB.
-        ///   With default configuration remoting from V3 client to V2 server will break as V3 client can send upto 500KB in a single Send packet
+        ///   With default configuration remoting from V3 client to V2 server will break as V3 client can send up to 500KB in a single Send packet
         ///   So if server version is known to be V2, we'll downgrade the max env size to 150KB (V2's default) if the current value is 500KB (V3 default)
         /// </summary>
         /// <param name="serverProtocolVersion">Server negotiated protocol version.</param>
@@ -1625,7 +1625,7 @@ namespace System.Management.Automation.Remoting.Client
         /// in a different thread
         /// Logic in transport callbacks should always use this to process a transport error.
         /// </summary>
-        internal void ProcessWSManTransportError(TransportErrorOccuredEventArgs eventArgs)
+        internal void ProcessWSManTransportError(TransportErrorOccurredEventArgs eventArgs)
         {
             EnqueueAndStartProcessingThread(null, eventArgs, null);
         }
@@ -1634,7 +1634,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Log the error message in the Crimson logger and raise error handler.
         /// </summary>
         /// <param name="eventArgs"></param>
-        public override void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public override void RaiseErrorHandler(TransportErrorOccurredEventArgs eventArgs)
         {
             // Look for a valid stack trace.
             string stackTrace;
@@ -1908,7 +1908,7 @@ namespace System.Management.Automation.Remoting.Client
                         return;
                     }
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
@@ -2001,7 +2001,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
@@ -2060,7 +2060,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
@@ -2142,12 +2142,12 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.ReconnectShellEx,
-                        RemotingErrorIdStrings.ReconnectShellExCallBackErrr,
+                        RemotingErrorIdStrings.ReconnectShellExCallBackErr,
                         new object[] { sessionTM.ConnectionInfo.ComputerName, WSManTransportManagerUtils.ParseEscapeWSManErrorMessage(errorStruct.errorDetail) });
                     sessionTM.ProcessWSManTransportError(eventargs);
 
@@ -2252,7 +2252,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
@@ -2335,8 +2335,8 @@ namespace System.Management.Automation.Remoting.Client
                 // about the same.
                 PSRemotingTransportException e = new PSRemotingTransportException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.SendExFailed, sessionTM.ConnectionInfo.ComputerName));
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.SendShellInputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.SendShellInputEx);
                 sessionTM.ProcessWSManTransportError(eventargs);
 
                 return;
@@ -2362,7 +2362,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
@@ -2414,8 +2414,8 @@ namespace System.Management.Automation.Remoting.Client
                 // about the same.
                 PSRemotingTransportException e = new PSRemotingTransportException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ReceiveExFailed, sessionTM.ConnectionInfo.ComputerName));
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.ReceiveShellOutputEx);
                 sessionTM.ProcessWSManTransportError(eventargs);
 
                 return;
@@ -2429,7 +2429,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode.ToString(), errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         sessionTM.WSManAPIData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
@@ -2933,7 +2933,7 @@ namespace System.Management.Automation.Remoting.Client
             sessnTM.RobustConnectionsInitiated += HandleRobustConnectionsInitiated;
 
             // Resume queue on robust connections completed event.
-            sessnTM.RobustConnectionsCompleted += HandleRobusConnectionsCompleted;
+            sessnTM.RobustConnectionsCompleted += HandleRobustConnectionsCompleted;
         }
 
         #endregion
@@ -2951,7 +2951,7 @@ namespace System.Management.Automation.Remoting.Client
             SuspendQueue();
         }
 
-        private void HandleRobusConnectionsCompleted(object sender, EventArgs e)
+        private void HandleRobustConnectionsCompleted(object sender, EventArgs e)
         {
             ResumeQueue();
         }
@@ -2999,8 +2999,8 @@ namespace System.Management.Automation.Remoting.Client
             if (_wsManCmdOperationHandle == IntPtr.Zero)
             {
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ConnectShellCommandEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.ConnectShellCommandEx);
                 ProcessWSManTransportError(eventargs);
                 return;
             }
@@ -3076,8 +3076,8 @@ namespace System.Management.Automation.Remoting.Client
             if (_wsManCmdOperationHandle == IntPtr.Zero)
             {
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.RunShellCommandEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.RunShellCommandEx);
                 ProcessWSManTransportError(eventargs);
                 return;
             }
@@ -3199,7 +3199,7 @@ namespace System.Management.Automation.Remoting.Client
         /// in a different thread
         /// Logic in transport callbacks should always use this to process a transport error.
         /// </summary>
-        internal void ProcessWSManTransportError(TransportErrorOccuredEventArgs eventArgs)
+        internal void ProcessWSManTransportError(TransportErrorOccurredEventArgs eventArgs)
         {
             EnqueueAndStartProcessingThread(null, eventArgs, null);
         }
@@ -3208,7 +3208,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Log the error message in the Crimson logger and raise error handler.
         /// </summary>
         /// <param name="eventArgs"></param>
-        public override void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public override void RaiseErrorHandler(TransportErrorOccurredEventArgs eventArgs)
         {
             // Look for a valid stack trace.
             string stackTrace;
@@ -3393,7 +3393,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("OnCreateCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
                         errorStruct,
@@ -3491,7 +3491,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("OnConnectCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
                         errorStruct,
@@ -3632,8 +3632,8 @@ namespace System.Management.Automation.Remoting.Client
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.CommandInputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.CommandInputEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
                 return;
@@ -3665,7 +3665,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("CmdSend callback: WSMan reported an error: {0}", errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
                         errorStruct,
@@ -3715,8 +3715,8 @@ namespace System.Management.Automation.Remoting.Client
                 // about the same.
                 tracer.WriteLine("CmdReceive callback: ShellOperationHandles are not the same as the Receive is initiated with");
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandReceiveExFailed);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReceiveCommandOutputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.ReceiveCommandOutputEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
                 return;
@@ -3739,7 +3739,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("CmdReceive callback: WSMan reported an error: {0}", errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
                         errorStruct,
@@ -3805,8 +3805,8 @@ namespace System.Management.Automation.Remoting.Client
                 // about the same.
                 tracer.WriteLine("Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ReconnectShellCommandExCallBackError);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.ReconnectShellCommandEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.ReconnectShellCommandEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
                 return;
@@ -3819,7 +3819,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("OnReconnectCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
                         errorStruct,
@@ -3877,8 +3877,8 @@ namespace System.Management.Automation.Remoting.Client
                 // about the same.
                 tracer.WriteLine("Cmd Signal callback: ShellOperationHandles are not the same as the signal is initiated with");
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.CommandSendExFailed);
-                TransportErrorOccuredEventArgs eventargs =
-                    new TransportErrorOccuredEventArgs(e, TransportMethodEnum.CommandInputEx);
+                TransportErrorOccurredEventArgs eventargs =
+                    new TransportErrorOccurredEventArgs(e, TransportMethodEnum.CommandInputEx);
                 cmdTM.ProcessWSManTransportError(eventargs);
 
                 return;
@@ -3911,7 +3911,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Cmd Signal callback: WSMan reported an error: {0}", errorStruct.errorDetail);
 
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
+                    TransportErrorOccurredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
                         errorStruct,
@@ -4093,7 +4093,7 @@ namespace System.Management.Automation.Remoting.Client
             if (_sessnTm != null)
             {
                 _sessnTm.RobustConnectionsInitiated -= HandleRobustConnectionsInitiated;
-                _sessnTm.RobustConnectionsCompleted -= HandleRobusConnectionsCompleted;
+                _sessnTm.RobustConnectionsCompleted -= HandleRobustConnectionsCompleted;
             }
 
             if (_closeCmdCompleted != null)

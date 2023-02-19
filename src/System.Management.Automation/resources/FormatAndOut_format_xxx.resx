@@ -128,7 +128,7 @@
   </data>
   <data name="UnknownViewNameErrorSuffix" xml:space="preserve">
     <value> The view name {0} cannot be found in the {1} formatting.</value>
-    <comment>{0} indicates one of the valid formating types such as Table, List, Wide or Custom.</comment>
+    <comment>{0} indicates one of the valid formatting types such as Table, List, Wide or Custom.</comment>
   </data>
   <data name="NonExistingViewNameError" xml:space="preserve">
     <value> There are no existing {0} views for {1} objects.</value>

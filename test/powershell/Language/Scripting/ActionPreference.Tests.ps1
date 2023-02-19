@@ -27,7 +27,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     )
 
     BeforeAll {
-        $orgin = $GLOBAL:errorActionPreference
+        $origin = $GLOBAL:errorActionPreference
 
         function Join-TestCase {
             [OutputType([Hashtable[]])]
@@ -65,8 +65,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     }
 
     AfterAll {
-        if ($GLOBAL:errorActionPreference -ne $orgin) {
-            $GLOBAL:errorActionPreference = $orgin
+        if ($GLOBAL:errorActionPreference -ne $origin) {
+            $GLOBAL:errorActionPreference = $origin
         }
     }
 
@@ -93,7 +93,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         } finally {
             Remove-Variable -Name ErrorActionPreference -Scope Global
             # Re-create the action preference variable as a strongly typed variable like it was before
-            [System.Management.Automation.ActionPreference]$GLOBAL:ErrorActionPreference = $orgin
+            [System.Management.Automation.ActionPreference]$GLOBAL:ErrorActionPreference = $origin
         }
     }
 
@@ -104,7 +104,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             Get-Process -Name asdfasdfasdf
             $error.Count | Should -BeExactly $errorCount
         } finally {
-            $GLOBAL:ErrorActionPreference = $orgin
+            $GLOBAL:ErrorActionPreference = $origin
         }
     }
 

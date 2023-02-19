@@ -59,7 +59,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "CertificateThumbprint".
-        /// This is specificly for wsman protocol.
+        /// This is specifically for wsman protocol.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CertificateParameterSet)]
@@ -133,7 +133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The following is the definition of the input parameter "Port".
         /// Specifies the port number to use, if different than the default port number.
-        /// This is specificly for wsman protocol.
+        /// This is specifically for wsman protocol.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public uint Port

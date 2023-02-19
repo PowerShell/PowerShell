@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Parameters
 
-        #region GererateSource
+        #region GenerateSource
 
         private string GenerateTypeSource(string typeNamespace, string typeName, string sourceCodeText, Language language)
         {
@@ -544,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
             return usingNamespaceSet.ToString();
         }
 
-        #endregion GererateSource
+        #endregion GenerateSource
 
         /// <summary>
         /// Prevent code compilation in ConstrainedLanguage mode.
@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool IsError = false;
 
-                foreach (var diagnisticRecord in compilerDiagnostics)
+                foreach (var diagnosticRecord in compilerDiagnostics)
                 {
                     // We shouldn't specify input and output files in CompilerOptions parameter
                     // so suppress errors from Roslyn default command line parser:
@@ -1225,27 +1225,27 @@ namespace Microsoft.PowerShell.Commands
                     // On emit phase some warnings (like CS8019/BS50001) don't suppressed
                     // and present in diagnostic report with DefaultSeverity equal to Hidden
                     // so we skip them explicitly here too.
-                    if (diagnisticRecord.IsSuppressed || diagnisticRecord.DefaultSeverity == DiagnosticSeverity.Hidden ||
-                        string.Equals(diagnisticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
-                        string.Equals(diagnisticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
-                        string.Equals(diagnisticRecord.Id, "BC2008", StringComparison.InvariantCulture))
+                    if (diagnosticRecord.IsSuppressed || diagnosticRecord.DefaultSeverity == DiagnosticSeverity.Hidden ||
+                        string.Equals(diagnosticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
+                        string.Equals(diagnosticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
+                        string.Equals(diagnosticRecord.Id, "BC2008", StringComparison.InvariantCulture))
                     {
                         continue;
                     }
 
                     if (!IsError)
                     {
-                        IsError = diagnisticRecord.Severity == DiagnosticSeverity.Error ||
-                                 (diagnisticRecord.IsWarningAsError && diagnisticRecord.Severity == DiagnosticSeverity.Warning);
+                        IsError = diagnosticRecord.Severity == DiagnosticSeverity.Error ||
+                                 (diagnosticRecord.IsWarningAsError && diagnosticRecord.Severity == DiagnosticSeverity.Warning);
                     }
 
-                    string errorText = BuildErrorMessage(diagnisticRecord);
+                    string errorText = BuildErrorMessage(diagnosticRecord);
 
-                    if (diagnisticRecord.Severity == DiagnosticSeverity.Warning)
+                    if (diagnosticRecord.Severity == DiagnosticSeverity.Warning)
                     {
                         WriteWarning(errorText);
                     }
-                    else if (diagnisticRecord.Severity == DiagnosticSeverity.Info)
+                    else if (diagnosticRecord.Severity == DiagnosticSeverity.Info)
                     {
                         WriteInformation(errorText, s_writeInformationTags);
                     }
@@ -1255,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
                             new Exception(errorText),
                             "SOURCE_CODE_ERROR",
                             ErrorCategory.InvalidData,
-                            diagnisticRecord);
+                            diagnosticRecord);
 
                         WriteError(errorRecord);
                     }
@@ -1273,14 +1273,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static string BuildErrorMessage(Diagnostic diagnisticRecord)
+        private static string BuildErrorMessage(Diagnostic diagnosticRecord)
         {
-            var location = diagnisticRecord.Location;
+            var location = diagnosticRecord.Location;
 
             if (location.SourceTree == null)
             {
                 // For some error types (linker?) we don't have related source code.
-                return diagnisticRecord.ToString();
+                return diagnosticRecord.ToString();
             }
             else
             {
@@ -1292,13 +1292,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // This is typical Roslyn diagnostic message which contains
                 // a message number, a source context and an error position.
-                var diagnisticMessage = diagnisticRecord.ToString();
+                var diagnosticMessage = diagnosticRecord.ToString();
                 var errorLineString = textLines[errorLineNumber].ToString();
                 var errorPosition = lineSpan.StartLinePosition.Character;
 
-                StringBuilder sb = new(diagnisticMessage.Length + errorLineString.Length * 2 + 4);
+                StringBuilder sb = new(diagnosticMessage.Length + errorLineString.Length * 2 + 4);
 
-                sb.AppendLine(diagnisticMessage);
+                sb.AppendLine(diagnosticMessage);
                 sb.AppendLine(errorLineString);
 
                 for (var i = 0; i < errorLineString.Length; i++)

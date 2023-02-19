@@ -418,7 +418,7 @@ namespace System.Management.Automation
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
         /// <returns>An array of zero or more result objects.</returns>
-        /// <remarks>Caller of synchronous exectute should not close
+        /// <remarks>Caller of synchronous execute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
         ///
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation
         internal ObjectStream MethodExecutorStream { get; }
 
         /// <summary>
-        /// Check if anyother pipeline is executing.
+        /// Check if another pipeline is executing.
         /// In case of nested pipeline, checks that it is called
         /// from currently executing pipeline's thread.
         /// </summary>

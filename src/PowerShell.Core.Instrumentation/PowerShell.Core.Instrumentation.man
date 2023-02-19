@@ -2356,7 +2356,7 @@
               value="8"
               />
           <task
-              message="$(string.PS_PROVIDER.task.T_M3P-ConfiguarationTask.message)"
+              message="$(string.PS_PROVIDER.task.T_M3P-ConfigurationTask.message)"
               name="Configuration"
               symbol="T_CONFIGURATION"
               value="9"
@@ -2400,7 +2400,7 @@
           <task
               message="$(string.PS_PROVIDER.task.T_EXECUTE_PIPELINE.message)"
               name="ExecutePipeline"
-              symbol="T_EXECUTEPIEPLINE"
+              symbol="T_EXECUTEPIPELINE"
               value="106"
               />
           <task
@@ -3690,7 +3690,7 @@
                 />
             <data
                 inType="win:Int32"
-                name="OverridenDepth"
+                name="OverriddenDepth"
                 />
             <data
                 inType="win:Int32"
@@ -3705,7 +3705,7 @@
             <data
                 inType="win:UInt32"
                 map="SerializationMethod"
-                name="OverridenMode"
+                name="OverriddenMode"
                 />
           </template>
           <template tid="T_SERIALIZER_SCRIPT_PROPERTY_WITHOUT_RUNSPACE">
@@ -4355,7 +4355,7 @@
           </counter>
           <counter
               defaultScale="0"
-              description="Displays the number of requests that were re-i nserted into the Activity Host Manager queue&apos;s because of failure due to process crash. This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval."
+              description="Displays the number of requests that were re-inserted into the Activity Host Manager queue&apos;s because of failure due to process crash. This counter is not an average over time; it displays the difference between the values observed in the last two samples divided by the duration of the sample interval."
               descriptionID="172"
               detailLevel="standard"
               id="17"
@@ -4542,7 +4542,7 @@
               name="PowerShell Remoting: # of connections closed-reopened"
               nameID="222"
               type="perf_counter_rawcount"
-              uri="PowerShellCore.PerfCounters.PowershellM3PCounterSet.PSRemotingConnectionsClosedReopendCount"
+              uri="PowerShellCore.PerfCounters.PowershellM3PCounterSet.PSRemotingConnectionsClosedReopenedCount"
               >
             <counterAttributes>
               <counterAttribute name="reference"/>
@@ -4881,7 +4881,7 @@
             />
         <string
             id="PS_PROVIDER.event.E_A_CREATE_COMMAND_REMOTESESSION.message"
-            value="Shell Context %1. Request Id %2. Creating a commonad session for running a command."
+            value="Shell Context %1. Request Id %2. Creating a command session for running a command."
             />
         <string
             id="PS_PROVIDER.event.E_A_STOP_COMMAND.message"
@@ -4929,11 +4929,11 @@
             />
         <string
             id="PS_PROVIDER.event.E_A_SERIALIZER_DEPTH_OVERRIDE.message"
-            value="Serialization depth has been overriden. %n %t Serialized type name: %1 %n %t Original depth: %2 %n %t Overridden depth: %3 %n %t Current depth below top level: %4"
+            value="Serialization depth has been overridden. %n %t Serialized type name: %1 %n %t Original depth: %2 %n %t Overridden depth: %3 %n %t Current depth below top level: %4"
             />
         <string
             id="PS_PROVIDER.event.E_A_SERIALIZER_MODE_OVERRIDE.message"
-            value="Serialization mode has been overriden. %n %t Serialized type name: %1 %n %t Overridden mode: %2"
+            value="Serialization mode has been overridden. %n %t Serialized type name: %1 %n %t Overridden mode: %2"
             />
         <string
             id="PS_PROVIDER.event.E_A_SERIALIZER_SCRIPT_PROPERTY_WITHOUT_RUNSPACE.message"
@@ -5248,7 +5248,7 @@
             value="Workflow Persistence"
             />
         <string
-            id="PS_PROVIDER.task.T_M3P-ConfiguarationTask.message"
+            id="PS_PROVIDER.task.T_M3P-ConfigurationTask.message"
             value="Configuration"
             />
         <string

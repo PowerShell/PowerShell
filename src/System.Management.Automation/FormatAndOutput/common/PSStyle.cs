@@ -763,10 +763,10 @@ namespace System.Management.Automation
         {
             ArgumentNullException.ThrowIfNull(text);
 
-            var decorartedString = new ValueStringDecorated(text);
-            if (decorartedString.ContentLength > 0)
+            var decoratedString = new ValueStringDecorated(text);
+            if (decoratedString.ContentLength > 0)
             {
-                throw new ArgumentException(string.Format(PSStyleStrings.TextContainsContent, decorartedString.ToString(OutputRendering.PlainText)));
+                throw new ArgumentException(string.Format(PSStyleStrings.TextContainsContent, decoratedString.ToString(OutputRendering.PlainText)));
             }
 
             return text;

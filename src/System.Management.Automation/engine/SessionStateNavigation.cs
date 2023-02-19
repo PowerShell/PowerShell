@@ -1196,7 +1196,7 @@ namespace System.Management.Automation
 
             Dbg.Diagnostics.Assert(
                 path != null,
-                "Caller should validate path before callin g this method");
+                "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
                 context != null,

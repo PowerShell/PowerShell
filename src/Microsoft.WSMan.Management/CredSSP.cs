@@ -150,7 +150,7 @@ namespace Microsoft.WSMan.Management
                     thread.Join();
                 }
 
-                if (!helper.ValidateCreadSSPRegistryRetry(false, null, applicationname))
+                if (!helper.ValidateCredSSPRegistryRetry(false, null, applicationname))
                 {
                     helper.AssertError(helper.GetResourceMsgFromResourcetext("DisableCredSSPPolicyValidateError"), false, null);
                 }
@@ -532,7 +532,7 @@ namespace Microsoft.WSMan.Management
                         thread.Join();
                     }
 
-                    if (helper.ValidateCreadSSPRegistryRetry(true, delegatecomputer, applicationname))
+                    if (helper.ValidateCredSSPRegistryRetry(true, delegatecomputer, applicationname))
                     {
                         WriteObject(xmldoc.FirstChild);
                     }

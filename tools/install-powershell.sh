@@ -56,7 +56,7 @@ install(){
     MACH=$(uname -m)
     local DIST
     local DistroBasedOn
-    local PSUEDONAME
+    local PSEUDONAME
     local REV
 
     if [ "${OS}" == "windowsnt" ]; then
@@ -84,11 +84,11 @@ install(){
             if [ -f /etc/redhat-release ] ; then
                 DistroBasedOn='redhat'
                 DIST=$(sed s/\ release.*// < /etc/redhat-release)
-                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/redhat-release )
+                PSEUDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/redhat-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/redhat-release )
             elif [ -f /etc/system-release ] ; then
                 DIST=$(sed s/\ release.*// < /etc/system-release)
-                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/system-release )
+                PSEUDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/system-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/system-release )
                 if [[ $DIST == *"Amazon Linux"* ]] ; then
                     DistroBasedOn='amazonlinux'
@@ -97,17 +97,17 @@ install(){
                 fi
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
-                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
+                PSEUDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
                 DIST=$(. /etc/os-release && echo $NAME)
-                PSUEDONAME=$(. /etc/os-release && echo $VERSION_CODENAME)
+                PSEUDONAME=$(. /etc/os-release && echo $VERSION_CODENAME)
                 REV=$(. /etc/os-release && echo $VERSION_ID)
             elif [ "$DISTRIBUTOR_ID" = Gentoo ] ; then
                 DistroBasedOn='gentoo'
                 DIST=$(. /etc/os-release && echo $NAME)
-                PSUEDONAME=$(eselect --brief profile show | sed -E 's/[[:space:]]*//g')
+                PSEUDONAME=$(eselect --brief profile show | sed -E 's/[[:space:]]*//g')
                 REV=$(       eselect --brief profile show | sed -E 's|^.*/([[:digit:].]+).*|\1|')
             fi
             if [ -f /etc/UnitedLinux-release ] ; then
@@ -127,7 +127,7 @@ install(){
     echo "  OS: $OS"
     echo "  DIST: $DIST"
     echo "  DistroBasedOn: $DistroBasedOn"
-    echo "  PSUEDONAME: $PSUEDONAME"
+    echo "  PSEUDONAME: $PSEUDONAME"
     echo "  REV: $REV"
     echo "  KERNEL: $KERNEL"
     echo "  MACH: $MACH"

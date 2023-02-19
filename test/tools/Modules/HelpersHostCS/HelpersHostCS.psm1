@@ -175,7 +175,7 @@ namespace TestHost
         // To see difference between 'Write' and 'WriteLine' with and w/o colors in the debug output
         // we need use a meta information.
         // So we make a output string as:
-        // <Foregraund color name> : <Background color name> : <'user value'> : <'NewLine' or 'NoNewLine'>
+        // <Foreground color name> : <Background color name> : <'user value'> : <'NewLine' or 'NoNewLine'>
         //
         public override void Write(string value)
         {

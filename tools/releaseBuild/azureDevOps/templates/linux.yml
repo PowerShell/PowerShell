@@ -62,8 +62,8 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       try {
@@ -72,7 +72,7 @@ jobs:
 
         Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
 
-        Write-Verbose -Verbose "File permisions after building"
+        Write-Verbose -Verbose "File permissions after building"
         Get-ChildItem -Path $(System.ArtifactsDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
 
       } catch {
@@ -134,7 +134,7 @@ jobs:
 
   - pwsh: |
       Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-      Write-Verbose -Verbose "File permisions before compressing"
+      Write-Verbose -Verbose "File permissions before compressing"
       Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
       tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
     displayName: Compress pwshLinuxBuild

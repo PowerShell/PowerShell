@@ -109,7 +109,7 @@
         </Border>
     </ControlTemplate>
 
-    <!--This is for themeing to make sure all textblocks behave as expected -->
+    <!--This is for theming to make sure all textblocks behave as expected -->
     <Style TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
     </Style>

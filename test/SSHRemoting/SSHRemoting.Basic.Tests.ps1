@@ -242,8 +242,8 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         }
 
         <#
-        It "Verifes that 'pwshbroken' throws expected error for missing config file." {
-            Write-Verbose -Verbose "It Starting: Verifes that 'pwshbroken' throws expected error for missing config file."
+        It "Verifies that 'pwshbroken' throws expected error for missing config file." {
+            Write-Verbose -Verbose "It Starting: Verifies that 'pwshbroken' throws expected error for missing config file."
             { $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshbroken' } | Should -Throw
             $script:session = $null
             Write-Verbose -Verbose "It Complete"

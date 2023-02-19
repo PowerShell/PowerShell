@@ -2326,7 +2326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// WriteObject/WriteObjecs/WriteError are only allowed during this scope.
+        /// WriteObject/WriteObjects/WriteError are only allowed during this scope.
         /// Be sure to use this object only in "using" so that it is reliably
         /// disposed and follows stack semantics.
         /// </summary>

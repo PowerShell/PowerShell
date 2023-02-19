@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
                 sortedItemCount = FullSort(dataToProcess, comparer);
             }
             // Otherwise, use an indexed min-/max-heap to perform an in-place heap sort (heap
-            // sorts are inheritantly stable, meaning they will preserve the respective order
+            // sorts are inherently stable, meaning they will preserve the respective order
             // of duplicate objects as they are sorted on the heap)
             else
             {

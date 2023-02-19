@@ -72,7 +72,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(cmdlet.ComputerName);
             string nameSpace;
-            List<CimSessionProxy> proxys = new();
+            List<CimSessionProxy> proxies = new();
             string action = string.Format(CultureInfo.CurrentUICulture, actionTemplate, cmdlet.MethodName);
 
             switch (cmdlet.ParameterSetName)
@@ -80,7 +80,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.CimInstanceComputerSet:
                     foreach (string computerName in computerNames)
                     {
-                        proxys.Add(CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet));
+                        proxies.Add(CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet));
                     }
 
                     break;
@@ -90,7 +90,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.QueryComputerSet:
                     foreach (string computerName in computerNames)
                     {
-                        proxys.Add(CreateSessionProxy(computerName, cmdlet));
+                        proxies.Add(CreateSessionProxy(computerName, cmdlet));
                     }
 
                     break;
@@ -102,7 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (CimSession session in cmdlet.CimSession)
                     {
                         CimSessionProxy proxy = CreateSessionProxy(session, cmdlet);
-                        proxys.Add(proxy);
+                        proxies.Add(proxy);
                     }
 
                     break;
@@ -131,7 +131,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
                         }
 
-                        foreach (CimSessionProxy proxy in proxys)
+                        foreach (CimSessionProxy proxy in proxies)
                         {
                             if (!cmdlet.ShouldProcess(target, action))
                             {
@@ -152,7 +152,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         string target = string.Format(CultureInfo.CurrentUICulture, targetClass, cmdlet.CimClass.CimSystemProperties.ClassName);
                         nameSpace = ConstValue.GetNamespace(cmdlet.CimClass.CimSystemProperties.Namespace);
-                        foreach (CimSessionProxy proxy in proxys)
+                        foreach (CimSessionProxy proxy in proxies)
                         {
                             if (!cmdlet.ShouldProcess(target, action))
                             {
@@ -171,7 +171,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.QueryComputerSet:
                 case CimBaseCommand.QuerySessionSet:
                     nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
-                    foreach (CimSessionProxy proxy in proxys)
+                    foreach (CimSessionProxy proxy in proxies)
                     {
                         // create context object
                         CimInvokeCimMethodContext context = new(
@@ -198,7 +198,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             nameSpace = ConstValue.GetNamespace(cmdlet.CimInstance.CimSystemProperties.Namespace);
                         }
 
-                        foreach (CimSessionProxy proxy in proxys)
+                        foreach (CimSessionProxy proxy in proxies)
                         {
                             if (!cmdlet.ShouldProcess(target, action))
                             {

@@ -99,7 +99,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
     }
     Context "Get-WinEvent UserData Queries" {
         It 'Get-WinEvent can retrieve events with UserData queries using FilterXml' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = "<QueryList><Query><Select Path='file://$eventLogFile'>*[UserData/*/Param2='Windows x64']</Select></Query></QueryList>"
@@ -108,7 +108,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             $results.RecordId | Should -Be 10
         }
         It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable (one value)' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = @{ path = "$eventLogFile"; Param2 = "Windows x64"}
@@ -117,7 +117,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             $results.RecordId | Should -Be 10
         }
         It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable (array of values)' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = @{ path = "$eventLogFile"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" }
@@ -127,7 +127,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             ($results.RecordId -contains 11) | Should -BeTrue
         }
         It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable (multiple named params)' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = @{ path = "$eventLogFile"; PackageAware="Not package aware"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" }
@@ -137,7 +137,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             ($results.RecordId -contains 11) | Should -BeTrue
         }
         It 'Get-WinEvent can retrieve events with UserData queries using FilterXPath' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = "*/UserData/*/Param2='Windows x64'"
@@ -148,7 +148,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
     }
     Context "Get-WinEvent Queries with SuppressHashFilter" {
         It 'Get-WinEvent can suppress events by Id' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = @{ path = "$eventLogFile"}
@@ -159,7 +159,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($resultsSuppress).Count | Should -Be 2
         }
         It 'Get-WinEvent can suppress events by UserData' {
-            # this relies on apriori knowledge about the log file
+            # this relies on a prior knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ErrorAction silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
             $filter = @{ path = "$eventLogFile"}

@@ -29,7 +29,7 @@ DynamicParam {
         $names += $name
     }
 
-    # Create the parameter attributs
+    # Create the parameter attributes
     $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
     $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $names
     $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"

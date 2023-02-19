@@ -2904,7 +2904,7 @@ namespace Microsoft.PowerShell.Commands
         /// Out parameter of the native win32 StartupType
         /// </param>
         /// <returns>
-        /// If a supported StartupType is provided, funciton returns true, otherwise false.
+        /// If a supported StartupType is provided, function returns true, otherwise false.
         /// </returns>
         internal static bool TryGetNativeStartupType(ServiceStartupType StartupType, out DWORD dwStartType)
         {

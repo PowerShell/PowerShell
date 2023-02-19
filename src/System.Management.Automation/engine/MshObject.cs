@@ -659,7 +659,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
+        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassAdapter(), DotNetInstanceAdapter);
         private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
 #endif
         private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
@@ -1680,7 +1680,7 @@ namespace System.Management.Automation
             catch (ArgumentException e)
             {
                 throw new ExtendedTypeSystemException("PSObjectCompareTo", e,
-                    ExtendedTypeSystem.NotTheSameTypeOrNotIcomparable, this.PrivateToString(), PSObject.AsPSObject(obj).ToString(), "IComparable");
+                    ExtendedTypeSystem.NotTheSameTypeOrNotIncomparable, this.PrivateToString(), PSObject.AsPSObject(obj).ToString(), "IComparable");
             }
         }
         #endregion IComparable

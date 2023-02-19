@@ -167,8 +167,8 @@ namespace Microsoft.PowerShell.Commands
             if (Context.EngineSessionState.Module?.LanguageMode != null &&
                 Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
             {
-                var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
-                var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
+                var se = new PSSecurityException(Modules.CannotExportMembersAcrossLanguageBoundaries);
+                var er = new ErrorRecord(se, "Modules_CannotExportMembersAcrossLanguageBoundaries", ErrorCategory.SecurityError, this);
                 ThrowTerminatingError(er);
             }
 

@@ -844,14 +844,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogEngineHealthEvent: check whether logging engine health event is necessary.
-        ///     Whether to log engine event is controled by session variable "LogEngineHealthEvent"
+        ///     Whether to log engine event is controlled by session variable "LogEngineHealthEvent"
         ///     The default value for this is true (?).
         /// Reading a session variable from execution context for
         /// every single logging call may be expensive. We may need to use a different
         /// approach for this:
         ///     a. ExecutionContext will cache the value for variable "LogEngineHealthEvent"
         ///     b. If this variable is changed, a notification function will change the cached
-        ///        value in engine correspondently.
+        ///        value in engine correspondingly.
         /// This applies to other logging preference variable also.
         /// </summary>
         /// <param name="logProvider"></param>
@@ -869,7 +869,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogEngineLifecycleEvent: check whether logging engine lifecycle event is necessary.
-        ///     Whether to log engine lifecycle event is controled by session variable "LogEngineLifecycleEvent"
+        ///     Whether to log engine lifecycle event is controlled by session variable "LogEngineLifecycleEvent"
         ///     The default value for this is false (?).
         /// </summary>
         /// <param name="logProvider"></param>
@@ -887,7 +887,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogCommandHealthEvent: check whether logging command health event is necessary.
-        ///     Whether to log command health event is controled by session variable "LogCommandHealthEvent"
+        ///     Whether to log command health event is controlled by session variable "LogCommandHealthEvent"
         ///     The default value for this is false (?).
         /// </summary>
         /// <param name="logProvider"></param>
@@ -905,7 +905,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogCommandLifecycleEvent: check whether logging command event is necessary.
-        ///     Whether to log command lifecycle event is controled by session variable "LogCommandLifecycleEvent"
+        ///     Whether to log command lifecycle event is controlled by session variable "LogCommandLifecycleEvent"
         ///     The default value for this is false (?).
         /// </summary>
         /// <param name="logProvider"></param>
@@ -924,7 +924,7 @@ namespace System.Management.Automation
         /// <summary>
         /// NeedToLogPipelineExecutionDetailEvent: check whether logging pipeline execution detail event is necessary.
         ///
-        /// Whether to log command lifecycle event is controled by PSSnapin set up.
+        /// Whether to log command lifecycle event is controlled by PSSnapin set up.
         ///
         /// Should we use session variable "LogPipelineExecutionEvent" to control this also?
         ///
@@ -947,7 +947,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogProviderHealthEvent: check whether logging Provider health event is necessary.
-        ///     Whether to log Provider health event is controled by session variable "LogProviderHealthEvent"
+        ///     Whether to log Provider health event is controlled by session variable "LogProviderHealthEvent"
         ///     The default value for this is true.
         /// </summary>
         /// <param name="logProvider"></param>
@@ -965,7 +965,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogProviderLifecycleEvent: check whether logging Provider lifecycle event is necessary.
-        ///     Whether to log Provider lifecycle event is controled by session variable "LogProviderLifecycleEvent"
+        ///     Whether to log Provider lifecycle event is controlled by session variable "LogProviderLifecycleEvent"
         ///     The default value for this is true.
         /// </summary>
         /// <param name="logProvider"></param>
@@ -983,7 +983,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// NeedToLogSettingsEvent: check whether logging settings event is necessary.
-        ///     Whether to log settings event is controled by session variable "LogSettingsEvent"
+        ///     Whether to log settings event is controlled by session variable "LogSettingsEvent"
         ///     The default value for this is false (?).
         /// </summary>
         /// <param name="logProvider"></param>

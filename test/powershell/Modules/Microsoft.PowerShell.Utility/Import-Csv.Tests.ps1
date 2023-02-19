@@ -24,7 +24,7 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
 
 Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
     BeforeAll {
-        $empyValueCsv = @'
+        $emptyValueCsv = @'
         a1""a3
         v1"v2"v3
 '@
@@ -42,7 +42,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
 
 
     It "Should handle <name> and bind to LiteralPath from pipeline" -TestCases @(
-        @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
+        @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $emptyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
         ){
@@ -65,7 +65,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
     }
 
     It "Should handle <name> and bind to Path from pipeline" -TestCases @(
-        @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
+        @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $emptyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
         ){
@@ -98,7 +98,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
         $TestImportCsv_W3C_ELF = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_W3C_ELF.csv
 
         $testCSVfiles = $TestImportCsv_NoHeader, $TestImportCsv_WithHeader, $TestImportCsv_W3C_ELF
-        $orginalHeader = "Column1","Column2","Column 3"
+        $originalHeader = "Column1","Column2","Column 3"
         $customHeader = "test1","test2","test3"
     }
     # Test set is the same for all file formats
@@ -110,7 +110,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
                 if ($FileName -eq "TestImportCsv_NoHeader.csv") {
                     # The file does not have header
                     # (w/o Delimiter here we get throw (bug?))
-                    $HeaderParams = @{Header = $orginalHeader; Delimiter = ","}
+                    $HeaderParams = @{Header = $originalHeader; Delimiter = ","}
                 } else {
                     # The files have header
                     $HeaderParams = @{Delimiter = ","}
@@ -121,7 +121,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
             It "Should be able to import all fields" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
                 $actualfields = $actual[0].psobject.Properties.Name
-                $actualfields | Should -Be $orginalHeader
+                $actualfields | Should -Be $originalHeader
             }
 
             It "Should be able to import all fields with custom header" {

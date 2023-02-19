@@ -1451,7 +1451,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// EnforceSystemLockDownLanguageMode
-        ///     FullLangauge        ->  ConstrainedLanguage
+        ///     FullLanguage        ->  ConstrainedLanguage
         ///     RestrictedLanguage  ->  NoLanguage
         ///     ConstrainedLanguage ->  ConstrainedLanguage
         ///     NoLanguage          ->  NoLanguage.

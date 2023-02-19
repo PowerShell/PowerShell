@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// LiteralPath parameter.
-        /// The literal paths of the files to calculate a hashs.
+        /// The literal paths of the files to calculate a hash.
         /// Don't resolved wildcards.
         /// </summary>
         /// <value></value>

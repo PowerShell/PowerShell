@@ -123,7 +123,7 @@
   <data name="PropertyNotFound" xml:space="preserve">
     <value>Property "{0}" cannot be found.</value>
   </data>
-  <data name="MutlipleExpandProperties" xml:space="preserve">
+  <data name="MultipleExpandProperties" xml:space="preserve">
     <value>Multiple properties cannot be expanded.</value>
   </data>
   <data name="AlreadyExistingProperty" xml:space="preserve">

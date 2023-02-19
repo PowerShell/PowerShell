@@ -160,9 +160,9 @@ namespace System.Management.Automation.Remoting
         TroubleShootingHelpTopic = 874,
         // BEGIN: Error IDs introduced for disconnect/reconnect
         DisconnectShellExFailed = 875,
-        DisconnectShellExCallBackErrr = 876,
+        DisconnectShellExCallBackErr = 876,
         ReconnectShellExFailed = 877,
-        ReconnectShellExCallBackErrr = 878,
+        ReconnectShellExCallBackErr = 878,
         // END: Error IDs introduced for disconnect/reconnect
         // Cmdlets related range: 900-999
         RemoteRunspaceInfoHasDuplicates = 900,
@@ -266,16 +266,16 @@ namespace System.Management.Automation.Remoting
         /// This parameter holds the string in the resource file.
         /// </param>
         /// <param name="args">
-        /// Optional parameters required by the resource string formating information.
+        /// Optional parameters required by the resource string formatting information.
         /// </param>
         /// <returns>
         /// The formatted localized string.
         /// </returns>
         internal static string FormatResourceString(string resourceString, params object[] args)
         {
-            string resourceFormatedString = StringUtil.Format(resourceString, args);
+            string resourceFormattedString = StringUtil.Format(resourceString, args);
 
-            return resourceFormatedString;
+            return resourceFormattedString;
         }
     }
 
@@ -297,7 +297,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes a localized string as the error message.
+        /// This constructor takes a localized string as the error message.
         /// </summary>
         /// <param name="message">
         /// A localized string as an error message.
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes a localized string as the error message, and an inner exception.
+        /// This constructor takes a localized string as the error message, and an inner exception.
         /// </summary>
         /// <param name="message">
         /// A localized string as an error message.
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes an inner exception and an error id.
+        /// This constructor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
         /// Inner exception.
@@ -445,7 +445,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes an inner exception and an error id.
+        /// This constructor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
         /// Inner exception.
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes an inner exception and an error id.
+        /// This constructor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
         /// Inner exception.
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         /// <summary>
-        /// This constuctor takes a localized string as the error message.
+        /// This constructor takes a localized string as the error message.
         /// </summary>
         /// <param name="message">
         /// A localized string as an error message.

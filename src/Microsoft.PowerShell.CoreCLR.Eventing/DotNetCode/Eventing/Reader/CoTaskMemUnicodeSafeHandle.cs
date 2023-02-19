@@ -57,7 +57,7 @@ namespace System.Diagnostics.Eventing.Reader
             return true;
         }
 
-        // DONT compare CoTaskMemUnicodeSafeHandle with CoTaskMemUnicodeSafeHandle.Zero
+        // DON'T compare CoTaskMemUnicodeSafeHandle with CoTaskMemUnicodeSafeHandle.Zero
         // use IsInvalid instead. Zero is provided where a NULL handle needed
         public static CoTaskMemUnicodeSafeHandle Zero
         {

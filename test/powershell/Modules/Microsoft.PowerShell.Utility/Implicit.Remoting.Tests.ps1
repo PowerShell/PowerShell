@@ -217,7 +217,7 @@ try
 
                 $results.Count | Should -Be 1              # Verifies that remote session pid is not returned
 
-                $errorString = $results[0] | Out-String   # Verifes error message for incorrect Scope parameter argument
+                $errorString = $results[0] | Out-String   # Verifies error message for incorrect Scope parameter argument
                 ($errorString -like "*Argument*") | Should -BeTrue
             }
         }
@@ -357,7 +357,7 @@ try
                 (Get-Variable -Name pid).Value | Should -Not -Be $PID
             }
 
-	        It "Verfies Remove-Module doesn't remove user's runspace" {
+	        It "Verifies Remove-Module doesn't remove user's runspace" {
                 Remove-Module $module -Force -ErrorAction SilentlyContinue
                 (Get-PSSession -InstanceId $session.InstanceId) | Should -Not -BeNullOrEmpty
             }
@@ -1770,7 +1770,7 @@ try
                 }
             }
 
-            It "Test warning is supressed by '-DisableNameChecking'" {
+            It "Test warning is suppressed by '-DisableNameChecking'" {
                 try {
                     $ps = [powershell]::Create().AddCommand("Import-PSSession", $true).AddParameter("Session", $session).AddParameter("CommandName", "BadVerb-Variable").AddParameter("DisableNameChecking", $true)
                     $module = $ps.Invoke() | Select-Object -First 1

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 # PowerShell Script to build and package PowerShell from specified form and branch
-# Script is intented to use in Docker containers
+# Script is intended to use in Docker containers
 # Ensure PowerShell is available in the provided image
 
 param (

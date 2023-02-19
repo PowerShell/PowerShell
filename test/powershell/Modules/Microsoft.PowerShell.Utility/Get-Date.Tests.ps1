@@ -361,7 +361,7 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
     }
 
     It "Get-Date -UFormat <format> (<result>)" -TestCases @(
-            # Some format specifiers is locale sensetive:
+            # Some format specifiers is locale sensitive:
             #   - and tests work on EN-US only
             #   - and can not be full compatible with Unix 'date' utility.
             # Commented tests mean not implemented or broken format specifiers.
@@ -400,7 +400,7 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
             #@{ date = $date1; format = "%N"; result = "090000000" }# nanoseconds (000000000..999999999)
             @{ date = $date1; format = "%p"; result = $amUpper1 }   # locale's equivalent of either AM or PM; blank if not known
             #@{ date = $date1; format = "%P"; result = $amLower1 }  # like %p, but lower case
-            #@{ date = $date1; format = "%q"; result = "" }         # quarter of year (1..4) - not implemented on Ununtu 17.10
+            #@{ date = $date1; format = "%q"; result = "" }         # quarter of year (1..4) - not implemented on Ubuntu 17.10
             @{ date = $date1; format = "%r"; result = "01:02:03 AM" }# locale's 12-hour clock time (e.g., 11:11:04 PM)
             @{ date = $date3; format = "%r"; result = "09:02:03 PM" }
             @{ date = $date1; format = "%R"; result = "01:02" }     # 24-hour hour and minute; same as %H:%M

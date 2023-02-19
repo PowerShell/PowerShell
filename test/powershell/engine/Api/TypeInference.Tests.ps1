@@ -158,7 +158,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.String[]'
     }
 
-    It "Infers type from array IndexExpresssion" {
+    It "Infers type from array IndexExpression" {
         $res = [AstTypeInference]::InferTypeOf( { (1, 2, 3)[0] }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Int32'
@@ -182,7 +182,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -BeExactly 'System.DateTime'
     }
 
-    It "Infers type from ScriptblockExpresssion" {
+    It "Infers type from ScriptblockExpression" {
         $res = [AstTypeInference]::InferTypeOf( { {} }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Management.Automation.Scriptblock'
@@ -600,7 +600,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Int32'
     }
 
-    It 'Infers type from attributed expession' {
+    It 'Infers type from attributed expression' {
         $res = [AstTypeInference]::InferTypeOf( {
                 [ValidateRange(1, 2)]
                 [int]$i = 1

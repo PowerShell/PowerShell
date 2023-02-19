@@ -448,7 +448,7 @@ Describe "Ternary Operator parsing" -Tags CI {
 Describe "ParserError type tests" -Tag CI {
     # This test was added because there use to be a hardcoded newline in the ToString() method of
     # the ParseError class. This makes sure the proper newlines are used.
-    It "Should use consistant newline depending on OS" {
+    It "Should use consistent newline depending on OS" {
         $ers = $null
         [System.Management.Automation.Language.Parser]::ParseInput('$x =', [ref]$null, [ref]$ers) | Out-Null
         $measureResult = $ers[0].ToString() -split [System.Environment]::NewLine | Measure-Object

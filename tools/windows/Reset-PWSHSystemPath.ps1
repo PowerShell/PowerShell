@@ -40,7 +40,7 @@
   Processes all path scopes including current process.
 
 .EXAMPLE
-  .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process -RemoveAllOccurencs
+  .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process -RemoveAllOccurrences
 
   Removes all paths from all path scopes including current process.
 #>
@@ -58,7 +58,7 @@ ForEach ($PathScopeItem in $PathScope)
   $pathstoremove = @([Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';') | Where-Object { $_ -ilike "*\Program Files\Powershell\6*"})
   If (!$RemoveAllOccurences)
   {
-    #If we are not removing all occurances of PowerShell paths, then remove the highest sorted path from the filter
+    #If we are not removing all occurrences of PowerShell paths, then remove the highest sorted path from the filter
     $pathstoremove = @($pathstoremove | Sort-Object | Select-Object -SkipLast 1)
   }
   Write-Verbose "Reset-PWSHSystemPath: Found $($pathstoremove.count) paths to remove from $PathScopeItem path scope: $($Pathstoremove -join ', ' | Out-String)"

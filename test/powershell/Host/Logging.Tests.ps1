@@ -215,7 +215,7 @@ $PID
         # Verify we log that we are the script to create the scriptblock
         $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
-        # Verify we log that we are excuting the created scriptblock
+        # Verify we log that we are executing the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
     }
 
@@ -246,7 +246,7 @@ $PID
         # Verify we log that we are the script to create the scriptblock
         $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
-        # Verify we log that we are excuting the created scriptblock
+        # Verify we log that we are executing the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
     }
 
@@ -369,7 +369,7 @@ $PID
             # Verify we log that we are the script to create the scriptblock
             $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
 
-            # Verify we log that we are excuting the created scriptblock
+            # Verify we log that we are executing the created scriptblock
             $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
         }
         catch {
@@ -407,7 +407,7 @@ $PID
             # Verify we log that we are the script to create the scriptblock
             $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
 
-            # Verify we log that we are excuting the created scriptblock
+            # Verify we log that we are executing the created scriptblock
             $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
         }
         catch {
@@ -418,7 +418,7 @@ $PID
         }
     }
 
-    # This is pending because it results in false postitives (-Skip:(!$IsSupportedEnvironment) )
+    # This is pending because it results in false positives (-Skip:(!$IsSupportedEnvironment) )
     It 'Verifies logging level filtering works' -Pending {
         try {
             $configFile = WriteLogSettings -LogId $logId -LogLevel Warning

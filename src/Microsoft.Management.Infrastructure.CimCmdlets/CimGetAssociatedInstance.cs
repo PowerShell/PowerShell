@@ -41,14 +41,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 nameSpace = ConstValue.GetNamespace(cmdlet.CimInstance.CimSystemProperties.Namespace);
             }
 
-            List<CimSessionProxy> proxys = new();
+            List<CimSessionProxy> proxies = new();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.ComputerSetName:
                     foreach (string computerName in computerNames)
                     {
                         CimSessionProxy proxy = CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet);
-                        proxys.Add(proxy);
+                        proxies.Add(proxy);
                     }
 
                     break;
@@ -56,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (CimSession session in cmdlet.CimSession)
                     {
                         CimSessionProxy proxy = CreateSessionProxy(session, cmdlet);
-                        proxys.Add(proxy);
+                        proxies.Add(proxy);
                     }
 
                     break;
@@ -64,7 +64,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return;
             }
 
-            foreach (CimSessionProxy proxy in proxys)
+            foreach (CimSessionProxy proxy in proxies)
             {
                 proxy.EnumerateAssociatedInstancesAsync(
                     nameSpace,

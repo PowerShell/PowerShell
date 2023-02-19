@@ -1010,7 +1010,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void RetryFailedSessions()
         {
-            using (ManualResetEvent retrysComplete = new ManualResetEvent(false))
+            using (ManualResetEvent retriesComplete = new ManualResetEvent(false))
             {
                 Collection<PSSession> connectedSessions = new Collection<PSSession>();
                 List<IThrottleOperation> retryConnectionOperations = new List<IThrottleOperation>();
@@ -1019,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            retrysComplete.Set();
+                            retriesComplete.Set();
                         }
                         catch (ObjectDisposedException) { }
                     };
@@ -1037,7 +1037,7 @@ namespace Microsoft.PowerShell.Commands
                 _retryThrottleManager.SubmitOperations(retryConnectionOperations);
                 _retryThrottleManager.EndSubmitOperations();
 
-                retrysComplete.WaitOne();
+                retriesComplete.WaitOne();
 
                 // Add or replace all successfully connected sessions to the local repository.
                 foreach (var session in connectedSessions)

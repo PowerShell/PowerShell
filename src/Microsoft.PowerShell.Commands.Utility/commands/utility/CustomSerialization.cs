@@ -283,7 +283,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            // Note: We donot use containers in depth calculation. i.e even if the
+            // Note: We don't use containers in depth calculation. i.e even if the
             // current depth is zero, we serialize the container. All contained items will
             // get serialized with depth zero.
             if (HandleKnownContainerTypes(source, property, depth))

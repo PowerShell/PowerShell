@@ -55,8 +55,8 @@ namespace System.Management.Automation
                        pathext.Contains(";.CPL;", StringComparison.OrdinalIgnoreCase) ||
                        pathext.Equals(".CPL", StringComparison.OrdinalIgnoreCase)))
             {
-                // Fast skip if we already added the extention as ";.CPL".
-                // Fast skip if user already added the extention.
+                // Fast skip if we already added the extension as ";.CPL".
+                // Fast skip if user already added the extension.
                 pathext += pathext[pathext.Length - 1] == ';' ? ".CPL" : ";.CPL";
                 Environment.SetEnvironmentVariable("PATHEXT", pathext);
             }

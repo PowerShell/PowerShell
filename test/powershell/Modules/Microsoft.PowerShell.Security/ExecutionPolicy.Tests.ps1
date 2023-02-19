@@ -1050,7 +1050,7 @@ ZoneId=$FileType
         }
     }
 
-    function VerfiyBlockedSetExecutionPolicy
+    function VerifyBlockedSetExecutionPolicy
     {
         param(
             [string]
@@ -1122,11 +1122,11 @@ ZoneId=$FileType
         }
 
         It "-Scope MachinePolicy is not Modifiable" {
-            VerfiyBlockedSetExecutionPolicy "MachinePolicy"
+            VerifyBlockedSetExecutionPolicy "MachinePolicy"
         }
 
         It "-Scope UserPolicy is not Modifiable" {
-            VerfiyBlockedSetExecutionPolicy "UserPolicy"
+            VerifyBlockedSetExecutionPolicy "UserPolicy"
         }
 
         It "-Scope Process is Settable" {
@@ -1167,7 +1167,7 @@ ZoneId=$FileType
             # execution policy of RemoteSigned. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more
             # information please see "Get-Help Set-ExecutionPolicy".
             #
-            # Regrdless of that error, the operation should succeed.
+            # Regardless of that error, the operation should succeed.
 
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted

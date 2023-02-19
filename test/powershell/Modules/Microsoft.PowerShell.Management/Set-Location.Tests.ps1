@@ -182,7 +182,7 @@ Describe "Set-Location" -Tags "CI" {
         }
     }
 
-    It 'Should nativate to literal path "<path>"' -TestCases @(
+    It 'Should navigate to literal path "<path>"' -TestCases @(
         @{ path = "-" },
         @{ path = "+" }
     ) {

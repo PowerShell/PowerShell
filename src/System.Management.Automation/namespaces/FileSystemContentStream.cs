@@ -1252,7 +1252,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Return the next available character, but DONT consume it (don't advance the _charCount)
+            // Return the next available character, but DON'T consume it (don't advance the _charCount)
             return (int)_charBuff[_charCount - 1];
         }
 

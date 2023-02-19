@@ -16,11 +16,11 @@ Describe "PSVersionTable" -Tags "CI" {
         {
             $rawGitCommitId = $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
             $expectedGitCommitIdPattern = $fullVersionPattern
-            $unexpectectGitCommitIdPattern = "qwerty"
+            $unexpectedGitCommitIdPattern = "qwerty"
         } else {
             $rawGitCommitId = ($formattedVersion -split " SHA: ")[0]
             $expectedGitCommitIdPattern = "^$mainVersionPattern$"
-            $unexpectectGitCommitIdPattern = $fullVersionPattern
+            $unexpectedGitCommitIdPattern = $fullVersionPattern
         }
 
         $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4"
@@ -55,7 +55,7 @@ Describe "PSVersionTable" -Tags "CI" {
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should -BeOfType System.String
        $PSVersionTable.GitCommitId | Should -Match $expectedGitCommitIdPattern
-       $PSVersionTable.GitCommitId | Should -Not -Match $unexpectectGitCommitIdPattern
+       $PSVersionTable.GitCommitId | Should -Not -Match $unexpectedGitCommitIdPattern
        $PSVersionTable.GitCommitId | Should -BeExactly $rawGitCommitId
     }
 

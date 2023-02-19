@@ -155,7 +155,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the hash code for this switch parameter.
         /// </summary>
-        /// <returns>The hash code for this cobject.</returns>
+        /// <returns>The hash code for this object.</returns>
         public override int GetHashCode()
         {
             return _isPresent.GetHashCode();

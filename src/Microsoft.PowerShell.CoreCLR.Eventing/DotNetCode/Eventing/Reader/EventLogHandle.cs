@@ -52,7 +52,7 @@ namespace System.Diagnostics.Eventing.Reader
             return true;
         }
 
-        // DONT compare EventLogHandle with EventLogHandle.Zero
+        // DON'T compare EventLogHandle with EventLogHandle.Zero
         // use IsInvalid instead. Zero is provided where a NULL handle needed
         public static EventLogHandle Zero
         {

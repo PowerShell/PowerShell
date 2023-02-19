@@ -513,7 +513,7 @@
   <data name="WinCompatModuleWarning" xml:space="preserve">
     <value>Module {0} is loaded in Windows PowerShell using {1} remoting session; please note that all input and output of commands from this module will be deserialized objects. If you want to load this module into PowerShell please use 'Import-Module -SkipEditionCheck' syntax.</value>
   </data>
-  <data name="WinCompatRequredVersionError" xml:space="preserve">
+  <data name="WinCompatRequiredVersionError" xml:space="preserve">
     <value>Detected Windows PowerShell version {0}. Windows PowerShell 5.1 is required to load modules using Windows PowerShell compatibility feature. Install Windows Management Framework (WMF) 5.1 from https://aka.ms/WMF5Download to enable this feature.</value>
   </data>
   <data name="WinCompatModuleInDenyList" xml:space="preserve">
@@ -534,7 +534,7 @@
   <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
     <value>Wildcard characters are not allowed in the member 'RequiredAssemblies' in the module manifest '{0}'.</value>
   </data>
-  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+  <data name="CmdletizationDoesSupportReexportingNestedModules" xml:space="preserve">
     <value>The value of the {0} key in {1} is {2} and the module has nested modules. When a CDXML file is the root module, the Import-Module command fails because the commands in nested modules cannot be exported. Move the CDXML file to the NestedModules key and try the command again.</value>
     <comment>{0} is equal to either ModuleToProcess or RootModule
 {1} is a placeholder for a file path to psd1 file
@@ -618,7 +618,7 @@
   <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
     <value>This module uses the dot-source operator while exporting functions using wildcard characters, and this is disallowed when the system is under application verification enforcement.</value>
   </data>
-  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+  <data name="CannotExportMembersAcrossLanguageBoundaries" xml:space="preserve">
     <value>Cannot export module members from a module that has a different language mode from the running session.</value>
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">

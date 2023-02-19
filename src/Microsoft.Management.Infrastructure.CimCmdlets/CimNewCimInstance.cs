@@ -132,7 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // create ciminstance on server
-            List<CimSessionProxy> proxys = new();
+            List<CimSessionProxy> proxies = new();
 
             switch (cmdlet.ParameterSetName)
             {
@@ -144,7 +144,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             cmdlet.ComputerName);
                         foreach (string computerName in computerNames)
                         {
-                            proxys.Add(CreateSessionProxy(computerName, cmdlet));
+                            proxies.Add(CreateSessionProxy(computerName, cmdlet));
                         }
                     }
 
@@ -154,13 +154,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ResourceUriSessionSet:
                     foreach (CimSession session in cmdlet.CimSession)
                     {
-                        proxys.Add(CreateSessionProxy(session, cmdlet));
+                        proxies.Add(CreateSessionProxy(session, cmdlet));
                     }
 
                     break;
             }
 
-            foreach (CimSessionProxy proxy in proxys)
+            foreach (CimSessionProxy proxy in proxies)
             {
                 proxy.ContextObject = new CimNewCimInstanceContext(proxy, nameSpace);
                 proxy.CreateInstanceAsync(nameSpace, cimInstance);

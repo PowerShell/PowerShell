@@ -106,10 +106,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <returns>A PSDriveInfo object.</returns>
         /// <!--
-        /// It also givesthe provider an opportunity to return a
+        /// It also gives the provider an opportunity to return a
         /// derived class of PSDriveInfo which can contain provider specific
         /// information about the drive.This may be done for performance
-        /// or reliability reasons or toprovide extra data to all calls
+        /// or reliability reasons or to provide extra data to all calls
         /// using the drive
         /// -->
         protected override PSDriveInfo NewDrive(PSDriveInfo drive)
@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
 
             while (textEnumerator.MoveNext())
             {
-                // Iterate through each element and findout whether
+                // Iterate through each element and find out whether
                 // any text needs escaping
                 string textElement = textEnumerator.GetTextElement();
 
@@ -839,7 +839,7 @@ namespace Microsoft.PowerShell.Commands
 
             while (textEnumerator.MoveNext())
             {
-                // Iterate through each element and findout whether
+                // Iterate through each element and find outtwhether
                 // any text needs escaping
                 string textElement = textEnumerator.GetTextElement();
 
@@ -2167,7 +2167,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // Check to see if the property already exists
-                    // or overwrite if frce is on
+                    // or overwrite if force is on
                     if (Force || key.GetValue(propertyName) == null)
                     {
                         // Create the value

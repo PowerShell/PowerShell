@@ -321,7 +321,7 @@ $typeDef = @'
 .Parameter PowerShellFilePath
     Specifies the file path to the PowerShell command used to host the SSH remoting PowerShell
     endpoint. If no value is specified then the currently running PowerShell executable path is used
-    in the subsytem command.
+    in the subsystem command.
 .Parameter Force
     When true, this cmdlet will update the sshd_config configuration file without prompting.
 #>
@@ -487,7 +487,7 @@ function Enable-SSHRemoting
     WriteLine "Modifying SSHD configuration file at this location:"
     WriteLine "$SSHDConfigFilePath" -AppendLines 1
 
-    # Get the SSHD configurtion
+    # Get the SSHD configuration
     $sshdConfig = [SSHRemotingConfig]::new($platformInfo, $SSHDConfigFilePath, $SubsystemName)
 
     if ($sshdConfig.psSubSystemEntries.Count -gt 0)

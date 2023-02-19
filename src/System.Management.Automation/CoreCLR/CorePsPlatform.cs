@@ -447,7 +447,7 @@ namespace System.Management.Automation
 
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
         // works *correctly* on Linux in that it creates an exception with
-        // the string perror would give you for the last set value of errno.
+        // the string error would give you for the last set value of errno.
         // No manual mapping is required. .NET Core maps the Linux errno
         // to a PAL value and calls strerror_r underneath to generate the message.
 

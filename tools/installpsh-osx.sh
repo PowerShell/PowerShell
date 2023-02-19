@@ -102,7 +102,7 @@ if ! hash brew 2>/dev/null; then
     echo "Homebrew is not found, installing..."
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
 else
-    echo "Howebrew is already installed, skipping..."
+    echo "Homebrew is already installed, skipping..."
 fi
 
 if ! hash brew 2>/dev/null; then

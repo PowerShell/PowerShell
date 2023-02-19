@@ -308,7 +308,7 @@ namespace System.Management.Automation.Security
         }
 
         [Flags]
-        internal enum NCryptDeletKeyFlag
+        internal enum NCryptDeleteKeyFlag
         {
             NCRYPT_MACHINE_KEY_FLAG = 0x00000020,  // same as CAPI CRYPT_MACHINE_KEYSET
             NCRYPT_SILENT_FLAG = 0x00000040,  // same as CAPI CRYPT_SILENT

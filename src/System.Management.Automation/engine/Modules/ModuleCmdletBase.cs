@@ -1487,14 +1487,14 @@ namespace Microsoft.PowerShell.Commands
 
             string nameOfRootModuleKey = data.ContainsKey("ModuleToProcess") ? "ModuleToProcess" : "RootModule";
             string message = StringUtil.Format(
-                Modules.CmdletizationDoesSupportRexportingNestedModules,
+                Modules.CmdletizationDoesSupportReexportingNestedModules,
                 nameOfRootModuleKey,
                 moduleManifestPath,
                 rootModulePath);
             InvalidOperationException ioe = new InvalidOperationException(message);
             ErrorRecord er = new ErrorRecord(
                 ioe,
-                "Modules_CmdletizationDoesSupportRexportingNestedModules",
+                "Modules_CmdletizationDoesSupportReexportingNestedModules",
                 ErrorCategory.InvalidOperation,
                 moduleManifestPath);
 
@@ -3419,7 +3419,7 @@ namespace Microsoft.PowerShell.Commands
                     if ((ss != null) && (!ss.Internal.UseExportList))
                     {
                         // For cross language boundaries, implicitly import all functions only if
-                        // this manifest *does* exort functions explicitly.
+                        // this manifest *does* export functions explicitly.
                         List<WildcardPattern> fnMatchPattern = (
                                                                 (manifestScriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
                                                                 (Context.LanguageMode != PSLanguageMode.FullLanguage) &&

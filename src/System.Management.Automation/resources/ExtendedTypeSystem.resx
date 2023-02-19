@@ -213,13 +213,13 @@
   <data name="ReferenceTypeExpected" xml:space="preserve">
     <value>Reference type is expected in argument.</value>
   </data>
-  <data name="NotIcomparable" xml:space="preserve">
+  <data name="NotIncomparable" xml:space="preserve">
     <value>Cannot compare "{0}" because it is not IComparable.</value>
   </data>
   <data name="ComparisonFailure" xml:space="preserve">
     <value>Could not compare "{0}" to "{1}". Error: "{2}"</value>
   </data>
-  <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
+  <data name="NotTheSameTypeOrNotIncomparable" xml:space="preserve">
     <value>Cannot compare "{0}" to "{1}" because the objects are not the same type or the object "{0}" does not implement "{2}".</value>
   </data>
   <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">

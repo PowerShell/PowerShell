@@ -176,14 +176,14 @@ function Start-PSPackage {
             # then `Start-PSPackage` runs from a new PS session or `build.psm1` was reloaded.
             #
             # In these cases, the user will be asked to build again even though it's technically not
-            # necessary. However, we want it that way -- being very explict when generating packages.
+            # necessary. However, we want it that way -- being very explicit when generating packages.
             # This check serves as a simple gate to ensure that the user knows what he is doing, and
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
 
             Write-Warning -Message "Start-PSPackage: The build PreCheck has failed."
             if (-not $Script:Options) {
-                Write-Warning -Message "Start-PSPackage: builid options variable is null indicating Start-PSBuild hasn't been run yet."
+                Write-Warning -Message "Start-PSPackage: buildid options variable is null indicating Start-PSBuild hasn't been run yet."
             }
             if (-not $PSModuleRestoreCorrect) {
                 Write-Warning -Message "Start-PSPackage: PSModuleRestoreCorrect variable is null indicating build -PSModuleRestore was not performed."
@@ -939,7 +939,7 @@ function New-UnixPackage {
     DynamicParam {
         if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
-            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+            # The '-Distribution' parameter can be used to indicate which Debian distro this package is targeting.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             if($type -eq 'deb')
             {
@@ -1462,7 +1462,7 @@ function Get-PackageDependencies
     param()
     DynamicParam {
         # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
-        # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+        # The '-Distribution' parameter can be used to indicate which Debian distro this package is targeting.
         $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
         $ParameterAttr.Mandatory = $true
         $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:AllDistributions
@@ -1531,14 +1531,14 @@ function Test-Dependencies
     foreach ($Dependency in "fpm", "ronn") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
-            # try adding them to the path and re-tesing first
+            # try adding them to the path and re-testing first
             [string] $gemsPath = $null
-            [string] $depenencyPath = $null
+            [string] $dependencyPath = $null
             $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $dependencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
-                $env:PATH = $ENV:PATH +":" + $depenencyPath
+                $env:PATH = $ENV:PATH +":" + $dependencyPath
                 if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
                     continue
                 }
@@ -2049,7 +2049,7 @@ function New-FileDependencies
         [string] $PackageVersion
     )
 
-    # Filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
+    # Filed a tracking bug for automating generation of dependency list: https://github.com/PowerShell/PowerShell/issues/6247
     $deps = [System.Collections.ArrayList]::new()
 
     switch ($FileBaseName) {
@@ -2444,7 +2444,7 @@ function Get-ProjectPackageInformation
     # get the package references
     $packages=$csprojXml.Project.ItemGroup.PackageReference
 
-    # check to see if there is a newer package for each refernce
+    # check to see if there is a newer package for each reference
     foreach($package in $packages)
     {
         if ($package.Version -notmatch '\*' -and $package.Include)
@@ -2469,7 +2469,7 @@ ID of the package.
 Version of the package.
 
 .PARAMETER Dependency
-Depedencies of the package.
+Dependencies of the package.
 
 .PARAMETER FilePath
 Path to create the nuspec file.
@@ -2839,8 +2839,8 @@ Create a NuGet package from a nuspec.
 
 .DESCRIPTION
 Creates a NuGet using the nuspec at the specified folder.
-It is expected that the lib / ref / runtime folders are welformed.
-The genereated NuGet package is copied over to the $PackageDestinationPath
+It is expected that the lib / ref / runtime folders are well formed.
+The generated NuGet package is copied over to the $PackageDestinationPath
 
 .PARAMETER NuSpecPath
 Path to the folder containing the nuspec file.
@@ -3863,7 +3863,7 @@ function Test-FileWxs
     )
 
     # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
-    # Wix will update this automaticaly, but the output is not the same xml
+    # Wix will update this automatically, but the output is not the same xml
     $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)', $FileArchitecture)
 
     [xml] $filesAssetXml = $filesAssetString
@@ -4307,12 +4307,12 @@ function Start-PrepForGlobalToolNupkg
 
 <#
 .SYNOPSIS
-Create a single PowerShell Global tool nuget package NuSpec source directory for the provied
+Create a single PowerShell Global tool nuget package NuSpec source directory for the provided
 package type.
 
 .DESCRIPTION
 A single NuSpec source directory is created for the individual package type, and the created
-directory path is set to the environement variable name: "GlobaToolNuSpecSourcePath_${PackageType}".
+directory path is set to the environnement variable name: "GlobalToolNuSpecSourcePath_${PackageType}".
 
 .PARAMETER PackageType
 Global tool package type to create.
@@ -4488,7 +4488,7 @@ function New-GlobalToolNupkgSource
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        default { throw "New-GlobalToolNupkgSource: Unkown package type: $PackageType" }
+        default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
     }
 
     $nuSpec = $packagingStrings.GlobalToolNuSpec -f $PackageName, $PackageVersion, $iconFileName
@@ -4526,7 +4526,7 @@ function New-GlobalToolNupkgSource
 
 <#
 .SYNOPSIS
-Create a single PowerShell Global tool nuget package from the provied package source folder.
+Create a single PowerShell Global tool nuget package from the provided package source folder.
 
 .DESCRIPTION
 Creates a single PowerShell Global tool nuget package based on the provided package NuSpec source

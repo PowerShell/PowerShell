@@ -450,7 +450,7 @@ try {
 
         It "Errors on Set-LocalGroup with an invalid Group name" {
             $sb = {
-                Set-LocalGroup -Name "NonexistantGroupName" -Description "Test Group Set 1 newer still description"
+                Set-LocalGroup -Name "NonexistentGroupName" -Description "Test Group Set 1 newer still description"
             }
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.SetLocalGroupCommand"
         }
@@ -569,15 +569,15 @@ try {
             VerifyFailingTest $sb "AmbiguousParameterSet,Microsoft.PowerShell.Commands.RenameLocalGroupCommand"
         }
 
-        It "Errors onRename-LocalGroup nonexistant group name" {
+        It "Errors onRename-LocalGroup nonexistent group name" {
             $sb = {
-                Rename-LocalGroup nonexistantGroupName -NewName DummyNewName
+                Rename-LocalGroup nonexistentGroupName -NewName DummyNewName
             }
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.RenameLocalGroupCommand"
         }
 
-        It "Errors onRename-LocalGroup nonexistant group SID" {
-            $nonexistantSid =
+        It "Errors onRename-LocalGroup nonexistent group SID" {
+            $nonexistentSid =
             $sb = {
                 Rename-LocalGroup -SID "S-1-5-21-1220945662-555555555-555555555-5555" -NewName DummyNewName
             }

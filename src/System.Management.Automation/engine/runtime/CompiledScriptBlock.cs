@@ -1607,7 +1607,7 @@ namespace System.Management.Automation
                 logBuilder.Replace(NullControlChar, NullSymbolChar);
 
                 // Syslog (only used on Linux) encodes CR and NL to their octal values.
-                // We will replace them with a unicode  'RETURN SYMBOL' (U+23CE) charater for easier viewing
+                // We will replace them with a unicode  'RETURN SYMBOL' (U+23CE) character for easier viewing
                 logBuilder.Replace(LinefeedControlChar, ReturnSymbolChar);
                 logBuilder.Replace(CarriageReturnControlChar, ReturnSymbolChar);
 

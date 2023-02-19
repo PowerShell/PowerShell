@@ -57,7 +57,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 }
 
 Describe "Extended Alias Provider Tests" -Tags "Feature" {
-    Context "Valdiation of Set-Item parameters for the Alias Provider" {
+    Context "Validation of Set-Item parameters for the Alias Provider" {
         BeforeAll {
             $testAliasName = "TestAlias"
             $testAliasName2 = "TestAlias2"

@@ -18,7 +18,7 @@ namespace System.Management.Automation
     /// MamlNode class provides logic in converting formatting tags into the format acceptable by monad format
     /// and output engine.
     ///
-    /// Following three kinds of formating tags are supported per our agreement with Maml team,
+    /// Following three kinds of formatting tags are supported per our agreement with Maml team,
     ///     1. para,
     ///         <para>
     ///             para text here
@@ -1110,23 +1110,23 @@ namespace System.Management.Automation
 
             string noTabText = text.Replace("\t", "    ");
             string[] lines = noTabText.Split('\n');
-            string[] trimedLines = TrimLines(lines);
+            string[] trimmedLines = TrimLines(lines);
 
-            if (trimedLines == null || trimedLines.Length == 0)
+            if (trimmedLines == null || trimmedLines.Length == 0)
                 return string.Empty;
 
-            int minIndentation = GetMinIndentation(trimedLines);
+            int minIndentation = GetMinIndentation(trimmedLines);
 
-            string[] shortedLines = new string[trimedLines.Length];
-            for (int i = 0; i < trimedLines.Length; i++)
+            string[] shortedLines = new string[trimmedLines.Length];
+            for (int i = 0; i < trimmedLines.Length; i++)
             {
-                if (IsEmptyLine(trimedLines[i]))
+                if (IsEmptyLine(trimmedLines[i]))
                 {
-                    shortedLines[i] = trimedLines[i];
+                    shortedLines[i] = trimmedLines[i];
                 }
                 else
                 {
-                    shortedLines[i] = trimedLines[i].Remove(0, minIndentation);
+                    shortedLines[i] = trimmedLines[i].Remove(0, minIndentation);
                 }
             }
 
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
         /// Trim empty lines from the either end of an string array.
         /// </summary>
         /// <param name="lines">Lines to trim.</param>
-        /// <returns>An string array with empty lines trimed on either end.</returns>
+        /// <returns>An string array with empty lines trimmed on either end.</returns>
         private static string[] TrimLines(string[] lines)
         {
             if (lines == null || lines.Length == 0)
@@ -1212,9 +1212,9 @@ namespace System.Management.Automation
             if (IsEmptyLine(line))
                 return 0;
 
-            string leftTrimedLine = line.TrimStart(' ');
+            string leftTrimmedLine = line.TrimStart(' ');
 
-            return line.Length - leftTrimedLine.Length;
+            return line.Length - leftTrimmedLine.Length;
         }
 
         /// <summary>
@@ -1229,8 +1229,8 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(line))
                 return true;
 
-            string trimedLine = line.Trim();
-            if (string.IsNullOrEmpty(trimedLine))
+            string trimmedLine = line.Trim();
+            if (string.IsNullOrEmpty(trimmedLine))
                 return true;
 
             return false;

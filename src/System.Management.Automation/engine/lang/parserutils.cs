@@ -372,7 +372,7 @@ namespace System.Management.Automation
         /// <exception cref="RuntimeException">An error occurred performing the operation, see inner exception.</exception>
         internal static object ImplicitOp(object lval, object rval, string op, IScriptExtent errorPosition, string errorOp)
         {
-            // Get the base object. At somepoint, we may allow users to dynamically extend
+            // Get the base object. At some point, we may allow users to dynamically extend
             // the implicit operators at which point, we'll need to change this to find the
             // extension method...
             lval = PSObject.Base(lval);

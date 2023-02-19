@@ -13,7 +13,7 @@ namespace Microsoft.Management.UI.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     internal class AutomationTextBlockAutomationPeer : TextBlockAutomationPeer
     {
-        #region Structors
+        #region Structures
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Microsoft.Management.UI.Internal.AutomationTextBlockAutomationPeer" /> class.

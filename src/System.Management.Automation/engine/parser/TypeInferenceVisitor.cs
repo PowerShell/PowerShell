@@ -76,12 +76,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="ast">The ast to infer the type from.</param>
         /// <param name="powerShell">The instance of powershell to user for expression evaluation needed for type inference.</param>
-        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference.</param>
+        /// <param name="evalPermissions">The runtime usage permissions allowed during type inference.</param>
         /// <returns>List of inferred typenames.</returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPersmissions)
+        public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPermissions)
         {
             var context = new TypeInferenceContext(powerShell);
-            return InferTypeOf(ast, context, evalPersmissions);
+            return InferTypeOf(ast, context, evalPermissions);
         }
 
         /// <summary>
@@ -89,17 +89,17 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="ast">The ast to infer the type from.</param>
         /// <param name="context">The current type inference context.</param>
-        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference.</param>
+        /// <param name="evalPermissions">The runtime usage permissions allowed during type inference.</param>
         /// <returns>List of inferred typenames.</returns>
         internal static IList<PSTypeName> InferTypeOf(
             Ast ast,
             TypeInferenceContext context,
-            TypeInferenceRuntimePermissions evalPersmissions = TypeInferenceRuntimePermissions.None)
+            TypeInferenceRuntimePermissions evalPermissions = TypeInferenceRuntimePermissions.None)
         {
             var originalRuntimePermissions = context.RuntimePermissions;
             try
             {
-                context.RuntimePermissions = evalPersmissions;
+                context.RuntimePermissions = evalPermissions;
                 return context.InferType(ast, new TypeInferenceVisitor(context)).Distinct(new PSTypeNameComparer()).ToList();
             }
             finally
@@ -1051,7 +1051,7 @@ namespace System.Management.Automation
             }
 
             // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
-            // With psuedo-binding, we actually know the candidate parameter sets, so we could take
+            // With pseudo-binding, we actually know the candidate parameter sets, so we could take
             // advantage of it here, but I opted for the simpler code because so few cmdlets use
             // ParameterSetName in OutputType and of the ones I know about, it isn't that useful.
             inferredTypes.AddRange(commandInfo.OutputType);

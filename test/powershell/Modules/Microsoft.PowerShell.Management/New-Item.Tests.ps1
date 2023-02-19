@@ -195,8 +195,8 @@ Describe "New-Item" -Tags "CI" {
 }
 
 # More precisely these tests require SeCreateSymbolicLinkPrivilege.
-# You can see list of priveledges with `whoami /priv`.
-# In the default windows setup, Admin user has this priveledge, but regular users don't.
+# You can see list of privileges with `whoami /priv`.
+# In the default windows setup, Admin user has this privilege, but regular users don't.
 
 Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     $tmpDirectory         = $TestDrive

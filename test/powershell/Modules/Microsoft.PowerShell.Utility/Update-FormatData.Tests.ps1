@@ -20,7 +20,7 @@ Describe "Update-FormatData" -Tags "CI" {
             $ps.HadErrors | Should -BeFalse
         }
 
-        It "Update with atributes on Configuration node should be ignored" {
+        It "Update with attributes on Configuration node should be ignored" {
             $xmlContent = @"
     <Configuration xmlns:foo="bar">
         <ViewDefinitions>

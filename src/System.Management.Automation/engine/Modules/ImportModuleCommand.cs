@@ -2032,7 +2032,7 @@ namespace Microsoft.PowerShell.Commands
                     // Here we want to load a core-edition compatible version of the module, so the loading procedure will skip
                     // the 'System32' module path when searching. Also, we want to suppress writing out errors in case that a
                     // core-compatible version of the module cannot be found, because:
-                    //  1. that's OK as long as it's not a PowerShell built-in module such as the 'Utility' moudle;
+                    //  1. that's OK as long as it's not a PowerShell built-in module such as the 'Utility' module;
                     //  2. the error message will be confusing to the user.
                     bool savedValue = importModuleOptions.SkipSystem32ModulesAndSuppressError;
                     importModuleOptions.SkipSystem32ModulesAndSuppressError = true;
@@ -2106,7 +2106,7 @@ namespace Microsoft.PowerShell.Commands
             var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
             if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
             {
-                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequredVersionError, winPSVersionString);
+                string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatRequiredVersionError, winPSVersionString);
                 throw new InvalidOperationException(errorMessage);
             }
 

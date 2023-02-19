@@ -130,10 +130,10 @@ namespace System.Management.Automation
             IScriptPosition positionForAstSearch = cursor;
 
             Token tokenBeforeCursor = null;
-            Token tokenAtCursor = InterstingTokenAtCursorOrDefault(inputTokens, cursor);
+            Token tokenAtCursor = InterestingTokenAtCursorOrDefault(inputTokens, cursor);
             if (tokenAtCursor == null)
             {
-                tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(inputTokens, cursor);
+                tokenBeforeCursor = InterestingTokenBeforeCursorOrDefault(inputTokens, cursor);
                 if (tokenBeforeCursor != null)
                 {
                     positionForAstSearch = tokenBeforeCursor.Extent.EndScriptPosition;
@@ -145,7 +145,7 @@ namespace System.Management.Automation
                 var stringExpandableToken = tokenAtCursor as StringExpandableToken;
                 if (stringExpandableToken?.NestedTokens != null)
                 {
-                    tokenAtCursor = InterstingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, cursor) ?? stringExpandableToken;
+                    tokenAtCursor = InterestingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, cursor) ?? stringExpandableToken;
                 }
             }
 
@@ -203,7 +203,7 @@ namespace System.Management.Automation
             };
         }
 
-        private static Token InterstingTokenAtCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterestingTokenAtCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
         {
             for (int i = tokens.Count - 1; i >= 0; --i)
             {
@@ -217,7 +217,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static Token InterstingTokenBeforeCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterestingTokenBeforeCursorOrDefault(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition)
         {
             for (int i = tokens.Count - 1; i >= 0; --i)
             {

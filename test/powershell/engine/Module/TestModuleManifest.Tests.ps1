@@ -257,7 +257,7 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
         }
     }
 
-    It "Test-ModuleManifest should not load unnessary modules" -Skip:(!(Test-CanWriteToPsHome)) {
+    It "Test-ModuleManifest should not load unnecessary modules" -Skip:(!(Test-CanWriteToPsHome)) {
 
         $job = Start-Job -Name "job1" -ScriptBlock {Test-ModuleManifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -Verbose} | Wait-Job
 

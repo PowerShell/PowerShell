@@ -850,7 +850,7 @@ namespace System.Management.Automation
 
             // At this point, we know that they aren't equal but we have no way of
             // knowing which should compare greater than the other so we throw an exception.
-            throw PSTraceSource.NewArgumentException(nameof(first), ExtendedTypeSystem.NotIcomparable, first.ToString());
+            throw PSTraceSource.NewArgumentException(nameof(first), ExtendedTypeSystem.NotIncomparable, first.ToString());
         }
 
         /// <summary>

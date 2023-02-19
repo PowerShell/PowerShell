@@ -3055,7 +3055,7 @@ namespace System.Management.Automation.Language
                 //     }
                 //
                 // We use a runtime check on popping because in some rare cases, PushTrapHandlers might not
-                // get called (e.g. if a trap handler specifies a type that doesn't exist, like trap [baddtype]{}).
+                // get called (e.g. if a trap handler specifies a type that doesn't exist, like trap [badtype]{}).
                 // We don't want to pop if we didn't push.
                 exprs = new List<Expression>();
 
@@ -3601,7 +3601,7 @@ namespace System.Management.Automation.Language
             var dispatchTargets = new List<LabelTarget>();
             var tryBodyExprs = new List<Expression>()
             {
-                null, // Add a slot for the inital switch/case that we'll come back to
+                null, // Add a slot for the initial switch/case that we'll come back to
             };
 
             // L0: dispatchIndex = 1; pipeline1

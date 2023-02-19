@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Applys the appropriate time filter to each job in the job list.
+        /// Applies the appropriate time filter to each job in the job list.
         /// Only Job2 type jobs can be time filtered so older Job types are skipped.
         /// </summary>
         /// <param name="jobList"></param>

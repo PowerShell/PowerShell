@@ -18,7 +18,7 @@ This module contains remoting tool cmdlets.
 
 Enable-SSHRemoting cmdlet:
 --------------------------
-PowerShell SSH remoting was implemented in PowerShell 6.0 but requries SSH (client) and SSHD (service) components
+PowerShell SSH remoting was implemented in PowerShell 6.0 but requires SSH (client) and SSHD (service) components
 to be installed.  In addition the sshd_config configuration file must be updated to define a PowerShell endpoint
 as a subsystem.  Once this is done PowerShell remoting cmdlets can be used to establish a PowerShell remoting
 session over SSH that works across platforms.

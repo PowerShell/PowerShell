@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal enum EnumerableExpansion
     {
         /// <summary>
-        /// Process core only, ignore IEumerable.
+        /// Process core only, ignore IEnumerable.
         /// </summary>
         CoreOnly,
 

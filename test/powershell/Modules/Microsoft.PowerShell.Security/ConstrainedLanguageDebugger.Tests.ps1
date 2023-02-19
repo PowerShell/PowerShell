@@ -129,7 +129,7 @@ try
                 [runspace] $runspace = [runspacefactory]::CreateRunspace()
                 $runspace.Open()
 
-                # Attach TestRuner.DebuggerTester DebugStop event handler to runspace
+                # Attach TestRunner.DebuggerTester DebugStop event handler to runspace
                 $debuggerTester = [TestRunner.DebuggerTester]::new($runspace)
 
                 # Run $scriptFilePath script with 'Wait-Debugger' in locked down mode

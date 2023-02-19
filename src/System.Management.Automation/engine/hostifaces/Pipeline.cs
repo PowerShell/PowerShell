@@ -140,7 +140,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         Running = 1,
         /// <summary>
-        /// The pipeline is stoping execution.
+        /// The pipeline is stopping execution.
         /// </summary>
         Stopping = 2,
         /// <summary>
@@ -534,7 +534,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
         /// <returns>An array of zero or more result objects.</returns>
-        /// <remarks>If using synchronous exectute, do not close
+        /// <remarks>If using synchronous execute, do not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
         /// </remarks>

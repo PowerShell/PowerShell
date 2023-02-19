@@ -95,7 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cmdlet"><see cref="GetCimClassCommand"/> object.</param>
         public void GetCimClass(GetCimClassCommand cmdlet)
         {
-            List<CimSessionProxy> proxys = new();
+            List<CimSessionProxy> proxies = new();
             string nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
             string className = cmdlet.ClassName ?? @"*";
             CimGetCimClassContext context = new(
@@ -113,7 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             CimSessionProxy proxy = CreateSessionProxy(computerName, cmdlet);
                             proxy.ContextObject = context;
-                            proxys.Add(proxy);
+                            proxies.Add(proxy);
                         }
                     }
 
@@ -124,7 +124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         {
                             CimSessionProxy proxy = CreateSessionProxy(session, cmdlet);
                             proxy.ContextObject = context;
-                            proxys.Add(proxy);
+                            proxies.Add(proxy);
                         }
                     }
 
@@ -137,14 +137,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 // retrieve all classes and then filter based on
                 // classname, propertyname, methodname, and qualifiername
-                foreach (CimSessionProxy proxy in proxys)
+                foreach (CimSessionProxy proxy in proxies)
                 {
                     proxy.EnumerateClassesAsync(nameSpace);
                 }
             }
             else
             {
-                foreach (CimSessionProxy proxy in proxys)
+                foreach (CimSessionProxy proxy in proxies)
                 {
                     proxy.GetClassAsync(nameSpace, className);
                 }

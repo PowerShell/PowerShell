@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // explicitely overridden:
+            // explicitly overridden:
             // do not do any processing
         }
     }

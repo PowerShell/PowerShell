@@ -28,7 +28,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $ObjArray.Length | Should -Be $col.Count
     }
 
-    It "Test convertion with .Net Core intrinsic type convertor" {
+    It "Test conversion with .Net Core intrinsic type convertor" {
         $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('2,3', [System.Drawing.Point])
         $result | Should -BeOfType System.Drawing.Point
         $result.X | Should -Be 2
@@ -49,7 +49,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $result.OriginalString | Should -BeExactly '..\foo'
     }
 
-    It "Test convertion with .Net Core intrinsic type convertor (Windows only types)" -Skip:(-not $IsWindows) {
+    It "Test conversion with .Net Core intrinsic type convertor (Windows only types)" -Skip:(-not $IsWindows) {
         $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('Microsoft Sans Serif,10', [System.Drawing.Font])
         $result | Should -BeOfType System.Drawing.Font
         $result.Size | Should -Be 10

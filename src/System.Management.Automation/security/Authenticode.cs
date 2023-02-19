@@ -298,7 +298,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the file signature using the dotNet Microsoft.Security.Extensions package.
         /// This supports both Windows catalog file signatures and embedded file signatures.
-        /// But it is not supported on all Windows platforms/skus, noteably Win7 and nanoserver.
+        /// But it is not supported on all Windows platforms/skus, notably Win7 and nanoserver.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static Signature GetSignatureFromMSSecurityExtensions(string filename)

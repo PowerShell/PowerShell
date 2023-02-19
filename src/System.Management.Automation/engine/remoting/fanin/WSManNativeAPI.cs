@@ -322,7 +322,7 @@ namespace System.Management.Automation.Remoting.Client
 
             /// <summary>
             /// Constructs an WSManUserNameAuthenticationCredentials object.
-            /// It is upto the caller to verify if <paramref name="name"/>
+            /// It is up to the caller to verify if <paramref name="name"/>
             /// and <paramref name="pwd"/> are valid. This API wont complain
             /// if they are Empty or Null.
             /// </summary>
@@ -412,7 +412,7 @@ namespace System.Management.Automation.Remoting.Client
 
             /// <summary>
             /// Constructs an WSManCertificateThumbprintCredentials object.
-            /// It is upto the caller to verify if <paramref name="thumbPrint"/>
+            /// It is up to the caller to verify if <paramref name="thumbPrint"/>
             /// is valid. This API wont complain if it is Empty or Null.
             /// </summary>
             /// <param name="thumbPrint"></param>
@@ -1739,7 +1739,7 @@ namespace System.Management.Automation.Remoting.Client
             internal WSManShellAsyncCallback(WSManShellCompletionFunction callback)
             {
                 // if a delegate is re-located by a garbage collection, it will not affect
-                // the underlaying managed callback, so Alloc is used to add a reference
+                // the underlying managed callback, so Alloc is used to add a reference
                 // to the delegate, allowing relocation of the delegate, but preventing
                 // disposal. Using GCHandle without pinning reduces fragmentation potential
                 // of the managed heap.

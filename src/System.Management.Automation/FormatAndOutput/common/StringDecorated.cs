@@ -50,7 +50,7 @@ namespace System.Management.Automation.Internal
         public int ContentLength => PlainText.Length;
 
         /// <summary>
-        /// Render the decorarted string using automatic output rendering.
+        /// Render the decorated string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
         public override string ToString() => ToString(
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Internal
         public int ContentLength => PlainText.Length;
 
         /// <summary>
-        /// Render the decorarted string using automatic output rendering.
+        /// Render the decorated string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
         public override string ToString() => ToString(

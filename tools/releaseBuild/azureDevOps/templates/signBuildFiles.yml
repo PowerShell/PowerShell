@@ -71,7 +71,7 @@ steps:
       "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll"
     )
 
-    Write-Verbose -verbose "recusively copying $($itemsToCopyWithRecurse | out-string) to $filesToSignDirectory"
+    Write-Verbose -verbose "recursively copying $($itemsToCopyWithRecurse | out-string) to $filesToSignDirectory"
     Copy-Item -Path $itemsToCopyWithRecurse -Destination $filesToSignDirectory -Recurse -verbose -exclude $itemsToExclude
 
     foreach($pattern in $itemsToCopy.Keys) {

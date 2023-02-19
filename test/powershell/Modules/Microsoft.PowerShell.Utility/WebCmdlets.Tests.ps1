@@ -179,7 +179,7 @@ function ExecuteRedirectRequest {
 }
 
 # This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
-# using the custum headers and the optional SkipHeaderValidation switch.
+# using the custom headers and the optional SkipHeaderValidation switch.
 function ExecuteRequestWithCustomHeaders {
     param (
         [Parameter(Mandatory)]
@@ -370,7 +370,7 @@ function GetMultipartBody {
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
     See https://docs.microsoft.com/previous-versions/windows/apps/f92ssyy1(v=vs.105)
-    for additonal details.
+    for additional details.
 #>
 $redirectTests = @(
     @{redirectType = 'MultipleChoices'; redirectedMethod = 'GET'}
@@ -925,7 +925,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.RelationLink["next"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=2&type=${type}"
     }
 
-    It "Verify Invoke-WebRequest supresses terminating errors with -SkipHttpErrorCheck" {
+    It "Verify Invoke-WebRequest suppresses terminating errors with -SkipHttpErrorCheck" {
         $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-WebRequest -SkipHttpErrorCheck -Uri '$uri'"
         $result = ExecuteWebCommand -Command $command
@@ -2626,7 +2626,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         1..$maxLinks | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
-    It "Verify Invoke-RestMethod supresses terminating errors with -SkipHttpErrorCheck" {
+    It "Verify Invoke-RestMethod suppresses terminating errors with -SkipHttpErrorCheck" {
         $uri =  Get-WebListenerUrl -Test 'Response' -Query $NotFoundQuery
         $command = "Invoke-RestMethod -SkipHttpErrorCheck -Uri '$uri'"
         $result = ExecuteWebCommand -Command $command
@@ -3315,10 +3315,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Verifies Invoke-RestMethod supports -ResponseHeadersVariable overwriting existing variable" {
             $uri = Get-WebListenerUrl -Test '/'
-            $headers = 'prexisting'
+            $headers = 'preexisting'
             $response = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
-            $headers | Should -Not -Be 'prexisting'
+            $headers | Should -Not -Be 'preexisting'
             $headers.'Content-Type' | Should -Be 'text/html; charset=utf-8'
             $headers.Server | Should -Be 'Kestrel'
         }

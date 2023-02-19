@@ -1019,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         Running = 1,
         /// <summary>
-        /// The operation is stoping execution.
+        /// The operation is stopping execution.
         /// </summary>
         Stopping = 2,
         /// <summary>
@@ -1510,10 +1510,10 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion internal constructor
 
-        // Set to true when at least one chil job failed
+        // Set to true when at least one child job failed
         private bool _atleastOneChildJobFailed = false;
 
-        // Count the number of childs which have finished
+        // Count the number of children which have finished
         private int _finishedChildJobsCount = 0;
 
         // Count of number of child jobs which are blocked

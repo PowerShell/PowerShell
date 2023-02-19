@@ -31,7 +31,7 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
     }
 
     ## fix https://github.com/PowerShell/PowerShell/issues/17165
-    It "([bool] `$var = 42) should return the varaible value" {
+    It "([bool] `$var = 42) should return the variable value" {
         ([bool]$var = 42).GetType().FullName | Should -Be "System.Boolean"
         . { ([bool]$var = 42).GetType().FullName } | Should -Be "System.Boolean"
     }

@@ -134,7 +134,7 @@ namespace System.Management.Automation
     #nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
-    /// when a native command retuns a non-zero exit code.
+    /// when a native command returns a non-zero exit code.
     /// </summary>
     [Serializable]
     public sealed class NativeCommandExitException : RuntimeException
@@ -775,7 +775,7 @@ namespace System.Management.Automation
                         // It's a normal situation: another thread can mark collection as CompleteAdding
                         // in a concurrent way and we will rise an exception in Take().
                         // Although it's a normal situation it's not the most common path
-                        // and will be executed only on the race condtion case.
+                        // and will be executed only on the race condition case.
                     }
                 }
 
@@ -1980,7 +1980,7 @@ namespace System.Management.Automation
         /// </param>
         internal void Start(Process process, NativeCommandIOFormat inputFormat)
         {
-            Dbg.Assert(process != null, "caller should validate the paramter");
+            Dbg.Assert(process != null, "caller should validate the parameter");
 
             // Get the encoding for writing to native command. Note we get the Encoding
             // from the current scope so a script or function can use a different encoding

@@ -154,7 +154,7 @@ namespace System.Management.Automation
         private readonly Collection<object> _itemsToAdd;
 
         /// <summary>
-        /// The list of items to remove when AppyTo is called.
+        /// The list of items to remove when ApplyTo is called.
         /// </summary>
         public Collection<object> Remove
         {

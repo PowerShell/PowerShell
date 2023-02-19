@@ -18,8 +18,8 @@ if ($ForceModuleReload) {
 
 Import-Module -Name "$PSScriptRoot/src/ClearlyDefined" @extraParams
 
-$cgManfest = Get-Content "$PSScriptRoot/../cgmanifest.json" | ConvertFrom-Json
-$fullCgList = $cgManfest.Registrations.Component |
+$cgManifest = Get-Content "$PSScriptRoot/../cgmanifest.json" | ConvertFrom-Json
+$fullCgList = $cgManifest.Registrations.Component |
     ForEach-Object {
         [Pscustomobject]@{
             type = $_.Type

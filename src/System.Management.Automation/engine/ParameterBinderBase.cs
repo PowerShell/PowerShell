@@ -51,7 +51,7 @@ namespace System.Management.Automation
     /// <summary>
     /// An abstract class used by the CommandProcessor to bind parameters to a bindable object.
     /// Derived classes are used to provide specific binding behavior for different object types,
-    /// like Cmdlet, PsuedoParameterCollection, and dynamic parameter objects.
+    /// like Cmdlet, PseudoParameterCollection, and dynamic parameter objects.
     /// </summary>
     [DebuggerDisplay("Command = {command}")]
     internal abstract class ParameterBinderBase

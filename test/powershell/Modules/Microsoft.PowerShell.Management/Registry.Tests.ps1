@@ -51,7 +51,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
     Context "Validate basic registry provider Cmdlets" {
         It "Verify Test-Path" {
             Test-Path -IsValid Registry::HKCU/Software | Should -BeTrue
-            Test-Path -IsValid Registry::foo/Softare | Should -BeFalse
+            Test-Path -IsValid Registry::foo/Software | Should -BeFalse
         }
 
         It "Verify Get-Item" {
@@ -106,7 +106,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         }
     }
 
-    Context "Valdiate basic registry property Cmdlets" {
+    Context "Validate basic registry property Cmdlets" {
         It "Verify New-ItemProperty" {
             New-ItemProperty -Path $testKey -Name "NewTestEntry" -Value 99 > $null
             $property = Get-ItemProperty -Path $testKey -Name "NewTestEntry"
@@ -236,7 +236,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate New-ItemProperty Parameters" {
+    Context "Validate New-ItemProperty Parameters" {
         BeforeEach {
             #remove the current properties so that we can remake them with different parameters
             Remove-ItemProperty -Path $testKey -Name $testPropertyName -Force -ErrorAction SilentlyContinue
@@ -271,7 +271,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Get-ItemProperty Parameters" {
+    Context "Validate Get-ItemProperty Parameters" {
         It "Verify Name" {
             $result = Get-ItemProperty -Path $testKey -Name $testPropertyName
             $result."$testPropertyName" | Should -Be $testPropertyValue
@@ -301,14 +301,14 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Get-ItemPropertyValue Parameters" {
+    Context "Validate Get-ItemPropertyValue Parameters" {
         It "Verify Name" {
             $result = Get-ItemPropertyValue -Path $testKey -Name $testPropertyName
             $result | Should -Be $testPropertyValue
         }
     }
 
-    Context "Valdiate Set-ItemPropertyValue Parameters" {
+    Context "Validate Set-ItemPropertyValue Parameters" {
         BeforeAll {
             $newPropertyValue = 2
         }
@@ -344,7 +344,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Copy-ItemProperty Parameters" {
+    Context "Validate Copy-ItemProperty Parameters" {
         BeforeEach {
             #remove the current property so that we have a place to copy to
             Remove-ItemProperty -Path $testKey2 -Name $testPropertyName -Force -ErrorAction SilentlyContinue
@@ -374,7 +374,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Move-ItemProperty Parameters" {
+    Context "Validate Move-ItemProperty Parameters" {
         BeforeEach {
             #remove the current property so that we have a place to move to
             Remove-ItemProperty -Path $testKey2 -Name $testPropertyName -Force -ErrorAction SilentlyContinue
@@ -407,7 +407,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Rename-ItemProperty Parameters" {
+    Context "Validate Rename-ItemProperty Parameters" {
         BeforeAll {
             $newPropertyName = "NewEntry"
         }
@@ -429,7 +429,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Clear-ItemProperty Parameters" {
+    Context "Validate Clear-ItemProperty Parameters" {
         It "Verify Confirm can be bypassed" {
             Clear-ItemProperty -Path $testKey -Name $testPropertyName -Confirm:$false
             $result = Get-ItemProperty -Path $testKey -Name $testPropertyName
@@ -443,7 +443,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
     }
 
-    Context "Valdiate Remove-ItemProperty Parameters" {
+    Context "Validate Remove-ItemProperty Parameters" {
         It "Verify Confirm can be bypassed" {
             Remove-ItemProperty -Path $testKey -Name $testPropertyName -Confirm:$false
             { Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction Stop } | Should -Throw -ErrorId "System.Management.Automation.PSArgumentException,Microsoft.PowerShell.Commands.GetItemPropertyCommand"

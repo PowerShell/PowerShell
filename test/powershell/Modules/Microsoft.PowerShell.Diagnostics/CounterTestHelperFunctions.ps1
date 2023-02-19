@@ -264,7 +264,7 @@ function CompareCounterSets
     $setA.Length | Should -Be $setB.Length
 
     # Depending on the kinds of counters used, the first record in
-    # exported counters are likely to have embty items, so we'll
+    # exported counters are likely to have empty items, so we'll
     # start comparing at the second item.
     #
     # Note that this is not a bug in either the cmdlets or the tests

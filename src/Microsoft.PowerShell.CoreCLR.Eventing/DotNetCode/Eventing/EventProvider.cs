@@ -635,7 +635,7 @@ namespace System.Diagnostics.Eventing
                         // The loop below goes through all the arguments and fills in the data
                         // descriptors. For strings save the location in the dataString array.
                         // Calculates the total size of the event by adding the data descriptor
-                        // size value set in EncodeObjec method.
+                        // size value set in EncodeObject method.
                         //
                         for (index = 0; index < eventPayload.Length; index++)
                         {
