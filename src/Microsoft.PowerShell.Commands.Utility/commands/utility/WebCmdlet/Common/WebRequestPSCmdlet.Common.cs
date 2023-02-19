@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Session property.
         /// </summary>
         [Parameter]
-        public virtual WebRequestSession? WebSession { get; set; }
+        public virtual WebRequestSession WebSession { get; set; } = new WebRequestSession();
 
         /// <summary>
         /// Gets or sets the SessionVariable property.
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
                 // If the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
                 bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
-                                                   && WebSession!.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
+                                                   && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession!.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
+                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // Make sure we have a valid WebRequestSession object to work with
-            WebSession ??= new WebRequestSession();
+            // WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
             {
@@ -948,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
-            handler.CookieContainer = WebSession!.Cookies;
+            handler.CookieContainer = WebSession.Cookies;
             handler.AutomaticDecompression = DecompressionMethods.All;
 
             // Set the credentials used by this request
@@ -1016,7 +1016,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Pull in session data
-            if (WebSession!.Headers.Count > 0)
+            if (WebSession.Headers.Count > 0)
             {
                 WebSession.ContentHeaders.Clear();
                 foreach (var entry in WebSession.Headers)
@@ -1105,12 +1105,12 @@ namespace Microsoft.PowerShell.Commands
             // Set the request content type
             if (ContentType is not null)
             {
-                WebSession!.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
+                WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
             }
             else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
-                WebSession!.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string? contentType);
+                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string? contentType);
                 if (string.IsNullOrEmpty(contentType))
                 {
                     WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = "application/x-www-form-urlencoded";
@@ -1188,7 +1188,7 @@ namespace Microsoft.PowerShell.Commands
                 request.Content.Headers.Clear();
             }
 
-            foreach (KeyValuePair<string, string> entry in WebSession!.ContentHeaders)
+            foreach (KeyValuePair<string, string> entry in WebSession.ContentHeaders)
             {
                 if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
@@ -1219,7 +1219,7 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(request);
 
             // Add 1 to account for the first request.
-            int totalRequests = WebSession!.MaximumRetryCount + 1;
+            int totalRequests = WebSession.MaximumRetryCount + 1;
             HttpRequestMessage currentRequest = request;
             HttpResponseMessage? response = null;
 
@@ -1444,11 +1444,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Authentication == WebAuthenticationType.Basic)
             {
-                WebSession!.Headers["Authorization"] = GetBasicAuthorizationHeader();
+                WebSession.Headers["Authorization"] = GetBasicAuthorizationHeader();
             }
             else if (Authentication == WebAuthenticationType.Bearer || Authentication == WebAuthenticationType.OAuth)
             {
-                WebSession!.Headers["Authorization"] = GetBearerAuthorizationHeader();
+                WebSession.Headers["Authorization"] = GetBearerAuthorizationHeader();
             }
             else
             {
@@ -1568,7 +1568,7 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(multipartContent);
             
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
-            WebSession!.ContentHeaders.Clear();
+            WebSession.ContentHeaders.Clear();
 
             request.Content = multipartContent;
         }
