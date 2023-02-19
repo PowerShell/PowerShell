@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal Dictionary<string, string>? _relationLink = null;
+        internal Dictionary<string, string> _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -654,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (_followRelLink)
                             {
-                                if (!_relationLink!.ContainsKey("next"))
+                                if (!_relationLink.ContainsKey("next"))
                                 {
                                     return;
                                 }
@@ -1588,15 +1588,8 @@ namespace Microsoft.PowerShell.Commands
 
             ArgumentNullException.ThrowIfNull(requestUri);
 
-            if (_relationLink is null)
-            {
-                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
-                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            }
-            else
-            {
-                _relationLink.Clear();
-            }
+            // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+            _relationLink.Clear();
 
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
