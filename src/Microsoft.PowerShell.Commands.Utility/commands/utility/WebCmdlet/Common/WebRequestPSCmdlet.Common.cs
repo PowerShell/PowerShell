@@ -1406,7 +1406,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = value is null ? string.Empty : WebUtility.UrlEncode(value.ToString()!);
+                string? encodedValue = value is null ? string.Empty : WebUtility.UrlEncode(value.ToString());
 
                 bodyBuilder.Append($"{encodedKey}={encodedValue}");
             }
