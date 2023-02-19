@@ -843,6 +843,17 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
     }
 
+    it 'Should complete base class members of types without type definition AST' {
+        $res = TabExpansion2 -inputScript @'
+class InheritedClassTest : System.Attribute
+{
+    [void] TestMethod()
+    {
+        $this.
+'@
+        $res.CompletionMatches.CompletionText | Should -Contain 'TypeId'
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
