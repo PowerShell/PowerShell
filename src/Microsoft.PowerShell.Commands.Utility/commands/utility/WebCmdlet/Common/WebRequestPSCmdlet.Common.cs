@@ -117,7 +117,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal Dictionary<string, string> _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        [System.Diagnostics.CodeAnalysis.AllowNullAttribute]
+        internal Dictionary<string, string> _relationLink = null;
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -945,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-        
+
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
@@ -1589,8 +1590,15 @@ namespace Microsoft.PowerShell.Commands
 
             ArgumentNullException.ThrowIfNull(requestUri);
 
-            // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
-            _relationLink.Clear();
+            if (_relationLink is null)
+            {
+                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+            else
+            {
+                _relationLink.Clear();
+            }
 
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
