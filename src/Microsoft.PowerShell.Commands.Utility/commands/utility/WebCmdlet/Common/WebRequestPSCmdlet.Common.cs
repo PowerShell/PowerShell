@@ -346,11 +346,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
+        [System.Diagnostics.CodeAnalysis.DisallowNullAttribute]
         public virtual string? CustomMethod
         {
             get => _custommethod;
 
-            set => _custommethod = value!.ToUpperInvariant();
+            set => _custommethod = value.ToUpperInvariant();
         }
 
         private string? _custommethod;
