@@ -167,7 +167,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Session property.
         /// </summary>
         [Parameter]
-        public virtual WebRequestSession WebSession { get; set; } = new WebRequestSession();
+        [System.Diagnostics.CodeAnalysis.AllowNullAttribute]
+        public virtual WebRequestSession WebSession { get; set; }
 
         /// <summary>
         /// Gets or sets the SessionVariable property.
@@ -838,7 +839,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // Make sure we have a valid WebRequestSession object to work with
-            // WebSession ??= new WebRequestSession();
+            WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
             {
