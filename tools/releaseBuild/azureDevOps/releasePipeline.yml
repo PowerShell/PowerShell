@@ -338,6 +338,17 @@ stages:
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
 
+  - job: PublishSymbols 
+
+    pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - template: templates/release-PublishSymbols.yml
+    #download artifacts or pipeline artifacts
+
 - stage: ChangesToMaster
   displayName: Ensure changes are in GH master
   dependsOn: PublishPackages
