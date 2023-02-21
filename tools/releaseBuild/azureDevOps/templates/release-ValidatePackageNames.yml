@@ -6,6 +6,12 @@ steps:
 - template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
+    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Install-AzCopy
+  displayName: Install AzCopy
+  retryCountOnTaskFailure: 2
+
+- pwsh: |
     $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
     Write-Host $name
     Write-Host "##vso[build.updatebuildnumber]$name"

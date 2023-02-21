@@ -21,6 +21,7 @@ variables:
     value: true
   - name: BUILDSECMON_OPT_IN
     value: true
+  - group: ReleasePipelineSecrets
 
 stages:
 - stage: MSIXBundle
