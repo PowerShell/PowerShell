@@ -338,7 +338,7 @@ stages:
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
 
-  - job: PublishSymbols 
+  - job: PublishSymbols
 
     pool:
     name: PowerShell1ES
