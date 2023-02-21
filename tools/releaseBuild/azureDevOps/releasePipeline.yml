@@ -347,7 +347,6 @@ stages:
 
     steps:
     - template: templates/release-PublishSymbols.yml
-    #download artifacts or pipeline artifacts
 
 - stage: ChangesToMaster
   displayName: Ensure changes are in GH master
