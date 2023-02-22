@@ -1349,24 +1349,6 @@ namespace System.Management.Automation
             return keyValuePairWithCursor;
         }
 
-        private static List<CompletionResult> CompletePropertyAssignment(MemberExpressionAst memberExpression, CompletionContext context)
-        {
-            if (SafeExprEvaluator.TrySafeEval(memberExpression, context.ExecutionContext, out var evalValue))
-            {
-                if (evalValue is null)
-                {
-                    return null;
-                }
-
-                Type type = evalValue.GetType();
-                if (type.IsEnum)
-                {
-                    return GetResultForEnum(type, context);
-                }
-            }
-            return null;
-        }
-
         // Pulls the variable out of an assignment's LHS expression
         // Also brings back the innermost type constraint if there is one
         private static VariableExpressionAst GetVariableFromExpressionAst(
@@ -1437,6 +1419,24 @@ namespace System.Management.Automation
             }
 
             return typeConstraint != null || setConstraint != null;
+        }
+
+        private static List<CompletionResult> CompletePropertyAssignment(MemberExpressionAst memberExpression, CompletionContext context)
+        {
+            if (SafeExprEvaluator.TrySafeEval(memberExpression, context.ExecutionContext, out var evalValue))
+            {
+                if (evalValue is null)
+                {
+                    return null;
+                }
+
+                Type type = evalValue.GetType();
+                if (type.IsEnum)
+                {
+                    return GetResultForEnum(type, context);
+                }
+            }
+            return null;
         }
 
         private static bool TryGetCompletionsForVariableAssignment(
