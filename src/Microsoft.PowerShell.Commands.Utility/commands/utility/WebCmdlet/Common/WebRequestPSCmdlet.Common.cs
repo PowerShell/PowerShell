@@ -1589,7 +1589,10 @@ namespace Microsoft.PowerShell.Commands
         {
             Uri? requestUri = response.RequestMessage?.RequestUri;
 
-            ArgumentNullException.ThrowIfNull(requestUri);
+            if (requestUri is null)
+            {
+                return;
+            }
 
             if (_relationLink is null)
             {
