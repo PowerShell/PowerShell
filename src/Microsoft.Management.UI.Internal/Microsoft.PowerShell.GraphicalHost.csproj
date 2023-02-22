@@ -7,7 +7,7 @@
     <AssemblyName>Microsoft.PowerShell.GraphicalHost</AssemblyName>
     <UseWPF>True</UseWPF>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <TargetPlatformVersion>7.0</TargetPlatformVersion>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
     <RunAnalyzers>false</RunAnalyzers>
   </PropertyGroup>
 
