@@ -167,14 +167,15 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Session property.
         /// </summary>
         [Parameter]
-        [System.Diagnostics.CodeAnalysis.AllowNullAttribute]
-        public virtual WebRequestSession WebSession { get; set; }
+        [ValidateNotNull]
+        public virtual WebRequestSession WebSession { get; set; } = new WebRequestSession();
 
         /// <summary>
         /// Gets or sets the SessionVariable property.
         /// </summary>
         [Parameter]
         [Alias("SV")]
+        [ValidateNotNullOrWhiteSpace]
         public virtual string? SessionVariable { get; set; }
 
         #endregion Session
@@ -693,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void ValidateParameters()
         {
             // Sessions
-            if (WebSession is not null && SessionVariable is not null)
+            if (MyInvocation.BoundParameters.ContainsKey("WebSession") && SessionVariable is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
@@ -839,9 +840,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void PrepareSession()
         {
-            // Make sure we have a valid WebRequestSession object to work with
-            WebSession ??= new WebRequestSession();
-
             if (SessionVariable is not null)
             {
                 // Save the session back to the PS environment if requested
