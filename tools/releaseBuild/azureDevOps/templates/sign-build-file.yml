@@ -218,7 +218,7 @@ steps:
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\signed\'
-    $BuildPath = Join-Path '$(BinPath)'
+    $BuildPath = '$(BinPath)'
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
@@ -278,7 +278,7 @@ steps:
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartySigned'
-    $BuildPath = Join-Path '$(BinPath)'
+    $BuildPath = '$(BinPath)'
 
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     if ($env:BuildConfiguration -eq 'minSize') {
