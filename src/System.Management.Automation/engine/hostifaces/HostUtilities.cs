@@ -964,7 +964,7 @@ namespace System.Management.Automation
             }
 
             List<string> actions = item.RecommendedActions;
-            if (item.Layout is FeedbackItem.DisplayLayout.Landscape)
+            if (item.Layout is FeedbackDisplayLayout.Landscape)
             {
                 // Add 4-space indentation and write the indicator.
                 output.Append($"    {textStyle}{s_actionIndicator}{ansiReset} ");
