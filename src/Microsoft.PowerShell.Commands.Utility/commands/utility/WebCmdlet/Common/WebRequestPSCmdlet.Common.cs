@@ -1764,7 +1764,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     JsonNode? jsonNode = JsonNode.Parse(error);
                     JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-
                     string jsonString = jsonNode?.ToJsonString(options) ?? throw new ArgumentNullException();
 
                     formattedError = Environment.NewLine + jsonString;
