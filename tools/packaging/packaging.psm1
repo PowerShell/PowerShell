@@ -20,6 +20,19 @@ $script:netCoreRuntime = 'net7.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
+class R2RVerification {
+    [ValidateSet('NoR2R','R2R','SdkOnly')]
+    [string]
+    $R2RState = 'R2R'
+
+    [System.Reflection.PortableExecutable.Machine]
+    $Architecture = [System.Reflection.PortableExecutable.Machine]::Amd64
+
+    [ValidateSet('Linux','Apple','Windows')]
+    [string]
+    $OperatingSystem = 'Windows'
+}
+
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
@@ -42,7 +55,6 @@ function Start-PSPackage {
 
         # Generate windows downlevel package
         [ValidateSet("win7-x86", "win7-x64", "win-arm", "win-arm64")]
-        [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
         [ValidateSet('osx-x64', 'osx-arm64')]
@@ -321,11 +333,31 @@ function Start-PSPackage {
 
         switch ($Type) {
             "zip" {
+                $os, $architecture = ($Script:Options.Runtime -split '-')
+                $peOS = ConvertTo-PEOperatingSystem -OperatingSystem $os
+                $peArch =  ConvertTo-PEArchitecture -Architecture $architecture
+
                 $Arguments = @{
                     PackageNameSuffix = $NameSuffix
                     PackageSourcePath = $Source
                     PackageVersion = $Version
                     Force = $Force
+                }
+
+                if ($architecture -in 'x86', 'x64', 'arm', 'arm64') {
+                    $Arguments += @{ R2RVerification = [R2RVerification]@{
+                            R2RState = 'R2R'
+                            OperatingSystem = $peOS
+                            Architecture = $peArch
+                        }
+                    }
+                } else {
+                    $Arguments += @{ R2RVerification = [R2RVerification]@{
+                            R2RState = 'SdkOnly'
+                            OperatingSystem = $peOS
+                            Architecture = $peArch
+                        }
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -352,6 +384,11 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         PackageVersion = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'SdkOnly'
+                            OperatingSystem = "Windows"
+                            Architecture = "amd64"
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -365,6 +402,9 @@ function Start-PSPackage {
                         PackageNameSuffix = 'gc'
                         Version = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'SdkOnly'
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -379,6 +419,9 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         PackageVersion = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'NoR2R'
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -391,6 +434,9 @@ function Start-PSPackage {
                         PackageNameSuffix = 'fxdependent'
                         Version = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'NoR2R'
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -400,8 +446,10 @@ function Start-PSPackage {
             }
             "msi" {
                 $TargetArchitecture = "x64"
+                $r2rArchitecture = "amd64"
                 if ($Runtime -match "-x86") {
                     $TargetArchitecture = "x86"
+                    $r2rArchitecture = "i386"
                 }
                 Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
@@ -412,7 +460,7 @@ function Start-PSPackage {
                     AssetsPath = "$RepoRoot\assets"
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
-                }
+            }
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                     New-MSIPackage @Arguments
@@ -454,7 +502,20 @@ function Start-PSPackage {
                 }
 
                 if ($MacOSRuntime) {
-                    $Arguments['Architecture'] = $MacOSRuntime.Split('-')[1]
+                    $architecture = $MacOSRuntime.Split('-')[1]
+                    $Arguments['Architecture'] = $architecture
+                }
+
+                if ($Script:Options.Runtime -match '(linux|osx).*') {
+                    $os, $architecture = ($Script:Options.Runtime -split '-')
+                    $peOS = ConvertTo-PEOperatingSystem -OperatingSystem $os
+                    $peArch =  ConvertTo-PEArchitecture -Architecture $architecture
+
+                    $Arguments['R2RVerification'] = [R2RVerification]@{
+                        R2RState        = "R2R"
+                        OperatingSystem = $peOS
+                        Architecture    = $peArch
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -462,6 +523,7 @@ function Start-PSPackage {
                 }
             }
             "tar-arm" {
+                $peArch = ConvertTo-PEArchitecture -Architecture 'arm'
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
@@ -469,6 +531,11 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = $peArch
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -483,6 +550,11 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "arm64"
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -497,6 +569,11 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "amd64"
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -628,7 +705,9 @@ function New-TarballPackage {
 
         [switch] $ExcludeSymbolicLinks,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [R2RVerification] $R2RVerification
     )
 
     if ($PackageNameSuffix) {
@@ -657,7 +736,7 @@ function New-TarballPackage {
     }
 
     $Staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
+    New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
@@ -1682,15 +1761,60 @@ function New-StagingFolder
         [Parameter(Mandatory)]
         [string]
         $StagingPath,
+
         [Parameter(Mandatory)]
         [string]
         $PackageSourcePath,
+
         [string]
-        $Filter = '*'
+        $Filter = '*',
+
+        [R2RVerification]
+        $R2RVerification
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
     Copy-Item -Recurse $PackageSourcePath $StagingPath -Filter $Filter
+
+    $smaPath = Join-Path $StagingPath 'System.Management.Automation.dll'
+    if ($R2RVerification) {
+        $smaInfo = Get-PEInfo -File $smaPath
+        switch ($R2RVerification.R2RState) {
+            $null {
+                Write-Verbose "Skipping R2R verification" -Verbose
+            }
+            'R2R' {
+                Write-Verbose "Verifying R2R was done..." -Verbose
+                if (!$smaInfo.CrossGen -or $smaInfo.Architecture -ne $R2RVerification.Architecture -or $smaInfo.OS -ne $R2RVerification.OperatingSystem) {
+                    throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actually ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
+                }
+                $mismatchedCrossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+                    Get-PEInfo |
+                    Where-Object { $_.CrossGen -and $_.OS -ne $R2RVerification.OperatingSystem -and $_.Architecture -ne $R2RVerification.Architecture })
+                if ($mismatchedCrossGenedFiles.Count -gt 0) {
+                    foreach ($file in $mismatchedCrossGenedFiles) {
+                        Write-Warning "Misconfigured ReadyToRun file found.  Expected $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actual ($($file.OS) $($file.Architecture) ) "
+                    }
+                    throw "Unexpected ReadyToRun files found."
+                }
+            }
+            'NoR2R' {
+                Write-Verbose "Verifying no R2R was done..." -Verbose
+                $crossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+                    Get-PEInfo |
+                    Where-Object { $_.CrossGen })
+                if ($crossGenedFiles.Count -gt 0) {
+                    throw "Unexpected ReadyToRun files found: $($crossGenedFiles | ForEach-Object { $_.Path })"
+                }
+            }
+            'SdkOnly' {
+                Write-Verbose "Verifying no R2R was done on SMA..." -Verbose
+                if ($smaInfo.CrossGen) {
+                    throw "System.Management.Automation.dll should not be ReadyToRun"
+                }
+            }
+        }
+    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -1718,7 +1842,9 @@ function New-ZipPackage
 
         [switch] $Force,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [R2RVerification] $R2RVerification = [R2RVerification]::new()
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1745,7 +1871,7 @@ function New-ZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
-            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
@@ -1816,6 +1942,8 @@ function New-PdbZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
+
+            # We should NOT R2R verify the PDB zip
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -Filter *.pdb
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
@@ -4822,6 +4950,115 @@ function Test-PackageManifest {
                 }
                 Write-Output $result
             }
+        }
+    }
+}
+
+# Get the PE information for a file
+function Get-PEInfo {
+    [CmdletBinding()]
+    param([Parameter(ValueFromPipeline = $true)][string] $File)
+    BEGIN {
+        # retrieved from ILCompiler.PEWriter.MachineOSOverride
+        enum MachineOSOverride {
+            Windows = 0
+            SunOS = 6546
+            NetBSD = 6547
+            Apple = 17988
+            Linux = 31609
+            FreeBSD = 44484
+        }
+
+        # The information we want
+        class PsPeInfo {
+            [string]$File
+            [bool]$CrossGen
+            [Nullable[MachineOSOverride]]$OS
+            [System.Reflection.PortableExecutable.Machine]$Architecture
+            [Nullable[System.Reflection.PortableExecutable.CorFlags]]$Flags
+        }
+
+    }
+    PROCESS {
+        $filePath = (get-item $file).fullname
+        $CrossGenFlag = 4
+        try {
+            $stream = [System.IO.FileStream]::new($FilePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
+            $peReader = [System.Reflection.PortableExecutable.PEReader]::new($stream)
+            $flags = $peReader.PEHeaders.CorHeader.Flags
+            if (-not $flags) {
+                Write-Warning "$filePath is not a managed assembly"
+            }
+            $machine = $peReader.PEHeaders.CoffHeader.Machine
+            if (-not $machine) {
+                throw "Null Machine"
+            }
+        } catch {
+            $er = [system.management.automation.errorrecord]::new(([InvalidOperationException]::new($_)), "Get-PEInfo:InvalidOperation", "InvalidOperation", $filePath)
+            $PSCmdlet.WriteError($er)
+            return
+        } finally {
+            if ($peReader) {
+                $peReader.Dispose()
+            }
+        }
+
+        [ushort]$r2rOsArch = $machine
+
+        $RealOS = $null
+        $realarch = "unknown"
+        foreach ($os in [enum]::GetValues([MachineOSOverride])) {
+            foreach ($architecture in [Enum]::GetValues([System.Reflection.PortableExecutable.Machine])) {
+                if (([ushort]$architecture -BXOR [ushort]$os) -eq [ushort]$r2rOsArch) {
+                    $realOS = $os
+                    $realArch = $architecture
+
+                    [PsPeInfo]@{
+                        File         = $File
+                        OS           = $realos
+                        Architecture = $realarch
+                        CrossGen     = [bool]($flags -band $CrossGenFlag)
+                        Flags        = $flags
+                    }
+                    return
+                }
+            }
+        }
+    }
+}
+
+function ConvertTo-PEArchitecture {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]
+        $Architecture
+    )
+
+    PROCESS {
+        switch ($Architecture) {
+            "x86" { "I386" }
+            "x64" { "AMD64" }
+            "arm" { "ArmThumb2" }
+            default { $Architecture }
+        }
+    }
+}
+
+function ConvertTo-PEOperatingSystem {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]
+        $OperatingSystem
+    )
+
+    PROCESS {
+        switch -regex ($OperatingSystem) {
+            "win.*" { "Windows" }
+            "Linux" { "Linux" }
+            "OSX" { "Apple" }
+            default { $OperatingSystem }
         }
     }
 }
