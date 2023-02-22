@@ -322,7 +322,18 @@ namespace System.Management.Automation
                 }
 
                 var baseTypeDefinitionAst = baseTypeName._typeDefinitionAst;
-                results.AddRange(GetMembersByInferredType(new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
+                if (baseTypeDefinitionAst is null)
+                {
+                    var baseReflectionType = baseTypeName.GetReflectionType();
+                    if (baseReflectionType is not null)
+                    {
+                        results.AddRange(GetMembersByInferredType(new PSTypeName(baseReflectionType), isStatic, filterToCall));
+                    }
+                }
+                else
+                {
+                    results.AddRange(GetMembersByInferredType(new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
+                }
             }
 
             // Add stuff from our base class System.Object.
