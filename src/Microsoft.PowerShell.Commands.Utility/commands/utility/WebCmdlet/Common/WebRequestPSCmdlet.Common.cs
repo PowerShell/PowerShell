@@ -1388,9 +1388,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static Uri CheckProtocol(Uri? uri)
         {
-            ArgumentNullException.ThrowIfNull(uri);
-
-            return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
+            return uri is not null && uri.IsAbsoluteUri ? uri : new Uri("http://" + uri?.OriginalString);
         }
 
         private string QualifyFilePath(string? path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
