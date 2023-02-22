@@ -2628,8 +2628,8 @@ function New-ReferenceAssembly
             Copy-Item -Path $sourceProjectFile -Destination $destProjectFile -Force -Verbose
             Copy-Item -Path $nugetConfigFile -Destination $projectFolder -Verbose
 
-            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$destProjectFile"
-            Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
+            Send-AzdoFile -Path $destProjectFile
+            Send-AzdoFile -Path $generatedSource
 
             $arguments = GenerateBuildArguments -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
 
@@ -3301,7 +3301,7 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    Write-Log "verifying no new files have been added or removed..."
+    Write-Log "Generating wxs file manifest..."
     $arguments = @{
         IsPreview              = $isPreview
         ProductSourcePath      = $staging
@@ -3317,6 +3317,8 @@ function New-MSIPackage
     $buildArguments = New-MsiArgsArray -Argument $arguments
 
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
+
+    Send-AzdoFile -Path $wixFragmentPath
 
     $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
 
@@ -4766,4 +4768,48 @@ function ConvertTo-PEOperatingSystem {
             default { $OperatingSystem }
         }
     }
+}
+
+# Upload an artifact in Azure DevOps
+# On other systems will just log where the file was placed
+function Send-AzdoFile {
+    param (
+        [parameter(Mandatory, ParameterSetName = 'contents')]
+        [string[]]
+        $Contents,
+        [parameter(Mandatory, ParameterSetName = 'contents')]
+        [string]
+        $LogName,
+        [parameter(Mandatory, ParameterSetName = 'path')]
+        [ValidateScript({ Test-Path -Path $_ })]
+        [string]
+        $Path
+    )
+
+    $logFolder = Join-Path -Path $PWD -ChildPath 'logfile'
+    if (!(Test-Path -Path $logFolder)) {
+        $null = New-Item -Path $logFolder -ItemType Directory
+        if ($IsMacOS -or $IsLinux) {
+            $null = chmod a+rw $logFolder
+        }
+    }
+
+    if ($LogName) {
+        $effectiveLogName = $LogName + '.txt'
+    } else {
+        $effectiveLogName = Split-Path -Leaf -Path $Path
+    }
+
+    $newName = ([System.Io.Path]::GetRandomFileName() + "-$effectiveLogName")
+    if ($Contents) {
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
+
+        $Contents | Out-File -path $logFile -Encoding ascii
+    } else {
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
+        Copy-Item -Path $Path -Destination $logFile
+    }
+
+    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    Write-Verbose "Log file captured as $newName" -Verbose
 }
