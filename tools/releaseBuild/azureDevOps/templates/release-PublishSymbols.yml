@@ -8,11 +8,11 @@ steps:
     runVersion: latestFromBranch
     runBranch: '$(Build.SourceBranch)'
     artifact: results
-    path: '$(Pipeline.Workspace)/releasePipeline/results'
+    path: '$(System.ArtifactsDirectory)\results'
 
 - pwsh: |
-    Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)/results"
-    $downloadedArtifacts = Get-ChildItem -Recurse "$(Pipeline.Workspace)/results"
+    Write-Verbose -Verbose "Enumerating $(System.ArtifactsDirectory)\results"
+    $downloadedArtifacts = Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\results"
     $downloadedArtifacts
     $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
     $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
