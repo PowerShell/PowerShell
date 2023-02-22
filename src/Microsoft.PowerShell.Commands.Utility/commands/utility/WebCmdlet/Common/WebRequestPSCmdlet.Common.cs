@@ -117,8 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.AllowNullAttribute]
-        internal Dictionary<string, string> _relationLink = null;
+        internal Dictionary<string, string>? _relationLink = null;
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -655,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(er);
                             }
 
-                            if (_followRelLink)
+                            if (_followRelLink && _relationLink is not null)
                             {
                                 if (!_relationLink.ContainsKey("next"))
                                 {
