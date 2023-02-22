@@ -19,7 +19,6 @@
         'New-GlobalToolNupkgFromSource'
         'New-ILNugetPackageSource'
         'New-ILNugetPackageFromSource'
-        'New-MSIPatch'
         'New-PSBuildZip'
         'New-PSSignedBuildZip'
         'Publish-NugetToMyGet'

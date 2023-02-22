@@ -3193,142 +3193,6 @@ function Get-WixPath
 
 <#
     .Synopsis
-        Creates a Windows installer MSP package from two MSIs and WIXPDB files
-        This only works on a Windows machine due to the usage of WiX.
-    .EXAMPLE
-        # This example shows how to produce a x64 patch from 6.0.2 to a theoretical 6.0.3
-        cd $RootPathOfPowerShellRepo
-        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPatch -NewVersion 6.0.1 -BaselineMsiPath .\PowerShell-6.0.2-win-x64.msi -BaselineWixPdbPath .\PowerShell-6.0.2-win-x64.wixpdb -PatchMsiPath .\PowerShell-6.0.3-win-x64.msi -PatchWixPdbPath .\PowerShell-6.0.3-win-x64.wixpdb
-#>
-function New-MSIPatch
-{
-    param(
-        [Parameter(Mandatory, HelpMessage='The version of the fixed or patch MSI.')]
-        [ValidatePattern("^\d+\.\d+\.\d+$")]
-        [string] $NewVersion,
-
-        [Parameter(Mandatory, HelpMessage='The path to the original or baseline MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
-        [string] $BaselineMsiPath,
-
-        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the original or baseline MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
-        [string] $BaselineWixPdbPath,
-
-        [Parameter(Mandatory, HelpMessage='The path to the fixed or patch MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
-        [string] $PatchMsiPath,
-
-        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the fixed or patch MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
-        [string] $PatchWixPdbPath,
-
-        [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $PatchWxsPath = "$RepoRoot\assets\wix\patch-template.wxs",
-
-        [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
-        [switch] $Delta
-    )
-
-    $mspName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.fullpath.msp')
-    $mspDeltaName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.deltapatch.msp')
-
-    $wixPatchXmlPath = Join-Path $env:Temp "patch.wxs"
-    $wixBaselineOriginalPdbPath = Join-Path $env:Temp "baseline.original.wixpdb"
-    $wixBaselinePdbPath = Join-Path $env:Temp "baseline.wixpdb"
-    $wixBaselineBinariesPath = Join-Path $env:Temp "baseline.binaries"
-    $wixPatchOriginalPdbPath = Join-Path $env:Temp "patch.original.wixpdb"
-    $wixPatchPdbPath = Join-Path $env:Temp "patch.wixpdb"
-    $wixPatchBinariesPath = Join-Path $env:Temp "patch.binaries"
-    $wixPatchMstPath = Join-Path $env:Temp "patch.wixmst"
-    $wixPatchObjPath = Join-Path $env:Temp "patch.wixobj"
-    $wixPatchWixMspPath = Join-Path $env:Temp "patch.wixmsp"
-
-    $filesToCleanup = @(
-        $wixPatchXmlPath
-        $wixBaselinePdbPath
-        $wixBaselineBinariesPath
-        $wixPatchPdbPath
-        $wixPatchBinariesPath
-        $wixPatchMstPath
-        $wixPatchObjPath
-        $wixPatchWixMspPath
-        $wixPatchOriginalPdbPath
-        $wixBaselineOriginalPdbPath
-    )
-
-    # cleanup from previous builds
-    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
-
-    # Melt changes the original, so copy before running melt
-    Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
-    Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
-
-    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\wix\files.wxs"
-    [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
-
-    # Update the patch version
-    $patchFamilyNode = $patchTemplateXml.Wix.Fragment.PatchFamily
-    $patchFamilyNode.SetAttribute('Version', $NewVersion)
-
-    # get all the file components from the files.wxs
-    $components = $filesAssetXml.GetElementsByTagName('Component')
-
-    # add all the file components to the patch
-    foreach($component in $components)
-    {
-        $id = $component.Id
-        $componentRef = $patchTemplateXml.CreateElement('ComponentRef','http://schemas.microsoft.com/wix/2006/wi')
-        $idAttribute = $patchTemplateXml.CreateAttribute('Id')
-        $idAttribute.Value = $id
-        $null = $componentRef.Attributes.Append($idAttribute)
-        $null = $patchFamilyNode.AppendChild($componentRef)
-    }
-
-    # save the updated patch xml
-    $patchTemplateXml.Save($wixPatchXmlPath)
-
-    $wixPaths = Get-WixPath
-
-    Write-Log "Processing baseline msi..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $BaselineMsiPath $wixBaselinePdbPath -pdb $wixBaselineOriginalPdbPath -x $wixBaselineBinariesPath}
-
-    Write-Log "Processing patch msi..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $PatchMsiPath $wixPatchPdbPath -pdb $wixPatchOriginalPdbPath -x $wixPatchBinariesPath}
-
-    Write-Log  "generate diff..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixTorchExePath -nologo -p -xi $wixBaselinePdbPath $wixPatchPdbPath -out $wixPatchMstPath}
-
-    Write-Log  "Compiling patch..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixCandleExePath -nologo $wixPatchXmlPath -out $wixPatchObjPath}
-
-    Write-Log  "Linking patch..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -nologo $wixPatchObjPath -out $wixPatchWixMspPath}
-
-    if ($Delta.IsPresent)
-    {
-        Write-Log  "Generating delta msp..."
-        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspDeltaName -t RTM $wixPatchMstPath }
-    }
-    else
-    {
-        Write-Log  "Generating full msp..."
-        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspName -t RTM $wixPatchMstPath }
-    }
-
-    # cleanup temporary files
-    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
-}
-
-<#
-    .Synopsis
         Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
@@ -3363,11 +3227,6 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
         [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
-
-        # File describing the MSI file components
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
@@ -3459,24 +3318,12 @@ function New-MSIPackage
 
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
-    # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
-    Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath -FileArchitecture $fileArchitecture
+    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
 
-    if ($isPreview)
-    {
-        # Now that we know that the two are functionally the same,
-        # We only need to use $FilesWxsPath for release we want to be able to Path
-        # and two releases shouldn't have the same identifiers,
-        # so we use the generated one for preview
-        $FilesWxsPath = $wixFragmentPath
+    # cleanup any garbage on the system
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
-        $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
-
-        # cleanup any garbage on the system
-        Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-    }
-
-    Start-MsiBuild -WxsFile $ProductWxsPath, $FilesWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
+    Start-MsiBuild -WxsFile $ProductWxsPath, $wixFragmentPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
 
@@ -3845,153 +3692,6 @@ function New-MSIXPackage
         Write-Verbose "Creating msix package" -Verbose
         Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
-    }
-}
-
-# verify no files have been added or removed
-# if so, write an error with details
-function Test-FileWxs
-{
-    param
-    (
-        # File describing the MSI file components from the asset folder
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
-
-        # File describing the MSI file components generated by heat
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $HeatFilesWxsPath,
-
-        [string] $FileArchitecture
-    )
-
-    # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
-    # Wix will update this automaticaly, but the output is not the same xml
-    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)', $FileArchitecture)
-
-    [xml] $filesAssetXml = $filesAssetString
-    [xml] $newFilesAssetXml = $filesAssetString
-    $xmlns=[System.Xml.XmlNamespaceManager]::new($newFilesAssetXml.NameTable)
-    $xmlns.AddNamespace('Wix','http://schemas.microsoft.com/wix/2006/wi')
-
-    [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
-    $assetFiles = $filesAssetXml.GetElementsByTagName('File')
-    $heatFiles = $heatFilesXml.GetElementsByTagName('File')
-    $heatNodesByFile = @{}
-
-    # Index the list of files generated by heat
-    foreach($file in $heatFiles)
-    {
-        $heatNodesByFile.Add($file.Source, $file)
-    }
-
-    # Index the files from the asset wxs
-    # and verify that no files have been removed.
-    $passed = $true
-    $indexedAssetFiles = @()
-    foreach($file in $assetFiles)
-    {
-        $name = $file.Source
-        if ($heatNodesByFile.Keys -inotcontains $name)
-        {
-            $passed = $false
-            Write-Warning "{$name} is no longer in product and should be removed from {$FilesWxsPath}"
-            $componentId = $file.ParentNode.Id
-            $componentXPath = '//Wix:Component[@Id="{0}"]' -f $componentId
-            $componentNode = Get-XmlNodeByXPath -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns -XPath $componentXPath
-            if ($componentNode)
-            {
-                # Remove the Component
-                Remove-XmlElement -Element $componentNode -RemoveEmptyParents
-                # Remove teh ComponentRef
-                Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-            }
-            else
-            {
-                Write-Warning "Could not remove this node!"
-            }
-        }
-        $indexedAssetFiles += $name
-    }
-
-    # verify that no files have been added.
-    foreach($file in $heatNodesByFile.Keys)
-    {
-        if ($indexedAssetFiles -inotcontains $file)
-        {
-            $passed = $false
-            $folder = Split-Path -Path $file
-            $heatNode = $heatNodesByFile[$file]
-            $compGroupNode = Get-ComponentGroupNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-            $filesNode = Get-DirectoryNode -Node $heatNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-            # Create new Component
-            $newComponent = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'Component' -Node $filesNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            $componentId = New-WixId -Prefix 'cmp'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Id' -Value $componentId
-            # Crete new File in Component
-            $newFile = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'File' -Node $newComponent -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Id' -Value (New-WixId -Prefix 'fil')
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'KeyPath' -Value "yes"
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Source' -Value $file
-            # Create new ComponentRef
-            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $compGroupNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $componentId
-
-            Write-Warning "new file in {$folder} with name {$name} in a {$($filesNode.LocalName)} need to be added to {$FilesWxsPath}"
-        }
-    }
-
-    # get all the file components from the files.wxs
-    $components = $filesAssetXml.GetElementsByTagName('Component')
-    $componentRefs = $filesAssetXml.GetElementsByTagName('ComponentRef')
-
-    $componentComparison = Compare-Object -ReferenceObject $components.id -DifferenceObject $componentRefs.id
-    if ( $componentComparison.Count -gt 0){
-        $passed = $false
-        Write-Verbose "Rebuilding componentRefs" -Verbose
-
-        # add all the file components to the patch
-        foreach($component in $componentRefs)
-        {
-            $componentId = $component.Id
-            Write-Verbose "Removing $componentId" -Verbose
-            Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-        }
-
-        # There is only one ComponentGroup.
-        # So we get all of them and select the first one.
-        $componentGroups = @($newFilesAssetXml.GetElementsByTagName('ComponentGroup'))
-        $componentGroup = $componentGroups[0]
-
-        # add all the file components to the patch
-        foreach($component in $components)
-        {
-            $id = $component.Id
-            Write-Verbose "Adding $id" -Verbose
-            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $componentGroup -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $id
-        }
-    }
-
-    if (!$passed)
-    {
-        $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.wxs')
-        $newFilesAssetXml.Save($newXmlFileName)
-        $newXml = Get-Content -Raw $newXmlFileName
-        $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
-        $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
-        $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
-        Write-Log -message "Updated xml saved to $newXmlFileName."
-        Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
-        Write-Information -MessageData @{FilesWxsPath = $FilesWxsPath; NewFile = $newXmlFileName} -Tags 'PackagingWxs'
-        if ($env:TF_BUILD)
-        {
-            Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
-        }
-
-        throw "Current files to not match  {$FilesWxsPath}"
     }
 }
 
