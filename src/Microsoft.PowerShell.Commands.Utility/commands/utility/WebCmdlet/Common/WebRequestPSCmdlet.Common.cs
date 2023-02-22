@@ -108,6 +108,11 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
+        /// Maximum number of Redirects to follow, caches WebSession.MaximumRedirection.
+        /// </summary>
+        internal int _maximumRedirection;
+
+        /// <summary>
         /// Parse Rel Links.
         /// </summary>
         internal bool _parseRelLink = false;
@@ -549,6 +554,8 @@ namespace Microsoft.PowerShell.Commands
 
                                 WriteVerbose(reqVerboseMsg);
 
+                                _maximumRedirection = WebSession.MaximumRedirection;
+
                                 using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                                 string contentType = ContentHelper.GetContentType(response);
@@ -633,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
+                                if (_maximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
@@ -1231,7 +1238,7 @@ namespace Microsoft.PowerShell.Commands
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (handleRedirect
-                    && WebSession.MaximumRedirection is not 0
+                    && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
                 {
@@ -1239,9 +1246,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken = null;
 
                     // If explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
+                    if (_maximumRedirection > 0)
                     {
-                        WebSession.MaximumRedirection--;
+                        _maximumRedirection--;
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
