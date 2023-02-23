@@ -2063,8 +2063,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Formatting.Debug)$($_.Formatting.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Debug")
                         .AddItemScriptBlock(@"""$($_.Formatting.TableHeader)$($_.Formatting.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.TableHeader")
                         .AddItemScriptBlock(@"""$($_.Formatting.CustomTableHeaderLabel)$($_.Formatting.CustomTableHeaderLabel.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.CustomTableHeaderLabel")
-                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackProvider)$($_.Formatting.FeedbackProvider.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackProvider")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackName)$($_.Formatting.FeedbackName.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackName")
                         .AddItemScriptBlock(@"""$($_.Formatting.FeedbackText)$($_.Formatting.FeedbackText.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackText")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackAction)$($_.Formatting.FeedbackAction.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackAction")
                         .AddItemScriptBlock(@"""$($_.Progress.Style)$($_.Progress.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Progress.Style")
                         .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
                         .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
@@ -2122,8 +2123,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Debug)$($_.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Debug")
                         .AddItemScriptBlock(@"""$($_.TableHeader)$($_.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "TableHeader")
                         .AddItemScriptBlock(@"""$($_.CustomTableHeaderLabel)$($_.CustomTableHeaderLabel.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "CustomTableHeaderLabel")
-                        .AddItemScriptBlock(@"""$($_.FeedbackProvider)$($_.FeedbackProvider.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackProvider")
+                        .AddItemScriptBlock(@"""$($_.FeedbackName)$($_.FeedbackName.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackName")
                         .AddItemScriptBlock(@"""$($_.FeedbackText)$($_.FeedbackText.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackText")
+                        .AddItemScriptBlock(@"""$($_.FeedbackAction)$($_.FeedbackAction.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackAction")
                     .EndEntry()
                 .EndList());
         }
