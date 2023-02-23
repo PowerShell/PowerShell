@@ -378,6 +378,11 @@ using `
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '${PSVersionTable}'
     }
 
+    It 'Should work for property assignment of enum type:' {
+        $res = TabExpansion2 -inputScript '$psstyle.Progress.View="Clas'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
