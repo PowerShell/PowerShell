@@ -6,7 +6,7 @@ jobs:
     - name: NugetSecurityAnalysisWarningLevel
       value: none
     - group: DotNetPrivateBuildAccess
-  displayName: Build test artifacts
+  displayName: Build windows test artifacts
   condition: succeeded()
   pool:
     name: PowerShell1ES
@@ -67,7 +67,7 @@ jobs:
     - name: NugetSecurityAnalysisWarningLevel
       value: none
     - group: DotNetPrivateBuildAccess
-  displayName: Build test artifacts
+  displayName: Build non-windows test artifacts
   condition: succeeded()
   pool:
     name: PowerShell1ES
