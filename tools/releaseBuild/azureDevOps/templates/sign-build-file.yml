@@ -300,7 +300,7 @@ steps:
       tar -czvf $uploadTarFilePath -C $uploadFolder *
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
-  displayName: Upload signed files to artifacts
+  displayName: Upload signed tar.gz files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'linux')
 
 - pwsh: |
@@ -308,11 +308,11 @@ steps:
       $containerName = '$(signedArtifactContainer)'
 
       $uploadZipFilePath = '$(signedBuildArtifactName)'
-      Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
+      Write-Verbose -Verbose -Message "Creating zip - $uploadZipFilePath"
       Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
-  displayName: Upload signed files to artifacts
+  displayName: Upload signed zip files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
