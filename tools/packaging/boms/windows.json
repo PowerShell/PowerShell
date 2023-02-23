@@ -1,7 +1,31 @@
 [
   {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.spdx.json",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.spdx.json.sha256",
+    "FileType": "Product"
+  },
+  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "assets\\Powershell_av_colors.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets\\Powershell_avatar.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets\\Powershell_black.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets\\ps_black_32x32.ico",
+    "FileType": "Product"
   },
   {
     "Pattern": "clretwrc.dll",
@@ -753,7 +777,7 @@
   },
   {
     "Pattern": "LICENSE.txt",
-    "FileType": "NonProduct"
+    "FileType": "Product"
   },
   {
     "Pattern": "Markdig.Signed.dll",
@@ -788,10 +812,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.Management.Infrastructure.CimCmdlets.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.Management.Infrastructure.CimCmdlets.xml",
     "FileType": "NonProduct"
   },
@@ -808,15 +828,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.PowerShell.Commands.Diagnostics.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.PowerShell.Commands.Diagnostics.xml",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Microsoft.PowerShell.Commands.Management.pdb",
     "FileType": "NonProduct"
   },
   {
@@ -824,23 +836,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.PowerShell.Commands.Utility.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.PowerShell.Commands.Utility.xml",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.PowerShell.ConsoleHost.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.PowerShell.ConsoleHost.xml",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Microsoft.PowerShell.CoreCLR.Eventing.pdb",
     "FileType": "NonProduct"
   },
   {
@@ -852,10 +852,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.PowerShell.GraphicalHost.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.PowerShell.GraphicalHost.xml",
     "FileType": "NonProduct"
   },
@@ -864,15 +860,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.PowerShell.SDK.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.PowerShell.SDK.xml",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Microsoft.PowerShell.Security.pdb",
     "FileType": "NonProduct"
   },
   {
@@ -908,15 +896,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Microsoft.WSMan.Management.pdb",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Microsoft.WSMan.Management.xml",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Microsoft.WSMan.Runtime.pdb",
     "FileType": "NonProduct"
   },
   {
@@ -1236,6 +1216,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "psoptions.json",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -1341,10 +1325,6 @@
   },
   {
     "Pattern": "pwsh.deps.json",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pwsh.pdb",
     "FileType": "NonProduct"
   },
   {
@@ -2629,10 +2609,6 @@
   },
   {
     "Pattern": "System.Linq.Queryable.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "System.Management.Automation.pdb",
     "FileType": "NonProduct"
   },
   {

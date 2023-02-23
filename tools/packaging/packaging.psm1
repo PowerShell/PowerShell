@@ -4895,11 +4895,7 @@ function Test-Bom {
 
         if (!$match) {
             $relativePath = $_.FullName.Replace($root, "").Substring(1)
-            $extraParams = @{}
-            if ($BomName -like '*win*') {
-                $extraParams += @{Windows = $true }
-            }
-            $isProduct = Test-IsProductFile -Path $relativePath @extraParams
+            $isProduct = Test-IsProductFile -Path $relativePath
             $fileType = "NonProduct"
             if ($isProduct) {
                 $fileType = "Product"
@@ -4948,61 +4944,37 @@ function Test-Bom {
 # Either simplify or remove
 function Test-IsProductFile {
     param(
-        $Path,
-        [switch]
-        $Windows
+        $Path
     )
 
-    $dirSeparator = [System.io.path]::DirectorySeparatorChar
     $itemsToCopy = @(
         "*.ps1"
-        "Microsoft.PowerShell*.dll"
+        "*Microsoft.PowerShell*.dll"
+        "*Microsoft.PowerShell*.psd1"
+        "*Microsoft.PowerShell*.ps1xml"
+        "*Microsoft.WSMan.Management*.psd1"
+        "*Microsoft.WSMan.Management*.ps1xml"
+        "*pwsh.dll"
+        "*System.Management.Automation.dll"
+        "*PSDiagnostics.ps?1"
+        "*pwsh"
+        "*pwsh.exe"
     )
-
-    $itemsToCopy += @(
-        "*.ps1"
-        "Modules${dirSeparator}Microsoft.PowerShell.Host${dirSeparator}Microsoft.PowerShell.Host.psd1"
-        "Modules${dirSeparator}Microsoft.PowerShell.Management${dirSeparator}Microsoft.PowerShell.Management.psd1"
-        "Modules${dirSeparator}Microsoft.PowerShell.Security${dirSeparator}Microsoft.PowerShell.Security.psd1"
-        "Modules${dirSeparator}Microsoft.PowerShell.Utility${dirSeparator}Microsoft.PowerShell.Utility.psd1"
-        "pwsh.dll"
-        "System.Management.Automation.dll"
-    )
-
-    ## Windows only modules
-
-    if ($Windows) {
-        $itemsToCopy += @(
-            "pwsh.exe"
-            "Microsoft.Management.Infrastructure.CimCmdlets.dll"
-            "Microsoft.WSMan.*.dll"
-            "Modules${dirSeparator}CimCmdlets${dirSeparator}CimCmdlets.psd1"
-            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}Diagnostics.format.ps1xml"
-            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}Event.format.ps1xml"
-            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}GetEvent.types.ps1xml"
-            "Modules${dirSeparator}Microsoft.PowerShell.Security${dirSeparator}Security.types.ps1xml"
-            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}Microsoft.PowerShell.Diagnostics.psd1"
-            "Modules${dirSeparator}Microsoft.WSMan.Management${dirSeparator}Microsoft.WSMan.Management.psd1"
-            "Modules${dirSeparator}Microsoft.WSMan.Management${dirSeparator}WSMan.format.ps1xml"
-            "Modules${dirSeparator}PSDiagnostics${dirSeparator}PSDiagnostics.ps?1"
-        )
-    } else {
-        $itemsToCopy += @(
-            "pwsh"
-        )
-    }
 
     $itemsToExclude = @(
         # This package is retrieved from https://www.github.com/powershell/MarkdownRender
-        "Microsoft.PowerShell.MarkdownRender.dll"
-    )
+        "*Microsoft.PowerShell.MarkdownRender.dll"
+
+        )
     if ($Path -like $itemsToExclude) {
         return $false
     }
+
     foreach ($pattern in $itemsToCopy) {
         if ($Path -like $pattern) {
             return $true
         }
     }
+
     return $false
 }
