@@ -1493,7 +1493,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// The CimSession object managed by this proxy object,
         /// which is either created by constructor OR passed in by caller.
         /// The session will be closed while disposing this proxy object
-        /// if it is created by constuctor.
+        /// if it is created by constructor.
         /// </summary>
         internal CimSession CimSession { get; private set; }
 

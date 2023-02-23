@@ -1733,11 +1733,6 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal static class Requires
     {
-        internal static void NotNull(object value, string paramName)
-        {
-            ArgumentNullException.ThrowIfNull(value, paramName);
-        }
-
         internal static void NotNullOrEmpty(string value, string paramName)
         {
             if (string.IsNullOrEmpty(value))
@@ -1748,19 +1743,9 @@ namespace System.Management.Automation.Internal
 
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            ArgumentNullException.ThrowIfNull(value, paramName);
-
-            if (value.Count == 0)
+            if (value is null || value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
-            }
-        }
-
-        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
-        {
-            if (!precondition)
-            {
-                throw new ArgumentException(paramName);
             }
         }
     }
