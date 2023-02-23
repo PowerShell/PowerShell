@@ -1252,7 +1252,7 @@ namespace Microsoft.PowerShell.Commands
                         CustomMethod = string.Empty;
                     }
 
-                    currentUri = new Uri(request.RequestUri!, response.Headers.Location);
+                    currentUri = request.RequestUri is not null ? new Uri(request.RequestUri, response.Headers.Location) : response.Headers.Location;
 
                     // Continue to handle redirection
                     using HttpRequestMessage redirectRequest = GetRequest(currentUri);
