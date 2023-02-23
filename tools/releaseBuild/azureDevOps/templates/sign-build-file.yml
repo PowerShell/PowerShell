@@ -299,7 +299,7 @@ steps:
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
       tar -czvf $uploadTarFilePath -C $uploadFolder *
 
-      Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Vebose
+      Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Verbose
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
   displayName: Upload signed tar.gz files to artifacts
@@ -315,7 +315,7 @@ steps:
       Write-Verbose -Verbose -Message "Creating zip - $uploadZipFilePath"
       Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath -Verbose
 
-      Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Vebose
+      Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Verbose
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
   displayName: Upload signed zip files to artifacts
