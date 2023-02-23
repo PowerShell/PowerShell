@@ -1144,6 +1144,9 @@ TabExpansion
 PSv2
 Microsoft.CSharp
 System.Data.SqlClient
+azcopy
+v7.2.10
+7.2.x
  - CHANGELOG.md
 aavdberg
 asrosent
