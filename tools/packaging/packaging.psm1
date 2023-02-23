@@ -4814,6 +4814,8 @@ function Send-AzdoFile {
     Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
     Write-Verbose "Log file captured as $newName" -Verbose
 }
+
+# Class used for serializing and deserialing a BOM into Json
 class BomRecord {
     [string]
     $Pattern
@@ -4823,6 +4825,8 @@ class BomRecord {
     $FileType = "3rdParty"
 }
 
+# Verify a folder based on a BOM json.
+# Use -Fix to update the BOM, Please review the file types.
 function Test-Bom {
     param(
         [ValidateSet('mac','windows','linux')]
@@ -4835,6 +4839,7 @@ function Test-Bom {
         $Fix
     )
 
+    Write-Log "verifying no unauthorized files have been added or removed..."
     $root = (Resolve-Path $Path).ProviderPath -replace "\$([System.io.path]::DirectorySeparatorChar)$"
 
     $bomFile = Join-Path -Path $PSScriptRoot -ChildPath "Boms\$BomName.json"
@@ -4914,6 +4919,9 @@ function Test-Bom {
     }
 }
 
+
+# TODO: this version is meant for initial BOM generation
+# Either simplify or remove
 function Test-IsProductFile {
     param(
         $Path,
