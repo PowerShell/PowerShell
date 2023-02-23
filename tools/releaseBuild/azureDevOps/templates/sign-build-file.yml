@@ -295,9 +295,11 @@ steps:
       Write-Verbose -Verbose "File permissions after signing"
       Get-ChildItem $uploadFolder\pwsh | Select-Object -Property 'unixmode', 'size', 'name'
 
-      $uploadTarFilePath = '$(signedBuildArtifactName)'
+      $uploadTarFilePath = Join-Path '$(System.ArtifactsDirectory)' '$(signedBuildArtifactName)'
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
       tar -czvf $uploadTarFilePath -C $uploadFolder *
+
+      Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Vebose
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
   displayName: Upload signed tar.gz files to artifacts
@@ -307,9 +309,13 @@ steps:
       $uploadFolder = '$(BinPath)'
       $containerName = '$(signedArtifactContainer)'
 
-      $uploadZipFilePath = 'PowerShell-$(Version)$(signedBuildArtifactName)'
+      Get-ChildItem $uploadFolder -Recurse | Out-String | Write-Verbose -Verbose
+
+      $uploadZipFilePath = Join-Path '$(System.ArtifactsDirectory)' 'PowerShell-$(Version)$(signedBuildArtifactName)'
       Write-Verbose -Verbose -Message "Creating zip - $uploadZipFilePath"
-      Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath
+      Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath -Verbose
+
+      Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Vebose
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
   displayName: Upload signed zip files to artifacts
