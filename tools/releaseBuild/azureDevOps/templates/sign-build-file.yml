@@ -295,7 +295,7 @@ steps:
       Write-Verbose -Verbose "File permissions after signing"
       Get-ChildItem $uploadFolder\pwsh | Select-Object -Property 'unixmode', 'size', 'name'
 
-      $uploadTarFilePath = $(signedBuildArtifactName)
+      $uploadTarFilePath = '$(signedBuildArtifactName)'
       Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
       tar -czvf $uploadTarFilePath -C $uploadFolder *
 
