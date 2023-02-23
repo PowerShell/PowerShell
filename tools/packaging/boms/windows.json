@@ -1,3619 +1,3515 @@
 [
   {
-    "Pattern": "_manifest\\spdx_2.2\\manifest.spdx.json",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "_manifest\\spdx_2.2\\manifest.spdx.json.sha256",
-    "FileType": "3rdParty"
-  },
-  {
     "Pattern": "Accessibility.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "assets\\Powershell_av_colors.ico",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "assets\\Powershell_avatar.ico",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "assets\\Powershell_black.ico",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "assets\\ps_black_32x32.ico",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "clretwrc.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "clrgc.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "clrjit.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "coreclr.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "createdump.exe",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "cs\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "cs/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "D3DCompiler_47_cor3.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "de\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "de/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "DirectWriteForwarder.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "en-US\\default.help.txt",
-    "FileType": "3rdParty"
+    "Pattern": "en-US/default.help.txt",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "es\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "es/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "fr\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "fr/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "getfilesiginforedist.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "getfilesiginforedistwrapper.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "hostfxr.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "hostpolicy.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "it\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "it/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ja/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ko\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ko/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "LICENSE.txt",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Markdig.Signed.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "mi.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.ApplicationInsights.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Bcl.AsyncInterfaces.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.CodeAnalysis.CSharp.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.CodeAnalysis.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.CSharp.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Extensions.ObjectPool.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.Management.Infrastructure.CimCmdlets.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.CimCmdlets.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.Native.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.Native.Unmanaged.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.Commands.Diagnostics.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Diagnostics.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.Commands.Management.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Management.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.Commands.Utility.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Utility.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.ConsoleHost.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.ConsoleHost.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.CoreCLR.Eventing.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.CoreCLR.Eventing.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.GraphicalHost.dll.config",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.GraphicalHost.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.GraphicalHost.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.MarkdownRender.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.SDK.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.SDK.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.Security.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.PowerShell.Security.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.VisualBasic.Core.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.VisualBasic.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.VisualBasic.Forms.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Win32.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Win32.Registry.AccessControl.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Win32.Registry.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.Win32.SystemEvents.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.WSMan.Management.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.WSMan.Management.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Microsoft.WSMan.Runtime.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Microsoft.WSMan.Runtime.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "miutils.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\en-US\\ArchiveResources.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/*.json",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\Microsoft.PowerShell.Archive.cat",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/*.sha256",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\Microsoft.PowerShell.Archive.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Archive/*.cat",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\Microsoft.PowerShell.Archive.psm1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Archive/*.ps?1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\coreclr\\netstandard2.0\\Microsoft.PackageManagement.ArchiverProviders.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\coreclr\\netstandard2.0\\Microsoft.PackageManagement.CoreProviders.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PackageManagement/*.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\coreclr\\netstandard2.0\\Microsoft.PackageManagement.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PackageManagement/*.mof",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\coreclr\\netstandard2.0\\Microsoft.PackageManagement.MetaProvider.PowerShell.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PackageManagement/*.ps?1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\coreclr\\netstandard2.0\\Microsoft.PackageManagement.NuGetProvider.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PackageManagement/*.ps1xml",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\coreclr\\netstandard2.0\\Microsoft.PowerShell.PackageManagement.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PowerShellGet/*.mfl",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\MSFT_PackageManagement\\MSFT_PackageManagement.psm1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PowerShellGet/*.mof",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\MSFT_PackageManagement\\MSFT_PackageManagement.schema.mof",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PowerShellGet/*.ps?1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\MSFT_PackageManagement\\MSFT_PackageManagement.strings.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PowerShellGet/*.ps1xml",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\MSFT_PackageManagementSource\\MSFT_PackageManagementSource.psm1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSReadLine/*.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\MSFT_PackageManagementSource\\MSFT_PackageManagementSource.schema.mof",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSReadLine/*.ps?1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\MSFT_PackageManagementSource\\MSFT_PackageManagementSource.strings.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSReadLine/*.ps1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\PackageManagementDscUtilities.psm1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSReadLine/*.ps1xml",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\DSCResources\\PackageManagementDscUtilities.strings.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSReadLine/*.txt",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\PackageManagement.format.ps1xml",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/ThreadJob/*.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\PackageManagement.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/ThreadJob/*.psd1",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\PackageManagement.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PackageManagement\\PackageManagement.Resources.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PackageManagement\\PackageProviderFunctions.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSModule\\en-US\\MSFT_PSModule.strings.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSModule\\MSFT_PSModule.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSModule\\MSFT_PSModule.schema.mfl",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSModule\\MSFT_PSModule.schema.mof",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSRepository\\en-US\\MSFT_PSRepository.strings.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSRepository\\MSFT_PSRepository.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSRepository\\MSFT_PSRepository.schema.mfl",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\DscResources\\MSFT_PSRepository\\MSFT_PSRepository.schema.mof",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\en-US\\PSGet.Resource.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\Modules\\PowerShellGet.LocalizationHelper\\PowerShellGet.LocalizationHelper.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\Modules\\PowerShellGet.ResourceHelper\\en-US\\PowerShellGet.ResourceHelper.strings.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\Modules\\PowerShellGet.ResourceHelper\\PowerShellGet.ResourceHelper.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\PowerShellGet.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\PSGet.Format.ps1xml",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\PSGet.Resource.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PowerShellGet\\PSModule.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\_manifest\\spdx_2.2\\manifest.spdx.json",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\_manifest\\spdx_2.2\\manifest.spdx.json.sha256",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\Changes.txt",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\License.txt",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\Microsoft.PowerShell.Pager.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\Microsoft.PowerShell.PSReadLine2.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\net462\\Microsoft.PowerShell.PSReadLine.Polyfiller.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\net6plus\\Microsoft.PowerShell.PSReadLine.Polyfiller.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\PSReadLine.format.ps1xml",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\PSReadLine.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\PSReadLine.psm1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\ThreadJob\\Microsoft.PowerShell.ThreadJob.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\ThreadJob\\ThreadJob.psd1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "mscordaccore_amd64_amd64_8.0.23.11008.dll",
-    "FileType": "3rdParty"
+    "Pattern": "mscordaccore_*_*_8.0.23.11008.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "mscordaccore.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "mscordbi.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "mscorlib.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "mscorrc.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "msquic.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Namotion.Reflection.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "netstandard.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Newtonsoft.Json.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "NJsonSchema.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PenImc_cor3.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pl\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pl/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "powershell.config.json",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PowerShell.Core.Instrumentation.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PowerShell.Core.Instrumentation.man",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PowerShellCoreExecutionPolicy.adml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PowerShellCoreExecutionPolicy.admx",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationCore.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework-SystemCore.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework-SystemData.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework-SystemDrawing.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework-SystemXml.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework-SystemXmlLinq.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.Aero.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.Aero2.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.AeroLite.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.Classic.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.Luna.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationFramework.Royale.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationNative_cor3.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "PresentationUI.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "preview\\pwsh-preview.cmd",
-    "FileType": "3rdParty"
+    "Pattern": "preview/pwsh-preview.cmd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "psoptions.json",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "pt-BR\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "pt-BR\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "pt-BR/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "pwrshplugin.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "pwsh.deps.json",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "pwsh.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "pwsh.runtimeconfig.json",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "pwsh.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "ReachFramework.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\Microsoft.CSharp.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/Microsoft.CSharp.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\Microsoft.VisualBasic.Core.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/Microsoft.VisualBasic.Core.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\Microsoft.VisualBasic.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/Microsoft.VisualBasic.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\Microsoft.Win32.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/Microsoft.Win32.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\Microsoft.Win32.Registry.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/Microsoft.Win32.Registry.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\mscorlib.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/mscorlib.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\netstandard.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/netstandard.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.AppContext.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.AppContext.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Buffers.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Buffers.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Collections.Concurrent.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Collections.Concurrent.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Collections.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Collections.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Collections.Immutable.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Collections.Immutable.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Collections.NonGeneric.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Collections.NonGeneric.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Collections.Specialized.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Collections.Specialized.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ComponentModel.Annotations.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ComponentModel.Annotations.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ComponentModel.DataAnnotations.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ComponentModel.DataAnnotations.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ComponentModel.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ComponentModel.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ComponentModel.EventBasedAsync.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ComponentModel.EventBasedAsync.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ComponentModel.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ComponentModel.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ComponentModel.TypeConverter.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ComponentModel.TypeConverter.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Configuration.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Configuration.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Console.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Console.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Core.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Core.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Data.Common.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Data.Common.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Data.DataSetExtensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Data.DataSetExtensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Data.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Data.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.Contracts.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.Contracts.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.Debug.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.Debug.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.DiagnosticSource.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.DiagnosticSource.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.FileVersionInfo.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.FileVersionInfo.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.Process.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.Process.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.StackTrace.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.StackTrace.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.TextWriterTraceListener.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.TextWriterTraceListener.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.Tools.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.Tools.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.TraceSource.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.TraceSource.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Diagnostics.Tracing.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Diagnostics.Tracing.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Drawing.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Drawing.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Drawing.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Drawing.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Dynamic.Runtime.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Dynamic.Runtime.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Formats.Asn1.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Formats.Asn1.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Formats.Tar.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Formats.Tar.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Globalization.Calendars.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Globalization.Calendars.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Globalization.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Globalization.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Globalization.Extensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Globalization.Extensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.Compression.Brotli.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.Compression.Brotli.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.Compression.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.Compression.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.Compression.FileSystem.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.Compression.FileSystem.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.Compression.ZipFile.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.Compression.ZipFile.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.FileSystem.AccessControl.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.FileSystem.AccessControl.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.FileSystem.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.FileSystem.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.FileSystem.DriveInfo.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.FileSystem.DriveInfo.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.FileSystem.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.FileSystem.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.FileSystem.Watcher.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.FileSystem.Watcher.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.IsolatedStorage.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.IsolatedStorage.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.MemoryMappedFiles.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.MemoryMappedFiles.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.Pipes.AccessControl.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.Pipes.AccessControl.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.Pipes.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.Pipes.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.IO.UnmanagedMemoryStream.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.IO.UnmanagedMemoryStream.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Linq.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Linq.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Linq.Expressions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Linq.Expressions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Linq.Parallel.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Linq.Parallel.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Linq.Queryable.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Linq.Queryable.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Memory.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Memory.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Http.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Http.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Http.Json.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Http.Json.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.HttpListener.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.HttpListener.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Mail.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Mail.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.NameResolution.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.NameResolution.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.NetworkInformation.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.NetworkInformation.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Ping.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Ping.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Quic.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Quic.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Requests.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Requests.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Security.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Security.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.ServicePoint.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.ServicePoint.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.Sockets.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.Sockets.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.WebClient.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.WebClient.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.WebHeaderCollection.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.WebHeaderCollection.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.WebProxy.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.WebProxy.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.WebSockets.Client.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.WebSockets.Client.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Net.WebSockets.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Net.WebSockets.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Numerics.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Numerics.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Numerics.Vectors.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Numerics.Vectors.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ObjectModel.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ObjectModel.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.DispatchProxy.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.DispatchProxy.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.Emit.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.Emit.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.Emit.ILGeneration.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.Emit.ILGeneration.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.Emit.Lightweight.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.Emit.Lightweight.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.Extensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.Extensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.Metadata.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.Metadata.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Reflection.TypeExtensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Reflection.TypeExtensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Resources.Reader.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Resources.Reader.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Resources.ResourceManager.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Resources.ResourceManager.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Resources.Writer.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Resources.Writer.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.CompilerServices.Unsafe.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.CompilerServices.Unsafe.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.CompilerServices.VisualC.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.CompilerServices.VisualC.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Extensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Extensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Handles.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Handles.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.InteropServices.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.InteropServices.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.InteropServices.JavaScript.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.InteropServices.JavaScript.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.InteropServices.RuntimeInformation.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.InteropServices.RuntimeInformation.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Intrinsics.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Intrinsics.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Loader.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Loader.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Numerics.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Numerics.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Serialization.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Serialization.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Serialization.Formatters.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Serialization.Formatters.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Serialization.Json.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Serialization.Json.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Serialization.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Serialization.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Runtime.Serialization.Xml.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Runtime.Serialization.Xml.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.AccessControl.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.AccessControl.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Claims.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Claims.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.Algorithms.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.Algorithms.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.Cng.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.Cng.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.Csp.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.Csp.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.Encoding.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.Encoding.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.OpenSsl.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.OpenSsl.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.Primitives.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.Primitives.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Cryptography.X509Certificates.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Cryptography.X509Certificates.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Principal.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Principal.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.Principal.Windows.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.Principal.Windows.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Security.SecureString.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Security.SecureString.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ServiceModel.Web.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ServiceModel.Web.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ServiceProcess.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ServiceProcess.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Text.Encoding.CodePages.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Text.Encoding.CodePages.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Text.Encoding.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Text.Encoding.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Text.Encoding.Extensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Text.Encoding.Extensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Text.Encodings.Web.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Text.Encodings.Web.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Text.Json.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Text.Json.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Text.RegularExpressions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Text.RegularExpressions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Channels.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Channels.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Overlapped.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Overlapped.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Tasks.Dataflow.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Tasks.Dataflow.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Tasks.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Tasks.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Tasks.Extensions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Tasks.Extensions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Tasks.Parallel.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Tasks.Parallel.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Thread.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Thread.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.ThreadPool.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.ThreadPool.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Threading.Timer.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Threading.Timer.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Transactions.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Transactions.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Transactions.Local.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Transactions.Local.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.ValueTuple.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.ValueTuple.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Web.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Web.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Web.HttpUtility.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Web.HttpUtility.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Windows.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Windows.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.Linq.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.Linq.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.ReaderWriter.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.ReaderWriter.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.Serialization.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.Serialization.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.XDocument.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.XDocument.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.XmlDocument.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.XmlDocument.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.XmlSerializer.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.XmlSerializer.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.XPath.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.XPath.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\System.Xml.XPath.XDocument.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/System.Xml.XPath.XDocument.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ref\\WindowsBase.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ref/WindowsBase.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "ru\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "ru/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\base.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/base.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\baseConditional.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/baseConditional.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\block.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/block.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\blockCommon.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/blockCommon.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\blockSoftware.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/blockSoftware.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\command.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/command.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\conditionSet.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/conditionSet.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developer.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developer.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerCommand.rld",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerCommand.rld",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerCommand.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerCommand.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerDscResource.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerDscResource.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManaged.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManaged.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedClass.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedClass.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedConstructor.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedConstructor.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedDelegate.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedDelegate.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedEnumeration.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedEnumeration.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedEvent.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedEvent.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedField.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedField.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedInterface.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedInterface.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedMethod.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedMethod.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedNamespace.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedNamespace.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedOperator.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedOperator.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedOverload.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedOverload.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedProperty.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedProperty.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerManagedStructure.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerManagedStructure.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerReference.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerReference.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerStructure.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerStructure.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\developerXaml.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/developerXaml.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\endUser.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/endUser.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\hierarchy.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/hierarchy.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\inline.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/inline.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\inlineCommon.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/inlineCommon.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\inlineSoftware.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/inlineSoftware.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\inlineUi.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/inlineUi.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\ITPro.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/ITPro.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\Maml_HTML_Style.xsl",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\Maml_HTML.xsl",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\Maml.rld",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/Maml.rld",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\Maml.tbr",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/Maml.tbr",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\Maml.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/Maml.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\Maml.xsx",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/Maml.xsx",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\ManagedDeveloper.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/ManagedDeveloper.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\ManagedDeveloperStructure.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/ManagedDeveloperStructure.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\ProviderHelp.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/ProviderHelp.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\shellExecute.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/shellExecute.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\structure.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/structure.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\structureGlossary.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/structureGlossary.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\structureList.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/structureList.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\structureProcedure.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/structureProcedure.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\structureTable.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/structureTable.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\structureTaskExecution.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/structureTaskExecution.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\task.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/task.xsd",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas\\PSMaml\\troubleshooting.xsd",
-    "FileType": "3rdParty"
+    "Pattern": "Schemas/PSMaml/troubleshooting.xsd",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "sni.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.AppContext.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Buffers.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.CodeDom.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Collections.Concurrent.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Collections.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Collections.Immutable.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Collections.NonGeneric.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Collections.Specialized.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.Annotations.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.Composition.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.Composition.Registration.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.DataAnnotations.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.EventBasedAsync.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ComponentModel.TypeConverter.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Configuration.ConfigurationManager.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Configuration.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Console.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Core.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Data.Common.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Data.DataSetExtensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Data.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Data.Odbc.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Data.OleDb.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Data.SqlClient.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Design.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.Contracts.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.Debug.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.DiagnosticSource.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.EventLog.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.EventLog.Messages.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.FileVersionInfo.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.PerformanceCounter.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.Process.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.StackTrace.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.TextWriterTraceListener.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.Tools.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.TraceSource.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Diagnostics.Tracing.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.DirectoryServices.AccountManagement.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.DirectoryServices.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.DirectoryServices.Protocols.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Drawing.Common.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Drawing.Design.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Drawing.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Drawing.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Dynamic.Runtime.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Formats.Asn1.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Formats.Tar.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Globalization.Calendars.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Globalization.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Globalization.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Compression.Brotli.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Compression.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Compression.FileSystem.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Compression.Native.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Compression.ZipFile.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.FileSystem.AccessControl.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.FileSystem.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.FileSystem.DriveInfo.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.FileSystem.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.FileSystem.Watcher.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.IsolatedStorage.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.MemoryMappedFiles.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Packaging.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Pipes.AccessControl.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Pipes.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.Ports.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.IO.UnmanagedMemoryStream.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Linq.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Linq.Expressions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Linq.Parallel.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Linq.Queryable.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Management.Automation.pdb",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Management.Automation.xml",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Management.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Memory.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Http.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Http.Json.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Http.WinHttpHandler.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.HttpListener.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Mail.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.NameResolution.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.NetworkInformation.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Ping.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Quic.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Requests.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Security.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.ServicePoint.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.Sockets.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.WebClient.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.WebHeaderCollection.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.WebProxy.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.WebSockets.Client.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Net.WebSockets.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Numerics.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Numerics.Vectors.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ObjectModel.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Printing.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Private.CoreLib.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Private.DataContractSerialization.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Private.ServiceModel.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Private.Uri.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Private.Xml.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Private.Xml.Linq.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Context.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.DispatchProxy.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Emit.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Emit.ILGeneration.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Emit.Lightweight.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Metadata.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Reflection.TypeExtensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Resources.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Resources.Reader.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Resources.ResourceManager.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Resources.Writer.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Caching.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.CompilerServices.Unsafe.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.CompilerServices.VisualC.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Handles.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.InteropServices.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.InteropServices.JavaScript.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.InteropServices.RuntimeInformation.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Intrinsics.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Loader.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Numerics.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Serialization.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Serialization.Formatters.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Serialization.Json.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Serialization.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Runtime.Serialization.Xml.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.AccessControl.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Claims.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Algorithms.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Cng.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Csp.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Encoding.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.OpenSsl.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Pkcs.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.ProtectedData.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.X509Certificates.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Cryptography.Xml.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Permissions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Principal.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.Principal.Windows.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Security.SecureString.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Duplex.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Http.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.NetFramingBase.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.NetTcp.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Security.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Syndication.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Web.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceProcess.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceProcess.ServiceController.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Speech.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Text.Encoding.CodePages.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Text.Encoding.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Text.Encoding.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Text.Encodings.Web.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Text.Json.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Text.RegularExpressions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.AccessControl.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Channels.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Overlapped.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Tasks.Dataflow.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Tasks.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Tasks.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Tasks.Parallel.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Thread.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.ThreadPool.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Threading.Timer.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Transactions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Transactions.Local.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ValueTuple.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Web.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Web.HttpUtility.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Web.Services.Description.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Controls.Ribbon.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Extensions.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Forms.Design.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Forms.Design.Editors.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Forms.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Forms.Primitives.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Input.Manipulations.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Windows.Presentation.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xaml.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.Linq.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.ReaderWriter.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.Serialization.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.XDocument.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.XmlDocument.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.XmlSerializer.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.XPath.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "System.Xml.XPath.XDocument.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "ThirdPartyNotices.txt",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "tr/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "UIAutomationClient.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "UIAutomationClientSideProviders.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "UIAutomationProvider.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "UIAutomationTypes.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "vcruntime140_cor3.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "WindowsBase.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "WindowsFormsIntegration.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "wpfgfx_cor3.dll",
-    "FileType": "3rdParty"
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hans/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/Microsoft.CodeAnalysis.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/Microsoft.VisualBasic.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\PresentationCore.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/PresentationCore.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\PresentationFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/PresentationFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\PresentationUI.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/PresentationUI.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\ReachFramework.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/ReachFramework.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Private.ServiceModel.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Private.ServiceModel.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.ServiceModel.Http.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.ServiceModel.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Web.Services.Description.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Web.Services.Description.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Windows.Controls.Ribbon.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Windows.Forms.Design.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Windows.Forms.Design.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Windows.Forms.Primitives.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Windows.Forms.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Windows.Forms.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Windows.Input.Manipulations.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\System.Xaml.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/System.Xaml.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\UIAutomationClient.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/UIAutomationClient.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\UIAutomationClientSideProviders.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/UIAutomationClientSideProviders.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\UIAutomationProvider.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/UIAutomationProvider.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\UIAutomationTypes.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/UIAutomationTypes.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\WindowsBase.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/WindowsBase.resources.dll",
+    "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant\\WindowsFormsIntegration.resources.dll",
-    "FileType": "3rdParty"
+    "Pattern": "zh-Hant/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
   },
   {
     "Pattern": "Install-PowerShellRemoting.ps1",
@@ -3668,84 +3564,56 @@
     "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\*.json",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/CimCmdlets/CimCmdlets.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\*.sha256",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/Diagnostics.format.ps1xml",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\*.cat",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/Event.format.ps1xml",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Archive\\*.ps?1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/GetEvent.types.ps1xml",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.Utility\\Microsoft.PowerShell.Utility.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\*.dll",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\*.mof",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Management/Microsoft.PowerShell.Management.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\*.ps?1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PackageManagement\\*.ps1xml",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.PowerShell.Security/Security.types.ps1xml",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PowerShellGet\\*.mfl",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PowerShellGet\\*.mof",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/Microsoft.WSMan.Management/WSMan.format.ps1xml",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PowerShellGet\\*.ps?1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSDiagnostics/PSDiagnostics.psd1",
+    "FileType": "Product"
   },
   {
-    "Pattern": "Modules\\PowerShellGet\\*.ps1xml",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\*.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\*.ps?1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\*.ps1",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\*.ps1xml",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\PSReadLine\\*.txt",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\ThreadJob\\*.dll",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "Modules\\ThreadJob\\*.psd1",
-    "FileType": "3rdParty"
+    "Pattern": "Modules/PSDiagnostics/PSDiagnostics.psm1",
+    "FileType": "Product"
   },
   {
     "Pattern": "pwsh.dll",

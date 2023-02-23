@@ -4817,12 +4817,33 @@ function Send-AzdoFile {
 
 # Class used for serializing and deserialing a BOM into Json
 class BomRecord {
+    hidden
     [string]
     $Pattern
 
-    [ValidateSet("Product","3rdParty")]
+    [ValidateSet("Product", "NonProduct")]
     [string]
-    $FileType = "3rdParty"
+    $FileType = "NonProduct"
+
+    [string]
+    GetPattern () {
+        $dirSeparator = [System.io.path]::DirectorySeparatorChar
+        if ($dirSeparator -ne '/') {
+            return $this.Pattern.replace('/', $dirSeparator)
+        }
+        return $this.Pattern
+    }
+
+    [void]
+    SetPattern ([string]$Pattern) {
+        $dirSeparator = [System.io.path]::DirectorySeparatorChar
+        if ($dirSeparator -ne '/') {
+            $this.Pattern = $Pattern.Replace($dirSeparator, '/')
+        }
+
+        $this.Pattern = $Pattern
+    }
+
 }
 
 # Verify a folder based on a BOM json.
@@ -4859,7 +4880,7 @@ function Test-Bom {
         $match = $false
         $matchingRecord = $null
         foreach ($record in $bomList) {
-            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $record.Pattern
+            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $record.GetPattern()
             Write-Verbose "testing '$_ -like $pattern"
             if ($_ -like $pattern) {
                 $matchingRecord = $record
@@ -4879,14 +4900,17 @@ function Test-Bom {
                 $extraParams += @{Windows = $true }
             }
             $isProduct = Test-IsProductFile -Path $relativePath @extraParams
-            $fileType = "3rdParty"
+            $fileType = "NonProduct"
             if ($isProduct) {
                 $fileType = "Product"
             }
-            $noMatch += [BomRecord] @{
-                Pattern  = [WildcardPattern]::Escape($_.FullName.Replace($root, "").Substring(1))
+
+            [BomRecord] $newBomRecord = [BomRecord] @{
                 FileType = $fileType
             }
+
+            $newBomRecord.SetPattern([WildcardPattern]::Escape($_.FullName.Replace($root, "").Substring(1)))
+            $noMatch += $newBomRecord
         }
         elseif($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.Pattern)) {
             # remove any exact pattern which have been matched to speed up file processing
