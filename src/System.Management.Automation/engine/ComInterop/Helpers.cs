@@ -33,7 +33,7 @@ namespace System.Management.Automation.ComInterop
     internal static class Requires
     {
         [System.Diagnostics.Conditional("DEBUG")]
-        internal static void NotNull(object value, string paramName)
+        internal static void NotNull(object value, [CallerArgumentExpression("value")] string? paramName = null)
         {
             ArgumentNullException.ThrowIfNull(value, paramName);
         }
