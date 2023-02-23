@@ -1748,13 +1748,5 @@ namespace System.Management.Automation.Internal
                 throw new ArgumentNullException(paramName);
             }
         }
-
-        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
-        {
-            if (!precondition)
-            {
-                throw new ArgumentException(paramName);
-            }
-        }
     }
 }

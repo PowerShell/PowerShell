@@ -60,7 +60,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// </summary>
         public static List<FeedbackResult>? GetFeedback(Runspace runspace, int millisecondsTimeout)
         {
-            Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(millisecondsTimeout);
 
             var localRunspace = runspace as LocalRunspace;
             if (localRunspace is null)
