@@ -307,7 +307,7 @@ steps:
       $uploadFolder = '$(BinPath)'
       $containerName = '$(signedArtifactContainer)'
 
-      $uploadZipFilePath = '$(signedBuildArtifactName)'
+      $uploadZipFilePath = 'PowerShell-$(Version)$(signedBuildArtifactName)'
       Write-Verbose -Verbose -Message "Creating zip - $uploadZipFilePath"
       Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath
 
