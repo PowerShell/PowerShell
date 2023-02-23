@@ -1287,9 +1287,9 @@ TabExpansion
 PSv2
 System.Data.SqlClient
 Microsoft.CSharp
-=======
 v7.2.10
 7.2.x
+v7.3.3
  - CHANGELOG.md
 aavdberg
 asrosent
