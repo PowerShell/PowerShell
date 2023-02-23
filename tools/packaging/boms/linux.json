@@ -1,13 +1,5 @@
 [
   {
-    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
-    "FileType": "3rdParty"
-  },
-  {
     "Pattern": "createdump",
     "FileType": "3rdParty"
   },
@@ -24,6 +16,22 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "cs/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "cs/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "cs/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "cs/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "cs/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
@@ -37,6 +45,22 @@
   },
   {
     "Pattern": "de/System.Private.ServiceModel.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "de/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "de/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "de/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "de/System.ServiceModel.Primitives.resources.dll",
     "FileType": "3rdParty"
   },
   {
@@ -60,6 +84,22 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "es/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "es/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "es/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "es/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "es/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
@@ -73,6 +113,22 @@
   },
   {
     "Pattern": "fr/System.Private.ServiceModel.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "fr/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "fr/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "fr/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "fr/System.ServiceModel.Primitives.resources.dll",
     "FileType": "3rdParty"
   },
   {
@@ -92,6 +148,22 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "it/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "it/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "it/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "it/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "it/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
@@ -105,6 +177,22 @@
   },
   {
     "Pattern": "ja/System.Private.ServiceModel.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ja/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ja/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ja/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ja/System.ServiceModel.Primitives.resources.dll",
     "FileType": "3rdParty"
   },
   {
@@ -124,75 +212,87 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "ko/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ko/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ko/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ko/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "ko/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libclrgc.dylib",
+    "Pattern": "libclrgc.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libclrjit.dylib",
+    "Pattern": "libclrjit.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libcoreclr.dylib",
+    "Pattern": "libcoreclr.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libhostfxr.dylib",
+    "Pattern": "libcoreclrtraceptprovider.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libhostpolicy.dylib",
+    "Pattern": "libhostfxr.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libmi.dylib",
+    "Pattern": "libhostpolicy.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libmscordaccore.dylib",
+    "Pattern": "libmscordaccore.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libmscordbi.dylib",
+    "Pattern": "libmscordbi.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libpsl-native.dylib",
+    "Pattern": "libpsl-native.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libpsrpclient.dylib",
+    "Pattern": "libSystem.Globalization.Native.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libSystem.Globalization.Native.dylib",
+    "Pattern": "libSystem.IO.Compression.Native.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libSystem.IO.Compression.Native.dylib",
+    "Pattern": "libSystem.IO.Ports.Native.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libSystem.IO.Ports.Native.dylib",
+    "Pattern": "libSystem.Native.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libSystem.Native.dylib",
+    "Pattern": "libSystem.Net.Security.Native.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libSystem.Net.Security.Native.dylib",
+    "Pattern": "libSystem.Security.Cryptography.Native.OpenSsl.so",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "libSystem.Security.Cryptography.Native.Apple.dylib",
-    "FileType": "3rdParty"
-  },
-  {
-    "Pattern": "libSystem.Security.Cryptography.Native.OpenSsl.dylib",
+    "Pattern": "LICENSE.txt",
     "FileType": "3rdParty"
   },
   {
@@ -228,11 +328,23 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "Microsoft.PowerShell.Commands.Management.pdb",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "Microsoft.PowerShell.Commands.Management.xml",
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "Microsoft.PowerShell.Commands.Utility.pdb",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "Microsoft.PowerShell.Commands.Utility.xml",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.ConsoleHost.pdb",
     "FileType": "3rdParty"
   },
   {
@@ -244,7 +356,15 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "Microsoft.PowerShell.SDK.pdb",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "Microsoft.PowerShell.SDK.xml",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "Microsoft.PowerShell.Security.pdb",
     "FileType": "3rdParty"
   },
   {
@@ -388,11 +508,27 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "pl/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pl/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pl/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pl/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "pl/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "psoptions.json",
+    "Pattern": "powershell.config.json",
     "FileType": "3rdParty"
   },
   {
@@ -408,11 +544,31 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "pt-BR/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pt-BR/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pt-BR/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pt-BR/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "pt-BR/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
   {
     "Pattern": "pwsh.deps.json",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "pwsh.pdb",
     "FileType": "3rdParty"
   },
   {
@@ -1088,6 +1244,22 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "ru/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ru/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ru/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "ru/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "ru/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
@@ -1592,6 +1764,10 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "System.Management.Automation.pdb",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "System.Management.Automation.xml",
     "FileType": "3rdParty"
   },
@@ -1912,15 +2088,15 @@
     "FileType": "3rdParty"
   },
   {
-    "Pattern": "System.ServiceModel.dll",
-    "FileType": "3rdParty"
-  },
-  {
     "Pattern": "System.ServiceModel.Duplex.dll",
     "FileType": "3rdParty"
   },
   {
     "Pattern": "System.ServiceModel.Http.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "System.ServiceModel.NetFramingBase.dll",
     "FileType": "3rdParty"
   },
   {
@@ -2108,6 +2284,22 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "tr/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "tr/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "tr/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "tr/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "tr/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
@@ -2128,6 +2320,22 @@
     "FileType": "3rdParty"
   },
   {
+    "Pattern": "zh-Hans/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hans/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hans/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hans/System.ServiceModel.Primitives.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
     "Pattern": "zh-Hans/System.Web.Services.Description.resources.dll",
     "FileType": "3rdParty"
   },
@@ -2141,6 +2349,22 @@
   },
   {
     "Pattern": "zh-Hant/System.Private.ServiceModel.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hant/System.ServiceModel.Http.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hant/System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hant/System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "3rdParty"
+  },
+  {
+    "Pattern": "zh-Hant/System.ServiceModel.Primitives.resources.dll",
     "FileType": "3rdParty"
   },
   {

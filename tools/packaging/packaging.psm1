@@ -3316,6 +3316,7 @@ function New-MSIPackage
 
     $buildArguments = New-MsiArgsArray -Argument $arguments
 
+    Test-Bom -Path $staging -BomName windows
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
     Send-AzdoFile -Path $wixFragmentPath
@@ -4813,44 +4814,163 @@ function Send-AzdoFile {
     Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
     Write-Verbose "Log file captured as $newName" -Verbose
 }
+class BomRecord {
+    [string]
+    $Pattern
+
+    [ValidateSet("Product","3rdParty")]
+    [string]
+    $FileType = "3rdParty"
+}
 
 function Test-Bom {
     param(
+        [ValidateSet('mac','windows','linux')]
         [string]
         $BomName,
         [ValidateScript({ Test-Path $_ })]
         [string]
-        $Path
+        $Path,
+        [switch]
+        $Fix
     )
 
     $root = (Resolve-Path $Path).ProviderPath -replace "\$([System.io.path]::DirectorySeparatorChar)$"
 
     $bomFile = Join-Path -Path $PSScriptRoot -ChildPath "Boms\$BomName.json"
     Write-Verbose "bomFile: $bomFile" -Verbose
-    $bom = Get-Content -Path $bomFile | ConvertFrom-Json
-    $filePatterns = $bom.filePatterns
+    [BomRecord[]]$bom = Get-Content -Path $bomFile | ConvertFrom-Json
+    $bomList = [System.Collections.Generic.List[BomRecord]]::new($bom)
     $noMatch = @()
     $patternsUsed = @()
-    Get-ChildItem -File -Path $Path -Recurse | ForEach-Object {
+    $files = @(Get-ChildItem -File -Path $Path -Recurse)
+    $totalFiles = $files.Count
+    $currentFileCount =0
+    $files | ForEach-Object {
+        [System.IO.FileInfo] $file = $_
+        $fileName = $file.Name
+        $currentFileCount++
+        Write-Progress -Activity "Testing $BomName BOM" -PercentComplete (100*$currentFileCount/$totalFiles) -CurrentOperation $fileName -Status "Processing $fileName"
         $match = $false
-        foreach ($pattern in $filePatterns) {
-            if ($_ -match $pattern) {
+        $matchingRecord = $null
+        foreach ($record in $bomList) {
+            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $record.Pattern
+            Write-Verbose "testing '$_ -like $pattern"
+            if ($_ -like $pattern) {
+                $matchingRecord = $record
+                Write-Verbose "matched '$_ -like $pattern"
                 $match = $true
-                if($patternsUsed -notcontains $pattern) {
-                    $patternsUsed += $pattern
+                if ($patternsUsed -notcontains $record) {
+                    $patternsUsed += $record
                 }
+                break
             }
         }
+
         if (!$match) {
-            $noMatch += [regex]::Escape($_.FullName.Replace($root, "").Substring(1))
+            $relativePath = $_.FullName.Replace($root, "").Substring(1)
+            $extraParams = @{}
+            if ($BomName -like '*win*') {
+                $extraParams += @{Windows = $true }
+            }
+            $isProduct = Test-IsProductFile -Path $relativePath @extraParams
+            $fileType = "3rdParty"
+            if ($isProduct) {
+                $fileType = "Product"
+            }
+            $noMatch += [BomRecord] @{
+                Pattern  = [WildcardPattern]::Escape($_.FullName.Replace($root, "").Substring(1))
+                FileType = $fileType
+            }
+        }
+        elseif($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.Pattern)) {
+            # remove any exact pattern which have been matched to speed up file processing
+            $null = $bomList.Remove($matchingRecord)
         }
     }
+    Write-Progress -Activity "Testing $BomName BOM" -Completed
 
-    Write-Verbose "Add the following filePatters to $bomFile" -Verbose
-    $noMatch | convertto-json | Write-Host
+    Write-Verbose "$($noMatch.count) records need to be added to $bomFile" -Verbose
+    #$noMatch | convertto-json | Write-Host
+    $currentRecords = @()
+    $currentRecords += $noMatch
+    $currentRecords += $patternsUsed
+    $newBom = [system.io.path]::GetTempFileName() + "-$bomName.json"
 
-    Write-Verbose "Remove the following filePatters from $bomFile" -Verbose
-    $filePatterns | Where-Object {
+    $currentRecords | Sort-Object -Property FileType, Pattern | ConvertTo-Json | Out-File -Encoding utf8NoBOM -FilePath $newBom
+
+    $needsRemoval = $bom | Where-Object {
         $_ -notin $patternsUsed
-    } | Write-Host
+    }
+    Write-Verbose "$($needsRemoval.count) need removal from $bomFile" -Verbose
+
+
+    if ($noMatch.count -gt 0 -or $needsRemoval.Count -gt 0) {
+        Send-AzdoFile -Path $newBom
+        if ($Fix) {
+            Copy-Item -Path $newBom -Destination $bomFile -Force -Verbose
+        }
+        throw "Please update $bomFile per the above instructions"
+    }
+}
+
+function Test-IsProductFile {
+    param(
+        $Path,
+        [switch]
+        $Windows
+    )
+
+    $dirSeparator = [System.io.path]::DirectorySeparatorChar
+    $itemsToCopy = @(
+        "*.ps1"
+        "Microsoft.PowerShell*.dll"
+    )
+
+    $itemsToCopy += @(
+        "*.ps1"
+        "Modules${dirSeparator}Microsoft.PowerShell.Host${dirSeparator}Microsoft.PowerShell.Host.psd1"
+        "Modules${dirSeparator}Microsoft.PowerShell.Management${dirSeparator}Microsoft.PowerShell.Management.psd1"
+        "Modules${dirSeparator}Microsoft.PowerShell.Security${dirSeparator}Microsoft.PowerShell.Security.psd1"
+        "Modules${dirSeparator}Microsoft.PowerShell.Utility${dirSeparator}Microsoft.PowerShell.Utility.psd1"
+        "pwsh.dll"
+        "System.Management.Automation.dll"
+    )
+
+    ## Windows only modules
+
+    if ($Windows) {
+        $itemsToCopy += @(
+            "pwsh.exe"
+            "Microsoft.Management.Infrastructure.CimCmdlets.dll"
+            "Microsoft.WSMan.*.dll"
+            "Modules${dirSeparator}CimCmdlets${dirSeparator}CimCmdlets.psd1"
+            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}Diagnostics.format.ps1xml"
+            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}Event.format.ps1xml"
+            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}GetEvent.types.ps1xml"
+            "Modules${dirSeparator}Microsoft.PowerShell.Security${dirSeparator}Security.types.ps1xml"
+            "Modules${dirSeparator}Microsoft.PowerShell.Diagnostics${dirSeparator}Microsoft.PowerShell.Diagnostics.psd1"
+            "Modules${dirSeparator}Microsoft.WSMan.Management${dirSeparator}Microsoft.WSMan.Management.psd1"
+            "Modules${dirSeparator}Microsoft.WSMan.Management${dirSeparator}WSMan.format.ps1xml"
+            "Modules${dirSeparator}PSDiagnostics${dirSeparator}PSDiagnostics.ps?1"
+        )
+    } else {
+        $itemsToCopy += @(
+            "pwsh"
+        )
+    }
+
+    $itemsToExclude = @(
+        # This package is retrieved from https://www.github.com/powershell/MarkdownRender
+        "Microsoft.PowerShell.MarkdownRender.dll"
+    )
+    if ($Path -like $itemsToExclude) {
+        return $false
+    }
+    foreach ($pattern in $itemsToCopy) {
+        if ($Path -like $pattern) {
+            return $true
+        }
+    }
+    return $false
 }

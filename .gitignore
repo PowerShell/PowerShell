@@ -98,3 +98,6 @@ test/tools/Modules/Microsoft.PowerShell.NamedPipeConnection/
 
 # Test generated startup profile
 StartupProfileData-NonInteractive
+
+# Ignore logfiles
+logfile/*
