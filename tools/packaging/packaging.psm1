@@ -4813,3 +4813,44 @@ function Send-AzdoFile {
     Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
     Write-Verbose "Log file captured as $newName" -Verbose
 }
+
+function Test-Bom {
+    param(
+        [string]
+        $BomName,
+        [ValidateScript({ Test-Path $_ })]
+        [string]
+        $Path
+    )
+
+    $root = (Resolve-Path $Path).ProviderPath -replace "\$([System.io.path]::DirectorySeparatorChar)$"
+
+    $bomFile = Join-Path -Path $PSScriptRoot -ChildPath "Boms\$BomName.json"
+    Write-Verbose "bomFile: $bomFile" -Verbose
+    $bom = Get-Content -Path $bomFile | ConvertFrom-Json
+    $filePatterns = $bom.filePatterns
+    $noMatch = @()
+    $patternsUsed = @()
+    Get-ChildItem -File -Path $Path -Recurse | ForEach-Object {
+        $match = $false
+        foreach ($pattern in $filePatterns) {
+            if ($_ -match $pattern) {
+                $match = $true
+                if($patternsUsed -notcontains $pattern) {
+                    $patternsUsed += $pattern
+                }
+            }
+        }
+        if (!$match) {
+            $noMatch += [regex]::Escape($_.FullName.Replace($root, "").Substring(1))
+        }
+    }
+
+    Write-Verbose "Add the following filePatters to $bomFile" -Verbose
+    $noMatch | convertto-json | Write-Host
+
+    Write-Verbose "Remove the following filePatters from $bomFile" -Verbose
+    $filePatterns | Where-Object {
+        $_ -notin $patternsUsed
+    } | Write-Host
+}

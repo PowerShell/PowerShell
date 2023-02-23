@@ -25,6 +25,7 @@
         'Start-PSPackage'
         'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
+        'Test-Bom'
     )
     RootModule        = "packaging.psm1"
     RequiredModules   = @("build")
