@@ -125,5 +125,4 @@ jobs:
     displayName: Build test package and upload
     retryCountOnTaskFailure: 1
 
-
   - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
