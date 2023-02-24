@@ -80,6 +80,7 @@ namespace Microsoft.Management.UI.Internal
         public FilterRulePanelItem(FilterRule rule, string groupId)
         {
             ArgumentNullException.ThrowIfNull(rule);
+
             ArgumentException.ThrowIfNullOrEmpty(groupId);
 
             this.Rule = rule;

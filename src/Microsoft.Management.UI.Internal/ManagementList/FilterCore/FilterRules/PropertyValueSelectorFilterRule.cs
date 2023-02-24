@@ -68,6 +68,7 @@ namespace Microsoft.Management.UI.Internal
         {
             ArgumentException.ThrowIfNullOrEmpty(propertyName);
             ArgumentException.ThrowIfNullOrEmpty(propertyDisplayName);
+
             ArgumentNullException.ThrowIfNull(rules);
 
             this.PropertyName = propertyName;

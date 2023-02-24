@@ -139,7 +139,9 @@ namespace Microsoft.WSMan.Management
         public void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
         {
             ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
+
             ArgumentException.ThrowIfNullOrEmpty(configurationName);
+
             ArgumentNullException.ThrowIfNull(configurationValue);
 
             XmlNode nodeToUpdate =
