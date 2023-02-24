@@ -233,8 +233,7 @@ namespace System.Management.Automation.PerformanceData
         {
             if (counterSetName == null)
             {
-                ArgumentNullException argNullException =
-                    new ArgumentNullException("counterSetName");
+                ArgumentNullException argNullException = new ArgumentNullException("counterSetName");
                 _tracer.TraceException(argNullException);
                 return false;
             }
@@ -275,8 +274,7 @@ namespace System.Management.Automation.PerformanceData
             Guid counterSetId;
             if (counterSetName == null)
             {
-                ArgumentNullException argNullException =
-                    new ArgumentNullException("counterSetName");
+                ArgumentNullException argNullException = new ArgumentNullException("counterSetName");
                 _tracer.TraceException(argNullException);
                 return false;
             }
@@ -376,8 +374,7 @@ namespace System.Management.Automation.PerformanceData
         {
             if (counterSetName == null)
             {
-                ArgumentNullException argNullException =
-                    new ArgumentNullException("counterSetName");
+                ArgumentNullException argNullException = new ArgumentNullException("counterSetName");
                 _tracer.TraceException(argNullException);
                 return false;
             }
@@ -416,8 +413,7 @@ namespace System.Management.Automation.PerformanceData
         {
             if (counterSetName == null)
             {
-                ArgumentNullException argNullException =
-                    new ArgumentNullException("counterSetName");
+                ArgumentNullException argNullException = new ArgumentNullException("counterSetName");
                 _tracer.TraceException(argNullException);
                 return false;
             }
