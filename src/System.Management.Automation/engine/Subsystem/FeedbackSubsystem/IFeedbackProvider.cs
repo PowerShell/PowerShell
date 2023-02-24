@@ -89,7 +89,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <param name="layout">The layout for displaying the actions.</param>
         public FeedbackItem(string header, List<string>? actions, string? footer, FeedbackDisplayLayout layout)
         {
-            Requires.NotNullOrEmpty(header, nameof(header));
+            ArgumentException.ThrowIfNullOrEmpty(header);
 
             Header = header;
             RecommendedActions = actions;

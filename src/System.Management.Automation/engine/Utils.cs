@@ -1733,14 +1733,6 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal static class Requires
     {
-        internal static void NotNullOrEmpty(string value, string paramName)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentNullException(paramName);
-            }
-        }
-
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
             if (value is null || value.Count == 0)
