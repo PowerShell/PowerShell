@@ -106,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.1"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -176,7 +176,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.Native",
-          "Version": "7.3.1"
+          "Version": "7.3.2"
         }
       },
       "DevelopmentDependency": false

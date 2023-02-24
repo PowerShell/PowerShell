@@ -263,10 +263,17 @@ function Invoke-CITest
     $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
 
     if ($Purpose -eq 'UnelevatedPesterTests') {
+        $unelevate = $true
+        $environment = Get-EnvironmentInformation
+        if ($environment.OSArchitecture -eq 'arm64') {
+            Write-Verbose -Verbose "running on arm64, running unelevated tests as elevated"
+            $unelevate = $false
+        }
+
         $arguments = @{
             Bindir = $env:CoreOutput
             OutputFile = $testResultsNonAdminFile
-            Unelevate = $true
+            Unelevate = $unelevate
             Terse = $true
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'

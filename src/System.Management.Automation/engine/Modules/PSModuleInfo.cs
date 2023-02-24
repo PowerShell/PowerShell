@@ -1437,8 +1437,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implements deep copy of a PSModuleInfo instance.
-        /// <returns>A new PSModuleInfo instance.</returns>
         /// </summary>
+        /// <returns>A new PSModuleInfo instance.</returns>
         public PSModuleInfo Clone()
         {
             PSModuleInfo clone = (PSModuleInfo)this.MemberwiseClone();

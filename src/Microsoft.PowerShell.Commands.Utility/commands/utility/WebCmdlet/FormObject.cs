@@ -11,22 +11,22 @@ namespace Microsoft.PowerShell.Commands
     public class FormObject
     {
         /// <summary>
-        /// Gets or private sets the Id property.
+        /// Gets the Id property.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// Gets or private sets the Method property.
+        /// Gets the Method property.
         /// </summary>
         public string Method { get; }
 
         /// <summary>
-        /// Gets or private sets the Action property.
+        /// Gets the Action property.
         /// </summary>
         public string Action { get; }
 
         /// <summary>
-        /// Gets or private sets the Fields property.
+        /// Gets the Fields property.
         /// </summary>
         public Dictionary<string, string> Fields { get; }
 
@@ -46,8 +46,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void AddField(string key, string value)
         {
-            string test;
-            if (key != null && !Fields.TryGetValue(key, out test))
+            if (key is not null && !Fields.TryGetValue(key, out string test))
             {
                 Fields[key] = value;
             }

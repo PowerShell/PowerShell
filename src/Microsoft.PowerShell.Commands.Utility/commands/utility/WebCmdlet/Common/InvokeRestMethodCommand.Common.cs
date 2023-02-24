@@ -26,41 +26,15 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the parameter Method.
-        /// </summary>
-        [Parameter(ParameterSetName = "StandardMethod")]
-        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
-        public override WebRequestMethod Method
-        {
-            get { return base.Method; }
-
-            set { base.Method = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the parameter CustomMethod.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
-        [Alias("CM")]
-        [ValidateNotNullOrEmpty]
-        public override string CustomMethod
-        {
-            get { return base.CustomMethod; }
-
-            set { base.CustomMethod = value; }
-        }
-
-        /// <summary>
         /// Enable automatic following of rel links.
         /// </summary>
         [Parameter]
         [Alias("FL")]
         public SwitchParameter FollowRelLink
         {
-            get { return base._followRelLink; }
+            get => base._followRelLink;
 
-            set { base._followRelLink = value; }
+            set => base._followRelLink = value;
         }
 
         /// <summary>
@@ -71,9 +45,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int MaximumFollowRelLink
         {
-            get { return base._maximumFollowRelLink; }
+            get => base._maximumFollowRelLink;
 
-            set { base._maximumFollowRelLink = value; }
+            set => base._maximumFollowRelLink = value;
         }
 
         /// <summary>
@@ -142,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Format(System.Globalization.CultureInfo.InvariantCulture, "Content encoding: {0}", encodingVerboseName));
+                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
                     
                     bool convertSuccess = false;
 
@@ -258,7 +232,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException) { }
+            catch (XmlException) 
+            {
+                // Catch XmlException
+            }
             finally
             {
                 responseStream.Seek(0, SeekOrigin.Begin);
@@ -331,12 +308,7 @@ namespace Microsoft.PowerShell.Commands
                     converted = true;
                 }
             }
-            catch (ArgumentException ex)
-            {
-                exRef = ex;
-                obj = null;
-            }
-            catch (InvalidOperationException ex)
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
                 exRef = ex;
                 obj = null;
@@ -401,18 +373,15 @@ namespace Microsoft.PowerShell.Commands
                 _streamBuffer.SetLength(0);
             }
 
-            public override long Length
-            {
-                get { return _length; }
-            }
+            public override long Length => _length;
 
             private long _length;
 
             public override long Position
             {
-                get { return _streamBuffer.Position; }
+                get => _streamBuffer.Position;
 
-                set { _streamBuffer.Position = value; }
+                set => _streamBuffer.Position = value;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
@@ -420,8 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 long previousPosition = Position;
                 bool consumedStream = false;
                 int totalCount = count;
-                while ((!consumedStream) &&
-                    ((Position + totalCount) > _streamBuffer.Length))
+                while (!consumedStream && (Position + totalCount) > _streamBuffer.Length)
                 {
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we

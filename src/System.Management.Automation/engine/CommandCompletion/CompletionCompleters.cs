@@ -1617,7 +1617,9 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (bestMatchSet is null || bestMatchSet.Position > positionInParameterSet)
+                    if (bestMatchSet is null
+                        || bestMatchSet.Position > positionInParameterSet
+                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
                     {
                         bestMatchParam = param;
                         bestMatchSet = parameterSetData;
@@ -2026,7 +2028,7 @@ namespace System.Management.Automation
             string parameterName = parameter.Name;
 
             // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
-            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // This allows for editors and other tools using CompleteInput with Script/AST definitions to get values from RegisteredArgumentCompleters to better match the console experience.
             // See issue https://github.com/PowerShell/PowerShell/issues/10567
             string actualCommandName = string.IsNullOrEmpty(commandName)
                         ? commandAst.GetCommandName()
@@ -2699,7 +2701,7 @@ namespace System.Management.Automation
             WildcardPattern resultClassNamePattern = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             result.AddRange(resultClassNames
                 .Where(resultClassNamePattern.IsMatch)
-                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", pseudoboundClassName, x))));
+                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Create(CultureInfo.InvariantCulture, $"{pseudoboundClassName} -> {x}"))));
         }
 
         private static void NativeCompletionCimMethodName(
@@ -4616,7 +4618,7 @@ namespace System.Management.Automation
                             }
                             catch (Exception)
                             {
-                                // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
+                                // The object at the specified path is not accessible, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
                                 continue;
                             }
@@ -6509,7 +6511,7 @@ namespace System.Management.Automation
                     if (i != 0) tooltip.Append(", ");
                     tooltip.Append(GenericArgumentCount == 1
                                        ? "T"
-                                       : string.Format(CultureInfo.InvariantCulture, "T{0}", i + 1));
+                                       : string.Create(CultureInfo.InvariantCulture, $"T{i + 1}"));
                 }
 
                 tooltip.Append(']');

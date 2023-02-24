@@ -1153,7 +1153,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Locates the last "word" in a string of text.  A word is a conguous sequence of characters that are not
+            /// Locates the last "word" in a string of text.  A word is a congruous sequence of characters that are not
             /// whitespace, or a contiguous set grouped by single or double quotes.  Can be called by at most 1 thread at a time
             /// per LastWordFinder instance.
             /// </summary>

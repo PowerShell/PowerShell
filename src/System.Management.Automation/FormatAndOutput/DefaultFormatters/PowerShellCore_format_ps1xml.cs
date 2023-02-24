@@ -138,6 +138,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo+ImplementationInfo",
+                ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo_ImplementationInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ShellVariable",
                 ViewsOf_System_Management_Automation_ShellVariable());
 
@@ -774,6 +778,21 @@ namespace System.Management.Automation.Runspaces
                 .EndTable());
         }
 
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo_ImplementationInfo()
+        {
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo+ImplementationInfo",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemProperty(@"Id")
+                        .AddItemProperty(@"Kind")
+                        .AddItemProperty(@"Name")
+                        .AddItemProperty(@"Description")
+                        .AddItemProperty(@"ImplementationType")
+                    .EndEntry()
+                .EndList());
+        }
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ShellVariable()
         {
             yield return new FormatViewDefinition("ShellVariable",
@@ -997,10 +1016,11 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
+                                    $errorColor = ''
+                                    $commandPrefix = ''
                                     if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
-                                        $errorColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal) {
                                             $errorColor = $PSStyle.Formatting.Error
                                         }
@@ -1051,10 +1071,7 @@ namespace System.Management.Automation.Runspaces
                                         }
                                     }
 
-                                    if ($commandPrefix)
-                                    {
-                                        $errorColor + $commandPrefix
-                                    }
+                                    $errorColor + $commandPrefix
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
@@ -1267,7 +1284,6 @@ namespace System.Management.Automation.Runspaces
                                         return ""${errorColor}$($err.Exception.Message)${resetcolor}""
                                     }
 
-                                    $myinv = $err.InvocationInfo
                                     if ($ErrorView -eq 'DetailedView') {
                                         $message = Get-Error | Out-String
                                         return ""${errorColor}${message}${resetcolor}""
@@ -1284,10 +1300,9 @@ namespace System.Management.Automation.Runspaces
                                     }
                                     elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
                                         $posmsg = $myinv.PositionMessage
-                                    }
-
-                                    if ($posmsg -ne '') {
-                                        $posmsg = $newline + $posmsg
+                                        if ($posmsg -ne '') {
+                                            $posmsg = $newline + $posmsg
+                                        }
                                     }
 
                                     if ($err.PSMessageDetails) {
@@ -2048,8 +2063,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Formatting.Debug)$($_.Formatting.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Debug")
                         .AddItemScriptBlock(@"""$($_.Formatting.TableHeader)$($_.Formatting.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.TableHeader")
                         .AddItemScriptBlock(@"""$($_.Formatting.CustomTableHeaderLabel)$($_.Formatting.CustomTableHeaderLabel.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.CustomTableHeaderLabel")
-                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackProvider)$($_.Formatting.FeedbackProvider.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackProvider")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackName)$($_.Formatting.FeedbackName.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackName")
                         .AddItemScriptBlock(@"""$($_.Formatting.FeedbackText)$($_.Formatting.FeedbackText.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackText")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackAction)$($_.Formatting.FeedbackAction.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackAction")
                         .AddItemScriptBlock(@"""$($_.Progress.Style)$($_.Progress.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Progress.Style")
                         .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
                         .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
@@ -2107,8 +2123,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Debug)$($_.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Debug")
                         .AddItemScriptBlock(@"""$($_.TableHeader)$($_.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "TableHeader")
                         .AddItemScriptBlock(@"""$($_.CustomTableHeaderLabel)$($_.CustomTableHeaderLabel.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "CustomTableHeaderLabel")
-                        .AddItemScriptBlock(@"""$($_.FeedbackProvider)$($_.FeedbackProvider.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackProvider")
+                        .AddItemScriptBlock(@"""$($_.FeedbackName)$($_.FeedbackName.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackName")
                         .AddItemScriptBlock(@"""$($_.FeedbackText)$($_.FeedbackText.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackText")
+                        .AddItemScriptBlock(@"""$($_.FeedbackAction)$($_.FeedbackAction.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackAction")
                     .EndEntry()
                 .EndList());
         }

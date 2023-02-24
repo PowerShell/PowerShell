@@ -10,7 +10,8 @@ try
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
     # Skip all tests if can't write to $PSHOME as Register-PSSessionConfiguration writes to $PSHOME
-    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated) -and (Test-CanWriteToPsHome))
+    # or if the processor architecture is Arm64
+    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated) -and (Test-CanWriteToPsHome) -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -ne [System.Runtime.InteropServices.Architecture]::Arm64)
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
     #
@@ -830,6 +831,12 @@ namespace PowershellTestConfigNamespace
 
     Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
         BeforeAll {
+            if (Test-IsWindowsArm64) {
+                Write-Verbose "remoting is not setup on ARM64, skipping tests" -Verbose
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+
             if ($IsNotSkipped) {
                 Enable-PSRemoting
             }

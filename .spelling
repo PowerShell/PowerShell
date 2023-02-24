@@ -106,6 +106,7 @@ brcrista
 breakpoint
 brianbunke
 britishben
+brotli
 brucepay
 bugfix
 build.json
@@ -1280,6 +1281,12 @@ CommonCommandParameters.cs
 preview.6.22352.1
 v2.2.6
 ResultsComparer
+pre-defined
+System.Runtime.CompilerServices.Unsafe
+TabExpansion
+PSv2
+System.Data.SqlClient
+Microsoft.CSharp
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1664,3 +1671,5 @@ centos-7
 Security.types.ps1xml
  - ADOPTERS.md
 MicrosoftPowerBIMgmt
+ - tools/clearlyDefined/readme.md
+ClearlyDefined

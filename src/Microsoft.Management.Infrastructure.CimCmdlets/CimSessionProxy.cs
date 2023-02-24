@@ -875,7 +875,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         parameters.Append(',');
                     }
 
-                    parameters.Append(string.Format(CultureInfo.CurrentUICulture, @"'{0}' = {1}", key, parameterList[key]));
+                    parameters.Append(CultureInfo.CurrentUICulture, $@"'{key}' = {parameterList[key]}");
                 }
             }
 
@@ -1232,7 +1232,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimInstance> asyncResult = this.CimSession.EnumerateInstancesAsync(namespaceName, className, this.OperationOptions);
-            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Create(CultureInfo.CurrentUICulture, $"{namespaceName}:{className}");
             ConsumeCimInstanceAsync(asyncResult, new CimResultContext(errorSource));
         }
 
@@ -1314,7 +1314,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimClass> asyncResult = this.CimSession.EnumerateClassesAsync(namespaceName, className, this.OperationOptions);
-            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Create(CultureInfo.CurrentUICulture, $"{namespaceName}:{className}");
             ConsumeCimClassAsync(asyncResult, new CimResultContext(errorSource));
         }
 
@@ -1334,7 +1334,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"className", className);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncResult<CimClass> asyncResult = this.CimSession.GetClassAsync(namespaceName, className, this.OperationOptions);
-            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Create(CultureInfo.CurrentUICulture, $"{namespaceName}:{className}");
             ConsumeCimClassAsync(asyncResult, new CimResultContext(errorSource));
         }
 
@@ -1388,7 +1388,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.operationParameters.Add(@"methodName", methodName);
             this.WriteOperationStartMessage(this.operationName, this.operationParameters);
             CimAsyncMultipleResults<CimMethodResultBase> asyncResult = this.CimSession.InvokeMethodAsync(namespaceName, className, methodName, methodParameters, this.OperationOptions);
-            string errorSource = string.Format(CultureInfo.CurrentUICulture, "{0}:{1}", namespaceName, className);
+            string errorSource = string.Create(CultureInfo.CurrentUICulture, $"{namespaceName}:{className}");
             ConsumeCimInvokeMethodResultAsync(asyncResult, className, methodName, new CimResultContext(errorSource));
         }
 
@@ -1493,7 +1493,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// The CimSession object managed by this proxy object,
         /// which is either created by constructor OR passed in by caller.
         /// The session will be closed while disposing this proxy object
-        /// if it is created by constuctor.
+        /// if it is created by constructor.
         /// </summary>
         internal CimSession CimSession { get; private set; }
 
@@ -2154,12 +2154,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSessionProxyNewCimInstance"/> class.
-        /// <summary>
+        /// </summary>
         /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name.
         /// Then create wrapper object.
         /// </remarks>
-        /// <param name="computerName"></param>
         public CimSessionProxyNewCimInstance(string computerName, CimNewCimInstance operation)
             : base(computerName)
         {
@@ -2169,6 +2168,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="CimSessionProxyNewCimInstance"/> class.
         /// </summary>
+        /// <param name="computerName"></param>
         /// <remarks>
         /// Create <see cref="CimSession"/> by given computer name
         /// and session options.

@@ -435,16 +435,17 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for rendering feedback provider names.
             /// </summary>
-            public string FeedbackProvider
+            public string FeedbackName
             {
-                get => _feedbackProvider;
-                set => _feedbackProvider = ValidateNoContent(value);
+                get => _feedbackName;
+                set => _feedbackName = ValidateNoContent(value);
             }
 
-            private string _feedbackProvider = "\x1b[33m";
+            // Yellow by default.
+            private string _feedbackName = "\x1b[33m";
 
             /// <summary>
-            /// Gets or sets the style for rendering feedback text.
+            /// Gets or sets the style for rendering feedback message.
             /// </summary>
             public string FeedbackText
             {
@@ -452,7 +453,20 @@ namespace System.Management.Automation
                 set => _feedbackText = ValidateNoContent(value);
             }
 
+            // BrightCyan by default.
             private string _feedbackText = "\x1b[96m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback actions.
+            /// </summary>
+            public string FeedbackAction
+            {
+                get => _feedbackAction;
+                set => _feedbackAction = ValidateNoContent(value);
+            }
+
+            // BrightWhite by default.
+            private string _feedbackAction = "\x1b[97m";
         }
 
         /// <summary>

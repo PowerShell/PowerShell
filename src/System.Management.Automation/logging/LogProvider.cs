@@ -110,6 +110,19 @@ namespace System.Management.Automation
         internal abstract void LogAmsiUtilStateEvent(string state, string context);
 
         /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal abstract void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult);
+
+        /// <summary>
         /// True if the log provider needs to use logging variables.
         /// </summary>
         /// <returns></returns>
@@ -383,6 +396,21 @@ namespace System.Management.Automation
         /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
         /// <param name="context">The amsiContext handled - Session pair.</param>
         internal override void LogAmsiUtilStateEvent(string state, string context)
+        {
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal override void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult)
         {
         }
 

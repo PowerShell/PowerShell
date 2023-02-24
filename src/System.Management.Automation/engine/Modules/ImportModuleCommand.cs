@@ -995,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
                 string errorMessageTemplate = string.Format(
                     CultureInfo.InvariantCulture,
                     Modules.RemoteDiscoveryRemotePsrpCommandFailed,
-                    string.Format(CultureInfo.InvariantCulture, "Import-Module -Name '{0}'", moduleName));
+                    string.Create(CultureInfo.InvariantCulture, $"Import-Module -Name '{moduleName}'"));
                 remotelyImportedModules = RemoteDiscoveryHelper.InvokePowerShell(
                     powerShell,
                     this,

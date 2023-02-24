@@ -4869,7 +4869,7 @@
             />
         <string
             id="PS_PROVIDER.event.E_A_CREATE_SERVER_REMOTESESSION.message"
-            value="Request %1. Creating a server remote session. UserName: %2 Custome Shell Id: %3"
+            value="Request %1. Creating a server remote session. UserName: %2 Custom Shell Id: %3"
             />
         <string
             id="PS_PROVIDER.event.E_A_REPORT_CONTEXT.message"
