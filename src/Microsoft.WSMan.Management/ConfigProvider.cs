@@ -3413,10 +3413,7 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private PSObject GetItemValue(string path)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(path);
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
 
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
