@@ -2758,6 +2758,11 @@ function CleanupGeneratedSourceCode
             Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute] */ "
         },
         @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)] */ "
+        },
+        @{
             ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
             Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)2)]"
             Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)2)] */"
