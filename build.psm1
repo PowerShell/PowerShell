@@ -795,6 +795,10 @@ function Restore-PSPackage
             $RestoreArguments += "quiet"
         }
 
+        if ($Options.Runtime -like 'win*') {
+            $RestoreArguments += "/property:EnableWindowsTargeting=True"
+        }
+
         if ($InteractiveAuth) {
             $RestoreArguments += "--interactive"
         }
@@ -873,8 +877,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net7.0")]
-        [string]$Framework = "net7.0",
+        [ValidateSet("net8.0")]
+        [string]$Framework = "net8.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -3480,7 +3484,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v7.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v8.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

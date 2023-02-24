@@ -132,8 +132,15 @@ function ExecuteRedirectRequest {
         [string]
         $Method = 'GET',
 
+        [ValidateSet('POST')]
+        [string]
+        $CustomMethod,
+
         [switch]
         $PreserveAuthorizationOnRedirect,
+
+        [switch]
+        $PreserveHttpMethodOnRedirect,
 
         [ValidateRange(0, [int]::MaxValue)]
         [int]
@@ -146,12 +153,20 @@ function ExecuteRedirectRequest {
         if ($Cmdlet -eq 'Invoke-WebRequest') {
             if ($MaximumRedirection -gt 0) {
                 $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method -MaximumRedirection:$MaximumRedirection
+            } elseif ($CustomMethod) {
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -CustomMethod $CustomMethod
             } else {
-                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+                $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -PreserveHttpMethodOnRedirect:$PreserveHttpMethodOnRedirect.IsPresent -Method $Method
             }
             $result.Content = $result.Output.Content | ConvertFrom-Json
         } else {
-            $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+            if ($MaximumRedirection -gt 0) {
+                $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method -MaximumRedirection:$MaximumRedirection
+            } elseif ($CustomMethod) {
+                $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -CustomMethod $CustomMethod
+            } else {
+                $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -PreserveHttpMethodOnRedirect:$PreserveHttpMethodOnRedirect.IsPresent -Method $Method
+            }
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
@@ -835,8 +850,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.RelationLink.Count | Should -Be 0
     }
 
-    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present" {
-        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
+    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present <name>" -TestCases @(
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
+        @{name = '(URI with scheme)'; uri = $originalUri}
+        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
+    ) {
+        param($uri)
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
@@ -999,10 +1018,39 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Error | Should -BeNullOrEmpty
             # ensure user-agent is present (i.e., no false positives )
             $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-            # ensure Authorization header has been removed.
+            # ensure Authorization header has been preserved.
             $response.Content.Headers."Authorization" | Should -BeExactly 'test'
             # ensure POST was changed to GET for selected redirections and remains as POST for others.
             $response.Content.Method | Should -Be $redirectedMethod
+        }
+
+        It "Validates Invoke-WebRequest -PreserveAuthorizationOnRedirect -CustomMethod POST keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+            param($redirectType, $redirectedMethod)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+
+            $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Uri $uri -CustomMethod 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been preserved.
+            $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+            # ensure POST was changed to GET for selected redirections and remains as POST for others.
+            $response.Content.Method | Should -Be $redirectedMethod
+        }
+
+        It "Validates Invoke-WebRequest -PreserveHttpMethodOnRedirect keeps the authorization header redirects and do remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+            $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Uri $uri -Method 'POST'
+
+            $response.Error | Should -BeNullOrEmpty
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+            # ensure Authorization header has been kept.
+            $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+            # ensure POST doesn't change.
+            $response.Content.Method | Should -Be 'POST'
         }
 
         It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
@@ -1042,7 +1090,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
 
             $result = ExecuteWebCommand -command $command
-            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $result.Error.FullyQualifiedErrorId | Should -Be "InsecureRedirection,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
     }
 
@@ -2551,9 +2599,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output | Should -BeExactly "foo"
     }
 
-    It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links" {
+    It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links <name>" -TestCases @(
         $maxLinks = 5
-        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        @{name = '(URI with scheme)'; uri = $originalUri}
+        @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
+    ) {
+        param($uri)
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
@@ -2721,10 +2773,38 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
-        # ensure Authorization header has been removed.
+        # ensure Authorization header has been preserved.
         $response.Content.Headers."Authorization" | Should -BeExactly 'test'
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
         $response.Content.Method | Should -Be $redirectedMethod
+    }
+
+    It "Validates Invoke-RestMethod -PreserveAuthorizationOnRedirect -CustomMethod POST keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -CustomMethod 'POST'
+
+        $response.Error | Should -BeNullOrEmpty
+        # ensure user-agent is present (i.e., no false positives )
+        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+        # ensure Authorization header has been preserved.
+        $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+        # ensure POST was changed to GET for selected redirections and remains as POST for others.
+        $response.Content.Method | Should -Be $redirectedMethod
+    }
+
+    It "Validates Invoke-RestMethod -PreserveHttpMethodOnRedirect keeps the authorization header redirects and remains POST when it handles the redirect: <redirectType>" -TestCases $redirectTests {
+        param($redirectType)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -PreserveHttpMethodOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
+
+        $response.Error | Should -BeNullOrEmpty
+        # ensure user-agent is present (i.e., no false positives )
+        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+        # ensure Authorization header has been kept.
+        $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+        # ensure POST doesn't change.
+        $response.Content.Method | Should -Be 'POST'
     }
 
     It "Validates Invoke-RestMethod handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
@@ -2763,7 +2843,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "InsecureRedirection,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     #endregion Redirect tests

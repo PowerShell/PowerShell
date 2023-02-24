@@ -65,7 +65,7 @@ namespace PSTests.Sequential
 
         #region IFeedbackProvider
 
-        public string GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token) => "nothing";
+        public FeedbackItem GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token) => new FeedbackItem("nothing", null);
 
         #endregion
 

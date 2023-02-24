@@ -159,11 +159,14 @@
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
     <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
   </data>
-  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
-  </data>
   <data name="IEDomNotSupported" xml:space="preserve">
     <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+  </data>
+  <data name="InsecureRedirection" xml:space="preserve">
+    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+  </data> 
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
     <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>

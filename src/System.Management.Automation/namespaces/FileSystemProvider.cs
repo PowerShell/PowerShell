@@ -7969,6 +7969,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException(nameof(target));
             }
+
             using (SafeHandle handle = WinOpenReparsePoint(path, FileAccess.Write))
             {
                 byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
