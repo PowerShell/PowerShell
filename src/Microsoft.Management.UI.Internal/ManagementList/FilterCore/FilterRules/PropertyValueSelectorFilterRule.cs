@@ -66,16 +66,8 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public PropertyValueSelectorFilterRule(string propertyName, string propertyDisplayName, IEnumerable<FilterRule> rules)
         {
-            if (string.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentNullException("propertyName");
-            }
-
-            if (string.IsNullOrEmpty(propertyDisplayName))
-            {
-                throw new ArgumentNullException("propertyDisplayName");
-            }
-
+            ArgumentException.ThrowIfNullOrEmpty(propertyName);
+            ArgumentException.ThrowIfNullOrEmpty(propertyDisplayName);
             ArgumentNullException.ThrowIfNull(rules);
 
             this.PropertyName = propertyName;
