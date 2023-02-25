@@ -25,7 +25,6 @@ namespace Microsoft.PowerShell.Commands
         private IWebProxy _proxy;
         private int _maximumRedirection;
         private WebSslProtocol _sslProtocol;
-        private int _maxAutomaticRedirections;
         private bool _allowAutoRedirect;
         private bool _skipCertificateCheck;
         private bool _noProxy;
@@ -134,8 +133,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal bool AllowAutoRedirect { set => SetStructVar(ref _allowAutoRedirect, value); }
 
-        internal int MaxAutomaticRedirections { set => SetStructVar(ref _maxAutomaticRedirections, value); }
-
         internal bool NoProxy
         {
             set
@@ -165,14 +162,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect, int timeoutSec, out bool newClient)
         {
             // This indicates GetResponse will handle redirects.
-            if (handleRedirect || MaximumRedirection == 0)
-            {
-                AllowAutoRedirect = false;
-            }
-            else if (MaximumRedirection > 0)
-            {
-                MaxAutomaticRedirections = MaximumRedirection;
-            }
+            AllowAutoRedirect = !(handleRedirect || MaximumRedirection == 0);
 
             // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
             TimeSpan timeSpanTimeout = timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(timeoutSec);
@@ -232,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
             handler.AllowAutoRedirect = _allowAutoRedirect;
             if (_allowAutoRedirect && MaximumRedirection > 0)
             {
-                handler.MaxAutomaticRedirections = _maxAutomaticRedirections;
+                handler.MaxAutomaticRedirections = MaximumRedirection;
             }
 
             handler.SslProtocols = (SslProtocols)_sslProtocol;
