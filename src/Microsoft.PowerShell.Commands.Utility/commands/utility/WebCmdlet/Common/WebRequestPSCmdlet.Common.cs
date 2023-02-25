@@ -991,8 +991,9 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
 
-            HttpClient client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out bool newClient);
-            if (newClient && IsPersistentSession() && SessionVariable is null)
+            HttpClient client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out bool clientWasReset);
+            
+            if (clientWasReset)
             {
                 WriteWarning("WebSession properties changed: new Http connection will be required");
             }

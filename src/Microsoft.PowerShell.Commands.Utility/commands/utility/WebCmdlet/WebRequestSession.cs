@@ -17,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
     public class WebRequestSession : IDisposable
     {
         private HttpClient _client;
-
         private CookieContainer _cookies;
         private bool _useDefaultCredentials;
         private ICredentials _credentials;
@@ -29,6 +28,12 @@ namespace Microsoft.PowerShell.Commands
         private bool _skipCertificateCheck;
         private bool _noProxy;
         private bool _disposedValue;
+
+        /// <summary>
+        /// Record whether an existing HttpClient in the WebRequestSession had to be disposed
+        /// after creating due to requested property changes.
+        /// </summary>
+        private bool _disposedClient;
 
         /// <summary>
         /// Gets or sets the Header property.
@@ -159,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal virtual HttpClient GetHttpClient(bool handleRedirect, int timeoutSec, out bool newClient)
+        internal virtual HttpClient GetHttpClient(bool handleRedirect, int timeoutSec, out bool clientWasReset)
         {
             // This indicates GetResponse will handle redirects.
             AllowAutoRedirect = !(handleRedirect || MaximumRedirection == 0);
@@ -171,11 +176,12 @@ namespace Microsoft.PowerShell.Commands
                 ResetClient();
             }
 
-            newClient = _client is null;
+            clientWasReset = _disposedClient;
 
-            if (newClient)
+            if (_client is null)
             {
                 _client = CreateHttpClient(timeSpanTimeout);
+                _disposedClient = false;
             }
 
             return _client;
@@ -253,8 +259,12 @@ namespace Microsoft.PowerShell.Commands
 
         private void ResetClient()
         {
-            _client?.Dispose();
-            _client = null;
+            if (_client is not null)
+            {
+                _disposedClient = true;
+                _client.Dispose();
+                _client = null;
+            }
         }
 
         /// <summary>
