@@ -18,17 +18,9 @@ namespace Microsoft.PowerShell.Commands
             _proxyAddress = address;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
+        public override bool Equals(object obj) => Equals(obj as WebProxy);
 
-            return Equals(obj as WebProxy);
-        }
-
-        public override int GetHashCode() => (_proxyAddress.GetHashCode() * 17) + (_credentials?.GetHashCode() ?? 0);
+        public override int GetHashCode() => HashCode.Combine(_proxyAddress, _credentials, BypassProxyOnLocal);
 
         public bool Equals(WebProxy other)
         {
@@ -38,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // _proxyAddress cannot be null as it is set in the constructor            
-            return GetHashCode() == other.GetHashCode() 
+            return GetHashCode() == other.GetHashCode()
                 && other._credentials == _credentials
                 && _proxyAddress.Equals(other._proxyAddress)
                 && BypassProxyOnLocal == other.BypassProxyOnLocal;

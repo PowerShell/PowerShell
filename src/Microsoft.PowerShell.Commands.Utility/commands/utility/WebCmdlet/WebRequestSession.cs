@@ -5,28 +5,31 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// WebRequestSession for holding session infos.
     /// </summary>
-    public class WebRequestSession
+    public class WebRequestSession : IDisposable
     {
-        private bool _changed;
+        private HttpClient _client;
+
         private CookieContainer _cookies;
         private bool _useDefaultCredentials;
         private ICredentials _credentials;
         private X509CertificateCollection _certificates;
         private IWebProxy _proxy;
         private int _maximumRedirection;
-        private HttpClientHandler _handler;
         private WebSslProtocol _sslProtocol;
         private int _maxAutomaticRedirections;
         private bool _allowAutoRedirect;
         private bool _skipCertificateCheck;
         private bool _noProxy;
+        private bool _disposedValue;
 
         /// <summary>
         /// Gets or sets the Header property.
@@ -69,18 +72,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string UserAgent { get; set; }
 
-        internal bool NoProxy
-        {
-            get => _noProxy; set
-            {
-                SetStructVar(ref _noProxy, value);
-                if (_noProxy)
-                {
-                    Proxy = null;
-                }
-            }
-        }
-
         /// <summary>
         /// Gets or sets the Proxy property.
         /// </summary>
@@ -112,16 +103,10 @@ namespace Microsoft.PowerShell.Commands
         public int RetryIntervalInSeconds { get; set; }
 
         /// <summary>
-        /// Gets or sets the SslProtocol for the session.
-        /// </summary>
-        public WebSslProtocol SslProtocol { get => _sslProtocol; set => SetStructVar(ref _sslProtocol, value); }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="WebRequestSession"/> class.
         /// </summary>
         public WebRequestSession()
         {
-            _changed = true;
 
             // Build the headers collection
             Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -143,29 +128,25 @@ namespace Microsoft.PowerShell.Commands
             _allowAutoRedirect = true;
         }
 
-        /// <summary>
-        /// Gets a value indicating whether a new handler must be created.
-        /// </summary>
-        internal bool Changed => _changed;
+        internal WebSslProtocol SslProtocol { set => SetStructVar(ref _sslProtocol, value); }
 
-        /// <summary>
-        /// Gets or sets the cached HttpClientHandler in the session to support persistent HTTP connections.
-        /// </summary>
-        internal HttpClientHandler Handler
+        internal bool SkipCertificateCheck { set => SetStructVar(ref _skipCertificateCheck, value); }
+
+        internal bool AllowAutoRedirect { set => SetStructVar(ref _allowAutoRedirect, value); }
+
+        internal int MaxAutomaticRedirections { set => SetStructVar(ref _maxAutomaticRedirections, value); }
+
+        internal bool NoProxy
         {
-            get => _handler; set
+            set
             {
-                // Once a handler has been created, it's assumed that it was created from the session properties.
-                _handler = value;
-                _changed = false;
+                SetStructVar(ref _noProxy, value);
+                if (_noProxy)
+                {
+                    Proxy = null;
+                }
             }
         }
-
-        internal bool SkipCertificateCheck { get => _skipCertificateCheck; set => SetStructVar(ref _skipCertificateCheck, value); }
-
-        internal bool AllowAutoRedirect { get => _allowAutoRedirect; set => SetStructVar(ref _allowAutoRedirect, value); }
-
-        internal int MaxAutomaticRedirections { get => _maxAutomaticRedirections; set => SetStructVar(ref _maxAutomaticRedirections, value); }
 
         /// <summary>
         /// Add a X509Certificate to the Certificates collection.
@@ -176,16 +157,91 @@ namespace Microsoft.PowerShell.Commands
             Certificates ??= new X509CertificateCollection();
             if (!Certificates.Contains(certificate))
             {
-                _changed = true;
+                ResetClient();
                 Certificates.Add(certificate);
             }
+        }
+
+        internal virtual HttpClient GetHttpClient(bool handleRedirect, int timeoutSec, out bool newClient)
+        {
+            // This indicates GetResponse will handle redirects.
+            if (handleRedirect || MaximumRedirection == 0)
+            {
+                AllowAutoRedirect = false;
+            }
+            else if (MaximumRedirection > 0)
+            {
+                MaxAutomaticRedirections = MaximumRedirection;
+            }
+
+            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
+            var timeSpanTimeout = timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(timeoutSec);
+            if (_client is not null && !timeSpanTimeout.Equals(_client.Timeout))
+            {
+                ResetClient();
+            }
+
+            newClient = _client is null;
+
+            if (newClient)
+            {
+                HttpClientHandler handler = new();
+
+                handler.CookieContainer = Cookies;
+                handler.AutomaticDecompression = DecompressionMethods.All;
+
+                // Set the credentials used by this request
+                if (UseDefaultCredentials)
+                {
+                    // The UseDefaultCredentials flag overrides other supplied credentials
+                    handler.UseDefaultCredentials = true;
+                }
+                else if (Credentials is not null)
+                {
+                    handler.Credentials = Credentials;
+                }
+
+                if (_noProxy)
+                {
+                    handler.UseProxy = false;
+                }
+                else if (Proxy is not null)
+                {
+                    handler.Proxy = Proxy;
+                }
+
+                if (Certificates is not null)
+                {
+                    handler.ClientCertificates.AddRange(Certificates);
+                }
+
+                if (_skipCertificateCheck)
+                {
+                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                }
+                handler.AllowAutoRedirect = _allowAutoRedirect;
+                if (_allowAutoRedirect && MaximumRedirection > 0)
+                {
+                    handler.MaxAutomaticRedirections = _maxAutomaticRedirections;
+                }
+                handler.SslProtocols = (SslProtocols)_sslProtocol;
+
+                _client = new(handler)
+                {
+                    Timeout = timeSpanTimeout
+                };
+
+            }
+
+            return _client;
         }
 
         private void SetClassVar<T>(ref T oldValue, T newValue) where T : class
         {
             if (oldValue != newValue)
             {
-                _changed = true;
+                ResetClient();
                 oldValue = newValue;
             }
         }
@@ -194,9 +250,40 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!oldValue.Equals(newValue))
             {
-                _changed = true;
+                ResetClient();
                 oldValue = newValue;
             }
+        }
+
+        private void ResetClient()
+        {
+            _client?.Dispose();
+            _client = null;
+        }
+
+        /// <summary>
+        /// Dispose the httpclient
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _client?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose the WebSession
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -437,11 +437,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string _originalFilePath;
 
-        /// <summary>
-        /// True if the web session was created specifically by this request
-        /// </summary>
-        private bool _noWebSession;
-
         #endregion Input
 
         #region Output
@@ -522,7 +517,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
-                using (HttpClient client = GetHttpClient(handleRedirect))
+                var client = GetHttpClient(handleRedirect);
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
@@ -669,7 +664,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
-                }
+               }
             }
             catch (CryptographicException ex)
             {
@@ -687,6 +682,23 @@ namespace Microsoft.PowerShell.Commands
         /// To implement ^C.
         /// </summary>
         protected override void StopProcessing() => _cancelToken?.Cancel();
+
+        /// <summary>
+        /// Cleanup disposable WebSession if it is not being kept between invocations.
+        /// </summary> 
+        protected override void EndProcessing()
+        {
+            base.EndProcessing();
+            if (!IsPersistentSession())
+            {
+                WebSession?.Dispose();
+            }
+        }
+
+        private bool IsPersistentSession()
+        {
+            return MyInvocation.BoundParameters.ContainsKey("WebSession") || !string.IsNullOrEmpty(SessionVariable);
+        }
 
         #endregion Overrides
 
@@ -842,7 +854,6 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // Make sure we have a valid WebRequestSession object to work with
-            _noWebSession = WebSession is null;
             WebSession ??= new WebRequestSession();
 
             if (SessionVariable is not null)
@@ -900,9 +911,10 @@ namespace Microsoft.PowerShell.Commands
                 // Store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
-            // Proxy and NoProxy parameters are mutually exclusive
+
+            // Proxy and NoProxy parameters are mutually exclusive.
             // If NoProxy is provided, WebSession will turn off the proxy
-            // and if Proxy is provided NoProxy will be turned off
+            // and if Proxy is provided NoProxy will be turned off.
             if (NoProxy.IsPresent)
             {
                 WebSession.NoProxy = true;
@@ -925,7 +937,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // We don't want to update the WebSession unless the proxies are different
                     // as that will require us to create a new HttpClientHandler and lose connection
-                    // persistence
+                    // persistence.
                     if (!webProxy.Equals(WebSession.Proxy))
                     {
                         WebSession.Proxy = webProxy;
@@ -958,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
                     // We silently ignore header if value is null.
                     if (value is not null)
                     {
-                        // Add the header value (or overwrite it if already present)
+                        // Add the header value (or overwrite it if already present).
                         WebSession.Headers[key] = value.ToString();
                     }
                 }
@@ -975,77 +987,13 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            var handler = WebSession.Handler;
 
-            // This indicates GetResponse will handle redirects.
-            if (handleRedirect || WebSession.MaximumRedirection == 0)
+            var client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out var newClient);
+            if (newClient && IsPersistentSession() && SessionVariable is null)
             {
-                WebSession.AllowAutoRedirect = false;
-            }
-            else if (WebSession.MaximumRedirection > 0)
-            {
-                WebSession.MaxAutomaticRedirections = WebSession.MaximumRedirection;
-            }
-            if (handler is not null && WebSession.Changed)
-            {
-                // None of the handler properties can be set after the handler has been used.
-                // Any options that are different to those used to construct the handler
-                // will cause the handler to be reconstructed.
                 WriteWarning("WebSession properties changed: new Http connection will be required");
-                handler.Dispose();
-                handler = null;
             }
-            if (handler is null)
-            {
-                WebSession.Handler = handler = new();
-
-                handler.CookieContainer = WebSession.Cookies;
-                handler.AutomaticDecompression = DecompressionMethods.All;
-
-                // Set the credentials used by this request
-                if (WebSession.UseDefaultCredentials)
-                {
-                    // The UseDefaultCredentials flag overrides other supplied credentials
-                    handler.UseDefaultCredentials = true;
-                }
-                else if (WebSession.Credentials is not null)
-                {
-                    handler.Credentials = WebSession.Credentials;
-                }
-
-                if (WebSession.NoProxy)
-                {
-                    handler.UseProxy = false;
-                }
-                else if (WebSession.Proxy is not null)
-                {
-                    handler.Proxy = WebSession.Proxy;
-                }
-
-                if (WebSession.Certificates is not null)
-                {
-                    handler.ClientCertificates.AddRange(WebSession.Certificates);
-                }
-
-                if (WebSession.SkipCertificateCheck)
-                {
-                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                }
-                handler.AllowAutoRedirect = WebSession.AllowAutoRedirect;
-                if (WebSession.AllowAutoRedirect && WebSession.MaximumRedirection > 0)
-                {
-                    handler.MaxAutomaticRedirections = WebSession.MaxAutomaticRedirections;
-                }
-                handler.SslProtocols = (SslProtocols)WebSession.SslProtocol;
-            }
-            // Only dispose the httpClientHandler if we are not trying to use a persistent one
-            HttpClient httpClient = new(handler, _noWebSession && string.IsNullOrEmpty(SessionVariable));
-
-            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
-
-            return httpClient;
+            return client;
         }
 
         internal virtual HttpRequestMessage GetRequest(Uri uri)
