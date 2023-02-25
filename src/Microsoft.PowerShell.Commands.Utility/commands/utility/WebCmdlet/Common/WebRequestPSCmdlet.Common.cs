@@ -990,7 +990,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-
             HttpClient client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out bool clientWasReset);
             
             if (clientWasReset)
