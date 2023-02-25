@@ -993,6 +993,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteWarning("WebSession properties changed: new Http connection will be required");
             }
+
             return client;
         }
 
