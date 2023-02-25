@@ -77,7 +77,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public IWebProxy Proxy
         {
-            get => _proxy; set
+            get => _proxy;
+            set
             {
                 SetClassVar(ref _proxy, value);
                 if (_proxy is not null)
@@ -174,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            var timeSpanTimeout = timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(timeoutSec);
+            TimeSpan timeSpanTimeout = timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(timeoutSec);
             if (_client is not null && !timeSpanTimeout.Equals(_client.Timeout))
             {
                 ResetClient();

@@ -108,6 +108,11 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
+        /// Maximum number of Redirects to follow, caches WebSession.MaximumRedirection.
+        /// </summary>
+        internal int _maximumRedirection;
+
+        /// <summary>
         /// Parse Rel Links.
         /// </summary>
         internal bool _parseRelLink = false;
@@ -517,7 +522,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
-                var client = GetHttpClient(handleRedirect);
+                HttpClient client = GetHttpClient(handleRedirect);
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
@@ -548,6 +553,8 @@ namespace Microsoft.PowerShell.Commands
                                     requestContentLength);
 
                                 WriteVerbose(reqVerboseMsg);
+
+                                _maximumRedirection = WebSession.MaximumRedirection;
 
                                 using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
@@ -633,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                                 // impossible to detect programmatically when we hit this limit. By handling this ourselves
                                 // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
+                                if (_maximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                                 {
                                     ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                     er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
@@ -664,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
-               }
+                }
             }
             catch (CryptographicException ex)
             {
@@ -693,11 +700,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession?.Dispose();
             }
-        }
-
-        private bool IsPersistentSession()
-        {
-            return MyInvocation.BoundParameters.ContainsKey("WebSession") || !string.IsNullOrEmpty(SessionVariable);
         }
 
         #endregion Overrides
@@ -989,7 +991,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
 
-            var client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out var newClient);
+            HttpClient client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out bool newClient);
             if (newClient && IsPersistentSession() && SessionVariable is null)
             {
                 WriteWarning("WebSession properties changed: new Http connection will be required");
@@ -1228,7 +1230,7 @@ namespace Microsoft.PowerShell.Commands
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (handleRedirect
-                    && WebSession.MaximumRedirection is not 0
+                    && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
                 {
@@ -1236,9 +1238,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken = null;
 
                     // If explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
+                    if (_maximumRedirection > 0)
                     {
-                        WebSession.MaximumRedirection--;
+                        _maximumRedirection--;
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
@@ -1452,6 +1454,8 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, string.Create(CultureInfo.InvariantCulture, $"Unrecognized Authentication value: {Authentication}"));
             }
         }
+
+        private bool IsPersistentSession() => MyInvocation.BoundParameters.ContainsKey("WebSession") || MyInvocation.BoundParameters.ContainsKey("SessionVariable");
 
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
