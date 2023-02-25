@@ -52,7 +52,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 
-    Context "ValidateRange - ParameterConstuctors" {
+    Context "ValidateRange - ParameterConstructors" {
         BeforeAll {
             $testCases = @(
                 @{
