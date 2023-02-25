@@ -1010,11 +1010,13 @@ namespace Microsoft.PowerShell.Commands
                 // Only set retry interval if retry count is set.
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
+
+            WebSession.TimeoutSec = TimeoutSec;
         }
 
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            HttpClient client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out bool clientWasReset);
+            HttpClient client = WebSession.GetHttpClient(handleRedirect, out bool clientWasReset);
 
             if (clientWasReset)
             {

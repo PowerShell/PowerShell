@@ -28,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _skipCertificateCheck;
         private bool _noProxy;
         private bool _disposedValue;
+        private int _timeoutSec;
 
         /// <summary>
         /// Record whether an existing HttpClient in the WebRequestSession had to be disposed
@@ -93,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the RedirectMax property.
+        /// Gets or sets the MaximumRedirection property.
         /// </summary>
         public int MaximumRedirection { get => _maximumRedirection; set => SetStructVar(ref _maximumRedirection, value); }
 
@@ -136,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal bool SkipCertificateCheck { set => SetStructVar(ref _skipCertificateCheck, value); }
 
-        internal bool AllowAutoRedirect { set => SetStructVar(ref _allowAutoRedirect, value); }
+        internal int TimeoutSec { set => SetStructVar(ref _timeoutSec, value); }
 
         internal bool NoProxy
         {
@@ -164,30 +165,23 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal virtual HttpClient GetHttpClient(bool handleRedirect, int timeoutSec, out bool clientWasReset)
+        internal virtual HttpClient GetHttpClient(bool handleRedirect, out bool clientWasReset)
         {
             // This indicates GetResponse will handle redirects.
-            AllowAutoRedirect = !(handleRedirect || MaximumRedirection == 0);
-
-            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            TimeSpan timeSpanTimeout = timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(timeoutSec);
-            if (_client is not null && !timeSpanTimeout.Equals(_client.Timeout))
-            {
-                ResetClient();
-            }
+            SetStructVar(ref _allowAutoRedirect, !(handleRedirect || MaximumRedirection == 0));
 
             clientWasReset = _disposedClient;
 
             if (_client is null)
             {
-                _client = CreateHttpClient(timeSpanTimeout);
+                _client = CreateHttpClient();
                 _disposedClient = false;
             }
 
             return _client;
         }
 
-        private HttpClient CreateHttpClient(TimeSpan timeout)
+        private HttpClient CreateHttpClient()
         {
             HttpClientHandler handler = new();
 
@@ -233,9 +227,10 @@ namespace Microsoft.PowerShell.Commands
 
             handler.SslProtocols = (SslProtocols)_sslProtocol;
 
+            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
             return new HttpClient(handler)
             {
-                Timeout = timeout
+                Timeout = _timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(_timeoutSec)
             };
         }
 
