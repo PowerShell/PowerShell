@@ -944,6 +944,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             if (MyInvocation.BoundParameters.ContainsKey("SslProtocol"))
             {
                 // SslProtocol parameter is a struct and we only want to switch back to the default
