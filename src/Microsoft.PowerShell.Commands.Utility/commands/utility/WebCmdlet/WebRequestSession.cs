@@ -107,7 +107,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public WebRequestSession()
         {
-
             // Build the headers collection
             Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             ContentHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -231,7 +230,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Timeout = timeSpanTimeout
                 };
-
             }
 
             return _client;
@@ -262,8 +260,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose the httpclient
+        /// Dispose the WebSession.
         /// </summary>
+        /// <param name="disposing">True when called from Dispose() and false when called from finalizer</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)

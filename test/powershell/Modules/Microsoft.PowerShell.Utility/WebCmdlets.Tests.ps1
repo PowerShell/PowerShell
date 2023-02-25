@@ -2229,8 +2229,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It 'Disable cert checking alters persistence' {
             $Uri = Get-WebListenerUrl -https
-            try { $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -wv warnings } catch {}
+            # This first request will throw because the certificate is invalid
+            try {
+                $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -wv warnings
+                $caught = $false
+            } catch {
+                $caught = $true
+            }
             $Warnings | Should -BeNullOrEmpty
+            $caught | should -BeTrue
 
             $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck -wv warnings
 
@@ -2238,8 +2245,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck -wv warnings
             $Warnings | Should -BeNullOrEmpty
 
-            try { $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck:$false -wv warnings } catch {}
+            # This request will throw because the certificate is invalid
+            try {
+                $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck:$false -wv warnings
+                $caught = $false
+            } catch {
+                $caught = $true
+            }
             $Warnings | Should -be $connWarning
+            $caught | should -BeTrue
         }
 
         It 'Changing headers does not impact persistence' {
