@@ -7939,7 +7939,18 @@ namespace System.Management.Automation.Language
             // G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
 
             SkipNewlines();
-            ExpressionAst indexExpr = ExpressionRule();
+            bool oldDisableCommaOperator = _disableCommaOperator;
+            _disableCommaOperator = false;
+            ExpressionAst indexExpr = null;
+            try
+            {
+                indexExpr = ExpressionRule();
+            }
+            finally
+            {
+                _disableCommaOperator = oldDisableCommaOperator;
+            }
+
             if (indexExpr == null)
             {
                 // ErrorRecovery: hope we see a closing bracket.  If we don't, we'll pretend we saw
