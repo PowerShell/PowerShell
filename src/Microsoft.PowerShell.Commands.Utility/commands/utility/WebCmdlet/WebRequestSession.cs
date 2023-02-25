@@ -267,9 +267,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose the WebSession.
+        /// Dispose the WebRequestSession.
         /// </summary>
-        /// <param name="disposing">True when called from Dispose() and false when called from finalizer</param>
+        /// <param name="disposing">True when called from Dispose() and false when called from finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
