@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
-    public abstract class WebRequestPSCmdlet : PSCmdlet
+    public abstract class WebRequestPSCmdlet : PSCmdlet, IDisposable
     {
         #region Fields
 
@@ -131,6 +131,11 @@ namespace Microsoft.PowerShell.Commands
         /// The remote endpoint returned a 206 status code indicating successful resume.
         /// </summary>
         private bool _resumeSuccess = false;
+
+        /// <summary>
+        /// The Dispose() method has already been called to cleanup Disposable fields.
+        /// </summary>
+        private bool _disposedValue = false;
 
         #endregion Fields
 
@@ -691,15 +696,34 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
         /// <summary>
-        /// Cleanup disposable WebSession if it is not being kept between invocations.
+        /// Dispose the CmdLet, cleaning up resources if required. The WebSession must be disposed
+        /// if it is not being used as part of a persistent session.
         /// </summary> 
-        protected override void EndProcessing()
+        /// <param name="disposing">True when called from Dispose() and false when called from finalizer.</param>
+        protected virtual void Dispose(bool disposing)
         {
-            base.EndProcessing();
-            if (!IsPersistentSession())
+            if (!_disposedValue)
             {
-                WebSession?.Dispose();
+                if (disposing)
+                {
+                    if (!IsPersistentSession())
+                    {
+                        WebSession?.Dispose();
+                        WebSession = null;
+                    }
+                }
+
+                _disposedValue = true;
             }
+        }
+
+        /// <summary>
+        /// Dispose the CmdLet, cleaning up resources if required.
+        /// </summary> 
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion Overrides
@@ -991,7 +1015,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClient client = WebSession.GetHttpClient(handleRedirect, TimeoutSec, out bool clientWasReset);
-            
+
             if (clientWasReset)
             {
                 WriteWarning("WebSession properties changed: new Http connection will be required");
