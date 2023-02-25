@@ -184,55 +184,62 @@ namespace Microsoft.PowerShell.Commands
 
             if (newClient)
             {
-                HttpClientHandler handler = new();
-
-                handler.CookieContainer = Cookies;
-                handler.AutomaticDecompression = DecompressionMethods.All;
-
-                // Set the credentials used by this request
-                if (UseDefaultCredentials)
-                {
-                    // The UseDefaultCredentials flag overrides other supplied credentials
-                    handler.UseDefaultCredentials = true;
-                }
-                else if (Credentials is not null)
-                {
-                    handler.Credentials = Credentials;
-                }
-
-                if (_noProxy)
-                {
-                    handler.UseProxy = false;
-                }
-                else if (Proxy is not null)
-                {
-                    handler.Proxy = Proxy;
-                }
-
-                if (Certificates is not null)
-                {
-                    handler.ClientCertificates.AddRange(Certificates);
-                }
-
-                if (_skipCertificateCheck)
-                {
-                    handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                }
-                handler.AllowAutoRedirect = _allowAutoRedirect;
-                if (_allowAutoRedirect && MaximumRedirection > 0)
-                {
-                    handler.MaxAutomaticRedirections = _maxAutomaticRedirections;
-                }
-                handler.SslProtocols = (SslProtocols)_sslProtocol;
-
-                _client = new(handler)
-                {
-                    Timeout = timeSpanTimeout
-                };
+                _client = CreateHttpClient(timeSpanTimeout);
             }
 
             return _client;
+        }
+
+        private HttpClient CreateHttpClient(TimeSpan timeout)
+        {
+            HttpClientHandler handler = new();
+
+            handler.CookieContainer = Cookies;
+            handler.AutomaticDecompression = DecompressionMethods.All;
+
+            // Set the credentials used by this request
+            if (UseDefaultCredentials)
+            {
+                // The UseDefaultCredentials flag overrides other supplied credentials
+                handler.UseDefaultCredentials = true;
+            }
+            else if (Credentials is not null)
+            {
+                handler.Credentials = Credentials;
+            }
+
+            if (_noProxy)
+            {
+                handler.UseProxy = false;
+            }
+            else if (Proxy is not null)
+            {
+                handler.Proxy = Proxy;
+            }
+
+            if (Certificates is not null)
+            {
+                handler.ClientCertificates.AddRange(Certificates);
+            }
+
+            if (_skipCertificateCheck)
+            {
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            }
+
+            handler.AllowAutoRedirect = _allowAutoRedirect;
+            if (_allowAutoRedirect && MaximumRedirection > 0)
+            {
+                handler.MaxAutomaticRedirections = _maxAutomaticRedirections;
+            }
+
+            handler.SslProtocols = (SslProtocols)_sslProtocol;
+
+            return new HttpClient(handler)
+            {
+                Timeout = timeout
+            };
         }
 
         private void SetClassVar<T>(ref T oldValue, T newValue) where T : class
@@ -277,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose the WebSession
+        /// Dispose the WebRequestSession.
         /// </summary>
         public void Dispose()
         {
