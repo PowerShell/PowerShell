@@ -2198,154 +2198,167 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $connWarning = 'WebSession properties changed: new Http connection will be required'
 
         It 'Connection persistence maintained' {
-            $Uri = Get-WebListenerUrl
-            $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -wv warnings
-            $Warnings | Should -BeNullOrEmpty
+            $uri = Get-WebListenerUrl
+            $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
-            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -wv warnings
-            $Warnings | Should -BeNullOrEmpty
+            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
-            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -wv warnings
-            $Warnings | Should -BeNullOrEmpty
+            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
-            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -wv warnings
-            $Warnings | Should -BeNullOrEmpty
+            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
         }
 
         It 'Connection persistence outperforms non-persistence' {
-            $Uri = Get-WebListenerUrl -Https
-            $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -wv warnings -SkipCertificateCheck
+            $uri = Get-WebListenerUrl -Https
+            $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -WarningVariable warnings -SkipCertificateCheck
             $iters = 5
             $persistence = Measure-Command { 1 .. $iters | ForEach-Object {
                     $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck
                 }
             }
-            $nonpersistence = Measure-Command { 1 .. $iters | ForEach-Object {
+            $nonPersistence = Measure-Command { 1 .. $iters | ForEach-Object {
                     $null = Invoke-WebRequest -Uri $uri -SkipCertificateCheck
                 }
             }
-            $persistence | Should -belessthan $nonpersistence
+            $persistence | Should -BeLessThan $nonPersistence
         }
 
         It 'Disable cert checking alters persistence' {
-            $Uri = Get-WebListenerUrl -https
+            $uri = Get-WebListenerUrl -https
             # This first request will throw because the certificate is invalid
             try {
-                $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -wv warnings
+                $null = Invoke-WebRequest -Uri $uri -SessionVariable Session -WarningVariable warnings
                 $caught = $false
             } catch {
                 $caught = $true
             }
-            $Warnings | Should -BeNullOrEmpty
-            $caught | should -BeTrue
 
-            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck -wv warnings
-
-            $Warnings | Should -be $connWarning
-            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck -wv warnings
-            $Warnings | Should -BeNullOrEmpty
+            $warnings | Should -BeNullOrEmpty
+            $caught | Should -BeTrue
 
             # This request will throw because the certificate is invalid
             try {
-                $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck:$false -wv warnings
+                $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck:$false -WarningVariable warnings
                 $caught = $false
             } catch {
                 $caught = $true
             }
-            $Warnings | Should -be $connWarning
-            $caught | should -BeTrue
+
+            $warnings | Should -BeNullOrEmpty
+            $caught | Should -BeTrue
+
+            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck -WarningVariable warnings
+
+            $warnings | Should -Be $connWarning
+            $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
+
+            # This request will throw because the certificate is invalid
+            try {
+                $null = Invoke-WebRequest -Uri $uri -WebSession $Session -SkipCertificateCheck:$false -WarningVariable warnings
+                $caught = $false
+            } catch {
+                $caught = $true
+            }
+
+            $warnings | Should -Be $connWarning
+            $caught | Should -BeTrue
         }
 
         It 'Changing headers does not impact persistence' {
-            $Uri = Get-WebListenerUrl
+            $uri = Get-WebListenerUrl
             $null = Invoke-WebRequest $uri -SessionVariable Session -Headers @{ A = 'B' }
-            $null = Invoke-WebRequest $uri -WebSession $Session -Headers @{} -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -Headers @{} -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -Headers @{ A = 'C' ; B = 'D' } -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -Headers @{ A = 'C' ; B = 'D' } -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
         }
 
         It 'Editing session cookie jar impacts persistence' {
-            $Uri = Get-WebListenerUrl
+            $uri = Get-WebListenerUrl
             $null = Invoke-WebRequest $uri -SessionVariable Session
             $Session.Cookies = New-Object System.Net.CookieContainer
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
-            $warnings | Should -be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -Be $connWarning
             # Can add a cookie to the container without causing issues
             $Session.Cookies.Add('http://localhost', [system.net.cookie]::new('cookie', 'value'))
-            $null = Invoke-WebRequest $uri -WebSession $Session -Headers @{ A = 'C' ; B = 'D' } -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -Headers @{ A = 'C' ; B = 'D' } -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
         }
 
         It 'Changing user agent does not impact persistence' {
-            $Uri = Get-WebListenerUrl
+            $uri = Get-WebListenerUrl
             $null = Invoke-WebRequest $uri -SessionVariable Session -UserAgent 'Powershell'
-            $null = Invoke-WebRequest $uri -WebSession $Session -UserAgent 'Powershell 7.3' -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -UserAgent 'Powershell 7.3' -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -UserAgent 'Powershell 7.3+' -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -UserAgent 'Powershell 7.3+' -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
         }
 
         It 'proxy can stay off between tests' {
-            $Uri = Get-WebListenerUrl
-            $null = Invoke-WebRequest $uri -SessionVariable Session -wv warnings
-            $warnings | Should -benull
+            $uri = Get-WebListenerUrl
+            $null = Invoke-WebRequest $uri -SessionVariable Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
             # Next item explicitly disables proxy, which changes settings from no specific proxy settings
-            $null = Invoke-WebRequest $uri -WebSession $Session -NoProxy -wv warnings
-            $warnings | Should -be $connWarning
-            $null = Invoke-WebRequest $uri -WebSession $Session -NoProxy:$true -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -NoProxy -WarningVariable warnings
+            $warnings | Should -Be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -NoProxy:$true -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
         }
 
         It 'SSL settings must be set explicitly to break persistence' {
-            $Uri = Get-WebListenerUrl
-            $null = Invoke-WebRequest $uri -SessionVariable Session -SslProtocol Tls12 -wv warnings
+            $uri = Get-WebListenerUrl
+            $null = Invoke-WebRequest $uri -SessionVariable Session -SslProtocol Tls12 -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -SslProtocol Default -wv warnings
-            $warnings | Should -be $connWarning
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -SslProtocol Default -WarningVariable warnings
+            $warnings | Should -Be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
-            $null = Invoke-WebRequest $uri -WebSession $Session -SslProtocol Default -wv warnings
+            $null = Invoke-WebRequest $uri -WebSession $Session -SslProtocol Default -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
         }
 
         It 'proxy can turn on and off between tests' {
-            $Uri = Get-WebListenerUrl
-            $null = Invoke-WebRequest $uri -SessionVariable Session -wv warnings
+            $uri = Get-WebListenerUrl
+            $null = Invoke-WebRequest $uri -SessionVariable Session -WarningVariable warnings
             $proxy = 'http://127.0.0.1:8080'
 
-            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy $proxy -wv warnings
-            $warnings | Should -be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy $proxy -WarningVariable warnings
+            $warnings | Should -Be $connWarning
 
-            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy $proxy -wv warnings
-            $warnings | Should -benull
+            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy $proxy -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
             # No proxy at all - use previous setting
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
-            $warnings | Should -benull
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
             # NoProxy toggles proxy off - disconnect
-            $null = Invoke-WebRequest $uri -WebSession $Session -NoProxy -wv warnings
-            $warnings | Should -be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -NoProxy -WarningVariable warnings
+            $warnings | Should -Be $connWarning
 
-             # No setting at all - retains NoProxy setting
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
-            $warnings | Should -benull
+            # No setting at all - retains NoProxy setting
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
-            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy $proxy -wv warnings
-            $warnings | Should -be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy $proxy -WarningVariable warnings
+            $warnings | Should -Be $connWarning
 
-            $null = Invoke-WebRequest $uri -WebSession $Session -wv warnings
-            $warnings | Should -benull
+            $null = Invoke-WebRequest $uri -WebSession $Session -WarningVariable warnings
+            $warnings | Should -BeNullOrEmpty
 
-            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy 'http://localhost:8080' -wv warnings
-            $warnings | Should -be $connWarning
+            $null = Invoke-WebRequest $uri -WebSession $Session -Proxy 'http://localhost:8080' -WarningVariable warnings
+            $warnings | Should -Be $connWarning
         }
     }
 }
