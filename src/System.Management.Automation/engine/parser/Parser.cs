@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Management.Automation.Subsystem;
 using System.Management.Automation.Subsystem.DSC;
 using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
+using System.Text.RegularExpressions;
 
 namespace System.Management.Automation.Language
 {
@@ -4945,7 +4946,7 @@ namespace System.Management.Automation.Language
             }
 
             if (itemAst is StringConstantExpressionAst stringAst
-                && (string.IsNullOrWhiteSpace(stringAst.Value) || (stringAst.Value[0] is '[' or ']' or ',')))
+                && !Regex.IsMatch(stringAst.Value, @"^([\p{L}_][\p{L}\p{Pc}\p{Nd}\p{Cf}\p{M}]*)(\.[\p{L}_][\p{L}\p{Pc}\p{Nd}\p{Cf}\p{M}]*)*$"))
             {
                 ReportError(ExtentFromFirstOf(stringAst, itemToken),
                     nameof(ParserStrings.InvalidValueForUsingItemName),
