@@ -1488,14 +1488,16 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(content);
             
             Encoding encoding = null;
-            if (ContentType is not null)
+            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
+
+            if (contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
+                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(contentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
@@ -1506,7 +1508,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!SkipHeaderValidation)
                     {
                         ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, contentType);
                         ThrowTerminatingError(er);
                     }
                 }
