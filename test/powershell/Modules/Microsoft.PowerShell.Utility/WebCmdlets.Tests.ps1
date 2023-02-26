@@ -568,6 +568,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-WebRequest -ContentType overwrites Content-Type from -Headers." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        $command = "Invoke-WebRequest -Uri '$uri' -ContentType 'application/json' -Headers @{'Content-Type'='plain/text'} -Method 'POST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.BaseResponse.RequestMessage.Content.Headers.ContentType.MediaType | Should -BeExactly 'application/json'
+    }
+
     It "Invoke-WebRequest supports sending request as UTF-8." {
         $uri = Get-WebListenerUrl -Test 'POST'
         # Body must contain non-ASCII characters
@@ -576,7 +583,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
-        $Result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
+        $result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
         $object = $Result.Output.Content | ConvertFrom-Json
         $object.Data | Should -BeExactly 'проверка'
     }
@@ -2337,6 +2344,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
         $Result.Output | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
+
 
     It "Invoke-RestMethod supports sending requests as UTF8" {
         $uri = Get-WebListenerUrl -Test POST
