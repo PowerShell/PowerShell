@@ -969,6 +969,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
 
+        It "Validates Invoke-WebRequest with -WebSession, -PreserveAuthorizationOnRedirect and -MaximumRedirection doesn't change Websession.MaximumRedirection on multiple redirects: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+            $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
+
+            $session.MaximumRedirection | Should -BeExactly 2
+        }
+
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
             $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
@@ -2704,6 +2712,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure Authorization header was stripped
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
+    }
+
+    It "Validates Invoke-RestMethod with -WebSession, -PreserveAuthorizationOnRedirect and -MaximumRedirection doesn't change Websession.MaximumRedirection on multiple redirects: <redirectType>" -TestCases $redirectTests {
+        param($redirectType)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
+
+        $session.MaximumRedirection | Should -BeExactly 2
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
