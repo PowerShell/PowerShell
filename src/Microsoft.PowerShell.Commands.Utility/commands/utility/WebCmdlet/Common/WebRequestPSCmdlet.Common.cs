@@ -704,13 +704,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!_disposedValue)
             {
-                if (disposing)
+                if (disposing && !IsPersistentSession())
                 {
-                    if (!IsPersistentSession())
-                    {
-                        WebSession?.Dispose();
-                        WebSession = null;
-                    }
+                    WebSession?.Dispose();
+                    WebSession = null;
                 }
 
                 _disposedValue = true;
