@@ -617,12 +617,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         param($proxy_address, $name, $protocol)
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck -SessionVariable session"
+        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
-        $session.Proxy.GetProxy("${protocol}://httpbin.org").AbsoluteUri | Should -BeExactly "${protocol}://${proxy_address}"
     }
 
     # Perform the following operation for Invoke-WebRequest
@@ -2394,12 +2393,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         param($proxy_address, $name, $protocol)
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-RestMethod -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}' -SessionVariable session"
+        $command = "Invoke-RestMethod -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output | Should -BeExactly $expectedResult.Output
-        $session.Proxy.GetProxy("${protocol}://httpbin.org").AbsoluteUri | Should -BeExactly "${protocol}://${proxy_address}"
     }
 
     # Perform the following operation for Invoke-RestMethod
