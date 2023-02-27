@@ -129,9 +129,7 @@ namespace System.Management.Automation
         /// <param name="errors">The collection of error messages.</param>
         public ParseException(ParseError[] errors)
         {
-            ArgumentNullException.ThrowIfNull(errors);
-
-            if (errors.Length == 0)
+            if (errors is null || errors.Length == 0)
             {
                 throw new ArgumentNullException(nameof(errors));
             }

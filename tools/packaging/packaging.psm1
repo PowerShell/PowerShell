@@ -16,7 +16,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net7.0'
+$script:netCoreRuntime = 'net8.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -1513,7 +1513,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-7.0"
+                    "dotnet-runtime-8.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {
@@ -2377,7 +2377,7 @@ function New-ILNugetPackageFromSource
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/net7.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/net8.0' folder properly.
   This is a helper function used by 'New-ILNugetPackageSource'.
 #>
 function CopyReferenceAssemblies
@@ -2756,6 +2756,11 @@ function CleanupGeneratedSourceCode
             ApplyTo = @("System.Management.Automation")
             Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute]"
             Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)] */ "
         },
         @{
             ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
@@ -3330,7 +3335,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -3721,7 +3726,7 @@ function Start-MsiBuild {
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
