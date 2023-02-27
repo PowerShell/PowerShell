@@ -419,10 +419,7 @@ namespace Microsoft.Management.UI.Internal
         {
             ArgumentNullException.ThrowIfNull(templateParent);
 
-            if (string.IsNullOrEmpty(childName))
-            {
-                throw new ArgumentNullException("childName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(childName);
 
             object templatePart = templateParent.Template.FindName(childName, templateParent);
             T item = templatePart as T;
