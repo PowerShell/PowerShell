@@ -1075,6 +1075,8 @@ namespace System.Management.Automation.Runspaces
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
+                                    $ErrorActionPreference = 'Stop'
+                                    trap { 'Error found in error view definition: ' + $_.Exception.Message }
                                     $newline = [Environment]::Newline
 
                                     $resetColor = ''
@@ -1106,7 +1108,7 @@ namespace System.Management.Automation.Runspaces
                                         $prefix = ''
 
                                         # Don't show line information if script module
-                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') -and !($myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
+                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.Type -is [System.Management.Automation.ParseException]) -and !($myinv.ScriptName -and $myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
                                             $useTargetObject = $false
 
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
