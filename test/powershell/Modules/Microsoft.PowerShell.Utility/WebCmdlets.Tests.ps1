@@ -969,12 +969,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
 
-        It "Validates Invoke-WebRequest with -WebSession, -PreserveAuthorizationOnRedirect and -MaximumRedirection doesn't change session.MaximumRedirection on multiple redirects: <redirectType>" -TestCases $redirectTests {
+        It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication
 
             $session.MaximumRedirection | Should -BeExactly 2
+            $session2.MaximumRetryCount | Should -BeExactly 2
+            $session2.RetryIntervalInSeconds | Should -BeExactly 2
+            $session3.UseDefaultCredentials | Should -BeExactly $true
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -2714,12 +2719,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
     }
 
-    It "Validates Invoke-RestMethod with -WebSession, -PreserveAuthorizationOnRedirect and -MaximumRedirection doesn't change session.MaximumRedirection on multiple redirects: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication
 
         $session.MaximumRedirection | Should -BeExactly 2
+        $session2.MaximumRetryCount | Should -BeExactly 2
+        $session2.RetryIntervalInSeconds | Should -BeExactly 2
+        $session3.UseDefaultCredentials | Should -BeExactly $true
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
