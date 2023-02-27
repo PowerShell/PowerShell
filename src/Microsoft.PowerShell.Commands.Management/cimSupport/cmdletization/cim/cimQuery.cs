@@ -315,7 +315,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         public override void AddQueryOption(string optionName, object optionValue)
         {
             ArgumentException.ThrowIfNullOrEmpty(optionName);
-            
             ArgumentNullException.ThrowIfNull(optionValue); 
 
             this.queryOptions[optionName] = optionValue;
