@@ -109,7 +109,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
-            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = "none"; cmdletThatDoesntExist' 2>&1 | Out-String
             $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
 
@@ -158,7 +158,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -Not -BeNullOrEmpty
             $e = $e.Split([Environment]::NewLine)
             $e[0] | Should -BeLike "ParserError:*"
-            $e[1] | Should -BeLike "Line *"
+            $e[1] | Should -BeLike "Line *" -Because ($e | Out-String)
             $e[2] | Should -BeLike "*|*1 ++ 1*"
         }
 

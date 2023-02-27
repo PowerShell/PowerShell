@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Runspaces
                                         $accentColor = $PSStyle.Formatting.ErrorAccent
                                     }
 
-                                    function Get-ConciseViewPositionMessage {
+                                    function Get-ConciseViewPositionMessage( $err ) {
 
                                         # returns a string cut to last whitespace
                                         function Get-TruncatedString($string, [int]$length) {
@@ -1108,9 +1108,8 @@ namespace System.Management.Automation.Runspaces
                                         $prefix = ''
 
                                         # Don't show line information if script module
-                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.Type -is [System.Management.Automation.ParseException]) -and !($myinv.ScriptName -and $myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
+                                        if (((($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception -is 'System.Management.Automation.ParentContainsErrorRecordException') -or $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1)) -and !($myinv.ScriptName -match '\.psm1$')) {
                                             $useTargetObject = $false
-
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
                                             if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
                                                 $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
@@ -1298,7 +1297,7 @@ namespace System.Management.Automation.Runspaces
 
                                     $posmsg = ''
                                     if ($ErrorView -eq 'ConciseView') {
-                                        $posmsg = Get-ConciseViewPositionMessage
+                                        $posmsg = Get-ConciseViewPositionMessage -Err $_
                                     }
                                     elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
                                         $posmsg = $myinv.PositionMessage
