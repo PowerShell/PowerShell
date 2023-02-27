@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Disable writing to the OutFile.
                                 OutFile = null;
                             }
-
+                            
                             // Detect insecure redirection
                             if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                             {
@@ -597,7 +597,7 @@ namespace Microsoft.PowerShell.Commands
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
                                 ThrowTerminatingError(er);
                             }
-
+                            
                             if (ShouldCheckHttpStatus && !_isSuccess)
                             {
                                 string message = string.Format(
@@ -675,7 +675,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
                 while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
-
             }
             catch (CryptographicException ex)
             {

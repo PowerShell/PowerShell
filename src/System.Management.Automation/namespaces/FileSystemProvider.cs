@@ -7960,15 +7960,8 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return false;
 #else
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
-
-            if (string.IsNullOrEmpty(target))
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
+            ArgumentException.ThrowIfNullOrEmpty(target);
 
             using (SafeHandle handle = WinOpenReparsePoint(path, FileAccess.Write))
             {
