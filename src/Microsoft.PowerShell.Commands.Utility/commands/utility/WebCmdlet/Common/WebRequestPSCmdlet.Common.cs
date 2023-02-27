@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
                             FillRequestStream(request);
                             try
                             {
-                                long? requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength;
+                                long? requestContentLength = request.Content?.Headers.ContentLength.GetValueOrDefault();
 
                                 string reqVerboseMsg = string.Format(
                                     CultureInfo.CurrentCulture,
@@ -1252,7 +1252,7 @@ namespace Microsoft.PowerShell.Commands
                         CustomMethod = string.Empty;
                     }
 
-                    currentUri = request.RequestUri is not null ? new Uri(request.RequestUri, response.Headers.Location) : response.Headers.Location;
+                    currentUri = request.RequestUri is null ? response.Headers.Location : new Uri(request.RequestUri, response.Headers.Location);
 
                     // Continue to handle redirection
                     using HttpRequestMessage redirectRequest = GetRequest(currentUri);
@@ -1279,7 +1279,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         FillRequestStream(requestWithoutRange);
 
-                        long? requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength;
+                        long? requestContentLength = requestWithoutRange.Content?.Headers.ContentLength.GetValueOrDefault();
 
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
