@@ -988,7 +988,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore_*_*_8.0.23.11008.dll",
+    "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
   {
