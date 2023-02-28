@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Runspaces
                                         $accentColor = $PSStyle.Formatting.ErrorAccent
                                     }
 
-                                    function Get-ConciseViewPositionMessage( $err ) {
+                                    function Get-ConciseViewPositionMessage() {
 
                                         # returns a string cut to last whitespace
                                         function Get-TruncatedString($string, [int]$length) {
@@ -1297,7 +1297,7 @@ namespace System.Management.Automation.Runspaces
 
                                     $posmsg = ''
                                     if ($ErrorView -eq 'ConciseView') {
-                                        $posmsg = Get-ConciseViewPositionMessage -Err $_
+                                        $posmsg = Get-ConciseViewPositionMessage
                                     }
                                     elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
                                         $posmsg = $myinv.PositionMessage
