@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
-                using HttpClient client = GetHttpClient(handleRedirect)
+                using HttpClient client = GetHttpClient(handleRedirect);
 
                 int followedRelLink = 0;
                 Uri? uri = Uri;
