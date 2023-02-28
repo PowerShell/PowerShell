@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Disable writing to the OutFile.
                                 OutFile = null;
                             }
-                                
+
                             // Detect insecure redirection
                             if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                             {
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
                                 ThrowTerminatingError(er);
                             }
-                                
+
                             if (ShouldCheckHttpStatus && !_isSuccess)
                             {
                                 string message = string.Format(
@@ -928,7 +928,7 @@ namespace Microsoft.PowerShell.Commands
                     // We silently ignore header if value is null.
                     if (value is not null)
                     {
-                        // Add the header value (or overwrite it if already present)
+                        // Add the header value (or overwrite it if already present).
                         WebSession.Headers[key] = value.ToString();
                     }
                 }
@@ -942,7 +942,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-        
+
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
@@ -1286,7 +1286,7 @@ namespace Microsoft.PowerShell.Commands
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
                             requestContentLength);
-                        
+
                         WriteVerbose(reqVerboseMsg);
 
                         response.Dispose();
@@ -1303,9 +1303,9 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
                     {
-                        try 
+                        try
                         {
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
@@ -1318,7 +1318,7 @@ namespace Microsoft.PowerShell.Commands
                             // Ignore broken header.
                         }
                     }
-                    
+
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
@@ -1388,7 +1388,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
-        
+
         private static string FormatDictionary(IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(content);
@@ -1485,7 +1485,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
-            
+
             Encoding encoding = null;
             if (ContentType is not null)
             {
@@ -1565,7 +1565,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
-            
+
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
             WebSession.ContentHeaders.Clear();
 
@@ -1735,7 +1735,8 @@ namespace Microsoft.PowerShell.Commands
                     XmlDocument doc = new();
                     doc.LoadXml(error);
 
-                    XmlWriterSettings settings = new XmlWriterSettings {
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
                         Indent = true,
                         NewLineOnAttributes = true,
                         OmitXmlDeclaration = true
