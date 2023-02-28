@@ -971,6 +971,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
             $credential = [pscredential]::new("testuser", $token)
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
@@ -2726,6 +2727,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
         $credential = [pscredential]::new("testuser", $token)
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
