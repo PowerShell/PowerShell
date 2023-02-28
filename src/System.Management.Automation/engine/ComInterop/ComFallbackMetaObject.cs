@@ -23,31 +23,31 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.FallbackGetIndex(UnwrapSelf(), indexes);
         }
 
         public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.FallbackSetIndex(UnwrapSelf(), indexes, value);
         }
 
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.FallbackGetMember(UnwrapSelf());
         }
 
         public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.FallbackInvokeMember(UnwrapSelf(), args);
         }
 
         public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
         {
-            Requires.NotNull(binder, nameof(binder));
+            Requires.NotNull(binder);
             return binder.FallbackSetMember(UnwrapSelf(), value);
         }
 

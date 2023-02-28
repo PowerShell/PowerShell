@@ -297,7 +297,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes a localized string as the error message.
+        /// This constructor takes a localized string as the error message.
         /// </summary>
         /// <param name="message">
         /// A localized string as an error message.
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes a localized string as the error message, and an inner exception.
+        /// This constructor takes a localized string as the error message, and an inner exception.
         /// </summary>
         /// <param name="message">
         /// A localized string as an error message.
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes an inner exception and an error id.
+        /// This constructor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
         /// Inner exception.
@@ -445,7 +445,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes an inner exception and an error id.
+        /// This constructor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
         /// Inner exception.
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constuctor takes an inner exception and an error id.
+        /// This constructor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
         /// Inner exception.
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         /// <summary>
-        /// This constuctor takes a localized string as the error message.
+        /// This constructor takes a localized string as the error message.
         /// </summary>
         /// <param name="message">
         /// A localized string as an error message.
