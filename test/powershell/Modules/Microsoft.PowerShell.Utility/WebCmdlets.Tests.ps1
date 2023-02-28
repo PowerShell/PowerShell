@@ -2345,6 +2345,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-RestMethod -ContentType overwrites Content-Type from -Headers." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        $command = "Invoke-RestMethod -Uri '$uri' -ContentType 'application/json' -Headers @{'Content-Type'='plain/text'} -Method 'POST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.headers."Content-Type" | Should -BeExactly 'application/json'
+    }
 
     It "Invoke-RestMethod supports sending requests as UTF8" {
         $uri = Get-WebListenerUrl -Test POST
