@@ -1113,6 +1113,7 @@ namespace System.Management.Automation.Runspaces
                                         # - check that it's not a script module as expectation is that users don't want to see the line of error within a module
                                         if ((($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception -is 'System.Management.Automation.ParentContainsErrorRecordException') -or $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1) -and !($myinv.ScriptName -match '\.psm1$')) {
                                             $useTargetObject = $false
+
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
                                             if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
                                                 $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
