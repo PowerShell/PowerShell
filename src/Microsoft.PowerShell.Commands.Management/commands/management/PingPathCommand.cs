@@ -186,19 +186,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool result = false;
 
-                if (path == null)
-                {
-                    WriteError(new ErrorRecord(
-                        new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
-                        "NullPathNotPermitted",
-                        ErrorCategory.InvalidArgument,
-                        Path));
-                    continue;
-                }
-
                 if (string.IsNullOrWhiteSpace(path))
                 {
-                    WriteObject(result);
+                    if (path is null)
+                    {
+                        WriteError(new ErrorRecord(
+                            new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
+                            "NullPathNotPermitted",
+                            ErrorCategory.InvalidArgument,
+                            Path));
+                    }
+                    else
+                    {
+                        WriteObject(result);
+                    }
+                    
                     continue;
                 }
 
