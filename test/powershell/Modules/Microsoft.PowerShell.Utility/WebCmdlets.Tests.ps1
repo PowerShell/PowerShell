@@ -2299,7 +2299,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $warnings | Should -BeNullOrEmpty
         }
 
-        It 'proxy can stay off between tests' {
+        It 'Proxy can stay off between tests' {
             $uri = Get-WebListenerUrl
             $null = Invoke-WebRequest $uri -SessionVariable Session -WarningVariable warnings
             $warnings | Should -BeNullOrEmpty
@@ -2328,7 +2328,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $warnings | Should -BeNullOrEmpty
         }
 
-        It 'proxy can turn on and off between tests' {
+        It 'Proxy can turn on and off between tests' {
             $uri = Get-WebListenerUrl
             $null = Invoke-WebRequest $uri -SessionVariable Session -WarningVariable warnings
             $proxy = 'http://127.0.0.1:8080'
