@@ -695,7 +695,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void ValidateParameters()
         {
             // Sessions
-            if (MyInvocation.BoundParameters.ContainsKey("WebSession") && MyInvocation.BoundParameters.ContainsKey("SessionVariable"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WebSession)) && MyInvocation.BoundParameters.ContainsKey(nameof(SessionVariable)))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
