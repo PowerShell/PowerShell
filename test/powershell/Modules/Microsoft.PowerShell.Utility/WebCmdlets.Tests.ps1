@@ -971,15 +971,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
+            $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+            $credential = [pscredential]::new("testuser", $token)
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication
+            $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication
 
             $session.MaximumRedirection | Should -BeExactly 2
             $session2.MaximumRetryCount | Should -BeExactly 2
             $session2.RetryIntervalInSeconds | Should -BeExactly 2
             $session3.UseDefaultCredentials | Should -BeExactly $true
+            $session4.Credentials.UserName | Should -BeExactly $credential.UserName
+            $session4.Credentials.Password | Should -BeExactly $credential.Password
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -2721,15 +2726,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
+        $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+        $credential = [pscredential]::new("testuser", $token)
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication
 
         $session.MaximumRedirection | Should -BeExactly 2
         $session2.MaximumRetryCount | Should -BeExactly 2
         $session2.RetryIntervalInSeconds | Should -BeExactly 2
         $session3.UseDefaultCredentials | Should -BeExactly $true
+        $session4.Credentials.UserName | Should -BeExactly $credential.UserName
+        $session4.Credentials.Password | Should -BeExactly $credential.Password
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
