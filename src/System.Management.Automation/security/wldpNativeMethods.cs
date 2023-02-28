@@ -7,6 +7,7 @@
 #if !UNIX
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
@@ -66,6 +67,24 @@ namespace System.Management.Automation.Security
     {
         private SystemPolicy()
         {
+        }
+
+        /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="Title">Audit message title.</param>
+        /// <param name="Message">Audit message message.</param>
+        internal static void LogWDACAuditMessage(
+            string Title,
+            string Message)
+        {
+            var auditMessage = string.Create(CultureInfo.CurrentCulture, $"WDAC Audit mode - {Title} - {Message}");
+
+            // TODO:  Add ETW call
+            // PSEtwLog.LogWDACQueryEvent("message");
+
+            // TODO: Debug only
+            System.Console.WriteLine(auditMessage);
         }
 
         /// <summary>

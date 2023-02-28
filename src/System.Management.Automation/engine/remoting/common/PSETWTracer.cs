@@ -160,6 +160,7 @@ namespace System.Management.Automation.Internal
         Engine_Trace = 0x1F06,
         Amsi_Init = 0x4001,
         WDAC_Query = 0x4002,
+        WDAC_Audit = 0x4003,
 
         // Experimental Features
         ExperimentalFeature_InvalidName = 0x3001,
