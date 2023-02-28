@@ -165,10 +165,15 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal virtual HttpClient GetHttpClient(bool handleRedirect, out bool clientWasReset)
+        /// <summary>
+        /// Gets an existing or creates a new HttpClient for this WebRequest session.
+        /// </summary>
+        /// <param name="doNotRedirect">True if the caller does not want the HttpClient to ever handle redirections automatically.</param>
+        /// <param name="clientWasReset">Outputs true if and only if an existing client connection had to be disposed and recreated.</param>
+        internal HttpClient GetHttpClient(bool doNotRedirect, out bool clientWasReset)
         {
-            // This indicates GetResponse will handle redirects.
-            SetStructVar(ref _allowAutoRedirect, !(handleRedirect || MaximumRedirection == 0));
+            // Do not auto redirect if the the caller does not want it, or maximum redirections is 0
+            SetStructVar(ref _allowAutoRedirect, !(doNotRedirect || MaximumRedirection == 0));
 
             clientWasReset = _disposedClient;
 

@@ -108,7 +108,9 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
-        /// Maximum number of Redirects to follow, caches WebSession.MaximumRedirection.
+        /// Maximum number of Redirects to follow, initialized from WebSession.MaximumRedirection,
+        /// and decremented as redirects occur so that the setting in WebSession is not altered
+        /// between persistent requests.
         /// </summary>
         internal int _maximumRedirection;
 
@@ -133,9 +135,10 @@ namespace Microsoft.PowerShell.Commands
         private bool _resumeSuccess = false;
 
         /// <summary>
-        /// The Dispose() method has already been called to cleanup Disposable fields.
+        /// True if the Dispose() method has already been called to cleanup Disposable fields,
+        /// as per IDisposable pattern (https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose).
         /// </summary>
-        private bool _disposedValue = false;
+        private bool _disposed = false;
 
         #endregion Fields
 
@@ -589,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Disable writing to the OutFile.
                                 OutFile = null;
                             }
-                            
+
                             // Detect insecure redirection
                             if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                             {
@@ -597,7 +600,7 @@ namespace Microsoft.PowerShell.Commands
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
                                 ThrowTerminatingError(er);
                             }
-                            
+
                             if (ShouldCheckHttpStatus && !_isSuccess)
                             {
                                 string message = string.Format(
@@ -694,13 +697,12 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
         /// <summary>
-        /// Dispose the CmdLet, cleaning up resources if required. The WebSession must be disposed
-        /// if it is not being used as part of a persistent session.
+        /// Disposes the associated WebSession if it is not being used as part of a persistent session.
         /// </summary> 
         /// <param name="disposing">True when called from Dispose() and false when called from finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!_disposed)
             {
                 if (disposing && !IsPersistentSession())
                 {
@@ -708,12 +710,12 @@ namespace Microsoft.PowerShell.Commands
                     WebSession = null;
                 }
 
-                _disposedValue = true;
+                _disposed = true;
             }
         }
 
         /// <summary>
-        /// Dispose the CmdLet, cleaning up resources if required.
+        /// Disposes the associated WebSession if it is not being used as part of a persistent session.
         /// </summary> 
         public void Dispose()
         {
@@ -956,6 +958,7 @@ namespace Microsoft.PowerShell.Commands
                         // UseDefaultCredentials will overwrite the supplied credentials.
                         webProxy.UseDefaultCredentials = true;
                     }
+
                     // We don't want to update the WebSession unless the proxies are different
                     // as that will require us to create a new HttpClientHandler and lose connection
                     // persistence.
@@ -966,9 +969,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("SslProtocol"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(SslProtocol)))
             {
-                // SslProtocol parameter is a struct and we only want to switch back to the default
+                // SslProtocol parameter is a value type so we only want to switch back to the default
                 // if it is explicitly provided on the command line. Otherwise we keep the value in
                 // the WebSession from any previous invocation.
                 WebSession.SslProtocol = SslProtocol;
@@ -1015,7 +1018,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (clientWasReset)
             {
-                WriteWarning("WebSession properties changed: new Http connection will be required");
+                WriteVerbose(WebCmdletStrings.WebSessionConnectionRecreated);
             }
 
             return client;
@@ -1476,7 +1479,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool IsPersistentSession() => MyInvocation.BoundParameters.ContainsKey("WebSession") || MyInvocation.BoundParameters.ContainsKey("SessionVariable");
+        private bool IsPersistentSession() => MyInvocation.BoundParameters.ContainsKey(nameof(WebSession)) || MyInvocation.BoundParameters.ContainsKey(nameof(SessionVariable));
 
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
