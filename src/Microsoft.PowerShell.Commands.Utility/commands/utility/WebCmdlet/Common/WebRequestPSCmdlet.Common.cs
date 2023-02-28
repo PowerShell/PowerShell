@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [System.Diagnostics.CodeAnalysis.DisallowNullAttribute]
-        public virtual Uri Uri { get; set; }
+        public virtual Uri Uri { get; set; } = null!;
 
         #endregion URI
 
