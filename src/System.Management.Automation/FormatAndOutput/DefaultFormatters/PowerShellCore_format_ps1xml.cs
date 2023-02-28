@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Runspaces
                                         $accentColor = $PSStyle.Formatting.ErrorAccent
                                     }
 
-                                    function Get-ConciseViewPositionMessage() {
+                                    function Get-ConciseViewPositionMessage {
 
                                         # returns a string cut to last whitespace
                                         function Get-TruncatedString($string, [int]$length) {
