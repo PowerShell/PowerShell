@@ -984,7 +984,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session2.RetryIntervalInSeconds | Should -BeExactly 2
             $session3.UseDefaultCredentials | Should -BeExactly $true
             $session4.Credentials.UserName | Should -BeExactly $credential.UserName
-            $session4.Credentials.Password | Should -BeExactly $credential.Password
+            $session4.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -2739,7 +2739,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session2.RetryIntervalInSeconds | Should -BeExactly 2
         $session3.UseDefaultCredentials | Should -BeExactly $true
         $session4.Credentials.UserName | Should -BeExactly $credential.UserName
-        $session4.Credentials.Password | Should -BeExactly $credential.Password
+        $session4.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
