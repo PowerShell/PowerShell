@@ -214,8 +214,9 @@ namespace System.Management.Automation
                 }
             }
 
-            SendTelemetryForDeactivatedFeatures(list);
-            return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
+            ReadOnlyBag<string> features = new(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
+            SendTelemetryForDeactivatedFeatures(features);
+            return features;
         }
 
         /// <summary>
