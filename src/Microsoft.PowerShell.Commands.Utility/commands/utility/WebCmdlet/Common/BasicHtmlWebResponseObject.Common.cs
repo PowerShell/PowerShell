@@ -164,8 +164,7 @@ namespace Microsoft.PowerShell.Commands
             string contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
             {
-                Encoding encoding = null;
-                // fill the Content buffer
+                // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
                 if (string.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
@@ -173,12 +172,12 @@ namespace Microsoft.PowerShell.Commands
                     characterSet = Encoding.UTF8.HeaderName;
                 }
 
-                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
-                this.Encoding = encoding;
+                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
+                Encoding = encoding;
             }
             else
             {
-                this.Content = string.Empty;
+                Content = string.Empty;
             }
         }
 

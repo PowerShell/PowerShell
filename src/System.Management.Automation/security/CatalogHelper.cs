@@ -457,7 +457,7 @@ namespace System.Management.Automation
                     _cmdlet.ThrowTerminatingError(errorRecord);
                 }
 
-                hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+                hashValue = Convert.ToHexString(hashBytes);
             }
 
             return hashValue;

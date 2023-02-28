@@ -201,7 +201,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <returns>A <see cref="PredictionContext"/> object.</returns>
         public static PredictionContext Create(string input)
         {
-            Requires.NotNullOrEmpty(input, nameof(input));
+            ArgumentException.ThrowIfNullOrEmpty(input);
 
             Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
             return new PredictionContext(ast, tokens);
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="toolTip">The tooltip of the suggestion.</param>
         public PredictiveSuggestion(string suggestion, string? toolTip)
         {
-            Requires.NotNullOrEmpty(suggestion, nameof(suggestion));
+            ArgumentException.ThrowIfNullOrEmpty(suggestion);
 
             SuggestionText = suggestion;
             ToolTip = toolTip;

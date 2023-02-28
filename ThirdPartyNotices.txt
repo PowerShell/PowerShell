@@ -176,22 +176,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 7.0.1 - MIT
+Microsoft.Extensions.ObjectPool 7.0.3 - MIT
 
 
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright (c) 2019 David Fowler
-Copyright (c) 2016 Richard Morris
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2014-2018 Michael Daines
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019-2020 West Wind Technologies
-Copyright (c) 2010-2019 Google LLC. http://angular.io/license
-Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 MIT License
 
@@ -265,7 +252,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.PowerShell.Native 7.3.1 - MIT
+Microsoft.PowerShell.Native 7.3.2 - MIT
 
 
 (c) Microsoft Corporation

@@ -72,6 +72,12 @@ namespace Microsoft.PowerShell.Commands
         [Alias("UQ")]
         public QuoteKind UseQuotes { get; set; } = QuoteKind.Always;
 
+        /// <summary>
+        /// Gets or sets property that writes csv file with no headers.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoHeader { get; set; }
+
         #endregion Command Line Parameters
 
         /// <summary>
@@ -301,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // write headers (row1: typename + row2: column names)
-                if (!_isActuallyAppending)
+                if (!_isActuallyAppending && !NoHeader.IsPresent)
                 {
                     if (NoTypeInformation == false)
                     {
@@ -727,16 +733,20 @@ namespace Microsoft.PowerShell.Commands
             if (_propertyNames == null)
             {
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
-                if (NoTypeInformation == false)
-                {
-                    WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
-                }
 
-                // Write property information
-                string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
-                if (!properties.Equals(string.Empty))
+                if (!NoHeader.IsPresent)
                 {
-                    WriteCsvLine(properties);
+                    if (NoTypeInformation == false)
+                    {
+                        WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
+                    }
+
+                    // Write property information
+                    string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
+                    if (!properties.Equals(string.Empty))
+                    {
+                        WriteCsvLine(properties);
+                    }
                 }
             }
 
@@ -1264,7 +1274,6 @@ namespace Microsoft.PowerShell.Commands
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
             ArgumentNullException.ThrowIfNull(cmdlet); 
-
             ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;
