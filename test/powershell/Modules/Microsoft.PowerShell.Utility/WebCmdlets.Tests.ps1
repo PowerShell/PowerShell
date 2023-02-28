@@ -1004,7 +1004,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
 
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-            $session.Certificates = $certificate
+            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
             $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
 
@@ -2786,7 +2786,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
 
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-        $session.Certificates = $certificate
+        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
         $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
 
