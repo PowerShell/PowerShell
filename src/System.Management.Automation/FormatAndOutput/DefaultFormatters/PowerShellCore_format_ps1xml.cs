@@ -1107,7 +1107,10 @@ namespace System.Management.Automation.Runspaces
                                         $message = ''
                                         $prefix = ''
 
-                                        # Don't show line information if script module
+                                        # The checks here determine if we show line detailed error information:
+                                        # - check if `ParserError` and comes from PowerShell which eventually results in a ParseException, but during this execution it's an ErrorRecord
+                                        # - check if invocation is a script or multiple lines in the console
+                                        # - check that it's not a script module as expectation is that users don't want to see the line of error within a module
                                         if (((($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception -is 'System.Management.Automation.ParentContainsErrorRecordException') -or $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1)) -and !($myinv.ScriptName -match '\.psm1$')) {
                                             $useTargetObject = $false
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
