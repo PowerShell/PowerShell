@@ -4945,7 +4945,8 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
-            if (itemAst is StringConstantExpressionAst stringAst
+            if (kind is UsingStatementKind.Namespace or UsingStatementKind.Type
+                && itemAst is StringConstantExpressionAst stringAst
                 && !Regex.IsMatch(stringAst.Value, @"^([\p{L}_][\p{L}\p{Pc}\p{Nd}\p{Cf}\p{M}]*)(\.[\p{L}_][\p{L}\p{Pc}\p{Nd}\p{Cf}\p{M}]*)*$"))
             {
                 ReportError(ExtentFromFirstOf(stringAst, itemToken),
