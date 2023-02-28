@@ -974,11 +974,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
             $credential = [pscredential]::new("testuser", $token)
+            $certificate = Get-WebListenerClientCertificate
+            $headers = @{"Authorization" = "test"}
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication
-            $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session -Headers $headers
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2 -Headers $headers
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication -Headers $headers
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication -Headers $headers
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -Certificate $certificate -SessionVariable session5 -SkipCertificateCheck -Headers $headers
 
             $session.MaximumRedirection | Should -BeExactly 2
             $session2.MaximumRetryCount | Should -BeExactly 2
@@ -986,7 +989,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session3.UseDefaultCredentials | Should -BeExactly $true
             $session4.Credentials.UserName | Should -BeExactly $credential.UserName
             $session4.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
+            $session5.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
         }
+
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
+            $uri = Get-WebListenerUrl -Https -Test 'Cert'
+            $certificate = Get-WebListenerClientCertificate
+            $result = Invoke-RestMethod -Uri $uri -Certificate $certificate -SkipCertificateCheck
+
+            $result.Status | Should -Be 'OK'
+            $result.Thumbprint | Should -Be $certificate.Thumbprint
+        }
+    }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
@@ -2730,11 +2744,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
         $credential = [pscredential]::new("testuser", $token)
+        $certificate = Get-WebListenerClientCertificate
+        $headers = @{"Authorization" = "test"}
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session -Headers $headers
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2 -Headers $headers
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication -Headers $headers
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication -Headers $headers
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Certificate $certificate -SessionVariable session5 -SkipCertificateCheck -Headers $headers
 
         $session.MaximumRedirection | Should -BeExactly 2
         $session2.MaximumRetryCount | Should -BeExactly 2
@@ -2742,6 +2759,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session3.UseDefaultCredentials | Should -BeExactly $true
         $session4.Credentials.UserName | Should -BeExactly $credential.UserName
         $session4.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
+        $session5.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
