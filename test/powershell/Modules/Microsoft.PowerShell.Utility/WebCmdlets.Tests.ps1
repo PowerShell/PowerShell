@@ -992,16 +992,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session5.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
         }
 
-        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
-            $uri = Get-WebListenerUrl -Https -Test 'Cert'
-            $certificate = Get-WebListenerClientCertificate
-            $result = Invoke-RestMethod -Uri $uri -Certificate $certificate -SkipCertificateCheck
-
-            $result.Status | Should -Be 'OK'
-            $result.Thumbprint | Should -Be $certificate.Thumbprint
-        }
-    }
-
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
             $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
