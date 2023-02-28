@@ -1009,7 +1009,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
 
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-            $session.Proxy = $proxy
+            $session.Proxy = [System.Net.WebProxy]::New($proxy)
             try { $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers } catch {}
             $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
         }
@@ -2791,7 +2791,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
 
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-        $session.Proxy = $proxy
+        $session.Proxy = [System.Net.WebProxy]::New($proxy)
         try { $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers } catch {}
         $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
     }
