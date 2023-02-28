@@ -976,12 +976,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $credential = [pscredential]::new("testuser", $token)
             $certificate = Get-WebListenerClientCertificate
             $headers = @{"Authorization" = "test"}
+            $proxy = "http://127.0.0.1:8080"
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session -Headers $headers
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2 -Headers $headers
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication -Headers $headers
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication -Headers $headers
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -Certificate $certificate -SessionVariable session5 -SkipCertificateCheck -Headers $headers
+            try { $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -Proxy $proxy -SessionVariable session6 -Headers $headers } catch {}
 
             $session.MaximumRedirection | Should -BeExactly 2
             $session2.MaximumRetryCount | Should -BeExactly 2
@@ -990,6 +992,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session4.Credentials.UserName | Should -BeExactly $credential.UserName
             $session4.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
             $session5.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+            $session6.Proxy.GetProxy($uri) | Should -BeExactly [uri]$proxy
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -2736,12 +2739,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $credential = [pscredential]::new("testuser", $token)
         $certificate = Get-WebListenerClientCertificate
         $headers = @{"Authorization" = "test"}
+        $proxy = "http://127.0.0.1:8080"
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRedirection 2 -SessionVariable session -Headers $headers
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -MaximumRetryCount 2 -RetryIntervalSec 2 -SessionVariable session2 -Headers $headers
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -UseDefaultCredentials -SessionVariable session3 -AllowUnencryptedAuthentication -Headers $headers
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Credential $credential -SessionVariable session4 -AllowUnencryptedAuthentication -Headers $headers
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Certificate $certificate -SessionVariable session5 -SkipCertificateCheck -Headers $headers
+        try { $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -Proxy $proxy -SessionVariable session6 -Headers $headers } catch {}
 
         $session.MaximumRedirection | Should -BeExactly 2
         $session2.MaximumRetryCount | Should -BeExactly 2
@@ -2750,6 +2755,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session4.Credentials.UserName | Should -BeExactly $credential.UserName
         $session4.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
         $session5.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+        $session6.Proxy.GetProxy($uri) | Should -BeExactly [uri]$proxy
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
