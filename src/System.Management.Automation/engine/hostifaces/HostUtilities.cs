@@ -496,64 +496,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Remove the GUID from the message if the message is in the pre-defined format.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        internal static string RemoveGuidFromMessage(string message)
-        {
-            if (message is null ||
-                message.Length < 37 ||
-                message[36] != ':' ||
-                message[23] != '-' ||
-                message[18] != '-' ||
-                message[13] != '-' ||
-                message[8] != '-')
-            {
-                // Fast return if the message does not start with 'GUID:'.
-                return message;
-            }
-
-            const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:).*";
-            Match matchResult = Regex.Match(message, pattern);
-            if (matchResult.Success)
-            {
-                string partToRemove = matchResult.Groups[1].Captures[0].Value;
-                message = message.Remove(0, partToRemove.Length);
-            }
-
-            return message;
-        }
-
-        internal static string RemoveIdentifierInfoFromMessage(string message, out bool matchPattern)
-        {
-            matchPattern = false;
-            if (message is null ||
-                message.Length < 40 ||
-                message[37] != '[' ||
-                message[36] != ':' ||
-                message[23] != '-' ||
-                message[18] != '-' ||
-                message[13] != '-' ||
-                message[8] != '-')
-            {
-                // Fast return if the message does not start with 'GUID:[]:'.
-                return message;
-            }
-
-            const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:\[.*\]:).*";
-            Match matchResult = Regex.Match(message, pattern);
-            if (matchResult.Success)
-            {
-                string partToRemove = matchResult.Groups[1].Captures[0].Value;
-                message = message.Remove(0, partToRemove.Length);
-                matchPattern = true;
-            }
-
-            return message;
-        }
-
-        /// <summary>
         /// Create suggestion with string rule and scriptblock suggestion.
         /// </summary>
         /// <param name="id">Identifier for the suggestion.</param>

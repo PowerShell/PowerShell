@@ -1206,9 +1206,6 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteDebugLine(string message)
         {
-            // don't lock here as WriteLine is already protected.
-            message = HostUtilities.RemoveGuidFromMessage(message);
-
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1266,9 +1263,6 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteVerboseLine(string message)
         {
-            // don't lock here as WriteLine is already protected.
-            message = HostUtilities.RemoveGuidFromMessage(message);
-
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1309,9 +1303,6 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteWarningLine(string message)
         {
-            // don't lock here as WriteLine is already protected.
-            message = HostUtilities.RemoveGuidFromMessage(message);
-
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1344,13 +1335,6 @@ namespace Microsoft.PowerShell
             {
                 // Do not write progress bar when the stdout is redirected.
                 return;
-            }
-
-            bool matchPattern;
-            string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
-            if (matchPattern)
-            {
-                record = new ProgressRecord(record) { CurrentOperation = currentOperation };
             }
 
             // We allow only one thread at a time to update the progress state.)
