@@ -29,10 +29,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal PropVariant(string value)
         {
-            if (value == null)
-            {
-                throw new ArgumentException("PropVariantNullString", nameof(value));
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
 #pragma warning disable CS0618 // Type or member is obsolete (might get deprecated in future versions
             _valueType = (ushort)VarEnum.VT_LPWSTR;
