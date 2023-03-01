@@ -240,7 +240,7 @@
   <data name="WebResponseVerboseMsg" xml:space="preserve">
     <value>received {0}-byte response of content type {1}</value>
   </data>
-  <data name="WebResponseVerboseMsgNoSize" xml:space="preserve">
+  <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
     <value>received response of content type {0} of unknown size</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
