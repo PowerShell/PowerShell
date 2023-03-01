@@ -1001,7 +1001,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
             $session.Proxy = [System.Net.WebProxy]::new($proxy)
-            $null = Invoke-WebRequest -Uri http://httpbin.org -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
             $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
         }
 
@@ -2774,7 +2774,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
         $session.Proxy = [System.Net.WebProxy]::new($proxy)
-        $null = Invoke-RestMethod -Uri http://httpbin.org -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
         $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
     }
 
