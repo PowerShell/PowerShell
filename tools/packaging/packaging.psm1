@@ -4952,7 +4952,7 @@ function Test-Bom {
     $currentRecords += $patternsUsed
 
     # Generate a name for the updated BOM
-    $newBom = "$bomName-" + [system.io.path]::GetTempFileName() + "-bom.json"
+    $newBom = Join-Path -Path ([system.io.path]::GetTempPath()) -ChildPath ("${bomName}-" +  [system.io.path]::GetRandomFileName() + "-bom.json")
 
     # Sort and serialize the BOM
     $currentRecords | Sort-Object -Property FileType, Pattern | ConvertTo-Json | Out-File -Encoding utf8NoBOM -FilePath $newBom
