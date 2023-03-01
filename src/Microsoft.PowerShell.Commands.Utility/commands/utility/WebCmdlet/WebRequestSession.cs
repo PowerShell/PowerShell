@@ -166,10 +166,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets an existing or creates a new HttpClient for this WebRequest session.
+        /// Gets an existing or creates a new HttpClient for this WebRequest session if none currently exists (either because it was never
+        /// created, or because changes to the WebSession properties required the existing HttpClient to be disposed).
         /// </summary>
         /// <param name="doNotRedirect">True if the caller does not want the HttpClient to ever handle redirections automatically.</param>
-        /// <param name="clientWasReset">Outputs true if and only if an existing client connection had to be disposed and recreated.</param>
+        /// <param name="clientWasReset">When this method returns, contains true if and only if an existing client connection had to be disposed and recreated since the WebSession was last used.</param>
+        /// <returns>The HttpClient cached in the WebSession, based on all current settings.</returns>
         internal HttpClient GetHttpClient(bool doNotRedirect, out bool clientWasReset)
         {
             // Do not auto redirect if the the caller does not want it, or maximum redirections is 0
