@@ -551,14 +551,12 @@ namespace Microsoft.PowerShell.Commands
 
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
-                            string byteLength = response.Content.Headers.ContentLength is null ? string.Empty : $"{response.Content.Headers.ContentLength}-byte ";
                             string contentType = ContentHelper.GetContentType(response);
-                            string respVerboseMsg = string.Format(
-                                CultureInfo.CurrentCulture,
-                                WebCmdletStrings.WebResponseVerboseMsg,
-                                byteLength,
-                                contentType);
-
+                            long? byteLength = response.Content.Headers.ContentLength ?? null;
+                            string respVerboseMsg = byteLength is null ?
+                                                    string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsgNoSize, contentType) :
+                                                    string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, byteLength ,contentType);
+                            
                             WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
