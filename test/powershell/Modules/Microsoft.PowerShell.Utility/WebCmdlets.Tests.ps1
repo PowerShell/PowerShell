@@ -568,6 +568,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-WebRequest -ContentType overwrites Content-Type from -Headers." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        $command = "Invoke-WebRequest -Uri '$uri' -ContentType 'application/json' -Headers @{'Content-Type'='plain/text'} -Method 'POST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.BaseResponse.RequestMessage.Content.Headers.ContentType.MediaType | Should -BeExactly 'application/json'
+    }
+
     It "Invoke-WebRequest supports sending request as UTF-8." {
         $uri = Get-WebListenerUrl -Test 'POST'
         # Body must contain non-ASCII characters
@@ -576,7 +583,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
-        $Result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
+        $result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
         $object = $Result.Output.Content | ConvertFrom-Json
         $object.Data | Should -BeExactly 'проверка'
     }
@@ -617,7 +624,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         param($proxy_address, $name, $protocol)
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
@@ -967,6 +974,42 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
+        }
+
+        It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session variable on multiple redirects: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
+            $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+            $credential = [pscredential]::new("testuser", $token)
+            $certificate = Get-WebListenerClientCertificate
+            $headers = @{"Authorization" = "test"}
+            $proxy = (Get-WebListenerUrl).Authority
+            $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.MaximumRedirection = 2
+            $session.MaximumRetryCount = 2
+            $session.RetryIntervalInSeconds = 2
+            $session.UseDefaultCredentials = $true
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+            $session.MaximumRedirection | Should -BeExactly 2
+            $session.MaximumRetryCount | Should -BeExactly 2
+            $session.RetryIntervalInSeconds | Should -BeExactly 2
+            $session.UseDefaultCredentials | Should -BeExactly $true
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.Credentials = $credential
+            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
+            $session.Credentials.UserName | Should -BeExactly $credential.UserName
+            $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
+            $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.Proxy = [System.Net.WebProxy]::new($proxy)
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+            $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -2338,6 +2381,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-RestMethod -ContentType overwrites Content-Type from -Headers." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        $command = "Invoke-RestMethod -Uri '$uri' -ContentType 'application/json' -Headers @{'Content-Type'='plain/text'} -Method 'POST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.headers."Content-Type" | Should -BeExactly 'application/json'
+    }
+
     It "Invoke-RestMethod supports sending requests as UTF8" {
         $uri = Get-WebListenerUrl -Test POST
         # Body must contain non-ASCII characters
@@ -2704,6 +2754,42 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure Authorization header was stripped
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
+    }
+
+    It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session variable on multiple redirects: <redirectType>" -TestCases $redirectTests {
+        param($redirectType)
+
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
+        $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+        $credential = [pscredential]::new("testuser", $token)
+        $certificate = Get-WebListenerClientCertificate
+        $headers = @{"Authorization" = "test"}
+        $proxy = (Get-WebListenerUrl).Authority
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.MaximumRedirection = 2
+        $session.MaximumRetryCount = 2
+        $session.RetryIntervalInSeconds = 2
+        $session.UseDefaultCredentials = $true
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+        $session.MaximumRedirection | Should -BeExactly 2
+        $session.MaximumRetryCount | Should -BeExactly 2
+        $session.RetryIntervalInSeconds | Should -BeExactly 2
+        $session.UseDefaultCredentials | Should -BeExactly $true
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.Credentials = $credential
+        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
+        $session.Credentials.UserName | Should -BeExactly $credential.UserName
+        $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
+        $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.Proxy = [System.Net.WebProxy]::new($proxy)
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+        $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {

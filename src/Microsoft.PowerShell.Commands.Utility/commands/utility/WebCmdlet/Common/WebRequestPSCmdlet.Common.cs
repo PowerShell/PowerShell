@@ -110,6 +110,11 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
+        /// Maximum number of Redirects to follow.
+        /// </summary>
+        internal int _maximumRedirection;
+
+        /// <summary>
         /// Parse Rel Links.
         /// </summary>
         internal bool _parseRelLink = false;
@@ -556,6 +561,8 @@ namespace Microsoft.PowerShell.Commands
 
                             WriteVerbose(reqVerboseMsg);
 
+                            _maximumRedirection = WebSession.MaximumRedirection;
+
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                             string contentType = ContentHelper.GetContentType(response);
@@ -905,11 +912,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
                 }
-                else if (ProxyUseDefaultCredentials)
+                else
                 {
-                    // If both ProxyCredential and ProxyUseDefaultCredentials are passed,
-                    // UseDefaultCredentials will overwrite the supplied credentials.
-                    webProxy.UseDefaultCredentials = true;
+                    webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
                 }
 
                 WebSession.Proxy = webProxy;
@@ -1233,7 +1238,7 @@ namespace Microsoft.PowerShell.Commands
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (handleRedirect
-                    && WebSession.MaximumRedirection is not 0
+                    && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
                 {
@@ -1241,9 +1246,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken = null;
 
                     // If explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
+                    if (_maximumRedirection > 0)
                     {
-                        WebSession.MaximumRedirection--;
+                        _maximumRedirection--;
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
@@ -1488,14 +1493,16 @@ namespace Microsoft.PowerShell.Commands
             
             Encoding? encoding = null;
 
-            if (ContentType is not null)
+            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
+
+            if (contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
+                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(contentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
@@ -1506,7 +1513,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!SkipHeaderValidation)
                     {
                         ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, contentType);
                         ThrowTerminatingError(er);
                     }
                 }
