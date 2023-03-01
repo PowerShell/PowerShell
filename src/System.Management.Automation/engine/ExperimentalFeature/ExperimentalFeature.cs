@@ -157,20 +157,15 @@ namespace System.Management.Automation
             EnabledExperimentalFeatureNames = ProcessEnabledFeatures(enabledFeatures);
         }
 
-        /// <summary>temp variable for debugging/summary>
-        public static int deactivationCount { get; set; } = 0;
-
         /// <summary>
         /// We need to notify which features were not enabled.
         /// </summary>
-        private static void SendTelemetryForDeactivatedFeatures(List<string> enabledFeatures)
+        private static void SendTelemetryForDeactivatedFeatures(ReadOnlyBag<string> enabledFeatures)
         {
-            var features = new HashSet<string>(enabledFeatures, StringComparer.OrdinalIgnoreCase);
             foreach (var feature in EngineExperimentalFeatures)
             {
-                if (!features.Contains(feature.Name))
+                if (!enabledFeatures.Contains(feature.Name))
                 {
-                    deactivationCount++;
                     ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureDeactivation, feature.Name);
                 }
             }
