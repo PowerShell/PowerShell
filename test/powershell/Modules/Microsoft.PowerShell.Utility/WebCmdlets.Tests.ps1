@@ -980,7 +980,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $proxy = "http://127.0.0.1:8080"
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
 
-            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
             $session.MaximumRedirection = 2
             $session.MaximumRetryCount = 2
             $session.RetryIntervalInSeconds = 2
@@ -991,10 +991,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session.RetryIntervalInSeconds | Should -BeExactly 2
             $session.UseDefaultCredentials | Should -BeExactly $true
 
-            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
             $session.Credentials = $credential
-            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
-            $session.Proxy = [System.Net.WebProxy]::New($proxy)
+            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
+            $session.Proxy = [System.Net.WebProxy]::new($proxy)
             try { $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers } catch {}
             $session.Credentials.UserName | Should -BeExactly $credential.UserName
             $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
@@ -2750,7 +2750,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $proxy = "http://127.0.0.1:8080"
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
 
-        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
         $session.MaximumRedirection = 2
         $session.MaximumRetryCount = 2
         $session.RetryIntervalInSeconds = 2
@@ -2761,10 +2761,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session.RetryIntervalInSeconds | Should -BeExactly 2
         $session.UseDefaultCredentials | Should -BeExactly $true
 
-        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
         $session.Credentials = $credential
-        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
-        $session.Proxy = [System.Net.WebProxy]::New($proxy)
+        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
+        $session.Proxy = [System.Net.WebProxy]::new($proxy)
         try { $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers } catch {}
         $session.Credentials.UserName | Should -BeExactly $credential.UserName
         $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
