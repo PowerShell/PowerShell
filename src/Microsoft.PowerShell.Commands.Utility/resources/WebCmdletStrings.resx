@@ -238,7 +238,7 @@
     <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
   </data>
   <data name="WebResponseVerboseMsg" xml:space="preserve">
-    <value>received {0}response of content type {1}</value>
+    <value>received {0}-byte response of content type {1}</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
     <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
