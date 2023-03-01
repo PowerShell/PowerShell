@@ -902,9 +902,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
                 }
-                else if (ProxyUseDefaultCredentials)
+                else
                 {
-                    webProxy.UseDefaultCredentials = true;
+                    webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
                 }
 
                 WebSession.Proxy = webProxy;
