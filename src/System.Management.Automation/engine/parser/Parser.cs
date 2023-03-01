@@ -4945,6 +4945,9 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
+            // Validates that it's a valid namespace/type identifier, see:
+            // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/namespaces#133-namespace-declarations
+            // https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names#naming-rules
             if (kind is UsingStatementKind.Namespace or UsingStatementKind.Type
                 && itemAst is StringConstantExpressionAst stringAst
                 && !Regex.IsMatch(stringAst.Value, @"^([\p{L}_][\p{L}\p{Pc}\p{Nd}\p{Cf}\p{M}]*)(\.[\p{L}_][\p{L}\p{Pc}\p{Nd}\p{Cf}\p{M}]*)*$"))
