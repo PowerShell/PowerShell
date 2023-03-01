@@ -4825,25 +4825,35 @@ class BomRecord {
     [string]
     $FileType = "NonProduct"
 
+    # Add methods to normalize Pattern to use `/` as the directory separator,
+    # but give a Pattern that is usable on the current platform
     [string]
     GetPattern () {
+        # Get the directory separator character for the current OS
         $dirSeparator = [System.io.path]::DirectorySeparatorChar
+
+        # If the directory separator character is not a slash, then replace all slashes in the pattern with the OS-specific directory separator character
         if ($dirSeparator -ne '/') {
             return $this.Pattern.replace('/', $dirSeparator)
         }
+
+        # If the directory separator character is a slash, then return the pattern as-is
         return $this.Pattern
     }
 
     [void]
     SetPattern ([string]$Pattern) {
+        # Get the directory separator character for the current OS
         $dirSeparator = [System.io.path]::DirectorySeparatorChar
+
+        # If the directory separator character is not a slash, then replace all instances of the OS-specific directory separator character with slashes in the pattern
         if ($dirSeparator -ne '/') {
             $this.Pattern = $Pattern.Replace($dirSeparator, '/')
         }
 
+        # If the directory separator character is a slash, then set the pattern as-is
         $this.Pattern = $Pattern
     }
-
 }
 
 # Verify a folder based on a BOM json.
@@ -4871,28 +4881,39 @@ function Test-Bom {
     $patternsUsed = @()
     $files = @(Get-ChildItem -File -Path $Path -Recurse)
     $totalFiles = $files.Count
-    $currentFileCount =0
+    $currentFileCount = 0
+
+    # Test each file if it is a match for a pattern in the BOM
+    # Add patters found to $patternsUsed
+    # Generate a list of new BOMs in $noMatch
     $files | ForEach-Object {
         [System.IO.FileInfo] $file = $_
         $fileName = $file.Name
+        $filePath = $file.FullName
         $currentFileCount++
-        Write-Progress -Activity "Testing $BomName BOM" -PercentComplete (100*$currentFileCount/$totalFiles) -CurrentOperation $fileName -Status "Processing $fileName"
+
+        Write-Progress -Activity "Testing $BomName BOM" -PercentComplete (100*$currentFileCount/$totalFiles) -Status "Processing $fileName"
+
         $match = $false
         $matchingRecord = $null
-        foreach ($record in $bomList) {
-            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $record.GetPattern()
-            Write-Verbose "testing '$_ -like $pattern"
-            if ($_ -like $pattern) {
-                $matchingRecord = $record
-                Write-Verbose "matched '$_ -like $pattern"
+
+        # Test file against each BOM that can still have a match
+        foreach ($bom in $bomList) {
+            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $bom.GetPattern()
+            Write-Verbose "testing '$filePath -like $pattern"
+            if ($filePath -like $pattern) {
+                $matchingRecord = $bom
+                Write-Verbose "matched '$filePath -like $pattern"
                 $match = $true
-                if ($patternsUsed -notcontains $record) {
-                    $patternsUsed += $record
+                if ($patternsUsed -notcontains $bom) {
+                    $patternsUsed += $bom
+
                 }
                 break
             }
         }
 
+        # if we didn't find a match, create a record in the noMatch list.
         if (!$match) {
             $relativePath = $_.FullName.Replace($root, "").Substring(1)
             $isProduct = Test-IsProductFile -Path $relativePath
@@ -4909,39 +4930,50 @@ function Test-Bom {
             $noMatch += $newBomRecord
         }
         elseif($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.Pattern)) {
-            # remove any exact pattern which have been matched to speed up file processing
+            # remove any exact pattern which have been matched to speed up file processing,
+            # because they should not have additional matches.
             $null = $bomList.Remove($matchingRecord)
         }
     }
+
     Write-Progress -Activity "Testing $BomName BOM" -Completed
 
     Write-Verbose "$($noMatch.count) records need to be added to $bomFile" -Verbose
-    #$noMatch | convertto-json | Write-Host
-    $currentRecords = @()
-    $currentRecords += $noMatch
-    $currentRecords += $patternsUsed
-    $newBom = [system.io.path]::GetTempFileName() + "-$bomName.json"
 
+    # Create the complete new manifest
+    $currentRecords = @()
+    # Add BOMs for all the files that didn't match
+    $currentRecords += $noMatch
+    # Add BOMs for all the patterns that did match
+    $currentRecords += $patternsUsed
+
+    # Generate a name for the updated BOM
+    $newBom = "$bomName-" + [system.io.path]::GetTempFileName() + "-bom.json"
+
+    # Sort and serialize the BOM
     $currentRecords | Sort-Object -Property FileType, Pattern | ConvertTo-Json | Out-File -Encoding utf8NoBOM -FilePath $newBom
 
+    # check if we removed any BOMs
     $needsRemoval = $bom | Where-Object {
         $_ -notin $patternsUsed
     }
+
     Write-Verbose "$($needsRemoval.count) need removal from $bomFile" -Verbose
 
-
+    # If we added or removed BOMs, log the new file and throw
     if ($noMatch.count -gt 0 -or $needsRemoval.Count -gt 0) {
         Send-AzdoFile -Path $newBom
+
+        # If -Fix was specified, update the original BOM
         if ($Fix) {
             Copy-Item -Path $newBom -Destination $bomFile -Force -Verbose
         }
+
         throw "Please update $bomFile per the above instructions"
     }
 }
 
-
-# TODO: this version is meant for initial BOM generation
-# Either simplify or remove
+# Simple test to guess if a file is a product file
 function Test-IsProductFile {
     param(
         $Path

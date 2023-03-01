@@ -1,10 +1,10 @@
 [
   {
-    "Pattern": "_manifest\\spdx_2.2\\manifest.spdx.json",
+    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
     "FileType": "Product"
   },
   {
-    "Pattern": "_manifest\\spdx_2.2\\manifest.spdx.json.sha256",
+    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
     "FileType": "Product"
   },
   {
@@ -12,19 +12,19 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "assets\\Powershell_av_colors.ico",
+    "Pattern": "assets/Powershell_av_colors.ico",
     "FileType": "Product"
   },
   {
-    "Pattern": "assets\\Powershell_avatar.ico",
+    "Pattern": "assets/Powershell_avatar.ico",
     "FileType": "Product"
   },
   {
-    "Pattern": "assets\\Powershell_black.ico",
+    "Pattern": "assets/Powershell_black.ico",
     "FileType": "Product"
   },
   {
-    "Pattern": "assets\\ps_black_32x32.ico",
+    "Pattern": "assets/ps_black_32x32.ico",
     "FileType": "Product"
   },
   {
