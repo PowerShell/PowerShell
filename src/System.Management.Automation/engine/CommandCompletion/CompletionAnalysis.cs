@@ -231,6 +231,31 @@ namespace System.Management.Automation
             return null;
         }
 
+        private static Token GetTokenBeforeCursor(IReadOnlyList<Token> tokens, IScriptPosition cursorPosition, out Token tokenAtCursor)
+        {
+            Token tokenBeforeCursor = null;
+            tokenAtCursor = null;
+            for (int i = tokens.Count - 1; i >= 0; i--)
+            {
+                if (tokens[i].Kind == TokenKind.LineContinuation)
+                {
+                    continue;
+                }
+
+                if (IsCursorAfterExtent(cursorPosition, tokens[i].Extent))
+                {
+                    tokenBeforeCursor = tokens[i];
+                    break;
+                }
+                else if (IsCursorWithinOrJustAfterExtent(cursorPosition, tokens[i].Extent))
+                {
+                    tokenAtCursor = tokens[i];
+                }
+            }
+
+            return tokenBeforeCursor;
+        }
+
         private static Ast GetLastAstAtCursor(ScriptBlockAst scriptBlockAst, IScriptPosition cursorPosition)
         {
             var asts = AstSearcher.FindAll(scriptBlockAst, ast => IsCursorRightAfterExtent(cursorPosition, ast.Extent), searchNestedScriptBlocks: true);
@@ -423,7 +448,7 @@ namespace System.Management.Automation
                     case TokenKind.Identifier:
                         if (!tokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
                         {
-                            var tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(_tokens, completionContext.CursorPosition);
+                            var tokenBeforeCursor = GetTokenBeforeCursor(_tokens, _cursorPosition, out _);
                             if (tokenBeforeCursor is not null)
                             {
                                 if (tokenBeforeCursor.Kind == TokenKind.Namespace && tokenAtCursor is StringToken stringToken)
@@ -790,7 +815,8 @@ namespace System.Management.Automation
                         }
                         break;
                     default:
-                        result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, tokenBeforeCursor:null, tokenAtCursor, ref replacementIndex, ref replacementLength);
+                        var tokenBeforeCursor2 = GetTokenBeforeCursor(_tokens, _cursorPosition, out var tokenAtCursor2);
+                        result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, tokenBeforeCursor2, tokenAtCursor2, ref replacementIndex, ref replacementLength);
                         if (result is not null)
                         {
                             return result;
