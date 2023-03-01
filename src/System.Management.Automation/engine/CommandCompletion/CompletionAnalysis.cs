@@ -423,10 +423,20 @@ namespace System.Management.Automation
                     case TokenKind.Identifier:
                         if (!tokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
                         {
-                            result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
-                            if (result is not null)
+                            var tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(_tokens, completionContext.CursorPosition);
+                            if (tokenBeforeCursor is not null)
                             {
-                                return result;
+                                if (tokenBeforeCursor.Kind == TokenKind.Namespace && tokenAtCursor is StringToken stringToken)
+                                {
+                                    completionContext.WordToComplete = stringToken.Value;
+                                    return CompletionCompleters.CompleteNamespace(completionContext);
+                                }
+
+                                result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, tokenBeforeCursor, tokenAtCursor, ref replacementIndex, ref replacementLength);
+                                if (result is not null)
+                                {
+                                    return result;
+                                }
                             }
 
                             result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
@@ -780,7 +790,7 @@ namespace System.Management.Automation
                         }
                         break;
                     default:
-                        result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+                        result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, tokenBeforeCursor:null, tokenAtCursor, ref replacementIndex, ref replacementLength);
                         if (result is not null)
                         {
                             return result;
@@ -1023,7 +1033,7 @@ namespace System.Management.Automation
                                     }
 
                                 case TokenKind.Using:
-                                    return CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+                                    return CompleteUsingKeywords(completionContext.CursorPosition.Offset, tokenBeforeCursor, tokenAtCursor, ref replacementIndex, ref replacementLength);
 
                                 case TokenKind.Dot:
                                 case TokenKind.ColonColon:
@@ -2528,28 +2538,18 @@ namespace System.Management.Automation
 
             return result;
         }
-      
-        private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
+
+        private static List<CompletionResult> CompleteUsingKeywords(
+            int cursorOffset,
+            Token tokenBeforeCursor,
+            Token tokenAtCursor,
+            ref int replacementIndex,
+            ref int replacementLength)
         {
-            var result = new List<CompletionResult>();
-            Token tokenBeforeCursor = null;
-            Token tokenAtCursor = null;
-
-            for (int i = tokens.Length - 1; i >= 0; i--)
+            if ((tokenBeforeCursor is not null && tokenBeforeCursor.Kind == TokenKind.Using)
+                || (tokenAtCursor is not null && tokenAtCursor.Kind is TokenKind.Assembly or TokenKind.Module or TokenKind.Namespace or TokenKind.Type))
             {
-                if (tokens[i].Extent.EndOffset < cursorOffset && tokens[i].Kind != TokenKind.LineContinuation)
-                {
-                    tokenBeforeCursor = tokens[i];
-                    break;
-                }
-                else if (tokens[i].Extent.StartOffset <= cursorOffset && tokens[i].Extent.EndOffset >= cursorOffset && tokens[i].Kind != TokenKind.LineContinuation)
-                {
-                    tokenAtCursor = tokens[i];
-                }
-            }
-
-            if (tokenBeforeCursor is not null && tokenBeforeCursor.Kind == TokenKind.Using)
-            {
+                var result = new List<CompletionResult>();
                 string wordToComplete = null;
                 if (tokenAtCursor is not null)
                 {
@@ -2570,11 +2570,11 @@ namespace System.Management.Automation
                         result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, GetUsingKeywordToolTip(keyword)));
                     }
                 }
-            }
 
-            if (result.Count > 0)
-            {
-                return result;
+                if (result.Count > 0)
+                {
+                    return result;
+                }
             }
 
             return null;
