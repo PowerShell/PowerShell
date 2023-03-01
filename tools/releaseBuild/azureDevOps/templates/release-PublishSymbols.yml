@@ -9,6 +9,7 @@ steps:
     runBranch: '$(Build.SourceBranch)'
     artifact: results
     path: '$(System.ArtifactsDirectory)\results'
+    searchPattern: '!*signed.zip'
 
 - pwsh: |
     Write-Verbose -Verbose "Enumerating $(System.ArtifactsDirectory)\results"
@@ -17,7 +18,7 @@ steps:
     $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
     $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
 
-    $downloadedArtifacts | Where-Object { $_.Name -notlike 'PowerShell*-symbols*signed.zip'} | ForEach-Object {
+    $downloadedArtifacts | ForEach-Object {
       $destFolder = New-Item -Path "$expandedRoot/$($_.BaseName)/" -ItemType Directory -Verbose
       Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
 
