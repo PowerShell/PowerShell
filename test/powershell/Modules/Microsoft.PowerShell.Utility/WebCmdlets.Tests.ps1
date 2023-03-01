@@ -994,11 +994,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
             $session.Credentials = $credential
             $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
-            $session.Proxy = [System.Net.WebProxy]::new($proxy)
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
             $session.Credentials.UserName | Should -BeExactly $credential.UserName
             $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
             $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.Proxy = [System.Net.WebProxy]::new($proxy)
+            $null = Invoke-WebRequest -Uri http://httpbin.org -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
             $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
         }
 
