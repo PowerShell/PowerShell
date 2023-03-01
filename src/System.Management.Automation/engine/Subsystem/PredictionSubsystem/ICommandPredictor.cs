@@ -22,11 +22,6 @@ namespace System.Management.Automation.Subsystem.Prediction
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
-        /// Default implementation for `ISubsystem.Kind`.
-        /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
-
-        /// <summary>
         /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
@@ -186,8 +181,8 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="inputTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         public PredictionContext(Ast inputAst, Token[] inputTokens)
         {
-            Requires.NotNull(inputAst, nameof(inputAst));
-            Requires.NotNull(inputTokens, nameof(inputTokens));
+            ArgumentNullException.ThrowIfNull(inputAst);
+            ArgumentNullException.ThrowIfNull(inputTokens);
 
             var cursor = inputAst.Extent.EndScriptPosition;
             var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
@@ -206,7 +201,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <returns>A <see cref="PredictionContext"/> object.</returns>
         public static PredictionContext Create(string input)
         {
-            Requires.NotNullOrEmpty(input, nameof(input));
+            ArgumentException.ThrowIfNullOrEmpty(input);
 
             Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
             return new PredictionContext(ast, tokens);
@@ -244,7 +239,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="toolTip">The tooltip of the suggestion.</param>
         public PredictiveSuggestion(string suggestion, string? toolTip)
         {
-            Requires.NotNullOrEmpty(suggestion, nameof(suggestion));
+            ArgumentException.ThrowIfNullOrEmpty(suggestion);
 
             SuggestionText = suggestion;
             ToolTip = toolTip;

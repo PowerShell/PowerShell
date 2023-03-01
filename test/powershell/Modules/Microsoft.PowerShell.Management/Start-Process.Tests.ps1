@@ -32,25 +32,25 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     It "Should process arguments without error" {
         $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should work correctly when used with full path name" {
         $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with FilePath argument" {
         $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with Path alias argument" {
@@ -67,26 +67,26 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     It "Should work correctly with WorkingDirectory argument" {
         $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
-	
+
     It "Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" {
         Push-Location -LiteralPath $tempDirectory
-	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
         Pop-Location
     }
 
     It "Should handle stderr redirection without error" {
         $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stdout redirection without error" {
@@ -95,8 +95,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 
-    # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
-    It "Should handle stdin redirection without error" -Pending {
+    It "Should handle stdin redirection without error" {
         $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
         $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0

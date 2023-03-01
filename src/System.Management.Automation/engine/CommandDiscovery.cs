@@ -55,7 +55,7 @@ namespace System.Management.Automation
         public bool StopSearch { get; set; }
 
         /// <summary>
-        /// The CommandInfo obejct for the command that was found.
+        /// The CommandInfo object for the command that was found.
         /// </summary>
         public CommandInfo Command { get; set; }
 

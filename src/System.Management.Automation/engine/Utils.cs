@@ -302,9 +302,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper fn to check byte[] arg for null.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
             if (arg == null)
@@ -329,9 +329,9 @@ namespace System.Management.Automation
         /// Helper fn to check arg for empty or null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
             if (arg == null)
@@ -348,9 +348,9 @@ namespace System.Management.Automation
         /// Helper fn to check arg for null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckArgForNull(object arg, string argName)
         {
             if (arg == null)
@@ -362,9 +362,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper fn to check arg for null.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
-        ///<returns> Does not return a value.</returns>
+        /// <param name="arg"> arg to check </param>
+        /// <param name="argName"> name of the arg </param>
+        /// <returns> Does not return a value.</returns>
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
             if (arg == null)
@@ -1457,22 +1457,18 @@ namespace System.Management.Automation
         ///     NoLanguage          ->  NoLanguage.
         /// </summary>
         /// <param name="context">ExecutionContext.</param>
-        /// <returns>Previous language mode or null for no language mode change.</returns>
-        internal static PSLanguageMode? EnforceSystemLockDownLanguageMode(ExecutionContext context)
+        /// <returns>The current ExecutionContext language mode.</returns>
+        internal static PSLanguageMode EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
-            PSLanguageMode? oldMode = null;
-
             if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
             {
                 switch (context.LanguageMode)
                 {
                     case PSLanguageMode.FullLanguage:
-                        oldMode = context.LanguageMode;
                         context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         break;
 
                     case PSLanguageMode.RestrictedLanguage:
-                        oldMode = context.LanguageMode;
                         context.LanguageMode = PSLanguageMode.NoLanguage;
                         break;
 
@@ -1482,13 +1478,12 @@ namespace System.Management.Automation
 
                     default:
                         Diagnostics.Assert(false, "Unexpected PSLanguageMode");
-                        oldMode = context.LanguageMode;
                         context.LanguageMode = PSLanguageMode.NoLanguage;
                         break;
                 }
             }
 
-            return oldMode;
+            return context.LanguageMode;
         }
 
         internal static string DisplayHumanReadableFileSize(long bytes)
@@ -1702,10 +1697,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal ReadOnlyBag(HashSet<T> hashset)
         {
-            if (hashset == null)
-            {
-                throw new ArgumentNullException(nameof(hashset));
-            }
+            ArgumentNullException.ThrowIfNull(hashset);
 
             _hashset = hashset;
         }
@@ -1741,49 +1733,11 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal static class Requires
     {
-        internal static void NotNull(object value, string paramName)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(paramName);
-            }
-        }
-
-        internal static void NotNullOrEmpty(string value, string paramName)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentNullException(paramName);
-            }
-        }
-
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            if (value == null || value.Count == 0)
+            if (value is null || value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
-            }
-        }
-
-        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
-        {
-            if (!precondition)
-            {
-                throw new ArgumentException(paramName);
-            }
-        }
-
-        internal static void OneSpecificSubsystemKind(Subsystem.SubsystemKind kind)
-        {
-            uint value = (uint)kind;
-            if (value == 0 || (value & (value - 1)) != 0)
-            {
-                // The value is either invalid or a composite value because it's not power of 2.
-                throw new ArgumentException(
-                    StringUtil.Format(
-                        SubsystemStrings.RequireOneSpecificSubsystemKind,
-                        kind.ToString()),
-                    nameof(kind));
             }
         }
     }

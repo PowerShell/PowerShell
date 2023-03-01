@@ -33,9 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response)
-            : this(response, null)
-        { }
+        public BasicHtmlWebResponseObject(HttpResponseMessage response) : this(response, null) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
@@ -43,8 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream)
-            : base(response, contentStream)
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream) : base(response, contentStream)
         {
             EnsureHtmlParser();
             InitializeContent();
@@ -167,8 +164,7 @@ namespace Microsoft.PowerShell.Commands
             string contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
             {
-                Encoding encoding = null;
-                // fill the Content buffer
+                // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
                 if (string.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
@@ -176,12 +172,12 @@ namespace Microsoft.PowerShell.Commands
                     characterSet = Encoding.UTF8.HeaderName;
                 }
 
-                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
-                this.Encoding = encoding;
+                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
+                Encoding = encoding;
             }
             else
             {
-                this.Content = string.Empty;
+                Content = string.Empty;
             }
         }
 

@@ -430,10 +430,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (userData == null)
-            {
-                throw new ArgumentNullException(nameof(userData));
-            }
+            ArgumentNullException.ThrowIfNull(userData);
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -518,10 +515,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (encryptedData == null)
-            {
-                throw new ArgumentNullException(nameof(encryptedData));
-            }
+            ArgumentNullException.ThrowIfNull(encryptedData);
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();

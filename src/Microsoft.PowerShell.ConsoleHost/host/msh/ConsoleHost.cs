@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
-                    s_theConsoleHost.UI.WriteLine("PowerShell " + PSVersionInfo.GitCommitId);
+                    s_theConsoleHost.UI.WriteLine($"PowerShell {PSVersionInfo.GitCommitId}");
                     return 0;
                 }
 
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell
         /// if true, then flag the parent ConsoleHost that it should shutdown the session.  If false, then only the current
         /// executing instance is stopped.
         ///
-        ///</param>
+        /// </param>
         private static void SpinUpBreakHandlerThread(bool shouldEndSession)
         {
             ConsoleHost host = ConsoleHost.SingletonInstance;
@@ -771,7 +771,7 @@ namespace Microsoft.PowerShell
 
             public ConsoleColorProxy(ConsoleHostUserInterface ui)
             {
-                if (ui == null) throw new ArgumentNullException(nameof(ui));
+                ArgumentNullException.ThrowIfNull(ui);
                 _ui = ui;
             }
 
@@ -1831,8 +1831,29 @@ namespace Microsoft.PowerShell
                 const string shellId = "Microsoft.PowerShell";
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
-                // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                // are loaded so that they are trusted. (Validation of their signatures is done in F&O).
+                var languageMode = Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
+                // When displaying banner, also display the language mode if running in any restricted mode.
+                if (s_cpp.ShowBanner)
+                {
+                    switch (languageMode)
+                    {
+                        case PSLanguageMode.ConstrainedLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
+                            break;
+
+                        case PSLanguageMode.NoLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerNLMode);
+                            break;
+
+                        case PSLanguageMode.RestrictedLanguage:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerRLMode);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
 
                 string allUsersProfile = HostUtilities.GetFullProfileFileName(null, false);
                 string allUsersHostSpecificProfile = HostUtilities.GetFullProfileFileName(shellId, false);
@@ -2815,61 +2836,13 @@ namespace Microsoft.PowerShell
                 // Output any training suggestions
                 try
                 {
-                    List<FeedbackEntry> feedbacks = FeedbackHub.GetFeedback(_parent.Runspace);
-                    if (feedbacks is null || feedbacks.Count == 0)
+                    List<FeedbackResult> feedbacks = FeedbackHub.GetFeedback(_parent.Runspace);
+                    if (feedbacks is null || feedbacks.Count is 0)
                     {
                         return;
                     }
 
-                    // Feedback section starts with a new line.
-                    ui.WriteLine();
-
-                    const string Indentation = "  ";
-                    string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
-                    string textStyle = PSStyle.Instance.Formatting.FeedbackText;
-                    string ansiReset = PSStyle.Instance.Reset;
-
-                    if (!ui.SupportsVirtualTerminal)
-                    {
-                        nameStyle = string.Empty;
-                        textStyle = string.Empty;
-                        ansiReset = string.Empty;
-                    }
-
-                    int count = 0;
-                    var output = new StringBuilder();
-
-                    foreach (FeedbackEntry entry in feedbacks)
-                    {
-                        if (count > 0)
-                        {
-                            output.AppendLine();
-                        }
-
-                        output.Append("Suggestion [")
-                            .Append(nameStyle)
-                            .Append(entry.Name)
-                            .Append(ansiReset)
-                            .AppendLine("]:")
-                            .Append(textStyle);
-
-                        string[] lines = entry.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                        foreach (string line in lines)
-                        {
-                            output.Append(Indentation)
-                                .Append(line.AsSpan().TrimEnd())
-                                .AppendLine();
-                        }
-
-                        output.Append(ansiReset);
-                        ui.Write(output.ToString());
-
-                        count++;
-                        output.Clear();
-                    }
-
-                    // Feedback section ends with a new line.
-                    ui.WriteLine();
+                    HostUtilities.RenderFeedback(feedbacks, ui);
                 }
                 catch (Exception e)
                 {

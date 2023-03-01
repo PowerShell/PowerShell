@@ -14,6 +14,7 @@
 32-bit
 4.final
 64-bit
+AAATechGuy
 about_
 about_debuggers
 about_jobs
@@ -60,14 +61,17 @@ appimage
 applocker
 appveyor
 appx
+ArchitectureSensitiveAttribute
 args
 argumentlist
 arm32
 arm64
 asp.net
+ast.cs
 assemblyloadcontext
 AssemblyInfo
 assessibility
+AtariDreams
 authenticode
 authenticodesignature
 azdevops
@@ -102,6 +106,7 @@ brcrista
 breakpoint
 brianbunke
 britishben
+brotli
 brucepay
 bugfix
 build.json
@@ -109,10 +114,12 @@ build.psm1
 bulid
 buildInfoJson
 callmejoebob
+CarloToso
 catchable
 cdxml
 celsius
 CentOS
+CimDscParser
 codeql-action
 CGManifest
 cgmanifest.json
@@ -131,6 +138,7 @@ chibi
 childitem
 ChuckieChen945
 ChrisLGardner
+chrullrich
 cimsession
 cimsupport
 ci.psm1
@@ -158,6 +166,7 @@ CommandSearcher
 comobject
 Compiler.cs
 composability
+computerinfo
 ComRuntimeHelpers.cs
 config
 connect-pssession
@@ -186,6 +195,8 @@ CorePsAssemblyLoadContext.cs
 coveralls.exe
 coveralls.io.
 coveralls.net
+CreateFile
+CreateFileW
 credssp
 cron
 crontab
@@ -203,6 +214,7 @@ DarylGraves
 darquewarrior
 darwinjs
 DateTime
+DateTime.UnixEpoch
 daxian-dbw
 dayofweek
 dchristian3188
@@ -240,6 +252,7 @@ distro
 distros
 dkaszews
 dll
+DllImport
 dlls
 dlwyatt
 dockerbasedbuild
@@ -302,6 +315,7 @@ felixfbecker
 ffeldhaus
 ffi
 fflaten
+File.OpenHandle
 filecatalog
 filename
 filesystem
@@ -372,6 +386,7 @@ GetExceptionForHR
 getparentprocess
 gettype
 Geweldig
+GigaScratch
 gitcommitid
 github
 githug
@@ -383,6 +398,7 @@ GoogleTest
 GUIs
 gzip
 hackathons
+HashData
 HashSet
 hashtable
 hashtables
@@ -423,6 +439,7 @@ includeide
 includeusername
 informationrecord
 initializers
+InitialSessionState.cs
 install-packageprovider
 IntelliSense
 interactivetesting
@@ -433,6 +450,7 @@ invoke-cimmethod
 Invoke-DSCResource
 invoke-restmethod
 invoke-wsmanaction
+InvokeRestMethodCommand.Common
 iot
 isazonov
 iscore
@@ -452,6 +470,7 @@ joandrsn
 joeltankam
 joeyaiello
 jokajak
+JohnLBevan
 joshuacooper
 journalctl
 jpsnover
@@ -489,6 +508,7 @@ lee303
 Leonhardt
 Libera.Chat
 libicu
+LibraryImport
 libpsl
 libpsl-native
 libunwind8
@@ -588,6 +608,7 @@ NameObscurerTelemetryInitializer
 namespace
 nano
 nanoserver
+NativeCultureResolver
 nativeexecution
 net5.0
 netcoreapp5.0
@@ -672,6 +693,8 @@ perfview
 perfview.exe
 peter-evans
 petseral
+pinvoke
+pinvokes
 plaintext
 pluggable
 pluralsight
@@ -697,6 +720,7 @@ powershellproperties
 ppadmavilasom
 pre-build
 pre-compiled
+pre-defined
 pre-generated
 pre-installed
 pre-parse
@@ -773,6 +797,7 @@ pwsh.deps.json
 qmfrederik
 raghav710
 RandomNoun7
+RandomNumberGenerator.Fill
 raspbian
 rc
 rc.1
@@ -806,6 +831,7 @@ register-packagesource
 register-psrepository
 registryprovider
 relationlink
+RemoteSessionNamedPipe
 remotesigned
 remoting
 remove-ciminstance
@@ -852,6 +878,7 @@ runtimes
 Ryan-Hutchison-USAF
 SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation
 Saancreed
+SafeRegistryHandle
 sample-dotnet1
 sample-dotnet2
 sarithsutha
@@ -988,8 +1015,10 @@ toolset
 tracesource
 travisez13
 travisty
+trossr32
 truher
 TSAUpload
+turbedi
 TValue
 tylerleonhardt
 typecataloggen
@@ -1015,6 +1044,7 @@ update-modulemanifest
 update-scriptfileinfo
 update-typedata
 uri
+urizen-source
 urls
 userdata
 uservoice
@@ -1057,7 +1087,10 @@ v7.1.0
 v7.1.6
 v7.1.7
 v7.2.2
+v7.2.6
 v7.3.0
+v7.4.0
+v7.0.12
 v7.0.13
 validatenotnullorempty
 ValidateSet
@@ -1077,6 +1110,8 @@ walkthrough
 webcmdlets
 weblistener
 webrequest
+webrequestpscmdlet.common.cs
+webresponseobject.common
 weltner
 wesholton84
 wget
@@ -1093,6 +1128,9 @@ windowspsmodulepath
 windowsversion
 winrm
 wix
+wmentha
+WNetGetConnection
+WNetAddConnection2
 worrenb
 wpr
 wprui.exe
@@ -1243,6 +1281,15 @@ CommonCommandParameters.cs
 preview.6.22352.1
 v2.2.6
 ResultsComparer
+pre-defined
+System.Runtime.CompilerServices.Unsafe
+TabExpansion
+PSv2
+System.Data.SqlClient
+Microsoft.CSharp
+v7.2.10
+7.2.x
+v7.3.3
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1282,6 +1329,7 @@ weltkante
 kilasuit
 tnieto88
 Orca88
+OrderBy
 centreboard
 romero126
 Greg-Smulko
@@ -1311,7 +1359,9 @@ Francisco-Gamino
 adamdriscoll
 analytics
 deserialized
+string.Join
 string.Split
+StringSplitOptions.TrimEntries
 Dictionary.TryAdd
 Environment.NewLine
 ParseError.ToString
@@ -1334,6 +1384,35 @@ SetVersionVariables
 yml
 DateTime
 DeploymentScripts
+GetValues
+GetNames
+SessionStateStrings
+Enum.HasFlags
+ConsoleInfoErrorStrings.resx
+ContentHelper.Common.cs
+FusionAssemblyIdentity
+GlobalAssemblyCache
+StringManipulationHelper
+testexe.exe
+echocmdline
+MemoryExtensions.IndexOfAny
+PSv2CompletionCompleter
+RemoteRunspacePoolInternal.cs
+PSVersionInfo
+WildcardPattern
+UTF8Encoding
+PowerShell.Core.Instrumentation.man
+Encoding.Default
+WinTrust
+System.Runtime.CompilerServices.Unsafe
+azCopy
+APISets
+ApiScan
+System.Data.SqlClient
+minimatch
+2.final
+SessionStateInternal
+Microsoft.PowerShell.SDK
 Markdig.Signed
  - docs/debugging/README.md
 corehost
@@ -1595,3 +1674,5 @@ centos-7
 Security.types.ps1xml
  - ADOPTERS.md
 MicrosoftPowerBIMgmt
+ - tools/clearlyDefined/readme.md
+ClearlyDefined

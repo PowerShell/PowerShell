@@ -110,10 +110,7 @@ namespace System.Management.Automation
             // The name can be empty for functions and filters but it
             // can't be null
 
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             Name = name;
             CommandType = type;
@@ -288,10 +285,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Rename(string newName)
         {
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(newName);
 
             Name = newName;
         }

@@ -193,10 +193,7 @@ namespace System.Management.Automation
         #region ctor
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }
