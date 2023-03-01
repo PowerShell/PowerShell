@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
-        /// Maximum number of Redirects to follow, caches WebSession.MaximumRedirection.
+        /// Maximum number of Redirects to follow.
         /// </summary>
         internal int _maximumRedirection;
 
