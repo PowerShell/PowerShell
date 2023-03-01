@@ -995,7 +995,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session.Credentials = $credential
             $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
             $session.Proxy = [System.Net.WebProxy]::new($proxy)
-            try { $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers } catch {}
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
             $session.Credentials.UserName | Should -BeExactly $credential.UserName
             $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
             $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
