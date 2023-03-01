@@ -1002,7 +1002,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
             $session.Proxy = [System.Net.WebProxy]::new($proxy)
             $null = Invoke-WebRequest -Uri http://httpbin.org -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
-            $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
+            $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -2767,12 +2767,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
         $session.Credentials = $credential
         $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
-        $session.Proxy = [System.Net.WebProxy]::new($proxy)
-        try { $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers } catch {}
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
         $session.Credentials.UserName | Should -BeExactly $credential.UserName
         $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
         $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
-        $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.Proxy = [System.Net.WebProxy]::new($proxy)
+        $null = Invoke-RestMethod -Uri http://httpbin.org -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+        $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
