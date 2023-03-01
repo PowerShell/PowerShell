@@ -560,7 +560,9 @@ namespace Microsoft.PowerShell.Commands.Internal
             else
             { // there is no key which also means there is no subkey
                 if (throwOnMissingSubKey)
+                {
                     throw new ArgumentException(RegistryProviderStrings.ArgumentException_RegSubKeyAbsent);
+                }
             }
         }
 
@@ -1396,7 +1398,9 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
 
             if (!Enum.IsDefined(typeof(RegistryValueKind), valueKind))
+            {
                 throw new ArgumentException(RegistryProviderStrings.Arg_RegBadKeyKind);
+            }
 
             EnsureWriteable();
 
@@ -2037,14 +2041,18 @@ namespace Microsoft.PowerShell.Commands.Internal
             while (nextSlash != -1)
             {
                 if ((nextSlash - current) > MaxKeyLength)
+                {
                     throw new ArgumentException(RegistryProviderStrings.Arg_RegKeyStrLenBug);
+                }
 
                 current = nextSlash + 1;
                 nextSlash = name.IndexOf('\\', current);
             }
 
             if ((name.Length - current) > MaxKeyLength)
+            {
                 throw new ArgumentException(RegistryProviderStrings.Arg_RegKeyStrLenBug);
+            }
         }
 
         private static void ValidateKeyMode(RegistryKeyPermissionCheck mode)
