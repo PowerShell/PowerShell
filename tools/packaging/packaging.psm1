@@ -4875,8 +4875,8 @@ function Test-Bom {
 
     $bomFile = Join-Path -Path $PSScriptRoot -ChildPath "Boms\$BomName.json"
     Write-Verbose "bomFile: $bomFile" -Verbose
-    [BomRecord[]]$bom = Get-Content -Path $bomFile | ConvertFrom-Json
-    $bomList = [System.Collections.Generic.List[BomRecord]]::new($bom)
+    [BomRecord[]]$bomRecords = Get-Content -Path $bomFile | ConvertFrom-Json
+    $bomList = [System.Collections.Generic.List[BomRecord]]::new($bomRecords)
     $noMatch = @()
     $patternsUsed = @()
     $files = @(Get-ChildItem -File -Path $Path -Recurse)
@@ -4895,7 +4895,7 @@ function Test-Bom {
         Write-Progress -Activity "Testing $BomName BOM" -PercentComplete (100*$currentFileCount/$totalFiles) -Status "Processing $fileName"
 
         $match = $false
-        $matchingRecord = $null
+        [BomRecord] $matchingRecord = $null
 
         # Test file against each BOM that can still have a match
         foreach ($bom in $bomList) {
