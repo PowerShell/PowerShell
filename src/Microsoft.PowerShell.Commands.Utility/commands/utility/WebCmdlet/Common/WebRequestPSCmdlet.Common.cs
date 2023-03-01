@@ -904,8 +904,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ProxyUseDefaultCredentials)
                 {
-                    // If both ProxyCredential and ProxyUseDefaultCredentials are passed,
-                    // UseDefaultCredentials will overwrite the supplied credentials.
                     webProxy.UseDefaultCredentials = true;
                 }
 
