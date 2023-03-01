@@ -552,10 +552,9 @@ namespace Microsoft.PowerShell.Commands
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                             string contentType = ContentHelper.GetContentType(response);
-                            long? byteLength = response.Content.Headers.ContentLength ?? null;
-                            string respVerboseMsg = byteLength is null ?
+                            string respVerboseMsg = response.Content.Headers.ContentLength is null ?
                                                     string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsgNoSize, contentType) :
-                                                    string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, byteLength ,contentType);
+                                                    string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Content.Headers.ContentLength,contentType);
                             
                             WriteVerbose(respVerboseMsg);
 
