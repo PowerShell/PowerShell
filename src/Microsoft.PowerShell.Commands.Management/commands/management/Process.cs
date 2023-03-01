@@ -21,8 +21,6 @@ using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Win32.SafeHandles;
-using DWORD = System.UInt32;
-using FileNakedHandle = System.IntPtr;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -519,27 +517,20 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = NameWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InputObjectWithUserNameParameterSet, Mandatory = true)]
-        public SwitchParameter IncludeUserName
-        {
-            get { return _includeUserName; }
+        public SwitchParameter IncludeUserName { get; set; }
 
-            set { _includeUserName = value; }
-        }
-
-        private bool _includeUserName = false;
-
-        ///<summary>
+        /// <summary>
         /// To display the modules of a process.
-        ///</summary>
+        /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
         [ValidateNotNull]
         public SwitchParameter Module { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// To display the fileversioninfo of the main module of a process.
-        ///</summary>
+        /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
@@ -640,7 +631,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                         }
                     }
-                    catch (PipelineStoppedException) 
+                    catch (PipelineStoppedException)
                     {
                         throw;
                     }
@@ -743,51 +734,52 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                do
+                int error;
+                if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler))
                 {
-                    int error;
-                    if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { break; }
+                    return null;
+                }
 
-                    // Set the default length to be 256, so it will be sufficient for most cases.
-                    int tokenInfoLength = 256;
-                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                // Set the default length to be 256, so it will be sufficient for most cases.
+                int tokenInfoLength = 256;
+                tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                {
+                    error = Marshal.GetLastWin32Error();
+                    if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
                     {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            Marshal.FreeHGlobal(tokenUserInfo);
-                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                        Marshal.FreeHGlobal(tokenUserInfo);
+                        tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
 
-                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
-                        }
-                        else
+                        if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
                         {
-                            break;
+                            return null;
                         }
                     }
-
-                    var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
-
-                    // Max username is defined as UNLEN = 256 in lmcons.h
-                    // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                    // The buffer length must be +1, last position is for a null string terminator.
-                    int userNameLength = 257;
-                    int domainNameLength = 16;
-#pragma warning disable CA2014
-                    Span<char> userNameStr = stackalloc char[userNameLength];
-                    Span<char> domainNameStr = stackalloc char[domainNameLength];
-#pragma warning restore CA2014
-                    Win32Native.SID_NAME_USE accountType;
-
-                    // userNameLength and domainNameLength will be set to actual lengths.
-                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    else
                     {
-                        break;
+                        return null;
                     }
+                }
 
-                    userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
-                } while (false);
+                var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                // Max username is defined as UNLEN = 256 in lmcons.h
+                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
+                // The buffer length must be +1, last position is for a null string terminator.
+                int userNameLength = 257;
+                int domainNameLength = 16;
+                Span<char> userNameStr = stackalloc char[userNameLength];
+                Span<char> domainNameStr = stackalloc char[domainNameLength];
+                Win32Native.SID_NAME_USE accountType;
+
+                // userNameLength and domainNameLength will be set to actual lengths.
+                if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                {
+                    return null;
+                }
+
+                userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
             }
             catch (NotSupportedException)
             {
@@ -817,7 +809,6 @@ namespace Microsoft.PowerShell.Commands
                     Win32Native.CloseHandle(processTokenHandler);
                 }
             }
-
 #endif
             return userName;
         }
@@ -1171,7 +1162,10 @@ namespace Microsoft.PowerShell.Commands
                             SafeGetProcessName(process),
                             SafeGetProcessId(process));
 
-                if (!ShouldProcess(targetString)) { continue; }
+                if (!ShouldProcess(targetString))
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -1329,7 +1323,10 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (ph != IntPtr.Zero) { Win32Native.CloseHandle(ph); }
+                if (ph != IntPtr.Zero)
+                {
+                    Win32Native.CloseHandle(ph);
+                }
             }
 
             return false;
@@ -1489,7 +1486,10 @@ namespace Microsoft.PowerShell.Commands
                             SafeGetProcessName(process),
                             SafeGetProcessId(process));
 
-                if (!ShouldProcess(targetMessage)) { continue; }
+                if (!ShouldProcess(targetMessage))
+                {
+                    continue;
+                }
 
                 // Sometimes Idle process has processid zero,so handle that because we cannot attach debugger to it.
                 if (process.Id == 0)
@@ -1504,7 +1504,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // If the process has exited, we skip it. If the process is from a remote
                     // machine, then we generate a non-terminating error.
-                    if (process.HasExited) { continue; }
+                    if (process.HasExited)
+                    {
+                        continue;
+                    }
                 }
                 catch (NotSupportedException ex)
                 {
@@ -1555,8 +1558,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (CimException e)
                     {
-                        string message = e.Message;
-                        if (!string.IsNullOrEmpty(message)) { message = message.Trim(); }
+                        string message = e.Message?.Trim();
 
                         var errorRecord = new ErrorRecord(
                                 new InvalidOperationException(StringUtil.Format(ProcessResources.DebuggerError, message)),
@@ -1572,16 +1574,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static string MapReturnCodeToErrorMessage(int returnCode)
         {
-            string errorMessage = string.Empty;
-            switch (returnCode)
+            string errorMessage = returnCode switch
             {
-                case 2: errorMessage = ProcessResources.AttachDebuggerReturnCode2; break;
-                case 3: errorMessage = ProcessResources.AttachDebuggerReturnCode3; break;
-                case 8: errorMessage = ProcessResources.AttachDebuggerReturnCode8; break;
-                case 9: errorMessage = ProcessResources.AttachDebuggerReturnCode9; break;
-                case 21: errorMessage = ProcessResources.AttachDebuggerReturnCode21; break;
-                default: Diagnostics.Assert(false, "Unreachable code."); break;
-            }
+                2 => ProcessResources.AttachDebuggerReturnCode2,
+                3 => ProcessResources.AttachDebuggerReturnCode3,
+                8 => ProcessResources.AttachDebuggerReturnCode8,
+                9 => ProcessResources.AttachDebuggerReturnCode9,
+                21 => ProcessResources.AttachDebuggerReturnCode21,
+                _ => string.Empty
+            };
+
+            Diagnostics.Assert(!string.IsNullOrEmpty(errorMessage), "Error message should not be null or empty.");
 
             return errorMessage;
         }
@@ -2012,13 +2015,19 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
-                if (Verb != null) { startInfo.Verb = Verb; }
+                if (Verb != null)
+                {
+                    startInfo.Verb = Verb;
+                }
 
                 startInfo.WindowStyle = _windowstyle;
             }
 
             string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
-            if (!ShouldProcess(targetMessage)) { return; }
+            if (!ShouldProcess(targetMessage))
+            {
+                return;
+            }
 
             Process process = Start(startInfo);
 
@@ -2045,21 +2054,29 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         process.WaitForExit();
 #else
-                        _waithandle = new ManualResetEvent(false);
-
-                        // Create and start the job object
-                        ProcessCollection jobObject = new();
-                        if (jobObject.AssignProcessToJobObject(process))
+                        if (_credential is not null)
                         {
-                            // Wait for the job object to finish
-                            jobObject.WaitOne(_waithandle);
-                        }
-                        else if (!process.HasExited)
-                        {
-                            // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                            process.Exited += myProcess_Exited;
-                            process.EnableRaisingEvents = true;
+                            // If we are running as a different user, we cannot use a job object, so just wait on the process
                             process.WaitForExit();
+                        }
+                        else
+                        {
+                            _waithandle = new ManualResetEvent(false);
+
+                            // Create and start the job object
+                            ProcessCollection jobObject = new();
+                            if (jobObject.AssignProcessToJobObject(process))
+                            {
+                                // Wait for the job object to finish
+                                jobObject.WaitOne(_waithandle);
+                            }
+                            else if (!process.HasExited)
+                            {
+                                // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+                                process.Exited += myProcess_Exited;
+                                process.EnableRaisingEvents = true;
+                                process.WaitForExit();
+                            }
                         }
 #endif
                     }
@@ -2267,28 +2284,22 @@ namespace Microsoft.PowerShell.Commands
             writer.Dispose();
         }
 #else
-        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, uint dwCreationDisposition)
-        {
-            System.IntPtr hFileHandle = System.IntPtr.Zero;
-            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new();
 
-            hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
-                ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
-                ProcessNativeMethods.FILE_SHARE_WRITE | ProcessNativeMethods.FILE_SHARE_READ,
-                lpSecurityAttributes,
-                dwCreationDisposition,
-                ProcessNativeMethods.FILE_ATTRIBUTE_NORMAL,
-                System.IntPtr.Zero);
-            if (hFileHandle == System.IntPtr.Zero)
+        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, FileMode mode)
+        {
+            SafeFileHandle sf = null;
+            try
             {
-                int error = Marshal.GetLastWin32Error();
-                Win32Exception win32ex = new(error);
+                sf = File.OpenHandle(RedirectionPath, mode, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Inheritable, FileOptions.WriteThrough);
+            }
+            catch (Win32Exception win32ex)
+            {
+                sf?.Dispose();
                 string message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
                 ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
 
-            SafeFileHandle sf = new(hFileHandle, true);
             return sf;
         }
 
@@ -2349,7 +2360,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 startinfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
-                lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, ProcessNativeMethods.OPEN_EXISTING);
+                lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, FileMode.Open);
             }
             else
             {
@@ -2361,7 +2372,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 startinfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, ProcessNativeMethods.CREATE_ALWAYS);
+                lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, FileMode.Create);
             }
             else
             {
@@ -2373,7 +2384,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, ProcessNativeMethods.CREATE_ALWAYS);
+                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
             }
             else
             {
@@ -2693,18 +2704,6 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
-        // Fields
-        internal static readonly UInt32 GENERIC_READ = 0x80000000;
-        internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
-        internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
-        internal static readonly UInt32 CREATE_ALWAYS = 2;
-        internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
-        internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
-        internal static readonly UInt32 OF_READWRITE = 0x00000002;
-        internal static readonly UInt32 OPEN_EXISTING = 3;
-
-        // Methods
-
         [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
         public static extern IntPtr GetStdHandle(int whichHandle);
 
@@ -2737,17 +2736,6 @@ namespace Microsoft.PowerShell.Commands
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern uint ResumeThread(IntPtr threadHandle);
-
-        [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern FileNakedHandle CreateFileW(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-            DWORD dwDesiredAccess,
-            DWORD dwShareMode,
-            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes,
-            DWORD dwCreationDisposition,
-            DWORD dwFlagsAndAttributes,
-            System.IntPtr hTemplateFile
-            );
 
         [DllImport("userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -2997,8 +2985,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.GetObjectData(info, context);
 
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
+            ArgumentNullException.ThrowIfNull(info);
 
             info.AddValue("ProcessName", _processName);
         }

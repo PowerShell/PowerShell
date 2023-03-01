@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (formatErrorObject != null && formatErrorObject.exception != null)
             {
-                // if we did no thave any errors in the expression evaluation
+                // if we did not have any errors in the expression evaluation
                 // we might have errors in the formatting, if present
                 _errorManager.LogStringFormatError(formatErrorObject);
                 if (_errorManager.DisplayFormatErrorString)
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
             {
                 // get the last token in the full name
-                string[] arr = typeNames[0].Split(Utils.Separators.Dot);
+                string[] arr = typeNames[0].Split('.');
                 if (arr.Length > 0)
                     return arr[arr.Length - 1];
             }

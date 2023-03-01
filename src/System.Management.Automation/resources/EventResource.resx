@@ -550,7 +550,7 @@ Parameters = {7}</value>
     <value>Test analytic message</value>
 </data>
 <data name="PS_PROVIDEReventE_A_RUNSPACE_WSMANCONNECTIONINFO" xml:space="preserve">
-    <value>Connection Paramters are
+    <value>Connection Parameters are
  Connection URI: {0}
  Resource URI: {1}
  User: {2}
@@ -640,7 +640,7 @@ Exception StackTrace: {2}</value>
     <value>Runspace Id: {0} Pipeline Id: {1}. Server is sending data of size {2} to client. DataType: {3} TargetInterface: {4}</value>
 </data>
 <data name="PS_PROVIDEReventE_A_CREATE_SERVER_REMOTESESSION" xml:space="preserve">
-    <value>Request {0}. Creating a server remote session. UserName: {1} Custome Shell Id: {2}</value>
+    <value>Request {0}. Creating a server remote session. UserName: {1} Custom Shell Id: {2}</value>
 </data>
 <data name="PS_PROVIDEReventE_A_REPORT_CONTEXT" xml:space="preserve">
     <value>Reporting context for request: {0} Context Reported: {0}</value>
@@ -707,16 +707,16 @@ Exception StackTrace: {2}</value>
  	 Type cast inner exception: {3}</value>
 </data>
 <data name="PS_PROVIDEReventE_A_SERIALIZER_DEPTH_OVERRIDE" xml:space="preserve">
-    <value>Serialization depth has been overriden.
+    <value>Serialization depth has been overridden.
  	 Serialized type name: {0}
  	 Original depth: {1}
- 	 Overriden depth: {2}
+ 	 Overridden depth: {2}
  	 Current depth below top level: {3}</value>
 </data>
 <data name="PS_PROVIDEReventE_A_SERIALIZER_MODE_OVERRIDE" xml:space="preserve">
-    <value>Serialization mode has been overriden.
+    <value>Serialization mode has been overridden.
  	 Serialized type name: {0}
- 	 Overriden mode: {1}</value>
+ 	 Overridden mode: {1}</value>
 </data>
 <data name="PS_PROVIDEReventE_A_SERIALIZER_SCRIPT_PROPERTY_WITHOUT_RUNSPACE" xml:space="preserve">
     <value>Serialization of a script property has been skipped, because there is no runspace to use for evaluation of the property.

@@ -57,6 +57,10 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
         }
 
         It 'Module logging policy test' {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
+            }
+
             function TestFeature
             {
                 param([string]$KeyPath)
@@ -85,7 +89,9 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Remove-Item $ModuleNamesKeyPath -Recurse -Force
                 # usually event becomes visible in the log after ~500 ms
                 # set timeout for 5 seconds
-                Wait-UntilTrue -sb { Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)} } -TimeoutInMilliseconds (5*1000) -IntervalInMilliseconds 100 | Should -BeTrue
+                Wait-UntilTrue -sb { Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 |
+                    Where-Object {$_.Message.Contains($RareCommand)} } -TimeoutInMilliseconds (5*1000) -IntervalInMilliseconds 100 |
+                        Should -BeTrue
             }
 
             $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
@@ -101,6 +107,10 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
         }
 
         It 'ScriptBlock logging policy test' {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
+            }
+
             function TestFeature
             {
                 param([string]$KeyPath)

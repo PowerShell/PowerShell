@@ -401,7 +401,7 @@ namespace System.Management.Automation
             if (Directory.Exists(tempAssemblyDirPath))
             {
                 // Enumerate all directories, sort by name and select the last. This selects the latest version.
-                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).OrderBy(static d => d).LastOrDefault();
+                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).Order().LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
@@ -579,15 +579,14 @@ namespace System.Management.Automation
         /// </param>
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)] string basePaths)
         {
-            if (string.IsNullOrEmpty(basePaths))
-                throw new ArgumentNullException(nameof(basePaths));
+            ArgumentException.ThrowIfNullOrEmpty(basePaths);
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }
     }
 
     /// <summary>
-    /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
+    /// Provides helper functions to facilitate calling managed code from a native PowerShell host.
     /// </summary>
     public static unsafe class PowerShellUnsafeAssemblyLoad
     {

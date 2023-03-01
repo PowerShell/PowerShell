@@ -10,8 +10,8 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         #$null = New-Item -ItemType File -Path (Join-Path $TestDrive WildCardCommandA.exe) -ErrorAction Ignore
         #$null = New-Item -ItemType File -Path (Join-Path $TestDRive WildCardCommand[B].exe) -ErrorAction Ignore
         if ( $IsLinux -or $IsMacOS ) {
-            /bin/chmod 777 "$file1"
-            /bin/chmod 777 "$file2"
+            /bin/chmod a+rw "$file1"
+            /bin/chmod a+rw "$file2"
         }
         $commandInfo = Get-Command Get-Date -ShowCommandInfo
     }

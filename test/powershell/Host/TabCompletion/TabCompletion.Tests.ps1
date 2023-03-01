@@ -341,9 +341,23 @@ switch ($x)
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
 
-    It 'Should complete keyword' -Skip {
+    It 'Should complete keyword with partial input' {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'namespace'
+    }
+
+    It 'Should complete keyword with no input' {
+        $res = TabExpansion2 -inputScript 'using ' -cursorColumn 'using '.Length
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
+    }
+
+    It 'Should complete keyword with no input after line continuation' {
+        $InputScript = @'
+using `
+
+'@
+        $res = TabExpansion2 -inputScript $InputScript -cursorColumn $InputScript.Length
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
     }
 
     It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -Skip {
@@ -362,6 +376,11 @@ switch ($x)
         $Text = '"Hello${psversiont}World"'
         $res = TabExpansion2 -inputScript $Text -cursorColumn $Text.IndexOf('p')
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '${PSVersionTable}'
+    }
+
+    It 'Should work for property assignment of enum type:' {
+        $res = TabExpansion2 -inputScript '$psstyle.Progress.View="Clas'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
@@ -558,6 +577,32 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
+    }
+
+    it 'Should complete "Value" parameter value in "Where-Object" for Enum property with partial input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -ne Ali'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum with no input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | Where-Object -FilterScript {$_.CommandType -like '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum with partial input' {
+        $TempVar = Get-Command
+        $res = TabExpansion2 -inputScript '$tempVar[0].CommandType -notlike "Ali"'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum when cursor is on a newline' {
+        $res = TabExpansion2 -inputScript "Get-Command | Where-Object -FilterScript {`$_.CommandType -like`n"
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
     it 'Should complete provider dynamic parameters with quoted path' {
         $Script = if ($IsWindows)
         {
@@ -569,6 +614,11 @@ ConstructorTestClass(int i, bool b)
         }
         $res = TabExpansion2 -inputScript $Script
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
+    }
+
+    it 'Should complete dynamic parameters while providing values to non-string parameters' {
+        $res = TabExpansion2 -inputScript 'Get-Content -Path $HOME -Verbose:$false -'
+        $res.CompletionMatches.CompletionText | Should -Contain '-Raw'
     }
 
     It 'Should enumerate types when completing member names for Select-Object' {
@@ -764,6 +814,49 @@ ConstructorTestClass(int i, bool b)
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
         $res.CompletionMatches.CompletionText | Should -Contain "-Path"
+    }
+
+    it 'Should find the closest positional parameter match' {
+        $TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter(Position = 0)]
+        [string]
+        $Param1,
+        [Parameter(Position = 1)]
+        [System.Management.Automation.ActionPreference]
+        $Param2
+    )
+}
+Verb-Noun -Param1 Hello ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches[0].CompletionText | Should -Be "Break"
+    }
+
+    it 'Should complete command with an empty arrayexpression element' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem @()' -cursorColumn 1
+        $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
+    }
+
+    it 'Should prefer the default parameterset when completing positional parameters' {
+        $ScriptInput = 'Get-ChildItem | Where-Object '
+        $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
+        $res.CompletionMatches[0].CompletionText | Should -Be "Attributes"
+    }
+
+    it 'Should complete base class members of types without type definition AST' {
+        $res = TabExpansion2 -inputScript @'
+class InheritedClassTest : System.Attribute
+{
+    [void] TestMethod()
+    {
+        $this.
+'@
+        $res.CompletionMatches.CompletionText | Should -Contain 'TypeId'
     }
 
     Context "Script name completion" {
@@ -1136,6 +1229,9 @@ ConstructorTestClass(int i, bool b)
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
+            if (!$env:HOMEDRIVE) {
+                Set-ItResult -Skipped -Because "Homerdrive is not set"
+            }
             $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
@@ -1458,12 +1554,21 @@ ConstructorTestClass(int i, bool b)
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Position"
             $entry.CompletionText | Should -BeExactly "Position"
         }
+
         It "Test Attribute member completion multiple members" {
             $inputStr = "function bar { [parameter(Position,]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf(',') + 1)
             $res.CompletionMatches | Should -HaveCount 9
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Mandatory"
             $entry.CompletionText | Should -BeExactly "Mandatory"
+        }
+
+        It "Should complete member in attribute argument value" {
+            $inputStr = '[ValidateRange(1,[int]::Maxva^)]$a'
+            $CursorIndex = $inputStr.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $inputStr.Remove($CursorIndex, 1)
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "MaxValue"
         }
 
         It "Test Attribute scriptblock completion" {
@@ -1540,8 +1645,8 @@ dir -Recurse `
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 6
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -1908,6 +2013,11 @@ dir -Recurse `
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
+
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "TBD"
+            }
+
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
@@ -2375,7 +2485,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
         @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
         @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
-        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\plugin"; parameter = "-proc"; expected = "ProcessIdleTimeoutSec"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
         @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
     ) {

@@ -686,7 +686,7 @@ namespace System.Management.Automation
         /// If the constructor for the cmdlet threw an exception.
         /// </exception>
         /// <exception cref="MemberAccessException">
-        /// The type referenced by <paramref name="cmdletInformation"/> refered to an
+        /// The type referenced by <paramref name="cmdletInformation"/> referred to an
         /// abstract type or them member was invoked via a late-binding mechanism.
         /// </exception>
         /// <exception cref="TypeLoadException">

@@ -12,10 +12,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// EngineInstaller is a class for facilitating registry of necessary
-    /// information for monad engine.
-    ///
-    /// This class will be built with monad console host dll
-    /// (System.Management.Automation.dll).
+    /// information for PowerShell engine.
     ///
     /// At install time, installation utilities (like InstallUtil.exe) will
     /// call install this engine assembly based on the implementation in

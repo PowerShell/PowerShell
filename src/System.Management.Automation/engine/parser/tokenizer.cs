@@ -314,7 +314,7 @@ namespace System.Management.Automation.Language
         public bool HasReservedProperties { get; set; }
 
         /// <summary>
-        /// A list of the properties allowed for this constuctor.
+        /// A list of the properties allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Language
         private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
-        /// A list of the parameters allowed for this constuctor.
+        /// A list of the parameters allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordParameter> Parameters
         {
@@ -699,16 +699,8 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(s_keywordText.Length == s_keywordTokenKind.Length, "Keyword table sizes must match");
             Diagnostics.Assert(_operatorText.Length == s_operatorTokenKind.Length, "Operator table sizes must match");
 
-            bool isCleanBlockFeatureEnabled = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCleanBlockFeatureName);
-
             for (int i = 0; i < s_keywordText.Length; ++i)
             {
-                if (!isCleanBlockFeatureEnabled && s_keywordText[i] == "clean")
-                {
-                    // Skip adding the 'clean' keyword when the feature is disabled.
-                    continue;
-                }
-
                 s_keywordTable.Add(s_keywordText[i], s_keywordTokenKind[i]);
             }
 
@@ -2571,7 +2563,7 @@ namespace System.Management.Automation.Language
 
             // Make sure we didn't consume anything because we didn't find
             // any nested tokens (no variable or subexpression.)
-            Diagnostics.Assert(PeekChar() == c1, "We accidently consumed a character we shouldn't have.");
+            Diagnostics.Assert(PeekChar() == c1, "We accidentally consumed a character we shouldn't have.");
 
             return false;
         }

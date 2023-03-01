@@ -1,16 +1,50 @@
 parameters:
-  pool: 'windows-latest'
-  jobName: 'win_build'
-  displayName: Windows Build
+  - name: pool
+    default: 'windows-latest'
+  - name: imageName
+    default: 'PSWindows11-ARM64'
+  - name: jobName
+    default: 'win_build'
+  - name: displayName
+    default: Windows Build
+  - name: PoolType
+    default: AzDoHosted
+    type: string
+    values:
+      - AzDoHosted
+      - 1esHosted
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
-    vmImage: ${{ parameters.pool }}
+    ${{ if eq( parameters.PoolType, 'AzDoHosted') }}:
+      vmImage: ${{ parameters.pool }}
+    ${{ else }}:
+      name: ${{ parameters.pool }}
+      demands:
+      - ImageOverride -equals ${{ parameters.imageName }}
 
   displayName: ${{ parameters.displayName }}
 
   steps:
+  - powershell: |
+      [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+      $pwsh = Get-Command pwsh -ErrorAction SilentlyContinue -CommandType Application
+
+      if ($null -eq $pwsh) {
+        $powerShellPath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'powershell'
+        Invoke-WebRequest -Uri https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.ps1 -outfile ./install-powershell.ps1
+        ./install-powershell.ps1 -Destination $powerShellPath
+        $vstsCommandString = "vso[task.setvariable variable=PATH]$powerShellPath;$env:PATH"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      }
+
+    displayName: Install PowerShell
+
+  - checkout: self
+    fetchDepth: 1000
+
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture Environment
@@ -26,6 +60,9 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
+      Write-Verbose -Verbose "Start Sync-PSTags"
+      Sync-PSTags -AddRemoteIfMissing
+      Write-Verbose -Verbose "End Sync-PSTags"
     displayName: Bootstrap
     condition: succeeded()
 

@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 s_sessionId = Guid.NewGuid().ToString();
                 TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-                configuration.InstrumentationKey = _psCoreTelemetryKey;
+                configuration.ConnectionString = "InstrumentationKey=" + _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
                 configuration.TelemetryChannel.DeveloperMode = false;
@@ -661,6 +661,11 @@ namespace Microsoft.PowerShell.Telemetry
         /// <param name="moduleVersion">The module version to report. The default value is the anonymous version '0.0.0.0'.</param>
         internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = AnonymousVersion)
         {
+            if (!CanSendTelemetry)
+            {
+                return;
+            }
+
             try
             {
                 string allowedModuleName = GetModuleName(moduleName);

@@ -18,7 +18,7 @@ using System.Security.Permissions;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Errors reported by Monad will be in one of these categories.
+    /// Errors reported by PowerShell will be in one of these categories.
     /// </summary>
     /// <remarks>
     /// Do not specify ErrorCategory.NotSpecified when creating an
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         WriteError = 23,
 
         /// <summary>
-        /// A non-Monad command reported an error to its STDERR pipe.
+        /// A native command reported an error to its STDERR pipe.
         /// </summary>
         /// <remarks>
         /// The Engine uses this ErrorCategory when it executes a native
@@ -193,10 +193,7 @@ namespace System.Management.Automation
         #region ctor
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }
@@ -1723,10 +1720,10 @@ namespace System.Management.Automation
     /// information.
     /// </summary>
     /// <remarks>
-    /// MSH defines certain exception classes which implement this interface.
+    /// PowerShell defines certain exception classes which implement this interface.
     /// This includes wrapper exceptions such as
     /// <see cref="System.Management.Automation.CmdletInvocationException"/>,
-    /// and also MSH engine errors such as
+    /// and also PowerShell engine errors such as
     /// <see cref="System.Management.Automation.GetValueException"/>.
     /// Cmdlets and providers should not define this interface;
     /// instead, they should use the

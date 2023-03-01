@@ -315,8 +315,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
-            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
+            string invertColorsVT100 = PSStyle.Instance.Reverse;
+            string resetVT100 = PSStyle.Instance.Reset;
 
             char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
@@ -532,10 +532,7 @@ namespace Microsoft.PowerShell.Commands
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                if (array == null)
-                {
-                    throw new ArgumentNullException(nameof(array));
-                }
+                ArgumentNullException.ThrowIfNull(array); 
 
                 if (arrayIndex < 0)
                 {
@@ -1363,7 +1360,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets the number of context lines to collect. If set to a

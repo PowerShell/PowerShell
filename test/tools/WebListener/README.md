@@ -143,6 +143,27 @@ Response when certificate is not provided in request:
 }
 ```
 
+### /Compression/Brotli/
+
+Returns the same results as the Get test with brotli compression.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Compression' -TestValue 'Brotli'
+Invoke-RestMethod -Uri $uri
+```
+
+```json
+{
+  "args": {},
+  "origin": "127.0.0.1",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) PowerShell/6.0.0",
+    "Host": "localhost:8083"
+  },
+  "url": "http://localhost:8083/Compression/Brotli"
+}
+```
+
 ### /Compression/Deflate/
 
 Returns the same results as the Get test with deflate compression.

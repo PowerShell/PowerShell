@@ -23,6 +23,7 @@ jobs:
         fetch-depth: 0
     - name: Post rebase started comment to pull request
       uses: actions/github-script@v6
+      continue-on-error: true
       with:
         script: |
           const backport_start_body = `Started rebase: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
@@ -33,6 +34,6 @@ jobs:
             body: backport_start_body
           });
     - name: Automatic Rebase
-      uses: cirrus-actions/rebase@1.7
+      uses: cirrus-actions/rebase@1.8
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

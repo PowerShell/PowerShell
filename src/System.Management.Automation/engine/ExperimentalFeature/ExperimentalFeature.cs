@@ -21,13 +21,11 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
-        internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
-        internal const string PSCleanBlockFeatureName = "PSCleanBlock";
-        internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
-        internal const string PSExecFeatureName = "PSExec";
-        internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
+        internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
+        internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
+        internal const string PSFeedbackProvider = "PSFeedbackProvider";
+        internal const string PSCommandWithArgs = "PSCommandWithArgs";
 
         #endregion
 
@@ -117,32 +115,23 @@ namespace System.Management.Automation
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
-                    name: PSNativeCommandArgumentPassingFeatureName,
-                    description: "Use ArgumentList when invoking a native command"),
-                new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
-                new ExperimentalFeature(
-                    name: "PSAnsiRenderingFileInfo",
-                    description: "Enable coloring for FileInfo objects"),
                 new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
                 new ExperimentalFeature(
-                    name: PSRemotingSSHTransportErrorHandling,
-                    description: "Removes the SSH remoting transport stdErr stream message handling as terminating errors, and instead just writes error messages to console."),
+                    name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
+                    description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
                 new ExperimentalFeature(
-                    name: PSCleanBlockFeatureName,
-                    description: "Add support of a 'Clean' block to functions and script cmdlets for easy resource cleanup"),
+                    name: PSCustomTableHeaderLabelDecoration,
+                    description: "Formatting differentiation for table header labels that aren't property members"),
                 new ExperimentalFeature(
-                    name: PSAMSIMethodInvocationLogging,
-                    description: "Provides AMSI notification of .NET method invocations."),
+                    name: PSFeedbackProvider,
+                    description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
                 new ExperimentalFeature(
-                    name: PSExecFeatureName,
-                    description: "Add 'exec' built-in command on Linux and macOS"),
-                new ExperimentalFeature(
-                    name: PSStrictModeAssignment,
-                    description: "Add support of setting Strict-Mode with Invoke-Command"),
+                    name: PSCommandWithArgs,
+                    description: "Enable `-CommandWithArgs` parameter for pwsh"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

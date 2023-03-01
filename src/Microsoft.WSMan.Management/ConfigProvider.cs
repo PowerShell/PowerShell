@@ -3413,10 +3413,7 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private PSObject GetItemValue(string path)
         {
-            if (string.IsNullOrEmpty(path) || (path.Length == 0))
-            {
-                throw new ArgumentNullException(path);
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
 
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -5059,9 +5056,9 @@ namespace Microsoft.WSMan.Management
         /// <param name="ResourceURI">Resource URI for the XML.</param>
         /// <param name="host">Name of the Host.</param>
         /// <param name="Operation">Type of Operation.</param>
-        ///<param name="resources">List of Resources.</param>
-        ///<param name="securities">List of Securities</param>
-        ///<param name="initParams">List of initialization parameters.</param>
+        /// <param name="resources">List of Resources.</param>
+        /// <param name="securities">List of Securities</param>
+        /// <param name="initParams">List of initialization parameters.</param>
         /// <returns>An Configuration XML, ready to send to server.</returns>
         private static string ConstructPluginXml(PSObject objinputparam, string ResourceURI, string host, string Operation, ArrayList resources, ArrayList securities, ArrayList initParams)
         {

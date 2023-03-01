@@ -912,7 +912,7 @@ namespace System.Management.Automation.PSTasks
 
         private Runspace GetRunspace(int taskId)
         {
-            var runspaceName = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", PSTask.RunspaceName, taskId);
+            var runspaceName = string.Create(CultureInfo.InvariantCulture, $"{PSTask.RunspaceName}:{taskId}");
 
             if (_useRunspacePool && _runspacePool.TryDequeue(out Runspace runspace))
             {
