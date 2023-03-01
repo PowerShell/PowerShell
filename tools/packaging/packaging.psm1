@@ -4929,10 +4929,14 @@ function Test-Bom {
             $newBomRecord.SetPattern([WildcardPattern]::Escape($_.FullName.Replace($root, "").Substring(1)))
             $noMatch += $newBomRecord
         }
-        elseif($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.Pattern)) {
+        elseif ($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.GetPattern())) {
             # remove any exact pattern which have been matched to speed up file processing,
             # because they should not have additional matches.
-            $null = $bomList.Remove($matchingRecord)
+            if ($matchingRecord -is [BomRecord]) {
+                $null = $bomList.Remove($matchingRecord)
+            } else {
+                Write-Warning "Cannot remove matchingRecord $($matchingRecord.GetPattern())"
+            }
         }
     }
 
