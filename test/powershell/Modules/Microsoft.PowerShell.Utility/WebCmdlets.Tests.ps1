@@ -977,7 +977,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $credential = [pscredential]::new("testuser", $token)
             $certificate = Get-WebListenerClientCertificate
             $headers = @{"Authorization" = "test"}
-            $proxy = "http://127.0.0.1:8080"
+            $proxy = (Get-WebListenerUrl).Authority
             $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
 
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
@@ -2750,7 +2750,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $credential = [pscredential]::new("testuser", $token)
         $certificate = Get-WebListenerClientCertificate
         $headers = @{"Authorization" = "test"}
-        $proxy = "http://127.0.0.1:8080"
+        $proxy = (Get-WebListenerUrl).Authority
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
 
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
