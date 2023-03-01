@@ -1003,9 +1003,9 @@ namespace Microsoft.PowerShell.Commands
             return httpClient;
         }
 
-        internal virtual HttpRequestMessage GetRequest(Uri uri)
+        internal virtual HttpRequestMessage GetRequest(Uri? uri)
         {
-            Uri requestUri = PrepareUri(uri);
+            Uri? requestUri = PrepareUri(uri);
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
             // Create the base WebRequest object
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Virtual Methods
 
         #region Helper Methods
-        private Uri PrepareUri(Uri uri)
+        private Uri PrepareUri(Uri? uri)
         {
             uri = CheckProtocol(uri);
 
@@ -1382,9 +1382,9 @@ namespace Microsoft.PowerShell.Commands
             return uri;
         }
 
-        private static Uri CheckProtocol(Uri uri)
+        private static Uri CheckProtocol(Uri? uri)
         {
-            return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
+            return uri is not null && uri.IsAbsoluteUri ? uri : new Uri("http://" + uri?.OriginalString);
         }
 
         private string QualifyFilePath(string? path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
