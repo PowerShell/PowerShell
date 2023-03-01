@@ -1,6 +1,4 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <!-- MSI installs on Win7 and above -->
-  <?define MinOSVersionSupported = "VersionNT >= 601" ?>
   <!-- The URL for add/remove programs -->
   <!-- TBD:Point to the actual release -->
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
@@ -135,8 +133,11 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT=1</Publish>
     </UI>
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Windows 7 and above">
-      <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
+    <Condition Message="Supported only on Windows 8.1 and above">
+      <![CDATA[ Installed OR MsiNTProductType <> 1 OR VersionNT >= 603 ]]>
+    </Condition>
+    <Condition Message="Supported only on Windows Server 2012 and above">
+      <![CDATA[ Installed OR MsiNTProductType = 1 OR VersionNT >= 602 ]]>
     </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(var.ProductName) is already installed." />
@@ -221,7 +222,7 @@
                 <RegistryValue Type="string" Name="InstallDir" Value="[VersionFolder]" KeyPath="yes"/>
               </RegistryKey>
             </Component>
-            <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
+            <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administrator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
             <Component Id="ExplorerContextMenu">
               <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>

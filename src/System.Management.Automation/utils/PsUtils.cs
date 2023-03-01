@@ -105,14 +105,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.NonWindowsGetThreadId();
 #else
-            return NativeMethods.GetCurrentThreadId();
+            return Interop.Windows.GetCurrentThreadId();
 #endif
-        }
-
-        private static class NativeMethods
-        {
-            [DllImport(PinvokeDllNames.GetCurrentThreadIdDllName)]
-            internal static extern uint GetCurrentThreadId();
         }
 
         #region ASTUtils
@@ -529,7 +523,7 @@ namespace System.Management.Automation
         internal static string ComputeHash(string input)
         {
             byte[] hashBytes = ComputeHash(Encoding.UTF8.GetBytes(input));
-            return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+            return Convert.ToHexString(hashBytes);
         }
     }
 

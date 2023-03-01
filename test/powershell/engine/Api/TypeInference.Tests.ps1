@@ -1091,6 +1091,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res | Should -HaveCount 1
         $res.Name | Should -Be System.Guid
     }
+
     It 'Infers type of variable $_ in array of calculated properties' {
         $variableAst = { New-TimeSpan | Select-Object -Property Day,@{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($variableAst)
@@ -1352,6 +1353,35 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { (([System.Management.Automation.Language.Ast]$null).FindAll() | Select-Object -First 1) }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Management.Automation.Language.Ast'
+    }
+
+    It 'Infers type of hashtable key with multiple types' {
+        $res = [AstTypeInference]::InferTypeOf( { (@{RandomKey = Get-ChildItem $HOME}).RandomKey }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
+    }
+
+    It 'Infers type of index expression on hashtable with synthetic type' {
+        $res = [AstTypeInference]::InferTypeOf( { (@{RandomKey = Get-ChildItem $HOME})['RandomKey'] }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
+    }
+
+    It 'Infers type of $null after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $null = "Hello";$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of all scope variable after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $true = "Hello";$true }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers type of all scope variable host after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $Host = "Hello";$Host }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
     }
 }
 

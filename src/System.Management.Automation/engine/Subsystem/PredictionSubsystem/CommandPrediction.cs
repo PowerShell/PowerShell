@@ -74,7 +74,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
         public static async Task<List<PredictionResult>?> PredictInputAsync(PredictionClient client, Ast ast, Token[] astTokens, int millisecondsTimeout)
         {
-            Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(millisecondsTimeout);
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="history">History command lines provided as references for prediction.</param>
         public static void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history)
         {
-            Requires.NotNull(history, nameof(history));
+            ArgumentNullException.ThrowIfNull(history);
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -249,7 +249,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="suggestionText">The accepted suggestion text.</param>
         public static void OnSuggestionAccepted(PredictionClient client, Guid predictorId, uint session, string suggestionText)
         {
-            Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
+            ArgumentException.ThrowIfNullOrEmpty(suggestionText);
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)

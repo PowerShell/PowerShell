@@ -903,12 +903,12 @@ namespace System.Management.Automation
         /// </summary>
         All = 0xFFFFF,
 
-        ///<summary>
+        /// <summary>
         /// Default Help.
         /// </summary>
         DefaultHelp = 0x1000,
 
-        ///<summary>
+        /// <summary>
         /// Help for a Configuration.
         /// </summary>
         Configuration = 0x4000,

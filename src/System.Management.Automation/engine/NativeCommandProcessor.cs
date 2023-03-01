@@ -247,8 +247,9 @@ namespace System.Management.Automation
         {
             "cmd",
             "cscript",
-            "wscript",
             "find",
+            "sqlcmd",
+            "wscript",
         };
 
         #region ctor/native command properties
@@ -582,12 +583,18 @@ namespace System.Management.Automation
                     }
                     catch (Win32Exception)
                     {
-                        // On Unix platforms, nothing can be further done, so just throw
+#if UNIX
+                        // On Unix platforms, nothing can be further done, so just throw.
+                        throw;
+#else
                         // On headless Windows SKUs, there is no shell to fall back to, so just throw
-                        if (!Platform.IsWindowsDesktop) { throw; }
+                        if (!Platform.IsWindowsDesktop)
+                        {
+                            throw;
+                        }
 
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
-                        string executable = FindExecutable(startInfo.FileName);
+                        string executable = Interop.Windows.FindExecutable(startInfo.FileName);
                         bool notDone = true;
                         // check to see what mode we should be in for argument passing
                         if (!string.IsNullOrEmpty(executable))
@@ -649,6 +656,7 @@ namespace System.Management.Automation
                                 throw;
                             }
                         }
+#endif
                     }
                 }
 
@@ -1095,7 +1103,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
 #if UNIX
@@ -1106,10 +1113,9 @@ namespace System.Management.Automation
                 return false;
             }
 
-            SHFILEINFO shinfo = new SHFILEINFO();
-            IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
+            int type = Interop.Windows.SHGetFileInfo(fileName);
 
-            switch ((int)type)
+            switch (type)
             {
                 case 0x0:
                     // 0x0 = not an exe
@@ -1590,88 +1596,6 @@ namespace System.Management.Automation
             return false;
 #endif
         }
-
-        #region Interop for FindExecutable...
-
-        // Constant used to determine the buffer size for a path
-        // when looking for an executable. MAX_PATH is defined as 260
-        // so this is much larger than what should be permitted
-        private const int MaxExecutablePath = 1024;
-
-        // The FindExecutable API is defined in shellapi.h as
-        // SHSTDAPI_(HINSTANCE) FindExecutableW(LPCWSTR lpFile, LPCWSTR lpDirectory, __out_ecount(MAX_PATH) LPWSTR lpResult);
-        // HINSTANCE is void* so we need to use IntPtr as API return value.
-
-        [DllImport("shell32.dll", EntryPoint = "FindExecutable")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "0")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "1")]
-        [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "2")]
-        private static extern IntPtr FindExecutableW(
-          string fileName, string directoryPath, StringBuilder pathFound);
-
-        [ArchitectureSensitive]
-        private static string FindExecutable(string filename)
-        {
-            // Preallocate a
-            StringBuilder objResultBuffer = new StringBuilder(MaxExecutablePath);
-            IntPtr resultCode = (IntPtr)0;
-
-            try
-            {
-                resultCode = FindExecutableW(filename, string.Empty, objResultBuffer);
-            }
-            catch (System.IndexOutOfRangeException e)
-            {
-                // If we got an index-out-of-range exception here, it's because
-                // of a buffer overrun error so we fail fast instead of
-                // continuing to run in an possibly unstable environment....
-                Environment.FailFast(e.Message, e);
-            }
-
-            // If FindExecutable returns a result >= 32, then it succeeded
-            // and we return the string that was found, otherwise we
-            // return null.
-            if ((long)resultCode >= 32)
-            {
-                return objResultBuffer.ToString();
-            }
-
-            return null;
-        }
-
-        #endregion
-
-        #region Interop for SHGetFileInfo
-
-        private const int SCS_32BIT_BINARY = 0;  // A 32-bit Windows-based application
-        private const int SCS_DOS_BINARY = 1;  // An MS-DOS - based application
-        private const int SCS_WOW_BINARY = 2;  // A 16-bit Windows-based application
-        private const int SCS_PIF_BINARY = 3;  // A PIF file that executes an MS-DOS - based application
-        private const int SCS_POSIX_BINARY = 4;  // A POSIX - based application
-        private const int SCS_OS216_BINARY = 5;  // A 16-bit OS/2-based application
-        private const int SCS_64BIT_BINARY = 6;  // A 64-bit Windows-based application.
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct SHFILEINFO
-        {
-            public IntPtr hIcon;
-            public int iIcon;
-            public uint dwAttributes;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szDisplayName;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-            public string szTypeName;
-        }
-
-        private const uint SHGFI_EXETYPE = 0x000002000; // flag used to ask to return exe type
-
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
-            ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
-
-        #endregion
 
         #region Minishell Interop
 
@@ -2161,58 +2085,6 @@ namespace System.Management.Automation
         /// </summary>
         public static bool AlwaysCaptureApplicationIO { get; set; }
 
-        [DllImport("Kernel32.dll")]
-        internal static extern IntPtr GetConsoleWindow();
-
-        internal const int SW_HIDE = 0;
-        internal const int SW_SHOWNORMAL = 1;
-        internal const int SW_NORMAL = 1;
-        internal const int SW_SHOWMINIMIZED = 2;
-        internal const int SW_SHOWMAXIMIZED = 3;
-        internal const int SW_MAXIMIZE = 3;
-        internal const int SW_SHOWNOACTIVATE = 4;
-        internal const int SW_SHOW = 5;
-        internal const int SW_MINIMIZE = 6;
-        internal const int SW_SHOWMINNOACTIVE = 7;
-        internal const int SW_SHOWNA = 8;
-        internal const int SW_RESTORE = 9;
-        internal const int SW_SHOWDEFAULT = 10;
-        internal const int SW_FORCEMINIMIZE = 11;
-        internal const int SW_MAX = 11;
-
-        /// <summary>
-        /// Code to control the display properties of the a window...
-        /// </summary>
-        /// <param name="hWnd">The window to show...</param>
-        /// <param name="nCmdShow">The command to do.</param>
-        /// <returns>True if it was successful.</returns>
-        [DllImport("user32.dll")]
-        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        /// <summary>
-        /// Code to allocate a console...
-        /// </summary>
-        /// <returns>True if a console was created...</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AllocConsole();
-
-        /// <summary>
-        /// Called to save the foreground window before allocating a hidden console window.
-        /// </summary>
-        /// <returns>A handle to the foreground window.</returns>
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        /// <summary>
-        /// Called to restore the foreground window after allocating a hidden console window.
-        /// </summary>
-        /// <param name="hWnd">A handle to the window that should be activated and brought to the foreground.</param>
-        /// <returns>True if the window was brought to the foreground.</returns>
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
         /// <summary>
         /// If no console window is attached to this process, then allocate one,
         /// hide it and return true. If there's already a console window attached, then
@@ -2221,86 +2093,53 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool AllocateHiddenConsole()
         {
+#if UNIX
+            return false;
+#else
             // See if there is already a console attached.
-            IntPtr hwnd = ConsoleVisibility.GetConsoleWindow();
-            if (hwnd != IntPtr.Zero)
+            IntPtr hwnd = Interop.Windows.GetConsoleWindow();
+            if (hwnd != nint.Zero)
             {
                 return false;
             }
 
             // save the foreground window since allocating a console window might remove focus from it
-            IntPtr savedForeground = ConsoleVisibility.GetForegroundWindow();
+            IntPtr savedForeground = Interop.Windows.GetForegroundWindow();
 
             // Since there is no console window, allocate and then hide it...
             // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
             // get the error code.
-#pragma warning disable 56523
-            ConsoleVisibility.AllocConsole();
-            hwnd = ConsoleVisibility.GetConsoleWindow();
+            Interop.Windows.AllocConsole();
+            hwnd = Interop.Windows.GetConsoleWindow();
 
             bool returnValue;
-            if (hwnd == IntPtr.Zero)
+            if (hwnd == nint.Zero)
             {
                 returnValue = false;
             }
             else
             {
                 returnValue = true;
-                ConsoleVisibility.ShowWindow(hwnd, ConsoleVisibility.SW_HIDE);
+                Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
                 AlwaysCaptureApplicationIO = true;
             }
 
-            if (savedForeground != IntPtr.Zero && ConsoleVisibility.GetForegroundWindow() != savedForeground)
+            if (savedForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
             {
-                ConsoleVisibility.SetForegroundWindow(savedForeground);
+                Interop.Windows.SetForegroundWindow(savedForeground);
             }
 
             return returnValue;
-        }
-
-        /// <summary>
-        /// If there is a console attached, then make it visible
-        /// and allow interactive console applications to be run.
-        /// </summary>
-        public static void Show()
-        {
-            IntPtr hwnd = GetConsoleWindow();
-            if (hwnd != IntPtr.Zero)
-            {
-                ShowWindow(hwnd, SW_SHOW);
-                AlwaysCaptureApplicationIO = false;
-            }
-            else
-            {
-                throw PSTraceSource.NewInvalidOperationException();
-            }
-        }
-
-        /// <summary>
-        /// If there is a console attached, then hide it and always capture
-        /// output from the child process.
-        /// </summary>
-        public static void Hide()
-        {
-            IntPtr hwnd = GetConsoleWindow();
-            if (hwnd != IntPtr.Zero)
-            {
-                ShowWindow(hwnd, SW_HIDE);
-                AlwaysCaptureApplicationIO = true;
-            }
-            else
-            {
-                throw PSTraceSource.NewInvalidOperationException();
-            }
+#endif
         }
     }
 
     /// <summary>
     /// Exception used to wrap the error coming from
-    /// remote instance of Msh.
+    /// remote instance of PowerShell.
     /// </summary>
     /// <remarks>
-    /// This remote instance of Msh can be in a separate process,
+    /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
     [Serializable]
@@ -2394,7 +2233,7 @@ namespace System.Management.Automation
         private readonly PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
-        /// Original Serialized Exception from remote msh.
+        /// Original Serialized Exception from remote PowerShell.
         /// </summary>
         /// <remarks>This is the exception which was thrown in remote.
         /// </remarks>
@@ -2410,7 +2249,7 @@ namespace System.Management.Automation
         /// InvocationInfo, if any, associated with the SerializedRemoteException.
         /// </summary>
         /// <remarks>
-        /// This is the serialized InvocationInfo from the remote msh.
+        /// This is the serialized InvocationInfo from the remote PowerShell.
         /// </remarks>
         public PSObject SerializedRemoteInvocationInfo
         {

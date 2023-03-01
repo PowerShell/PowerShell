@@ -162,9 +162,6 @@
   <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
     <value>Cannot use tag '{0}'. The 'PS' prefix is reserved.</value>
   </data>
-  <data name="AlgorithmTypeNotSupported" xml:space="preserve">
-    <value>Algorithm '{0}' is not supported in this system.</value>
-  </data>
   <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
     <value>The file '{0}' could not be parsed as a PowerShell Data File.</value>
   </data>

@@ -385,10 +385,11 @@ namespace Microsoft.PowerShell.Commands
         private void InitParallelParameterSet()
         {
             // The following common parameters are not (yet) supported in this parameter set.
-            //  ErrorAction, WarningAction, InformationAction, PipelineVariable.
+            //  ErrorAction, WarningAction, InformationAction, ProgressAction, PipelineVariable.
             if (MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ErrorAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.WarningAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.InformationAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ProgressAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.PipelineVariable)))
             {
                 ThrowTerminatingError(
@@ -700,7 +701,7 @@ namespace Microsoft.PowerShell.Commands
                         StringBuilder possibleMatches = new StringBuilder();
                         foreach (PSMemberInfo item in members)
                         {
-                            possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                            possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                         }
 
                         WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousPropertyOrMethodName,
@@ -1018,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(GenerateNameParameterError(
@@ -1048,7 +1049,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
                 for (int i = 1; i < _arguments.Length; i++)
                 {
-                    arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
+                    arglist.Append(CultureInfo.InvariantCulture, $", {GetStringRepresentation(_arguments[i])}");
                 }
 
                 string methodAction = string.Format(CultureInfo.InvariantCulture,
@@ -2354,7 +2355,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in members)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(

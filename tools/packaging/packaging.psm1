@@ -16,9 +16,22 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net7.0'
+$script:netCoreRuntime = 'net8.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
+
+class R2RVerification {
+    [ValidateSet('NoR2R','R2R','SdkOnly')]
+    [string]
+    $R2RState = 'R2R'
+
+    [System.Reflection.PortableExecutable.Machine]
+    $Architecture = [System.Reflection.PortableExecutable.Machine]::Amd64
+
+    [ValidateSet('Linux','Apple','Windows')]
+    [string]
+    $OperatingSystem = 'Windows'
+}
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -42,7 +55,6 @@ function Start-PSPackage {
 
         # Generate windows downlevel package
         [ValidateSet("win7-x86", "win7-x64", "win-arm", "win-arm64")]
-        [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
         [ValidateSet('osx-x64', 'osx-arm64')]
@@ -321,11 +333,31 @@ function Start-PSPackage {
 
         switch ($Type) {
             "zip" {
+                $os, $architecture = ($Script:Options.Runtime -split '-')
+                $peOS = ConvertTo-PEOperatingSystem -OperatingSystem $os
+                $peArch =  ConvertTo-PEArchitecture -Architecture $architecture
+
                 $Arguments = @{
                     PackageNameSuffix = $NameSuffix
                     PackageSourcePath = $Source
                     PackageVersion = $Version
                     Force = $Force
+                }
+
+                if ($architecture -in 'x86', 'x64', 'arm', 'arm64') {
+                    $Arguments += @{ R2RVerification = [R2RVerification]@{
+                            R2RState = 'R2R'
+                            OperatingSystem = $peOS
+                            Architecture = $peArch
+                        }
+                    }
+                } else {
+                    $Arguments += @{ R2RVerification = [R2RVerification]@{
+                            R2RState = 'SdkOnly'
+                            OperatingSystem = $peOS
+                            Architecture = $peArch
+                        }
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -352,6 +384,11 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         PackageVersion = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'SdkOnly'
+                            OperatingSystem = "Windows"
+                            Architecture = "amd64"
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -365,6 +402,9 @@ function Start-PSPackage {
                         PackageNameSuffix = 'gc'
                         Version = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'SdkOnly'
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -379,6 +419,9 @@ function Start-PSPackage {
                         PackageSourcePath = $Source
                         PackageVersion = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'NoR2R'
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
@@ -391,6 +434,9 @@ function Start-PSPackage {
                         PackageNameSuffix = 'fxdependent'
                         Version = $Version
                         Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'NoR2R'
+                        }
                     }
 
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -400,8 +446,10 @@ function Start-PSPackage {
             }
             "msi" {
                 $TargetArchitecture = "x64"
+                $r2rArchitecture = "amd64"
                 if ($Runtime -match "-x86") {
                     $TargetArchitecture = "x86"
+                    $r2rArchitecture = "i386"
                 }
                 Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
@@ -412,7 +460,7 @@ function Start-PSPackage {
                     AssetsPath = "$RepoRoot\assets"
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
-                }
+            }
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                     New-MSIPackage @Arguments
@@ -454,7 +502,20 @@ function Start-PSPackage {
                 }
 
                 if ($MacOSRuntime) {
-                    $Arguments['Architecture'] = $MacOSRuntime.Split('-')[1]
+                    $architecture = $MacOSRuntime.Split('-')[1]
+                    $Arguments['Architecture'] = $architecture
+                }
+
+                if ($Script:Options.Runtime -match '(linux|osx).*') {
+                    $os, $architecture = ($Script:Options.Runtime -split '-')
+                    $peOS = ConvertTo-PEOperatingSystem -OperatingSystem $os
+                    $peArch =  ConvertTo-PEArchitecture -Architecture $architecture
+
+                    $Arguments['R2RVerification'] = [R2RVerification]@{
+                        R2RState        = "R2R"
+                        OperatingSystem = $peOS
+                        Architecture    = $peArch
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -462,6 +523,7 @@ function Start-PSPackage {
                 }
             }
             "tar-arm" {
+                $peArch = ConvertTo-PEArchitecture -Architecture 'arm'
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
@@ -469,6 +531,11 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm32"
                     ExcludeSymbolicLinks = $true
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = $peArch
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -483,6 +550,11 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "arm64"
                     ExcludeSymbolicLinks = $true
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "arm64"
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -497,6 +569,11 @@ function Start-PSPackage {
                     Force = $Force
                     Architecture = "alpine-x64"
                     ExcludeSymbolicLinks = $true
+                    R2RVerification = [R2RVerification]@{
+                        R2RState = 'R2R'
+                        OperatingSystem = "Linux"
+                        Architecture = "amd64"
+                    }
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -628,7 +705,9 @@ function New-TarballPackage {
 
         [switch] $ExcludeSymbolicLinks,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [R2RVerification] $R2RVerification
     )
 
     if ($PackageNameSuffix) {
@@ -657,7 +736,7 @@ function New-TarballPackage {
     }
 
     $Staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
+    New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
@@ -669,7 +748,7 @@ function New-TarballPackage {
 
             try {
                 Push-Location -Path $Staging
-                tar $options $packagePath .
+                tar $options $packagePath *
             } finally {
                 Pop-Location
             }
@@ -1337,6 +1416,7 @@ function Get-FpmArguments
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
+        $Arguments += @("--rpm-rpmbuild-define", "_build_id_links none")
     } else {
         $Arguments += @("--license", "MIT License")
     }
@@ -1433,7 +1513,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-7.0"
+                    "dotnet-runtime-8.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {
@@ -1681,15 +1761,60 @@ function New-StagingFolder
         [Parameter(Mandatory)]
         [string]
         $StagingPath,
+
         [Parameter(Mandatory)]
         [string]
         $PackageSourcePath,
+
         [string]
-        $Filter = '*'
+        $Filter = '*',
+
+        [R2RVerification]
+        $R2RVerification
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
     Copy-Item -Recurse $PackageSourcePath $StagingPath -Filter $Filter
+
+    $smaPath = Join-Path $StagingPath 'System.Management.Automation.dll'
+    if ($R2RVerification) {
+        $smaInfo = Get-PEInfo -File $smaPath
+        switch ($R2RVerification.R2RState) {
+            $null {
+                Write-Verbose "Skipping R2R verification" -Verbose
+            }
+            'R2R' {
+                Write-Verbose "Verifying R2R was done..." -Verbose
+                if (!$smaInfo.CrossGen -or $smaInfo.Architecture -ne $R2RVerification.Architecture -or $smaInfo.OS -ne $R2RVerification.OperatingSystem) {
+                    throw "System.Management.Automation.dll is not ReadyToRun for $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actually ($($smaInfo.CrossGen) $($smaInfo.OS) $($smaInfo.Architecture) )"
+                }
+                $mismatchedCrossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+                    Get-PEInfo |
+                    Where-Object { $_.CrossGen -and $_.OS -ne $R2RVerification.OperatingSystem -and $_.Architecture -ne $R2RVerification.Architecture })
+                if ($mismatchedCrossGenedFiles.Count -gt 0) {
+                    foreach ($file in $mismatchedCrossGenedFiles) {
+                        Write-Warning "Misconfigured ReadyToRun file found.  Expected $($R2RVerification.OperatingSystem) $($R2RVerification.Architecture).  Actual ($($file.OS) $($file.Architecture) ) "
+                    }
+                    throw "Unexpected ReadyToRun files found."
+                }
+            }
+            'NoR2R' {
+                Write-Verbose "Verifying no R2R was done..." -Verbose
+                $crossGenedFiles = @(Get-ChildItem -Path $StagingPath -Filter '*.dll' -Recurse |
+                    Get-PEInfo |
+                    Where-Object { $_.CrossGen })
+                if ($crossGenedFiles.Count -gt 0) {
+                    throw "Unexpected ReadyToRun files found: $($crossGenedFiles | ForEach-Object { $_.Path })"
+                }
+            }
+            'SdkOnly' {
+                Write-Verbose "Verifying no R2R was done on SMA..." -Verbose
+                if ($smaInfo.CrossGen) {
+                    throw "System.Management.Automation.dll should not be ReadyToRun"
+                }
+            }
+        }
+    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -1717,7 +1842,9 @@ function New-ZipPackage
 
         [switch] $Force,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [R2RVerification] $R2RVerification = [R2RVerification]::new()
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1744,7 +1871,7 @@ function New-ZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
-            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
@@ -1815,6 +1942,8 @@ function New-PdbZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
+
+            # We should NOT R2R verify the PDB zip
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -Filter *.pdb
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
@@ -2248,7 +2377,7 @@ function New-ILNugetPackageFromSource
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/net7.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/net8.0' folder properly.
   This is a helper function used by 'New-ILNugetPackageSource'.
 #>
 function CopyReferenceAssemblies
@@ -2573,7 +2702,8 @@ function CleanupGeneratedSourceCode
         '[Microsoft.PowerShell.Commands.HttpVersionCompletionsAttribute]'
         '[System.Management.Automation.ArgumentToVersionTransformationAttribute]'
         '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ArgumentToPSVersionTransformationAttribute]'
-        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ValidateVersionAttribute]'
+        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ValidateVersionAttribute]',
+        '[System.Management.Automation.OutputTypeAttribute(new System.Type[]{ typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatStartData), typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatEntryData), typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatEndData), typeof(Microsoft.PowerShell.Commands.Internal.Format.GroupStartData), typeof(Microsoft.PowerShell.Commands.Internal.Format.GroupEndData)})]'
         )
 
     $patternsToReplace = @(
@@ -2626,6 +2756,11 @@ function CleanupGeneratedSourceCode
             ApplyTo = @("System.Management.Automation")
             Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute]"
             Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)] */ "
         },
         @{
             ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
@@ -3200,7 +3335,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -3521,7 +3656,7 @@ function New-MsiArgsArray {
 
     $buildArguments = @()
     foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=`"$($Argument.$key)`""
+        $buildArguments += "-d$key=$($Argument.$key)"
     }
 
     return $buildArguments
@@ -3591,7 +3726,7 @@ function Start-MsiBuild {
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
@@ -4479,15 +4614,21 @@ function Invoke-AzDevOpsLinuxPackageCreation {
 
         switch ($BuildType) {
             'fxdependent' {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
             }
             'alpine' {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
             }
             'rpm' {
                 Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
             }
             default {
+                $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
+                Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}"
                 Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
             }
         }
@@ -4496,6 +4637,9 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
 
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
+
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}"
 
             Write-Verbose -Verbose "---- Min-Size ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
@@ -4506,14 +4650,20 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             ## Create 'linux-arm' 'tar.gz' package.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
 
             ## Create 'linux-arm64' 'tar.gz' package.
             ## Note that 'linux-arm64' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
         } elseif ($BuildType -eq 'rpm') {
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
 
             Write-Verbose -Verbose "---- rpm-fxdependent ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
@@ -4566,6 +4716,8 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+        Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+
         # Remove symbol files.
         Remove-Item "${buildFolder}\*.pdb" -Force
 
@@ -4586,6 +4738,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
@@ -4593,11 +4746,13 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         } elseif ($BuildType -eq 'rpm') {
             ## Build for Mariner
             $options = Get-PSOptions
@@ -4615,11 +4770,116 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         }
     }
     catch {
         Get-Error -InputObject $_
         throw
+    }
+}
+
+<#
+    Apply the file permissions specified in the json file $FilePath to the files under $RootPath.
+    The format of the json file is like:
+
+    {
+        "System.Net.WebClient.dll": "744",
+        "Schemas/PSMaml/developer.xsd": "644",
+        "ref/System.Security.AccessControl.dll": "744",
+        "ref/System.IO.dll": "744",
+        "cs/Microsoft.CodeAnalysis.resources.dll": "744",
+        "Schemas/PSMaml/base.xsd": "644",
+        "Schemas/PSMaml/structureProcedure.xsd": "644",
+        "ref/System.Net.Security.dll": "744"
+    }
+#>
+function Set-LinuxFilePermission {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $FilePath,
+        [Parameter(Mandatory)] [string] $RootPath
+    )
+
+    if (-not (Test-Path $FilePath)) {
+        throw "File does not exist: $FilePath"
+    }
+
+    if (-not (Test-Path $RootPath)) {
+        throw "File does not exist: $RootPath"
+    }
+
+    try {
+        Push-Location $RootPath
+        $filePermission = Get-Content $FilePath -Raw | ConvertFrom-Json -AsHashtable
+
+        Write-Verbose -Verbose -Message "Got file permission: $($filePermission.Count) for $FilePath"
+
+        $filePermission.GetEnumerator() | ForEach-Object {
+            $file = $_.Name
+            $permission = $_.Value
+            $fileFullName = Join-Path -Path $RootPath -ChildPath $file
+            Write-Verbose "Set permission $permission to $fileFullName" -Verbose
+            chmod $permission $fileFullName
+        }
+    }
+    finally {
+        Pop-Location
+    }
+}
+
+<#
+    Store the linux file permissions for all the files under root path $RootPath to the json file $FilePath.
+    The json file stores them as relative paths to the root.
+
+    The format of the json file is like:
+
+    {
+        "System.Net.WebClient.dll": "744",
+        "Schemas/PSMaml/developer.xsd": "644",
+        "ref/System.Security.AccessControl.dll": "744",
+        "ref/System.IO.dll": "744",
+        "cs/Microsoft.CodeAnalysis.resources.dll": "744",
+        "Schemas/PSMaml/base.xsd": "644",
+        "Schemas/PSMaml/structureProcedure.xsd": "644",
+        "ref/System.Net.Security.dll": "744"
+    }
+
+#>
+function Export-LinuxFilePermission {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $FilePath,
+        [Parameter(Mandatory)] [string] $RootPath,
+        [Parameter(Mandatory, ValueFromPipeline = $true)] [System.IO.FileInfo[]] $InputObject,
+        [Parameter()] [switch] $Force
+    )
+
+    begin {
+        if (Test-Path $FilePath) {
+          if (-not $Force) {
+            throw "File '$FilePath' already exists."
+          }
+          else {
+            Remove-Item $FilePath -Force
+          }
+        }
+
+        $fileData = @{}
+    }
+
+    process {
+        foreach ($object in $InputObject) {
+            Write-Verbose "Processing $($object.FullName)"
+            # This gets the unix stat information for the file in the format that chmod expects, like '644'.
+            $filePerms = [convert]::ToString($object.unixstat.mode, 8).substring(3)
+            $relativePath = [System.IO.Path]::GetRelativePath($RootPath, $_.FullName)
+            $fileData.Add($relativePath, $filePerms)
+        }
+    }
+
+    end {
+        $fileData | ConvertTo-Json -Depth 10 | Out-File -FilePath $FilePath
     }
 }
 
@@ -4695,6 +4955,115 @@ function Test-PackageManifest {
                 }
                 Write-Output $result
             }
+        }
+    }
+}
+
+# Get the PE information for a file
+function Get-PEInfo {
+    [CmdletBinding()]
+    param([Parameter(ValueFromPipeline = $true)][string] $File)
+    BEGIN {
+        # retrieved from ILCompiler.PEWriter.MachineOSOverride
+        enum MachineOSOverride {
+            Windows = 0
+            SunOS = 6546
+            NetBSD = 6547
+            Apple = 17988
+            Linux = 31609
+            FreeBSD = 44484
+        }
+
+        # The information we want
+        class PsPeInfo {
+            [string]$File
+            [bool]$CrossGen
+            [Nullable[MachineOSOverride]]$OS
+            [System.Reflection.PortableExecutable.Machine]$Architecture
+            [Nullable[System.Reflection.PortableExecutable.CorFlags]]$Flags
+        }
+
+    }
+    PROCESS {
+        $filePath = (get-item $file).fullname
+        $CrossGenFlag = 4
+        try {
+            $stream = [System.IO.FileStream]::new($FilePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
+            $peReader = [System.Reflection.PortableExecutable.PEReader]::new($stream)
+            $flags = $peReader.PEHeaders.CorHeader.Flags
+            if (-not $flags) {
+                Write-Warning "$filePath is not a managed assembly"
+            }
+            $machine = $peReader.PEHeaders.CoffHeader.Machine
+            if (-not $machine) {
+                throw "Null Machine"
+            }
+        } catch {
+            $er = [system.management.automation.errorrecord]::new(([InvalidOperationException]::new($_)), "Get-PEInfo:InvalidOperation", "InvalidOperation", $filePath)
+            $PSCmdlet.WriteError($er)
+            return
+        } finally {
+            if ($peReader) {
+                $peReader.Dispose()
+            }
+        }
+
+        [ushort]$r2rOsArch = $machine
+
+        $RealOS = $null
+        $realarch = "unknown"
+        foreach ($os in [enum]::GetValues([MachineOSOverride])) {
+            foreach ($architecture in [Enum]::GetValues([System.Reflection.PortableExecutable.Machine])) {
+                if (([ushort]$architecture -BXOR [ushort]$os) -eq [ushort]$r2rOsArch) {
+                    $realOS = $os
+                    $realArch = $architecture
+
+                    [PsPeInfo]@{
+                        File         = $File
+                        OS           = $realos
+                        Architecture = $realarch
+                        CrossGen     = [bool]($flags -band $CrossGenFlag)
+                        Flags        = $flags
+                    }
+                    return
+                }
+            }
+        }
+    }
+}
+
+function ConvertTo-PEArchitecture {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]
+        $Architecture
+    )
+
+    PROCESS {
+        switch ($Architecture) {
+            "x86" { "I386" }
+            "x64" { "AMD64" }
+            "arm" { "ArmThumb2" }
+            default { $Architecture }
+        }
+    }
+}
+
+function ConvertTo-PEOperatingSystem {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string]
+        $OperatingSystem
+    )
+
+    PROCESS {
+        switch -regex ($OperatingSystem) {
+            "win.*" { "Windows" }
+            "Linux" { "Linux" }
+            "OSX" { "Apple" }
+            default { $OperatingSystem }
         }
     }
 }

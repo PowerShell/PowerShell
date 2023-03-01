@@ -28,6 +28,8 @@ resources:
     ref: master
 
 variables:
+  - name: PS_RELEASE_BUILD
+    value: 1
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT

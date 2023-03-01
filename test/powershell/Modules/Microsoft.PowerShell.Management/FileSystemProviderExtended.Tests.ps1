@@ -659,7 +659,7 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
     }
 }
 
-Describe "Validate Get-Item ResolvedTarget property" -Tag RequireAdminOnWindows {
+Describe "Validate Get-Item ResolvedTarget property" -Tags "Feature","RequireAdminOnWindows" {
     BeforeAll {
         $rootDir = Join-Path "TestDrive:" "TestDir"
 

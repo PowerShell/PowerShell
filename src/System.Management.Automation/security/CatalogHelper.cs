@@ -457,7 +457,7 @@ namespace System.Management.Automation
                     _cmdlet.ThrowTerminatingError(errorRecord);
                 }
 
-                hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+                hashValue = Convert.ToHexString(hashBytes);
             }
 
             return hashValue;
@@ -689,8 +689,8 @@ namespace System.Management.Automation
             List<string> relativePathsFromFolder = pathItems.Keys.ToList();
             List<string> relativePathsFromCatalog = catalogItems.Keys.ToList();
 
-            // Find entires those are not in both list lists. These should be empty lists for success
-            // Hashes in Catalog should be exact similar to the ones from folder
+            // Find entries that are not in both lists. These should be empty lists for success
+            // Hashes in Catalog should be exactly similar to the ones from folder
             List<string> relativePathsNotInFolder = relativePathsFromFolder.Except(relativePathsFromCatalog, StringComparer.CurrentCultureIgnoreCase).ToList();
             List<string> relativePathsNotInCatalog = relativePathsFromCatalog.Except(relativePathsFromFolder, StringComparer.CurrentCultureIgnoreCase).ToList();
 

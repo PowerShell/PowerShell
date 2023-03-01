@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
                         }
                         else if (insertPosition > result.Length)
                         {
-                            // handle case where path is a singleton with no path seperator already
+                            // handle case where path is a singleton with no path separator already
                             result.Append(Path.PathSeparator).Append(subPathToAdd);
                         }
                         else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
@@ -1248,7 +1248,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         /// <summary>
-        /// Returns a PSModulePath suiteable for Windows PowerShell by removing PowerShell's specific
+        /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
         /// paths from current PSModulePath.
         /// </summary>
         /// <returns>
@@ -1711,7 +1711,7 @@ namespace System.Management.Automation
         /// <summary>Module version was greater than the maximum version.</summary>
         MaximumVersion,
 
-        /// <summary>The module specifcation passed in was null.</summary>
+        /// <summary>The module specification passed in was null.</summary>
         NullModuleSpecification,
     }
 

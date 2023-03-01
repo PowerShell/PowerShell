@@ -65,3 +65,17 @@ Describe "Temp: drive" -Tag Feature {
         $res.Root | Should -BeExactly ([System.IO.Path]::GetTempPath())
     }
 }
+
+Describe "Get-PSDrive for network path" -Tags "Feature","RequireAdminOnWindows" {
+
+    It 'Check P/Invoke GetDosDevice/QueryDosDevice' -Skip:(-not $IsWindows) {
+        $UsedDrives  = Get-PSDrive | Select-Object -ExpandProperty Name
+        $PSDriveName = 'D'..'Z' | Where-Object -FilterScript {$_ -notin $UsedDrives} | Get-Random
+
+        subst "$($PSDriveName):" \\localhost\c$\Windows
+
+        $drive = Get-PSDrive $PSDriveName
+        $drive.DisplayRoot | Should -BeExactly '\\localhost\c$\Windows'
+        subst "$($PSDriveName):" /D
+    }
+}

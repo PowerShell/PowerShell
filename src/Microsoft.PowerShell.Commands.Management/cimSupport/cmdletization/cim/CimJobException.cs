@@ -54,10 +54,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             _errorRecord = (ErrorRecord)info.GetValue("errorRecord", typeof(ErrorRecord));
         }
@@ -69,10 +66,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info); 
 
             base.GetObjectData(info, context);
             info.AddValue("errorRecord", _errorRecord);

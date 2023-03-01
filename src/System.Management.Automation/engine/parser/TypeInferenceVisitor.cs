@@ -322,7 +322,18 @@ namespace System.Management.Automation
                 }
 
                 var baseTypeDefinitionAst = baseTypeName._typeDefinitionAst;
-                results.AddRange(GetMembersByInferredType(new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
+                if (baseTypeDefinitionAst is null)
+                {
+                    var baseReflectionType = baseTypeName.GetReflectionType();
+                    if (baseReflectionType is not null)
+                    {
+                        results.AddRange(GetMembersByInferredType(new PSTypeName(baseReflectionType), isStatic, filterToCall));
+                    }
+                }
+                else
+                {
+                    results.AddRange(GetMembersByInferredType(new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
+                }
             }
 
             // Add stuff from our base class System.Object.
@@ -540,7 +551,6 @@ namespace System.Management.Automation
                 foreach (var kv in hashtableAst.KeyValuePairs)
                 {
                     string name = null;
-                    string typeName = null;
                     if (kv.Item1 is StringConstantExpressionAst stringConstantExpressionAst)
                     {
                         name = stringConstantExpressionAst.Value;
@@ -554,32 +564,46 @@ namespace System.Management.Automation
                         name = nameValue.ToString();
                     }
 
-                    if (name != null)
+                    if (name is not null)
                     {
-                        object value = null;
                         if (kv.Item2 is PipelineAst pipelineAst && pipelineAst.GetPureExpression() is ExpressionAst expression)
                         {
-                            switch (expression)
+                            object value;
+                            if (expression is ConstantExpressionAst constant)
                             {
-                                case ConstantExpressionAst constantExpression:
-                                    value = constantExpression.Value;
-                                    break;
-                                default:
-                                    typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
-                                    if (typeName == null)
-                                    {
-                                        if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
-                                        {
-                                            value = safeValue;
-                                        }
-                                    }
+                                value = constant.Value;
+                            }
+                            else
+                            {
+                                _ = SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out value);
+                            }
 
-                                    break;
+                            PSTypeName valueType;
+                            if (value is null)
+                            {
+                                valueType = new PSTypeName("System.Object");
+                            }
+                            else
+                            {
+                                valueType = new PSTypeName(value.GetType());
+                            }
+
+                            properties.Add(new PSMemberNameAndType(name, valueType, value));
+                        }
+                        else
+                        {
+                            bool foundAnyTypes = false;
+                            foreach (var item in InferTypes(kv.Item2))
+                            {
+                                foundAnyTypes = true;
+                                properties.Add(new PSMemberNameAndType(name, item));
+                            }
+
+                            if (!foundAnyTypes)
+                            {
+                                properties.Add(new PSMemberNameAndType(name, new PSTypeName("System.Object")));
                             }
                         }
-
-                        var pstypeName = value != null ? new PSTypeName(value.GetType()) : new PSTypeName(typeName ?? "System.Object");
-                        properties.Add(new PSMemberNameAndType(name, pstypeName, value));
                     }
                 }
 
@@ -1833,7 +1857,7 @@ namespace System.Management.Automation
             // We don't need to handle drive qualified variables, we can usually get those values
             // without needing to "guess" at the type.
             var astVariablePath = variableExpressionAst.VariablePath;
-            if (!astVariablePath.IsVariable)
+            if (!astVariablePath.IsVariable || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.Null))
             {
                 // Not a variable - the caller should have already tried going to session state
                 // to get the item and hence it's type, but that must have failed.  Don't try again.
@@ -1948,6 +1972,23 @@ namespace System.Management.Automation
                 var isThis = astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This);
                 if (!isThis || (_context.CurrentTypeDefinitionAst == null && _context.CurrentThisType == null))
                 {
+                    if (SpecialVariables.AllScopeVariables.TryGetValue(astVariablePath.UserPath, out Type knownType))
+                    {
+                        if (knownType == typeof(object))
+                        {
+                            if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var psType))
+                            {
+                                inferredTypes.Add(psType);
+                            }
+                        }
+                        else
+                        {
+                            inferredTypes.Add(new PSTypeName(knownType));
+                        }
+
+                        return;
+                    }
+
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
                         if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
@@ -2257,6 +2298,16 @@ namespace System.Management.Automation
             bool foundAny = false;
             foreach (var psType in targetTypes)
             {
+                if (psType is PSSyntheticTypeName syntheticType)
+                {
+                    foreach (var member in syntheticType.Members)
+                    {
+                        yield return member.PSTypeName;
+                    }
+
+                    continue;
+                }
+
                 var type = psType.Type;
                 if (type != null)
                 {

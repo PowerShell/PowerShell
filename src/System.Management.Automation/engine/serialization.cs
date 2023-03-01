@@ -733,7 +733,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a new collection of typenames without "Deserialization." prefix
-        /// in the typename. This will allow to map type info/format info of the orignal type
+        /// in the typename. This will allow to map type info/format info of the original type
         /// for deserialized objects.
         /// </summary>
         /// <param name="typeNames"></param>
@@ -3988,7 +3988,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utilitily class for ReadDictionary(), supporting ordered or non-ordered Dictionaty methods.
+        /// Utility class for ReadDictionary(), supporting ordered or non-ordered Dictionary methods.
         /// </summary>
         private class PSDictionary
         {
@@ -5933,10 +5933,7 @@ namespace System.Management.Automation
         public PSPrimitiveDictionary(Hashtable other)
             : base(StringComparer.OrdinalIgnoreCase)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             foreach (DictionaryEntry entry in other)
             {
@@ -6526,7 +6523,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If originalHash contains PSVersionTable, then just returns the Cloned copy of
-        /// the original hash. Othewise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
+        /// the original hash. Otherwise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
         /// to the clone and returns.
         /// </summary>
         /// <param name="originalHash"></param>
@@ -6628,7 +6625,6 @@ namespace Microsoft.PowerShell
     ///       - PropertySerializationSet=<empty>
     ///     - TargetTypeForDeserialization=DeserializingTypeConverter
     ///   - Add a field of that type in unit tests / S.M.A.Test.SerializationTest+RehydratedType
-    ///     (testsrc\admintest\monad\DRT\engine\UnitTests\SerializationTest.cs)
     /// -->
     public sealed class DeserializingTypeConverter : PSTypeConverter
     {

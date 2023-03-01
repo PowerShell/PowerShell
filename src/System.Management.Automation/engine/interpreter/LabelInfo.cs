@@ -80,7 +80,7 @@ namespace System.Management.Automation.Interpreter
             {
                 if (j.ContainsTarget(_node))
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
+                    throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Label target already defined: {_node.Name}"));
                 }
             }
 
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Interpreter
 
             if (HasMultipleDefinitions)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
+                throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Ambiguous jump {_node.Name}"));
             }
 
             // We didn't find an outward jump. Look for a jump across blocks

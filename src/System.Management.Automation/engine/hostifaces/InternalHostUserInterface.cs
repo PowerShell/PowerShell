@@ -495,7 +495,7 @@ namespace System.Management.Automation.Internal.Host
                         break;
 
                     case 3:
-                        // No to All means that we want to stop everytime WriteDebug is called. Since No throws an error, I
+                        // No to All means that we want to stop every time WriteDebug is called. Since No throws an error, I
                         // think that ordinarily, the caller will terminate.  So I don't think the caller will ever get back
                         // calling WriteDebug again, and thus "No to All" might not be a useful option to have.
 
@@ -927,8 +927,7 @@ namespace System.Management.Automation.Internal.Host
                         defaultStr = hotkeysAndPlainLabels[1, defaultChoice];
                     }
 
-                    defaultChoicesBuilder.Append(string.Format(Globalization.CultureInfo.InvariantCulture,
-                        "{0}{1}", prepend, defaultStr));
+                    defaultChoicesBuilder.Append(Globalization.CultureInfo.InvariantCulture, $"{prepend}{defaultStr}");
                     prepend = ",";
                 }
 
@@ -936,8 +935,7 @@ namespace System.Management.Automation.Internal.Host
 
                 if (defaultChoiceKeys.Count == 1)
                 {
-                    defaultPrompt = StringUtil.Format(InternalHostUserInterfaceStrings.DefaultChoice,
-                        defaultChoicesStr);
+                    defaultPrompt = StringUtil.Format(InternalHostUserInterfaceStrings.DefaultChoice, defaultChoicesStr);
                 }
                 else
                 {

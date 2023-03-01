@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace System.Management.Automation
 {
@@ -14,8 +14,15 @@ namespace System.Management.Automation
     /// </summary>
     internal class AutomationEngine
     {
+        static AutomationEngine()
+        {
+            // Register the encoding provider to load encodings that are not supported by default,
+            // so as to allow them to be used in user's script/code.
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
+
         // Holds the parser to use for this instance of the engine...
-        internal Language.Parser EngineParser;
+        internal Parser EngineParser;
 
         /// <summary>
         /// Returns the handle to the execution context
@@ -98,12 +105,22 @@ namespace System.Management.Automation
 
             if (errors.Length > 0)
             {
-                if (errors[0].IncompleteInput)
+                ParseException ex = errors[0].IncompleteInput
+                    ? new IncompleteParseException(errors[0].Message, errors[0].ErrorId)
+                    : new ParseException(errors);
+
+                if (addToHistory)
                 {
-                    throw new IncompleteParseException(errors[0].Message, errors[0].ErrorId);
+                    // Try associating the parsing error with the history item if we can.
+                    InvocationInfo invInfo = ex.ErrorRecord.InvocationInfo;
+                    LocalRunspace localRunspace = Context.CurrentRunspace as LocalRunspace;
+                    if (invInfo is not null && localRunspace?.History is not null)
+                    {
+                        invInfo.HistoryId = localRunspace.History.GetNextHistoryId();
+                    }
                 }
 
-                throw new ParseException(errors);
+                throw ex;
             }
 
             return new ScriptBlock(ast, isFilter: false);

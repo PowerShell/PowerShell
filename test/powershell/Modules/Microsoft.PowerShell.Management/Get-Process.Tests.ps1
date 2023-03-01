@@ -79,6 +79,10 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows) {
+        if (Test-IsElevated) {
+            Set-ItResult -Skipped -Because "must NOT be run as admin"
+        }
+
         { Get-Process -IncludeUserName } | Should -Throw -ErrorId "IncludeUserNameRequiresElevation,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
@@ -96,9 +100,25 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should return CommandLine property" -Skip:($IsMacOS) {
-        $command = "(Get-Process -Id `$pid).CommandLine"
-        $result = & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command $command
-        $result | Should -BeLike "*$command*"
+        if ($IsWindows) {
+            # Windows will convert the bound parameters and quote them if it
+            # contains whitespace. Any inner double quotes are escaped with \".
+            $expected = "`"$PSHOME\pwsh.exe`" -NoProfile -NoLogo -NonInteractive -Command `"(Get-Process -Id \`"`$pid\`").CommandLine`""
+
+            $actual = & {
+                $PSNativeCommandArgumentPassing = 'Windows'
+                & $PSHOME/pwsh -NoProfile -NoLogo -NonInteractive -Command '(Get-Process -Id "$pid").CommandLine'
+            }
+        } else {
+            # Linux passes arguments as they are bound. As there is no actual
+            # command line string, pwsh just joins each array with a space
+            # without attempting to use some sort of quoting rule.
+            $expected = "$PSHOME/pwsh -NoProfile -NoLogo -NonInteractive -Command (Get-Process -Id `"`$pid`").CommandLine"
+
+            $actual = & "$PSHOME/pwsh" -NoProfile -NoLogo -NonInteractive -Command '(Get-Process -Id "$pid").CommandLine'
+        }
+
+        $actual | Should -Be $expected
     }
 }
 

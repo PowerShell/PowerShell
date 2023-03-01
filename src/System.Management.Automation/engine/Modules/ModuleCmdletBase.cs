@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
-                //  - If the current module is a nested module, then the parent module will be specifeid.
+                //  - If the current module is a nested module, then the parent module will be specified.
                 //  - If the current module is a root module, then the parent module will not be specified.
                 string moduleName = parentModule?.Name ?? ModuleIntrinsics.GetModuleName(moduleSpecification.Name);
                 rootedPath = FixFileName(moduleName, moduleBase, moduleSpecification.Name, extension: null, canLoadAssembly: importingModule);
@@ -4542,7 +4542,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparamref name="T"/>)</c>.
         /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
@@ -4608,7 +4608,7 @@ namespace Microsoft.PowerShell.Commands
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
         /// <remarks>
-        /// When fixing up an assembly file, this method loads the resovled assembly if it's in the process of actually loading a module.
+        /// When fixing up an assembly file, this method loads the resolved assembly if it's in the process of actually loading a module.
         /// Read the comments in the method for the detailed information.
         /// </remarks>
         /// <param name="moduleName">Name of the module that we are processing, used for caching purpose when we need to load an assembly.</param>
@@ -4939,7 +4939,7 @@ namespace Microsoft.PowerShell.Commands
                 using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                 ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
                 ps.AddParameter("Session", compatSession);
-                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Create(CultureInfo.InvariantCulture, $"Set-Location -Path '{args.NewPath.Path}'")));
                 ps.Invoke();
             }
         }
@@ -5723,7 +5723,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
-                                    // Implict function export is allowed when any of the following is true:
+                                    // Implicit function export is allowed when any of the following is true:
                                     //  - Nested modules are allowed by module manifest
                                     //  - The import context language mode is FullLanguage
                                     //  - This script module not running as trusted (FullLanguage)
@@ -7192,6 +7192,9 @@ namespace Microsoft.PowerShell.Commands
                     CommandOrigin.Internal,
                     targetSessionState.ExecutionContext);
 
+                // Note that the module 'func' and the function table 'functionInfo' instances are now linked
+                // together (see 'CopiedCommand' in CommandInfo class), so setting visibility on one also 
+                // sets it on the other.
                 SetCommandVisibility(isImportModulePrivate, functionInfo);
                 functionInfo.Module = sourceModule;
 
