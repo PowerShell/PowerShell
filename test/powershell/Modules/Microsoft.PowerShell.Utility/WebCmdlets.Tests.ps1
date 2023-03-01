@@ -969,7 +969,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
         }
 
-        It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
+        It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session variable on multiple redirects: <redirectType>" -TestCases $redirectTests {
             param($redirectType)
 
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
@@ -2739,7 +2739,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
     }
 
-    It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session on multiple redirects: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session variable on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
 
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
