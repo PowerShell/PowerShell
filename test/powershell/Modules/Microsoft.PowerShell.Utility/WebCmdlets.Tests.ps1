@@ -982,35 +982,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
             $session.MaximumRedirection = 2
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
-            $session.MaximumRedirection | Should -BeExactly 2
-
-            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
             $session.MaximumRetryCount = 2
             $session.RetryIntervalInSeconds = 2
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
-            $session.MaximumRetryCount | Should -BeExactly 2
-            $session.RetryIntervalInSeconds | Should -BeExactly 2
-
-            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
             $session.UseDefaultCredentials = $true
             $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+            $session.MaximumRedirection | Should -BeExactly 2
+            $session.MaximumRetryCount | Should -BeExactly 2
+            $session.RetryIntervalInSeconds | Should -BeExactly 2
             $session.UseDefaultCredentials | Should -BeExactly $true
 
             $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
             $session.Credentials = $credential
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
+            $session.Proxy = [System.Net.WebProxy]::New($proxy)
+            try { $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers } catch {}
             $session.Credentials.UserName | Should -BeExactly $credential.UserName
             $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
-
-            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
-            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
             $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
-
-            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-            $session.Proxy = [System.Net.WebProxy]::New($proxy)
-            try { $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers } catch {}
             $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
         }
 
@@ -2764,35 +2752,23 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
         $session.MaximumRedirection = 2
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
-        $session.MaximumRedirection | Should -BeExactly 2
-
-        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
         $session.MaximumRetryCount = 2
         $session.RetryIntervalInSeconds = 2
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
-        $session.MaximumRetryCount | Should -BeExactly 2
-        $session.RetryIntervalInSeconds | Should -BeExactly 2
-
-        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
         $session.UseDefaultCredentials = $true
         $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+        $session.MaximumRedirection | Should -BeExactly 2
+        $session.MaximumRetryCount | Should -BeExactly 2
+        $session.RetryIntervalInSeconds | Should -BeExactly 2
         $session.UseDefaultCredentials | Should -BeExactly $true
 
         $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
         $session.Credentials = $credential
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
+        $session.Proxy = [System.Net.WebProxy]::New($proxy)
+        try { $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers } catch {}
         $session.Credentials.UserName | Should -BeExactly $credential.UserName
         $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
-
-        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::New([X509Certificate]$certificate)
-        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
         $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
-
-        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::New()
-        $session.Proxy = [System.Net.WebProxy]::New($proxy)
-        try { $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers } catch {}
         $session.Proxy.GetProxy($uri).OriginalString | Should -BeExactly $proxy
     }
 
