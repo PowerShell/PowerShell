@@ -306,7 +306,10 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            if (!(runspace is LocalRunspace localRunspace)) { return new List<string>(); }
+            if (!(runspace is LocalRunspace localRunspace))
+            {
+                return new List<string>();
+            }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;

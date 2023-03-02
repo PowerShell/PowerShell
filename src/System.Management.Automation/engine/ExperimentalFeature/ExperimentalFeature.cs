@@ -164,7 +164,10 @@ namespace System.Management.Automation
         /// </summary>
         private static ReadOnlyBag<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            if (enabledFeatures.Length == 0) { return ReadOnlyBag<string>.Empty; }
+            if (enabledFeatures.Length == 0)
+            {
+                return ReadOnlyBag<string>.Empty;
+            }
 
             var list = new List<string>(enabledFeatures.Length);
             foreach (string name in enabledFeatures)

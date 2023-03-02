@@ -1513,7 +1513,10 @@ namespace System.Management.Automation.Runspaces
 
                 if (count > 0)
                 {
-                    if (count == 1) { _baseRunningPowerShell = null; }
+                    if (count == 1)
+                    {
+                        _baseRunningPowerShell = null;
+                    }
 
                     return _runningPowerShells.Pop();
                 }
