@@ -1553,6 +1553,7 @@ namespace Microsoft.PowerShell
                         {
                             Console.Out.Write('\n');
                         }
+
                         consoleIn.Read();
                     }
 

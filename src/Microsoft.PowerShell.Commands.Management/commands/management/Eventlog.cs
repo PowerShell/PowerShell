@@ -364,6 +364,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw;
                 }
+
                 ThrowTerminatingError(new ErrorRecord(
                     e, // default exception text is OK
                     "EventLogNotFound",

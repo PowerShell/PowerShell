@@ -1150,6 +1150,7 @@ namespace System.Management.Automation
                 {
                     return;
                 }
+
                 _stopped = true;
             }
 
