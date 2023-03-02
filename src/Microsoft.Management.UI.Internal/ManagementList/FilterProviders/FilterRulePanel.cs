@@ -230,7 +230,10 @@ namespace Microsoft.Management.UI.Internal
         {
             Debug.Assert(e != null, "not null");
 
-            ArgumentNullException.ThrowIfNull(e.Parameter);
+            if (e.Parameter == null)
+            {
+                throw new ArgumentException("e.Parameter is null.", "e");
+            }
 
             List<FilterRulePanelItem> itemsToAdd = new List<FilterRulePanelItem>();
 
@@ -262,7 +265,10 @@ namespace Microsoft.Management.UI.Internal
         {
             Debug.Assert(e != null, "not null");
 
-            ArgumentNullException.ThrowIfNull(e.Parameter);
+            if (e.Parameter == null)
+            {
+                throw new ArgumentException("e.Parameter is null.", "e");
+            }
 
             FilterRulePanelItem item = e.Parameter as FilterRulePanelItem;
             if (item == null)

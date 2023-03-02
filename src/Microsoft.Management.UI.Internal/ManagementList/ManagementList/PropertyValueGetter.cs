@@ -43,7 +43,11 @@ namespace Microsoft.Management.UI.Internal
         {
             propertyValue = null;
 
-            ArgumentNullException.ThrowIfNullOrEmpty(propertyName);
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentException("propertyName is empty", "propertyName");
+            }
+
             ArgumentNullException.ThrowIfNull(value);
 
             PropertyDescriptor descriptor = this.GetPropertyDescriptor(propertyName, value);

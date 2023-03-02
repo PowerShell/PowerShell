@@ -149,9 +149,7 @@ namespace ResultsComparer
             var diffFiles = GetFilesToParse(args.DiffPath);
 
             if (!baseFiles.Any() || !diffFiles.Any())
-            {
                 throw new ArgumentException($"Provided paths contained no {FullBdnJsonFileExtension} files.");
-            }
 
             var baseResults = baseFiles.Select(ReadFromFile);
             var diffResults = diffFiles.Select(ReadFromFile);

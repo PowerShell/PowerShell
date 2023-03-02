@@ -365,10 +365,7 @@ namespace System.Management.Automation
         {
             // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
-            if (index < 0 || index >= size)
-            {
-                throw new ArgumentException("index");
-            }
+            if (index < 0 || index >= size) throw new ArgumentException("index");
 
             foreach (int curIndex in GetAccessPath(size, index))
             {

@@ -76,7 +76,10 @@ namespace Microsoft.Management.UI.Internal
 
             foreach (FilterRule rule in rules)
             {
-                ArgumentNullException.ThrowIfNull(rule);
+                if (rule == null)
+                {
+                    throw new ArgumentException("A value within rules is null", "rules");
+                }
 
                 this.AvailableRules.AvailableValues.Add(rule);
             }
