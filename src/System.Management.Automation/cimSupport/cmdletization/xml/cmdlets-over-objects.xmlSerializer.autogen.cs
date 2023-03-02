@@ -514,7 +514,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -531,7 +535,10 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(@"EnumMetadataEnumValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(@"EnumMetadataEnumValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
             WriteAttribute(@"Value", @"", ((global::System.String)o.@Value));
             WriteEndElement(o);
@@ -541,7 +548,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -558,7 +569,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(@"EnumMetadataEnum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(@"EnumMetadataEnum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"EnumName", @"", ((global::System.String)o.@EnumName));
             WriteAttribute(@"UnderlyingType", @"", ((global::System.String)o.@UnderlyingType));
             if (o.@BitwiseFlagsSpecified)
@@ -587,7 +602,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -604,7 +623,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
             WriteAttribute(@"Value", @"", ((global::System.String)o.@Value));
             WriteEndElement(o);
@@ -614,7 +637,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -631,7 +658,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(@"ClassMetadataData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(@"ClassMetadataData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
             if ((object)(o.@Value) != null)
             {
@@ -660,7 +691,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -677,7 +712,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(@"WildcardablePropertyQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(@"WildcardablePropertyQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             if (o.@AllowGlobbingSpecified)
             {
                 WriteAttribute(@"AllowGlobbing", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@AllowGlobbing)));
@@ -695,7 +734,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -712,7 +755,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+    
             if (o.@IsMandatorySpecified)
             {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));
@@ -725,7 +772,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
-                        if (i != 0) Writer.WriteString(" ");
+                        if (i != 0)
+                        {
+                            Writer.WriteString(" ");
+                        }
+
                         WriteValue(ai);
                     }
 
@@ -752,7 +803,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
-                        if (i != 0) Writer.WriteString(" ");
+                        if (i != 0)
+                        {
+                            Writer.WriteString(" ");
+                        }
+
                         WriteValue(ai);
                     }
 
@@ -811,7 +866,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -828,7 +887,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(@"ObsoleteAttributeMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(@"ObsoleteAttributeMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"Message", @"", ((global::System.String)o.@Message));
             WriteEndElement(o);
         }
@@ -837,7 +900,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -854,7 +921,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"Min", @"", ((global::System.String)o.@Min));
             WriteAttribute(@"Max", @"", ((global::System.String)o.@Max));
             WriteEndElement(o);
@@ -864,7 +935,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -881,7 +956,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"Min", @"", ((global::System.String)o.@Min));
             WriteAttribute(@"Max", @"", ((global::System.String)o.@Max));
             WriteEndElement(o);
@@ -891,7 +970,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if ((object)o == null)
             {
-                if (isNullable) WriteNullTagLiteral(n, ns);
+                if (isNullable)
+                {
+                    WriteNullTagLiteral(n, ns);
+                }
+
                 return;
             }
 
@@ -908,7 +991,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             }
 
             WriteStartElement(n, ns, o, false, null);
-            if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            if (needType)
+            {
+                WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            }
+
             WriteAttribute(@"Min", @"", ((global::System.String)o.@Min));
             WriteAttribute(@"Max", @"", ((global::System.String)o.@Max));
             WriteEndElement(o);
