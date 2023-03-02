@@ -44,9 +44,7 @@ namespace System.Diagnostics.Eventing
                 ArgumentNullException.ThrowIfNull(value, nameof(Delimiter));
 
                 if (value.Length == 0)
-                {
                     throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
-                }
 
                 _delimiter = value;
             }
@@ -76,9 +74,7 @@ namespace System.Diagnostics.Eventing
             ArgumentNullException.ThrowIfNull(delimiter);
 
             if (delimiter.Length == 0)
-            {
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
-            }
 
             _delimiter = delimiter;
             InitProvider(providerId);

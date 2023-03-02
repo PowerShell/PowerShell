@@ -7673,7 +7673,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!fileSysInfo.Exists)
                 {
-                    throw new ArgumentException(StringUtil.Format(SessionStateStrings.PathNotFound, fileSysInfo.FullName));
+                    throw new ArgumentException(
+                        StringUtil.Format(SessionStateStrings.PathNotFound, fileSysInfo.FullName));
                 }
 
                 return fileSysInfo.LinkTarget;

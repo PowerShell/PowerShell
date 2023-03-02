@@ -340,7 +340,10 @@ namespace Microsoft.Management.UI.Internal
 
         private void ViewManager_ItemSelected(object sender, DataRoutedEventArgs<object> e)
         {
-            ArgumentNullException.ThrowIfNull(e.Data);
+            if (e.Data == null)
+            {
+                throw new ArgumentException("e.Data is null", "e");
+            }
 
             StateDescriptor<ManagementList> sd = (StateDescriptor<ManagementList>)e.Data;
             sd.RestoreState(this);
@@ -350,7 +353,10 @@ namespace Microsoft.Management.UI.Internal
 
         private void ViewManager_ItemDeleted(object sender, DataRoutedEventArgs<object> e)
         {
-            ArgumentNullException.ThrowIfNull(e.Data);
+            if (e.Data == null)
+            {
+                throw new ArgumentException("e.Data is null", "e");
+            }
 
             StateDescriptor<ManagementList> sd = (StateDescriptor<ManagementList>)e.Data;
             this.Views.Remove(sd);
