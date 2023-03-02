@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -19,7 +18,18 @@ namespace Microsoft.PowerShell.Commands
             Position = 0,
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
-        public string Activity { get; set; } = " ";
+        public string Activity
+        {
+            get
+            {
+                return _activity;
+            }
+
+            set
+            {
+                _activity = string.IsNullOrEmpty(value) ? " " : value;
+            }
+        }
 
         /// <summary>
         /// Describes the current state of the activity.
@@ -106,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _completed;
+        private string _activity = " ";
 
         private const string HelpMessageBaseName = "WriteProgressResourceStrings";
     }

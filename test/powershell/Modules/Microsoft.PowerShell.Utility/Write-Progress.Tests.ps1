@@ -1,10 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
-    It "Should be able to throw exception when missing mandatory parameters" {
-        { Write-Progress $null } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.WriteProgressCommand'
-    }
-
     It "Should be able to throw exception when running Write-Progress with bad percentage" {
         { Write-Progress -Activity 'myactivity' -Status 'mystatus' -percent 101 } |
 	    Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
