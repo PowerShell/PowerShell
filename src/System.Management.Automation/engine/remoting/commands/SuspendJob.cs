@@ -331,9 +331,21 @@ namespace Microsoft.PowerShell.Commands
             if (haveToWait)
                 _waitForJobs.WaitOne();
 
-            if (_warnInvalidState) WriteWarning(RemotingErrorIdStrings.SuspendJobInvalidJobState);
-            foreach (var e in _errorsToWrite) WriteError(e);
-            foreach (var j in _allJobsToSuspend) WriteObject(j);
+            if (_warnInvalidState)
+            {
+                WriteWarning(RemotingErrorIdStrings.SuspendJobInvalidJobState);
+            }
+
+            foreach (var e in _errorsToWrite)
+            {
+                WriteError(e);
+            }
+
+            foreach (var j in _allJobsToSuspend)
+            {
+                WriteObject(j);
+            }
+
             base.EndProcessing();
         }
 
@@ -361,7 +373,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (!disposing)
+            {
+                return;
+            }
+
             foreach (var pair in _cleanUpActions)
             {
                 pair.Key.SuspendJobCompleted -= pair.Value;
