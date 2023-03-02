@@ -559,12 +559,11 @@ namespace Microsoft.PowerShell.Commands
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                             string contentType = ContentHelper.GetContentType(response);
-                            string respVerboseMsg = string.Format(
-                                CultureInfo.CurrentCulture,
-                                WebCmdletStrings.WebResponseVerboseMsg,
-                                response.Content.Headers.ContentLength,
-                                contentType);
-
+                            long? contentLength = response.Content.Headers.ContentLength;
+                            string respVerboseMsg = contentLength is null
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                            
                             WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
