@@ -1491,7 +1491,10 @@ namespace Microsoft.PowerShell
             result = ReadLineResult.endedOnEnter;
 
             // If the test hook is set, read from it.
-            if (s_h != null) return s_h.ReadLine();
+            if (s_h != null)
+            {
+                return s_h.ReadLine();
+            }
 
             string restOfLine = null;
 
@@ -1536,14 +1539,20 @@ namespace Microsoft.PowerShell
                 }
 
                 var c = unchecked((char)inC);
-                if (!NoPrompt) Console.Out.Write(c);
+                if (!NoPrompt)
+                {
+                    Console.Out.Write(c);
+                }
 
                 if (c == '\r')
                 {
                     // Treat as newline, but consume \n if there is one.
                     if (consoleIn.Peek() == '\n')
                     {
-                        if (!NoPrompt) Console.Out.Write('\n');
+                        if (!NoPrompt)
+                        {
+                            Console.Out.Write('\n');
+                        }
                         consoleIn.Read();
                     }
 
