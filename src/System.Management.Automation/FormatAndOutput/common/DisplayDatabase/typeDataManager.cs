@@ -409,7 +409,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                if (etwEnabled) RunspaceEventSource.Log.ProcessFormatFileStart(file.FullPath);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.ProcessFormatFileStart(file.FullPath);
+                }
 
                 if (!ProcessBuiltin(file, db, expressionFactory, logEntries, ref success))
                 {

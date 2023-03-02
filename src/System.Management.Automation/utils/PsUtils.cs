@@ -211,11 +211,20 @@ namespace System.Management.Automation
                                      bool allowEnvironmentVariables,
                                      bool skipPathValidation)
         {
-            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException(nameof(parameterName)); }
+            if (!skipPathValidation && string.IsNullOrEmpty(parameterName))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
+            }
 
-            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath)); }
+            if (string.IsNullOrEmpty(psDataFilePath))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath));
+            }
 
-            if (context == null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
+            if (context == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
+            }
 
             string resolvedPath;
             if (skipPathValidation)
