@@ -431,7 +431,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 string mshsnapinMessage = StringUtil.Format(FormatAndOutXmlLoadingStrings.MshSnapinQualifiedError, info.psSnapinName, entry.message);
                                 info.errors.Add(mshsnapinMessage);
-                                if (entry.failToLoadFile) { file.FailToLoadFile = true; }
+                                if (entry.failToLoadFile)
+                                {
+                                    file.FailToLoadFile = true;
+                                }
                             }
                         }
                         // now aggregate the entries...
@@ -439,7 +442,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (etwEnabled) RunspaceEventSource.Log.ProcessFormatFileStop(file.FullPath);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.ProcessFormatFileStop(file.FullPath);
+                }
             }
 
             // add any sensible defaults to the database

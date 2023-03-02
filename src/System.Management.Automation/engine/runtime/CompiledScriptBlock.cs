@@ -187,7 +187,10 @@ namespace System.Management.Automation
                 TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimize, sw.ElapsedMilliseconds);
             }
 #endif
-            if (etwEnabled) ParserEventSource.Log.CompileStop();
+            if (etwEnabled)
+            {
+                ParserEventSource.Log.CompileStop();
+            }
         }
 
         private void PerformSecurityChecks()
@@ -2054,7 +2057,10 @@ namespace System.Management.Automation
                     if (++longestPossiblePattern >= 4)
                     {
                         var result = CheckForMatches(runningHash, longestPossiblePattern);
-                        if (result != null) return result;
+                        if (result != null)
+                        {
+                            return result;
+                        }
                     }
                 }
 
