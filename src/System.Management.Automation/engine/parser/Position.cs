@@ -356,10 +356,18 @@ namespace System.Management.Automation.Language
         {
             if (extent.StartLineNumber == line)
             {
-                if (column == 0) return true;
+                if (column == 0)
+                {
+                    return true;
+                }
+
                 if (column >= extent.StartColumnNumber)
                 {
-                    if (extent.EndLineNumber != extent.StartLineNumber) return true;
+                    if (extent.EndLineNumber != extent.StartLineNumber)
+                    {
+                        return true;
+                    }
+
                     return (column < extent.EndColumnNumber);
                 }
 

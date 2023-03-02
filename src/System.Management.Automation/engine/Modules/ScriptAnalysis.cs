@@ -434,7 +434,10 @@ namespace System.Management.Automation
 
         private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
-            if (value == null) return;
+            if (value == null)
+            {
+                return;
+            }
 
             var commandName = value as string;
             if (commandName != null)
