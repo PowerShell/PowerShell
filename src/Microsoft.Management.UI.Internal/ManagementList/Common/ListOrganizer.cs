@@ -42,10 +42,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnSelectItemExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            if (e.Parameter == null)
-            {
-                throw new ArgumentException("e.Parameter is null", "e");
-            }
+            ArgumentNullException.ThrowIfNull(e.Parameter);
 
             this.RaiseEvent(new DataRoutedEventArgs<object>(e.Parameter, ItemSelectedEvent));
             this.picker.IsOpen = false;
@@ -53,10 +50,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnDeleteItemExecutedImplementation(ExecutedRoutedEventArgs e)
         {
-            if (e.Parameter == null)
-            {
-                throw new ArgumentException("e.Parameter is null", "e");
-            }
+            ArgumentNullException.ThrowIfNull(e.Parameter);
 
             this.RaiseEvent(new DataRoutedEventArgs<object>(e.Parameter, ItemDeletedEvent));
         }

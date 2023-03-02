@@ -41,10 +41,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             FilterRule rule = value as FilterRule;
-            if (rule == null)
-            {
-                throw new ArgumentException("value of type FilterRule expected.", "value");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             return rule.DisplayName;
         }

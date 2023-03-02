@@ -413,8 +413,7 @@ namespace System.Management.Automation
                     {
                         suggestion["Enabled"] = false;
 
-                        throw new ArgumentException(
-                            SuggestionStrings.RuleMustBeScriptBlock, "Rule");
+                        throw new ArgumentException(SuggestionStrings.RuleMustBeScriptBlock, "Rule");
                     }
 
                     try
@@ -482,9 +481,7 @@ namespace System.Management.Automation
                     {
                         suggestion["Enabled"] = false;
 
-                        throw new ArgumentException(
-                            SuggestionStrings.InvalidMatchType,
-                            "MatchType");
+                        throw new ArgumentException(SuggestionStrings.InvalidMatchType, "MatchType");
                     }
 
                     // If the text matches, evaluate the suggestion
