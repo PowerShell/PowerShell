@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -145,17 +146,28 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Prevent additional commands in ConstrainedLanguage mode
-            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            // Prevent additional commands in ConstrainedLanguage mode.
+            switch (Context.LanguageMode)
             {
-                if (_setSupportedCommand)
-                {
-                    NotSupportedException nse =
-                        PSTraceSource.NewNotSupportedException(
-                            ImportLocalizedDataStrings.CannotDefineSupportedCommand);
-                    ThrowTerminatingError(
-                        new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
-                }
+                case PSLanguageMode.ConstrainedLanguage:
+                    if (_setSupportedCommand)
+                    {
+                        NotSupportedException nse =
+                            PSTraceSource.NewNotSupportedException(
+                                ImportLocalizedDataStrings.CannotDefineSupportedCommand);
+                        ThrowTerminatingError(
+                            new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
+                    }
+                    break;
+                
+                case PSLanguageMode.ConstrainedLanguageAudit:
+                    if (_setSupportedCommand)
+                    {
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "Import-LocalizedData",
+                            Message: "Additional supported commands will not be allowed in ConstrainedLanguage mode under policy enforcement.");
+                    }
+                    break;
             }
 
             string script = GetScript(path);

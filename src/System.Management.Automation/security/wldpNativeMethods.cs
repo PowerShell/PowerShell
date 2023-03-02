@@ -37,7 +37,12 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in ConstrainedLanguage mode only.
         /// </summary>
-        AllowConstrained = 3
+        AllowConstrained = 3,
+
+        /// <summary>
+        /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage audit logs.
+        /// </summary>
+        AllowConstrainedAudit = 4
     }
 
     /// <summary>
@@ -196,8 +201,10 @@ namespace System.Management.Automation.Security
                     case SystemEnforcementMode.Enforce:
                         return SystemScriptFileEnforcement.AllowConstrained;
 
-                    case SystemEnforcementMode.None:
                     case SystemEnforcementMode.Audit:
+                        return SystemScriptFileEnforcement.AllowConstrainedAudit;
+
+                    case SystemEnforcementMode.None:
                         return SystemScriptFileEnforcement.Allow;
 
                     default:

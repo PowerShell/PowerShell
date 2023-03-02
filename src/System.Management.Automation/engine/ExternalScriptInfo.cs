@@ -529,7 +529,6 @@ namespace System.Management.Automation
                                     {
                                         DefiningLanguageMode = Context.LanguageMode;
                                     }
-
                                     break;
 
                                 case SystemScriptFileEnforcement.Allow:
@@ -538,6 +537,10 @@ namespace System.Management.Automation
 
                                 case SystemScriptFileEnforcement.AllowConstrained:
                                     DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.AllowConstrainedAudit:
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
                                     break;
 
                                 case SystemScriptFileEnforcement.Block:

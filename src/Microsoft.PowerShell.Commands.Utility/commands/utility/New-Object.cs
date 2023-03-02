@@ -187,18 +187,26 @@ namespace Microsoft.PowerShell.Commands
                             targetObject: null));
                 }
 
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-                {
-                    if (!CoreTypes.Contains(type))
-                    {
-                        ThrowTerminatingError(
-                            new ErrorRecord(
-                                new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
-                    }
-                }
-
                 switch (Context.LanguageMode)
                 {
+                    case PSLanguageMode.ConstrainedLanguage:
+                        if (!CoreTypes.Contains(type))
+                        {
+                            ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
+                        }
+                        break;
+
+                    case PSLanguageMode.ConstrainedLanguageAudit:
+                        if (!CoreTypes.Contains(type))
+                        {
+                            SystemPolicy.LogWDACAuditMessage(
+                                Title: "New-Object",
+                                Message: $"Will not create type {type.FullName} in ConstrainedLanguage mode under policy enforcement.");
+                        }
+                        break;
+
                     case PSLanguageMode.NoLanguage:
                     case PSLanguageMode.RestrictedLanguage:
                         if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
@@ -212,8 +220,7 @@ namespace Microsoft.PowerShell.Commands
                                     ErrorCategory.PermissionDenied,
                                     targetObject: null));
                         }
-
-                    break;
+                        break;
                 }
 
                 // WinRT does not support creating instances of attribute & delegate WinRT types.
@@ -296,7 +303,8 @@ namespace Microsoft.PowerShell.Commands
                 int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
 
                 // If we're in ConstrainedLanguage, do additional restrictions
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
+                    Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
                 {
                     bool isAllowed = false;
 
@@ -312,10 +320,17 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!isAllowed)
                     {
-                        ThrowTerminatingError(
-                            new ErrorRecord(
-                                new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateComTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
-                        return;
+                        if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                        {
+                            ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateComTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
+                            return;
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "New-Object",
+                            Message: "Will not be able to create COM type in ConstrainedLanguage mode under policy enforcement.");
                     }
                 }
 
