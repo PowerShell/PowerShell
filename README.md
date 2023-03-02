@@ -177,9 +177,9 @@ If you have any problems building, consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
-| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | CodeFactor Grade         |
-|:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|:-------------------------|
-| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
+| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | CodeFactor Grade         |
+|:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|
+| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cf-image][]][cf-site] |
 
 [bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
 [bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
@@ -193,8 +193,6 @@ If you have any problems building, consult the developer [FAQ][].
 [windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
 [linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
 [macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
-[cc-site]: https://codecov.io/gh/PowerShell/PowerShell
-[cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
 [cf-site]: https://www.codefactor.io/repository/github/powershell/powershell
 [cf-image]: https://www.codefactor.io/repository/github/powershell/powershell/badge
 
