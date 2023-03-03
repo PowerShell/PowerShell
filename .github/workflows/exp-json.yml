@@ -138,12 +138,10 @@ jobs:
 
           Set-GWVariable -Name CREATE_EXP_JSON_PR -Value $createPR
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        id: cpr
+      - name: Create PR if needed
+        uses: ./.github/workflows/composite/createPR
         if: env.CREATE_EXP_JSON_PR == 'true'
         with:
-          commit-message: "Update experimental-feature-windows.json"
+          token: ${{ secrets.PR_PAT }}
           title: "Update experimental-feature json files"
-          base: master
-          branch: expjson_update_windows
+          branch: exp_json_update_windows

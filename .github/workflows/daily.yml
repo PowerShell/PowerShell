@@ -53,15 +53,15 @@ jobs:
         with:
           webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
           overwrite: "{title: `Failure in .github/daily.yml updating .NET build. Look at ${workflow_link}`}"
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+      - name: Create PR if needed
+        uses: ./.github/workflows/composite/createPR
         id: cpr
         if: env.CREATE_PR == 'true'
         with:
-          commit-message: "Update .NET SDK version from `${{ env.OLD_VERSION }}` to `${{ env.NEW_VERSION }}`"
+          token: ${{ secrets.PR_PAT }}
           title: "Update .NET SDK version from `${{ env.OLD_VERSION }}` to `${{ env.NEW_VERSION }}`"
-          base: master
           branch: dotnet_update
+
   update-tpn:
     permissions:
       contents: write  # for peter-evans/create-pull-request to create branch
@@ -92,19 +92,15 @@ jobs:
             Write-Verbose "No difference found.  Not creating a PR." -Verbose
           }
           exit 0
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+      - name: Create PR if needed
+        uses: ./.github/workflows/composite/createPR
         id: cprtpn
         if: env.CREATE_PR == 'true'
         with:
-          commit-message: "Update to the latest NOTICES file"
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          token: ${{ secrets.PR_PAT }}
           title: "Update to the latest NOTICES file"
-          reviewers: travisez13
-          base: master
-          draft: false
           branch: update-cgmanifest
+
   update-cgmanifest:
     permissions:
       contents: write  # for peter-evans/create-pull-request to create branch
@@ -139,16 +135,12 @@ jobs:
         with:
           name: cgmanifest
           path: ${{ env.CGMANIFEST_PATH }}
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+
+      - name: Create PR if needed
+        uses: ./.github/workflows/composite/createPR
         id: cprcgmanifest
         if: env.CGMANIFEST_PATH != ''
         with:
-          commit-message: "Update the cgmanifest"
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          token: ${{ secrets.PR_PAT }}
           title: "Update the cgmanifest"
-          reviewers: travisez13
-          base: master
-          draft: false
           branch: update-cgmanifest

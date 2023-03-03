@@ -1,0 +1,32 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
+name: "Create PR"
+
+description: "Create PR"
+
+inputs:
+  token:
+    description: Token used to create PR
+  branch:
+    description: The branch
+  title:
+    description: The PR title
+
+runs:
+  using: "composite"
+  steps:
+      - name: (scheduled-auto-release) Create Pull Request
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        id: cpr
+        uses: peter-evans/create-pull-request@2b011faafdcbc9ceb11414d64d0573f37c774b04 # v4.2.3
+        with:
+          commit-message: ${{ inputs.title }}
+          title: ${{ inputs.title }}
+          token: ${{ inputs.token }}
+          committer: PwshBot <pwshbot@microsoft.com>
+          author: PwshBot <pwshbot@microsoft.com>
+          base: master
+          draft: false
+          branch: ${{ inputs.branch }}
+          push-to-fork: pwshBot/PowerShell
