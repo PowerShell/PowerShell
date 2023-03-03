@@ -208,7 +208,10 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(Path != null, "FileName is mandatory parameter");
 
-            if (!ShouldProcess(Path)) return;
+            if (!ShouldProcess(Path))
+            {
+                return;
+            }
 
             StreamWriter sw;
             PathUtils.MasterStreamOpen(
