@@ -1206,6 +1206,7 @@ function __cmdletization_BindCommonParameters
                         {
                             output.Write(", ");
                         }
+
                         firstParameterSet = false;
                         output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                     }
@@ -1360,6 +1361,7 @@ function __cmdletization_BindCommonParameters
                 {
                     output.Write(", ");
                 }
+
                 firstParameterSet = false;
                 output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
             }
@@ -1505,6 +1507,7 @@ function __cmdletization_BindCommonParameters
                     {
                         output.Write(", ");
                     }
+
                     firstParameterSet = false;
                     output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                 }
