@@ -129,9 +129,9 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-tar-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos#binary-archives
 [in-raspbian]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#raspbian
 [in-arm]: https://docs.microsoft.com/powershell/scripting/install/powershell-core-on-arm
-[corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/6.0/6.0-supported-os.md#windows
-[corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/6.0/6.0-supported-os.md#linux
-[corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/6.0/6.0-supported-os.md#macos
+[corefx-win]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#windows
+[corefx-linux]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#linux
+[corefx-macos]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#macos
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
