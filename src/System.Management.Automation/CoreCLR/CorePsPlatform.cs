@@ -69,7 +69,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
+                if (_isNanoServer.HasValue)
+                {
+                    return _isNanoServer.Value;
+                }
 
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
@@ -99,7 +102,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isIoT.HasValue) { return _isIoT.Value; }
+                if (_isIoT.HasValue)
+                {
+                    return _isIoT.Value;
+                }
 
                 _isIoT = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
@@ -129,7 +135,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isWindowsDesktop.HasValue) { return _isWindowsDesktop.Value; }
+                if (_isWindowsDesktop.HasValue)
+                {
+                    return _isWindowsDesktop.Value;
+                }
 
                 _isWindowsDesktop = !IsNanoServer && !IsIoT;
                 return _isWindowsDesktop.Value;

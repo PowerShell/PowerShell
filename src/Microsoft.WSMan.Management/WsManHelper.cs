@@ -179,11 +179,7 @@ namespace Microsoft.WSMan.Management
             object[] args)
         {
             ArgumentNullException.ThrowIfNull(resourceManager);
-
-            if (string.IsNullOrEmpty(resourceName))
-            {
-                throw new ArgumentNullException(nameof(resourceName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(resourceName);
 
             string template = resourceManager.GetString(resourceName);
 

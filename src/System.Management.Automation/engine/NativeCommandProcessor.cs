@@ -1146,7 +1146,11 @@ namespace System.Management.Automation
         {
             lock (_sync)
             {
-                if (_stopped) return;
+                if (_stopped)
+                {
+                    return;
+                }
+
                 _stopped = true;
             }
 
@@ -1651,9 +1655,15 @@ namespace System.Management.Automation
 
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
-            if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
+            if (process.StartInfo.RedirectStandardOutput)
+            {
+                _refCount++;
+            }
 
-            if (process.StartInfo.RedirectStandardError) { _refCount++; }
+            if (process.StartInfo.RedirectStandardError)
+            {
+                _refCount++;
+            }
 
             // once we have _refCount, we can start processing
             if (process.StartInfo.RedirectStandardOutput)

@@ -2921,7 +2921,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                // Restore the langauge mode, but not if it was altered by the startup script itself.
+                // Restore the language mode, but not if it was altered by the startup script itself.
                 if (initializedRunspace.SessionStateProxy.LanguageMode == PSLanguageMode.FullLanguage)
                 {
                     initializedRunspace.SessionStateProxy.LanguageMode = originalLanguageMode;
@@ -5231,7 +5231,11 @@ end {
                             // the users of the cmdlet, instead of the author, should have control of what options applied to an alias
                             // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
-                            if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+
+                            if (psSnapInInfo != null)
+                            {
+                                aliasEntry.SetPSSnapIn(psSnapInInfo);
+                            }
 
                             if (moduleInfo != null)
                             {

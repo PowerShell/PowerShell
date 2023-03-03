@@ -926,7 +926,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void AddSetShouldExitToHost()
         {
-            if (!_allowSetShouldExit || _host == null) { return; }
+            if (!_allowSetShouldExit || _host == null)
+            {
+                return;
+            }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
             if (hostPrivateData != null)
@@ -938,7 +941,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void RemoveSetShouldExitFromHost()
         {
-            if (!_allowSetShouldExit || _host == null) { return; }
+            if (!_allowSetShouldExit || _host == null)
+            {
+                return;
+            }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
             if (hostPrivateData != null)
