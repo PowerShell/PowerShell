@@ -1994,7 +1994,7 @@ dotnet_diagnostic.SA1500.severity = none
 
 # SA1501: Statement should not be on a single line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1501.md
-dotnet_diagnostic.SA1501.severity = none
+dotnet_diagnostic.SA1501.severity = suggestion
 
 # SA1502: Element should not be on a single line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1502.md
@@ -2002,7 +2002,7 @@ dotnet_diagnostic.SA1502.severity = none
 
 # SA1503: Braces should not be omitted
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1503.md
-dotnet_diagnostic.SA1503.severity = none
+dotnet_diagnostic.SA1503.severity = suggestion
 
 # SA1504: All accessors should be single-line or multi-line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1504.md
@@ -2010,7 +2010,7 @@ dotnet_diagnostic.SA1504.severity = warning
 
 # SA1505: Opening braces should not be followed by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1505.md
-dotnet_diagnostic.SA1505.severity = none
+dotnet_diagnostic.SA1505.severity = suggestion
 
 # SA1506: Element documentation headers should not be followed by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1506.md
@@ -2022,11 +2022,11 @@ dotnet_diagnostic.SA1507.severity = warning
 
 # SA1508: Closing braces should not be preceded by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1508.md
-dotnet_diagnostic.SA1508.severity = none
+dotnet_diagnostic.SA1508.severity = suggestion
 
 # SA1509: Opening braces should not be preceded by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1509.md
-dotnet_diagnostic.SA1509.severity = none
+dotnet_diagnostic.SA1509.severity = suggestion
 
 # SA1510: Chained statement blocks should not be preceded by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1510.md
@@ -2042,7 +2042,7 @@ dotnet_diagnostic.SA1512.severity = none
 
 # SA1513: Closing brace should be followed by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1513.md
-dotnet_diagnostic.SA1513.severity = none
+dotnet_diagnostic.SA1513.severity = suggestion
 
 # SA1514: Element documentation header should be preceded by blank line
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1514.md
