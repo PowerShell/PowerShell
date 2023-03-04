@@ -301,7 +301,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value != null) { _referencedAssemblies = value; }
+                if (value != null)
+                {
+                    _referencedAssemblies = value;
+                }
             }
         }
 
@@ -867,7 +870,10 @@ namespace Microsoft.PowerShell.Commands
                 var tempReferences = new List<PortableExecutableReference>(s_autoReferencedAssemblies.Value);
                 foreach (string assembly in ReferencedAssemblies)
                 {
-                    if (string.IsNullOrWhiteSpace(assembly)) { continue; }
+                    if (string.IsNullOrWhiteSpace(assembly))
+                    {
+                        continue;
+                    }
 
                     string resolvedAssemblyPath = ResolveAssemblyName(assembly, true);
 
