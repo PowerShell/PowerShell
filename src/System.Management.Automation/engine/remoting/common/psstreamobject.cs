@@ -225,10 +225,17 @@ namespace System.Management.Automation.Remoting.Internal
             jobInstanceId = Guid.Empty;
             computerName = string.Empty;
 
-            if (message == null) return;
+            if (message == null)
+            {
+                return;
+            }
+
             string[] parts = message.Split(':', 3);
 
-            if (parts.Length != 3) return;
+            if (parts.Length != 3)
+            {
+                return;
+            }
 
             if (!Guid.TryParse(parts[0], out jobInstanceId))
                 jobInstanceId = Guid.Empty;
@@ -456,7 +463,11 @@ namespace System.Management.Automation.Remoting.Internal
 
         internal static ErrorRecord AddSourceTagToError(ErrorRecord errorRecord, Guid sourceId)
         {
-            if (errorRecord == null) return null;
+            if (errorRecord == null)
+            {
+                return null;
+            }
+
             errorRecord.ErrorDetails ??= new ErrorDetails(string.Empty);
             errorRecord.ErrorDetails.RecommendedAction = CreateInformationalMessage(sourceId, errorRecord.ErrorDetails.RecommendedAction);
             return errorRecord;
