@@ -539,6 +539,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 WriteXsiType(@"EnumMetadataEnumValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             }
+
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
             WriteAttribute(@"Value", @"", ((global::System.String)o.@Value));
             WriteEndElement(o);
