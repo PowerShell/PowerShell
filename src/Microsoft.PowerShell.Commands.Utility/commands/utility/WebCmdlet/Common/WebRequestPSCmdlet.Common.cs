@@ -1522,7 +1522,7 @@ namespace Microsoft.PowerShell.Commands
 
             byte[] bytes = null;
             XmlDocument doc = xmlNode as XmlDocument;
-            if (doc?.FirstChild is XmlDeclaration decl)
+            if (doc?.FirstChild is XmlDeclaration decl && !string.IsNullOrEmpty(decl.Encoding))
             {
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);
                 bytes = StreamHelper.EncodeToBytes(doc.OuterXml, encoding);
