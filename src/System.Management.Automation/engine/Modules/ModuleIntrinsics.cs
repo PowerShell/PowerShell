@@ -1139,12 +1139,19 @@ namespace System.Management.Automation
                         if (insertPosition == -1) // append subPathToAdd to the end
                         {
                             bool endsWithPathSeparator = false;
-                            if (result.Length > 0) endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            if (result.Length > 0)
+                            {
+                                endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            }
 
                             if (endsWithPathSeparator)
+                            {
                                 result.Append(subPathToAdd);
+                            }
                             else
+                            {
                                 result.Append(Path.PathSeparator + subPathToAdd);
+                            }
                         }
                         else if (insertPosition > result.Length)
                         {

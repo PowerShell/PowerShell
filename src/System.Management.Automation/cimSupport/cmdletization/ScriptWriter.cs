@@ -1202,7 +1202,11 @@ function __cmdletization_BindCommonParameters
                             MultiplyParameterSets(
                                 GetMethodParameterSet(method), StaticMethodParameterSetTemplate, commonParameterSets))
                     {
-                        if (!firstParameterSet) output.Write(", ");
+                        if (!firstParameterSet)
+                        {
+                            output.Write(", ");
+                        }
+
                         firstParameterSet = false;
                         output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                     }
@@ -1353,7 +1357,11 @@ function __cmdletization_BindCommonParameters
             bool firstParameterSet = true;
             foreach (string parameterSetName in MultiplyParameterSets(GetMethodParameterSet(method), InstanceMethodParameterSetTemplate, commonParameterSets, queryParameterSets))
             {
-                if (!firstParameterSet) output.Write(", ");
+                if (!firstParameterSet)
+                {
+                    output.Write(", ");
+                }
+
                 firstParameterSet = false;
                 output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
             }
@@ -1495,7 +1503,11 @@ function __cmdletization_BindCommonParameters
             foreach (string queryParameterSetName in cmdletParameterMetadata.ParameterSets.Keys)
                 foreach (string parameterSetName in MultiplyParameterSets(queryParameterSetName, InstanceQueryParameterSetTemplate, commonParameterSets, methodParameterSets))
                 {
-                    if (!firstParameterSet) output.Write(", ");
+                    if (!firstParameterSet)
+                    {
+                        output.Write(", ");
+                    }
+
                     firstParameterSet = false;
                     output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                 }

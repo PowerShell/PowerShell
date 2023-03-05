@@ -108,6 +108,11 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
+        /// Maximum number of Redirects to follow.
+        /// </summary>
+        internal int _maximumRedirection;
+
+        /// <summary>
         /// Parse Rel Links.
         /// </summary>
         internal bool _parseRelLink = false;
@@ -549,15 +554,16 @@ namespace Microsoft.PowerShell.Commands
 
                             WriteVerbose(reqVerboseMsg);
 
+                            _maximumRedirection = WebSession.MaximumRedirection;
+
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                             string contentType = ContentHelper.GetContentType(response);
-                            string respVerboseMsg = string.Format(
-                                CultureInfo.CurrentCulture,
-                                WebCmdletStrings.WebResponseVerboseMsg,
-                                response.Content.Headers.ContentLength,
-                                contentType);
-
+                            long? contentLength = response.Content.Headers.ContentLength;
+                            string respVerboseMsg = contentLength is null
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                            
                             WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
@@ -578,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Disable writing to the OutFile.
                                 OutFile = null;
                             }
-                                
+
                             // Detect insecure redirection
                             if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                             {
@@ -586,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
                                 ThrowTerminatingError(er);
                             }
-                                
+
                             if (ShouldCheckHttpStatus && !_isSuccess)
                             {
                                 string message = string.Format(
@@ -902,11 +908,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
                 }
-                else if (ProxyUseDefaultCredentials)
+                else
                 {
-                    // If both ProxyCredential and ProxyUseDefaultCredentials are passed,
-                    // UseDefaultCredentials will overwrite the supplied credentials.
-                    webProxy.UseDefaultCredentials = true;
+                    webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
                 }
 
                 WebSession.Proxy = webProxy;
@@ -928,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
                     // We silently ignore header if value is null.
                     if (value is not null)
                     {
-                        // Add the header value (or overwrite it if already present)
+                        // Add the header value (or overwrite it if already present).
                         WebSession.Headers[key] = value.ToString();
                     }
                 }
@@ -942,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-        
+
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
@@ -1105,7 +1109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
             }
-            else if (request.Method == HttpMethod.Post)
+            else if (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
@@ -1230,7 +1234,7 @@ namespace Microsoft.PowerShell.Commands
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (handleRedirect
-                    && WebSession.MaximumRedirection is not 0
+                    && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
                 {
@@ -1238,9 +1242,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken = null;
 
                     // If explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
+                    if (_maximumRedirection > 0)
                     {
-                        WebSession.MaximumRedirection--;
+                        _maximumRedirection--;
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
@@ -1286,7 +1290,7 @@ namespace Microsoft.PowerShell.Commands
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
                             requestContentLength);
-                        
+
                         WriteVerbose(reqVerboseMsg);
 
                         response.Dispose();
@@ -1303,9 +1307,9 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
                     {
-                        try 
+                        try
                         {
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
@@ -1318,7 +1322,7 @@ namespace Microsoft.PowerShell.Commands
                             // Ignore broken header.
                         }
                     }
-                    
+
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
@@ -1388,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
-        
+
         private static string FormatDictionary(IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(content);
@@ -1485,16 +1489,18 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
-            
+
             Encoding encoding = null;
-            if (ContentType is not null)
+            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
+
+            if (contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
+                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(contentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
@@ -1505,7 +1511,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!SkipHeaderValidation)
                     {
                         ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, contentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1565,7 +1571,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
-            
+
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
             WebSession.ContentHeaders.Clear();
 
@@ -1735,7 +1741,8 @@ namespace Microsoft.PowerShell.Commands
                     XmlDocument doc = new();
                     doc.LoadXml(error);
 
-                    XmlWriterSettings settings = new XmlWriterSettings {
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
                         Indent = true,
                         NewLineOnAttributes = true,
                         OmitXmlDeclaration = true

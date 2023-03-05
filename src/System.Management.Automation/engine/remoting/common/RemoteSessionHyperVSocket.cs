@@ -557,13 +557,13 @@ namespace System.Management.Automation.Remoting
                     //
                     if (emptyPassword)
                     {
-                        HyperVSocket.Send(Encoding.ASCII.GetBytes("EMPTYPW"));
+                        HyperVSocket.Send("EMPTYPW"u8);
                         HyperVSocket.Receive(response);
                         responseString = Encoding.ASCII.GetString(response);
                     }
                     else
                     {
-                        HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYPW"));
+                        HyperVSocket.Send("NONEMPTYPW"u8);
                         HyperVSocket.Receive(response);
 
                         HyperVSocket.Send(password);
@@ -596,11 +596,11 @@ namespace System.Management.Automation.Remoting
                     {
                         if (emptyConfiguration)
                         {
-                            HyperVSocket.Send(Encoding.ASCII.GetBytes("EMPTYCF"));
+                            HyperVSocket.Send("EMPTYCF"u8);
                         }
                         else
                         {
-                            HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
+                            HyperVSocket.Send("NONEMPTYCF"u8);
                             HyperVSocket.Receive(response);
 
                             byte[] configName = Encoding.Unicode.GetBytes(configurationName);

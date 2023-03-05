@@ -325,13 +325,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 _needToCheckForWaitingJobs = true;
                 if (_pendingJobs.Count > 0)
+                {
                     haveToWait = true;
+                }
             }
 
             if (haveToWait)
+            {
                 _waitForJobs.WaitOne();
+            }
 
-            if (_warnInvalidState)
+            if (_warnInvalidState) 
             {
                 WriteWarning(RemotingErrorIdStrings.SuspendJobInvalidJobState);
             }
