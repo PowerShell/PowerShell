@@ -482,7 +482,10 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase()
         {
-            return Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory ?? Path.GetDirectoryName(Environment.ProcessPath));
+            // AppContext is needed where PS7 may be compiled as a single exe
+            // Environment.ProcessPath covers the pwsh exe case
+            // Assembly.Location is needed for hosted scenarios
+            return Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory ?? Path.GetDirectoryName(Environment.ProcessPath) ?? Path.GetDirectoryName(typeof(PSObject).Assembly.Location));
         }
 
         private static string[] s_productFolderDirectories;
