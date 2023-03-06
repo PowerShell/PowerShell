@@ -231,8 +231,8 @@ namespace Microsoft.PowerShell.Commands
         // The following variable controls the view.
         private HelpView _viewTokenToAdd = HelpView.Default;
 
-        private readonly Stopwatch _timer = new Stopwatch();
 #if LEGACYTELEMETRY
+        private readonly Stopwatch _timer = new Stopwatch();
         private bool _updatedHelp;
 #endif
 
@@ -245,7 +245,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+#if LEGACYTELEMETRY
             _timer.Start();
+#endif
         }
 
         /// <summary>
@@ -321,9 +323,9 @@ namespace Microsoft.PowerShell.Commands
                     countOfHelpInfos++;
                 }
 
+#if LEGACYTELEMETRY
                 _timer.Stop();
 
-#if LEGACYTELEMETRY
                 if (!string.IsNullOrEmpty(Name))
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 #endif
@@ -422,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (originalHelpObject.TypeNames.Count == 0)
             {
-                string typeToAdd = string.Format(CultureInfo.InvariantCulture, "HelpInfo#{0}", tokenToAdd);
+                string typeToAdd = string.Create(CultureInfo.InvariantCulture, $"HelpInfo#{tokenToAdd}");
                 objectToReturn.TypeNames.Add(typeToAdd);
             }
             else
@@ -438,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    string typeToAdd = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", typeName, tokenToAdd);
+                    string typeToAdd = string.Create(CultureInfo.InvariantCulture, $"{typeName}#{tokenToAdd}");
                     s_tracer.WriteLine("Adding type {0}", typeToAdd);
                     objectToReturn.TypeNames.Add(typeToAdd);
                 }
@@ -506,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cat">Category specified by the user.</param>
         /// <exception cref="ArgumentException">
-        /// If the request cant be serviced.
+        /// If the request can't be serviced.
         /// </exception>
         private void ValidateAndThrowIfError(HelpCategory cat)
         {
@@ -735,8 +737,8 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Checks whether the default runspace associated with the current thread has the standard Get-Help cmdlet.
-        /// <summary>
-        /// <return>True if Get-Help is found, false otherwise.</return>
+        /// </summary>
+        /// <returns>True if Get-Help is found, false otherwise.</returns>
         private static bool DoesCurrentRunspaceIncludeCoreHelpCmdlet()
         {
             InitialSessionState iss = Runspace.DefaultRunspace.InitialSessionState;
@@ -819,8 +821,7 @@ namespace Microsoft.PowerShell.Commands
             string cmdName = cmdInfo.Name;
             if (!string.IsNullOrEmpty(cmdInfo.ModuleName))
             {
-                cmdName = string.Format(CultureInfo.InvariantCulture,
-                                        "{0}\\{1}", cmdInfo.ModuleName, cmdInfo.Name);
+                cmdName = string.Create(CultureInfo.InvariantCulture, $"{cmdInfo.ModuleName}\\{cmdInfo.Name}");
             }
 
             if (DoesCurrentRunspaceIncludeCoreHelpCmdlet())

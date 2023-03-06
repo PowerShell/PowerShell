@@ -6,29 +6,47 @@
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- we persist source generator files under 'gen' folder so that they are visible to IDEs -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>gen\SourceGenerated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- these properties are declared in 'PowerShell.Common.props' and used by source generator -->
+    <CompilerVisibleProperty Include="ProductVersion" />
+    <CompilerVisibleProperty Include="PSCoreBuildVersion" />
+    <CompilerVisibleProperty Include="PowerShellVersion" />
+    <CompilerVisibleProperty Include="ReleaseTag" />
+
+    <ProjectReference Include="SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.DirectoryServices" Version="7.0.0-preview.7.22375.6" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="System.DirectoryServices" Version="8.0.0-preview.1.23110.8" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
-    <PackageReference Include="System.Management" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="7.0.0-preview.2.22152.2" />
+    <PackageReference Include="System.Management" Version="8.0.0-preview.1.23110.8" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.Security.Permissions" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0-preview.7.22375.6" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="System.Security.Permissions" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-preview.1.23110.8" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.3.0-preview.1" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0-preview.2" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.2.0" />
   </ItemGroup>
@@ -38,6 +56,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
+    <Compile Remove="SourceGenerators\**\*.cs" />
+
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
     <Compile Remove="engine\TransactedString.cs" />
@@ -64,9 +85,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
-    <Compile Remove="engine\ExtraAdapter.cs" />
-    <Compile Remove="engine\ManagementObjectAdapter.cs" />
+    <Compile Remove="engine\COM\**\*.cs" />
     <Compile Remove="engine\ComInterop\**\*.cs" />
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\Interop\Windows\**\*.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
@@ -74,4 +97,7 @@
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
+    <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
 </Project>

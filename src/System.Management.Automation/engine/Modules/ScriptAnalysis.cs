@@ -94,10 +94,9 @@ namespace System.Management.Automation
         {
             using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
                 Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
-                using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
                 {
                     return scriptReader.ReadToEnd();
                 }
@@ -435,7 +434,10 @@ namespace System.Management.Automation
 
         private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
-            if (value == null) return;
+            if (value == null)
+            {
+                return;
+            }
 
             var commandName = value as string;
             if (commandName != null)

@@ -59,10 +59,10 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// Starts the managed MSH.
+        /// Starts PowerShell.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to PowerShell
         /// </param>
         public static int Main(string[] args)
         {
@@ -119,10 +119,7 @@ namespace Microsoft.PowerShell
                 pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
                 Marshal.FreeHGlobal(linkPathPtr);
 
-                if (pwshPath == null)
-                {
-                    throw new ArgumentNullException(nameof(pwshPath));
-                }
+                ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
@@ -207,10 +204,7 @@ namespace Microsoft.PowerShell
                 // Get the pwshPath from exec_path
                 pwshPath = Marshal.PtrToStringAnsi(executablePathPtr);
 
-                if (pwshPath == null)
-                {
-                    throw new ArgumentNullException(nameof(pwshPath));
-                }
+                ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
@@ -354,7 +348,11 @@ namespace Microsoft.PowerShell
             foreach (char c in str)
             {
                 length++;
-                if (c == '\'') { length++; }
+
+                if (c == '\'')
+                {
+                    length++;
+                }
             }
 
             return length;

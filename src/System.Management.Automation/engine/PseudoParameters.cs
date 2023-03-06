@@ -174,14 +174,20 @@ namespace System.Management.Automation
             {
                 if (!hasSeenExpAttribute && attr is ExperimentalAttribute expAttribute)
                 {
-                    if (expAttribute.ToHide) { return true; }
+                    if (expAttribute.ToHide)
+                    {
+                        return true;
+                    }
 
                     hasSeenExpAttribute = true;
                 }
                 else if (attr is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
-                    if (paramAttribute.ToHide) { continue; }
+                    if (paramAttribute.ToHide)
+                    {
+                        continue;
+                    }
 
                     hasEnabledParamAttribute = true;
                 }

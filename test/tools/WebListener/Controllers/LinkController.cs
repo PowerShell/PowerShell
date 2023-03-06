@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using mvc.Models;
@@ -87,10 +88,10 @@ namespace mvc.Controllers
             }
             else
             {
-                linkHeader = string.Join(",", linkList);
+                linkHeader = string.Join(',', linkList);
             }
 
-            Response.Headers.Add("Link", linkHeader);
+            Response.Headers.Append("Link", linkHeader);
 
             // Generate /Get/ result and append linknumber, maxlinks, and type
             var getController = new GetController();

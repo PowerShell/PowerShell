@@ -263,7 +263,7 @@ namespace System.Management.Automation.Runspaces
             if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
 
 #if LEGACYTELEMETRY
-            // We report startup telementry when opening the runspace - because this is the first time
+            // We report startup telemetry when opening the runspace - because this is the first time
             // we are really using PowerShell. This isn't the cleanest place though, because
             // sometimes there are many runspaces created - the callee ensures telemetry is only
             // reported once. Note that if the host implements IHostProvidesTelemetryData, we rely

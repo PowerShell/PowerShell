@@ -983,7 +983,7 @@ namespace System.Management.Automation
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
                 string or = string.Empty;
-                string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
+                string[] regexOptionEnumValues = Enum.GetNames<System.Text.RegularExpressions.RegexOptions>();
 
                 foreach (string regexOption in regexOptionEnumValues)
                 {

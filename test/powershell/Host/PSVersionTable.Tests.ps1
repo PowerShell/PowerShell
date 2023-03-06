@@ -23,7 +23,7 @@ Describe "PSVersionTable" -Tags "CI" {
             $unexpectectGitCommitIdPattern = $fullVersionPattern
         }
 
-        $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3"
+        $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4"
         $powerShellCompatibleVersions = $PSVersionTable.PSCompatibleVersions |
             ForEach-Object {$_.ToString(2).SubString(0,3)}
     }

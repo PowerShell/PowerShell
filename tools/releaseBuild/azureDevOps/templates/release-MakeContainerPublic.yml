@@ -12,5 +12,9 @@ steps:
   displayName: Make container public
 
 - pwsh: |
+    az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion)-gc --public-access blob
+  displayName: Make guest configuration miminal package container public
+
+- pwsh: |
     az logout
   displayName: az logout

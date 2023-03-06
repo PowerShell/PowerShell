@@ -117,20 +117,20 @@ jobs:
           Write-Verbose -Verbose "Create PR Windows == $createPrWin"
 
           $createPrLinux = ShouldCreatePR $currentLinuxFile $newLinuxFile
-          Write-Verbose -Verbose "Create PR Windows == $createPrLinux"
+          Write-Verbose -Verbose "Create PR Linux == $createPrLinux"
 
           $createPr = $createPrWin -or $createPrLinux
           Write-Verbose -Verbose "Create PR == $createPr"
 
           if ($createPrWin) {
-            Move-Item $newWinFile $currentWinFile -Verbose
+            Move-Item $newWinFile $currentWinFile -Verbose -Force
           }
           else {
             Remove-Item $newWinFile -Verbose
           }
 
           if ($createPrLinux) {
-            Move-Item $newLinuxFile $currentLinuxFile -Verbose
+            Move-Item $newLinuxFile $currentLinuxFile -Verbose -Force
           }
           else {
             Remove-Item $newLinuxFile -Verbose

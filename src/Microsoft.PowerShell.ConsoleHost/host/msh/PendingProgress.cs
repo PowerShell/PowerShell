@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell
             int invisible = 0;
             if (TallyHeight(rawUI, maxHeight, maxWidth) > maxHeight)
             {
-                // This will smash down nodes until the tree will fit into the alloted number of lines.  If in the
+                // This will smash down nodes until the tree will fit into the allotted number of lines.  If in the
                 // process some nodes were made invisible, we will add a line to the display to say so.
 
                 invisible = CompressToFit(rawUI, maxHeight, maxWidth);
@@ -872,7 +872,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The number of nodes that were made invisible during the compression.
         ///
-        ///</returns>
+        /// </returns>
         private
         int
         CompressToFit(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
