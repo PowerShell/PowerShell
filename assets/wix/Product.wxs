@@ -50,6 +50,17 @@
     <Icon Id="PowerShellExe.ico" SourceFile="$(var.IconPath)" />
     <!-- Add PowerShell icon in Add/Remove Programs -->
     <Property Id="ARPPRODUCTICON" Value="PowerShellExe.ico" />
+    <Property Id="DISABLE_TELEMETRY"/>
+    <Property Id="EXISTING.POWERSHELL_TELEMETRY_OPTOUT">
+      <RegistrySearch Id="SEARCH.POWERSHELL_TELEMETRY_OPTOUT"
+                      Root="HKLM"
+                      Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)"
+                      Name="POWERSHELL_TELEMETRY_OPTOUT"
+                      Type="raw"/>
+    </Property>
+    <SetProperty Id="DISABLE_TELEMETRY"
+             Value="[EXISTING.POWERSHELL_TELEMETRY_OPTOUT]"
+             After="AppSearch">NOT(DISABLE_TELEMETRY)</SetProperty>
     <!-- Set properties for add/remove programs -->
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
     <!-- custom images -->
@@ -216,6 +227,9 @@
             <Component Id="DisableTelemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
               <Condition>DISABLE_TELEMETRY</Condition>
               <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <RegistryValue Type="string" Value="1" Name="POWERSHELL_TELEMETRY_OPTOUT" />
+              </RegistryKey>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath">
