@@ -2358,7 +2358,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-RestMethod supports sending XML requests without encoding" {
         $uri = Get-WebListenerUrl -Test POST
-        $body = '<?xml version="1.0"?><foo/>'
+        $body = '<?xml version="1.0"?><foo />'
         $result = Invoke-RestMethod -Uri $uri -body ([xml]$body) -ContentType 'text/xml' -method 'POST'
 
         $result.Data | Should -BeExactly $body
