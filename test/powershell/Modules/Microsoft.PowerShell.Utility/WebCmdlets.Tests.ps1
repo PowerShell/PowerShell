@@ -584,11 +584,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     It "Invoke-WebRequest supports sending XML requests without encoding" {
         $uri = Get-WebListenerUrl -Test POST
         $body = '<?xml version="1.0"?><foo/>'
-        $xmlbody = [xml]$body
-        $command = "Invoke-WebRequest -Uri '$uri' -body '$xmlbody' -ContentType 'text/xml' -method 'POST'"
+        $result = Invoke-WebRequest -Uri $uri -body [xml]$body -ContentType 'text/xml' -method 'POST'
 
-        $result = ExecuteWebCommand -command $command
-        $object = $result.Output.Content | ConvertFrom-Json
+        $object = $result.Content | ConvertFrom-Json
         $object.Data | Should -BeExactly $body
     }
 
@@ -2361,11 +2359,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     It "Invoke-RestMethod supports sending XML requests without encoding" {
         $uri = Get-WebListenerUrl -Test POST
         $body = '<?xml version="1.0"?><foo/>'
-        $xmlbody = [xml]$body
-        $command = "Invoke-RestMethod -Uri '$uri' -body '$xmlbody' -ContentType 'text/xml' -method 'POST'"
+        $result = Invoke-RestMethod -Uri $uri -body [xml]$body -ContentType 'text/xml' -method 'POST'
 
-        $result = ExecuteWebCommand -command $command
-        $Result.Output.Data | Should -BeExactly $body
+        $result.Data | Should -BeExactly $body
     }
 
     It "Invoke-RestMethod supports request that returns page containing Code Page 936 data." {
