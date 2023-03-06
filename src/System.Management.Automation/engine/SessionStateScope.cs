@@ -421,7 +421,10 @@ namespace System.Management.Automation
             bool varExists = TryGetVariable(name, origin, true, out variable);
 
             // Initialize the private variable dictionary if it's not yet
-            if (_variables == null) { GetPrivateVariables(); }
+            if (_variables == null)
+            {
+                GetPrivateVariables();
+            }
 
             if (!asValue && variableToSet != null)
             {
@@ -1639,9 +1642,14 @@ namespace System.Management.Automation
 
         internal Type LookupType(string name)
         {
-            if (TypeTable == null) return null;
+            if (TypeTable == null) 
+            {
+                return null;
+            }
+
             Type result;
             TypeTable.TryGetValue(name, out result);
+
             return result;
         }
 
@@ -1682,12 +1690,18 @@ namespace System.Management.Automation
 
             // Then use the creation constructors - workflows don't get here because the workflow info
             // is created during compilation.
-            else if (function.IsFilter) { newValue = new FilterInfo(name, function, options, context, helpFile); }
+            else if (function.IsFilter)
+            {
+                newValue = new FilterInfo(name, function, options, context, helpFile);
+            }
             else if (function.IsConfiguration)
             {
                 newValue = new ConfigurationInfo(name, function, options, context, helpFile, function.IsMetaConfiguration());
             }
-            else newValue = new FunctionInfo(name, function, options, context, helpFile);
+            else 
+            {
+                newValue = new FunctionInfo(name, function, options, context, helpFile);
+            }
 
             return newValue;
         }
