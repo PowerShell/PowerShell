@@ -584,7 +584,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     It "Invoke-WebRequest supports sending XML requests without encoding" {
         $uri = Get-WebListenerUrl -Test POST
         $body = '<?xml version="1.0"?><foo/>'
-        $command = "Invoke-WebRequest -Uri '$uri' -body $([xml]$body) -ContentType 'text/xml' -method 'POST'"
+        $xmlbody = [xml]$body
+        $command = "Invoke-WebRequest -Uri '$uri' -body '$xmlbody' -ContentType 'text/xml' -method 'POST'"
 
         $result = ExecuteWebCommand -command $command
         $object = $result.Output.Content | ConvertFrom-Json
@@ -2360,7 +2361,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     It "Invoke-RestMethod supports sending XML requests without encoding" {
         $uri = Get-WebListenerUrl -Test POST
         $body = '<?xml version="1.0"?><foo/>'
-        $command = "Invoke-RestMethod -Uri '$uri' -body $([xml]$body) -ContentType 'text/xml' -method 'POST'"
+        $xmlbody = [xml]$body
+        $command = "Invoke-RestMethod -Uri '$uri' -body '$xmlbody' -ContentType 'text/xml' -method 'POST'"
 
         $result = ExecuteWebCommand -command $command
         $Result.Output.Data | Should -BeExactly $body
