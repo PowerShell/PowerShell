@@ -122,7 +122,7 @@ function Start-WebListener
             return $runningListener
         }
 
-        $initTimeoutSeconds  = 15
+        $initTimeoutSeconds  = 25
         $appExe              = (Get-Command WebListener).Path
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
