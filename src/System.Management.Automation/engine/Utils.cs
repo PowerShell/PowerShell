@@ -482,7 +482,7 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase()
         {
-            return AppContext.BaseDirectory ?? Path.GetDirectoryName(Environment.ProcessPath);
+            return Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory) ?? Path.GetDirectoryName(Environment.ProcessPath);
         }
 
         private static string[] s_productFolderDirectories;
