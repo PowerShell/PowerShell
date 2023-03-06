@@ -583,7 +583,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-WebRequest supports sending XML requests without encoding" {
         $uri = Get-WebListenerUrl -Test POST
-        $body = '<?xml version="1.0"?><foo/>'
+        $body = '<?xml version="1.0"?><foo />'
         $result = Invoke-WebRequest -Uri $uri -body ([xml]$body) -ContentType 'text/xml' -method 'POST'
 
         $object = $result.Content | ConvertFrom-Json
