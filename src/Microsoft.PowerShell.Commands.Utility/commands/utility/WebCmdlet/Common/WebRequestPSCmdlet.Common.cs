@@ -1404,7 +1404,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string QualifyFilePath(string? path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
-        
+
         private static string FormatDictionary(IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(content);
