@@ -343,6 +343,7 @@ stages:
   dependsOn: PublishPackages
   jobs:
   - job: PublishSymbol
+
       pool:
         name: PowerShell1ES
         demands:
