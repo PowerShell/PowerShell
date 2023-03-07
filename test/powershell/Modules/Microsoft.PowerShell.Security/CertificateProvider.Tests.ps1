@@ -55,8 +55,8 @@ Describe "Certificate Provider tests" -Tags "CI" {
                 $resolvedPath.ProviderPath.TrimStart('\') | Should -Be $expectedResolvedPath.ProviderPath.TrimStart('\')
             }
         }
-        It "Should return two items at the root of the provider" {
-            (Get-Item -Path cert:\*).Count | Should -Be 2
+        It "Should return three items at the root of the provider" {
+            (Get-Item -Path cert:\*).Count | Should -Be 3
         }
         It "Should be able to get multiple items explictly" {
             (Get-Item cert:\LocalMachine , cert:\CurrentUser).Count | Should -Be 2
@@ -67,14 +67,113 @@ Describe "Certificate Provider tests" -Tags "CI" {
         It "Should return PathNotFound when getting a non-existant certificate" {
             {Get-Item cert:\currentuser\my\IDONTEXIST -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
+        It "Should be able to get all service stores" {
+            $result = Get-Item -Path cert:\service
+            $result.LocationName | Should -Be Service
+        }
     }
     Context "Get-ChildItem tests"{
         It "should be able to get a container using a wildcard" {
             (Get-ChildItem Cert:\CurrentUser\M?).PSPath | Should -Be 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'
         }
-        It "Should return two items at the root of the provider" {
-            (Get-ChildItem -Path cert:\).Count | Should -Be 2
+        It "Should return three items at the root of the provider" {
+            (Get-ChildItem -Path cert:\).Count | Should -Be 3
         }
+    }
+}
+
+Describe "Certificate service location tests" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll{
+        if(!$IsWindows)
+        {
+            # Skip for non-Windows platforms
+            $defaultParamValues = $global:PSDefaultParameterValues.Clone()
+            $global:PSDefaultParameterValues = @{ "it:skip" = $true }
+            return
+        }
+
+        $serviceName = "pwsh-test-$([Guid]::NewGuid())"
+        $service = New-Service -Name $serviceName -BinaryPathName "$PSHome/pwsh.exe" -StartupType Manual
+    }
+
+    AfterAll {
+        if(!$IsWindows)
+        {
+            $global:PSDefaultParameterValues = $defaultParamValues
+            return
+        }
+
+        $service | Remove-Service
+    }
+
+    AfterEach {
+        if (!$IsWindows) {
+            return
+        }
+
+        $regPath = "HKLM:\SOFTWARE\Microsoft\Cryptography\Services\$serviceName"
+        if (Test-Path -LiteralPath $regPath) {
+            Remove-Item -LiteralPath $regPath -Recurse -Force
+        }
+    }
+
+    It "Errors with missing cert store" {
+        Get-Item Cert:\Service\$serviceName\My -ErrorAction SilentlyContinue -ErrorVariable err
+        $err.Count | Should -Be 1
+        [string]$err[0] | Should -Be "Cannot find path 'Cert:\Service\$serviceName\My' because it does not exist."
+    }
+
+    It "Creates cert store" {
+        $actual = New-Item Cert:\Service\$serviceName\Test
+        $actual | Should -BeOfType ([System.Security.Cryptography.X509Certificates.X509Store])
+        $actual.Name | Should -Be "$serviceName\Test"
+
+        (Get-Item Cert:\Service).StoreNames.Keys | Should -Contain "$serviceName\Test"
+    }
+
+    It "Get-Item on new cert store" {
+        New-Item Cert:\Service\$serviceName\Test | Out-Null
+
+        $actual = Get-Item Cert:\Service\$serviceName\Test
+        $actual | Should -BeOfType ([System.Security.Cryptography.X509Certificates.X509Store])
+        $actual.Name | Should -Be "$serviceName\Test"
+    }
+
+    It "Get-ChildItem on new cert store" {
+        New-Item Cert:\Service\$serviceName\Test1 | Out-Null
+        New-Item Cert:\Service\$serviceName\Test2 | Out-Null
+
+        $actual = Get-ChildItem "Cert:\Service\$serviceName*" | Where-Object { $_.Name.StartsWith("$serviceName\Test") }
+        $actual.Count | Should -Be 2
+
+        $actual | ForEach-Object {
+            $_ | Should -BeOfType ([System.Security.Cryptography.X509Certificates.X509Store])
+            $_.Name | Should -BeIn @("$serviceName\Test1", "$serviceName\Test2")
+        }
+    }
+
+    It "Removes cert store" {
+        New-Item Cert:\Service\$serviceName\Test | Out-Null
+        Remove-Item -Path Cert:\Service\$serviceName\Test
+
+        Get-Item Cert:\Service\$serviceName\Test -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+    }
+
+    It "Stores cert into cert store" {
+        $cert = New-SelfSignedCertificate -Subject CN=TestCert -CertStoreLocation Cert:\CurrentUser\My
+        Remove-Item -Path Cert:\CurrentUser\My\$($cert.Thumbprint) -Force
+
+        $store = New-Item Cert:\Service\$serviceName\Test
+        $store.Add($cert)
+        $store.Dispose()
+
+        $actual = Get-Item Cert:\Service\$serviceName\Test\*
+        $actual.Count | Should -Be 1
+        $actual[0].Thumbprint | Should -Be $cert.Thumbprint
+
+        $actual = Get-Item Cert:\Service\$serviceName\Test\$($cert.Thumbprint)
+        $actual.Count | Should -Be 1
+        $actual[0].Thumbprint | Should -Be $cert.Thumbprint
     }
 }
 

@@ -143,24 +143,6 @@ namespace System.Management.Automation.Security
         // crypt32.dll stuff
         //
 
-        [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern
-        bool CertEnumSystemStore(CertStoreFlags Flags,
-                                 IntPtr notUsed1,
-                                 IntPtr notUsed2,
-                                 CertEnumSystemStoreCallBackProto fn);
-
-        /// <summary>
-        /// Signature of call back function used by CertEnumSystemStore.
-        /// </summary>
-        internal delegate
-        bool CertEnumSystemStoreCallBackProto([MarshalAs(UnmanagedType.LPWStr)]
-                                               string storeName,
-                                               DWORD dwFlagsNotUsed,
-                                               IntPtr notUsed1,
-                                               IntPtr notUsed2,
-                                               IntPtr notUsed3);
-
         /// <summary>
         /// Signature of cert enumeration function.
         /// </summary>
