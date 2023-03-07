@@ -3,7 +3,6 @@ parameters:
   - name: PackagePath
   - name: WinFxdPath
   - name: LinuxFxdPath
-  - name: GenAPIToolPath
   - name: ListOfFiles
     type: object
     default:
@@ -20,6 +19,53 @@ parameters:
     - System.Management.Automation.dll
 
 steps:
+
+- pwsh: |
+    Import-Module "$env:REPOROOT/build.psm1" -Force
+    Start-PSBootstrap
+
+    $sharedModules = @('Microsoft.PowerShell.Commands.Management',
+                       'Microsoft.PowerShell.Commands.Utility',
+                       'Microsoft.PowerShell.ConsoleHost',
+                       'Microsoft.PowerShell.Security',
+                       'System.Management.Automation'
+                      )
+
+    $winOnlyModules = @('Microsoft.Management.Infrastructure.CimCmdlets',
+                        'Microsoft.PowerShell.Commands.Diagnostics',
+                        'Microsoft.PowerShell.CoreCLR.Eventing',
+                        'Microsoft.WSMan.Management',
+                        'Microsoft.WSMan.Runtime'
+                        )
+
+    $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
+    $null = New-Item -Path $refAssemblyFolder -Force -Verbose
+
+    Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+
+    $sharedModules | Foreach-Object {
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
+      Write-Verbose -Verbose 'RefAssembly: $refFile'
+      Copy-Item -Path $refFile -Destination $refAssemblyFolder -Verbose
+    }
+
+    Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+
+    $winOnlyModules | Foreach-Object {
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
+      Write-Verbose -Verbose 'RefAssembly: $refFile'
+      Copy-Item -Path $refFile -Destination $refAssemblyFolder -Verbose
+    }
+
+    Get-ChildItem $refAssemblyFolder | Out-String | Write-Verbose -Verbose
+
+    # Set RefAssemblyPath path variable
+    $vstsCommandString = "vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+
+  displayName: Build reference assemblies
+
 - ${{ each value in parameters.ListOfFiles }}:
   - pwsh: |
       $FileName = '${{ value }}'
@@ -45,7 +91,7 @@ steps:
       Import-Module -Name $env:REPOROOT\build.psm1
       Import-Module -Name $env:REPOROOT\tools\packaging
       Find-DotNet
-      New-ILNugetPackageSource -File $FileName -PackagePath '${{ parameters.PackagePath }}' -PackageVersion '${{ parameters.PackageVersion }}' -WinFxdBinPath '${{ parameters.WinFxdPath }}' -LinuxFxdBinPath '${{ parameters.LinuxFxdPath }}' -GenAPIToolPath '${{ parameters.GenAPIToolPath }}' -CGManifestPath $CGManifestPath
+      New-ILNugetPackageSource -File $FileName -PackagePath '${{ parameters.PackagePath }}' -PackageVersion '${{ parameters.PackageVersion }}' -WinFxdBinPath '${{ parameters.WinFxdPath }}' -LinuxFxdBinPath '${{ parameters.LinuxFxdPath }}' -CGManifestPath $CGManifestPath -RefAssemblyPath $(RefAssemblyPath)
     displayName: 'Create NuGet Package source for single file'
 
   - template: Sbom.yml@ComplianceRepo

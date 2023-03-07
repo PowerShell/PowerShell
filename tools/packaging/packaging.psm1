@@ -2183,10 +2183,11 @@ function New-ILNugetPackageSource
         [string] $LinuxFxdBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $GenAPIToolPath,
+        [string] $RefAssemblyPath,
 
         [Parameter(Mandatory = $true)]
         [string] $CGManifestPath
+
     )
 
     if (! $Environment.IsWindows)
@@ -2219,10 +2220,7 @@ function New-ILNugetPackageSource
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll")
 
-    $refBinPath = New-TempFolder
     $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
-
-    New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
 
     if (! (Test-Path $PackagePath)) {
         $null = New-Item -Path $PackagePath -ItemType Directory
@@ -2237,7 +2235,7 @@ function New-ILNugetPackageSource
 
     #region ref
     $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
-    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
+    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $RefAssemblyPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
     #endregion ref
 
     $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -2392,7 +2390,11 @@ function CopyReferenceAssemblies
 
     $supportedRefList = @(
         "Microsoft.PowerShell.Commands.Utility",
-        "Microsoft.PowerShell.ConsoleHost")
+        "Microsoft.PowerShell.ConsoleHost",
+        "Microsoft.PowerShell.Commands.Management",
+        "Microsoft.PowerShell.Commands.Diagnostics",
+        "Microsoft.PowerShell.Commands.Security"
+        )
 
     switch ($assemblyName) {
         { $_ -in $supportedRefList } {
