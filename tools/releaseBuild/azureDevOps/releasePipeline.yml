@@ -344,10 +344,10 @@ stages:
   jobs:
   - job: PublishSymbol
 
-      pool:
-        name: PowerShell1ES
-        demands:
-        - ImageOverride -equals PSMMS2019-Secure
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
 
     steps:
     - template: templates/release-PublishSymbols.yml
