@@ -710,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing && !IsPersistentSession())
                 {
                     WebSession?.Dispose();
-                    WebSession = null;
+                    WebSession = null!;
                 }
 
                 _disposed = true;
