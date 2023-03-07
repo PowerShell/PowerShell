@@ -338,7 +338,7 @@ stages:
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
 
-- stage: Publish Symbols
+- stage: PublishSymbols
   displayName: Publish symbols
   dependsOn: PublishPackages
   jobs:
