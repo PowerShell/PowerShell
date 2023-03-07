@@ -859,7 +859,10 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (string.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName))
+                            {
+                                continue;
+                            }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
