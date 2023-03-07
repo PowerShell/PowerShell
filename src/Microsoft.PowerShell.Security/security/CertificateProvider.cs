@@ -318,45 +318,7 @@ namespace Microsoft.PowerShell.Commands
                 _valid = false;
                 _open = false;
 
-                SMASecurity.NativeMethods.CertOpenStoreFlags StoreFlags =
-                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_STORE_FLAG |
-                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_CONTEXT_FLAG |
-                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
-                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG;
-
-                if (includeArchivedCerts)
-                {
-                    StoreFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_ENUM_ARCHIVED_FLAG;
-                }
-
-                switch (_storeLocation.Location)
-                {
-                    case StoreLocation.LocalMachine:
-                        StoreFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
-                        break;
-
-                    case StoreLocation.CurrentUser:
-                        StoreFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
-                        break;
-
-                    default:
-                        // ThrowItemNotFound(storeLocation.ToString(), CertificateProviderItem.StoreLocation);
-                        break;
-                }
-
-                IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
-                                SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
-                                SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
-                                IntPtr.Zero,  // hCryptProv
-                                StoreFlags,
-                                _storeName);
-                if (hCertStore == IntPtr.Zero)
-                {
-                    throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-                }
-
-                _storeHandle = new CertificateStoreHandle();
-                _storeHandle.Handle = hCertStore;
+                _storeHandle = CertOpenStore(_storeLocation.CertLocation, _storeName, includeArchivedCerts);
 
                 // we only do CertControlStore for stores other than UserDS
                 if (!string.Equals(
@@ -378,6 +340,30 @@ namespace Microsoft.PowerShell.Commands
                 _valid = true;
                 _open = true;
                 _archivedCerts = includeArchivedCerts;
+            }
+        }
+
+        public X509Store OpenManaged()
+        {
+            if (Location.Location != null)
+            {
+                StoreLocation location = (StoreLocation)Location.Location;
+                return new(StoreName, location);
+            }
+            else
+            {
+                using CertificateStoreHandle handle = CertOpenStore(Location.CertLocation, StoreName, false);
+
+                // X509Store creates an internal copy
+                X509Store store = new(handle.DangerousGetHandle());
+
+                // When using the IntPtr overload for X509Store the Name
+                // property isn't populated. Rely on pwsh's ETS properties
+                // to ensure the caller can see this information.
+                PSObject storePSObj = PSObject.AsPSObject(store);
+                storePSObj.Properties.Add(new PSNoteProperty("Name", StoreName));
+
+                return store;
             }
         }
 
@@ -511,6 +497,55 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private static CertificateStoreHandle CertOpenStore(CertStoreLocation location, string name, bool includeArchivedCerts)
+        {
+            SMASecurity.NativeMethods.CertOpenStoreFlags storeFlags =
+                SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_STORE_FLAG |
+                SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_CONTEXT_FLAG |
+                SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
+                SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG;
+
+            if (includeArchivedCerts)
+            {
+                storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_ENUM_ARCHIVED_FLAG;
+            }
+
+            switch (location)
+            {
+                case CertStoreLocation.LocalMachine:
+                    storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                    break;
+
+                case CertStoreLocation.CurrentUser:
+                    storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
+                    break;
+
+                case CertStoreLocation.Service:
+                    storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_SERVICES;
+                    break;
+
+                default:
+                    // ThrowItemNotFound(storeLocation.ToString(), CertificateProviderItem.StoreLocation);
+                    break;
+            }
+
+            IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
+                            SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
+                            SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
+                            IntPtr.Zero,  // hCryptProv
+                            storeFlags,
+                            name);
+            if (hCertStore == IntPtr.Zero)
+            {
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            }
+
+            CertificateStoreHandle storeHandle = new();
+            storeHandle.Handle = hCertStore;
+
+            return storeHandle;
+        }
+
         private bool _archivedCerts = false;
         private readonly X509StoreLocation _storeLocation = null;
         private readonly string _storeName = null;
@@ -608,9 +643,38 @@ namespace Microsoft.PowerShell.Commands
         private static readonly char[] s_pathSeparators = new char[] { '/', '\\' };
 
         /// <summary>
+        /// Currently only the service location requires a sub location name.
+        /// </summary>
+        private static readonly string[] s_locationsWithName = new[] { "service" };
+
+        /// <summary>
         /// Regex pattern that defines a valid cert path.
         /// </summary>
-        private const string certPathPattern = @"^\\((?<StoreLocation>CurrentUser|LocalMachine)(\\(?<StoreName>[a-zA-Z]+)(\\(?<Thumbprint>[0-9a-f]{40}))?)?)?$";
+        private const string certPathPattern = @"
+^
+\\
+(  # CurrentUser and LocalMachine are fixed and has no sub location.
+    (?<StoreLocation>CurrentUser|LocalMachine)
+    (\\
+        (?<StoreName>[a-zA-Z]+)
+        (\\
+            (?<Thumbprint>[0-9a-f]{40})
+        )?
+    )?
+)
+|
+(  # Service requires a location name (the service)
+    (?<StoreLocation>Service)
+    \\
+    (?<LocationName>[^\/\\]+)
+    (\\
+        (?<StoreName>[a-zA-Z]+)
+        (\\
+            (?<Thumbprint>[0-9a-f]{40})
+        )?
+    )?
+)
+$";
 
         /// <summary>
         /// Cache the store handle to avoid repeated CertOpenStore calls.
@@ -636,7 +700,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (s_certPathRegex == null)
                     {
-                        const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+                        const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace;
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
@@ -665,18 +729,27 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // create and cache CurrentUser store-location
                     //
-                    X509StoreLocation user = new(StoreLocation.CurrentUser);
+                    X509StoreLocation user = new(CertStoreLocation.CurrentUser);
                     s_storeLocations.Add(user);
-                    AddItemToCache(nameof(StoreLocation.CurrentUser),
+                    AddItemToCache(nameof(CertStoreLocation.CurrentUser),
                                   user);
 
                     //
                     // create and cache LocalMachine store-location
                     //
-                    X509StoreLocation machine = new(StoreLocation.LocalMachine);
+                    X509StoreLocation machine = new(CertStoreLocation.LocalMachine);
                     s_storeLocations.Add(machine);
-                    AddItemToCache(nameof(StoreLocation.LocalMachine),
+                    AddItemToCache(nameof(CertStoreLocation.LocalMachine),
                                    machine);
+
+                    //
+                    // create and cache Service store-location
+                    //
+                    X509StoreLocation service = new(CertStoreLocation.Service);
+                    s_storeLocations.Add(service);
+                    AddItemToCache(
+                        nameof(CertStoreLocation.Service),
+                        service);
 
                     AddItemToCache(string.Empty, s_storeLocations);
                 }
@@ -968,17 +1041,27 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
 
-            const SMASecurity.NativeMethods.CertOpenStoreFlags StoreFlags =
+            SMASecurity.NativeMethods.CertOpenStoreFlags storeFlags =
                     SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
-                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
-                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG;
+
+            X509StoreLocation storeLocation = GetStoreLocation(pathElements[0]);
+            switch (storeLocation.CertLocation)
+            {
+                case CertStoreLocation.LocalMachine:
+                    storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                    break;
+                case CertStoreLocation.Service:
+                    storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_SERVICES;
+                    break;
+            }
 
             // Create new store
             IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
                                 SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
                                 SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
                                 IntPtr.Zero,  // hCryptProv
-                                StoreFlags,
+                                storeFlags,
                                 pathElements[1]);
             if (hCertStore == IntPtr.Zero)
             {
@@ -990,7 +1073,7 @@ namespace Microsoft.PowerShell.Commands
                 fResult = SMASecurity.NativeMethods.CertCloseStore(hCertStore, 0);
             }
 
-            X509Store outStore = new(pathElements[1], StoreLocation.LocalMachine);
+            X509Store outStore = new X509NativeStore(storeLocation, pathElements[1]).OpenManaged();
             WriteItemObject(outStore, path, true);
         }
 
@@ -1085,6 +1168,8 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the specified path is syntactically and semantically valid.
         /// An example path looks like this:
         ///     cert:\CurrentUser\My\5F98EBBFE735CDDAE00E33E0FD69050EF9220254.
+        /// or
+        ///     cert:\Service\WinRM\My\96096EBB1FD12B990DFD383DE1B4F36A58D2E55F.
         /// </summary>
         /// <param name="path">
         /// The path of the item to check.
@@ -1255,7 +1340,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (item is X509NativeStore store) // store
                     {
                         // create X509Store
-                        X509Store outStore = new(store.StoreName, store.Location.Location);
+                        X509Store outStore = store.OpenManaged();
                         WriteItemObject(outStore, path, isContainer);
                     }
                 }
@@ -1563,7 +1648,7 @@ namespace Microsoft.PowerShell.Commands
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
 
-            Stack<string> elts = new();
+            List<string> elts = new();
 
             foreach (string e in allElts)
             {
@@ -1575,17 +1660,26 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (elts.Count > 0)
                     {
-                        elts.Pop();
+                        elts.RemoveAt(elts.Count);
                     }
                 }
                 else
                 {
-                    elts.Push(e);
+                    elts.Add(e);
                 }
             }
 
+            // Combines the location name with the store name for locations
+            // that can have a name, e.g. Cert:\Service\WinRM\My becomes
+            //     [0] Service
+            //     [1] WinRM\My
+            if (elts.Count > 2 && Array.Exists(s_locationsWithName, e => e == elts[0].ToLowerInvariant()))
+            {
+                elts[1] = $"{elts[1]}\\{elts[2]}";
+                elts.RemoveAt(2);
+            }
+
             result = elts.ToArray();
-            Array.Reverse(result);
 
             return result;
         }
@@ -1751,19 +1845,29 @@ namespace Microsoft.PowerShell.Commands
                     certContext = store.GetNextCert(certContext);
                 }
                 // remove the cert store
-                const SMASecurity.NativeMethods.CertOpenStoreFlags StoreFlags =
+                SMASecurity.NativeMethods.CertOpenStoreFlags storeFlags =
                         SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_READONLY_FLAG |
                         SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
                         SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_DEFER_CLOSE_UNTIL_LAST_FREE_FLAG |
-                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_DELETE_FLAG |
-                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_DELETE_FLAG;
+
+                switch (store.Location.CertLocation)
+                {
+                    case CertStoreLocation.LocalMachine:
+                        storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                        break;
+
+                    case CertStoreLocation.Service:
+                        storeFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_SERVICES;
+                        break;
+                }
 
                 // delete store
                 IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
                                 SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
                                 SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
                                 IntPtr.Zero,  // hCryptProv
-                                StoreFlags,
+                                storeFlags,
                                 storeName);
             }
             else
@@ -2460,7 +2564,7 @@ namespace Microsoft.PowerShell.Commands
         private X509StoreLocation GetStoreLocation(string path)
         {
             //
-            // we store the only two possible store-location
+            // we store the only three possible store-location
             // objects during ctor.
             //
             X509StoreLocation location =
@@ -2507,7 +2611,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="storePath">Path to the store.</param>
         /// <param name="storeName">Name of store (path leaf element).</param>
-        /// <param name="storeLocation">Location of store (CurrentUser or LocalMachine).</param>
+        /// <param name="storeLocation">Location of store (CurrentUser, LocalMachine, or Service).</param>
         /// <returns>X509NativeStore object.</returns>
         private X509NativeStore GetStore(string storePath,
                                    string storeName,
@@ -2568,8 +2672,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     X509NativeStore store = GetStore(storePath, name, location);
-                    X509Store ManagedStore = new(store.StoreName, store.Location.Location);
-                    thingToReturn = ManagedStore;
+                    thingToReturn = store.OpenManaged();
                 }
 
                 // 'returnNames' is true only when called from
@@ -2883,9 +2986,7 @@ namespace Microsoft.PowerShell.Commands
                     return string.Empty;
                 }
 
-                //
                 // Load the help file from the current UI culture subfolder of the module's root folder
-                //
                 XmlDocument document = new();
 
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
@@ -2958,8 +3059,8 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines a class to represent a store location in the certificate
-    /// provider.  The two possible store locations are CurrentUser and
-    /// LocalMachine.
+    /// provider. The possible store locations are CurrentUser, LocalMachine,
+    /// and Service.
     /// </summary>
     public sealed class X509StoreLocation
     {
@@ -2970,28 +3071,33 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _location.ToString();
+                return CertLocation.ToString();
             }
         }
 
         /// <summary>
         /// Gets the location as a
         /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation"/>
+        /// The property CertLocation should be used instead of this one as it
+        /// supports store locations other than CurrentUser and LocalMachine.
         /// </summary>
-        public StoreLocation Location
+        public StoreLocation? Location
         {
             get
             {
-                return _location;
+                return Enum.IsDefined(typeof(StoreLocation), (int)CertLocation) ? (StoreLocation)CertLocation : null;
             }
 
             set
             {
-                _location = value;
+                CertLocation = (CertStoreLocation)value;
             }
         }
 
-        private StoreLocation _location = StoreLocation.CurrentUser;
+        /// <summary>
+        /// Gets the location of the current type.
+        /// </summary>
+        public CertStoreLocation CertLocation { get; internal set; }
 
         /// <summary>
         /// Gets the list of stores at this location.
@@ -3006,7 +3112,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // since there is no managed support to obtain store names,
                 // we use pinvoke to get it ourselves.
-                List<string> names = Crypt32Helpers.GetStoreNamesAtLocation(_location);
+                List<string> names = Crypt32Helpers.GetStoreNamesAtLocation(CertLocation);
                 foreach (string name in names)
                 {
                     storeNames.Add(name, true);
@@ -3018,11 +3124,39 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the X509StoreLocation class.
+        /// Use the CertStoreLocation overload instead of this one.
         /// </summary>
-        public X509StoreLocation(StoreLocation location)
+        public X509StoreLocation(StoreLocation location) : this((CertStoreLocation)location)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the X509StoreLocation class.
+        /// </summary>
+        /// <param name="location">The store location type.</param>
+        public X509StoreLocation(CertStoreLocation location)
         {
-            Location = location;
+            CertLocation = location;
+            if (Enum.IsDefined(typeof(StoreLocation), (int)location))
+            {
+                Location = (StoreLocation)location;
+            }
         }
+    }
+
+    /// <summary>
+    /// The certificate store location. Expands on StoreLocation to include
+    /// extra locations like Service.
+    /// </summary>
+    public enum CertStoreLocation
+    {
+        /// <summary>The X.509 certificate store used by the current user.</summary>
+        CurrentUser = 1,
+
+        /// <summary>The X.509 certificate store assigned to the local machine.</summary>
+        LocalMachine = 2,
+
+        /// <summary>The X.509 certificate store used by a system service.</summary>
+        Service = 3,
     }
 
     /// <summary>
@@ -3180,10 +3314,8 @@ namespace Microsoft.PowerShell.Commands
                         // obtained pathElements[2] is MY
                         // obtained pathElements[3] is HashID
 
-                        bool fUserContext = string.Equals(pathElements[1], "Certificate::CurrentUser", StringComparison.OrdinalIgnoreCase);
-
-                        X509StoreLocation storeLocation =
-                            new(fUserContext ? StoreLocation.CurrentUser : StoreLocation.LocalMachine);
+                        CertStoreLocation location = Enum.Parse<CertStoreLocation>(pathElements[1].Substring(13), true);
+                        X509StoreLocation storeLocation = new(location);
 
                         // get certificate from the store pathElements[2]
                         X509NativeStore store = null;
@@ -3512,29 +3644,27 @@ namespace Microsoft.PowerShell.Commands
     internal static class Crypt32Helpers
     {
         /// <summary>
-        /// Lock that guards access to the following static members
-        /// -- storeNames.
-        /// </summary>
-        private static readonly object s_staticLock = new();
-
-        internal static readonly List<string> storeNames = new();
-
-        /// <summary>
         /// Get a list of store names at the specified location.
         /// </summary>
-        internal static List<string> GetStoreNamesAtLocation(StoreLocation location)
+        /// <param name="location">The cert store location.</param>
+        /// <returns>Lists of stores at the location specified.</returns>
+        internal static List<string> GetStoreNamesAtLocation(CertStoreLocation location)
         {
             SMASecurity.NativeMethods.CertStoreFlags locationFlag =
                 SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
 
             switch (location)
             {
-                case StoreLocation.CurrentUser:
+                case CertStoreLocation.CurrentUser:
                     locationFlag = SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
                     break;
 
-                case StoreLocation.LocalMachine:
+                case CertStoreLocation.LocalMachine:
                     locationFlag = SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                    break;
+
+                case CertStoreLocation.Service:
+                    locationFlag = SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_SERVICES;
                     break;
 
                 default:
@@ -3542,43 +3672,52 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            SMASecurity.NativeMethods.CertEnumSystemStoreCallBackProto callBack = new(CertEnumSystemStoreCallBack);
-
-            // Return a new list to avoid synchronization issues.
-
             List<string> names = new();
-            lock (s_staticLock)
+            GCHandle namesPtr = GCHandle.Alloc(names);
+            try
             {
-                storeNames.Clear();
-
-                SMASecurity.NativeMethods.CertEnumSystemStore(locationFlag, IntPtr.Zero,
-                                                  IntPtr.Zero, callBack);
-                foreach (string name in storeNames)
-                {
-                    names.Add(name);
-                }
+                Interop.Windows.CertEnumSystemStore(
+                    (uint)locationFlag,
+                    null,
+                    GCHandle.ToIntPtr(namesPtr),
+                    CertEnumSystemStoreCallBack);
+            }
+            finally
+            {
+                namesPtr.Free();
             }
 
             return names;
         }
 
         /// <summary>
+        /// <para>
         /// Call back function used by CertEnumSystemStore
-        ///
+        /// </para><para>
         /// Currently, there is no managed support for enumerating store
         /// names on a machine. We use the win32 function CertEnumSystemStore()
         /// to get a list of stores for a given context.
-        ///
+        /// </para><para>
         /// Each time this callback is called, we add the passed store name
         /// to the list of stores.
+        /// </para>
         /// </summary>
-        internal static bool CertEnumSystemStoreCallBack(string storeName,
-                                                          DWORD dwFlagsNotUsed,
-                                                          IntPtr notUsed1,
-                                                          IntPtr notUsed2,
-                                                          IntPtr notUsed3)
+        /// <param name="storeName">The system store found.</param>
+        /// <param name="flags">Flags to describe the store.</param>
+        /// <param name="storeInfo">Pointer to the store into structure.</param>
+        /// <param name="reserved">Reserved for future use.</param>
+        /// <param name="arg">Pointer to information passed to the callback function from the parent.</param>
+        /// <returns>true if the function succeeds, else false.</returns>
+        internal static bool CertEnumSystemStoreCallBack(
+            string storeName,
+            uint flags,
+            nint storeInfo,
+            nint reserved,
+            nint arg)
         {
-            storeNames.Add(storeName);
+            List<string> names = (List<string>)GCHandle.FromIntPtr(arg).Target;
+            names.Add(storeName);
+
             return true;
         }
     }
