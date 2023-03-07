@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
-    public abstract class WebRequestPSCmdlet : PSCmdlet
+    public abstract class WebRequestPSCmdlet : PSCmdlet, IDisposable
     {
         #region Fields
 
@@ -133,6 +133,11 @@ namespace Microsoft.PowerShell.Commands
         /// The remote endpoint returned a 206 status code indicating successful resume.
         /// </summary>
         private bool _resumeSuccess = false;
+
+        /// <summary>
+        /// True if the Dispose() method has already been called to cleanup Disposable fields.
+        /// </summary>
+        private bool _disposed = false;
 
         #endregion Fields
 
@@ -529,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
-                using HttpClient client = GetHttpClient(handleRedirect);
+                HttpClient client = GetHttpClient(handleRedirect);
 
                 int followedRelLink = 0;
                 Uri uri = Uri;
@@ -566,12 +571,11 @@ namespace Microsoft.PowerShell.Commands
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
                             string contentType = ContentHelper.GetContentType(response);
-                            string respVerboseMsg = string.Format(
-                                CultureInfo.CurrentCulture,
-                                WebCmdletStrings.WebResponseVerboseMsg,
-                                response.Content.Headers.ContentLength,
-                                contentType);
-
+                            long? contentLength = response.Content.Headers.ContentLength;
+                            string respVerboseMsg = contentLength is null
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                            
                             WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
@@ -646,7 +650,7 @@ namespace Microsoft.PowerShell.Commands
                             // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
                             // impossible to detect programmatically when we hit this limit. By handling this ourselves
                             // (and still writing out the result), users can debug actual HTTP redirect problems.
-                            if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
+                            if (_maximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                             {
                                 ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
@@ -694,6 +698,33 @@ namespace Microsoft.PowerShell.Commands
         /// To implement ^C.
         /// </summary>
         protected override void StopProcessing() => _cancelToken?.Cancel();
+
+        /// <summary>
+        /// Disposes the associated WebSession if it is not being used as part of a persistent session.
+        /// </summary> 
+        /// <param name="disposing">True when called from Dispose() and false when called from finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing && !IsPersistentSession())
+                {
+                    WebSession?.Dispose();
+                    WebSession = null;
+                }
+
+                _disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Disposes the associated WebSession if it is not being used as part of a persistent session.
+        /// </summary> 
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion Overrides
 
@@ -904,26 +935,49 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.UserAgent = UserAgent;
             }
 
-            if (Proxy is not null)
+            // Proxy and NoProxy parameters are mutually exclusive.
+            // If NoProxy is provided, WebSession will turn off the proxy
+            // and if Proxy is provided NoProxy will be turned off.
+            if (NoProxy.IsPresent)
             {
-                WebProxy webProxy = new(Proxy);
-                webProxy.BypassProxyOnLocal = false;
-                if (ProxyCredential is not null)
+                WebSession.NoProxy = true;
+            }
+            else
+            {
+                if (Proxy is not null)
                 {
-                    webProxy.Credentials = ProxyCredential.GetNetworkCredential();
-                }
-                else
-                {
-                    webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
-                }
+                    WebProxy webProxy = new(Proxy);
+                    webProxy.BypassProxyOnLocal = false;
+                    if (ProxyCredential is not null)
+                    {
+                        webProxy.Credentials = ProxyCredential.GetNetworkCredential();
+                    }
+                    else
+                    {
+                        webProxy.UseDefaultCredentials =  ProxyUseDefaultCredentials;
+                    }
 
-                WebSession.Proxy = webProxy;
+                    // We don't want to update the WebSession unless the proxies are different
+                    // as that will require us to create a new HttpClientHandler and lose connection
+                    // persistence.
+                    if (!webProxy.Equals(WebSession.Proxy))
+                    {
+                        WebSession.Proxy = webProxy;
+                    }
+                }
+            }
+
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(SslProtocol)))
+            {
+                WebSession.SslProtocol = SslProtocol;
             }
 
             if (MaximumRedirection > -1)
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
+
+            WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
 
             // Store the other supplied headers
             if (Headers is not null)
@@ -949,63 +1003,20 @@ namespace Microsoft.PowerShell.Commands
                 // Only set retry interval if retry count is set.
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
+
+            WebSession.TimeoutSec = TimeoutSec;
         }
 
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
-            HttpClientHandler handler = new();
-            handler.CookieContainer = WebSession.Cookies;
-            handler.AutomaticDecompression = DecompressionMethods.All;
+            HttpClient client = WebSession.GetHttpClient(handleRedirect, out bool clientWasReset);
 
-            // Set the credentials used by this request
-            if (WebSession.UseDefaultCredentials)
+            if (clientWasReset)
             {
-                // The UseDefaultCredentials flag overrides other supplied credentials
-                handler.UseDefaultCredentials = true;
-            }
-            else if (WebSession.Credentials is not null)
-            {
-                handler.Credentials = WebSession.Credentials;
+                WriteVerbose(WebCmdletStrings.WebSessionConnectionRecreated);
             }
 
-            if (NoProxy)
-            {
-                handler.UseProxy = false;
-            }
-            else if (WebSession.Proxy is not null)
-            {
-                handler.Proxy = WebSession.Proxy;
-            }
-
-            if (WebSession.Certificates is not null)
-            {
-                handler.ClientCertificates.AddRange(WebSession.Certificates);
-            }
-
-            if (SkipCertificateCheck)
-            {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            }
-
-            // This indicates GetResponse will handle redirects.
-            if (handleRedirect || WebSession.MaximumRedirection == 0)
-            {
-                handler.AllowAutoRedirect = false;
-            }
-            else if (WebSession.MaximumRedirection > 0)
-            {
-                handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
-            }
-
-            handler.SslProtocols = (SslProtocols)SslProtocol;
-
-            HttpClient httpClient = new(handler);
-
-            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
-            httpClient.Timeout = TimeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : new TimeSpan(0, 0, TimeoutSec);
-
-            return httpClient;
+            return client;
         }
 
         internal virtual HttpRequestMessage GetRequest(Uri? uri)
@@ -1113,7 +1124,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
             }
-            else if (request.Method == HttpMethod.Post)
+            else if (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string? contentType);
@@ -1460,6 +1471,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private bool IsPersistentSession() => MyInvocation.BoundParameters.ContainsKey(nameof(WebSession)) || MyInvocation.BoundParameters.ContainsKey(nameof(SessionVariable));
+
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
@@ -1530,7 +1543,7 @@ namespace Microsoft.PowerShell.Commands
 
             byte[]? bytes = null;
             XmlDocument? doc = xmlNode as XmlDocument;
-            if (doc?.FirstChild is XmlDeclaration decl)
+            if (doc?.FirstChild is XmlDeclaration decl && !string.IsNullOrEmpty(decl.Encoding))
             {
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);
                 bytes = StreamHelper.EncodeToBytes(doc.OuterXml, encoding);
@@ -1694,7 +1707,7 @@ namespace Microsoft.PowerShell.Commands
         private static StringContent GetMultipartStringContent(object fieldName, object? fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-            
+
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
 
@@ -1781,7 +1794,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Ignore errors
             }
-            
+
             if (string.IsNullOrEmpty(formattedError))
             {
                 // Remove HTML tags making it easier to read

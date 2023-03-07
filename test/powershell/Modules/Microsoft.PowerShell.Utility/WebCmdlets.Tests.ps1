@@ -588,6 +588,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $object.Data | Should -BeExactly 'проверка'
     }
 
+    It "Invoke-WebRequest supports sending XML requests without encoding" {
+        $uri = Get-WebListenerUrl -Test POST
+        $body = '<?xml version="1.0"?><foo />'
+        $result = Invoke-WebRequest -Uri $uri -body ([xml]$body) -ContentType 'text/xml' -method 'POST'
+
+        $object = $result.Content | ConvertFrom-Json
+        $object.Data | Should -BeExactly $body
+    }
+
     It "Invoke-WebRequest supports request that returns page containing CodPage 936 data." {
         $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'CP936'
         $command = "Invoke-WebRequest -Uri '$uri'"
@@ -759,9 +768,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ($result.Output.Content | ConvertFrom-Json).method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
-        $uri = Get-WebListenerUrl -Test 'Post'
-        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
+    It "Validate Invoke-WebRequest default ContentType for CustomMethod <method>" -TestCases @(
+        @{method = "POST"}
+        @{method = "PUT"}
+    ) {
+        param($method)
+
+        $uri = Get-WebListenerUrl -Test $method
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod $method -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $jsonResult = $result.Output.Content | ConvertFrom-Json
         $jsonResult.form.testparam | Should -Be "testvalue"
@@ -2236,6 +2250,148 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $pathologicalRatio | Should -BeGreaterThan 5
         }
     }
+
+    Context 'Invoke-WebSession: Connection persistence in a WebSession' {
+        # Match verbose message from resource name WebSessionConnectionRecreated with message:
+        # The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.
+        $matchConnRecreatedMessage = [regex]::new('WebSession.+HTTP')
+
+        function RunCheckingPersistence {
+            param(
+                [uri]$Uri,
+                [string]$Command,
+                [object]$Session,
+                [switch]$ExpectConnectionRecreated,
+                [switch]$CaptureSession
+            )
+
+            $pwsh = [PowerShell]::Create()
+            $pwsh.Runspace.SessionStateProxy.SetVariable('uri', $Uri)
+            if ($Session) {
+                $pwsh.Runspace.SessionStateProxy.SetVariable('Session', $Session)
+                $command = "$command -WebSession `$Session"
+            }
+            if ($CaptureSession) {
+                $command = "$command -SessionVariable Session"
+            }
+            $script = "`$null = $command -Verbose"
+            $pwsh.AddScript($script).Invoke()
+            $session = $pwsh.Runspace.SessionStateProxy.GetVariable('Session')
+
+            $expectedConnRecreatedCount = if ($ExpectConnectionRecreated) { 1 } else { 0 }
+            ($pwsh.Streams.Verbose | Where-Object { $matchConnRecreatedMessage.Matches($_.Message) }).Count | Should -Be $expectedConnRecreatedCount
+
+            $pwsh.Dispose()
+
+            return $session
+        }
+
+        It 'Connection persistence maintained' {
+            $uri = Get-WebListenerUrl
+            $Session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            1 .. 3 | ForEach-Object {
+                RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri' -Session $Session
+            }
+        }
+
+        It 'Connection persistence impacted by changing SkipCertificateCheck' {
+            $uri = Get-WebListenerUrl -Https
+            # This first request will throw because the certificate is invalid
+            $session = $null
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            # No change in setting
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck:$false' -Session $session
+            # Skipping cert check changes persistence
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck' -Session $session -ExpectConnectionRecreated
+            # Same settings won't lose persistence
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck' -Session $session
+            # Lose persistence due to changing cert check - this will also throw
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck:$false' -Session $session -ExpectConnectionRecreated
+        }
+
+        It 'Connection persistence is not impacted by changing request headers' {
+            $uri = Get-WebListenerUrl
+            $session = $null
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -Headers @{ A = "B" }' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -Headers @{}' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -Headers @{ A = "C"; B = "D"}' -Session $session
+        }
+
+        It 'Connection persistence is impacted by changing the session cookie jar' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            $session.Cookies = New-Object System.Net.CookieContainer
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session -ExpectConnectionRecreated
+
+            # Adding a cookie to the container does not lose persistence
+            $Session.Cookies.Add('http://localhost', [system.net.cookie]::new('cookie', 'value'))
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+        }
+
+        It 'Connection persistence is not impacted by changing the user agent' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -UserAgent Powershell' -CaptureSession
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -UserAgent "PowerShell Core"' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -UserAgent "PowerShell Core with HttpClient"' -Session $session
+            # Ensure persistence is lost when we change a different setting
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -NoProxy -UserAgent "PowerShell Core"' -Session $session -ExpectConnectionRecreated
+        }
+
+        It 'Connection persistence is not impacted when NoProxy parameter is not supplied' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            # Explicitly prevent proxy - connection lost
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -NoProxy' -Session $session -ExpectConnectionRecreated
+            # Provide explicit switch value - connection maintained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -NoProxy:$true' -Session $session
+            # No spec for proxy - connection maintained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            # Two follow up calls without altering anything do not lose connection
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+        }
+
+        It 'Connection persistence is not impacted when SslProtocol parameter is not supplied' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SslProtocol Tls12' -CaptureSession
+            # No SslProtocol provided - keeps last value - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            # Explicit default - loses connection
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SslProtocol Default' -Session $session -ExpectConnectionRecreated
+            # No SslProtocol provided - keeps last value - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            # Explicitly set to same value as last time it was set - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SslProtocol Default' -Session $session
+        }
+
+        It 'Connection persistence is not impacted by Proxy and NoProxy unless changed parameters are used between invocations' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            $proxy = 'http://127.0.0.1:8080'
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
+            # same proxy - do not lose persistence
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session
+            # No proxy at all - use previous setting and don't lose connection
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+
+            # NoProxy toggles proxy off - loses connection
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -NoProxy" -Session $session -ExpectConnectionRecreated
+            # No setting at all - retains NoProxy setting
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+
+            # Use proxy again - lose connection
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
+            # No proxy specified - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+
+            # Proxy changed - lose connection
+            $proxy = 'http://localhost:8080'
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
+            # No proxy specified - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+        }
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
@@ -2395,6 +2551,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $result = ExecuteWebCommand -command $command
         $Result.Output.Data | Should -BeExactly 'проверка'
+    }
+
+    It "Invoke-RestMethod supports sending XML requests without encoding" {
+        $uri = Get-WebListenerUrl -Test POST
+        $body = '<?xml version="1.0"?><foo />'
+        $result = Invoke-RestMethod -Uri $uri -body ([xml]$body) -ContentType 'text/xml' -method 'POST'
+
+        $result.Data | Should -BeExactly $body
     }
 
     It "Invoke-RestMethod supports request that returns page containing Code Page 936 data." {
@@ -2559,9 +2723,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
-        $uri = Get-WebListenerUrl -Test 'Post'
-        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
+    It "Validate Invoke-RestMethod default ContentType for CustomMethod <method>" -TestCases @(
+        @{method = "POST"}
+        @{method = "PUT"}
+    ) {
+        param($method)
+        $uri = Get-WebListenerUrl -Test $method
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod $method -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should -Be "testvalue"
         $result.Output.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"

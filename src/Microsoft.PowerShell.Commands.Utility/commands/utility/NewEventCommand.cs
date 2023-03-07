@@ -121,7 +121,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object messageSender = null;
-            if (_sender != null) { messageSender = _sender.BaseObject; }
+            if (_sender != null)
+            {
+                messageSender = _sender.BaseObject;
+            }
 
             // And then generate the event
             WriteObject(Events.GenerateEvent(_sourceIdentifier, messageSender, baseEventArgs, _messageData, true, false));

@@ -555,7 +555,10 @@ namespace System.Management.Automation.Help
             }
             catch (XmlException e)
             {
-                if (ignoreValidationException) { return null; }
+                if (ignoreValidationException)
+                {
+                    return null;
+                }
 
                 throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
                     e.Message, ErrorCategory.InvalidData, null, e);
