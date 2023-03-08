@@ -39,7 +39,7 @@ steps:
                         )
 
     $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
-    $null = New-Item -Path $refAssemblyFolder -Force -Verbose
+    $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
 
     Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
 
