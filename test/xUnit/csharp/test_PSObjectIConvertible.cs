@@ -189,7 +189,8 @@ namespace PSTests.Parallel
             Assert.Throws<InvalidCastException>(() => wrappedValue.ToDouble(provider: null));
             Assert.Throws<InvalidCastException>(() => wrappedValue.ToDecimal(provider: null));
             Assert.Throws<InvalidCastException>(() => wrappedValue.ToDateTime(provider: null));
-            Assert.Throws<InvalidCastException>(() => wrappedValue.ToString(provider: null));
+
+            Assert.Equal(string.Empty, wrappedValue.ToString(provider: null));
 
             Assert.Throws<InvalidCastException>(() => wrappedValue.ToType(typeof(bool), provider: null));
             Assert.Throws<InvalidCastException>(() => wrappedValue.ToType(typeof(char), provider: null));
