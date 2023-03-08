@@ -2393,30 +2393,26 @@ function CopyReferenceAssemblies
         )
 
     switch ($assemblyName) {
-        { $_ -in $supportedRefList } {
-            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
-            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
-            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
-            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
-        }
-
         "Microsoft.PowerShell.SDK" {
             foreach ($asmFileName in $assemblyFileList) {
-                $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
-                if (Test-Path -Path $refFile) {
-                    $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
-                    Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
-                    Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
+                $fileName = [System.IO.Path]::GetFileNameWithoutExtension($asmFileName)
+
+                if ($fileName -in $supportedRefList) {
+                    $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
+                    if (Test-Path -Path $refFile) {
+                        $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
+                        Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
+                        Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
+                    }
                 }
             }
         }
 
         default {
-            $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
-            $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
-            $self_ref_doc = Join-Path -Path $winBinPath -ChildPath "$assemblyName.xml"
-            Copy-Item $ref_SMA, $ref_doc, $self_ref_doc -Destination $refNugetPath -Force
-            Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
+            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
+            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
         }
     }
 }
