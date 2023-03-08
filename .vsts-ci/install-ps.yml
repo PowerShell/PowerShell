@@ -48,7 +48,7 @@ phases:
     jobName: InstallPowerShellUbuntu
     pool: ubuntu-latest
     verification: |
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
@@ -56,11 +56,23 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: sudo ./tools/install-powershell.sh
+    jobName: InstallPowerShellMariner2
+    pool: ubuntu-latest
+    container: mcr.microsoft.com/powershell/test-deps:mariner-2.0
+    verification: |
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
+      {
+        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+      }
+      
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: sudo ./tools/install-powershell.sh
     jobName: InstallPowerShellAmazonLinux
     pool: ubuntu-latest
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
@@ -72,7 +84,7 @@ phases:
     pool: ubuntu-latest
     container: pshorg/powershellcommunity-test-deps:amazonlinux-2.0
     verification: |
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
@@ -105,7 +117,7 @@ phases:
     jobName: InstallPowerShellMacOS
     pool: macOS-latest
     verification: |
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"6.2.0")
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
       {
         # The script does not upgrade on  mac os https://github.com/PowerShell/PowerShell/issues/9322
         Write-Warning "powershell was not upgraded: $($PSVersionTable.PSVersion)"
@@ -124,7 +136,7 @@ phases:
     pool: ubuntu-latest
     verification: |
       Write-Verbose $PSVersionTable.PSVersion -verbose
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
+      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
