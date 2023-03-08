@@ -26,7 +26,7 @@ install(){
     #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
     local VERSION="1.2.0"
-    local gitreposubpath="PowerShell/PowerShell/master"
+    local gitreposubpath="PowerShell/PowerShell/mariner-inst"
     local gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
     local gitscriptname="install-powershell.psh"
 
