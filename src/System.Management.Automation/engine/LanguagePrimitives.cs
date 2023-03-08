@@ -5671,7 +5671,7 @@ namespace System.Management.Automation
                         converter = FigureCastConversion(fromType, toType, ref rank);
                         if (converter == null)
                         {
-                            if (typeof(IConvertible).IsAssignableFrom(fromType))
+                            if (fromType != typeof(InternalPSObject) && typeof(IConvertible).IsAssignableFrom(fromType))
                             {
                                 if (LanguagePrimitives.IsNumeric(GetTypeCode(fromType)) && !fromType.IsEnum)
                                 {
