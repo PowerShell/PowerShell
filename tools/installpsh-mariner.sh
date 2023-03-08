@@ -138,7 +138,6 @@ $SUDO tdnf install -y \
         less \
         openssh-clients \
         ca-certificates \
-        dotnet-runtime-7.0 \
         tar \
         curl \
     && tdnf clean all
