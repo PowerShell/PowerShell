@@ -30,7 +30,9 @@ namespace System.Management.Automation
         public TypeCode GetTypeCode()
         {
             object obj = PSObject.Base(this);
-            return obj is PSObject ? TypeCode.Object : Convert.GetTypeCode(obj);
+
+            // Take into account PSObject and all derived classes like InternalPSObject.
+            return typeof(PSObject).IsAssignableFrom(obj.GetType()) ? TypeCode.Object : Convert.GetTypeCode(obj);
         }
 
         /// <inheritdoc/>
