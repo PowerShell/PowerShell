@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
