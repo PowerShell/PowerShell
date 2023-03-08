@@ -2300,10 +2300,6 @@ function New-ILNugetPackageSource
     }
     $deps = New-FileDependencies -FileBaseName $fileBaseName -PackageVersion $PackageVersion
     New-CGManifest -FilePath (Join-Path -Path $CGManifestPath -ChildPath "CGManifest.json") -Dependencies $deps
-
-    if (Test-Path $refBinPath) {
-        Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
-    }
 }
 
 <#
