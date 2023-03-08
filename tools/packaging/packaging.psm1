@@ -4900,10 +4900,8 @@ function Test-Bom {
         # Test file against each BOM that can still have a match
         foreach ($bom in $bomList) {
             $pattern = $root + [system.io.path]::DirectorySeparatorChar + $bom.GetPattern()
-            Write-Verbose "testing '$filePath -like $pattern"
             if ($filePath -like $pattern) {
                 $matchingRecord = $bom
-                Write-Verbose "matched '$filePath -like $pattern"
                 $match = $true
                 if ($patternsUsed -notcontains $bom) {
                     $patternsUsed += $bom
