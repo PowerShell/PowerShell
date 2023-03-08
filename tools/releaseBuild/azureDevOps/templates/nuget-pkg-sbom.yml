@@ -48,7 +48,12 @@ steps:
       Write-Verbose -Verbose 'RefAssembly: $refFile'
       Copy-Item -Path $refFile -Destination $refAssemblyFolder -Verbose
       $refDoc = Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\linux-x64\publish\$_.xml"
-      Copy-Item -Path $refDoc -Destination $refAssemblyFolder -Verbose
+      if (-not (Test-Path $refDoc)) {
+        Write-Warning "$env:REPOROOT\src\$_\bin\Release\net8.0\linux-x64\publish\$_.xml not found"
+      }
+      else {
+        Copy-Item -Path $refDoc -Destination $refAssemblyFolder -Verbose
+      }
     }
 
     Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
@@ -57,8 +62,12 @@ steps:
       $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
       Write-Verbose -Verbose 'RefAssembly: $refFile'
       Copy-Item -Path $refFile -Destination $refAssemblyFolder -Verbose
-      $refDoc = Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\win7-x64\publish\$_.xml"
-      Copy-Item -Path $refDoc -Destination $refAssemblyFolder -Verbose
+      if (-not (Test-Path $refDoc)) {
+        $refDoc = Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\win7-x64\publish\$_.xml"
+      }
+      else {
+        Copy-Item -Path $refDoc -Destination $refAssemblyFolder -Verbose
+      }
     }
 
     Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
