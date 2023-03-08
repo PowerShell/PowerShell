@@ -76,7 +76,7 @@ namespace System.Management.Automation
         public DateTime ToDateTime(IFormatProvider? provider) => GetIConvertibleOrThrow(this).ToDateTime(provider);
 
         /// <inheritdoc/>
-        public string ToString(IFormatProvider? provider) => GetIConvertibleOrThrow(this).ToString(provider);
+        public string ToString(IFormatProvider? provider) => this.ToString(format: null, provider);
 
         /// <inheritdoc/>
         public object ToType(Type conversionType, IFormatProvider? provider) => GetIConvertibleOrThrow(this).ToType(conversionType, provider);
