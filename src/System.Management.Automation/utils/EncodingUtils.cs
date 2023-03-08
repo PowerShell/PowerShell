@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 using System.Management.Automation.Internal;
@@ -10,25 +11,26 @@ namespace System.Management.Automation
 {
     internal static class EncodingConversion
     {
-        internal const string Unknown = "unknown";
-        internal const string String = "string";
-        internal const string Unicode = "unicode";
+        internal const string Ascii = "ascii";
         internal const string BigEndianUnicode = "bigendianunicode";
         internal const string BigEndianUtf32 = "bigendianutf32";
-        internal const string Ascii = "ascii";
-        internal const string Utf8 = "utf8";
-        internal const string Utf8NoBom = "utf8NoBOM";
-        internal const string Utf8Bom = "utf8BOM";
-        internal const string Utf7 = "utf7";
-        internal const string Utf32 = "utf32";
         internal const string Default = "default";
         internal const string OEM = "oem";
+        internal const string Unicode = "unicode";
+        internal const string Utf7 = "utf7";
+        internal const string Utf8 = "utf8";
+        internal const string Utf8Bom = "utf8BOM";
+        internal const string Utf8NoBom = "utf8NoBOM";
+        internal const string Utf32 = "utf32";
+        internal const string ANSI = "ansi";
+        internal const string String = "string";
+        internal const string Unknown = "unknown";
 
         internal static readonly string[] TabCompletionResults = {
                 Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
-        internal static readonly Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly Dictionary<string, Encoding> encodingMap = new(StringComparer.OrdinalIgnoreCase)
         {
             { Ascii, Encoding.ASCII },
             { BigEndianUnicode, Encoding.BigEndianUnicode },
@@ -43,6 +45,7 @@ namespace System.Management.Automation
             { Utf8Bom, Encoding.UTF8 },
             { Utf8NoBom, Encoding.Default },
             { Utf32, Encoding.UTF32 },
+            { ANSI, Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.ANSICodePage) },
             { String, Encoding.Unicode },
             { Unknown, Encoding.Unicode },
         };
@@ -60,8 +63,7 @@ namespace System.Management.Automation
                 return Encoding.Default;
             }
 
-            Encoding foundEncoding;
-            if (encodingMap.TryGetValue(encoding, out foundEncoding))
+            if (encodingMap.TryGetValue(encoding, out Encoding foundEncoding))
             {
                 // Write a warning if using utf7 as it is obsolete in .NET5
                 if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
@@ -122,10 +124,10 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        return System.Text.Encoding.GetEncoding(stringName);
+                        return Encoding.GetEncoding(stringName);
                     }
                 case int intName:
-                    return System.Text.Encoding.GetEncoding(intName);
+                    return Encoding.GetEncoding(intName);
             }
 
             return inputData;
