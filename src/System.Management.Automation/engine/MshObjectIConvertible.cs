@@ -29,10 +29,10 @@ namespace System.Management.Automation
         /// <returns>Returns <see cref="System.TypeCode"/> of the PSObject.</returns>
         public TypeCode GetTypeCode()
         {
-            object obj = PSObject.Base(this);
+            object? obj = PSObject.Base(this);
 
             // Take into account PSObject and all derived classes like InternalPSObject.
-            return typeof(PSObject).IsAssignableFrom(obj.GetType()) ? TypeCode.Object : Convert.GetTypeCode(obj);
+            return obj is null || typeof(PSObject).IsAssignableFrom(obj.GetType()) ? TypeCode.Object : Convert.GetTypeCode(obj);
         }
 
         /// <inheritdoc/>
