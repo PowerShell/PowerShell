@@ -17,14 +17,13 @@
         'New-GlobalToolNupkg'
         'New-ILNugetPackageSource'
         'New-ILNugetPackageFromSource'
-        'New-ILNugetPackage'
-        'New-MSIPatch'
         'New-PSBuildZip'
         'New-PSSignedBuildZip'
         'Publish-NugetToMyGet'
         'Start-PSPackage'
         'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
+        'Test-Bom'
     )
     RootModule        = "packaging.psm1"
     RequiredModules   = @("build")
