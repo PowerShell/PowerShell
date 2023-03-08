@@ -4907,7 +4907,6 @@ function Test-Bom {
                 $match = $true
                 if ($patternsUsed -notcontains $bom) {
                     $patternsUsed += $bom
-
                 }
                 break
             }
