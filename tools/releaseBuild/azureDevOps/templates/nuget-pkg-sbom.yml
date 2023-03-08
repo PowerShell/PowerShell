@@ -47,6 +47,8 @@ steps:
       $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
       Write-Verbose -Verbose 'RefAssembly: $refFile'
       Copy-Item -Path $refFile -Destination $refAssemblyFolder -Verbose
+      $refDoc = Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\publish\$_.xml"
+      Copy-Item -Path $refDoc -Destination $refAssemblyFolder -Verbose
     }
 
     Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
@@ -55,9 +57,11 @@ steps:
       $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
       Write-Verbose -Verbose 'RefAssembly: $refFile'
       Copy-Item -Path $refFile -Destination $refAssemblyFolder -Verbose
+      $refDoc = Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\publish\$_.xml"
+      Copy-Item -Path $refDoc -Destination $refAssemblyFolder -Verbose
     }
 
-    Get-ChildItem $refAssemblyFolder | Out-String | Write-Verbose -Verbose
+    Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
 
     # Set RefAssemblyPath path variable
     $vstsCommandString = "vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
