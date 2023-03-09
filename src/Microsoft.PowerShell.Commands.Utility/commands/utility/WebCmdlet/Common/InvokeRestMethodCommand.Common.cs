@@ -89,21 +89,16 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // determine the response type
+                    // Determine the response type
                     RestReturnType returnType = CheckReturnType(response);
 
                     // Try to get the response encoding from the ContentType header.
-                    Encoding encoding = null;
-                    string charSet = response.Content.Headers.ContentType?.CharSet;
-                    if (!string.IsNullOrEmpty(charSet))
-                    {
-                        StreamHelper.TryGetEncoding(charSet, out encoding);
-                    }
+                    string charSet = WebResponseHelper.GetCharacterSet(response);
+
+                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding);
 
                     object obj = null;
                     Exception ex = null;
-
-                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
 
                     string encodingVerboseName;
                     try
@@ -122,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (returnType == RestReturnType.Json)
                     {
-                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                        convertSuccess = TryConvertToJson(str, out object obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
                     // default to try xml first since it's more common
                     else

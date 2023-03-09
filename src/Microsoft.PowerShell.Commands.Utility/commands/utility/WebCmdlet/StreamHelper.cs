@@ -449,10 +449,9 @@ namespace Microsoft.PowerShell.Commands
                 
                 if (match.Success)
                 {
-                    Encoding localEncoding = null;
                     string characterSet = match.Groups["charset"].Value;
 
-                    if (TryGetEncoding(characterSet, out localEncoding))
+                    if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
                         content = StreamToString(stream, localEncoding);
