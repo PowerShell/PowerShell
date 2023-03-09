@@ -102,14 +102,6 @@ jobs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
       destinationFolder: '$(linuxFxdPath)'
 
-  - task: PkgESInstallNuGetToolsPackage@10
-    displayName: 'Install package Microsoft.DotNet.BuildTools.GenAPI'
-    inputs:
-      packageName: Microsoft.DotNet.BuildTools.GenAPI
-      packageVersion: '1.0.0-beta-00081'
-      packageSources: 'https://nuget.org/api/v2'
-      installRoot: '$(GenAPIToolPath)'
-
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -126,7 +118,6 @@ jobs:
       PackagePath: $(PackagePath)
       WinFxdPath: $(winFxdPath)
       LinuxFxdPath: $(linuxFxdPath)
-      GenAPIToolPath: $(GenAPIToolPath)
 
   - pwsh: |
       Get-ChildItem $(linuxFxdPath)
