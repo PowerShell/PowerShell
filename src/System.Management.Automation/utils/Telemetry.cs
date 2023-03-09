@@ -39,10 +39,29 @@ namespace Microsoft.PowerShell.Telemetry
         WinCompatModuleLoad,
 
         /// <summary>
+        /// Send telemetry for experimental module feature deactivation.
+        /// All experimental engine features will be have telemetry.
+        /// </summary>
+        ExperimentalEngineFeatureDeactivation,
+
+        /// <summary>
         /// Send telemetry for experimental module feature activation.
         /// All experimental engine features will be have telemetry.
         /// </summary>
         ExperimentalEngineFeatureActivation,
+
+        /// <summary>
+        /// Send telemetry for an experimental feature when use.
+        /// </summary>
+        ExperimentalFeatureUse,
+
+        /// <summary>
+        /// Send telemetry for experimental module feature deactivation.
+        /// Experimental module features will send telemetry based on the module it is in.
+        /// If we send telemetry for the module, we will also do so for any experimental feature
+        /// in that module.
+        /// </summary>
+        ExperimentalModuleFeatureDeactivation,
 
         /// <summary>
         /// Send telemetry for experimental module feature activation.
@@ -126,7 +145,7 @@ namespace Microsoft.PowerShell.Telemetry
         private static readonly HashSet<string> s_knownModules;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
-        public static bool CanSendTelemetry { get; private set; }
+        public static bool CanSendTelemetry { get; private set; } = false;
 
         /// <summary>
         /// Initializes static members of the <see cref="ApplicationInsightsTelemetry"/> class.
@@ -703,9 +722,12 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.PowerShellCreate:
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
+                    case TelemetryType.ExperimentalEngineFeatureDeactivation:
+                    case TelemetryType.ExperimentalFeatureUse:
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, data);
                         break;
                     case TelemetryType.ExperimentalModuleFeatureActivation:
+                    case TelemetryType.ExperimentalModuleFeatureDeactivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
                         break;
@@ -716,6 +738,21 @@ namespace Microsoft.PowerShell.Telemetry
                 // do nothing, telemetry can't be sent
                 // don't send the panic telemetry as if we have failed above, it will likely fail here.
             }
+        }
+
+        /// <summary>
+        /// Send additional information about an experimental feature as it is used.
+        /// </summary>
+        /// <param name="featureName">The name of the experimental feature.</param>
+        /// <param name="detail">The details about the experimental feature use.</param>
+        internal static void SendExperimentalUseData(string featureName, string detail)
+        {
+            if (!CanSendTelemetry)
+            {
+                return;
+            }
+
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureUse, string.Join(":", featureName, detail));
         }
 
         // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"
@@ -779,6 +816,7 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("UUID", s_uniqueUserIdentifier);
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
+            properties.Add("RuntimeIdentifier", RuntimeInformation.RuntimeIdentifier);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
             properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
 

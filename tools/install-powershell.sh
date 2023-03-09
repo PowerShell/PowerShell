@@ -95,6 +95,10 @@ install(){
                 else
                     DistroBasedOn='redhat'
                 fi
+            elif [ -f /etc/mariner-release ] ; then
+                DistroBasedOn='mariner'
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mariner-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mariner-release )
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
@@ -135,7 +139,7 @@ install(){
 
 
     case "$DistroBasedOn" in
-        redhat|debian|osx|suse|amazonlinux|gentoo)
+        redhat|debian|osx|suse|amazonlinux|gentoo|mariner)
             echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
             if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
                 #Script files were copied local - use them

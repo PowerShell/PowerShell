@@ -2518,6 +2518,325 @@ function New-NuSpec {
 
 <#
 .SYNOPSIS
+Create a reference assembly from System.Management.Automation.dll
+
+.DESCRIPTION
+A unix variant of System.Management.Automation.dll is converted to a reference assembly.
+GenAPI.exe generated the CS file containing the APIs.
+This file is cleaned up and then compiled into a dll.
+
+.PARAMETER Unix64BinPath
+Path to the folder containing unix 64 bit assemblies.
+
+.PARAMETER RefAssemblyDestinationPath
+Path to the folder where the reference assembly is created.
+
+.PARAMETER RefAssemblyVersion
+Version of the reference assembly.
+
+.PARAMETER GenAPIToolPath
+Path to GenAPI.exe. Tool from https://www.nuget.org/packages/Microsoft.DotNet.BuildTools.GenAPI/
+
+.PARAMETER SnkFilePath
+Path to the snk file for strong name signing.
+#>
+
+function New-ReferenceAssembly
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Linux64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $RefAssemblyDestinationPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $RefAssemblyVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $GenAPIToolPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $SnkFilePath
+    )
+
+    if (-not $Environment.IsWindows)
+    {
+        throw "New-ReferenceAssembly can be only executed on Windows platform."
+    }
+
+    $genAPIExe = Get-ChildItem -Path "$GenAPIToolPath/*GenAPI.exe" -Recurse
+
+    if (-not (Test-Path $genAPIExe))
+    {
+        throw "GenAPI.exe was not found at: $GenAPIToolPath"
+    }
+
+    Write-Log "GenAPI nuget package saved and expanded."
+
+    $genAPIFolder = New-TempFolder
+    Write-Log "Working directory: $genAPIFolder."
+
+    $SMAReferenceAssembly = $null
+    $assemblyNames = @(
+        "System.Management.Automation",
+        "Microsoft.PowerShell.Commands.Utility",
+        "Microsoft.PowerShell.ConsoleHost"
+    )
+
+    # Ensure needed dotNet version is available.  Find-DotNet does this, and is part of build.psm1 which should already be imported.
+    Find-DotNet -Verbose
+
+    foreach ($assemblyName in $assemblyNames) {
+
+        Write-Log "Building reference assembly for '$assemblyName'"
+        $projectFolder = New-Item -Path "$genAPIFolder/$assemblyName" -ItemType Directory -Force
+        $generatedSource = Join-Path $projectFolder "$assemblyName.cs"
+        $filteredSource = Join-Path $projectFolder "${assemblyName}_Filtered.cs"
+
+        $linuxDllPath = Join-Path $Linux64BinPath "$assemblyName.dll"
+        if (-not (Test-Path $linuxDllPath)) {
+            throw "$assemblyName.dll was not found at: $Linux64BinPath"
+        }
+
+        $dllXmlDoc = Join-Path $Linux64BinPath "$assemblyName.xml"
+        if (-not (Test-Path $dllXmlDoc)) {
+            throw "$assemblyName.xml was not found at: $Linux64BinPath"
+        }
+
+        $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgs"
+
+        Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
+        Write-Log "Reference assembly file generated at: $generatedSource"
+
+        CleanupGeneratedSourceCode -assemblyName $assemblyName -generatedSource $generatedSource -filteredSource $filteredSource
+
+        try
+        {
+            Push-Location $projectFolder
+
+            $sourceProjectRoot = Join-Path $PSScriptRoot "projects/reference/$assemblyName"
+            $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
+
+            $destProjectFile = Join-Path $projectFolder "$assemblyName.csproj"
+            $nugetConfigFile = Join-Path $PSScriptRoot "../../nuget.config"
+
+            Copy-Item -Path $sourceProjectFile -Destination $destProjectFile -Force -Verbose
+            Copy-Item -Path $nugetConfigFile -Destination $projectFolder -Verbose
+
+            Send-AzdoFile -Path $destProjectFile
+            Send-AzdoFile -Path $generatedSource
+
+            $arguments = GenerateBuildArguments -AssemblyName $assemblyName -RefAssemblyVersion $RefAssemblyVersion -SnkFilePath $SnkFilePath -SMAReferencePath $SMAReferenceAssembly
+
+            Write-Log "Running: dotnet $arguments"
+            Start-NativeExecution -sb {dotnet $arguments}
+
+            $refBinPath = Join-Path $projectFolder "bin/Release/$script:netCoreRuntime/$assemblyName.dll"
+            if ($null -eq $refBinPath) {
+                throw "Reference assembly was not built."
+            }
+
+            Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+            Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            Copy-Item $dllXmlDoc $RefAssemblyDestinationPath -Force
+            Write-Log "Xml document '$assemblyName.xml' copied to $RefAssemblyDestinationPath"
+
+            if ($assemblyName -eq "System.Management.Automation") {
+                $SMAReferenceAssembly = $refBinPath
+            }
+        }
+        finally
+        {
+            Pop-Location
+        }
+    }
+
+    if (Test-Path $genAPIFolder)
+    {
+        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+<#
+  Helper function for New-ReferenceAssembly to further clean up the
+  C# source code generated from GenApi.exe.
+#>
+function CleanupGeneratedSourceCode
+{
+    param(
+        [string] $assemblyName,
+        [string] $generatedSource,
+        [string] $filteredSource
+    )
+
+    $patternsToRemove = @(
+        '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]'
+        'typeof(System.Security.AccessControl.FileSecurity)'
+        '[System.Management.Automation.ArgumentTypeConverterAttribute'
+        '[System.Runtime.CompilerServices.IteratorStateMachineAttribute'
+        '[Microsoft.PowerShell.Commands.ArgumentToModuleTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ValidateVersionAttribute]'
+        '[System.Management.Automation.OutputTypeAttribute(typeof(System.Management.Automation.PSRemotingJob))]'
+        'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)'
+        '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
+        '[System.Management.Automation.ArgumentEncodingCompletionsAttribute]'
+        '[Microsoft.PowerShell.Commands.AddMemberCommand'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(Microsoft.PowerShell.Commands.Utility.JoinItemCompleter))]'
+        '[System.Management.Automation.ArgumentCompleterAttribute(typeof(System.Management.Automation.PropertyNameCompleter))]'
+        '[Microsoft.PowerShell.Commands.ArgumentToTypeNameTransformationAttribute]'
+        '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
+        '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'
+        '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
+        '[System.Runtime.CompilerServices.NullableContextAttribute('
+        '[System.Runtime.CompilerServices.NullableAttribute((byte)0)]'
+        '[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1, (byte)1})]'
+        '[System.Runtime.CompilerServices.AsyncStateMachineAttribute'
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToPSVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.HttpVersionCompletionsAttribute]'
+        '[System.Management.Automation.ArgumentToVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ArgumentToPSVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ValidateVersionAttribute]',
+        '[System.Management.Automation.OutputTypeAttribute(new System.Type[]{ typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatStartData), typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatEntryData), typeof(Microsoft.PowerShell.Commands.Internal.Format.FormatEndData), typeof(Microsoft.PowerShell.Commands.Internal.Format.GroupStartData), typeof(Microsoft.PowerShell.Commands.Internal.Format.GroupEndData)})]'
+        )
+
+    $patternsToReplace = @(
+        @{
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
+            Pattern = "[System.Runtime.CompilerServices.IsReadOnlyAttribute]ref Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+            Replacement = "in Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
+            Pattern = "public partial struct ConvertToJsonContext"
+            Replacement = "public readonly struct ConvertToJsonContext"
+        },
+        @{
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+            Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)1, (byte)2, (byte)1})]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)1, (byte)2, (byte)1})] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1})]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1})] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)1)] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)2)]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)2)] */"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)1)] */"
+        }
+    )
+
+    $reader = [System.IO.File]::OpenText($generatedSource)
+    $writer = [System.IO.File]::CreateText($filteredSource)
+
+    while($null -ne ($line = $reader.ReadLine()))
+    {
+        $lineWasProcessed = $false
+        foreach ($patternToReplace in $patternsToReplace)
+        {
+            if ($assemblyName -in $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
+                $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
+                $lineWasProcessed = $true
+            }
+        }
+
+        if (!$lineWasProcessed) {
+            $match = Select-String -InputObject $line -Pattern $patternsToRemove -SimpleMatch
+            if ($null -ne $match)
+            {
+                $line = "//$line"
+            }
+        }
+
+        $writer.WriteLine($line)
+    }
+
+    if ($null -ne $reader)
+    {
+        $reader.Close()
+    }
+
+    if ($null -ne $writer)
+    {
+        $writer.Close()
+    }
+
+    Move-Item $filteredSource $generatedSource -Force
+    Write-Log "Code cleanup complete for reference assembly '$assemblyName'."
+}
+
+<#
+  Helper function for New-ReferenceAssembly to get the arguments
+  for building reference assemblies.
+#>
+function GenerateBuildArguments
+{
+    param(
+        [string] $AssemblyName,
+        [string] $RefAssemblyVersion,
+        [string] $SnkFilePath,
+        [string] $SMAReferencePath
+    )
+
+    $arguments = @('build')
+    $arguments += @('-c','Release')
+    $arguments += "/p:RefAsmVersion=$RefAssemblyVersion"
+    $arguments += "/p:SnkFile=$SnkFilePath"
+
+    if ($AssemblyName -ne "System.Management.Automation") {
+        $arguments += "/p:SmaRefFile=$SMAReferencePath"
+    }
+
+    return $arguments
+}
+
+<#
+.SYNOPSIS
 Create a NuGet package from a nuspec.
 
 .DESCRIPTION
@@ -2871,142 +3190,6 @@ function Get-WixPath
 
 <#
     .Synopsis
-        Creates a Windows installer MSP package from two MSIs and WIXPDB files
-        This only works on a Windows machine due to the usage of WiX.
-    .EXAMPLE
-        # This example shows how to produce a x64 patch from 6.0.2 to a theoretical 6.0.3
-        cd $RootPathOfPowerShellRepo
-        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPatch -NewVersion 6.0.1 -BaselineMsiPath .\PowerShell-6.0.2-win-x64.msi -BaselineWixPdbPath .\PowerShell-6.0.2-win-x64.wixpdb -PatchMsiPath .\PowerShell-6.0.3-win-x64.msi -PatchWixPdbPath .\PowerShell-6.0.3-win-x64.wixpdb
-#>
-function New-MSIPatch
-{
-    param(
-        [Parameter(Mandatory, HelpMessage='The version of the fixed or patch MSI.')]
-        [ValidatePattern("^\d+\.\d+\.\d+$")]
-        [string] $NewVersion,
-
-        [Parameter(Mandatory, HelpMessage='The path to the original or baseline MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
-        [string] $BaselineMsiPath,
-
-        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the original or baseline MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
-        [string] $BaselineWixPdbPath,
-
-        [Parameter(Mandatory, HelpMessage='The path to the fixed or patch MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
-        [string] $PatchMsiPath,
-
-        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the fixed or patch MSI.')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
-        [string] $PatchWixPdbPath,
-
-        [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $PatchWxsPath = "$RepoRoot\assets\wix\patch-template.wxs",
-
-        [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
-        [switch] $Delta
-    )
-
-    $mspName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.fullpath.msp')
-    $mspDeltaName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.deltapatch.msp')
-
-    $wixPatchXmlPath = Join-Path $env:Temp "patch.wxs"
-    $wixBaselineOriginalPdbPath = Join-Path $env:Temp "baseline.original.wixpdb"
-    $wixBaselinePdbPath = Join-Path $env:Temp "baseline.wixpdb"
-    $wixBaselineBinariesPath = Join-Path $env:Temp "baseline.binaries"
-    $wixPatchOriginalPdbPath = Join-Path $env:Temp "patch.original.wixpdb"
-    $wixPatchPdbPath = Join-Path $env:Temp "patch.wixpdb"
-    $wixPatchBinariesPath = Join-Path $env:Temp "patch.binaries"
-    $wixPatchMstPath = Join-Path $env:Temp "patch.wixmst"
-    $wixPatchObjPath = Join-Path $env:Temp "patch.wixobj"
-    $wixPatchWixMspPath = Join-Path $env:Temp "patch.wixmsp"
-
-    $filesToCleanup = @(
-        $wixPatchXmlPath
-        $wixBaselinePdbPath
-        $wixBaselineBinariesPath
-        $wixPatchPdbPath
-        $wixPatchBinariesPath
-        $wixPatchMstPath
-        $wixPatchObjPath
-        $wixPatchWixMspPath
-        $wixPatchOriginalPdbPath
-        $wixBaselineOriginalPdbPath
-    )
-
-    # cleanup from previous builds
-    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
-
-    # Melt changes the original, so copy before running melt
-    Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
-    Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
-
-    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\wix\files.wxs"
-    [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
-
-    # Update the patch version
-    $patchFamilyNode = $patchTemplateXml.Wix.Fragment.PatchFamily
-    $patchFamilyNode.SetAttribute('Version', $NewVersion)
-
-    # get all the file components from the files.wxs
-    $components = $filesAssetXml.GetElementsByTagName('Component')
-
-    # add all the file components to the patch
-    foreach($component in $components)
-    {
-        $id = $component.Id
-        $componentRef = $patchTemplateXml.CreateElement('ComponentRef','http://schemas.microsoft.com/wix/2006/wi')
-        $idAttribute = $patchTemplateXml.CreateAttribute('Id')
-        $idAttribute.Value = $id
-        $null = $componentRef.Attributes.Append($idAttribute)
-        $null = $patchFamilyNode.AppendChild($componentRef)
-    }
-
-    # save the updated patch xml
-    $patchTemplateXml.Save($wixPatchXmlPath)
-
-    $wixPaths = Get-WixPath
-
-    Write-Log "Processing baseline msi..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $BaselineMsiPath $wixBaselinePdbPath -pdb $wixBaselineOriginalPdbPath -x $wixBaselineBinariesPath}
-
-    Write-Log "Processing patch msi..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $PatchMsiPath $wixPatchPdbPath -pdb $wixPatchOriginalPdbPath -x $wixPatchBinariesPath}
-
-    Write-Log  "generate diff..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixTorchExePath -nologo -p -xi $wixBaselinePdbPath $wixPatchPdbPath -out $wixPatchMstPath}
-
-    Write-Log  "Compiling patch..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixCandleExePath -nologo $wixPatchXmlPath -out $wixPatchObjPath}
-
-    Write-Log  "Linking patch..."
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -nologo $wixPatchObjPath -out $wixPatchWixMspPath}
-
-    if ($Delta.IsPresent)
-    {
-        Write-Log  "Generating delta msp..."
-        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspDeltaName -t RTM $wixPatchMstPath }
-    }
-    else
-    {
-        Write-Log  "Generating full msp..."
-        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspName -t RTM $wixPatchMstPath }
-    }
-
-    # cleanup temporary files
-    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
-}
-
-<#
-    .Synopsis
         Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
@@ -3041,11 +3224,6 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
         [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
-
-        # File describing the MSI file components
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
@@ -3120,7 +3298,7 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    Write-Log "verifying no new files have been added or removed..."
+    Write-Log "Generating wxs file manifest..."
     $arguments = @{
         IsPreview              = $isPreview
         ProductSourcePath      = $staging
@@ -3135,26 +3313,17 @@ function New-MSIPackage
 
     $buildArguments = New-MsiArgsArray -Argument $arguments
 
+    Test-Bom -Path $staging -BomName windows
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
-    # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
-    Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath -FileArchitecture $fileArchitecture
+    Send-AzdoFile -Path $wixFragmentPath
 
-    if ($isPreview)
-    {
-        # Now that we know that the two are functionally the same,
-        # We only need to use $FilesWxsPath for release we want to be able to Path
-        # and two releases shouldn't have the same identifiers,
-        # so we use the generated one for preview
-        $FilesWxsPath = $wixFragmentPath
+    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
 
-        $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+    # cleanup any garbage on the system
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
-        # cleanup any garbage on the system
-        Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-    }
-
-    Start-MsiBuild -WxsFile $ProductWxsPath, $FilesWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
+    Start-MsiBuild -WxsFile $ProductWxsPath, $wixFragmentPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
 
@@ -3523,153 +3692,6 @@ function New-MSIXPackage
         Write-Verbose "Creating msix package" -Verbose
         Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
-    }
-}
-
-# verify no files have been added or removed
-# if so, write an error with details
-function Test-FileWxs
-{
-    param
-    (
-        # File describing the MSI file components from the asset folder
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
-
-        # File describing the MSI file components generated by heat
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $HeatFilesWxsPath,
-
-        [string] $FileArchitecture
-    )
-
-    # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
-    # Wix will update this automaticaly, but the output is not the same xml
-    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)', $FileArchitecture)
-
-    [xml] $filesAssetXml = $filesAssetString
-    [xml] $newFilesAssetXml = $filesAssetString
-    $xmlns=[System.Xml.XmlNamespaceManager]::new($newFilesAssetXml.NameTable)
-    $xmlns.AddNamespace('Wix','http://schemas.microsoft.com/wix/2006/wi')
-
-    [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
-    $assetFiles = $filesAssetXml.GetElementsByTagName('File')
-    $heatFiles = $heatFilesXml.GetElementsByTagName('File')
-    $heatNodesByFile = @{}
-
-    # Index the list of files generated by heat
-    foreach($file in $heatFiles)
-    {
-        $heatNodesByFile.Add($file.Source, $file)
-    }
-
-    # Index the files from the asset wxs
-    # and verify that no files have been removed.
-    $passed = $true
-    $indexedAssetFiles = @()
-    foreach($file in $assetFiles)
-    {
-        $name = $file.Source
-        if ($heatNodesByFile.Keys -inotcontains $name)
-        {
-            $passed = $false
-            Write-Warning "{$name} is no longer in product and should be removed from {$FilesWxsPath}"
-            $componentId = $file.ParentNode.Id
-            $componentXPath = '//Wix:Component[@Id="{0}"]' -f $componentId
-            $componentNode = Get-XmlNodeByXPath -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns -XPath $componentXPath
-            if ($componentNode)
-            {
-                # Remove the Component
-                Remove-XmlElement -Element $componentNode -RemoveEmptyParents
-                # Remove teh ComponentRef
-                Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-            }
-            else
-            {
-                Write-Warning "Could not remove this node!"
-            }
-        }
-        $indexedAssetFiles += $name
-    }
-
-    # verify that no files have been added.
-    foreach($file in $heatNodesByFile.Keys)
-    {
-        if ($indexedAssetFiles -inotcontains $file)
-        {
-            $passed = $false
-            $folder = Split-Path -Path $file
-            $heatNode = $heatNodesByFile[$file]
-            $compGroupNode = Get-ComponentGroupNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-            $filesNode = Get-DirectoryNode -Node $heatNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-            # Create new Component
-            $newComponent = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'Component' -Node $filesNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            $componentId = New-WixId -Prefix 'cmp'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Id' -Value $componentId
-            # Crete new File in Component
-            $newFile = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'File' -Node $newComponent -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Id' -Value (New-WixId -Prefix 'fil')
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'KeyPath' -Value "yes"
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Source' -Value $file
-            # Create new ComponentRef
-            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $compGroupNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $componentId
-
-            Write-Warning "new file in {$folder} with name {$name} in a {$($filesNode.LocalName)} need to be added to {$FilesWxsPath}"
-        }
-    }
-
-    # get all the file components from the files.wxs
-    $components = $filesAssetXml.GetElementsByTagName('Component')
-    $componentRefs = $filesAssetXml.GetElementsByTagName('ComponentRef')
-
-    $componentComparison = Compare-Object -ReferenceObject $components.id -DifferenceObject $componentRefs.id
-    if ( $componentComparison.Count -gt 0){
-        $passed = $false
-        Write-Verbose "Rebuilding componentRefs" -Verbose
-
-        # add all the file components to the patch
-        foreach($component in $componentRefs)
-        {
-            $componentId = $component.Id
-            Write-Verbose "Removing $componentId" -Verbose
-            Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
-        }
-
-        # There is only one ComponentGroup.
-        # So we get all of them and select the first one.
-        $componentGroups = @($newFilesAssetXml.GetElementsByTagName('ComponentGroup'))
-        $componentGroup = $componentGroups[0]
-
-        # add all the file components to the patch
-        foreach($component in $components)
-        {
-            $id = $component.Id
-            Write-Verbose "Adding $id" -Verbose
-            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $componentGroup -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $id
-        }
-    }
-
-    if (!$passed)
-    {
-        $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.wxs')
-        $newFilesAssetXml.Save($newXmlFileName)
-        $newXml = Get-Content -Raw $newXmlFileName
-        $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
-        $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
-        $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
-        Write-Log -message "Updated xml saved to $newXmlFileName."
-        Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
-        Write-Information -MessageData @{FilesWxsPath = $FilesWxsPath; NewFile = $newXmlFileName} -Tags 'PackagingWxs'
-        if ($env:TF_BUILD)
-        {
-            Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
-        }
-
-        throw "Current files to not match  {$FilesWxsPath}"
     }
 }
 
@@ -4744,4 +4766,245 @@ function ConvertTo-PEOperatingSystem {
             default { $OperatingSystem }
         }
     }
+}
+
+# Upload an artifact in Azure DevOps
+# On other systems will just log where the file was placed
+function Send-AzdoFile {
+    param (
+        [parameter(Mandatory, ParameterSetName = 'contents')]
+        [string[]]
+        $Contents,
+        [parameter(Mandatory, ParameterSetName = 'contents')]
+        [string]
+        $LogName,
+        [parameter(Mandatory, ParameterSetName = 'path')]
+        [ValidateScript({ Test-Path -Path $_ })]
+        [string]
+        $Path
+    )
+
+    $logFolder = Join-Path -Path $PWD -ChildPath 'logfile'
+    if (!(Test-Path -Path $logFolder)) {
+        $null = New-Item -Path $logFolder -ItemType Directory
+        if ($IsMacOS -or $IsLinux) {
+            $null = chmod a+rw $logFolder
+        }
+    }
+
+    if ($LogName) {
+        $effectiveLogName = $LogName + '.txt'
+    } else {
+        $effectiveLogName = Split-Path -Leaf -Path $Path
+    }
+
+    $newName = ([System.Io.Path]::GetRandomFileName() + "-$effectiveLogName")
+    if ($Contents) {
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
+
+        $Contents | Out-File -path $logFile -Encoding ascii
+    } else {
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
+        Copy-Item -Path $Path -Destination $logFile
+    }
+
+    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    Write-Verbose "Log file captured as $newName" -Verbose
+}
+
+# Class used for serializing and deserialing a BOM into Json
+class BomRecord {
+    hidden
+    [string]
+    $Pattern
+
+    [ValidateSet("Product", "NonProduct")]
+    [string]
+    $FileType = "NonProduct"
+
+    # Add methods to normalize Pattern to use `/` as the directory separator,
+    # but give a Pattern that is usable on the current platform
+    [string]
+    GetPattern () {
+        # Get the directory separator character for the current OS
+        $dirSeparator = [System.io.path]::DirectorySeparatorChar
+
+        # If the directory separator character is not a slash, then replace all slashes in the pattern with the OS-specific directory separator character
+        if ($dirSeparator -ne '/') {
+            return $this.Pattern.replace('/', $dirSeparator)
+        }
+
+        # If the directory separator character is a slash, then return the pattern as-is
+        return $this.Pattern
+    }
+
+    [void]
+    SetPattern ([string]$Pattern) {
+        # Get the directory separator character for the current OS
+        $dirSeparator = [System.io.path]::DirectorySeparatorChar
+
+        # If the directory separator character is not a slash, then replace all instances of the OS-specific directory separator character with slashes in the pattern
+        if ($dirSeparator -ne '/') {
+            $this.Pattern = $Pattern.Replace($dirSeparator, '/')
+        }
+
+        # If the directory separator character is a slash, then set the pattern as-is
+        $this.Pattern = $Pattern
+    }
+}
+
+# Verify a folder based on a BOM json.
+# Use -Fix to update the BOM, Please review the file types.
+function Test-Bom {
+    param(
+        [ValidateSet('mac','windows','linux')]
+        [string]
+        $BomName,
+        [ValidateScript({ Test-Path $_ })]
+        [string]
+        $Path,
+        [switch]
+        $Fix
+    )
+
+    Write-Log "verifying no unauthorized files have been added or removed..."
+    $root = (Resolve-Path $Path).ProviderPath -replace "\$([System.io.path]::DirectorySeparatorChar)$"
+
+    $bomFile = Join-Path -Path $PSScriptRoot -ChildPath "Boms\$BomName.json"
+    Write-Verbose "bomFile: $bomFile" -Verbose
+    [BomRecord[]]$bomRecords = Get-Content -Path $bomFile | ConvertFrom-Json
+    $bomList = [System.Collections.Generic.List[BomRecord]]::new($bomRecords)
+    $noMatch = @()
+    $patternsUsed = @()
+    $files = @(Get-ChildItem -File -Path $Path -Recurse)
+    $totalFiles = $files.Count
+    $currentFileCount = 0
+
+    # Test each file if it is a match for a pattern in the BOM
+    # Add patters found to $patternsUsed
+    # Generate a list of new BOMs in $noMatch
+    $files | ForEach-Object {
+        [System.IO.FileInfo] $file = $_
+        $fileName = $file.Name
+        $filePath = $file.FullName
+        $currentFileCount++
+
+        Write-Progress -Activity "Testing $BomName BOM" -PercentComplete (100*$currentFileCount/$totalFiles) -Status "Processing $fileName"
+
+        $match = $false
+        [BomRecord] $matchingRecord = $null
+
+        # Test file against each BOM that can still have a match
+        foreach ($bom in $bomList) {
+            $pattern = $root + [system.io.path]::DirectorySeparatorChar + $bom.GetPattern()
+            if ($filePath -like $pattern) {
+                $matchingRecord = $bom
+                $match = $true
+                if ($patternsUsed -notcontains $bom) {
+                    $patternsUsed += $bom
+                }
+                break
+            }
+        }
+
+        # if we didn't find a match, create a record in the noMatch list.
+        if (!$match) {
+            $relativePath = $_.FullName.Replace($root, "").Substring(1)
+            $isProduct = Test-IsProductFile -Path $relativePath
+            $fileType = "NonProduct"
+            if ($isProduct) {
+                $fileType = "Product"
+            }
+
+            [BomRecord] $newBomRecord = [BomRecord] @{
+                FileType = $fileType
+            }
+
+            $newBomRecord.SetPattern([WildcardPattern]::Escape($_.FullName.Replace($root, "").Substring(1)))
+            $noMatch += $newBomRecord
+        }
+        elseif ($matchingRecord -and ![WildcardPattern]::ContainsWildcardCharacters($matchingRecord.GetPattern())) {
+            # remove any exact pattern which have been matched to speed up file processing,
+            # because they should not have additional matches.
+            if ($matchingRecord -is [BomRecord]) {
+                $null = $bomList.Remove($matchingRecord)
+            } else {
+                Write-Warning "Cannot remove matchingRecord $($matchingRecord.GetPattern())"
+            }
+        }
+    }
+
+    Write-Progress -Activity "Testing $BomName BOM" -Completed
+
+    Write-Verbose "$($noMatch.count) records need to be added to $bomFile" -Verbose
+
+    # Create the complete new manifest
+    $currentRecords = @()
+    # Add BOMs for all the files that didn't match
+    $currentRecords += $noMatch
+    # Add BOMs for all the patterns that did match
+    $currentRecords += $patternsUsed
+
+    # Generate a name for the updated BOM
+    $newBom = Join-Path -Path ([system.io.path]::GetTempPath()) -ChildPath ("${bomName}-" +  [system.io.path]::GetRandomFileName() + "-bom.json")
+
+    # Sort and serialize the BOM
+    $currentRecords | Sort-Object -Property FileType, Pattern | ConvertTo-Json | Out-File -Encoding utf8NoBOM -FilePath $newBom
+
+    # check if we removed any BOMs
+    $needsRemoval = $bom | Where-Object {
+        $_ -notin $patternsUsed
+    }
+
+    Write-Verbose "$($needsRemoval.count) need removal from $bomFile" -Verbose
+
+    # If we added or removed BOMs, log the new file and throw
+    if ($noMatch.count -gt 0 -or $needsRemoval.Count -gt 0) {
+        Send-AzdoFile -Path $newBom
+
+        # If -Fix was specified, update the original BOM
+        if ($Fix) {
+            Copy-Item -Path $newBom -Destination $bomFile -Force -Verbose
+        }
+
+        throw "Please update $bomFile per the above instructions"
+    }
+}
+
+# Simple test to guess if a file is a product file
+function Test-IsProductFile {
+    param(
+        $Path
+    )
+
+    $itemsToCopy = @(
+        "*.ps1"
+        "*Microsoft.PowerShell*.dll"
+        "*Microsoft.PowerShell*.psd1"
+        "*Microsoft.PowerShell*.ps1xml"
+        "*Microsoft.WSMan.Management*.psd1"
+        "*Microsoft.WSMan.Management*.ps1xml"
+        "*pwsh.dll"
+        "*System.Management.Automation.dll"
+        "*PSDiagnostics.ps?1"
+        "*pwsh"
+        "*pwsh.exe"
+    )
+
+    $itemsToExclude = @(
+        # This package is retrieved from https://www.github.com/powershell/MarkdownRender
+        "*Microsoft.PowerShell.MarkdownRender.dll"
+
+        )
+    if ($Path -like $itemsToExclude) {
+        return $false
+    }
+
+    foreach ($pattern in $itemsToCopy) {
+        if ($Path -like $pattern) {
+            return $true
+        }
+    }
+
+    return $false
 }

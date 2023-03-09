@@ -1294,7 +1294,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
