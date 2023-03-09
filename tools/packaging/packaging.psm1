@@ -2388,8 +2388,8 @@ function CopyReferenceAssemblies
         "Microsoft.PowerShell.Commands.Utility",
         "Microsoft.PowerShell.ConsoleHost",
         "Microsoft.PowerShell.Commands.Management",
-        "Microsoft.PowerShell.Commands.Diagnostics",
-        "Microsoft.PowerShell.Commands.Security"
+        "Microsoft.PowerShell.Commands.Security",
+        "System.Management.Automation"
         )
 
     switch ($assemblyName) {
