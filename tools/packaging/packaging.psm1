@@ -2160,8 +2160,11 @@ Path to source folder containing Windows framework dependent assemblies.
 .PARAMETER LinuxFxdBinPath
 Path to source folder containing Linux framework dependent assemblies.
 
-.PARAMETER GenAPIToolPath
-Path to the GenAPI.exe tool.
+.PARAMETER RefAssemblyPath
+Path to the reference assemblies.
+
+.PARAMETER CGManifestPath
+Path to the CGManifest.json file.
 #>
 function New-ILNugetPackageSource
 {
@@ -2183,10 +2186,11 @@ function New-ILNugetPackageSource
         [string] $LinuxFxdBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $GenAPIToolPath,
+        [string] $RefAssemblyPath,
 
         [Parameter(Mandatory = $true)]
         [string] $CGManifestPath
+
     )
 
     if (! $Environment.IsWindows)
@@ -2219,10 +2223,7 @@ function New-ILNugetPackageSource
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll")
 
-    $refBinPath = New-TempFolder
     $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
-
-    New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
 
     if (! (Test-Path $PackagePath)) {
         $null = New-Item -Path $PackagePath -ItemType Directory
@@ -2237,7 +2238,7 @@ function New-ILNugetPackageSource
 
     #region ref
     $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
-    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
+    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $RefAssemblyPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
     #endregion ref
 
     $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -2302,10 +2303,6 @@ function New-ILNugetPackageSource
     }
     $deps = New-FileDependencies -FileBaseName $fileBaseName -PackageVersion $PackageVersion
     New-CGManifest -FilePath (Join-Path -Path $CGManifestPath -ChildPath "CGManifest.json") -Dependencies $deps
-
-    if (Test-Path $refBinPath) {
-        Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
-    }
 }
 
 <#
@@ -2392,33 +2389,33 @@ function CopyReferenceAssemblies
 
     $supportedRefList = @(
         "Microsoft.PowerShell.Commands.Utility",
-        "Microsoft.PowerShell.ConsoleHost")
+        "Microsoft.PowerShell.ConsoleHost",
+        "Microsoft.PowerShell.Commands.Management",
+        "Microsoft.PowerShell.Commands.Security",
+        "System.Management.Automation"
+        )
 
     switch ($assemblyName) {
-        { $_ -in $supportedRefList } {
-            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
-            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
-            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
-            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
-        }
-
         "Microsoft.PowerShell.SDK" {
             foreach ($asmFileName in $assemblyFileList) {
-                $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
-                if (Test-Path -Path $refFile) {
-                    $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
-                    Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
-                    Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
+                $fileName = [System.IO.Path]::GetFileNameWithoutExtension($asmFileName)
+
+                if ($fileName -in $supportedRefList) {
+                    $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
+                    if (Test-Path -Path $refFile) {
+                        $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
+                        Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
+                        Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
+                    }
                 }
             }
         }
 
         default {
-            $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
-            $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
-            $self_ref_doc = Join-Path -Path $winBinPath -ChildPath "$assemblyName.xml"
-            Copy-Item $ref_SMA, $ref_doc, $self_ref_doc -Destination $refNugetPath -Force
-            Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
+            $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
+            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
         }
     }
 }
