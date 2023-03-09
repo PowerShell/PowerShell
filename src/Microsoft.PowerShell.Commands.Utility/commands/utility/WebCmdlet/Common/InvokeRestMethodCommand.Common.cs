@@ -75,11 +75,11 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
 
-            var baseResponseStream = StreamHelper.GetResponseStream(response);
+            Stream baseResponseStream = StreamHelper.GetResponseStream(response);
 
             if (ShouldWriteToPipeline)
             {
-                using var responseStream = new BufferingStreamReader(baseResponseStream);
+                using BufferingStreamReader responseStream = new(baseResponseStream);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (returnType == RestReturnType.Json)
                     {
-                        convertSuccess = TryConvertToJson(str, out object obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
                     // default to try xml first since it's more common
                     else
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                 XmlReaderSettings settings = GetSecureXmlReaderSettings();
                 XmlReader xmlReader = XmlReader.Create(new StringReader(xml), settings);
 
-                var xmlDoc = new XmlDocument();
+                XmlDocument xmlDoc = new();
                 xmlDoc.PreserveWhitespace = true;
                 xmlDoc.Load(xmlReader);
 
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (JsonException ex)
             {
-                var msg = string.Format(System.Globalization.CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, ex.Message);
+                string msg = string.Format(System.Globalization.CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, ex.Message);
                 exRef = new ArgumentException(msg, ex);
                 obj = null;
             }
