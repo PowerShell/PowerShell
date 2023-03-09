@@ -105,6 +105,7 @@ Describe "Get-Content" -Tags "CI" {
         @{EncodingName = 'UTF7'},
         @{EncodingName = 'UTF32'},
         @{EncodingName = 'Ascii'}
+        @{EncodingName = 'ANSI'}
         ){
         param($EncodingName)
 
@@ -221,7 +222,7 @@ Describe "Get-Content" -Tags "CI" {
         $expected = 'He', 'o,', '', 'Wor', "d${nl}He", 'o2,', '', 'Wor', "d2${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]    | Should -BeExactly $expected[$i]}
     }
-    
+
     Context "Alternate Data Stream support on Windows" {
         It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
             Set-Content "${testPath}:Stream" -Value "Foo"
