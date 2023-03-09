@@ -109,11 +109,11 @@ fi
 SUDO=''
 if (( EUID != 0 )); then
     #Check that sudo is available
-    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+    if [[ ("'$*'" =~ skip-sudo-check) || ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
     else
         echo "ERROR: You must either be root or be able to use sudo" >&2
-        #exit 5
+        exit 5
     fi
 fi
 
@@ -139,8 +139,8 @@ $SUDO tdnf install -y \
         openssh-clients \
         ca-certificates \
         tar \
-        curl \
-    && tdnf clean all
+        curl
+$SUDO tdnf clean all
 
 ##END Check requirements and prerequisites
 
@@ -183,8 +183,6 @@ $SUDO tar zxf "$package" -C "/opt/microsoft/powershell/$release"
 $SUDO chmod 755 "/opt/microsoft/powershell/$release/pwsh"
 ## Create the symbolic link that points to powershell
 $SUDO ln -sfn "/opt/microsoft/powershell/$release/pwsh" $pwshlink
-## Change the mode of the 'pwsh' symbolic link to 'rwxr-xr-x' to allow execution
-$SUDO chmod 755 $pwshlink
 
 ## Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
