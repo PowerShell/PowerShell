@@ -11,20 +11,20 @@ namespace System.Management.Automation
 {
     internal static class EncodingConversion
     {
+        internal const string ANSI = "ansi";
         internal const string Ascii = "ascii";
         internal const string BigEndianUnicode = "bigendianunicode";
         internal const string BigEndianUtf32 = "bigendianutf32";
         internal const string Default = "default";
         internal const string OEM = "oem";
+        internal const string String = "string";
         internal const string Unicode = "unicode";
+        internal const string Unknown = "unknown";
         internal const string Utf7 = "utf7";
         internal const string Utf8 = "utf8";
         internal const string Utf8Bom = "utf8BOM";
         internal const string Utf8NoBom = "utf8NoBOM";
         internal const string Utf32 = "utf32";
-        internal const string ANSI = "ansi";
-        internal const string String = "string";
-        internal const string Unknown = "unknown";
 
         internal static readonly string[] TabCompletionResults = {
                 Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
@@ -32,22 +32,22 @@ namespace System.Management.Automation
 
         internal static readonly Dictionary<string, Encoding> encodingMap = new(StringComparer.OrdinalIgnoreCase)
         {
+            { ANSI, Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.ANSICodePage) },
             { Ascii, Encoding.ASCII },
             { BigEndianUnicode, Encoding.BigEndianUnicode },
             { BigEndianUtf32, new UTF32Encoding(bigEndian: true, byteOrderMark: true) },
             { Default, Encoding.Default },
             { OEM, ClrFacade.GetOEMEncoding() },
+            { String, Encoding.Unicode },
             { Unicode, Encoding.Unicode },
+            { Unknown, Encoding.Unicode },
 #pragma warning disable SYSLIB0001
             { Utf7, Encoding.UTF7 },
 #pragma warning restore SYSLIB0001
             { Utf8, Encoding.Default },
             { Utf8Bom, Encoding.UTF8 },
             { Utf8NoBom, Encoding.Default },
-            { Utf32, Encoding.UTF32 },
-            { ANSI, Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.ANSICodePage) },
-            { String, Encoding.Unicode },
-            { Unknown, Encoding.Unicode },
+            { Utf32, Encoding.UTF32 },  
         };
 
         /// <summary>
