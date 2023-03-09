@@ -27,7 +27,7 @@ gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=mariner
 repobased=false
-gitscriptname="installpsh-mariner.psh"
+gitscriptname="installpsh-mariner.sh"
 pwshlink=/usr/bin/pwsh
 
 echo
