@@ -183,6 +183,8 @@ $SUDO tar zxf "$package" -C "/opt/microsoft/powershell/$release"
 $SUDO chmod 755 "/opt/microsoft/powershell/$release/pwsh"
 ## Create the symbolic link that points to powershell
 $SUDO ln -sfn "/opt/microsoft/powershell/$release/pwsh" $pwshlink
+## Change the mode of the 'pwsh' symbolic link to 'rwxr-xr-x' to allow execution
+$SUDO chmod 755 $pwshlink
 
 ## Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
