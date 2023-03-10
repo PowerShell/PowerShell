@@ -457,6 +457,8 @@ namespace Microsoft.PowerShell.Commands
             return encoding.GetBytes(str);
         }
 
+        internal static string GetResponseString(HttpResponseMessage response) => response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
         internal static Stream GetResponseStream(HttpResponseMessage response) => response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
 
         #endregion Static Methods
