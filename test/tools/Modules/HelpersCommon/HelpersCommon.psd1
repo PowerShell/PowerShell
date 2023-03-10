@@ -30,6 +30,8 @@ FunctionsToExport = @(
         'Start-NativeExecution'
         'Test-CanWriteToPsHome'
         'Test-IsElevated'
+        'Test-IsPreview',
+        'Test-IsReleaseCandidate'
         'Test-IsRoot'
         'Test-IsVstsLinux'
         'Test-IsVstsWindows'
