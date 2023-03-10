@@ -61,7 +61,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows -or !(Test-CanWriteToPsHome) -or (Test-IsWinWow64))
+        if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -75,7 +75,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Configuration name should be in the transcript header" -Skip:(Test-IsWinWow64) {
+    It "Configuration name should be in the transcript header" {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
@@ -103,7 +103,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows -or !(Test-CanWriteToPsHome) -or (Test-IsWinWow64) )
+        if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -143,7 +143,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows -or (Test-IsWinWow64) )
+        if ( ! $IsWindows )
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
