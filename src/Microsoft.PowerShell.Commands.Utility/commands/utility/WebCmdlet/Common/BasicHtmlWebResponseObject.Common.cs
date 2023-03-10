@@ -167,11 +167,6 @@ namespace Microsoft.PowerShell.Commands
                 // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                if (string.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
-                {
-                    characterSet = Encoding.UTF8.HeaderName;
-                }
-
                 Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
                 Encoding = encoding;
             }
