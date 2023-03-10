@@ -167,11 +167,6 @@ namespace Microsoft.PowerShell.Commands
                 // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                if (string.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
-                {
-                    characterSet = Encoding.UTF8.HeaderName;
-                }
-
                 Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
                 Encoding = encoding;
             }
@@ -218,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
             raw.Append(Content);
-            this.RawContent = raw.ToString();
+            RawContent = raw.ToString();
         }
 
         private static void ParseAttributes(string outerHtml, PSObject elementObject)
@@ -228,16 +223,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Extract just the opening tag of the HTML element (omitting the closing tag and any contents,
                 // including contained HTML elements)
-                var match = s_tagRegex.Match(outerHtml);
+                Match match = s_tagRegex.Match(outerHtml);
 
                 // Extract all the attribute specifications within the HTML element opening tag
-                var attribMatches = s_attribsRegex.Matches(match.Value);
+                MatchCollection attribMatches = s_attribsRegex.Matches(match.Value);
 
                 foreach (Match attribMatch in attribMatches)
                 {
                     // Extract the name and value for this attribute (allowing for variations like single/double/no
                     // quotes, and no value at all)
-                    var nvMatches = s_attribNameValueRegex.Match(attribMatch.Value);
+                    Match nvMatches = s_attribNameValueRegex.Match(attribMatch.Value);
                     Debug.Assert(nvMatches.Groups.Count == 5);
 
                     // Name is always captured by group #1
