@@ -383,14 +383,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            try
-            {
-                encoding = Encoding.GetEncoding(characterSet);
-            }
-            catch (ArgumentException)
-            {
-                encoding = null;
-            }
+            TryGetEncoding(characterSet, out encoding);
 
             return DecodeStream(stream, ref encoding);
         }
