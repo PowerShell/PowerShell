@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
             raw.Append(Content);
-            this.RawContent = raw.ToString();
+            RawContent = raw.ToString();
         }
 
         private static void ParseAttributes(string outerHtml, PSObject elementObject)
