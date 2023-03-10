@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal static class StreamHelper
+    internal static partial class StreamHelper
     {
         #region Constants
 
@@ -411,15 +411,11 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static readonly Regex s_metaRegex = new(
-                @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
-            );
+        [GeneratedRegex(@"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]", RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking)]
+        private static partial Regex s_metaRegex();
         
-        private static readonly Regex s_xmlRegex = new(
-                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
-            ); 
+        [GeneratedRegex(@"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]", RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking)]
+        private static partial Regex s_xmlRegex();
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
@@ -439,12 +435,12 @@ namespace Microsoft.PowerShell.Commands
                 string substring = content.Substring(0, Math.Min(content.Length, 1024));
 
                 // Check for a charset attribute on the meta element to override the default
-                Match match = s_metaRegex.Match(substring);
+                Match match = s_metaRegex().Match(substring);
                 
                 // Check for a encoding attribute on the xml declaration to override the default
                 if (!match.Success)
                 {
-                    match = s_xmlRegex.Match(substring);
+                    match = s_xmlRegex().Match(substring);
                 }
                 
                 if (match.Success)
