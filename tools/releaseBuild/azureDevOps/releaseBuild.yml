@@ -417,7 +417,7 @@ stages:
     - template: templates/windows-package-signing.yml
 
   - stage: nuget_and_json
-    dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
+    dependsOn: [package_signing]
     jobs:
       - template: templates/nuget.yml
       - template: templates/json.yml
