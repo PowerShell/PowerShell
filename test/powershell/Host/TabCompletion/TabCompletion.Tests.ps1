@@ -2161,8 +2161,8 @@ dir -Recurse `
                 $userScopeHelp = Test-Path $userHelpPath
                 if ($userScopeHelp) {
                     $expectedCompletionCount++
-                } else {
-                    Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                }
+                else {                    Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
                     if (Test-Path $userHelpPath) {
                         $expectedCompletionCount++
                     }
