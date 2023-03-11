@@ -133,7 +133,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
 Describe "Default enablement of Experimental Features" -Tags CI {
     BeforeAll {
-        $isPreview = (Test-IsPreview) -and (-not (Test-IsReleaseCandidate))
+        $isPreview = (Test-IsPreview -Version $PSVersionTable.PSVersion) -and (-not (Test-IsReleaseCandidate -Version $PSVersionTable.PSVersion))
 
         Function BeEnabled {
             [CmdletBinding()]
