@@ -9,7 +9,9 @@ steps:
     runBranch: '$(Build.SourceBranch)'
     artifact: results
     path: '$(Pipeline.Workspace)\results'
-    itemPattern: '!**/*signed.zip'
+    itemPattern: |
+      *
+      !**/*signed.zip
 
 - pwsh: |
     Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)\results"
