@@ -23,10 +23,10 @@ steps:
       Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
 
       $symbolsZipFile = Join-Path -Path $destFolder -ChildPath "symbols.zip"
-      $symbolZipFileContents = New-Item -Path $destFolder/"Symbols-$($_.BaseName)" -ItemType Directory -Verbose
+      $symbolZipFileContents = New-Item -Path "$destFolder/Symbols-$($_.BaseName)" -ItemType Directory -Verbose
       Expand-Archive -Path $symbolsZipFile -DestinationPath $symbolZipFileContents -Force
 
-      $symbolsToPublish = New-Item -Path $symbolsRoot/($_.BaseName) -ItemType Directory -Verbose
+      $symbolsToPublish = New-Item -Path "$symbolsRoot/$($_.BaseName)" -ItemType Directory -Verbose
 
       Get-ChildItem -Path $symbolZipFileContents -Recurse -Filter '*.pdb' | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $symbolsToPublish -Verbose
