@@ -45,7 +45,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         }
     }
 
-    $availableEncodings = 
+    $availableEncodings =
         @([System.Text.Encoding]::ASCII
           [System.Text.Encoding]::BigEndianUnicode
           [System.Text.UTF32Encoding]::new($true,$true)
@@ -53,7 +53,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
           [System.Text.Encoding]::UTF7
           [System.Text.Encoding]::UTF8
           [System.Text.Encoding]::UTF32)
-              
+
     foreach($encoding in $availableEncodings) {
 
         $encodingName = $encoding.EncodingName
