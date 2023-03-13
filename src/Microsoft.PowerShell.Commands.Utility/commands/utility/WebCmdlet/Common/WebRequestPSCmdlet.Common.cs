@@ -609,19 +609,14 @@ namespace Microsoft.PowerShell.Commands
                                 HttpResponseException httpEx = new(message, response);
                                 ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                 string detailMsg = string.Empty;
-                                StreamReader reader = null;
                                 try
                                 {
-                                    reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                    detailMsg = FormatErrorMessage(reader.ReadToEnd(), contentType);
+                                    string error = StreamHelper.GetResponseString(response);
+                                    detailMsg = FormatErrorMessage(error, contentType);
                                 }
                                 catch
                                 {
                                     // Catch all
-                                }
-                                finally
-                                {
-                                    reader?.Dispose();
                                 }
 
                                 if (!string.IsNullOrEmpty(detailMsg))
@@ -1791,7 +1786,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(formattedError))
             {
                 // Remove HTML tags making it easier to read
-                formattedError = System.Text.RegularExpressions.Regex.Replace(error, "<[^>]*>", string.Empty);
+                formattedError = Regex.Replace(error, "<[^>]*>", string.Empty);
             }
 
             return formattedError;
