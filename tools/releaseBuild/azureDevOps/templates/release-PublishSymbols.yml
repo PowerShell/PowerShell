@@ -10,7 +10,7 @@ steps:
     artifact: results
     path: '$(Pipeline.Workspace)\results'
     itemPattern: |
-      *
+      **/*
       !**/*signed.zip
 
 - pwsh: |
