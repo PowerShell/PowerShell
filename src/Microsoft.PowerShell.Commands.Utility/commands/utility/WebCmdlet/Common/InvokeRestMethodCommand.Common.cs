@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isRssOrFeed)
                 {
-                    var workingDocument = new XmlDocument();
+                    XmlDocument workingDocument = new();
 
                     // Performing a Read() here to avoid rechecking
                     // "rss" or "feed" items
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                 XmlReaderSettings settings = GetSecureXmlReaderSettings();
                 XmlReader xmlReader = XmlReader.Create(new StringReader(xml), settings);
 
-                XmlDocument xmlDoc = new();
+                var xmlDoc = new XmlDocument();
                 xmlDoc.PreserveWhitespace = true;
                 xmlDoc.Load(xmlReader);
 
