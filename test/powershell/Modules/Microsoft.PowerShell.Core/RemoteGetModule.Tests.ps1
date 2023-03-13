@@ -4,7 +4,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
 
-        if (!$IsWindows)
+        if (!$IsWindows -or (Test-IsWinWow64))
         {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true

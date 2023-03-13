@@ -892,10 +892,16 @@ Describe 'Table color tests' -Tag 'CI' {
     }
 
     It 'Table header should use TableHeader' {
-        ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
-$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)
-$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)
-  1
-"@
+        $expected = @(
+        ""
+        "$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)"
+        "$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)"
+        "  1"
+        ""
+        )
+
+        $actual = [pscustomobject]@{foo = 1} | Format-Table | Out-String -Stream
+
+        $actual | Should -BeExactly $expected
     }
 }
