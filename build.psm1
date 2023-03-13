@@ -1050,6 +1050,36 @@ function Get-PesterTag {
     $o
 }
 
+# Function to build and publish the Microsoft.PowerShell.NamedPipeConnection module for
+# testing PowerShell remote custom connections.
+function Publish-CustomConnectionTestModule
+{
+    $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
+    $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
+    $publishPath = "${PSScriptRoot}/test/tools/Modules"
+
+    Find-DotNet
+
+    Push-Location -Path $sourcePath
+    try {
+        # Build the Microsoft.PowerShell.NamedPipeConnect module
+        ./build.ps1 -Clean -Build
+
+        if (! (Test-Path -Path $outPath)) {
+            throw "Publish-CustomConnectionTestModule: Build failed. Output path does not exist: $outPath"
+        }
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module
+        Copy-Item -Path $outPath -Destination $publishPath -Recurse -Force
+
+        # Clean up build artifacts
+        ./build.ps1 -Clean
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 function Publish-PSTestTools {
     [CmdletBinding()]
     param(
@@ -1099,6 +1129,9 @@ function Publish-PSTestTools {
 
     # `dotnet restore` on test project is not called if product projects have been restored unless -Force is specified.
     Copy-PSGalleryModules -Destination "${PSScriptRoot}/test/tools/Modules" -CsProjPath "$PSScriptRoot/test/tools/Modules/PSGalleryTestModules.csproj" -Force
+
+    # Publish the Microsoft.PowerShell.NamedPipeConnection module
+    Publish-CustomConnectionTestModule
 }
 
 function Get-ExperimentalFeatureTests {

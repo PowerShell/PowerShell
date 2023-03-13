@@ -857,11 +857,17 @@ Describe 'Table color tests' {
         $PSStyle.OutputRendering = $originalRendering
     }
 
-    It 'Table header should use FormatAccent' {
-        ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
-$($PSStyle.Formatting.FormatAccent)foo$($PSStyle.Reset)
-$($PSStyle.Formatting.FormatAccent)---$($PSStyle.Reset)
-  1
-"@
+    It 'Table header should use TableHeader' {
+        $expected = @(
+        ""
+        "$($PSStyle.Formatting.TableHeader)foo$($PSStyle.Reset)"
+        "$($PSStyle.Formatting.TableHeader)---$($PSStyle.Reset)"
+        "  1"
+        ""
+        )
+
+        $actual = [pscustomobject]@{foo = 1} | Format-Table | Out-String -Stream
+
+        $actual | Should -BeExactly $expected
     }
 }

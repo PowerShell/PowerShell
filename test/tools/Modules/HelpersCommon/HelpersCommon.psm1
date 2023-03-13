@@ -402,3 +402,53 @@ function Get-WsManSupport {
 
     return $false
 }
+
+function Test-IsWindowsArm64 {
+    return $IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64
+}
+
+function Test-IsWinWow64 {
+    return $IsWindows -and [System.Environment]::Is64BitOperatingSystem -and -not [System.Environment]::Is64BitProcess
+}
+
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version,
+
+        [switch]$IsLTS
+    )
+
+    if ($IsLTS.IsPresent) {
+        ## If we are building a LTS package, then never consider it preview.
+        return $false
+    }
+
+    return $Version -like '*-*'
+}
+
+<#
+    .Synopsis
+        Tests if a version is a Release Candidate
+    .EXAMPLE
+        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
+        Test-IsReleaseCandidate -version '6.1.0' # returns false
+#>
+function Test-IsReleaseCandidate
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    if ($Version -like '*-rc.*')
+    {
+        return $true
+    }
+
+    return $false
+}
