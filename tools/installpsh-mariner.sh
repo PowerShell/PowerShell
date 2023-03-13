@@ -27,7 +27,7 @@ gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=mariner
 repobased=false
-gitscriptname="installpsh-mariner.psh"
+gitscriptname="installpsh-mariner.sh"
 pwshlink=/usr/bin/pwsh
 
 echo
@@ -109,11 +109,11 @@ fi
 SUDO=''
 if (( EUID != 0 )); then
     #Check that sudo is available
-    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+    if [[ ("'$*'" =~ skip-sudo-check) || ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
     else
         echo "ERROR: You must either be root or be able to use sudo" >&2
-        #exit 5
+        exit 5
     fi
 fi
 
@@ -139,8 +139,8 @@ $SUDO tdnf install -y \
         openssh-clients \
         ca-certificates \
         tar \
-        curl \
-    && tdnf clean all
+        curl
+$SUDO tdnf clean all
 
 ##END Check requirements and prerequisites
 

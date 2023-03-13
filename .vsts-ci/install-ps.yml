@@ -9,13 +9,8 @@ trigger:
     - feature*
   paths:
     include:
-    - /tools/install-powershell.sh
-    - /tools/installpsh-amazonlinux.sh
-    - /tools/installpsh-debian.sh
-    - /tools/installpsh-osx.sh
-    - /tools/installpsh-redhat.sh
-    - /tools/installpsh-suse.sh
-    - /tools/install-powershell.ps1
+    - /tools/install-powershell.*
+    - /tools/installpsh-*.sh
     - /.vsts-ci/install-ps.yml
 pr:
   branches:
@@ -26,11 +21,7 @@ pr:
   paths:
     include:
     - /tools/install-powershell.sh
-    - /tools/installpsh-amazonlinux.sh
-    - /tools/installpsh-debian.sh
-    - /tools/installpsh-osx.sh
-    - /tools/installpsh-redhat.sh
-    - /tools/installpsh-suse.sh
+    - /tools/installpsh-*.sh
     - /tools/install-powershell.ps1
     - /.vsts-ci/install-ps.yml
 
