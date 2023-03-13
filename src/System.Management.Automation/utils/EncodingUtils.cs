@@ -27,7 +27,7 @@ namespace System.Management.Automation
         internal const string Utf32 = "utf32";
 
         internal static readonly string[] TabCompletionResults = {
-                Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
+                ANSI, Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
         internal static readonly Dictionary<string, Encoding> encodingMap = new(StringComparer.OrdinalIgnoreCase)
@@ -140,6 +140,7 @@ namespace System.Management.Automation
     internal sealed class ArgumentEncodingCompletionsAttribute : ArgumentCompletionsAttribute
     {
         public ArgumentEncodingCompletionsAttribute() : base(
+            EncodingConversion.ANSI,
             EncodingConversion.Ascii,
             EncodingConversion.BigEndianUnicode,
             EncodingConversion.BigEndianUtf32,
