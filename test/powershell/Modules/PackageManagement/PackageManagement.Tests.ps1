@@ -31,24 +31,6 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
-
-    if (-not $IsWindows) {
-        try {
-            New-Item -Path ~/.local/share/PackageManagement/NuGet/Packages -ItemType Directory -Force -ErrorAction Stop
-        }
-        catch {
-                .{
-                    Get-Item ~/.local -ErrorAction Ignore
-                    Get-Item ~/.local/share -ErrorAction Ignore
-                    Get-Item ~/.local/share/PackageManagement -ErrorAction Ignore
-                    Get-Item ~/.local/share/PackageManagement/NuGet -ErrorAction Ignore
-                    Get-Item ~/.local/share/PackageManagement/NuGet/Packages -ErrorAction Ignore
-                } | Out-String | Write-Verbose -Verbose
-        }
-        finally {
-            Write-Verbose -Verbose "Create Path: $(Get-Item ~/.local/share/PackageManagement/NuGet/Packages -ErrorAction Ignore)"
-        }
-    }
  }
  AfterAll {
      $ProgressPreference = $SavedProgressPreference
@@ -78,14 +60,6 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 	}
 
     It "Install-package"  {
-        if ($env:__INCONTAINER) {
-            Write-Verbose -Verbose "Id: $(id)" # retrieve the id of the user
-        }
-
-        if (-not $IsWindows) {
-            /bin/ls -ld '~/.local/share/PackageManagement/NuGet/Packages' 2>&1 | Out-String | Write-Verbose -Verbose
-        }
-
         $i = Install-Package -ProviderName NuGet -Name jquery -Force -Source Nugettest -Scope CurrentUser
         $i.Name | Should -Contain "jquery"
 	}
