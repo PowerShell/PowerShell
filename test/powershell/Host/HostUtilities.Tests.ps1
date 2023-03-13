@@ -38,7 +38,9 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
         if (Test-IsWinWow64) {
-            $global:PSDefaultParameterValues["it:skip"] = $true        }
+            $global:PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
 
         if ($IsWindows) {
             $script:remoteRunspace = New-RemoteRunspace

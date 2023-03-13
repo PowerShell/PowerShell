@@ -106,7 +106,9 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
         else
         {
-            $global:PSDefaultParameterValues = $defaultParamValues
+            if ($defaultParamValues -ne $null) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
         }
     }
 

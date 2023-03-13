@@ -103,7 +103,10 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         }
         else
         {
-            $global:PSdefaultParameterValues = $defaultParamValues
+            if ($defaultParamValues -ne $null) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
+
         }
     }
 
