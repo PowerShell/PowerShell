@@ -488,6 +488,10 @@ namespace System.Management.Automation
             {
                 return Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory);
             }
+            else if (!string.IsNullOrEmpty(Path.GetDirectoryName(typeof(PSObject).Assembly.Location)))
+            {
+                return Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            }
 
             return Path.GetDirectoryName(Environment.ProcessPath);
         }
