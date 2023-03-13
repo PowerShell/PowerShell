@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldWriteToPipeline)
             {
-                using BufferingStreamReader responseStream = new(baseResponseStream);
+                using var responseStream = new BufferingStreamReader(baseResponseStream);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isRssOrFeed)
                 {
-                    XmlDocument workingDocument = new();
+                    var workingDocument = new XmlDocument();
 
                     // Performing a Read() here to avoid rechecking
                     // "rss" or "feed" items
