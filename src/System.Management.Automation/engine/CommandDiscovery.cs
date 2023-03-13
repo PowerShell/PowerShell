@@ -332,74 +332,19 @@ namespace System.Management.Automation
         {
             VerifyScriptRequirements(scriptInfo, Context);
 
-            IEnumerable<PSSnapInSpecification> requiresPSSnapIns = scriptInfo.RequiresPSSnapIns;
-            if (requiresPSSnapIns != null && requiresPSSnapIns.Any())
+            if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
             {
-                Collection<string> requiresMissingPSSnapIns = null;
-                VerifyRequiredSnapins(requiresPSSnapIns, context, out requiresMissingPSSnapIns);
-                if (requiresMissingPSSnapIns != null)
-                {
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            requiresMissingPSSnapIns,
-                            "ScriptRequiresMissingPSSnapIns",
-                            true);
-                    throw scriptRequiresException;
-                }
-            }
-            else
-            {
-                // If there were no PSSnapins required but there is a shellID required, then we need
-                // to error
+                ScriptRequiresException sre =
+                    new ScriptRequiresException(
+                        scriptInfo.Name,
+                        string.Empty,
+                        string.Empty,
+                        "RequiresShellIDInvalidForSingleShell");
 
-                if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
-                {
-                    ScriptRequiresException sre =
-                      new ScriptRequiresException(
-                          scriptInfo.Name,
-                          string.Empty,
-                          string.Empty,
-                          "RequiresShellIDInvalidForSingleShell");
-
-                    throw sre;
-                }
+                throw sre;
             }
 
             return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
-        }
-
-        private static void VerifyRequiredSnapins(IEnumerable<PSSnapInSpecification> requiresPSSnapIns, ExecutionContext context, out Collection<string> requiresMissingPSSnapIns)
-        {
-            requiresMissingPSSnapIns = null;
-            Dbg.Assert(context.InitialSessionState != null, "PowerShell should be hosted with InitialSessionState");
-
-            foreach (var requiresPSSnapIn in requiresPSSnapIns)
-            {
-                var loadedPSSnapIn = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
-                if (loadedPSSnapIn is null)
-                {
-                    requiresMissingPSSnapIns ??= new Collection<string>();
-                    requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
-                }
-                else
-                {
-                    // the requires PSSnapin is loaded. now check the PSSnapin version
-                    Dbg.Assert(loadedPSSnapIn.Version != null,
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Version is null for loaded PSSnapin {0}.", loadedPSSnapIn));
-                    if (requiresPSSnapIn.Version != null)
-                    {
-                        if (!AreInstalledRequiresVersionsCompatible(
-                            requiresPSSnapIn.Version, loadedPSSnapIn.Version))
-                        {
-                            requiresMissingPSSnapIns ??= new Collection<string>();
-                            requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
-                        }
-                    }
-                }
-            }
         }
 
         // This method verifies the following 3 elements of #Requires statement
