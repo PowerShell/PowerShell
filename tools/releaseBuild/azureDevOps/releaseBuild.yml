@@ -69,30 +69,6 @@ stages:
         parameters:
           buildArchitecture: arm64
 
-      # - template: templates/mac-file-signing.yml
-      #   parameters:
-      #     buildArchitecture: x64
-
-      # - template: templates/mac-file-signing.yml
-      #   parameters:
-      #     buildArchitecture: arm64
-
-      # - template: templates/mac-package-build.yml
-      #   parameters:
-      #     buildArchitecture: x64
-
-      # - template: templates/mac-package-build.yml
-      #   parameters:
-      #     buildArchitecture: arm64
-
-      # - template: templates/mac-package-signing.yml
-      #   parameters:
-      #     buildArchitecture: x64
-
-      # - template: templates/mac-package-signing.yml
-      #   parameters:
-      #     buildArchitecture: arm64
-
   - stage: linux
     dependsOn: ['prep']
     jobs:
@@ -113,29 +89,6 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: alpine
-
-      # - template: templates/linux-authenticode-sign.yml
-
-      # - template: templates/linux-packaging.yml
-      #   parameters:
-      #     buildName: deb
-      #     parentJob: sign_linux_builds
-
-      # - template: templates/linux-packaging.yml
-      #   parameters:
-      #     buildName: rpm
-      #     uploadDisplayName: Upload and Sign
-      #     parentJob: sign_linux_builds
-
-      # - template: templates/linux-packaging.yml
-      #   parameters:
-      #     buildName: alpine
-      #     parentJob: sign_linux_builds
-
-      # - template: templates/linux-packaging.yml
-      #   parameters:
-      #     buildName: fxdependent
-      #     parentJob: sign_linux_builds
 
   - stage: windows
     dependsOn: ['prep']
@@ -169,59 +122,8 @@ stages:
         parameters:
           Architecture: fxdependentWinDesktop
 
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: x64
-      #     parentJob: build_windows_x64_release
-
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: x64
-      #     BuildConfiguration: minSize
-      #     parentJob: build_windows_x64_minSize
-
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: x86
-      #     parentJob: build_windows_x86_release
-
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: arm
-      #     parentJob: build_windows_arm_release
-
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: arm64
-      #     parentJob: build_windows_arm64_release
-
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: fxdependent
-      #     parentJob: build_windows_fxdependent_release
-
-      # - template: templates/windows-packaging.yml
-      #   parameters:
-      #     Architecture: fxdependentWinDesktop
-      #     parentJob: build_windows_fxdependentWinDesktop_release
-
-      # - template: templates/windows-package-signing.yml
-      #   parameters:
-      #     parentJobs:
-      #       - sign_windows_x64_release
-      #       - sign_windows_x64_minSize
-      #       - sign_windows_x86_release
-      #       - sign_windows_arm_release
-      #       - sign_windows_arm64_release
-      #       - sign_windows_fxdependent_release
-      #       - sign_windows_fxdependentWinDesktop_release
-
-  - stage: compliance
-    dependsOn: ['windows']
-    jobs:
-      - template: templates/compliance.yml
-
   - stage: SignFiles
+    displayName: Sign files
     dependsOn: ['windows', 'linux', 'macos']
     jobs:
     - template: templates/mac-file-signing.yml
@@ -342,6 +244,7 @@ stages:
       - template: templates/sign-build-file.yml
 
   - stage: mac_packaging
+    displayName: macOS packaging
     dependsOn: ['SignFiles']
     jobs:
     - template: templates/mac-package-build.yml
@@ -353,6 +256,7 @@ stages:
         buildArchitecture: arm64
 
   - stage: linux_packaging
+    displayName: Linux Packaging
     dependsOn: ['SignFiles']
     jobs:
     - template: templates/linux-packaging.yml
@@ -373,6 +277,7 @@ stages:
         buildName: fxdependent
 
   - stage: win_packaging
+    displayName: Windows Packaging
     dependsOn: ['SignFiles']
     jobs:
     - template: templates/windows-packaging.yml
@@ -412,17 +317,26 @@ stages:
         parentJob: build_windows_fxdependentWinDesktop_release
 
   - stage: package_signing
+    displayName: Package Signing
     dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
     jobs:
     - template: templates/windows-package-signing.yml
 
+  # This is done late so that we dont use resources before the big signing and packaging tasks.
+  - stage: compliance
+    dependsOn: ['package_signing']
+    jobs:
+      - template: templates/compliance.yml
+
   - stage: nuget_and_json
+    displayName: NuGet Packaging and Build Json
     dependsOn: [package_signing]
     jobs:
       - template: templates/nuget.yml
       - template: templates/json.yml
 
   - stage: test_and_release_artifacts
+    displayName: Test and Release Artifacts
     dependsOn: ['prep']
     jobs:
       - template: templates/testartifacts.yml
