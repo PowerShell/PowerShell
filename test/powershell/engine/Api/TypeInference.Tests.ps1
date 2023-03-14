@@ -1401,6 +1401,11 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
     }
+
+    It 'Infers type of external applications' {
+        $res = [AstTypeInference]::InferTypeOf( { pwsh }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {

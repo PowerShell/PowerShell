@@ -1043,8 +1043,32 @@ namespace System.Management.Automation
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
             .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
 
-            if (pseudoBinding?.CommandInfo == null)
+            if (pseudoBinding?.CommandInfo is null)
             {
+                var commandName = commandAst.GetCommandName();
+                if (string.IsNullOrEmpty(commandName))
+                {
+                    return;
+                }
+
+                try
+                {
+                    var foundCommand = CommandDiscovery.LookupCommandInfo(
+                        commandName,
+                        CommandTypes.Application,
+                        SearchResolutionOptions.ResolveLiteralThenPathPatterns,
+                        CommandOrigin.Internal,
+                        _context.ExecutionContext);
+
+                    // There's no way to know whether or not an application outputs anything
+                    // but when they do, PowerShell will treat it as string data.
+                    inferredTypes.Add(new PSTypeName(typeof(string)));
+                }
+                catch
+                {
+                    // The command wasn't found so we can't infer anything.
+                }
+
                 return;
             }
 
