@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -146,9 +147,16 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Prevent additional commands in ConstrainedLanguage mode
-            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (_setSupportedCommand)
             {
-                if (_setSupportedCommand)
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                {
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "Import-LocalizedData",
+                        Message: "Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode under policy enforcement.");
+                }
+
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     NotSupportedException nse =
                         PSTraceSource.NewNotSupportedException(

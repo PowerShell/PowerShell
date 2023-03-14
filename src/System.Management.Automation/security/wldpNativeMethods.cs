@@ -36,7 +36,12 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in ConstrainedLanguage mode only.
         /// </summary>
-        AllowConstrained = 3
+        AllowConstrained = 3,
+
+        /// <summary>
+        /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage restriction audit logs.
+        /// </summary>
+        AllowConstrainedAudit
     }
 
     /// <summary>
@@ -66,6 +71,28 @@ namespace System.Management.Automation.Security
     {
         private SystemPolicy()
         {
+        }
+
+        /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="Title">Audit message title.</param>
+        /// <param name="Message">Audit message message.</param>
+        internal static void LogWDACAuditMessage(
+            string Title,
+            string Message)
+        {
+            var auditMessage = $"WDAC Audit mode - {Title} - {Message}";
+
+            // TODO:  Add ETW call
+            // PSEtwLog.LogWDACAuditEvent("message");
+
+            // TODO: Debug only
+            try
+            {
+                System.Console.WriteLine(auditMessage);
+            }
+            catch { }
         }
 
         /// <summary>
@@ -128,6 +155,8 @@ namespace System.Management.Automation.Security
 
                     PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile", filePath, hr, (int)canExecuteResult);
 
+                    // TODO: How does WldpCanExecuteFile work in AUDIT mode?
+
                     if (hr >= 0)
                     {
                         switch (canExecuteResult)
@@ -175,10 +204,15 @@ namespace System.Management.Automation.Security
                 switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
                 {
                     case SystemEnforcementMode.Enforce:
+                        // File is not allowed by policy enforcement and must run in CL mode.
                         return SystemScriptFileEnforcement.AllowConstrained;
 
-                    case SystemEnforcementMode.None:
                     case SystemEnforcementMode.Audit:
+                        // File is not allowed and would be run in CL mode if policy was enforced and not audit.
+                        return SystemScriptFileEnforcement.AllowConstrainedAudit;
+
+                    case SystemEnforcementMode.None:
+                        // No restrictions, file will run in FL mode.
                         return SystemScriptFileEnforcement.Allow;
 
                     default:
@@ -251,6 +285,16 @@ namespace System.Management.Automation.Security
                 if ((s_cachedWldpSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
                     return s_cachedWldpSystemPolicy.Value;
+                }
+            }
+
+            // TODO: !!Debug only!!
+            if (string.IsNullOrEmpty(path))
+            {
+                var debuggerAttached = false;
+                while (!debuggerAttached)
+                {
+                    System.Threading.Thread.Sleep(500);
                 }
             }
 

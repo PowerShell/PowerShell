@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -3998,6 +3999,13 @@ namespace System.Management.Automation
                     }
                     else
                     {
+                        if (ecFromTLS.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                        {
+                            SystemPolicy.LogWDACAuditMessage(
+                                Title: "LanguagePrimitives Type Conversion",
+                                Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.");
+                        }
+
                         RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
                             "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
                         throw rte;
@@ -5636,15 +5644,22 @@ namespace System.Management.Automation
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage || context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit))
                 {
                     if ((toType != typeof(object)) &&
                         (toType != typeof(object[])) &&
                         (!CoreTypes.Contains(toType)))
                     {
-                        converter = ConvertNotSupportedConversion;
-                        rank = ConversionRank.None;
-                        return CacheConversion(fromType, toType, converter, rank);
+                        if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                        {
+                            converter = ConvertNotSupportedConversion;
+                            rank = ConversionRank.None;
+                            return CacheConversion(fromType, toType, converter, rank);
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "LanguagePrimitives Type Conversion",
+                            Message: $"Type conversion from {fromType.FullName} to {toType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.");
                     }
                 }
             }

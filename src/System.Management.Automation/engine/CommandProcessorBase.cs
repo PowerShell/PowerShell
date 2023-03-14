@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 
 namespace System.Management.Automation
@@ -210,7 +210,8 @@ namespace System.Management.Automation
             if ((scriptBlock.LanguageMode.HasValue) &&
                 (scriptBlock.LanguageMode != languageMode) &&
                 ((languageMode == PSLanguageMode.RestrictedLanguage) ||
-                (languageMode == PSLanguageMode.ConstrainedLanguage)))
+                 (languageMode == PSLanguageMode.ConstrainedLanguage) ||
+                 (languageMode == PSLanguageMode.ConstrainedLanguageAudit)))
             {
                 // Finally check if script block is really just PowerShell commands plus parameters.
                 // If so then it is safe to dot source across language mode boundaries.
@@ -226,14 +227,21 @@ namespace System.Management.Automation
 
                 if (!isSafeToDotSource)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
-                    new NotSupportedException(
-                        DiscoveryExceptions.DotSourceNotSupported),
-                        "DotSourceNotSupported",
-                        ErrorCategory.InvalidOperation,
-                        null);
-                    errorRecord.SetInvocationInfo(invocationInfo);
-                    throw new CmdletInvocationException(errorRecord);
+                    if (languageMode != PSLanguageMode.ConstrainedLanguageAudit)
+                    {
+                        ErrorRecord errorRecord = new ErrorRecord(
+                        new NotSupportedException(
+                            DiscoveryExceptions.DotSourceNotSupported),
+                            "DotSourceNotSupported",
+                            ErrorCategory.InvalidOperation,
+                            null);
+                        errorRecord.SetInvocationInfo(invocationInfo);
+                        throw new CmdletInvocationException(errorRecord);
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "Script Block Processing Dot-Source",
+                        Message: $"Processing for script block, {scriptBlock.File ?? string.Empty}, would fail in Constrained Language mode because its language mode, {scriptBlock.LanguageMode}, does not match the current language mode, {languageMode}.");
                 }
             }
         }

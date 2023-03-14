@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -840,10 +841,20 @@ namespace System.Management.Automation
             }
 
             // Don't return untrusted commands to trusted functions
-            if ((result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage) &&
+            if ((result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage || result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
                 (executionContext.LanguageMode == PSLanguageMode.FullLanguage))
             {
-                return true;
+                if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                {
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "Command Searcher",
+                        Message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.");
+                }
+
+                if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage)
+                {
+                    return true;
+                }
             }
 
             // Don't allow invocation of trusted functions from debug breakpoints.

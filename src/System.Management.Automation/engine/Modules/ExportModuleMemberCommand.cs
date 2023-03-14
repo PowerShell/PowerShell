@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -167,9 +168,17 @@ namespace Microsoft.PowerShell.Commands
             if (Context.EngineSessionState.Module?.LanguageMode != null &&
                 Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
             {
-                var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
-                var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
-                ThrowTerminatingError(er);
+                if (Context.LanguageMode != PSLanguageMode.ConstrainedLanguageAudit && 
+                    Context.EngineSessionState.Module.LanguageMode != PSLanguageMode.ConstrainedLanguageAudit)
+                {
+                    var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
+                    var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
+                    ThrowTerminatingError(er);
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    Title: "Export-ModuleMember Cmdlet",
+                    Message: $"Export of module members would fail because module, {Context.EngineSessionState.Module.Name}, has a different language mode, {Context.EngineSessionState.Module.LanguageMode}, than the current session, {Context.LanguageMode}");
             }
 
             ModuleIntrinsics.ExportModuleMembers(this,

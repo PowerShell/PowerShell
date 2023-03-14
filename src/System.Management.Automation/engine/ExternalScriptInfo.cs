@@ -532,7 +532,6 @@ namespace System.Management.Automation
                                     {
                                         DefiningLanguageMode = Context.LanguageMode;
                                     }
-
                                     break;
 
                                 case SystemScriptFileEnforcement.Allow:
@@ -541,6 +540,13 @@ namespace System.Management.Automation
 
                                 case SystemScriptFileEnforcement.AllowConstrained:
                                     DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.AllowConstrainedAudit:
+                                    SystemPolicy.LogWDACAuditMessage(
+                                        Title: "Script File Read",
+                                        Message: $"Script file {_path} is not trusted by policy and would run in Constrained Language mode under policy enforcement.");
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
                                     break;
 
                                 case SystemScriptFileEnforcement.Block:
