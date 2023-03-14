@@ -147,6 +147,8 @@ namespace Microsoft.PowerShell.Commands
                     _qualifiedOutFile = Path.Join(_qualifiedOutFile, System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]));
                 }
 
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
                 StreamHelper.SaveStreamToFile(baseResponseStream, _qualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
