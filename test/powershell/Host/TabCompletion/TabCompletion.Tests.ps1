@@ -633,6 +633,13 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
     }
 
+    It 'Should complete psobject members for variable' {
+        $TestVar = Get-Command Get-Command | Select-Object CommandType
+        $res = TabExpansion2 -inputScript '$TestVar | ForEach-Object {$_.commandtype'
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CommandType'
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
