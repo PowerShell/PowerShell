@@ -427,7 +427,29 @@ namespace System.Management.Automation
                 value = PSObject.Base(value);
                 if (value != null)
                 {
-                    type = new PSTypeName(value.GetType());
+                    var typeObject = value.GetType();
+                    
+                    if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.Ordinal))
+                    {
+                        var psobjectPropertyList = new List<PSMemberNameAndType>();
+                        foreach (var property in ((PSObject)value).Properties)
+                        {
+                            if (property.IsHidden)
+                            {
+                                continue;
+                            }
+
+                            var propertyTypeName = new PSTypeName(property.TypeNameOfValue);
+                            psobjectPropertyList.Add(new PSMemberNameAndType(property.Name, propertyTypeName, property.Value));
+                        }
+
+                        type = PSSyntheticTypeName.Create(typeObject, psobjectPropertyList);
+                    }
+                    else
+                    {
+                        type = new PSTypeName(typeObject);
+                    }
+                    
                     return true;
                 }
             }
@@ -1059,10 +1081,25 @@ namespace System.Management.Automation
                     inferredTypes.AddRange(inferTypesFromObjectCmdlets);
                     return;
                 }
+
+                if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.GetRandomCommand")
+                    && pseudoBinding.BoundArguments.TryGetValue("InputObject", out var value))
+                {
+                    if (value.ParameterArgumentType == AstParameterArgumentType.PipeObject)
+                    {
+                        InferTypesFromPreviousCommand(commandAst, inferredTypes);
+                    }
+                    else if (value.ParameterArgumentType == AstParameterArgumentType.AstPair)
+                    {
+                        inferredTypes.AddRange(InferTypes(((AstPair)value).Argument));
+                    }
+
+                    return;
+                }
             }
 
             // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
-            // With psuedo-binding, we actually know the candidate parameter sets, so we could take
+            // With pseudo-binding, we actually know the candidate parameter sets, so we could take
             // advantage of it here, but I opted for the simpler code because so few cmdlets use
             // ParameterSetName in OutputType and of the ones I know about, it isn't that useful.
             inferredTypes.AddRange(commandInfo.OutputType);
