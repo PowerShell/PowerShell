@@ -103,8 +103,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_relative)
                     {
-                        string basePathCache = string.Empty;
-                        string resolvedPathCache = string.Empty;
+                        ReadOnlySpan<char> baseCache = null;
+                        ReadOnlySpan<char> adjustedBaseCache = null;
                         foreach (PathInfo currentPath in result)
                         {
                             // When result path and base path is on different PSDrive
@@ -119,14 +119,14 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             int leafIndex = currentPath.Path.LastIndexOf(currentPath.Provider.ItemSeparator);
-                            string basePath = currentPath.Path.Substring(0, leafIndex);
-                            if (basePath == basePathCache)
+                            var basePath = currentPath.Path.AsSpan(0, leafIndex);
+                            if (basePath == baseCache)
                             {
-                                WriteObject(string.Concat(resolvedPathCache, currentPath.Path.AsSpan(leafIndex + 1)), enumerateCollection: false);
+                                WriteObject(string.Concat(adjustedBaseCache, currentPath.Path.AsSpan(leafIndex + 1)), enumerateCollection: false);
                                 continue;
                             }
 
-                            basePathCache = basePath;
+                            baseCache = basePath;
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
 
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             leafIndex = adjustedPath.LastIndexOf(currentPath.Provider.ItemSeparator);
-                            resolvedPathCache = adjustedPath.Substring(0, leafIndex + 1);
+                            adjustedBaseCache = adjustedPath.AsSpan(0, leafIndex + 1);
 
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
