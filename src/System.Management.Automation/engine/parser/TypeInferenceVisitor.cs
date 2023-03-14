@@ -1024,6 +1024,11 @@ namespace System.Management.Automation
             if (pseudoBinding?.CommandInfo is null)
             {
                 var commandName = commandAst.GetCommandName();
+                if (string.IsNullOrEmpty(commandName))
+                {
+                    return;
+                }
+
                 try
                 {
                     var foundCommand = CommandDiscovery.LookupCommandInfo(
@@ -1031,13 +1036,11 @@ namespace System.Management.Automation
                         CommandTypes.Application,
                         SearchResolutionOptions.ResolveLiteralThenPathPatterns,
                         CommandOrigin.Internal,
-                        _context);
-                    if (foundCommand.CommandType == CommandTypes.Application)
-                    {
-                        // There's no way to know whether or not an application outputs anything
-                        // but when they do, PowerShell will treat it as string data.
-                        inferredTypes.Add(new PSTypeName(typeof(string)));
-                    }
+                        _context.ExecutionContext);
+
+                    // There's no way to know whether or not an application outputs anything
+                    // but when they do, PowerShell will treat it as string data.
+                    inferredTypes.Add(new PSTypeName(typeof(string)));
                 }
                 catch
                 {
