@@ -1290,6 +1290,47 @@ Microsoft.CSharp
 v7.2.10
 7.2.x
 v7.3.3
+http
+webcmdlet
+argumentexception.throwifnullorempty
+bitconverter.tostring
+convert.tohexstring
+requires.notnullorempty
+argumentoutofrangeexception.throwifnegativeorzero
+callerargumentexpression
+requires.notnull
+argumentnullexception
+throwifnull
+process.cs
+setrequestcontent
+streamhelper.cs
+invokerestmethodcommand.common.cs
+gethttpmethod
+httpmethod
+removenulls
+notnull
+argumentnullexception.throwifnull
+disable_telemetry
+langversion
+microsoft.extensions.objectpool
+microsoft.codeanalysis.analyzers
+benchmarkdotnet
+winforms
+benchmarkdotnet.extensions
+eg
+10ms
+100ns
+1s
+1.0ns
+1.1ns
+0.5ns
+1ns
+0.3ns.
+ns
+perflabtests.blockcopyperf.callblockcopy
+numelements
+system.tests.perf_string.trim_chararr
+system.tests.perf_array.arraycopy3d
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1676,3 +1717,9 @@ Security.types.ps1xml
 MicrosoftPowerBIMgmt
  - tools/clearlyDefined/readme.md
 ClearlyDefined
+ - CHANGELOG/preview.md
+stevenebutler
+spaette
+syntax-tm
+pwshBot
+techguy16

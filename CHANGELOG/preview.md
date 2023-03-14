@@ -1,5 +1,208 @@
 # Current preview release
 
+## [7.4.0-preview.2] - 2023-03-14
+
+### Breaking Changes
+
+- Update some PowerShell APIs to throw `ArgumentException` instead of `ArgumentNullException` when the argument is an empty string (#19215) (Thanks @xtqqczze!)
+- Add the parameter `-ProgressAction` to the common parameters (#18887)
+
+### Engine Updates and Fixes
+
+- Fix `PlainText` output to correctly remove the `Reset` VT sequence without number (#19283)
+- Fix `ConciseView` to handle custom `ParserError` error records (#19239)
+- Fix `VtSubstring` helper method to correctly check characters copied (#19240)
+- Update the `FeedbackProvider` interface to return structured data (#19133)
+- Make the exception error in PowerShell able to associate with the right history entry (#19095)
+- Fix for JEA session leaking functions (#19024)
+- Add WDAC events and system lockdown notification (#18893)
+- Fix support for nanoserver due to lack of AMSI (#18882)
+
+### Performance
+
+- Use interpolated strings (#19002)(#19003)(#18977)(#18980)(#18996)(#18979)(#18997)(#18978)(#18983)(#18992)(#18993)(#18985)(#18988) (Thanks @CarloToso!)
+
+### General Cmdlet Updates and Fixes
+
+- Fix completion for `PSCustomObject` variable properties (#18682) (Thanks @MartinGC94!)
+- Improve type inference for `Get-Random` (#18972) (Thanks @MartinGC94!)
+- Make `-Encoding` parameter able to take `ANSI` encoding in PowerShell (#19298) (Thanks @CarloToso!)
+- Telemetry improvements for tracking experimental feature opt out (#18762)
+- Support HTTP persistent connections in Web Cmdlets (#19249) (Thanks @stevenebutler!)
+- Fix using xml `-Body` in webcmdlets without an encoding (#19281) (Thanks @CarloToso!)
+- Add the `Statement` property to `$MyInvocation` (#19027) (Thanks @IISResetMe!)
+- Fix `Start-Process` `-Wait` with `-Credential` (#19096) (Thanks @jborean93!)
+- Adjust `PUT` method behavior to `POST` one for default content type in WebCmdlets (#19152) (Thanks @CarloToso!)
+- Improve verbose message in web cmdlets when content length is unknown (#19252) (Thanks @CarloToso!)
+- Preserve `WebSession.MaximumRedirection` from changes (#19190) (Thanks @CarloToso!)
+- Take into account `ContentType` from Headers in WebCmdlets (#19227) (Thanks @CarloToso!)
+- Use C# 11 UTF-8 string literals (#19243) (Thanks @turbedi!)
+- Add property assignment completion for enums (#19178) (Thanks @MartinGC94!)
+- Fix class member completion for classes with base types (#19179) (Thanks @MartinGC94!)
+- Add `-Path` and `-LiteralPath` parameters to `Test-Json` cmdlet (#19042) (Thanks @ArmaanMcleod!)
+- Allow to preserve the original HTTP method by adding `-PreserveHttpMethodOnRedirect` to Web cmdlets (#18894) (Thanks @CarloToso!)
+- Webcmdlets display an error on https to http redirect (#18595) (Thanks @CarloToso!)
+- Build the relative URI for links from the response in `Invoke-WebRequest` (#19092) (Thanks @CarloToso!)
+- Fix redirection for `-CustomMethod` `POST` in WebCmdlets (#19111) (Thanks @CarloToso!)
+- Dispose previous response in Webcmdlets (#19117) (Thanks @CarloToso!)
+- Improve `Invoke-WebRequest` xml and json errors format (#18837) (Thanks @CarloToso!)
+- Fix error formatting to remove the unneeded leading newline for concise view (#19080)
+- Add `-NoHeader` parameter to `ConvertTo-Csv` and `Export-Csv` cmdlets (#19108) (Thanks @ArmaanMcleod!)
+- Fix `Start-Process -Credential -Wait` to work on Windows (#19082)
+- Add `ValidateNotNullOrEmpty` to `OutFile` and `InFile` parameters of WebCmdlets (#19044) (Thanks @CarloToso!)
+- Correct spelling of "custom" in event (#19059) (Thanks @spaette!)
+- Ignore expected error for file systems not supporting alternate streams (#19065)
+- Adding missing guard for telemetry opt out to avoid `NullReferenceException` when importing modules (#18949) (Thanks @powercode!)
+- Fix progress calculation divide by zero in Copy-Item (#19038)
+- Add progress to `Copy-Item` (#18735)
+- WebCmdlets parse XML declaration to get encoding value, if present. (#18748) (Thanks @CarloToso!)
+- `HttpKnownHeaderNames` update headers list  (#18947) (Thanks @CarloToso!)
+- Fix bug with managing redirection and `KeepAuthorization` in Web cmdlets (#18902) (Thanks @CarloToso!)
+- Fix `Get-Error` to work with strict mode (#18895)
+- Add `AllowInsecureRedirect` switch to Web cmdlets (#18546) (Thanks @CarloToso!)
+- `Invoke-RestMethod` `-FollowRelLink` fix links containing commas (#18829) (Thanks @CarloToso!)
+- Prioritize the default parameter set when completing positional arguments (#18755) (Thanks @MartinGC94!)
+- Add `-CommandWithArgs` parameter to pwsh (#18726)
+- Enable creating composite subsystem implementation in modules (#18888)
+- Fix `Format-Table -RepeatHeader` for property derived tables (#18870)
+- Add `StatusCode` to `HttpResponseException` (#18842) (Thanks @CarloToso!)
+- Fix type inference for all scope variables (#18758) (Thanks @MartinGC94!)
+- Add completion for Using keywords (#16514) (Thanks @MartinGC94!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@CarloToso, @iSazonov, @xtqqczze, @turbedi, @syntax-tm, @eltociear, @ArmaanMcleod</p>
+
+</summary>
+
+<ul>
+<li>Small cleanup in the WebCmdlet code (#19299) (Thanks @CarloToso!)</li>
+<li>Remove unused GUID detection code from console host (#18871) (Thanks @iSazonov!)</li>
+<li>Fix <code>CodeFactor</code> issues in the code base - part 4 (#19270) (Thanks @CarloToso!)</li>
+<li>Fix codefactor if part 3 (#19269) (Thanks @CarloToso!)</li>
+<li>Fix codefactor if part 2 (#19267) (Thanks @CarloToso!)</li>
+<li>Fix codefactor if part 1 (#19266) (Thanks @CarloToso!)</li>
+<li>Remove comment and simplify condition in WebCmdlets (#19251) (Thanks @CarloToso!)</li>
+<li>Small style changes (#19241) (Thanks @CarloToso!)</li>
+<li>Use <code>ArgumentException.ThrowIfNullOrEmpty</code> as appropriate [part 1] (#19215) (Thanks @xtqqczze!)</li>
+<li>Use <code>using</code> variable to reduce the nested level (#19229) (Thanks @CarloToso!)</li>
+<li>Use <code>ArgumentException.ThrowIfNullOrEmpty()</code> in more places (#19213) (Thanks @CarloToso!)</li>
+<li>Replace <code>BitConverter.ToString</code> with <code>Convert.ToHexString</code> where appropriate (#19216) (Thanks @turbedi!)</li>
+<li>Replace <code>Requires.NotNullOrEmpty(string)</code> with <code>ArgumentException.ThrowIfNullOrEmpty</code> (#19197) (Thanks @xtqqczze!)</li>
+<li>Use <code>ArgumentOutOfRangeException.ThrowIfNegativeOrZero</code> when applicable (#19201) (Thanks @xtqqczze!)</li>
+<li>Use <code>CallerArgumentExpression</code> on <code>Requires.NotNull</code> (#19200) (Thanks @xtqqczze!)</li>
+<li>Revert a few change to not use 'ArgumentNullException.ThrowIfNull' (#19151)</li>
+<li>Corrected some minor spelling mistakes (#19176) (Thanks @syntax-tm!)</li>
+<li>Fix a typo in <code>InitialSessionState.cs</code> (#19177) (Thanks @eltociear!)</li>
+<li>Fix a typo in <code>pwsh</code> help content (#19153)</li>
+<li>Revert comment changes in <code>WebRequestPSCmdlet.Common.cs</code> (#19136) (Thanks @CarloToso!)</li>
+<li>Small cleanup webcmdlets (#19128) (Thanks @CarloToso!)</li>
+<li>Merge partials in <code>WebRequestPSCmdlet.Common.cs</code> (#19126) (Thanks @CarloToso!)</li>
+<li>Cleanup WebCmdlets comments (#19124) (Thanks @CarloToso!)</li>
+<li>Added minor readability and refactoring fixes to <code>Process.cs</code> (#19123) (Thanks @ArmaanMcleod!)</li>
+<li>Small changes in Webcmdlets (#19109) (Thanks @CarloToso!)</li>
+<li>Rework <code>SetRequestContent</code> in WebCmdlets (#18964) (Thanks @CarloToso!)</li>
+<li>Small cleanup WebCmdlets (#19030) (Thanks @CarloToso!)</li>
+<li>Update additional interpolated string changes (#19029)</li>
+<li>Revert some of the interpolated string changes (#19018)</li>
+<li>Cleanup <code>StreamHelper.cs</code>, <code>WebRequestPSCmdlet.Common.cs</code> and <code>InvokeRestMethodCommand.Common.cs</code> (#18950) (Thanks @CarloToso!)</li>
+<li>Small cleanup common code of webcmdlets (#18946) (Thanks @CarloToso!)</li>
+<li>Simplification of <code>GetHttpMethod</code> and <code>HttpMethod</code> in WebCmdlets (#18846) (Thanks @CarloToso!)</li>
+<li>Fix typo in <code>ModuleCmdletBase.cs</code> (#18933) (Thanks @eltociear!)</li>
+<li>Fix regression in <code>RemoveNulls</code> (#18881) (Thanks @iSazonov!)</li>
+<li>Replace all <code>NotNull</code> with <code>ArgumentNullException.ThrowIfNull</code> (#18820) (Thanks @CarloToso!)</li>
+<li>Cleanup <code>InvokeRestMethodCommand.Common.cs</code> (#18861) (Thanks @CarloToso!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add a Mariner install script (#19294)
+- Add tool to trigger license information gathering for NuGet modules (#18827)
+
+### Tests
+
+- Update and enable the test for the type of `$input` (#18968) (Thanks @MartinGC94!)
+- Increase the timeout for creating the `WebListener` (#19268)
+- Increase the timeout when waiting for the event log (#19264)
+- Add Windows ARM64 CI (#19040)
+- Change test so output does not include newline (#19026)
+- Allow system lock down test debug hook to work with new WLDP API (#18962)
+- Add tests for `Allowinsecureredirect` parameter in Web cmdlets (#18939) (Thanks @CarloToso!)
+- Enable `get-help` pattern tests on Unix (#18855) (Thanks @xtqqczze!)
+- Create test to check if WebCmdlets decompress brotli-encoded data (#18905) (Thanks @CarloToso!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@pwshBot, @bergmeister, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Restructure the package build to simplify signing and packaging stages (#19321)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from <code>4.4.0</code> to <code>4.6.0-2.23152.6</code> (#19306)(#19233)</li>
+<li>Test fixes for stabilizing tests (#19068)</li>
+<li>Bump <code>Newtonsoft.Json</code> from <code>13.0.2</code> to <code>13.0.3</code> (#19290)(#19289)</li>
+<li>Fix mariner sudo detection (#19304)</li>
+<li>Add stage for symbols job in Release build (#18937)</li>
+<li>Bump .NET to Preview 2 version (#19305)</li>
+<li>Move workflows that create PRs to private repo (#19276)</li>
+<li>Use reference assemblies generated by dotnet (#19302)</li>
+<li>Update the cgmanifest (#18814)(#19165)(#19296)</li>
+<li>Always regenerate files WXS fragment (#19196)</li>
+<li>MSI installer: Add checkbox and MSI property DISABLE_TELEMETRY to optionally disable telemetry. (#10725) (Thanks @bergmeister!)</li>
+<li>Add <code>-Force</code> to <code>Move-Item</code> to fix the GitHub workflow (#19262)</li>
+<li>Update and remove outdated docs to fix the URL link checks (#19261)</li>
+<li>Bump <code>Markdig.Signed</code> from <code>0.30.4</code> to <code>0.31.0</code> (#19232)</li>
+<li>Add pattern to replace for reference API generation (#19214)</li>
+<li>Split test artifact build into windows and non-windows (#19199)</li>
+<li>Set <code>LangVersion</code> compiler option to <code>11.0</code> (#18877) (Thanks @xtqqczze!)</li>
+<li>Update to .NET 8 preview 1 build (#19194)</li>
+<li>Simplify Windows Packaging CI Trigger YAML (#19160)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from <code>17.4.0</code> to <code>17.5.0</code> (#18823)(#19191)</li>
+<li>Add URL for all distributions (#19159)</li>
+<li>Bump <code>Microsoft.Extensions.ObjectPool</code> from <code>7.0.1</code> to <code>7.0.3</code> (#18925)(#19155)</li>
+<li>Add verification of R2R at packaging (#19129)</li>
+<li>Allow cross compiling windows (#19119)</li>
+<li>Update CodeQL build agent (#19113)</li>
+<li>Bump <code>XunitXml.TestLogger</code> from <code>3.0.70</code> to <code>3.0.78</code> (#19066)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.Analyzers</code> from <code>3.3.3</code> to <code>3.3.4</code> (#18975)</li>
+<li>Bump <code>BenchmarkDotNet</code> to <code>0.13.3</code> (#18878) (Thanks @xtqqczze!)</li>
+<li>Bump <code>Microsoft.PowerShell.Native</code> from <code>7.4.0-preview.1</code> to <code>7.4.0-preview.2</code> (#18910)</li>
+<li>Add checks for Windows 8.1 and Server 2012 in the MSI installer (#18904)</li>
+<li>Update build to include <code>WinForms</code> / <code>WPF</code> in all Windows builds (#18859)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update to the latest NOTICES file (#19169)(#19309)(#19086)(#19077)
+- Update supported distros in Readme (#18667) (Thanks @techguy16!)
+- Remove the 'Code Coverage Status' badge (#19265)
+- Pull in change logs for `v7.2.10` and `v7.3.3` releases (#19219)
+- Update tools `metadata` and `README` (#18831)(#19204)(#19014)
+- Update a broken link in the `README.md` (#19187)
+- Fix typos in comments (#19064) (Thanks @spaette!)
+- Add `7.2` and `7.3` change logs (#19025)
+- typos (#19058) (Thanks @spaette!)
+- Fix typo in `dotnet-tools/README.md` (#19021) (Thanks @spaette!)
+- Fix up all comments to be in the proper order with proper spacing (#18619)
+- Change log for `v7.4.0-preview.1` release (#18835)
+
+[7.4.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.1...v7.4.0-preview.2
+
 ## [7.4.0-preview.1] - 2022-12-20
 
 ### Engine Updates and Fixes
