@@ -5,7 +5,6 @@ parameters:
 jobs:
 - job: package_macOS_${{ parameters.buildArchitecture }}
   displayName: Package macOS ${{ parameters.buildArchitecture }}
-  dependsOn: MacFileSigningJob_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
     vmImage: macos-latest

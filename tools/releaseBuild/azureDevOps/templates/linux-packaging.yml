@@ -1,7 +1,6 @@
 parameters:
   buildName: ''
   uploadDisplayName: 'Upload'
-  parentJob: ''
 
 jobs:
 - job: pkg_${{ parameters.buildName }}
@@ -11,7 +10,6 @@ jobs:
     name: PowerShell1ES
     demands:
     - ImageOverride -equals PSMMSUbuntu20.04-Secure
-  dependsOn: sign_linux_builds
   variables:
     - name: runCodesignValidationInjection
       value: false
