@@ -1026,7 +1026,12 @@ namespace System.Management.Automation
                 var commandName = commandAst.GetCommandName();
                 try
                 {
-                    var foundCommand = _context.ExecutionContext.CommandDiscovery.LookupCommandInfo(commandName);
+                    var foundCommand = CommandDiscovery.LookupCommandInfo(
+                        commandName,
+                        CommandTypes.Application,
+                        SearchResolutionOptions.ResolveLiteralThenPathPatterns,
+                        CommandOrigin.Internal,
+                        _context);
                     if (foundCommand.CommandType == CommandTypes.Application)
                     {
                         // There's no way to know whether or not an application outputs anything
