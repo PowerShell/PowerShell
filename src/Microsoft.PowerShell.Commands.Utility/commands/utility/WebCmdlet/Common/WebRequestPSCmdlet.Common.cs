@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -359,13 +360,22 @@ namespace Microsoft.PowerShell.Commands
             set => _custommethod = value.ToUpperInvariant();
         }
 
-        private string _custommethod;
+        internal static string _custommethod;
 
         /// <summary>
         /// Gets or sets the PreserveHttpMethodOnRedirect property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter PreserveHttpMethodOnRedirect { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UnixSocket property.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public virtual UnixDomainSocketEndPoint UnixSocket { get => _unixSocket; set => _unixSocket = value; }
+
+        internal static UnixDomainSocketEndPoint _unixSocket;
 
         #endregion Method
 
