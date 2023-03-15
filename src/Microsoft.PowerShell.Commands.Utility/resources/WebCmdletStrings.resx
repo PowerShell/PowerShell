@@ -210,6 +210,9 @@
   <data name="ThumbprintNotFound" xml:space="preserve">
     <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
   </data>
+  <data name="UriSchemeMissing" xml:space="preserve">
+    <value>The provided Uri has no Scheme. Using http:// by default, It might be insecure.</value>
+  </data>
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Web request completed. (Number of bytes processed: {0})</value>
   </data>

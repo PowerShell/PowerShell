@@ -1391,11 +1391,19 @@ namespace Microsoft.PowerShell.Commands
             return uri;
         }
 
-        private static Uri CheckProtocol(Uri uri)
+        private Uri CheckProtocol(Uri uri)
         {
             ArgumentNullException.ThrowIfNull(uri);
 
-            return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
+            if (!uri.IsAbsoluteUri)
+            {
+                string warning = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.UriSchemeMissing);
+                WriteWarning(warning);
+                
+                return new Uri("http://" + uri.OriginalString);
+            }
+
+            return uri;
         }
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
