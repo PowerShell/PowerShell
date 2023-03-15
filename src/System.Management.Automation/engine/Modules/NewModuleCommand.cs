@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
+using System.Management.Automation.Security;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -168,15 +169,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Check ScriptBlock language mode.  If it is different than the context language mode
                 // then throw error since private trusted script functions may be exposed.
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) || (Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
                     _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
                 {
-                    this.ThrowTerminatingError(
-                        new ErrorRecord(
-                            new PSSecurityException(Modules.CannotCreateModuleWithScriptBlock),
-                            "Modules_CannotCreateModuleWithFullLanguageScriptBlock",
-                            ErrorCategory.SecurityError,
-                            null));
+                    if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                    {
+                        this.ThrowTerminatingError(
+                            new ErrorRecord(
+                                new PSSecurityException(Modules.CannotCreateModuleWithScriptBlock),
+                                "Modules_CannotCreateModuleWithFullLanguageScriptBlock",
+                                ErrorCategory.SecurityError,
+                                null));
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "New-Module Cmdlet",
+                        Message: $"A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.");
                 }
 
                 string gs = System.Guid.NewGuid().ToString();

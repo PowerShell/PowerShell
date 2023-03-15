@@ -2331,8 +2331,8 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (Context.LanguageMode == PSLanguageMode.FullLanguage);
+                // This is trusted input as long as we're in FullLanguage or ConstrainedLanguageAudit mode
+                bool isTrustedInput = Context.LanguageMode == PSLanguageMode.FullLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit;
                 powershell = _scriptBlock.GetPowerShell(isTrustedInput, _args);
             }
             catch (ScriptBlockToPowerShellNotSupportedException)

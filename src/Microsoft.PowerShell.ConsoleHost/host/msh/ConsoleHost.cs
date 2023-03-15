@@ -1842,6 +1842,10 @@ namespace Microsoft.PowerShell
                             s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
                             break;
 
+                        case PSLanguageMode.ConstrainedLanguageAudit:
+                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLAuditMode);
+                            break;
+
                         case PSLanguageMode.NoLanguage:
                             s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerNLMode);
                             break;

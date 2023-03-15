@@ -288,16 +288,6 @@ namespace System.Management.Automation.Security
                 }
             }
 
-            // TODO: !!Debug only!!
-            if (string.IsNullOrEmpty(path))
-            {
-                var debuggerAttached = false;
-                while (!debuggerAttached)
-                {
-                    System.Threading.Thread.Sleep(500);
-                }
-            }
-
             try
             {
                 WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();

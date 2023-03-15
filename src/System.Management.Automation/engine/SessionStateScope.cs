@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 
 namespace System.Management.Automation
 {
@@ -1982,18 +1983,34 @@ namespace System.Management.Automation
         private void CheckVariableChangeInConstrainedLanguage(PSVariable variable)
         {
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (context == null)
             {
-                if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
-                {
-                    // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
-                    // interfere with the session state of trusted commands.
-                    throw new PSNotSupportedException();
-                }
+                return;
+            }
 
-                // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
-                // a module scope, if it's necessary.
-                ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, this, context.EngineSessionState);
+            switch (context.LanguageMode)
+            {
+                case PSLanguageMode.ConstrainedLanguage:
+                    if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                    {
+                        // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
+                        // interfere with the session state of trusted commands.
+                        throw new PSNotSupportedException();
+                    }
+
+                    // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
+                    // a module scope, if it's necessary.
+                    ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, this, context.EngineSessionState);
+                    break;
+
+                case PSLanguageMode.ConstrainedLanguageAudit:
+                    if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                    {
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "Session State Variables",
+                            Message: $"Changing or creating the variable {variable.Name} scope to AllScope will be prevented in ConstrainedLanguage mode for unstrusted script.");
+                    }
+                    break;
             }
         }
 

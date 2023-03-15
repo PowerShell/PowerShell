@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell;
+using System.Management.Automation.Security;
 using System.Management.Automation.Subsystem;
 using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
@@ -1830,13 +1830,20 @@ namespace System.Management.Automation.Language
         {
             // If we get here, we have already determined the data statement invokes commands, so
             // we only need to check the language mode.
-            if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            switch (executionContext.LanguageMode)
             {
-                var parser = new Parser();
-                parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
-                    nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
-                    ParserStrings.DataSectionAllowedCommandDisallowed);
-                throw new ParseException(parser.ErrorList.ToArray());
+                case PSLanguageMode.ConstrainedLanguageAudit:
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "Parser Data Section SupportedCommand",
+                        Message: $"The Data Section that includes the SupportedCommand parameter would be disallowed in ConstrainedLanguage mode for untrusted script.");
+                    break;
+
+                case PSLanguageMode.ConstrainedLanguage:
+                    var parser = new Parser();
+                    parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
+                        nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
+                        ParserStrings.DataSectionAllowedCommandDisallowed);
+                    throw new ParseException(parser.ErrorList.ToArray());
             }
         }
 

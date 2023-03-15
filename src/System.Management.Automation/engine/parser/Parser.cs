@@ -9,11 +9,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Management.Automation.Subsystem;
-using System.Management.Automation.Subsystem.DSC;
 using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
@@ -2981,8 +2982,15 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace = localRunspace;
                 }
 
+                if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                {
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "Parser Configuration Keyword",
+                        Message: $"The Configuration keyword would not allowed in ConstrainedLanguage mode for untrusted script.");
+                }
+
                 // Configuration is not supported on ARM or in ConstrainedLanguage
-                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace.ExecutionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     ReportError(configurationToken.Extent,
                                 nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
@@ -4199,7 +4207,13 @@ namespace System.Management.Automation.Language
             // G      class-member-list   class-member
 
             // PowerShell classes are not supported in ConstrainedLanguage
-            if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            {
+                SystemPolicy.LogWDACAuditMessage(
+                    Title: "Parser Class keyword",
+                    Message: $"The Class keyword would not allowed in ConstrainedLanguage mode for untrusted script.");
+            }
+            else if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 ReportError(classToken.Extent,
                             nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
