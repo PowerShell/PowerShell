@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
                                 string detailMsg = string.Empty;
                                 try
                                 {
-                                    string error = StreamHelper.GetResponseString(response);
+                                    string error = StreamHelper.GetResponseString(response, _cancelToken.Token);
                                     detailMsg = FormatErrorMessage(error, contentType);
                                 }
                                 catch
@@ -655,6 +655,11 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             ThrowTerminatingError(er);
+                        }
+                        finally 
+                        {
+                            _cancelToken?.Dispose();
+                            _cancelToken = null;
                         }
 
                         if (_followRelLink)

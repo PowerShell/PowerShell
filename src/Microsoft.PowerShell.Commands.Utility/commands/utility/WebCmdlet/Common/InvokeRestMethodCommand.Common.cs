@@ -6,6 +6,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 using Newtonsoft.Json;
@@ -74,12 +75,13 @@ namespace Microsoft.PowerShell.Commands
         internal override void ProcessResponse(HttpResponseMessage response)
         {
             ArgumentNullException.ThrowIfNull(response);
+            ArgumentNullException.ThrowIfNull(_cancelToken);
 
-            Stream baseResponseStream = StreamHelper.GetResponseStream(response);
+            Stream baseResponseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
 
             if (ShouldWriteToPipeline)
             {
-                using var responseStream = new BufferingStreamReader(baseResponseStream);
+                using var responseStream = new BufferingStreamReader(baseResponseStream, _cancelToken.Token);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -95,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                     // Try to get the response encoding from the ContentType header.
                     string charSet = WebResponseHelper.GetCharacterSet(response);
 
-                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding);
+                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding, _cancelToken.Token);
 
                     object obj = null;
                     Exception ex = null;
@@ -112,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
-                    
+
                     bool convertSuccess = false;
 
                     if (returnType == RestReturnType.Json)
@@ -227,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException) 
+            catch (XmlException)
             {
                 // Catch XmlException
             }
@@ -345,17 +347,19 @@ namespace Microsoft.PowerShell.Commands
 
         internal class BufferingStreamReader : Stream
         {
-            internal BufferingStreamReader(Stream baseStream)
+            internal BufferingStreamReader(Stream baseStream, CancellationToken cancellationToken)
             {
                 _baseStream = baseStream;
                 _streamBuffer = new MemoryStream();
                 _length = long.MaxValue;
                 _copyBuffer = new byte[4096];
+                _cancellationToken = cancellationToken;
             }
 
             private readonly Stream _baseStream;
             private readonly MemoryStream _streamBuffer;
             private readonly byte[] _copyBuffer;
+            private readonly CancellationToken _cancellationToken;
 
             public override bool CanRead => true;
 
@@ -389,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we
                     // may cache 4095 bytes more than what is required by the Read operation.
-                    int bytesRead = _baseStream.Read(_copyBuffer, 0, _copyBuffer.Length);
+                    int bytesRead = _baseStream.ReadAsync(_copyBuffer, 0, _copyBuffer.Length, _cancellationToken).GetAwaiter().GetResult();
 
                     if (_streamBuffer.Position < _streamBuffer.Length)
                     {

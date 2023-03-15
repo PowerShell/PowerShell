@@ -9,9 +9,9 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseObjectFactory
     {
-        internal static WebResponseObject GetResponseObject(HttpResponseMessage response, Stream responseStream, ExecutionContext executionContext)
+        internal static WebResponseObject GetResponseObject(HttpResponseMessage response, Stream responseStream, ExecutionContext executionContext, System.Threading.CancellationToken cancellationToken)
         {
-            WebResponseObject output = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream) : new WebResponseObject(response, responseStream);
+            WebResponseObject output = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, cancellationToken) : new WebResponseObject(response, responseStream, cancellationToken);
 
             return output;
         }
