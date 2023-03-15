@@ -145,7 +145,7 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@pwshBot, @bergmeister, @xtqqczze</p>
+<p>@bergmeister, @xtqqczze</p>
 
 </summary>
 
