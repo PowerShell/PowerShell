@@ -1173,6 +1173,42 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The available module path types.
+        /// </summary>
+        public enum ModulePathType
+        {
+            /// <summary>The users module path.</summary>
+            User,
+
+            /// <summary>The PSHOME module path.</summary>
+            PsHome,
+
+            /// <summary>The shared module path.</summary>
+            Shared
+        }
+
+        /// <summary>
+        /// Retrieve the current PSModulePath.
+        /// </summary>
+        /// <param name="type">The type of module path to retrieve. This can be User, PsHome, or Shared.</param>
+        /// <returns>The string represting the requested module path type.</returns>
+        public static string GetPSModulePath(ModulePathType type)
+        {
+            if (type == ModulePathType.User)
+            {
+                return GetPersonalModulePath();
+            }
+            else if (type == ModulePathType.PsHome)
+            {
+                return GetPSHomeModulePath();
+            }
+            else
+            {
+                return GetSharedModulePath();
+            }
+        }
+
+        /// <summary>
         /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate.
         /// </summary>
         public static string GetModulePath(string currentProcessModulePath, string hklmMachineModulePath, string hkcuUserModulePath)

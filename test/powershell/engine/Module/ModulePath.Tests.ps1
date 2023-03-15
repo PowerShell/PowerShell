@@ -201,4 +201,27 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $out = & $powershell -noprofile -command '$env:PSModulePath'
         $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike $validation
     }
+
+    Context "ModuleIntrinsics.GetPSModulePath API tests" {
+        BeforeAll {
+            $testCases = @(
+                @{ Name = "User"   ; Expected = "" }
+                @{ Name = "Shared" ; Expected = "" }
+                @{ Name = "PsHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
+        }
+
+        It "The GetPSModulePath api is available" {
+            { [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath("PSHOME") } | Should -not -throw
+        }
+
+        It "The value '<Name>' should return the proper value" -testcase $testCases {
+            param ( $Name, $Expected )
+            $result = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+            $result | Should -not -BeNullOrEmpty
+            # spot check pshome
+            if ( $name -eq "PSHOME") {
+                $result | Should -Be $Expected
+            }
+        }
+    }
 }
