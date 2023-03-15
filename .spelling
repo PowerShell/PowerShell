@@ -1316,21 +1316,6 @@ microsoft.extensions.objectpool
 microsoft.codeanalysis.analyzers
 benchmarkdotnet
 winforms
-benchmarkdotnet.extensions
-eg
-10ms
-100ns
-1s
-1.0ns
-1.1ns
-0.5ns
-1ns
-0.3ns.
-ns
-perflabtests.blockcopyperf.callblockcopy
-numelements
-system.tests.perf_string.trim_chararr
-system.tests.perf_array.arraycopy3d
  - CHANGELOG.md
 aavdberg
 asrosent
