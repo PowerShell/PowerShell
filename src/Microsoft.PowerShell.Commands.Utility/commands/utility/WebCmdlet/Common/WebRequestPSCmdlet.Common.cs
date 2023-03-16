@@ -353,14 +353,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod
-        {
-            get => _custommethod;
+        public virtual string CustomMethod { get => _custommethod; set => _custommethod = value.ToUpperInvariant(); }
 
-            set => _custommethod = value.ToUpperInvariant();
-        }
-
-        internal static string _custommethod;
+        private string _custommethod;
 
         /// <summary>
         /// Gets or sets the PreserveHttpMethodOnRedirect property.
