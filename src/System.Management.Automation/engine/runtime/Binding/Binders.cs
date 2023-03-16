@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -5509,11 +5510,19 @@ namespace System.Management.Automation.Language
         internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, object targetValue,
             string name, bool isStatic, DynamicMetaObject[] args, BindingRestrictions moreTests, string errorID, string resourceString)
         {
-            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage || context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
                 {
-                    return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
+                    if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                    {
+                        return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
+                    }
+
+                    string targetName = (targetValue as Type)?.GetType()?.FullName;
+                    SystemPolicy.LogWDACAuditMessage(
+                        Title: "Parameter Binder",
+                        Message: $"Method or Property {name} on type {targetName ?? string.Empty} will not be accessible during binding with policy enforcement.");
                 }
             }
 
@@ -7676,9 +7685,18 @@ namespace System.Management.Automation.Language
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage && !CoreTypes.Contains(instanceType))
+            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit &&
+                !CoreTypes.Contains(instanceType))
             {
-                return target.ThrowRuntimeError(restrictions, "CannotCreateTypeConstrainedLanguage", ParserStrings.CannotCreateTypeConstrainedLanguage).WriteToDebugLog(this);
+                if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                {
+                    return target.ThrowRuntimeError(restrictions, "CannotCreateTypeConstrainedLanguage", ParserStrings.CannotCreateTypeConstrainedLanguage).WriteToDebugLog(this);
+                }
+
+                string targetName = instanceType?.GetType()?.FullName;
+                SystemPolicy.LogWDACAuditMessage(
+                    Title: "Parameter Binder",
+                    Message: $"Will not be able to create type {targetName} during binding with policy enforcement.");
             }
 
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));

@@ -4,6 +4,7 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -41,6 +42,13 @@ namespace Microsoft.PowerShell.Commands
             if (Context.HasRunspaceEverUsedConstrainedLanguageMode)
             {
                 myScriptBlock.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+            }
+
+            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+            {
+                SystemPolicy.LogWDACAuditMessage(
+                    Title: "Invoke-Expression Cmdlet",
+                    Message: "Invoke-Expression cmdlet script block would be run in ConstrainedLanguage mode when policy is enforced.");
             }
 
             var emptyArray = Array.Empty<object>();

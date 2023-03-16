@@ -567,6 +567,13 @@ namespace Microsoft.PowerShell.Commands
                         targetObject: null));
             }
 
+            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            {
+                SystemPolicy.LogWDACAuditMessage(
+                    Title: "Add-Type Cmdlet",
+                    Message: "Add-Type cmdlet would not be allowed in ConstrainedLanguage mode.");
+            }
+
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core
             if (OutputType != OutputAssemblyType.Library)
             {
