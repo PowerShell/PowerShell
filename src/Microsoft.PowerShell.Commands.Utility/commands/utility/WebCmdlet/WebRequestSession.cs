@@ -206,8 +206,7 @@ namespace Microsoft.PowerShell.Commands
                 handler.ConnectCallback = async (context, token) =>
                 {
                     Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-                    UnixDomainSocketEndPoint endpoint = _unixSocket;
-                    await socket.ConnectAsync(endpoint).ConfigureAwait(false);
+                    await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
 
                     return new NetworkStream(socket, ownsSocket: false);
                 };
