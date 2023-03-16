@@ -90,7 +90,9 @@ namespace System.Management.Automation.Security
             // TODO: Debug only
             try
             {
+                System.Console.WriteLine(string.Empty);
                 System.Console.WriteLine(auditMessage);
+                System.Console.WriteLine(string.Empty);
             }
             catch { }
         }
@@ -136,10 +138,12 @@ namespace System.Management.Automation.Security
             System.IO.FileStream fileStream)
         {
             SafeHandle fileHandle = fileStream.SafeFileHandle;
+            var systemLockdownPolicy = SystemPolicy.GetSystemLockdownPolicy();
 
-            // First check latest WDAC APIs if available. Also revert to legacy APIs if debug hook is in effect.
+            // First check latest WDAC APIs if available.
+            // Revert to legacy APIs if system policy is in AUDIT mode or debug hook is in effect.
             Exception errorException = null;
-            if (s_wldpCanExecuteAvailable && !s_allowDebugOverridePolicy)
+            if (s_wldpCanExecuteAvailable && systemLockdownPolicy != SystemEnforcementMode.Audit && !s_allowDebugOverridePolicy)
             {
                 try
                 {
@@ -154,8 +158,6 @@ namespace System.Management.Automation.Security
                         result: out WLDP_EXECUTION_POLICY canExecuteResult);
 
                     PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile", filePath, hr, (int)canExecuteResult);
-
-                    // TODO: How does WldpCanExecuteFile work in AUDIT mode?
 
                     if (hr >= 0)
                     {
@@ -199,29 +201,29 @@ namespace System.Management.Automation.Security
             }
 
             // Original (legacy) WDAC and AppLocker system checks.
-            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.None)
+            if (systemLockdownPolicy == SystemEnforcementMode.None)
             {
-                switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
-                {
-                    case SystemEnforcementMode.Enforce:
-                        // File is not allowed by policy enforcement and must run in CL mode.
-                        return SystemScriptFileEnforcement.AllowConstrained;
-
-                    case SystemEnforcementMode.Audit:
-                        // File is not allowed and would be run in CL mode if policy was enforced and not audit.
-                        return SystemScriptFileEnforcement.AllowConstrainedAudit;
-
-                    case SystemEnforcementMode.None:
-                        // No restrictions, file will run in FL mode.
-                        return SystemScriptFileEnforcement.Allow;
-
-                    default:
-                        System.Diagnostics.Debug.Assert(false, "GetFilePolicyEnforcement: Unknown SystemEnforcementMode.");
-                        return SystemScriptFileEnforcement.Block;
-                }
+                return SystemScriptFileEnforcement.None;
             }
 
-            return SystemScriptFileEnforcement.None;
+            switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
+            {
+                case SystemEnforcementMode.Enforce:
+                    // File is not allowed by policy enforcement and must run in CL mode.
+                    return SystemScriptFileEnforcement.AllowConstrained;
+
+                case SystemEnforcementMode.Audit:
+                    // File is allowed but would be run in CL mode if policy was enforced and not audit.
+                    return SystemScriptFileEnforcement.AllowConstrainedAudit;
+
+                case SystemEnforcementMode.None:
+                    // No restrictions, file will run in FL mode.
+                    return SystemScriptFileEnforcement.Allow;
+
+                default:
+                    System.Diagnostics.Debug.Assert(false, "GetFilePolicyEnforcement: Unknown SystemEnforcementMode.");
+                    return SystemScriptFileEnforcement.Block;
+            }
         }
 
         /// <summary>
