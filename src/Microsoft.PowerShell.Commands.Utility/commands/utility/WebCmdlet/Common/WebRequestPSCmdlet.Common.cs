@@ -368,9 +368,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public virtual UnixDomainSocketEndPoint UnixSocket { get => _unixSocket; set => _unixSocket = value; }
-
-        internal static UnixDomainSocketEndPoint _unixSocket;
+        public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
         #endregion Method
 
@@ -972,6 +970,11 @@ namespace Microsoft.PowerShell.Commands
             if (MaximumRedirection > -1)
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
+            }
+
+            if (UnixSocket is not null)
+            {
+                WebSession.UnixSocket = UnixSocket;
             }
 
             WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;

@@ -30,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _noProxy;
         private bool _disposed;
         private int _timeoutSec;
+        private UnixDomainSocketEndPoint _unixSocket;
 
         /// <summary>
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
@@ -139,6 +140,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal int TimeoutSec { set => SetStructVar(ref _timeoutSec, value); }
 
+        internal UnixDomainSocketEndPoint UnixSocket { set => SetClassVar(ref _unixSocket, value); }
+
         internal bool NoProxy
         {
             set
@@ -192,12 +195,12 @@ namespace Microsoft.PowerShell.Commands
         {
             SocketsHttpHandler handler = new();
 
-            if (WebRequestPSCmdlet._unixSocket is not null)
+            if (_unixSocket is not null)
             {
                 handler.ConnectCallback = async (context, token) =>
                 {
                     Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-                    UnixDomainSocketEndPoint endpoint = WebRequestPSCmdlet._unixSocket;
+                    UnixDomainSocketEndPoint endpoint = _unixSocket;
                     await socket.ConnectAsync(endpoint).ConfigureAwait(false);
 
                     return new NetworkStream(socket, ownsSocket: false);
