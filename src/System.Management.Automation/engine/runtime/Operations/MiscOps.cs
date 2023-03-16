@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -56,11 +57,21 @@ namespace System.Management.Automation
                 }
                 else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
                 {
-                    // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
-                    // runs "internal" origin and so has access to all functions, including non-exported functions.
-                    // Otherwise we end up leaking non-exported functions that run in FullLanguage.
-                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
-                        "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                    if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                    {
+                        // In audit mode, report but don't enforce.
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "Module Scope Call Operator",
+                            Message: "The module scope call operator, & (Get-Module MyModule) MyFunction, would be denied when run in policy enforcement.");
+                    }
+                    else
+                    {
+                        // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
+                        // runs "internal" origin and so has access to all functions, including non-exported functions.
+                        // Otherwise we end up leaking non-exported functions that run in FullLanguage.
+                        throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
+                            "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                    }
                 }
 
                 commandSessionState = mi.SessionState.Internal;
@@ -2990,12 +3001,19 @@ namespace System.Management.Automation
                                 }
 
                                 // In constrained language mode, can only execute methods on certain types.
-                                if (languageMode == PSLanguageMode.ConstrainedLanguage)
+                                if (languageMode == PSLanguageMode.ConstrainedLanguage || languageMode == PSLanguageMode.ConstrainedLanguageAudit)
                                 {
                                     if (!CoreTypes.Contains(basedCurrent.GetType()))
                                     {
-                                        throw InterpreterError.NewInterpreterException(current, typeof(PSInvalidOperationException),
-                                            null, "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
+                                        if (languageMode == PSLanguageMode.ConstrainedLanguage)
+                                        {
+                                            throw InterpreterError.NewInterpreterException(current, typeof(PSInvalidOperationException),
+                                                null, "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
+                                        }
+
+                                        SystemPolicy.LogWDACAuditMessage(
+                                            Title: "ForEach Operator",
+                                            Message: $"The ForEach operator would fail method call, {method.Name ?? string.Empty}, when run in Constrained Language mode.");
                                     }
                                 }
 
