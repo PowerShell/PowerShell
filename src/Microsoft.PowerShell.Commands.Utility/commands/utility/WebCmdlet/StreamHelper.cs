@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -433,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException)
             {
-                encoding = null;
+                encoding = null!;
             }
 
             return result;
