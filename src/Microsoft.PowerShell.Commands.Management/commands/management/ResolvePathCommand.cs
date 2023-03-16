@@ -75,6 +75,12 @@ namespace Microsoft.PowerShell.Commands
 
         private SwitchParameter _relative;
 
+        /// <summary>
+        /// Gets or sets the path the resolved relative path should be based off.
+        /// </summary>
+        [Parameter()]
+        public string RelativeBasePath { get; set; }
+
         #endregion Parameters
 
         #region parameter data
@@ -84,9 +90,67 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string[] _paths;
 
+        private PSDriveInfo _relativeDrive;
+        private string _relativeBasePath;
+
         #endregion parameter data
 
         #region Command code
+
+        /// <summary>
+        /// Finds the path and drive that should be used for relative path resolution
+        /// represents.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            if (_relative)
+            {
+                if (!string.IsNullOrEmpty(RelativeBasePath))
+                {
+                    try
+                    {
+                        _relativeBasePath = SessionState.Internal.Globber.GetProviderPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
+                    }
+                    catch (ProviderNotFoundException providerNotFound)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                providerNotFound.ErrorRecord,
+                                providerNotFound));
+                    }
+                    catch (DriveNotFoundException driveNotFound)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                driveNotFound.ErrorRecord,
+                                driveNotFound));
+                    }
+                    catch (ProviderInvocationException providerInvocation)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                providerInvocation.ErrorRecord,
+                                providerInvocation));
+                    }
+                    catch (NotSupportedException notSupported)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(notSupported, "ProviderIsNotNavigationCmdletProvider", ErrorCategory.InvalidArgument, RelativeBasePath));
+                    }
+                    catch (InvalidOperationException invalidOperation)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(invalidOperation, "InvalidHomeLocation", ErrorCategory.InvalidOperation, RelativeBasePath));
+                    }
+
+                    return;
+                }
+
+                _relativeDrive = SessionState.Path.CurrentLocation.Drive;
+                _relativeBasePath = SessionState.Path.CurrentLocation.ProviderPath;
+                return;
+            }
+        }
 
         /// <summary>
         /// Resolves the path containing glob characters to the PowerShell paths that it
@@ -109,10 +173,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // When result path and base path is on different PSDrive
                             // (../)*path should not go beyond the root of base path
-                            if (currentPath.Drive != SessionState.Path.CurrentLocation.Drive &&
-                                SessionState.Path.CurrentLocation.Drive != null &&
-                                !currentPath.ProviderPath.StartsWith(
-                                    SessionState.Path.CurrentLocation.Drive.Root, StringComparison.OrdinalIgnoreCase))
+                            if (currentPath.Drive != _relativeDrive &&
+                                _relativeDrive != null &&
+                                !currentPath.ProviderPath.StartsWith(_relativeDrive.Root, StringComparison.OrdinalIgnoreCase))
                             {
                                 WriteObject(currentPath.Path, enumerateCollection: false);
                                 continue;
@@ -127,8 +190,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             baseCache = basePath;
-                            string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
-                                SessionState.Path.CurrentLocation.ProviderPath);
+                            string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path, _relativeBasePath);
 
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(

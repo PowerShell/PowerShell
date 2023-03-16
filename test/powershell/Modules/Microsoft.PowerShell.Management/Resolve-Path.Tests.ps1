@@ -48,4 +48,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
+    It 'Resolve-Path -Relative should support user specified base paths' {
+        Resolve-Path -Path $fakeRoot -Relative -RelativeBasePath $testRoot | Should -BeExactly '.\fakeroot'
+    }
 }
