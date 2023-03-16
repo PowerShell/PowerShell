@@ -696,7 +696,7 @@ namespace System.Management.Automation
                 // GetSteppablePipeline() is called on an arbitrary script block with the intention
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
-                bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
+                bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage || scriptBlock.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit;
 
                 foreach (var commandAst in pipelineAst.PipelineElements.Cast<CommandAst>())
                 {

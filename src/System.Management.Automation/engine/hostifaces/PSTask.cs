@@ -936,8 +936,20 @@ namespace System.Management.Automation.PSTasks
 
             // Create and initialize a new Runspace
             var iss = InitialSessionState.CreateDefault2();
-            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-                ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+            switch (SystemPolicy.GetSystemLockdownPolicy())
+            {
+                case SystemEnforcementMode.Enforce:
+                    iss.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    break;
+
+                case SystemEnforcementMode.Audit:
+                    iss.LanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
+                    break;
+
+                case SystemEnforcementMode.None:
+                    iss.LanguageMode = PSLanguageMode.FullLanguage;
+                    break;
+            }
             runspace = RunspaceFactory.CreateRunspace(iss);
             runspace.Name = runspaceName;
             _activeRunspaces.TryAdd(runspace.Id, runspace);

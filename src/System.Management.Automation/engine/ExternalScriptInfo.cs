@@ -103,14 +103,19 @@ namespace System.Management.Automation
                 // Get the lock down policy with no handle. This only impacts command discovery,
                 // as the real language mode assignment will be done when we read the script
                 // contents.
-                SystemEnforcementMode scriptSpecificPolicy = SystemPolicy.GetLockdownPolicy(_path, null);
-                if (scriptSpecificPolicy != SystemEnforcementMode.Enforce)
+                switch (SystemPolicy.GetLockdownPolicy(_path, null))
                 {
-                    this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
-                }
-                else
-                {
-                    this.DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    case SystemEnforcementMode.None:
+                        DefiningLanguageMode = PSLanguageMode.FullLanguage;
+                        break;
+
+                    case SystemEnforcementMode.Audit:
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
+                        break;
+
+                    case SystemEnforcementMode.Enforce:
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                        break;
                 }
             }
         }

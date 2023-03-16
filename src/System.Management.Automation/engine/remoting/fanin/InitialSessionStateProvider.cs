@@ -2760,7 +2760,7 @@ namespace System.Management.Automation.Remoting
             }
 
             SessionStateEntryVisibility visibility = SessionStateEntryVisibility.Private;
-            if (languageMode == PSLanguageMode.FullLanguage)
+            if (languageMode == PSLanguageMode.FullLanguage || languageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 visibility = SessionStateEntryVisibility.Public;
             }
