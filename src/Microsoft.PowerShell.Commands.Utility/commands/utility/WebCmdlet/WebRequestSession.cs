@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _noProxy;
         private bool _disposed;
         private int _timeoutSec;
-        private UnixDomainSocketEndPoint _unixSocket;
+        private UnixDomainSocketEndPoint? _unixSocket;
 
         /// <summary>
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
