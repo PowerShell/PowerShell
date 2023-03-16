@@ -175,6 +175,7 @@ stages:
   jobs:
   - job: KickOffRA
     displayName: Kickoff Release Automation
+    timeoutInMinutes: 240
 
     pool:
       name: PowerShell1ES
@@ -257,7 +258,6 @@ stages:
   - StaticPkgValidation
   - StartDocker
   - ManualValidation
-  - ReleaseAutomation
   - ValidateFxdPackage
   - ValidateGlobalTool
 
@@ -557,7 +557,7 @@ stages:
         $isPreview = $semanticVersion.PreReleaseLabel -ne $null
 
         if (-not $isPreview) {
-          $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238 -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
+          $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238  -Branch '$(Build.SourceBranch)' -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
           Write-Verbose -Verbose "Kicked off vPack build: $($buildInvocationInfo.WebUrl)"
           $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 60
           if ($status.result -ne 'Succeeded') {
