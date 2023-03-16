@@ -322,6 +322,14 @@ stages:
     jobs:
     - template: templates/windows-package-signing.yml
 
+    - template: templates/mac-package-signing.yml
+        parameters:
+          buildArchitecture: x64
+
+    - template: templates/mac-package-signing.yml
+        parameters:
+          buildArchitecture: arm64
+
   # This is done late so that we dont use resources before the big signing and packaging tasks.
   - stage: compliance
     dependsOn: ['package_signing']
