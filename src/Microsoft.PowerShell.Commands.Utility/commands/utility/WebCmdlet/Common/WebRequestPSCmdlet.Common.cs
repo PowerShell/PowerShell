@@ -972,10 +972,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
 
-            if (UnixSocket is not null)
-            {
-                WebSession.UnixSocket = UnixSocket;
-            }
+            WebSession.UnixSocket = UnixSocket;
 
             WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
 
