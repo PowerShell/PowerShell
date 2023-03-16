@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -20,19 +21,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the BaseResponse property.
         /// </summary>
-        public HttpResponseMessage BaseResponse { get; set; }
+        public HttpResponseMessage? BaseResponse { get; set; }
 
         /// <summary>
         /// Gets or protected sets the response body content.
         /// </summary>
-        public byte[] Content { get; protected set; }
+        public byte[]? Content { get; protected set; }
 
         /// <summary>
         /// Gets the Headers property.
         /// </summary>
         public Dictionary<string, IEnumerable<string>> Headers => _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
 
-        private Dictionary<string, IEnumerable<string>> _headers = null;
+        private Dictionary<string, IEnumerable<string>>? _headers;
 
         /// <summary>
         /// Gets or protected sets the full response content.
@@ -40,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// Full response content, including the HTTP status line, headers, and body.
         /// </value>
-        public string RawContent { get; protected set; }
+        public string? RawContent { get; protected set; }
 
         /// <summary>
         /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
@@ -50,12 +51,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or protected sets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
-        public MemoryStream RawContentStream { get; protected set; }
+        public MemoryStream? RawContentStream { get; protected set; }
 
         /// <summary>
         /// Gets the RelationLink property.
         /// </summary>
-        public Dictionary<string, string> RelationLink { get; internal set; }
+        public Dictionary<string, string>? RelationLink { get; internal set; }
 
         /// <summary>
         /// Gets the response status code.
@@ -70,13 +71,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Properties
 
         #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
-        /// </summary>
-        /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response) : this(response, null)
-        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class
@@ -100,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void InitializeContent()
         {
-            Content = RawContentStream.ToArray();
+            Content = RawContentStream?.ToArray();
         }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
@@ -108,9 +102,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
 
             // Use ASCII encoding for the RawContent visual view of the content.
-            if (Content.Length > 0)
+            if (Content?.Length > 0)
             {
-                raw.Append(this.ToString());
+                raw.Append(ToString());
             }
 
             RawContent = raw.ToString();
@@ -128,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
 
             BaseResponse = response;
 
-            MemoryStream ms = contentStream as MemoryStream;
+            MemoryStream? ms = contentStream as MemoryStream;
             if (ms is not null)
             {
                 RawContentStream = ms;
@@ -141,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                     st = StreamHelper.GetResponseStream(response);
                 }
 
-                long contentLength = response.Content.Headers.ContentLength.Value;
+                long contentLength = response.Content.Headers.ContentLength.GetValueOrDefault();
                 if (contentLength <= 0)
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
@@ -161,8 +155,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of this web response.</returns>
         public sealed override string ToString()
         {
-            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
-            for (int counter = 0; counter < stringContent.Length; counter++)
+            char[]? stringContent = Content is null ? null : Encoding.ASCII.GetChars(Content);
+            for (int counter = 0; counter < stringContent?.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))
                 {
