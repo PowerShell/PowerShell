@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Management.Automation;
 using System.Net.Http;
@@ -16,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         #region Internal Methods
 
         // ContentType may not exist in response header.  Return null if not.
-        internal static string GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
+        internal static string? GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
 
         internal static Encoding GetDefaultEncoding() => Encoding.UTF8;
 
@@ -35,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
             HttpHeaders[] headerCollections =
             {
                 response.Headers,
-                response.Content?.Headers
+                response.Content.Headers
             };
 
             foreach (var headerCollection in headerCollections)
@@ -118,19 +120,19 @@ namespace Microsoft.PowerShell.Commands
             if (Platform.IsWindows && !isText)
             {
                 // Media types registered with Windows as having a perceived type of text, are text
-                using (RegistryKey contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
+                using (RegistryKey? contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
                 {
                     if (contentTypeKey != null)
                     {
-                        string extension = contentTypeKey.GetValue("Extension") as string;
+                        string? extension = contentTypeKey.GetValue("Extension") as string;
                         if (extension != null)
                         {
-                            using (RegistryKey extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
+                            using (RegistryKey? extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
                             {
                                 if (extensionKey != null)
                                 {
-                                    string perceivedType = extensionKey.GetValue("PerceivedType") as string;
-                                    isText = (perceivedType == "text");
+                                    string? perceivedType = extensionKey.GetValue("PerceivedType") as string;
+                                    isText = perceivedType == "text";
                                 }
                             }
                         }
@@ -161,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(contentType))
             {
-                return null;
+                return null!;
             }
 
             string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
