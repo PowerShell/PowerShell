@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly long? _contentLength;
         private readonly Stream _originalStreamToProxy;
         private bool _isInitialized = false;
-        private readonly Cmdlet _ownerCmdlet;
+        private readonly Cmdlet? _ownerCmdlet;
 
         #endregion Data
 
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="initialCapacity"></param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength) : base(initialCapacity)
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
