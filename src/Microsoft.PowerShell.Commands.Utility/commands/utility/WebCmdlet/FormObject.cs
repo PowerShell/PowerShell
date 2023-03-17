@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
@@ -46,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void AddField(string key, string value)
         {
-            if (key is not null && !Fields.TryGetValue(key, out string test))
+            if (key is not null && !Fields.TryGetValue(key, out string? test))
             {
                 Fields[key] = value;
             }
