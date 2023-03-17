@@ -16,29 +16,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class BasicHtmlWebResponseObject : WebResponseObject
     {
-        #region Private Fields
-
-        private static readonly Regex s_attribsRegex = CreateAttribsRegex();
-        private static readonly Regex s_attribNameValueRegex = CreateAttribNameValueRegex();
-        private static readonly Regex s_imageRegex = CreateImageRegex();
-        private static readonly Regex s_inputFieldRegex = CreateInputFieldRegex();
-        private static readonly Regex s_linkRegex = CreateLinkRegex();
-        private static readonly Regex s_tagRegex = CreateTagRegex();
-
-        private static Regex CreateAttribsRegex() => new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Regex CreateAttribNameValueRegex() => new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Regex CreateImageRegex() => new Regex(@"<img\s[^>]*?>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Regex CreateInputFieldRegex() => new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Regex CreateLinkRegex() => new Regex(@"<a\s+[^>]*(/>|>.*?</a>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Regex CreateTagRegex() => new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        #endregion Private Fields
-
         #region Constructors
 
         /// <summary>
@@ -94,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_inputFields == null)
                 {
                     List<PSObject> parsedFields = new();
-                    MatchCollection fieldMatch = s_inputFieldRegex.Matches(Content);
+                    MatchCollection fieldMatch = HtmlParser.s_inputFieldRegex.Matches(Content);
                     foreach (Match field in fieldMatch)
                     {
                         parsedFields.Add(CreateHtmlObject(field.Value, "INPUT"));
@@ -119,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_links == null)
                 {
                     List<PSObject> parsedLinks = new();
-                    MatchCollection linkMatch = s_linkRegex.Matches(Content);
+                    MatchCollection linkMatch = HtmlParser.s_linkRegex.Matches(Content);
                     foreach (Match link in linkMatch)
                     {
                         parsedLinks.Add(CreateHtmlObject(link.Value, "A"));
@@ -144,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_images == null)
                 {
                     List<PSObject> parsedImages = new();
-                    MatchCollection imageMatch = s_imageRegex.Matches(Content);
+                    MatchCollection imageMatch = HtmlParser.s_imageRegex.Matches(Content);
                     foreach (Match image in imageMatch)
                     {
                         parsedImages.Add(CreateHtmlObject(image.Value, "IMG"));
@@ -207,16 +184,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Extract just the opening tag of the HTML element (omitting the closing tag and any contents,
                 // including contained HTML elements)
-                Match match = s_tagRegex.Match(outerHtml);
+                Match match = HtmlParser.s_tagRegex.Match(outerHtml);
 
                 // Extract all the attribute specifications within the HTML element opening tag
-                MatchCollection attribMatches = s_attribsRegex.Matches(match.Value);
+                MatchCollection attribMatches = HtmlParser.s_attribsRegex.Matches(match.Value);
 
                 foreach (Match attribMatch in attribMatches)
                 {
                     // Extract the name and value for this attribute (allowing for variations like single/double/no
                     // quotes, and no value at all)
-                    Match nvMatches = s_attribNameValueRegex.Match(attribMatch.Value);
+                    Match nvMatches = HtmlParser.s_attribNameValueRegex.Match(attribMatch.Value);
                     Debug.Assert(nvMatches.Groups.Count == 5);
 
                     // Name is always captured by group #1
@@ -243,5 +220,26 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Methods
+    }
+
+    internal static class HtmlParser
+    {
+        internal static Regex s_tagRegex = new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        internal static Regex s_attribsRegex = new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        internal static Regex s_attribNameValueRegex = new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        internal static Regex s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        internal static Regex s_linkRegex = new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        internal static Regex s_imageRegex = new Regex(@"<img\s[^>]*?>",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
     }
 }
