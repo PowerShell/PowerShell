@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,22 +20,16 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Private Fields
 
-        private static Regex s_attribNameValueRegex;
-        private static Regex s_attribsRegex;
-        private static Regex s_imageRegex;
-        private static Regex s_inputFieldRegex;
-        private static Regex s_linkRegex;
-        private static Regex s_tagRegex;
+        private static Regex? s_attribNameValueRegex;
+        private static Regex? s_attribsRegex;
+        private static Regex? s_imageRegex;
+        private static Regex? s_inputFieldRegex;
+        private static Regex? s_linkRegex;
+        private static Regex? s_tagRegex;
 
         #endregion Private Fields
 
         #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
-        /// </summary>
-        /// <param name="response"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response) : this(response, null) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
@@ -60,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the <c>Content-Type</c> response header is a recognized text
         /// type.  Otherwise <see langword="null"/>.
         /// </value>
-        public new string Content { get; private set; }
+        public new string? Content { get; private set; }
 
         /// <summary>
         /// Gets the encoding of the text body content of this response.
@@ -69,9 +65,9 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding of the response body from the <c>Content-Type</c> header,
         /// or <see langword="null"/> if the encoding could not be determined.
         /// </value>
-        public Encoding Encoding { get; private set; }
+        public Encoding? Encoding { get; private set; }
 
-        private WebCmdletElementCollection _inputFields;
+        private WebCmdletElementCollection? _inputFields;
 
         /// <summary>
         /// Gets the HTML input field elements parsed from <see cref="Content"/>.
@@ -85,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
                     EnsureHtmlParser();
 
                     List<PSObject> parsedFields = new();
-                    MatchCollection fieldMatch = s_inputFieldRegex.Matches(Content);
+                    MatchCollection fieldMatch = s_inputFieldRegex!.Matches(Content!);
                     foreach (Match field in fieldMatch)
                     {
                         parsedFields.Add(CreateHtmlObject(field.Value, "INPUT"));
@@ -98,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private WebCmdletElementCollection _links;
+        private WebCmdletElementCollection? _links;
 
         /// <summary>
         /// Gets the HTML a link elements parsed from <see cref="Content"/>.
@@ -112,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                     EnsureHtmlParser();
 
                     List<PSObject> parsedLinks = new();
-                    MatchCollection linkMatch = s_linkRegex.Matches(Content);
+                    MatchCollection linkMatch = s_linkRegex!.Matches(Content!);
                     foreach (Match link in linkMatch)
                     {
                         parsedLinks.Add(CreateHtmlObject(link.Value, "A"));
@@ -125,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private WebCmdletElementCollection _images;
+        private WebCmdletElementCollection? _images;
 
         /// <summary>
         /// Gets the HTML img elements parsed from <see cref="Content"/>.
@@ -139,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                     EnsureHtmlParser();
 
                     List<PSObject> parsedImages = new();
-                    MatchCollection imageMatch = s_imageRegex.Matches(Content);
+                    MatchCollection imageMatch = s_imageRegex!.Matches(Content!);
                     foreach (Match image in imageMatch)
                     {
                         parsedImages.Add(CreateHtmlObject(image.Value, "IMG"));
@@ -161,13 +157,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected void InitializeContent()
         {
-            string contentType = ContentHelper.GetContentType(BaseResponse);
+            string? contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
             {
                 // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
+                Content = StreamHelper.DecodeStream(RawContentStream!, characterSet, out Encoding encoding);
                 Encoding = encoding;
             }
             else
@@ -223,23 +219,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Extract just the opening tag of the HTML element (omitting the closing tag and any contents,
                 // including contained HTML elements)
-                Match match = s_tagRegex.Match(outerHtml);
+                Match match = s_tagRegex!.Match(outerHtml);
 
                 // Extract all the attribute specifications within the HTML element opening tag
-                MatchCollection attribMatches = s_attribsRegex.Matches(match.Value);
+                MatchCollection attribMatches = s_attribsRegex!.Matches(match.Value);
 
                 foreach (Match attribMatch in attribMatches)
                 {
                     // Extract the name and value for this attribute (allowing for variations like single/double/no
                     // quotes, and no value at all)
-                    Match nvMatches = s_attribNameValueRegex.Match(attribMatch.Value);
+                    Match nvMatches = s_attribNameValueRegex!.Match(attribMatch.Value);
                     Debug.Assert(nvMatches.Groups.Count == 5);
 
                     // Name is always captured by group #1
                     string name = nvMatches.Groups[1].Value;
 
                     // The value (if any) is captured by group #2, #3, or #4, depending on quoting or lack thereof
-                    string value = null;
+                    string? value = null;
                     if (nvMatches.Groups[2].Success)
                     {
                         value = nvMatches.Groups[2].Value;
