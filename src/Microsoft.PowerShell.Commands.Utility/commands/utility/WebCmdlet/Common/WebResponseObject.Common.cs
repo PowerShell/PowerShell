@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -74,19 +75,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// </summary>
-        /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response) : this(response, null)
+        /// <param name="response">The Http response.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public WebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken)
         { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class
         /// with the specified <paramref name="contentStream"/>.
         /// </summary>
-        /// <param name="response"></param>
-        /// <param name="contentStream"></param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
+        /// <param name="response">Http response.</param>
+        /// <param name="contentStream">The http content stream.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public WebResponseObject(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken)
         {
-            SetResponse(response, contentStream);
+            SetResponse(response, contentStream, cancellationToken);
             InitializeContent();
             InitializeRawContent(response);
         }
@@ -116,13 +119,13 @@ namespace Microsoft.PowerShell.Commands
             RawContent = raw.ToString();
         }
 
-        private static bool IsPrintable(char c) => char.IsLetterOrDigit(c) 
-                                                || char.IsPunctuation(c) 
-                                                || char.IsSeparator(c) 
-                                                || char.IsSymbol(c) 
+        private static bool IsPrintable(char c) => char.IsLetterOrDigit(c)
+                                                || char.IsPunctuation(c)
+                                                || char.IsSeparator(c)
+                                                || char.IsSymbol(c)
                                                 || char.IsWhiteSpace(c);
 
-        private void SetResponse(HttpResponseMessage response, Stream contentStream)
+        private void SetResponse(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(response);
 
@@ -138,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 Stream st = contentStream;
                 if (contentStream is null)
                 {
-                    st = StreamHelper.GetResponseStream(response);
+                    st = StreamHelper.GetResponseStream(response, cancellationToken);
                 }
 
                 long contentLength = response.Content.Headers.ContentLength.Value;
@@ -148,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
-                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault());
+                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault(), cancellationToken);
             }
 
             // Set the position of the content stream to the beginning

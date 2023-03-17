@@ -235,6 +235,10 @@ function Get-WebListenerUrl {
             'ResponseHeaders',
             'Resume',
             'Retry',
+            'Stall',
+            'StallGZip',
+            'StallBrotli',
+            'StallDeflate',
             '/'
         )]
         [String]$Test,

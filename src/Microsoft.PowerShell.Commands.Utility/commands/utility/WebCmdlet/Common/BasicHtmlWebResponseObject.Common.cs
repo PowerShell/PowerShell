@@ -8,6 +8,7 @@ using System.Management.Automation;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -21,18 +22,20 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
-        /// <param name="response"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response) : this(response, null) { }
+        /// <param name="response">The response.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
         /// with the specified <paramref name="contentStream"/>.
         /// </summary>
-        /// <param name="response"></param>
-        /// <param name="contentStream"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream) : base(response, contentStream)
+        /// <param name="response">The response.</param>
+        /// <param name="contentStream">The content stream associated with the response.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken) : base(response, contentStream, cancellationToken)
         {
-            InitializeContent();
+            InitializeContent(cancellationToken);
             InitializeRawContent(response);
         }
 
@@ -141,7 +144,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Reads the response content from the web response.
         /// </summary>
-        protected void InitializeContent()
+        /// <param name="cancellationToken">The cancellation token.</param>
+        protected void InitializeContent(CancellationToken cancellationToken)
         {
             string contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
@@ -149,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
+                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding, cancellationToken);
                 Encoding = encoding;
             }
             else
