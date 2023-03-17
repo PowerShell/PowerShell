@@ -49,6 +49,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     }
     It 'Resolve-Path -Relative should support user specified base paths' {
-        Resolve-Path -Path $fakeRoot -Relative -RelativeBasePath $testRoot | Should -BeExactly '.\fakeroot'
+        $Expected = Join-Path -Path .\ -ChildPath fakeroot
+        Resolve-Path -Path $fakeRoot -Relative -RelativeBasePath $testRoot | Should -BeExactly $Expected
     }
 }
