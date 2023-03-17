@@ -220,26 +220,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Methods
-    }
 
-    internal static class HtmlParser
-    {
-        internal static Regex s_tagRegex = new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
+        // This class is needed so the static Regexes are initialized only the first time they are used
+        private static class HtmlParser
+        {
+            internal static Regex s_tagRegex = new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
+                    RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+            internal static Regex s_attribsRegex = new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
                 RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        internal static Regex s_attribsRegex = new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
-            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            internal static Regex s_attribNameValueRegex = new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        internal static Regex s_attribNameValueRegex = new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
-            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            internal static Regex s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        internal static Regex s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)",
-            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            internal static Regex s_linkRegex = new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        internal static Regex s_linkRegex = new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
-            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        internal static Regex s_imageRegex = new Regex(@"<img\s[^>]*?>",
-            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            internal static Regex s_imageRegex = new Regex(@"<img\s[^>]*?>",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        }
     }
 }
