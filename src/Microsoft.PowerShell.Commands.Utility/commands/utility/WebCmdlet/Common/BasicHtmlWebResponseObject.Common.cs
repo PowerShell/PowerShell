@@ -18,12 +18,19 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Private Fields
 
-        private static Regex s_attribNameValueRegex;
-        private static Regex s_attribsRegex;
-        private static Regex s_imageRegex;
-        private static Regex s_inputFieldRegex;
-        private static Regex s_linkRegex;
-        private static Regex s_tagRegex;
+        private static readonly Regex s_attribsRegex = CreateAttribsRegex();
+        private static readonly Regex s_attribNameValueRegex = CreateAttribNameValueRegex();
+        private static readonly Regex s_imageRegex = CreateImageRegex();
+        private static readonly Regex s_inputFieldRegex = CreateInputFieldRegex();
+        private static readonly Regex s_linkRegex = CreateLinkRegex();
+        private static readonly Regex s_tagRegex = CreateTagRegex();
+
+        private static Regex CreateAttribsRegex() => new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static Regex CreateAttribNameValueRegex() => new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static Regex CreateImageRegex() => new Regex(@"<img\s[^>]*?>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static Regex CreateInputFieldRegex() => new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static Regex CreateLinkRegex() => new Regex(@"<a\s+[^>]*(/>|>.*?</a>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static Regex CreateTagRegex() => new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         #endregion Private Fields
 
@@ -43,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="contentStream"></param>
         public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream) : base(response, contentStream)
         {
-            EnsureHtmlParser();
             InitializeContent();
             InitializeRawContent(response);
         }
@@ -82,8 +88,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_inputFields == null)
                 {
-                    EnsureHtmlParser();
-
                     List<PSObject> parsedFields = new();
                     MatchCollection fieldMatch = s_inputFieldRegex.Matches(Content);
                     foreach (Match field in fieldMatch)
@@ -109,8 +113,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_links == null)
                 {
-                    EnsureHtmlParser();
-
                     List<PSObject> parsedLinks = new();
                     MatchCollection linkMatch = s_linkRegex.Matches(Content);
                     foreach (Match link in linkMatch)
@@ -136,8 +138,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_images == null)
                 {
-                    EnsureHtmlParser();
-
                     List<PSObject> parsedImages = new();
                     MatchCollection imageMatch = s_imageRegex.Matches(Content);
                     foreach (Match image in imageMatch)
@@ -186,27 +186,6 @@ namespace Microsoft.PowerShell.Commands
             ParseAttributes(html, elementObject);
 
             return elementObject;
-        }
-
-        private static void EnsureHtmlParser()
-        {
-            s_tagRegex ??= new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
-                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            s_attribsRegex ??= new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
-                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            s_attribNameValueRegex ??= new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
-                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            s_inputFieldRegex ??= new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)",
-                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            s_linkRegex ??= new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
-                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            s_imageRegex ??= new Regex(@"<img\s[^>]*?>",
-                RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
