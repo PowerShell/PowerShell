@@ -26,10 +26,15 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Regex s_tagRegex = CreateTagRegex();
 
         private static Regex CreateAttribsRegex() => new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private static Regex CreateAttribNameValueRegex() => new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private static Regex CreateImageRegex() => new Regex(@"<img\s[^>]*?>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private static Regex CreateInputFieldRegex() => new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private static Regex CreateLinkRegex() => new Regex(@"<a\s+[^>]*(/>|>.*?</a>)", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private static Regex CreateTagRegex() => new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         #endregion Private Fields
