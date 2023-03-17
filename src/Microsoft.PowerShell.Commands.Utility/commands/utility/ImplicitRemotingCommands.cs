@@ -2259,19 +2259,40 @@ function Get-PSImplicitRemotingSessionOption
             WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
-                if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
+                if (!wsmanConnectionInfo.UseCompression)
+                {
+                    result.Append("-NoCompression ");
+                }
 
-                if (wsmanConnectionInfo.NoEncryption) { result.Append("-NoEncryption "); }
+                if (wsmanConnectionInfo.NoEncryption)
+                {
+                    result.Append("-NoEncryption ");
+                }
 
-                if (wsmanConnectionInfo.NoMachineProfile) { result.Append("-NoMachineProfile "); }
+                if (wsmanConnectionInfo.NoMachineProfile)
+                {
+                    result.Append("-NoMachineProfile ");
+                }
 
-                if (wsmanConnectionInfo.UseUTF16) { result.Append("-UseUTF16 "); }
+                if (wsmanConnectionInfo.UseUTF16)
+                {
+                    result.Append("-UseUTF16 ");
+                }
 
-                if (wsmanConnectionInfo.SkipCACheck) { result.Append("-SkipCACheck "); }
+                if (wsmanConnectionInfo.SkipCACheck)
+                {
+                    result.Append("-SkipCACheck ");
+                }
 
-                if (wsmanConnectionInfo.SkipCNCheck) { result.Append("-SkipCNCheck "); }
+                if (wsmanConnectionInfo.SkipCNCheck)
+                {
+                    result.Append("-SkipCNCheck ");
+                }
 
-                if (wsmanConnectionInfo.SkipRevocationCheck) { result.Append("-SkipRevocationCheck "); }
+                if (wsmanConnectionInfo.SkipRevocationCheck)
+                {
+                    result.Append("-SkipRevocationCheck ");
+                }
 
                 if (wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.HasValue)
                 {

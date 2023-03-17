@@ -237,7 +237,11 @@ namespace System.Management.Automation.Runspaces
         private void CoreOpen(bool syncCall)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.OpenRunspaceStart();
+            }
+
             lock (SyncRoot)
             {
                 // Call fails if RunspaceState is not BeforeOpen.
@@ -260,7 +264,10 @@ namespace System.Management.Automation.Runspaces
             RaiseRunspaceStateEvents();
 
             OpenHelper(syncCall);
-            if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.OpenRunspaceStop();
+            }
 
 #if LEGACYTELEMETRY
             // We report startup telemetry when opening the runspace - because this is the first time

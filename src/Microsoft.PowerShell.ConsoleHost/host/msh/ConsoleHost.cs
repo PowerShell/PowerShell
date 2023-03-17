@@ -611,7 +611,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         public void PushRunspace(Runspace newRunspace)
         {
-            if (_runspaceRef == null) { return; }
+            if (_runspaceRef == null)
+            {
+                return;
+            }
 
             RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
@@ -744,7 +747,10 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (this.RunspaceRef == null) { return null; }
+                if (this.RunspaceRef == null)
+                {
+                    return null;
+                }
 
                 return this.RunspaceRef.Runspace;
             }
@@ -759,7 +765,10 @@ namespace Microsoft.PowerShell
                     return RunspaceRef.OldRunspace as LocalRunspace;
                 }
 
-                if (RunspaceRef == null) { return null; }
+                if (RunspaceRef == null)
+                {
+                    return null;
+                }
 
                 return RunspaceRef.Runspace as LocalRunspace;
             }
@@ -964,7 +973,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (ui == null) return null;
+                if (ui == null)
+                {
+                    return null;
+                }
+
                 return _consoleColorProxy ??= PSObject.AsPSObject(new ConsoleColorProxy(ui));
             }
         }
@@ -1514,7 +1527,10 @@ namespace Microsoft.PowerShell
                 RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, configurationFilePath, initialCommandArgs);
                 CreateRunspace(args);
 
-                if (ExitCode == ExitCodeInitFailure) { break; }
+                if (ExitCode == ExitCodeInitFailure)
+                {
+                    break;
+                }
 
                 if (!_noExit)
                 {
@@ -2228,7 +2244,10 @@ namespace Microsoft.PowerShell
         {
             // Check local runspace internalHost to see if debugging is enabled.
             LocalRunspace localrunspace = LocalRunspace;
-            if ((localrunspace != null) && !localrunspace.ExecutionContext.EngineHostInterface.DebuggerEnabled) { return; }
+            if ((localrunspace != null) && !localrunspace.ExecutionContext.EngineHostInterface.DebuggerEnabled)
+            {
+                return;
+            }
 
             _debuggerStopEventArgs = e;
             InputLoop baseLoop = null;

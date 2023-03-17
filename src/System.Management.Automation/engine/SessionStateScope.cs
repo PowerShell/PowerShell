@@ -1642,7 +1642,7 @@ namespace System.Management.Automation
 
         internal Type LookupType(string name)
         {
-            if (TypeTable == null) 
+            if (TypeTable == null)
             {
                 return null;
             }
@@ -1698,7 +1698,7 @@ namespace System.Management.Automation
             {
                 newValue = new ConfigurationInfo(name, function, options, context, helpFile, function.IsMetaConfiguration());
             }
-            else 
+            else
             {
                 newValue = new FunctionInfo(name, function, options, context, helpFile);
             }

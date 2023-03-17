@@ -81,11 +81,11 @@ Describe 'OutputRendering tests' -Tag 'CI' {
     }
 
     It 'ToString(OutputRendering) works correctly' {
-        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + 'Hello')
+        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + "Hello`e[m.")
         $s.IsDecorated | Should -BeTrue
-        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
-        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
-        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello'
+        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello`e[m."
+        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello`e[m."
+        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello.'
         { $s.ToString([System.Management.Automation.OutputRendering]::Host) } | Should -Throw -ErrorId 'ArgumentException'
     }
 }

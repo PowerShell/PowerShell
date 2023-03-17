@@ -934,7 +934,10 @@ namespace System.Management.Automation.Runspaces
         private static void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
         {
             List<RemoteRunspace> runspaces = getRunspaces();
-            if (runspaces.Count == 0) { return; }
+            if (runspaces.Count == 0)
+            {
+                return;
+            }
 
             // whether the close of all remoterunspaces completed
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
@@ -959,7 +962,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void StopOrDisconnectAllJobs()
         {
-            if (JobRepository.Jobs.Count == 0) { return; }
+            if (JobRepository.Jobs.Count == 0)
+            {
+                return;
+            }
 
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 

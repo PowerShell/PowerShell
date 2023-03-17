@@ -103,6 +103,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_relative)
                     {
+                        ReadOnlySpan<char> baseCache = null;
+                        ReadOnlySpan<char> adjustedBaseCache = null;
                         foreach (PathInfo currentPath in result)
                         {
                             // When result path and base path is on different PSDrive
@@ -116,8 +118,18 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
+                            int leafIndex = currentPath.Path.LastIndexOf(currentPath.Provider.ItemSeparator);
+                            var basePath = currentPath.Path.AsSpan(0, leafIndex);
+                            if (basePath == baseCache)
+                            {
+                                WriteObject(string.Concat(adjustedBaseCache, currentPath.Path.AsSpan(leafIndex + 1)), enumerateCollection: false);
+                                continue;
+                            }
+
+                            baseCache = basePath;
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
+
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
@@ -125,6 +137,9 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
+
+                            leafIndex = adjustedPath.LastIndexOf(currentPath.Provider.ItemSeparator);
+                            adjustedBaseCache = adjustedPath.AsSpan(0, leafIndex + 1);
 
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
