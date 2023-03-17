@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
                 while (!completed)
                 {
                     // If this is the last input data, flush the decoder's internal buffer and state.
-                    bool flush = (bytesRead == 0);
+                    bool flush = bytesRead is 0;
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
                                     chars, 0, useBufferSize, flush,
                                     out int bytesUsed, out int charsUsed, out completed);
@@ -385,13 +385,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            bool isDefaultEncoding = false;
-            if (!TryGetEncoding(characterSet, out encoding))
-            {
-                // Use the default encoding if one wasn't provided
-                encoding = ContentHelper.GetDefaultEncoding();
-                isDefaultEncoding = true;
-            }
+            bool isDefaultEncoding = TryGetEncoding(characterSet, out encoding);
 
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
@@ -416,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
                     if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding);
+                        content = StreamToString(stream, localEncoding!);
                         encoding = localEncoding;
                     }
                 }
@@ -435,7 +429,8 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException)
             {
-                encoding = null!;
+                // Use the default encoding if one wasn't provided
+                encoding = ContentHelper.GetDefaultEncoding();
             }
 
             return result;

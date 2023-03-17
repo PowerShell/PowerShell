@@ -61,19 +61,19 @@ namespace Microsoft.PowerShell.Commands
             return raw;
         }
 
-        internal static bool IsJson(string contentType)
+        internal static bool IsJson(string? contentType)
         {
             contentType = GetContentTypeSignature(contentType);
             return CheckIsJson(contentType);
         }
 
-        internal static bool IsText(string contentType)
+        internal static bool IsText(string? contentType)
         {
             contentType = GetContentTypeSignature(contentType);
             return CheckIsText(contentType);
         }
 
-        internal static bool IsXml(string contentType)
+        internal static bool IsXml(string? contentType)
         {
             contentType = GetContentTypeSignature(contentType);
             return CheckIsXml(contentType);
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Helper Methods
 
-        private static bool CheckIsJson(string contentType)
+        private static bool CheckIsJson(string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
             return isJson;
         }
 
-        private static bool CheckIsText(string contentType)
+        private static bool CheckIsText(string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
             return isText;
         }
 
-        private static bool CheckIsXml(string contentType)
+        private static bool CheckIsXml(string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -159,11 +159,11 @@ namespace Microsoft.PowerShell.Commands
             return isXml;
         }
 
-        private static string GetContentTypeSignature(string contentType)
+        private static string? GetContentTypeSignature(string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
-                return null!;
+                return null;
             }
 
             string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
