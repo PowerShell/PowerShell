@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            bool isDefaultEncoding = TryGetEncoding(characterSet, out encoding);
+            bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
 
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
