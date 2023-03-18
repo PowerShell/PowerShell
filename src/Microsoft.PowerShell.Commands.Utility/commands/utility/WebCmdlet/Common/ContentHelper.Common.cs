@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -61,19 +62,19 @@ namespace Microsoft.PowerShell.Commands
             return raw;
         }
 
-        internal static bool IsJson(string? contentType)
+        internal static bool IsJson([NotNullWhen(true)] string? contentType)
         {
             contentType = GetContentTypeSignature(contentType);
             return CheckIsJson(contentType);
         }
 
-        internal static bool IsText(string? contentType)
+        internal static bool IsText([NotNullWhen(true)] string? contentType)
         {
             contentType = GetContentTypeSignature(contentType);
             return CheckIsText(contentType);
         }
 
-        internal static bool IsXml(string? contentType)
+        internal static bool IsXml([NotNullWhen(true)] string? contentType)
         {
             contentType = GetContentTypeSignature(contentType);
             return CheckIsXml(contentType);

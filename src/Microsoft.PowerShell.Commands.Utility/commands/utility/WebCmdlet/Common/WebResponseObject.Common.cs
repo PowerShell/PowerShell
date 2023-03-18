@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -51,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or protected sets the response body content as a <see cref="MemoryStream"/>.
         /// </summary>
-        public MemoryStream? RawContentStream { get; protected set; }
+        public MemoryStream RawContentStream { get; protected set; }
 
         /// <summary>
         /// Gets the RelationLink property.
@@ -94,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void InitializeContent()
         {
-            Content = RawContentStream?.ToArray();
+            Content = RawContentStream.ToArray();
         }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
@@ -116,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
                                                 || char.IsSymbol(c) 
                                                 || char.IsWhiteSpace(c);
 
+        [MemberNotNull(nameof(RawContentStream))]
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
             ArgumentNullException.ThrowIfNull(response);

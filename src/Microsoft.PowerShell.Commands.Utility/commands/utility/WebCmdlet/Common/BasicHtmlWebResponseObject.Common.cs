@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
@@ -44,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the <c>Content-Type</c> response header is a recognized text
         /// type.  Otherwise <see langword="null"/>.
         /// </value>
-        public new string? Content { get; private set; }
+        public new string Content { get; private set; }
 
         /// <summary>
         /// Gets the encoding of the text body content of this response.
@@ -67,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_inputFields == null)
                 {
                     List<PSObject> parsedFields = new();
-                    MatchCollection fieldMatch = HtmlParser.InputFieldRegex.Matches(Content!);
+                    MatchCollection fieldMatch = HtmlParser.InputFieldRegex.Matches(Content);
                     foreach (Match field in fieldMatch)
                     {
                         parsedFields.Add(CreateHtmlObject(field.Value, "INPUT"));
@@ -92,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_links == null)
                 {
                     List<PSObject> parsedLinks = new();
-                    MatchCollection linkMatch = HtmlParser.LinkRegex.Matches(Content!);
+                    MatchCollection linkMatch = HtmlParser.LinkRegex.Matches(Content);
                     foreach (Match link in linkMatch)
                     {
                         parsedLinks.Add(CreateHtmlObject(link.Value, "A"));
@@ -117,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_images == null)
                 {
                     List<PSObject> parsedImages = new();
-                    MatchCollection imageMatch = HtmlParser.ImageRegex.Matches(Content!);
+                    MatchCollection imageMatch = HtmlParser.ImageRegex.Matches(Content);
                     foreach (Match image in imageMatch)
                     {
                         parsedImages.Add(CreateHtmlObject(image.Value, "IMG"));
@@ -137,6 +138,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Reads the response content from the web response.
         /// </summary>
+        [MemberNotNull(nameof(Content))]
         protected void InitializeContent()
         {
             string? contentType = ContentHelper.GetContentType(BaseResponse);
@@ -145,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
                 // Fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                Content = StreamHelper.DecodeStream(RawContentStream!, characterSet, out Encoding encoding);
+                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
                 Encoding = encoding;
             }
             else
