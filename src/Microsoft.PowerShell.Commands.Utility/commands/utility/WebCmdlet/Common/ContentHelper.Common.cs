@@ -124,8 +124,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (contentTypeKey != null)
                     {
-                        string? extension = contentTypeKey.GetValue("Extension") as string;
-                        if (extension != null)
+                        if (contentTypeKey.GetValue("Extension") is string extension)
                         {
                             using (RegistryKey? extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
                             {
