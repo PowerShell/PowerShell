@@ -22,12 +22,18 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
+        /// </summary>
+        /// <param name="response"></param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response) : this(response, null) { }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
         /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream) : base(response, contentStream)
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream? contentStream) : base(response, contentStream)
         {
             InitializeContent();
             InitializeRawContent(response);

@@ -74,12 +74,17 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
+        /// <param name="response"></param>
+        /// </summary>
+        public WebResponseObject(HttpResponseMessage response) : this(response, null) { }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class
         /// with the specified <paramref name="contentStream"/>.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
+        public WebResponseObject(HttpResponseMessage response, Stream? contentStream)
         {
             SetResponse(response, contentStream);
             InitializeContent();
@@ -118,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                                                 || char.IsWhiteSpace(c);
 
         [MemberNotNull(nameof(RawContentStream))]
-        private void SetResponse(HttpResponseMessage response, Stream contentStream)
+        private void SetResponse(HttpResponseMessage response, Stream? contentStream)
         {
             ArgumentNullException.ThrowIfNull(response);
 
@@ -131,11 +136,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Stream st = contentStream;
-                if (contentStream is null)
-                {
-                    st = StreamHelper.GetResponseStream(response);
-                }
+                Stream st = contentStream ?? StreamHelper.GetResponseStream(response);
 
                 long contentLength = response.Content.Headers.ContentLength.GetValueOrDefault();
                 if (contentLength <= 0)
