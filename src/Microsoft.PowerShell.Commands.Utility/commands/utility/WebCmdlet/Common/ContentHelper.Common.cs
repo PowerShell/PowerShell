@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Helper Methods
 
-        private static bool CheckIsJson(string? contentType)
+        private static bool CheckIsJson([NotNullWhen(true)] string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             return isJson;
         }
 
-        private static bool CheckIsText(string? contentType)
+        private static bool CheckIsText([NotNullWhen(true)] string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
             return isText;
         }
 
-        private static bool CheckIsXml(string? contentType)
+        private static bool CheckIsXml([NotNullWhen(true)] string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
