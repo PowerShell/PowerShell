@@ -1824,7 +1824,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _UseNewEnvironment;
 
         /// <summary>
-        /// Sets the environment variables for the process.
+        /// Gets or sets the environment variables for the process.
         /// </summary>
         [Parameter]
         public Hashtable Environment
