@@ -181,7 +181,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
     }
 }
 
-Describe "Start-Process" -Tags "Feature" {
+Describe "Environment Tests" -Tags "Feature" {
 
     It "UseNewEnvironment parameter should reset environment variables for child process" {
 
@@ -205,5 +205,16 @@ Describe "Start-Process" -Tags "Feature" {
         } finally {
             $env:TestEnvVariable = $null
         }
+    }
+
+    It '-Environment adds or replaces environment variables to child process' {
+        $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
+        Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ a = 1; B = 'hello'; TERM = 'dumb'; PATH = 'mine' } -RedirectStandardOutput $outputfile
+        $out = Import-Clixml $outputfile
+        ($out | Where-Object { $_.Name -eq 'a' }).Value | Should -Be 1
+        ($out | Where-Object { $_.Name -eq 'B' }).Value | Should -BeExactly 'hello'
+        ($out | Where-Object { $_.Name -eq 'TERM' }).Value | Should -BeExactly 'dumb'
+        $pathSeparator = [System.IO.Path]::PathSeparator
+        ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine"
     }
 }
