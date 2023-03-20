@@ -215,6 +215,10 @@ Describe "Environment Tests" -Tags "Feature" {
         ($out | Where-Object { $_.Name -eq 'B' }).Value | Should -BeExactly 'hello'
         ($out | Where-Object { $_.Name -eq 'TERM' }).Value | Should -BeExactly 'dumb'
         $pathSeparator = [System.IO.Path]::PathSeparator
-        ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine"
+        if ($IsWindows) {
+            ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine${pathSeparator}*"
+        } else {
+            ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine"
+        }
     }
 }
