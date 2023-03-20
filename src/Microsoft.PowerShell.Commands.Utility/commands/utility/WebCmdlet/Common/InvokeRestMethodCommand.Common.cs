@@ -281,8 +281,9 @@ namespace Microsoft.PowerShell.Commands
             return doc != null;
         }
 
-        private static bool TryConvertToJson(string json, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
+        private static bool TryConvertToJson(string json, out object? obj, ref Exception? exRef)
         {
+            bool converted = false;
             try
             {
                 obj = JsonObject.ConvertFromJson(json, out ErrorRecord error);
@@ -299,6 +300,10 @@ namespace Microsoft.PowerShell.Commands
                     exRef = error.Exception;
                     obj = null;
                 }
+                else
+                {
+                    converted = true;
+                }
             }
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
             {
@@ -312,7 +317,7 @@ namespace Microsoft.PowerShell.Commands
                 obj = null;
             }
 
-            return obj != null;
+            return converted;
         }
 
         #endregion Helper Methods
