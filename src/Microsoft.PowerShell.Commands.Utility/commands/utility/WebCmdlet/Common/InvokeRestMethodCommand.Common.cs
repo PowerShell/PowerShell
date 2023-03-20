@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
@@ -258,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
             return xrs;
         }
 
-        private static bool TryConvertToXml(string xml, out object? doc, ref Exception? exRef)
+        private static bool TryConvertToXml(string xml, [NotNullWhen(true)] out object? doc, ref Exception? exRef)
         {
             try
             {
@@ -280,13 +281,11 @@ namespace Microsoft.PowerShell.Commands
             return doc != null;
         }
 
-        private static bool TryConvertToJson(string json, out object? obj, ref Exception? exRef)
+        private static bool TryConvertToJson(string json, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
         {
-            bool converted = false;
             try
             {
-                ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(json, out error);
+                obj = JsonObject.ConvertFromJson(json, out ErrorRecord error);
 
                 if (obj == null)
                 {
@@ -299,10 +298,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     exRef = error.Exception;
                     obj = null;
-                }
-                else
-                {
-                    converted = true;
                 }
             }
             catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
@@ -317,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
                 obj = null;
             }
 
-            return converted;
+            return obj != null;
         }
 
         #endregion Helper Methods
