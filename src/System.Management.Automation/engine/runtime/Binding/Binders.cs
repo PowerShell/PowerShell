@@ -5507,10 +5507,17 @@ namespace System.Management.Automation.Language
                                         new object[] { Name });
         }
 
-        internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, object targetValue,
+        internal static DynamicMetaObject EnsureAllowedInLanguageMode(DynamicMetaObject target, object targetValue,
             string name, bool isStatic, DynamicMetaObject[] args, BindingRestrictions moreTests, string errorID, string resourceString)
         {
-            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage || context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            var context = LocalPipeline.GetExecutionContextFromTLS();
+            if (context == null)
+            {
+                return null;
+            }
+
+            if ((ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage) || 
+                context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
                 {
@@ -6176,16 +6183,15 @@ namespace System.Management.Automation.Language
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 restrictions = restrictions.Merge(BinderUtils.GetLanguageModeCheckIfHasEverUsedConstrainedLanguage());
+            }
 
-                // Validate that this is allowed in the current language mode
-                var context = LocalPipeline.GetExecutionContextFromTLS();
-                DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    context, target, targetValue, Name, _static, new[] { value }, restrictions,
-                    "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
-                if (runtimeError != null)
-                {
-                    return runtimeError.WriteToDebugLog(this);
-                }
+            // Validate that this is allowed in the current language mode.
+            DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
+                target, targetValue, Name, _static, new[] { value }, restrictions,
+                "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
+            if (runtimeError != null)
+            {
+                return runtimeError.WriteToDebugLog(this);
             }
 
             if (!canOptimize)
@@ -6729,16 +6735,15 @@ namespace System.Management.Automation.Language
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 restrictions = restrictions.Merge(BinderUtils.GetLanguageModeCheckIfHasEverUsedConstrainedLanguage());
+            }
 
-                // Validate that this is allowed in the current language mode
-                var context = LocalPipeline.GetExecutionContextFromTLS();
-                DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    context, target, targetValue, Name, _static, args, restrictions,
-                    "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
-                if (runtimeError != null)
-                {
-                    return runtimeError.WriteToDebugLog(this);
-                }
+            // Validate that this is allowed in the current language mode.
+            DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
+                target, targetValue, Name, _static, args, restrictions,
+                "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
+            if (runtimeError != null)
+            {
+                return runtimeError.WriteToDebugLog(this);
             }
 
             if (!canOptimize)
