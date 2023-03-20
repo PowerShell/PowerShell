@@ -22,6 +22,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = "PathWithRelativeBase",
+                   Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
@@ -39,6 +41,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "LiteralPathWithRelativeBase",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -59,7 +63,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the value that determines if the resolved path should
         /// be resolved to its relative version.
         /// </summary>
-        [Parameter()]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "LiteralPath")]
         public SwitchParameter Relative
         {
             get
@@ -78,8 +83,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the path the resolved relative path should be based off.
         /// </summary>
-        [Parameter()]
-        public string RelativeBasePath { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = "PathWithRelativeBase")]
+        [Parameter(Mandatory = true, ParameterSetName = "LiteralPathWithRelativeBase")]
+        public string RelativeBasePath
+        { 
+            get
+            {
+                return _relativeBasePath;
+            }
+
+            set
+            {
+                _relative = true;
+                _relativeBasePath = value;
+            }
+        }
 
         #endregion Parameters
 
