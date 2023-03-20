@@ -316,18 +316,6 @@ namespace System.Management.Automation
             }
         }
 
-        private static Collection<string> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
-        {
-            Collection<string> result = new Collection<string>();
-
-            foreach (var PSSnapin in PSSnapins)
-            {
-                result.Add(BuildPSSnapInDisplayName(PSSnapin));
-            }
-
-            return result;
-        }
-
         private CommandProcessorBase CreateScriptProcessorForSingleShell(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState)
         {
             VerifyScriptRequirements(scriptInfo, Context);
@@ -424,32 +412,6 @@ namespace System.Management.Automation
                             "ScriptRequiresElevation");
                 throw scriptRequiresException;
             }
-        }
-
-        /// <summary>
-        /// Used to determine compatibility between the versions in the requires statement and
-        /// the installed version. The version can be PSSnapin or msh.
-        /// </summary>
-        /// <param name="requires">Versions in the requires statement.</param>
-        /// <param name="installed">Version installed.</param>
-        /// <returns>
-        /// true if requires and installed's major version match and requires' minor version
-        /// is smaller than or equal to installed's
-        /// </returns>
-        /// <remarks>
-        /// In PowerShell V2, script requiring PowerShell 1.0 will fail.
-        /// </remarks>
-        private static bool AreInstalledRequiresVersionsCompatible(Version requires, Version installed)
-        {
-            return requires.Major == installed.Major && requires.Minor <= installed.Minor;
-        }
-
-        private static string BuildPSSnapInDisplayName(PSSnapInSpecification PSSnapin)
-        {
-            return PSSnapin.Version == null ?
-                PSSnapin.Name :
-                StringUtil.Format(DiscoveryExceptions.PSSnapInNameVersion,
-                        PSSnapin.Name, PSSnapin.Version);
         }
 
         /// <summary>
