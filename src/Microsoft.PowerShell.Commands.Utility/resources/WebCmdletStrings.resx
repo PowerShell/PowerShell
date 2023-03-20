@@ -211,7 +211,7 @@
     <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
   </data>
   <data name="UriSchemeMissing" xml:space="preserve">
-    <value>The provided Uri has no Scheme. Using HTTP by default, It might be insecure. It is recommended to use HTTPS explicitly.</value>
+    <value>The provided Uri has no Scheme. Using HTTP by default, which does not provide any security. It is recommended to use HTTPS explicitly.</value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Web request completed. (Number of bytes processed: {0})</value>
