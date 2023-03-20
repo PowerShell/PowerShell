@@ -725,7 +725,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
 
         # ensure the file does not exist
-        Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
         Invoke-WebRequest -Uri $uri -OutFile $TestDrive
 
         Test-Path $outFile | Should -Be $true
