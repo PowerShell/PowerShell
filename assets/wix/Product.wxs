@@ -195,7 +195,7 @@
             <Component Id="MURegistryEntries">
               <Condition>USE_MU=1</Condition>
               <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  -->
-              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes">
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <RegistryValue Type="integer" Value="1" Name="UseMU"  KeyPath="yes"/>
               </RegistryKey>
             </Component>
