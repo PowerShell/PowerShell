@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
                     if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding!);
+                        content = StreamToString(stream, localEncoding);
                         encoding = localEncoding;
                     }
                 }
