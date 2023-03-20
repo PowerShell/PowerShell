@@ -5526,7 +5526,7 @@ namespace System.Management.Automation.Language
                         return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
                     }
 
-                    string targetName = (targetValue as Type)?.GetType()?.FullName;
+                    string targetName = (targetValue as Type)?.FullName;
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "Parameter Binder",
                         Message: $"Method or Property {name} on type {targetName ?? string.Empty} will not be accessible during binding with policy enforcement.");
@@ -7698,10 +7698,10 @@ namespace System.Management.Automation.Language
                     return target.ThrowRuntimeError(restrictions, "CannotCreateTypeConstrainedLanguage", ParserStrings.CannotCreateTypeConstrainedLanguage).WriteToDebugLog(this);
                 }
 
-                string targetName = instanceType?.GetType()?.FullName;
+                string targetName = instanceType?.FullName;
                 SystemPolicy.LogWDACAuditMessage(
                     Title: "Parameter Binder",
-                    Message: $"Will not be able to create type {targetName} during binding with policy enforcement.");
+                    Message: $"Will not be able to create type {targetName ?? string.Empty} during binding with policy enforcement.");
             }
 
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
