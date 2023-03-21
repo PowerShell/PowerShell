@@ -383,9 +383,21 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
+            byte[] buffer = new byte[4];
+            stream.ReadExactly(buffer, 0, 4);
 
+            EncodingHelper.TryDetectEncodingFromBom(buffer, out encoding, out int preambleLength);
+
+            bool isDefaultEncoding = false;
+            
+            if (encoding is null)
+            {
+                isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out encoding);
+            }
+
+            stream.Seek(preambleLength, SeekOrigin.Begin);
             string content = StreamToString(stream, encoding);
+
             if (isDefaultEncoding)
             {
                 // We only look within the first 1k characters as the meta element and
@@ -405,9 +417,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     characterSet = match.Groups["charset"].Value;
 
-                    if (TryGetEncoding(characterSet, out Encoding localEncoding))
+                    if (TryGetEncodingFromCharset(characterSet, out Encoding localEncoding))
                     {
-                        stream.Seek(0, SeekOrigin.Begin);
+                        stream.Seek(preambleLength, SeekOrigin.Begin);
                         content = StreamToString(stream, localEncoding);
                         encoding = localEncoding;
                     }
@@ -417,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        internal static bool TryGetEncodingFromCharset(string characterSet, out Encoding encoding)
         {
             bool result = false;
             try
