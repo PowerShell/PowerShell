@@ -3978,7 +3978,9 @@ namespace System.Management.Automation
                     //  - It's in FullLanguage but not because it's part of a parameter binding that is transitioning from ConstrainedLanguage to FullLanguage
                     // When this is invoked from a parameter binding in transition from ConstrainedLanguage environment to FullLanguage command, we disallow
                     // the property conversion because it's dangerous.
-                    if (ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding))
+                    if (ecFromTLS == null || 
+                        ((ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage || ecFromTLS.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
+                         !ecFromTLS.LanguageModeTransitionInParameterBinding))
                     {
                         result = _constructor();
                         var psobject = valueToConvert as PSObject;
@@ -3995,21 +3997,21 @@ namespace System.Management.Automation
                             SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
                         }
 
+                        if (ecFromTLS?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                        {
+                            SystemPolicy.LogWDACAuditMessage(
+                                Title: "LanguagePrimitives Type Conversion",
+                                Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                                FQID:"LanguageTypeConversionNotAllowed");
+                        }
+
                         typeConversion.WriteLine("Constructor result: \"{0}\".", result);
                     }
                     else
                     {
-                        if (ecFromTLS.LanguageMode != PSLanguageMode.ConstrainedLanguageAudit)
-                        {
-                            RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                                "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                            throw rte;
-                        }
-                        
-                        SystemPolicy.LogWDACAuditMessage(
-                            Title: "LanguagePrimitives Type Conversion",
-                            Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
-                            FQID:"LanguageTypeConversionNotAllowed");
+                        RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
+                            "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
+                        throw rte;
                     }
 
                     return result;

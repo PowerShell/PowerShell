@@ -149,21 +149,22 @@ namespace Microsoft.PowerShell.Commands
             // Prevent additional commands in ConstrainedLanguage mode
             if (_setSupportedCommand)
             {
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                switch (Context.LanguageMode)
                 {
-                    SystemPolicy.LogWDACAuditMessage(
-                        Title: "Import-LocalizedData",
-                        Message: "Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode under policy enforcement.",
-                        FQID: "SupportedCommandsDisabled");
-                }
+                    case PSLanguageMode.ConstrainedLanguage:
+                        NotSupportedException nse =
+                            PSTraceSource.NewNotSupportedException(
+                                ImportLocalizedDataStrings.CannotDefineSupportedCommand);
+                        ThrowTerminatingError(
+                            new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
+                        break;
 
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-                {
-                    NotSupportedException nse =
-                        PSTraceSource.NewNotSupportedException(
-                            ImportLocalizedDataStrings.CannotDefineSupportedCommand);
-                    ThrowTerminatingError(
-                        new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
+                    case PSLanguageMode.ConstrainedLanguageAudit:
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "Import-LocalizedData",
+                            Message: "Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode under policy enforcement.",
+                            FQID: "SupportedCommandsDisabled");
+                        break;
                 }
             }
 

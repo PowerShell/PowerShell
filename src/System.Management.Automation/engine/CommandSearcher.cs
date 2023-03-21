@@ -844,18 +844,15 @@ namespace System.Management.Automation
             if ((result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage || result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
                 (executionContext.LanguageMode == PSLanguageMode.FullLanguage))
             {
-                if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
-                {
-                    SystemPolicy.LogWDACAuditMessage(
-                        Title: "Command Searcher",
-                        Message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.",
-                        FQID:"CommandSearchFailInConstrained");
-                }
-
                 if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     return true;
                 }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    Title: "Command Searcher",
+                    Message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.",
+                    FQID:"CommandSearchFailInConstrained");
             }
 
             // Don't allow invocation of trusted functions from debug breakpoints.
