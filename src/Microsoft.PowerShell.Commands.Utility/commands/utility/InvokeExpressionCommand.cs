@@ -48,7 +48,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 SystemPolicy.LogWDACAuditMessage(
                     Title: "Invoke-Expression Cmdlet",
-                    Message: "Invoke-Expression cmdlet script block would be run in ConstrainedLanguage mode when policy is enforced.");
+                    Message: "Invoke-Expression cmdlet script block would be run in ConstrainedLanguage mode when policy is enforced.",
+                    FQID:"InvokeExpressionCmdletConstrained");
             }
 
             var emptyArray = Array.Empty<object>();

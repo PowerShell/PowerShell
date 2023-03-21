@@ -153,7 +153,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "Import-LocalizedData",
-                        Message: "Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode under policy enforcement.");
+                        Message: "Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode under policy enforcement.",
+                        FQID: "SupportedCommandsDisabled");
                 }
 
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)

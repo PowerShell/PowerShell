@@ -4003,7 +4003,8 @@ namespace System.Management.Automation
                         {
                             SystemPolicy.LogWDACAuditMessage(
                                 Title: "LanguagePrimitives Type Conversion",
-                                Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.");
+                                Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                                FQID:"LanguageTypeConversionNotAllowed");
                         }
 
                         RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
@@ -5658,7 +5659,8 @@ namespace System.Management.Automation
 
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "LanguagePrimitives Type Conversion",
-                        Message: $"Type conversion from {fromType.FullName} to {toType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.");
+                        Message: $"Type conversion from {fromType.FullName} to {toType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                        FQID:"LanguageTypeConversionNotAllowed");
                 }
             }
 

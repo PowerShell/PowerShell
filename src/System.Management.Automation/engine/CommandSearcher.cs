@@ -848,7 +848,8 @@ namespace System.Management.Automation
                 {
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "Command Searcher",
-                        Message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.");
+                        Message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.",
+                        FQID:"CommandSearchFailInConstrained");
                 }
 
                 if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage)

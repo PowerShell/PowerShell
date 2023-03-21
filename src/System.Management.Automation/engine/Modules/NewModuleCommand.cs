@@ -184,7 +184,8 @@ namespace Microsoft.PowerShell.Commands
 
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "New-Module Cmdlet",
-                        Message: "A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.");
+                        Message: "A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.",
+                        FQID: "NewModuleCmdletWitFullLanguageScriptblockNotAllowed");
                 }
 
                 string gs = System.Guid.NewGuid().ToString();

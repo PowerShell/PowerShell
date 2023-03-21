@@ -1221,7 +1221,8 @@ namespace Microsoft.PowerShell.Commands
 
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "ForEach-Object Cmdlet",
-                        Message: $"Method invocation on type {objectType.FullName} would not be allowed when run in non-audit policy enforcement mode.");
+                        Message: $"Method invocation on type {objectType.FullName} would not be allowed when run in non-audit policy enforcement mode.",
+                        FQID:"ForEachObjectCmdletMethodInvocationNotAllowed");
                 }
             }
 

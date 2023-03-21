@@ -62,7 +62,8 @@ namespace System.Management.Automation
                         // In audit mode, report but don't enforce.
                         SystemPolicy.LogWDACAuditMessage(
                             Title: "Module Scope Call Operator",
-                            Message: "The module scope call operator, & (Get-Module MyModule) MyFunction, would be denied when run in policy enforcement.");
+                            Message: "The module scope call operator, & (Get-Module MyModule) MyFunction, would be denied when run in policy enforcement.",
+                            FQID: "ModuleScopeCallOperatorNotAllowed");
                     }
                     else
                     {
@@ -3013,7 +3014,8 @@ namespace System.Management.Automation
 
                                         SystemPolicy.LogWDACAuditMessage(
                                             Title: "ForEach Operator",
-                                            Message: $"The ForEach operator would fail method call, {method.Name ?? string.Empty}, when run in Constrained Language mode.");
+                                            Message: $"The ForEach operator would fail method invocation, {method.Name ?? string.Empty}, when run in Constrained Language mode.",
+                                            FQID: "ForEachOperatorMethodInvocationNotAllowed");
                                     }
                                 }
 

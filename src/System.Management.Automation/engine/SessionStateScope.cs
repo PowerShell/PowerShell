@@ -2005,7 +2005,8 @@ namespace System.Management.Automation
                         {
                             SystemPolicy.LogWDACAuditMessage(
                                 Title: "Session State Variables",
-                                Message: $"Changing or creating the variable {variable.Name} scope to AllScope will be prevented in ConstrainedLanguage mode for unstrusted script.");
+                                Message: $"Changing or creating the variable {variable.Name} scope to AllScope will be prevented in ConstrainedLanguage mode for unstrusted script.",
+                                FQID: "AllScopeVariableNotAllowed");
                         }
                         break;
                 }

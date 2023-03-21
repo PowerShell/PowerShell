@@ -5529,7 +5529,8 @@ namespace System.Management.Automation.Language
                     string targetName = (targetValue as Type)?.FullName;
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "Parameter Binder",
-                        Message: $"Method or Property {name} on type {targetName ?? string.Empty} will not be accessible during binding with policy enforcement.");
+                        Message: $"Method or Property {name} on type {targetName ?? string.Empty} invocation will not be allowed with policy enforcement.",
+                        FQID:"MethodOrPropertyInvocationNotAllowed");
                 }
             }
 
@@ -7701,7 +7702,8 @@ namespace System.Management.Automation.Language
                 string targetName = instanceType?.FullName;
                 SystemPolicy.LogWDACAuditMessage(
                     Title: "Parameter Binder",
-                    Message: $"Will not be able to create type {targetName ?? string.Empty} during binding with policy enforcement.");
+                    Message: $"Will not be able to create type {targetName ?? string.Empty} during binding with policy enforcement.",
+                    FQID:"BinderTypeCreationNotAllowed");
             }
 
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));

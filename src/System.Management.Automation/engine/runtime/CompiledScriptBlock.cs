@@ -1071,7 +1071,8 @@ namespace System.Management.Automation
                 {
                     SystemPolicy.LogWDACAuditMessage(
                         Title: "Compiled Script Block Dot Source",
-                        Message: $"Script block invocation into current scope language transition would be disallowed when policiy is enforced.  Script language mode: {this.LanguageMode}, Context language mode: {context.LanguageMode}");
+                        Message: $"Script block invocation into current scope language transition would be disallowed when policiy is enforced.  Script language mode: {this.LanguageMode}, Context language mode: {context.LanguageMode}",
+                        FQID: "ScriptBlockDotSourceNotAllowed");
 
                     // Since we are in audit mode, go ahead and allow the language transition.
                     oldLanguageMode = context.LanguageMode;

@@ -78,11 +78,13 @@ namespace System.Management.Automation.Security
         /// </summary>
         /// <param name="Title">Audit message title.</param>
         /// <param name="Message">Audit message message.</param>
+        /// <param name="FQID">Fully Qualified ID.</param>
         internal static void LogWDACAuditMessage(
             string Title,
-            string Message)
+            string Message,
+            string FQID )
         {
-            var auditMessage = $"WDAC Audit mode - {Title} - {Message}";
+            var auditMessage = $"WDAC Audit mode - {Title} - {Message} - {FQID}";
 
             // TODO:  Add ETW call
             // PSEtwLog.LogWDACAuditEvent("message");

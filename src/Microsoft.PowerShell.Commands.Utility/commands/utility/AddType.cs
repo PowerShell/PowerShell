@@ -571,7 +571,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 SystemPolicy.LogWDACAuditMessage(
                     Title: "Add-Type Cmdlet",
-                    Message: "Add-Type cmdlet would not be allowed in ConstrainedLanguage mode.");
+                    Message: "Add-Type cmdlet would not be allowed in ConstrainedLanguage mode.",
+                    FQID: "AddTypeCmdletDisabled");
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core
