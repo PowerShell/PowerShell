@@ -33,17 +33,12 @@ namespace Microsoft.PowerShell.Commands
 
             switch (first2Bytes)
             {
-                case UTF8PreambleFirst2Bytes:
-                    if (buffer[2] == UTF8PreambleByte2)
-                    {
-                        encoding = Encoding.UTF8;
-                        preambleLength = UTF8PreambleLength;
-                        return true;
-                    }
-                    break;
+                case UTF8PreambleFirst2Bytes when buffer[2] == UTF8PreambleByte2:
+                    encoding = Encoding.UTF8;
+                    preambleLength = UTF8PreambleLength;
+                    return true;
 
                 case UTF32OrUnicodePreambleFirst2Bytes:
-                    // UTF32 not supported on Phone
                     if (buffer[2] == UTF32PreambleByte2 && buffer[3] == UTF32PreambleByte3)
                     {
                         encoding = Encoding.UTF32;
@@ -61,16 +56,12 @@ namespace Microsoft.PowerShell.Commands
                     preambleLength = UnicodePreambleLength;
                     return true;
                 
-                case BigEndianUTF32PreambleFirst2Bytes:
-                    if (buffer[2] == BigEndianUTF32PreambleByte2 && buffer[3] == BigEndianUTF32PreambleByte3)
-                    {
-                        encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
-                        preambleLength = UTF32PreambleLength;
-                        return true;
-                    }
-                    break;
+                case BigEndianUTF32PreambleFirst2Bytes when buffer[2] == BigEndianUTF32PreambleByte2 && buffer[3] == BigEndianUTF32PreambleByte3:
+                    encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
+                    preambleLength = UTF32PreambleLength;
+                    return true;
             }
-        
+
             encoding = null;
             preambleLength = 0;
             return false;
