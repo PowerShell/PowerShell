@@ -1157,9 +1157,6 @@ namespace Microsoft.PowerShell.Commands
 
                 switch (content)
                 {
-                    case FormObject form:
-                        SetRequestContent(request, form.Fields);
-                        break;
                     case IDictionary dictionary when request.Method != HttpMethod.Get:
                         SetRequestContent(request, dictionary);
                         break;
