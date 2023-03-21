@@ -158,8 +158,13 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of this web response.</returns>
         public sealed override string ToString()
         {
-            char[]? stringContent = Content is null ? null : Encoding.ASCII.GetChars(Content);
-            for (int counter = 0; counter < stringContent?.Length; counter++)
+            if (Content is null)
+            {
+                return string.Empty;
+            }
+
+            char[] stringContent = Encoding.ASCII.GetChars(Content);
+            for (int counter = 0; counter < stringContent.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))
                 {
