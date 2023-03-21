@@ -3999,17 +3999,17 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        if (ecFromTLS.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                        if (ecFromTLS.LanguageMode != PSLanguageMode.ConstrainedLanguageAudit)
                         {
-                            SystemPolicy.LogWDACAuditMessage(
-                                Title: "LanguagePrimitives Type Conversion",
-                                Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
-                                FQID:"LanguageTypeConversionNotAllowed");
+                            RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
+                                "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
+                            throw rte;
                         }
-
-                        RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                            "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                        throw rte;
+                        
+                        SystemPolicy.LogWDACAuditMessage(
+                            Title: "LanguagePrimitives Type Conversion",
+                            Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                            FQID:"LanguageTypeConversionNotAllowed");
                     }
 
                     return result;
