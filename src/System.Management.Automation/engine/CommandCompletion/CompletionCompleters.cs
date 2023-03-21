@@ -726,8 +726,11 @@ namespace System.Management.Automation
                 {
                     if (pattern.IsMatch(alias))
                     {
-                        result.Add(new CompletionResult("-" + alias + colonSuffix, alias, CompletionResultType.ParameterName,
-                                                          parameterType + alias));
+                        result.Add(new CompletionResult(
+                            $"-{alias}{colonSuffix}",
+                            alias,
+                            CompletionResultType.ParameterName,
+                            parameterType + alias));
                     }
                 }
             }
@@ -803,8 +806,11 @@ namespace System.Management.Automation
                     {
                         if (pattern.IsMatch(alias))
                         {
-                            listInUse.Add(new CompletionResult("-" + alias + colonSuffix, alias, CompletionResultType.ParameterName,
-                                                              type + alias));
+                            listInUse.Add(new CompletionResult(
+                                $"-{alias}{colonSuffix}",
+                                alias,
+                                CompletionResultType.ParameterName,
+                                type + alias));
                         }
                     }
                 }
