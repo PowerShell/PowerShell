@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                     StreamHelper.ChunkSize,
                     this,
                     response.Content.Headers.ContentLength.GetValueOrDefault());
-                WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream) : new WebResponseObject(response, responseStream);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
