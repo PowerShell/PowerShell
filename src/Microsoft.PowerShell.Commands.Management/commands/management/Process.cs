@@ -2201,17 +2201,20 @@ namespace Microsoft.PowerShell.Commands
                     processEnvironment.Remove(entry.Key.ToString());
                 }
 
-                if (entry.Key.ToString().Equals("PATH"))
+                if (entry.Value != null)
                 {
+                    if (entry.Key.ToString().Equals("PATH"))
+                    {
 #if UNIX
-                    processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
+                        processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
 #else
-                    processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString() + Path.PathSeparator + System.Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.Machine) + Path.PathSeparator + System.Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.User));
+                        processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString() + Path.PathSeparator + System.Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.Machine) + Path.PathSeparator + System.Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.User));
 #endif
-                }
-                else
-                {
-                    processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
+                    }
+                    else
+                    {
+                        processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
+                    }
                 }
             }
         }
