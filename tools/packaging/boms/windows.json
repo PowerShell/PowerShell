@@ -1,31 +1,7 @@
 [
   {
-    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
-    "FileType": "Product"
-  },
-  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "assets/Powershell_av_colors.ico",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "assets/Powershell_avatar.ico",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "assets/Powershell_black.ico",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "assets/ps_black_32x32.ico",
-    "FileType": "Product"
   },
   {
     "Pattern": "clretwrc.dll",
@@ -676,6 +652,22 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "JetBrains.Annotations.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Json.More.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonPointer.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonSchema.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -774,10 +766,6 @@
   {
     "Pattern": "ko/WindowsFormsIntegration.resources.dll",
     "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "LICENSE.txt",
-    "FileType": "Product"
   },
   {
     "Pattern": "Markdig.Signed.dll",
@@ -1012,19 +1000,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Namotion.Reflection.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "netstandard.dll",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "Newtonsoft.Json.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "JsonSchema.Net.dll",
     "FileType": "NonProduct"
   },
   {
@@ -3488,11 +3468,39 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/Powershell_av_colors.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/Powershell_avatar.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/Powershell_black.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/ps_black_32x32.ico",
+    "FileType": "Product"
+  },
+  {
     "Pattern": "Install-PowerShellRemoting.ps1",
     "FileType": "Product"
   },
   {
     "Pattern": "InstallPSCorePolicyDefinitions.ps1",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "LICENSE.txt",
     "FileType": "Product"
   },
   {
