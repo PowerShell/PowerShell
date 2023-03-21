@@ -383,13 +383,16 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
+            bool isDefaultEncoding = false;
             byte[] buffer = new byte[4];
-            stream.ReadExactly(buffer, 0, 4);
+
+            if (stream.Length >= 4)
+            {
+                stream.ReadExactly(buffer, 0, 4);
+            }
 
             EncodingHelper.TryDetectEncodingFromBom(buffer, out encoding, out int preambleLength);
 
-            bool isDefaultEncoding = false;
-            
             if (encoding is null)
             {
                 isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out encoding);
