@@ -194,8 +194,8 @@
             </Component>
             <Component Id="MURegistryEntries">
               <Condition>USE_MU=1</Condition>
-              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  -->
-              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  We don't want to uninstall because it's used by both Preview and Stable and the detection relies on PS7 being installed for this to take effect. -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes">
                   <RegistryValue Type="integer" Value="1" Name="UseMU"  KeyPath="yes"/>
               </RegistryKey>
             </Component>
