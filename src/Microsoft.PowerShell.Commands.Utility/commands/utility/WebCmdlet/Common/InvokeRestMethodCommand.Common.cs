@@ -135,8 +135,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             else if (ShouldSaveToOutFile)
-            {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+            {   
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(baseResponseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))

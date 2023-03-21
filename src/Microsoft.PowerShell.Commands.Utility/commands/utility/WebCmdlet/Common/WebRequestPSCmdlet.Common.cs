@@ -484,6 +484,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
+        internal string _qualifiedOutFile;
+
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
         /// <summary>
@@ -852,7 +854,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Output ??
-            if (PassThru && OutFile is null)
+            if (PassThru.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
@@ -862,6 +864,15 @@ namespace Microsoft.PowerShell.Commands
             if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
+                ThrowTerminatingError(error);
+            }
+
+            _qualifiedOutFile = ShouldSaveToOutFile ? QualifiedOutFile : null;
+
+            // OutFile must not be a directory to use Resume.
+            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
                 ThrowTerminatingError(error);
             }
         }
@@ -1093,6 +1104,7 @@ namespace Microsoft.PowerShell.Commands
             if (Resume.IsPresent)
             {
                 FileInfo fileInfo = new(QualifiedOutFile);
+
                 if (fileInfo.Exists)
                 {
                     request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);

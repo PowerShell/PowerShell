@@ -735,6 +735,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
+    It "Invoke-WebRequest -OutFile folder Downloads the file and names it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        Invoke-WebRequest -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -2000,6 +2013,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
+        It "Invoke-WebRequest -Resume should fail if -OutFile folder" {
+            { Invoke-WebRequest -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
             $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
@@ -2689,6 +2707,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
         $jsonContent.headers.Host | Should -Be $uri.Authority
+    }
+
+    It "Invoke-RestMethod -OutFile folder Downloads the file and names it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        Invoke-RestMethod -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
     It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
@@ -3879,6 +3910,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-RestMethod -Resume requires -OutFile" {
             { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+        It "Invoke-RestMethod -Resume should fail if -OutFile folder" {
+            { Invoke-RestMethod -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Invoke-RestMethod -Resume Downloads the whole file when the file does not exist" {
