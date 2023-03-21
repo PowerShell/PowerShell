@@ -84,19 +84,7 @@ namespace System.Management.Automation.Security
             string Message,
             string FQID )
         {
-            var auditMessage = $"WDAC Audit mode - {Title} - {Message} - {FQID}";
-
-            // TODO:  Add ETW call
-            // PSEtwLog.LogWDACAuditEvent("message");
-
-            // TODO: Debug only
-            try
-            {
-                System.Console.WriteLine(string.Empty);
-                System.Console.WriteLine(auditMessage);
-                System.Console.WriteLine(string.Empty);
-            }
-            catch { }
+            PSEtwLog.LogWDACAuditEvent(Title, Message, FQID);
         }
 
         /// <summary>
