@@ -577,7 +577,12 @@ namespace System.Management.Automation
             {
                 case PseudoBindingInfoType.PseudoBindingFail:
                     // The command is a cmdlet or script cmdlet. Binding failed
-                    result = GetParameterCompletionResults(partialName, uint.MaxValue, pseudoBinding.UnboundParameters, withColon);
+                    result = GetParameterCompletionResults(
+                        partialName,
+                        uint.MaxValue,
+                        pseudoBinding.UnboundParameters,
+                        withColon,
+                        pseudoBinding.CommandInfo.CommandMetadata.HideCommonParameters);
                     break;
                 case PseudoBindingInfoType.PseudoBindingSucceed:
                     // The command is a cmdlet or script cmdlet. Binding succeeded.
@@ -614,7 +619,8 @@ namespace System.Management.Automation
                     parameterName,
                     bindingInfo.ValidParameterSetsFlags,
                     bindingInfo.UnboundParameters,
-                    withColon);
+                    withColon,
+                    bindingInfo.CommandInfo.CommandMetadata.HideCommonParameters);
                 return result;
             }
 
@@ -636,7 +642,8 @@ namespace System.Management.Automation
                         parameterName,
                         bindingInfo.ValidParameterSetsFlags,
                         bindingInfo.UnboundParameters,
-                        withColon);
+                        withColon, 
+                        bindingInfo.CommandInfo.CommandMetadata.HideCommonParameters);
                 }
 
                 return result;
@@ -651,7 +658,8 @@ namespace System.Management.Automation
                         parameterName,
                         bindingInfo.ValidParameterSetsFlags,
                         bindingInfo.BoundParameters.Values,
-                        withColon);
+                        withColon,
+                        bindingInfo.CommandInfo.CommandMetadata.HideCommonParameters);
                 }
 
                 return result;
@@ -745,19 +753,20 @@ namespace System.Management.Automation
         /// <param name="validParameterSetFlags"></param>
         /// <param name="parameters"></param>
         /// <param name="withColon"></param>
+        /// <param name="hideCommonParameters"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetParameterCompletionResults(
             string parameterName,
             uint validParameterSetFlags,
             IEnumerable<MergedCompiledCommandParameter> parameters,
-            bool withColon)
+            bool withColon,
+            bool hideCommonParameters)
         {
             var result = new List<CompletionResult>();
             var commonParamResult = new List<CompletionResult>();
             var pattern = WildcardPattern.Get(parameterName + "*", WildcardOptions.IgnoreCase);
             var colonSuffix = withColon ? ":" : string.Empty;
 
-            bool addCommonParameters = true;
             foreach (MergedCompiledCommandParameter param in parameters)
             {
                 bool inParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
@@ -773,8 +782,7 @@ namespace System.Management.Automation
                 {
                     // Then using functions to back dynamic keywords, we don't necessarily
                     // want all of the parameters to be shown to the user. Those that are marked
-                    // DontShow will not be displayed. Also, if any of the parameters have
-                    // don't show set, we won't show any of the common parameters either.
+                    // DontShow will not be displayed.
                     bool showToUser = true;
                     var compiledAttributes = param.Parameter.CompiledAttributes;
                     if (compiledAttributes != null && compiledAttributes.Count > 0)
@@ -785,7 +793,6 @@ namespace System.Management.Automation
                             if (pattr != null && pattr.DontShow)
                             {
                                 showToUser = false;
-                                addCommonParameters = false;
                                 break;
                             }
                         }
@@ -817,7 +824,7 @@ namespace System.Management.Automation
             }
 
             // Add the common parameters to the results if expected.
-            if (addCommonParameters)
+            if (!hideCommonParameters)
             {
                 result.AddRange(commonParamResult);
             }

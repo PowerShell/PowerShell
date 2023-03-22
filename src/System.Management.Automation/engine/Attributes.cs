@@ -370,6 +370,11 @@ namespace System.Management.Automation
         /// with ambient remoting.
         /// </summary>
         public RemotingCapability RemotingCapability { get; set; } = RemotingCapability.PowerShell;
+
+        /// <summary>
+        /// True if the cmdlet should hide common parameters from completion, false otherwise.
+        /// </summary>
+        public bool HideCommonParameters { get; set; }
     }
 
     /// <summary>

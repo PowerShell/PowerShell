@@ -598,6 +598,12 @@ namespace System.Management.Automation
         /// <value></value>
         internal ObsoleteAttribute Obsolete { get; set; }
 
+        /// <summary>
+        /// True if the cmdlet should hide common parameters from completion, false otherwise.
+        /// </summary>
+        /// <value></value>
+        public bool HideCommonParameters { get; set; }
+
         #endregion
 
         #region internal members
@@ -762,6 +768,8 @@ namespace System.Management.Automation
             {
                 PositionalBinding = cmdletBindingAttribute.PositionalBinding;
             }
+
+            HideCommonParameters = attribute.HideCommonParameters;
         }
 
         /// <summary>

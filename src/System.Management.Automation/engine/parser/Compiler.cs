@@ -1410,6 +1410,10 @@ namespace System.Management.Automation.Language
                 {
                     result.RemotingCapability = s_attrArgToRemotingCapabilityConverter.Target(s_attrArgToRemotingCapabilityConverter, argValue);
                 }
+                else if (argumentName.Equals("HideCommonParameters", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.HideCommonParameters = s_attrArgToBoolConverter.Target(s_attrArgToBoolConverter, argValue);
+                }
                 else
                 {
                     throw InterpreterError.NewInterpreterException(

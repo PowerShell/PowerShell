@@ -883,6 +883,24 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
+    it 'Should hide common parameters when attribute is set' {
+        $res = TabExpansion2 -inputScript @'
+function Verb-Noun
+{
+    [CmdletBinding(HideCommonParameters)]
+    Param
+    (
+        [Parameter()]
+        [string[]]
+        $Param1
+    )
+}
+Verb-Noun -
+'@
+        $res.CompletionMatches.Count | Should -be 1
+        $res.CompletionMatches[0].CompletionText | Should -Be '-Param1'
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
