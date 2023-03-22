@@ -37,32 +37,30 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string GetOutFilePath(HttpResponseMessage response, string _qualifiedOutFile)
         {            
-            if (Directory.Exists(_qualifiedOutFile))
-            {
-                string contentDisposition = response.Content.Headers.ContentDisposition?.FileNameStar ?? response.Content.Headers.ContentDisposition?.FileName;
-                string pathAndQuery = response.RequestMessage.RequestUri.PathAndQuery;
-
-                if (!string.IsNullOrEmpty(contentDisposition)) 
-                {
-                    // Get file name from Content-Disposition header if present
-                    return Path.Join(_qualifiedOutFile, contentDisposition);
-                }
-
-                if (pathAndQuery != "/")
-                {
-                    string lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]);
-
-                    // Get file name from last segment of Uri
-                    return Path.Join(_qualifiedOutFile, lastUriSegment);
-                }
-
-                // File name not found use sanitized Host name instead
-                return Path.Join(_qualifiedOutFile, response.RequestMessage.RequestUri.Host.Replace('.', '_'));
-            }
-            else
+            if (!Directory.Exists(_qualifiedOutFile))
             {
                 return _qualifiedOutFile;
             }
+
+            string contentDisposition = response.Content.Headers.ContentDisposition?.FileNameStar ?? response.Content.Headers.ContentDisposition?.FileName;
+            string pathAndQuery = response.RequestMessage.RequestUri.PathAndQuery;
+
+            if (!string.IsNullOrEmpty(contentDisposition)) 
+            {
+                // Get file name from Content-Disposition header if present
+                return Path.Join(_qualifiedOutFile, contentDisposition);
+            }
+
+            if (pathAndQuery != "/")
+            {
+                string lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]);
+
+                // Get file name from last segment of Uri
+                return Path.Join(_qualifiedOutFile, lastUriSegment);
+            }
+
+            // File name not found use sanitized Host name instead
+            return Path.Join(_qualifiedOutFile, response.RequestMessage.RequestUri.Host.Replace('.', '_'));
         }
 
         internal static string GetProtocol(HttpResponseMessage response) => string.Create(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");
