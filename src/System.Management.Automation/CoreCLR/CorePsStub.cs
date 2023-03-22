@@ -436,6 +436,19 @@ namespace System.Management.Automation.Security
         private SystemPolicy() { }
 
         /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="Title">Audit message title.</param>
+        /// <param name="Message">Audit message message.</param>
+        /// <param name="FQID">Fully Qualified ID.</param>
+        internal static void LogWDACAuditMessage(
+            string Title,
+            string Message,
+            string FQID )
+        {
+        }
+
+        /// <summary>
         /// Gets the system lockdown policy.
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
