@@ -749,12 +749,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Invoke-WebRequest -OutFile folder Downloads the file and names it as the Content-Disposition header if present." {
+        $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+        $ContentDisposition.FileName = 'DownloadedFile.txt'
         $query = @{
-            contentdisposition = 'DownloadedFile.txt'
+            contentdisposition = $ContentDisposition
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $content = Invoke-WebRequest -Uri $uri
-        $outFile = Join-Path $TestDrive $query['contentdisposition']
+        $outFile = Join-Path $TestDrive $ContentDisposition.FileName
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
@@ -2739,12 +2741,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Invoke-RestMethod -OutFile folder Downloads the file and names it as the Content-Disposition header if present." {
+        $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+        $ContentDisposition.FileName = 'DownloadedFile.txt'
         $query = @{
-            contentdisposition = 'DownloadedFile.txt'
+            contentdisposition = $ContentDisposition
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $content = Invoke-WebRequest -Uri $uri
-        $outFile = Join-Path $TestDrive $query['contentdisposition']
+        $outFile = Join-Path $TestDrive $ContentDisposition.FileName
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
