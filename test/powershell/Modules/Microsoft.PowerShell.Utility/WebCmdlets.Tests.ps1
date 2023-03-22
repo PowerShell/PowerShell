@@ -748,6 +748,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
+    It "Invoke-WebRequest -OutFile folder Downloads the file and names it as the Content-Disposition header if present." {
+        $query = @{
+            contentdisposition = 'DownloadedFile.txt'
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $query['contentdisposition']
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        Invoke-WebRequest -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -2713,6 +2729,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $content = Invoke-WebRequest -Uri $uri
         $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        Invoke-RestMethod -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
+    It "Invoke-RestMethod -OutFile folder Downloads the file and names it as the Content-Disposition header if present." {
+        $query = @{
+            contentdisposition = 'DownloadedFile.txt'
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $query['contentdisposition']
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
