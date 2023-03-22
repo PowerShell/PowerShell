@@ -47,18 +47,17 @@ namespace Microsoft.PowerShell.Commands
                     // Get file name from Content-Disposition header if present
                     return Path.Join(_qualifiedOutFile, contentDisposition);
                 }
-                else if (pathAndQuery != "/")
+
+                if (pathAndQuery != "/")
                 {
                     string lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]);
 
                     // Get file name from last segment of Uri
                     return Path.Join(_qualifiedOutFile, lastUriSegment);
                 }
-                else
-                {
-                    // File name not found use sanitized Host name instead
-                    return Path.Join(_qualifiedOutFile, response.RequestMessage.RequestUri.Host.Replace('.', '_'));
-                }
+
+                // File name not found use sanitized Host name instead
+                return Path.Join(_qualifiedOutFile, response.RequestMessage.RequestUri.Host.Replace('.', '_'));
             }
             else
             {
