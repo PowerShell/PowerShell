@@ -223,11 +223,16 @@ Describe "Environment Tests" -Tags "Feature" {
     }
 
     It '-Environment can remove an environment variable from child process' {
-        $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
-        Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ a = $null; TERM = $null; TEMP = $null } -RedirectStandardOutput $outputfile
-        $out = Import-Clixml $outputfile
-        $out | Where-Object { $_.Name -eq 'a' } | Should -BeNullOrEmpty
-        $out | Where-Object { $_.Name -eq 'TERM' } | Should -BeNullOrEmpty
-        $out | Where-Object { $_.Name -eq 'TEMP' } | Should -BeNullOrEmpty
+        try {
+            $env:existing = 1 # set a variable that we will remove
+            $env:nonexisting = $null # validate that removing a non-existing variable is a no-op
+            $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
+            Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ existing = $null; nonexisting = $null } -RedirectStandardOutput $outputfile
+            $out = Import-Clixml $outputfile
+            $out | Where-Object { $_.Name -eq 'existing' } | Should -BeNullOrEmpty
+            $out | Where-Object { $_.Name -eq 'nonexisting' } | Should -BeNullOrEmpty
+        } finally {
+            $env:existing = $null
+        }
     }
 }
