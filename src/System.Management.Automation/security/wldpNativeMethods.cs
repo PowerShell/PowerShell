@@ -76,15 +76,15 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Writes to PowerShell WDAC Audit mode ETW log.
         /// </summary>
-        /// <param name="Title">Audit message title.</param>
-        /// <param name="Message">Audit message message.</param>
-        /// <param name="FQID">Fully Qualified ID.</param>
+        /// <param name="title">Audit message title.</param>
+        /// <param name="message">Audit message message.</param>
+        /// <param name="fqid">Fully Qualified ID.</param>
         internal static void LogWDACAuditMessage(
-            string Title,
-            string Message,
-            string FQID )
+            string title,
+            string message,
+            string fqid)
         {
-            PSEtwLog.LogWDACAuditEvent(Title, Message, FQID);
+            PSEtwLog.LogWDACAuditEvent(title, message, fqid);
         }
 
         /// <summary>

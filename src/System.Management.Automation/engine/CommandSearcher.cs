@@ -850,9 +850,9 @@ namespace System.Management.Automation
                 }
 
                 SystemPolicy.LogWDACAuditMessage(
-                    Title: "Command Searcher",
-                    Message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.",
-                    FQID:"CommandSearchFailInConstrained");
+                    title: "Command Searcher",
+                    message: $"Command {result.Name} in module {result.ModuleName ?? string.Empty} is untrusted and would not be accessible in ConstrainedLanguage mode.",
+                    fqid: "CommandSearchFailInConstrained");
             }
 
             // Don't allow invocation of trusted functions from debug breakpoints.

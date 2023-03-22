@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Check ScriptBlock language mode.  If it is different than the context language mode
                 // then throw error since private trusted script functions may be exposed.
-                if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) || (Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
+                if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
                     _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
                 {
                     if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
@@ -183,9 +183,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
-                        Title: "New-Module Cmdlet",
-                        Message: "A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.",
-                        FQID: "NewModuleCmdletWitFullLanguageScriptblockNotAllowed");
+                        title: "New-Module Cmdlet",
+                        message: "A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.",
+                        fqid: "NewModuleCmdletWitFullLanguageScriptblockNotAllowed");
                 }
 
                 string gs = System.Guid.NewGuid().ToString();

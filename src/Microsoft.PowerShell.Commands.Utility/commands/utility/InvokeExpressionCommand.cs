@@ -47,9 +47,9 @@ namespace Microsoft.PowerShell.Commands
             if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
             {
                 SystemPolicy.LogWDACAuditMessage(
-                    Title: "Invoke-Expression Cmdlet",
-                    Message: "Invoke-Expression cmdlet script block would be run in ConstrainedLanguage mode when policy is enforced.",
-                    FQID:"InvokeExpressionCmdletConstrained");
+                    title: "Invoke-Expression Cmdlet",
+                    message: "Invoke-Expression cmdlet script block would be run in ConstrainedLanguage mode when policy is enforced.",
+                    fqid: "InvokeExpressionCmdletConstrained");
             }
 
             var emptyArray = Array.Empty<object>();

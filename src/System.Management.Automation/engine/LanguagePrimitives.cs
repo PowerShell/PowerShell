@@ -4000,9 +4000,9 @@ namespace System.Management.Automation
                         if (ecFromTLS?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
                         {
                             SystemPolicy.LogWDACAuditMessage(
-                                Title: "LanguagePrimitives Type Conversion",
-                                Message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
-                                FQID:"LanguageTypeConversionNotAllowed");
+                                title: "LanguagePrimitives Type Conversion",
+                                message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                                fqid: "LanguageTypeConversionNotAllowed");
                         }
 
                         typeConversion.WriteLine("Constructor result: \"{0}\".", result);
@@ -5660,9 +5660,9 @@ namespace System.Management.Automation
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
-                        Title: "LanguagePrimitives Type Conversion",
-                        Message: $"Type conversion from {fromType.FullName} to {toType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
-                        FQID:"LanguageTypeConversionNotAllowed");
+                        title: "LanguagePrimitives Type Conversion",
+                        message: $"Type conversion from {fromType.FullName} to {toType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                        fqid: "LanguageTypeConversionNotAllowed");
                 }
             }
 

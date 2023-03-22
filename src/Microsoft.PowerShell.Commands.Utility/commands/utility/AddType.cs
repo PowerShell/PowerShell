@@ -570,9 +570,9 @@ namespace Microsoft.PowerShell.Commands
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 SystemPolicy.LogWDACAuditMessage(
-                    Title: "Add-Type Cmdlet",
-                    Message: "Add-Type cmdlet would not be allowed in ConstrainedLanguage mode.",
-                    FQID: "AddTypeCmdletDisabled");
+                    title: "Add-Type Cmdlet",
+                    message: "Add-Type cmdlet would not be allowed in ConstrainedLanguage mode.",
+                    fqid: "AddTypeCmdletDisabled");
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core

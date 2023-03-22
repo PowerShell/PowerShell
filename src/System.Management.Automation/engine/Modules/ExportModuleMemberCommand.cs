@@ -177,9 +177,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 SystemPolicy.LogWDACAuditMessage(
-                    Title: "Export-ModuleMember Cmdlet",
-                    Message: $"Export of module members would fail because module, {Context.EngineSessionState.Module.Name}, has a different language mode, {Context.EngineSessionState.Module.LanguageMode}, than the current session, {Context.LanguageMode}",
-                    FQID:"ExportModuleMemberCmdletNotAllowed");
+                    title: "Export-ModuleMember Cmdlet",
+                    message: $"Export of module members would fail because module, {Context.EngineSessionState.Module.Name}, has a different language mode, {Context.EngineSessionState.Module.LanguageMode}, than the current session, {Context.LanguageMode}",
+                    fqid: "ExportModuleMemberCmdletNotAllowed");
             }
 
             ModuleIntrinsics.ExportModuleMembers(this,

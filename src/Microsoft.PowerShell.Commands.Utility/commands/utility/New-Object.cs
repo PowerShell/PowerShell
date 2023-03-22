@@ -196,16 +196,18 @@ namespace Microsoft.PowerShell.Commands
                                 new ErrorRecord(
                                     new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
                         }
+
                         break;
 
                     case PSLanguageMode.ConstrainedLanguageAudit:
                         if (!CoreTypes.Contains(type))
                         {
                             SystemPolicy.LogWDACAuditMessage(
-                                Title: "New-Object",
-                                Message: $"Type {type.FullName} will not be created in ConstrainedLanguage mode under policy enforcement.",
-                                FQID:"NewObjectCmdletCannotCreateType");
+                                title: "New-Object",
+                                message: $"Type {type.FullName} will not be created in ConstrainedLanguage mode under policy enforcement.",
+                                fqid: "NewObjectCmdletCannotCreateType");
                         }
+
                         break;
 
                     case PSLanguageMode.NoLanguage:
@@ -221,6 +223,7 @@ namespace Microsoft.PowerShell.Commands
                                     ErrorCategory.PermissionDenied,
                                     targetObject: null));
                         }
+                        
                         break;
                 }
 
@@ -325,9 +328,9 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         SystemPolicy.LogWDACAuditMessage(
-                            Title: "New-Object",
-                            Message: $"The COM object, {(ComObject ?? string.Empty)}, will not be created in ConstrainedLanguage mode under policy enforcement.",
-                            FQID:"NewObjectCmdletCannotCreateCOM");
+                            title: "New-Object",
+                            message: $"The COM object, {(ComObject ?? string.Empty)}, will not be created in ConstrainedLanguage mode under policy enforcement.",
+                            fqid: "NewObjectCmdletCannotCreateCOM");
                     }
                 }
 
