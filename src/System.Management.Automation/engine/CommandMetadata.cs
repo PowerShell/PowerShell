@@ -599,7 +599,7 @@ namespace System.Management.Automation
         internal ObsoleteAttribute Obsolete { get; set; }
 
         /// <summary>
-        /// True if the cmdlet should hide common parameters from completion, false otherwise.
+        /// Gets or sets the HideCommonParameters attribute on the command.
         /// </summary>
         /// <value></value>
         public bool HideCommonParameters { get; set; }
