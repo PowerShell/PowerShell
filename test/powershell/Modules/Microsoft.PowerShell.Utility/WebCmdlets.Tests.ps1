@@ -752,7 +752,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
         $ContentDisposition.FileName = 'DownloadedFile.txt'
         $query = @{
-            contentdisposition = $ContentDisposition
+            contentdisposition = [string]$ContentDisposition
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $content = Invoke-WebRequest -Uri $uri
@@ -2744,7 +2744,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
         $ContentDisposition.FileName = 'DownloadedFile.txt'
         $query = @{
-            contentdisposition = $ContentDisposition
+            contentdisposition = [string]$ContentDisposition
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $content = Invoke-WebRequest -Uri $uri
