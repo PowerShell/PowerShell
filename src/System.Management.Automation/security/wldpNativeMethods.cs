@@ -41,7 +41,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage restriction audit logs.
         /// </summary>
-        AllowConstrainedAudit
+        AllowConstrainedAudit = 4
     }
 
     /// <summary>
