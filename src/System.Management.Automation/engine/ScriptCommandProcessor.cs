@@ -520,7 +520,8 @@ namespace System.Management.Automation
                     try
                     {
                         // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
-                        if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && newLanguageMode == PSLanguageMode.FullLanguage)
+                        if ((oldLanguageMode == PSLanguageMode.ConstrainedLanguage || oldLanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
+                            newLanguageMode == PSLanguageMode.FullLanguage)
                         {
                             oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
                             Context.LanguageModeTransitionInParameterBinding = true;

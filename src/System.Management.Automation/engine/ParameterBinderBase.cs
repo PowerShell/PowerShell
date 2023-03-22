@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
                         // setting 'Context.LanguageModeTransitionInParameterBinding' to true before the conversion.
                         var currentLanguageMode = Context.LanguageMode;
                         bool changeLanguageModeForTrustedCommand =
-                            currentLanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                            (currentLanguageMode == PSLanguageMode.ConstrainedLanguage || currentLanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
                             this.Command.CommandInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage;
                         bool oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
 

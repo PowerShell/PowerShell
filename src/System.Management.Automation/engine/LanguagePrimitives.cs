@@ -26,7 +26,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
 using System.DirectoryServices;
-using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -3978,9 +3977,7 @@ namespace System.Management.Automation
                     //  - It's in FullLanguage but not because it's part of a parameter binding that is transitioning from ConstrainedLanguage to FullLanguage
                     // When this is invoked from a parameter binding in transition from ConstrainedLanguage environment to FullLanguage command, we disallow
                     // the property conversion because it's dangerous.
-                    if (ecFromTLS == null || 
-                        ((ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage || ecFromTLS.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
-                         !ecFromTLS.LanguageModeTransitionInParameterBinding))
+                    if (ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding))
                     {
                         result = _constructor();
                         var psobject = valueToConvert as PSObject;
@@ -3997,21 +3994,23 @@ namespace System.Management.Automation
                             SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
                         }
 
-                        if (ecFromTLS?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                        typeConversion.WriteLine("Constructor result: \"{0}\".", result);
+                    }
+                    else
+                    {
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                         {
                             SystemPolicy.LogWDACAuditMessage(
                                 title: "LanguagePrimitives Type Conversion",
                                 message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
                                 fqid: "LanguageTypeConversionNotAllowed");
                         }
-
-                        typeConversion.WriteLine("Constructor result: \"{0}\".", result);
-                    }
-                    else
-                    {
-                        RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                            "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                        throw rte;
+                        else
+                        {
+                            RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
+                                "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
+                            throw rte;
+                        }
                     }
 
                     return result;
