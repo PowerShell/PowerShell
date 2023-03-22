@@ -304,6 +304,8 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             else // Parameterset -Com
             {
+                int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
+
                 // If we're in ConstrainedLanguage, do additional restrictions
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
                 {
@@ -313,7 +315,6 @@ namespace Microsoft.PowerShell.Commands
                     var systemLockdownPolicy = SystemPolicy.GetSystemLockdownPolicy();
                     if (systemLockdownPolicy == SystemEnforcementMode.Enforce || systemLockdownPolicy == SystemEnforcementMode.Audit)
                     {
-                        int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
                         isAllowed = (result >= 0) && SystemPolicy.IsClassInApprovedList(_comObjectClsId);
                     }
 
