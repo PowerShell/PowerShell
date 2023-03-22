@@ -754,7 +754,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $query = @{
             contentdisposition = [string]$ContentDisposition
         }
-        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query $query
         $content = Invoke-WebRequest -Uri $uri
         $outFile = Join-Path $TestDrive $ContentDisposition.FileName
 
@@ -2746,7 +2746,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $query = @{
             contentdisposition = [string]$ContentDisposition
         }
-        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query $query
         $content = Invoke-WebRequest -Uri $uri
         $outFile = Join-Path $TestDrive $ContentDisposition.FileName
 
