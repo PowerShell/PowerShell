@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return reader.ReadToEnd();
+            return new StreamReader(stream, encoding).ReadToEnd();
         }
 
         internal static bool TryGetEncodingFromCharset(string characterSet, out Encoding encoding)
