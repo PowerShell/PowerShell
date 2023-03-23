@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string contentDisposition = response.Content.Headers.ContentDisposition?.FileNameStar ?? response.Content.Headers.ContentDisposition?.FileName;
-            string pathAndQuery = response.RequestMessage.RequestUri.PathAndQuery;
 
             if (!string.IsNullOrEmpty(contentDisposition)) 
             {
@@ -51,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
                 return Path.Join(_qualifiedOutFile, contentDisposition);
             }
 
-            if (pathAndQuery != "/")
+            if (response.RequestMessage.RequestUri.PathAndQuery != "/")
             {
                 string lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]);
 
