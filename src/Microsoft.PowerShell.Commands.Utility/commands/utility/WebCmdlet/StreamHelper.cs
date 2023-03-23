@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out encoding);
 
-            using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true);
+            using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
 
             encoding = reader.CurrentEncoding;
 
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return new StreamReader(stream, encoding).ReadToEnd();
+            return new StreamReader(stream, encoding, leaveOpen: true).ReadToEnd();
         }
 
         internal static bool TryGetEncodingFromCharset(string characterSet, out Encoding encoding)
