@@ -760,7 +760,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
         Invoke-WebRequest -Uri $uri -OutFile $TestDrive
 
-        Test-Path $outFile | Should -Be $true
+        Test-Path $outFile | Should -BeTrue
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
