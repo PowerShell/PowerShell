@@ -329,83 +329,25 @@ namespace Microsoft.PowerShell.Commands
             WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
         }
 
-        private static string StreamToString(Stream stream, Encoding encoding)
-        {
-            StringBuilder result = new(capacity: ChunkSize);
-            Decoder decoder = encoding.GetDecoder();
-
-            int useBufferSize = 64;
-            if (useBufferSize < encoding.GetMaxCharCount(10))
-            {
-                useBufferSize = encoding.GetMaxCharCount(10);
-            }
-
-            char[] chars = new char[useBufferSize];
-            byte[] bytes = new byte[useBufferSize * 4];
-            int bytesRead = 0;
-            do
-            {
-                // Read at most the number of bytes that will fit in the input buffer. The
-                // return value is the actual number of bytes read, or zero if no bytes remain.
-                bytesRead = stream.Read(bytes, 0, useBufferSize * 4);
-
-                bool completed = false;
-                int byteIndex = 0;
-
-                while (!completed)
-                {
-                    // If this is the last input data, flush the decoder's internal buffer and state.
-                    bool flush = (bytesRead == 0);
-                    decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
-                                    chars, 0, useBufferSize, flush,
-                                    out int bytesUsed, out int charsUsed, out completed);
-
-                    // The conversion produced the number of characters indicated by charsUsed. Write that number
-                    // of characters to our result buffer
-                    result.Append(chars, 0, charsUsed);
-
-                    // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
-                    byteIndex += bytesUsed;
-
-                    // The behavior of decoder.Convert changed start .NET 3.1-preview2.
-                    // The change was made in https://github.com/dotnet/coreclr/pull/27229
-                    // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
-                    // Break out of the loop if all bytes have been read.
-                    if (!flush && bytesRead == byteIndex)
-                    {
-                        break;
-                    }
-                }
-            } while (bytesRead != 0);
-
-            return result.ToString();
-        }
-
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            bool isDefaultEncoding = false;
-            byte[] buffer = new byte[4];
+            bool isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out encoding);
 
-            if (stream.Length >= 4)
-            {
-                stream.ReadExactly(buffer, 0, 4);
-            }
+            using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true);
 
-            EncodingHelper.TryDetectEncodingFromBom(buffer, out encoding, out int preambleLength);
-
-            if (encoding is null)
-            {
-                isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out encoding);
-            }
-
-            stream.Seek(preambleLength, SeekOrigin.Begin);
-            string content = StreamToString(stream, encoding);
+            encoding = reader.CurrentEncoding;
 
             if (isDefaultEncoding)
             {
                 // We only look within the first 1k characters as the meta element and
                 // the xml declaration are at the start of the document
-                string substring = content.Substring(0, Math.Min(content.Length, 1024));
+                int bufferLength = (int)Math.Min(reader.BaseStream.Length, 1024);
+
+                char[] buffer = new char[bufferLength];
+                reader.ReadBlock(buffer, 0, bufferLength);
+                stream.Seek(0, SeekOrigin.Begin);
+
+                string substring = new(buffer);
 
                 // Check for a charset attribute on the meta element to override the default
                 Match match = s_metaRegex.Match(substring);
@@ -422,14 +364,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (TryGetEncodingFromCharset(characterSet, out Encoding localEncoding))
                     {
-                        stream.Seek(preambleLength, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding);
                         encoding = localEncoding;
                     }
                 }
             }
 
-            return content;
+            return reader.ReadToEnd();
         }
 
         internal static bool TryGetEncodingFromCharset(string characterSet, out Encoding encoding)
