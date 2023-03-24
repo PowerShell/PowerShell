@@ -51,6 +51,54 @@ namespace mvc.Controllers
             };
             await Response.Body.WriteAsync(body, 0, body.Length);
         }
+        public async void Utf8BOM()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.UTF8.GetPreamble() + Encoding.UTF8.GetBytes("hello");
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void Unicode()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.Unicode.GetPreamble() + Encoding.Unicode.GetBytes("hello");
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void BigEndianUnicode()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.BigEndianUnicode.GetPreamble() + Encoding.BigEndianUnicode.GetBytes("hello");
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void Utf32()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.UTF32.GetPreamble() + Encoding.UTF32.GetBytes("hello");
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void Utf32BE()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+
+            UTF32Encoding Utf32BE = new(bigEndian: true, byteOrderMark: true);
+            byte[] body = Utf32BE.GetPreamble() + Utf32BE.GetBytes("hello");
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        
 
         public IActionResult Error()
         {
