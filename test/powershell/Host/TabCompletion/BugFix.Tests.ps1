@@ -28,10 +28,9 @@ Describe "Tab completion bug fix" -Tags "CI" {
     It "Issue#1345 - 'Import-Module -n<tab>' should work" {
         $cmd = "Import-Module -n"
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-        $result.CompletionMatches | Should -HaveCount 3
+        $result.CompletionMatches | Should -HaveCount 2
         $result.CompletionMatches[0].CompletionText | Should -BeExactly "-Name"
         $result.CompletionMatches[1].CompletionText | Should -BeExactly "-NoClobber"
-        $result.CompletionMatches[2].CompletionText | Should -BeExactly "-NoOverwrite"
     }
 
     It "Issue#11227 - [CompletionCompleters]::CompleteVariable and [CompletionCompleters]::CompleteType should work" {
