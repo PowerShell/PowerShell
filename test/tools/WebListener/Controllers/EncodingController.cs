@@ -51,6 +51,7 @@ namespace mvc.Controllers
             };
             await Response.Body.WriteAsync(body, 0, body.Length);
         }
+
         public async void Utf8BOM()
         {
             MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
@@ -92,13 +93,11 @@ namespace mvc.Controllers
             MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
             Response.ContentType = mediaType.ToString();
 
-            UTF32Encoding Utf32BE = new(bigEndian: true, byteOrderMark: true);
-            byte[] body = Utf32BE.GetPreamble() + Utf32BE.GetBytes("hello");
+            UTF32Encoding utf32BE = new(bigEndian: true, byteOrderMark: true);
+            byte[] body = utf32BE.GetPreamble() + utf32BE.GetBytes("hello");
 
             await Response.Body.WriteAsync(body, 0, body.Length);
         }
-
-        
 
         public IActionResult Error()
         {
