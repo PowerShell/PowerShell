@@ -335,19 +335,17 @@ namespace Microsoft.PowerShell.Commands
 
             using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
 
-            // reader.Peek();
+            // We only look within the first 1k characters as the meta element and
+            // the xml declaration are at the start of the document
+            int bufferLength = (int)Math.Min(reader.BaseStream.Length, 1024);
+
+            char[] buffer = new char[bufferLength];
+            reader.ReadBlock(buffer, 0, bufferLength);
+            stream.Seek(0, SeekOrigin.Begin);
             encoding = reader.CurrentEncoding;
 
             if (isDefaultEncoding)
             {
-                // We only look within the first 1k characters as the meta element and
-                // the xml declaration are at the start of the document
-                int bufferLength = (int)Math.Min(reader.BaseStream.Length, 1024);
-
-                char[] buffer = new char[bufferLength];
-                reader.ReadBlock(buffer, 0, bufferLength);
-                stream.Seek(0, SeekOrigin.Begin);
-
                 string substring = new(buffer);
 
                 // Check for a charset attribute on the meta element to override the default
