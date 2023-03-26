@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
 
             using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
 
-            reader.Peek();
+            // reader.Peek();
             encoding = reader.CurrentEncoding;
 
             if (isDefaultEncoding)
