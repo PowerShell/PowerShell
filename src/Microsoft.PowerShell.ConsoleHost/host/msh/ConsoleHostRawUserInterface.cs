@@ -35,15 +35,14 @@ namespace Microsoft.PowerShell
             defaultForeground = ForegroundColor;
             defaultBackground = BackgroundColor;
             parent = mshConsole;
+
             // cacheKeyEvent is a value type and initialized automatically
 
             // add "Administrator: " prefix into the window title, but don't wait for it to finish
             //   (we may load resources which can take some time)
             Task.Run(() =>
             {
-                var identity = WindowsIdentity.GetCurrent();
-                var principal = new WindowsPrincipal(identity);
-                if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+                if (Environment.IsPrivilegedProcess)
                 {
                     // Check if the window already has the "Administrator: " prefix (i.e. from the parent console process).
                     ReadOnlySpan<char> prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
