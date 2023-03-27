@@ -237,7 +237,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the execution context.
         /// </summary>
-        internal override System.Management.Automation.ExecutionContext GetExecutionContext
+        internal override ExecutionContext GetExecutionContext
         {
             get
             {

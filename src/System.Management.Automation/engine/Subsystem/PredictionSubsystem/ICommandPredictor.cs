@@ -132,6 +132,12 @@ namespace System.Management.Automation.Subsystem.Prediction
         public PredictionClientKind Kind { get; }
 
         /// <summary>
+        /// Gets the current location of the default session.
+        /// It returns null if there is no default Runspace or if the default is a remote Runspace.
+        /// </summary>
+        public PathInfo? CurrentLocation { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PredictionClient"/> class.
         /// </summary>
         /// <param name="name">Name of the interactive client.</param>
