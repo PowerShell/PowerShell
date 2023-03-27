@@ -52,6 +52,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
     }
 
     It "install-packageprovider, Expect succeed" {
+        Set-ItResult -Skipped -Because "local test package provider not installable"
 		$ippArgs = @{
 			Name = "NanoServerPackage"
 			Force = $true
