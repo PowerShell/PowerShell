@@ -3,12 +3,24 @@
 
 Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if ($IsWindows) {
+            $osInfo = [System.Environment]::OSVersion.Version
+            $isSrv2k12R2 = $osInfo.Major -eq 6 -and $osInfo.Minor -le 3
+
+            if ($isSrv2k12R2) {
+                $PSDefaultParameterValues["it:skip"] = $true
+            }
+        }
+
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
         $PSStyle.OutputRendering = $originalRendering
     }

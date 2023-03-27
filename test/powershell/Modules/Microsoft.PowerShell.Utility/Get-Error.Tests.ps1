@@ -119,6 +119,16 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error uses Error color for Message and PositionMessage members' {
+
+        if ($IsWindows) {
+            $osInfo = [System.Environment]::OSVersion.Version
+            $isSrv2k12R2 = $osInfo.Major -eq 6 -and $osInfo.Minor -le 3
+
+            if ($isSrv2k12R2) {
+                Set-ItResult -Skipped -Because 'Windows Server 2012 R2 does not support VT100 escape sequences'
+            }
+        }
+
         $suppressVT = $false
         if (Test-Path env:/__SuppressAnsiEscapeSequences) {
             $suppressVT = $true
