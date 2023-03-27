@@ -1823,6 +1823,26 @@ namespace Microsoft.PowerShell.Commands
 
         private SwitchParameter _UseNewEnvironment;
 
+        /// <summary>
+        /// Gets or sets the environment variables for the process.
+        /// </summary>
+        [Parameter]
+        public Hashtable Environment
+        {
+            get
+            {
+                return _environment;
+            }
+
+            set
+            {
+                _environment = value;
+                _isDefaultSetParameterSpecified = true;
+            }
+        }
+
+        private Hashtable _environment;
+
         #endregion
 
         #region overrides
@@ -1929,8 +1949,13 @@ namespace Microsoft.PowerShell.Commands
                 if (_UseNewEnvironment)
                 {
                     startInfo.EnvironmentVariables.Clear();
-                    LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
-                    LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
+                    LoadEnvironmentVariable(startInfo, System.Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
+                    LoadEnvironmentVariable(startInfo, System.Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
+                }
+
+                if (_environment != null)
+                {
+                    LoadEnvironmentVariable(startInfo, _environment);
                 }
 
                 startInfo.WindowStyle = _windowstyle;
@@ -2176,13 +2201,20 @@ namespace Microsoft.PowerShell.Commands
                     processEnvironment.Remove(entry.Key.ToString());
                 }
 
-                if (entry.Key.ToString().Equals("PATH"))
+                if (entry.Value != null)
                 {
-                    processEnvironment.Add(entry.Key.ToString(), Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.Machine) + ";" + Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.User));
-                }
-                else
-                {
-                    processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
+                    if (entry.Key.ToString().Equals("PATH"))
+                    {
+#if UNIX
+                        processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
+#else
+                        processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString() + Path.PathSeparator + System.Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.Machine) + Path.PathSeparator + System.Environment.GetEnvironmentVariable(entry.Key.ToString(), EnvironmentVariableTarget.User));
+#endif
+                    }
+                    else
+                    {
+                        processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
+                    }
                 }
             }
         }
