@@ -2434,6 +2434,13 @@ namespace Microsoft.PowerShell.Commands
 
                     bool exists = false;
 
+                   // junctions require an absolute path
+                    if (!Path.IsPathRooted(strTargetPath))
+                    {
+                        WriteError(new ErrorRecord(new ArgumentException(FileSystemProviderStrings.JunctionAbsolutePath), "NotAbsolutePath", ErrorCategory.InvalidArgument, strTargetPath));
+                        return;
+                    }
+
                     try
                     {
                         exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;

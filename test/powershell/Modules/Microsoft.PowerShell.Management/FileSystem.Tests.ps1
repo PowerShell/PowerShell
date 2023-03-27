@@ -611,6 +611,17 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
+        It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
+            try {
+                Push-Location $TestDrive
+                1 > 1.txt
+                { New-Item -ItemType Junction -Path 2.txt -Target 1.txt -ErrorAction Stop } | Should -Throw -ErrorId "NotAbsolutePath,Microsoft.PowerShell.Commands.NewItemCommand"
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
         It 'New-Item can create hardlink with relative path' {
             try {
                 Push-Location $TestDrive
