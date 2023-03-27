@@ -161,8 +161,8 @@ namespace Microsoft.PowerShell.Commands
 
                     case PSLanguageMode.ConstrainedLanguageAudit:
                         SystemPolicy.LogWDACAuditMessage(
-                            title: "Import-LocalizedData",
-                            message: "Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode under policy enforcement.",
+                            title: ImportLocalizedDataStrings.WDACLogTitle,
+                            message: ImportLocalizedDataStrings.WDACLogMessage,
                             fqid: "SupportedCommandsDisabled");
                         break;
                 }

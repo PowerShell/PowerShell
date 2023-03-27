@@ -47,8 +47,8 @@ namespace Microsoft.PowerShell.Commands
             if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
             {
                 SystemPolicy.LogWDACAuditMessage(
-                    title: "Invoke-Expression Cmdlet",
-                    message: "Invoke-Expression cmdlet script block would be run in ConstrainedLanguage mode when policy is enforced.",
+                    title: UtilityCommonStrings.IEXWDACLogTitle,
+                    message: UtilityCommonStrings.IEXWDACLogMessage,
                     fqid: "InvokeExpressionCmdletConstrained");
             }
 

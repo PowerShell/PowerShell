@@ -570,8 +570,8 @@ namespace Microsoft.PowerShell.Commands
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 SystemPolicy.LogWDACAuditMessage(
-                    title: "Add-Type Cmdlet",
-                    message: "Add-Type cmdlet would not be allowed in ConstrainedLanguage mode.",
+                    title: AddTypeStrings.AddTypeLogTitle,
+                    message: AddTypeStrings.AddTypeLogMessage,
                     fqid: "AddTypeCmdletDisabled");
             }
 

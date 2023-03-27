@@ -240,8 +240,8 @@ namespace System.Management.Automation
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Script Block Processing Dot-Source",
-                        message: $"Processing for script block, {scriptBlock.File ?? string.Empty}, would fail in Constrained Language mode because its language mode, {scriptBlock.LanguageMode}, does not match the current language mode, {languageMode}.",
+                        title: CommandBaseStrings.WDACLogTitle,
+                        message: StringUtil.Format(CommandBaseStrings.WDACLogTitle, (scriptBlock.File ?? string.Empty), scriptBlock.LanguageMode, languageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed");
                 }
             }

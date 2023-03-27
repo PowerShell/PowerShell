@@ -229,7 +229,7 @@ namespace System.Management.Automation.Tracing
             string message,
             string fqid)
         {
-            WriteEvent(PSEventId.WDAC_Audit, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, PSTask.WDAC, (PSKeyword)0x0, title, message, fqid);
+            WriteEvent(PSEventId.WDAC_Audit, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, PSTask.WDACAudit, (PSKeyword)0x0, title, message, fqid);
         }
 
         /// <summary>

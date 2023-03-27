@@ -203,8 +203,8 @@ namespace Microsoft.PowerShell.Commands
                         if (!CoreTypes.Contains(type))
                         {
                             SystemPolicy.LogWDACAuditMessage(
-                                title: "New-Object",
-                                message: $"Type {type.FullName} will not be created in ConstrainedLanguage mode under policy enforcement.",
+                                title: NewObjectStrings.TypeWDACLogTitle,
+                                message: StringUtil.Format(NewObjectStrings.TypeWDACLogMessage, type.FullName),
                                 fqid: "NewObjectCmdletCannotCreateType");
                         }
 
@@ -329,8 +329,8 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         SystemPolicy.LogWDACAuditMessage(
-                            title: "New-Object",
-                            message: $"The COM object, {(ComObject ?? string.Empty)}, will not be created in ConstrainedLanguage mode under policy enforcement.",
+                            title: NewObjectStrings.ComWDACLogTitle,
+                            message: StringUtil.Format(NewObjectStrings.ComWDACLogMessage, (ComObject ?? string.Empty)),
                             fqid: "NewObjectCmdletCannotCreateCOM");
                     }
                 }

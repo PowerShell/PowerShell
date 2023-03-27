@@ -244,7 +244,8 @@ namespace System.Management.Automation.Internal
         NamedPipe = 0x6F,
         ISEOperation = 0x78,
         Amsi = 0X82,
-        WDAC = 0x83
+        WDAC = 0x83,
+        WDACAudit = 0x84
     }
 
     /// <summary>
