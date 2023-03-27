@@ -27,6 +27,8 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
+                // Activity used to be mandatory and the underlying API expects a value
+                // so we use a whitespace value as a default value.
                 _activity = string.IsNullOrEmpty(value) ? " " : value;
             }
         }
