@@ -4692,7 +4692,8 @@ namespace System.Management.Automation
                                 }
 
                                 // treat AutomationNull.Value as null for consistency
-                                if (propValue == AutomationNull.Value) {
+                                if (propValue == AutomationNull.Value)
+                                {
                                     propValue = null;
                                 }
 
