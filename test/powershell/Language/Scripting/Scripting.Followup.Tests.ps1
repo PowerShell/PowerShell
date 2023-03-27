@@ -36,7 +36,7 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
                 [string[]]$LogMessage
             }
 
-            [Example] @{ 'LogMessage' = [System.Management.Automation.Internal.AutomationNull]::Value }
+            [Example] @{ LogMessage = [System.Management.Automation.Internal.AutomationNull]::Value }
         }
 
         $result.LogMessage | Should -BeNullOrEmpty
