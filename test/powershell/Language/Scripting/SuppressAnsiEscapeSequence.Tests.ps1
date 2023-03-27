@@ -6,7 +6,7 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
         if (-not $host.ui.SupportsVirtualTerminal) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
 
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences

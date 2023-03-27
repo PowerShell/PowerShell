@@ -7,7 +7,7 @@ Describe 'OutputRendering tests' -Tag 'CI' {
         # Console host does not support VT100 escape sequences on Windows 2012R2 or earlier
 
         if (-not $host.ui.SupportsVirtualTerminal) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
     }
 
