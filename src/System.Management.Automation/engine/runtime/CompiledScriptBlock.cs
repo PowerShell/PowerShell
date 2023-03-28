@@ -1070,8 +1070,8 @@ namespace System.Management.Automation
                 else if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                 {
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Compiled Script Block Dot Source",
-                        message: $"Script block invocation into current scope language transition would be disallowed when policiy is enforced.  Script language mode: {this.LanguageMode}, Context language mode: {context.LanguageMode}",
+                        title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,
+                        message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, this.GetFileName() ?? string.Empty, this.LanguageMode, context.LanguageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed");
 
                     // Since we are in audit mode, go ahead and allow the language transition.

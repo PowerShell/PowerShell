@@ -1834,8 +1834,8 @@ namespace System.Management.Automation.Language
             {
                 case PSLanguageMode.ConstrainedLanguageAudit:
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Parser Data Section SupportedCommand",
-                        message: "The Data Section that includes the SupportedCommand parameter would be disallowed in ConstrainedLanguage mode for untrusted script.",
+                        title: ParserStrings.WDACParserDSSupportedCommandLogTitle,
+                        message: ParserStrings.WDACParserDSSupportedCommandLogMessage,
                         fqid: "SupportedCommandInDataSectionNotSupported");
                     break;
 

@@ -2004,8 +2004,8 @@ namespace System.Management.Automation
                         if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
                         {
                             SystemPolicy.LogWDACAuditMessage(
-                                title: "Session State Variables",
-                                message: $"Changing or creating the variable {variable.Name} scope to AllScope will be prevented in ConstrainedLanguage mode for unstrusted script.",
+                                title: SessionStateStrings.WDACSessionStateVarLogTitle,
+                                message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
                                 fqid: "AllScopeVariableNotAllowed");
                         }
 

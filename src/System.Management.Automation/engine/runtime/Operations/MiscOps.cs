@@ -61,8 +61,8 @@ namespace System.Management.Automation
                     {
                         // In audit mode, report but don't enforce.
                         SystemPolicy.LogWDACAuditMessage(
-                            title: "Module Scope Call Operator",
-                            message: "The module scope call operator, & (Get-Module MyModule) MyFunction, would be denied when run in policy enforcement.",
+                            title: ParserStrings.WDACParserModuleScopeCallOperatorLogTitle,
+                            message: ParserStrings.WDACParserModuleScopeCallOperatorLogMessage,
                             fqid: "ModuleScopeCallOperatorNotAllowed");
                     }
                     else
@@ -3013,8 +3013,8 @@ namespace System.Management.Automation
                                         }
 
                                         SystemPolicy.LogWDACAuditMessage(
-                                            title: "ForEach Operator",
-                                            message: $"The ForEach operator would fail method invocation, {method.Name ?? string.Empty}, when run in Constrained Language mode.",
+                                            title: ParserStrings.WDACParserForEachOperatorLogTitle,
+                                            message: StringUtil.Format(ParserStrings.WDACParserForEachOperatorLogMessage, method.Name ?? string.Empty),
                                             fqid: "ForEachOperatorMethodInvocationNotAllowed");
                                     }
                                 }

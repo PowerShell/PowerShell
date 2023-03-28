@@ -5528,9 +5528,9 @@ namespace System.Management.Automation.Language
 
                     string targetName = (targetValue as Type)?.FullName;
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Parameter Binder",
-                        message: $"Method or Property {name} on type {targetName ?? string.Empty} invocation will not be allowed with policy enforcement.",
-                        fqid: "MethodOrPropertyInvocationNotAllowed");
+                        title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
+                        message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, name, targetName ?? string.Empty),
+                        fqid: "BinderMethodOrPropertyInvocationNotAllowed");
                 }
             }
 
@@ -7701,8 +7701,8 @@ namespace System.Management.Automation.Language
 
                 string targetName = instanceType?.FullName;
                 SystemPolicy.LogWDACAuditMessage(
-                    title: "Parameter Binder",
-                    message: $"Will not be able to create type {targetName ?? string.Empty} during binding with policy enforcement.",
+                    title: ParameterBinderStrings.WDACBinderTypeCreationLogTitle,
+                    message: StringUtil.Format(ParameterBinderStrings.WDACBinderTypeCreationLogMessage, targetName ?? string.Empty),
                     fqid: "BinderTypeCreationNotAllowed");
             }
 

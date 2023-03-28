@@ -2985,8 +2985,8 @@ namespace System.Management.Automation.Language
                 if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
                 {
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Parser Configuration Keyword",
-                        message: "The Configuration keyword would not allowed in ConstrainedLanguage mode for untrusted script.",
+                        title: ParserStrings.WDACParserConfigKeywordLogTitle,
+                        message: ParserStrings.WDACParserConfigKeywordLogMessage,
                         fqid: "ConfigurationLanguageKeywordNotAllowed");
                 }
 
@@ -4211,8 +4211,8 @@ namespace System.Management.Automation.Language
             if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 SystemPolicy.LogWDACAuditMessage(
-                    title: "Parser Class keyword",
-                    message: "The Class keyword would not allowed in ConstrainedLanguage mode for untrusted script.",
+                    title: ParserStrings.WDACParserClassKeywordLogTitle,
+                    message: ParserStrings.WDACParserClassKeywordLogMessage,
                     fqid: "ClassLanguageKeywordNotAllowed");
             }
             else if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)

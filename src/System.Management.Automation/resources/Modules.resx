@@ -633,4 +633,37 @@
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
     <value>Export of module members will fail because module '{0}', has a different language mode '{1}' than the current session '{2}'.</value>
   </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>Module Implicit Function Export</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>Implicit function export for module '{0}' will be denied, because it is trusted but the session is in ConstrainedLanguage mode (not trusted).</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage2" xml:space="preserve">
+    <value>Implict function export for trusted module '{0}' will be denied because the session is in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>Importing Script File as Module</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>Importing the script file '{0}' as a module will be disallowed in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>Module Contains Dot-Source Operator</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>Module '{0}' import will fail because it exports functions using wild card characters while also uses the dot-source operator.</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"Module Exporting Functions</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>Module '{0}' exports functions using name wildcard characters, any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"New-Module Cmdlet</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.</value>
+  </data>
 </root>

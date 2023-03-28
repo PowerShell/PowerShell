@@ -3430,8 +3430,8 @@ namespace Microsoft.PowerShell.Commands
                         if (fnMatchPattern == null && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                         {
                             SystemPolicy.LogWDACAuditMessage(
-                                title: "Module Implicit Function Export",
-                                message: $"Implicit function export for module, {manifestScriptInfo.ModuleName}, would be denied in policy enforcement, because it is trusted but the session is in ConstrainedLanguage mode (not trusted).",
+                                title: Modules.WDACImplicitFunctionExportLogTitle,
+                                message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage, manifestScriptInfo.ModuleName),
                                 fqid: "ModuleImplicitFunctionExportNotAllowed");
                             fnMatchPattern = MatchAll;
                         }
@@ -5653,8 +5653,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 SystemPolicy.LogWDACAuditMessage(
-                    title: "Module Importing of Script File",
-                    message: $"Script file, {fileName}, would not be imported as a module because session is in ConstrainedLanguage mode.",
+                    title: Modules.WDACScriptFileImportLogTitle,
+                    message: StringUtil.Format(Modules.WDACScriptFileImportLogMessage, fileName),
                     fqid: "ModuleImportScriptFilesNotAllowed");
             }
 
@@ -5756,8 +5756,8 @@ namespace Microsoft.PowerShell.Commands
                                     if (fnMatchPattern == null && systemLockdownPolicy == SystemEnforcementMode.Audit)
                                     {
                                         SystemPolicy.LogWDACAuditMessage(
-                                            title: "Module Implicit Function Export",
-                                            message: $"Implict function export for trusted module, {module.Name}, would be denied because the session is in ConstrainedLanguage mode.",
+                                            title: Modules.WDACImplicitFunctionExportLogTitle,
+                                            message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage2, module.Name),
                                             fqid: "ModuleImplicitFunctionExportNotAllowed");
                                         fnMatchPattern = MatchAll;
                                     }
@@ -6142,8 +6142,8 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Module Contains Dot-Source Operator",
-                        message: $"Module, {moduleInfo.Name}, exports functions using wild card characters and also uses the dot-source operator, and import will fail when run in ConstrainedLanguage mode.",
+                        title: Modules.WDACModuleDotSourceLogTitle,
+                        message: StringUtil.Format(Modules.WDACModuleDotSourceLogMessage, moduleInfo.Name),
                         fqid: "ModuleImportDotSourceNotAllowed");
                 }
             }
@@ -6163,8 +6163,8 @@ namespace Microsoft.PowerShell.Commands
 
                 case SystemEnforcementMode.Audit:
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "Module Exporting Functions",
-                        message: $"Module, {module.Name}, exports functions using name wildcard characters, any nested module function names will be removed when running in ConstrainedLanguage mode.",
+                        title: Modules.WDACModuleFnExportWithNestedModulesLogTitle,
+                        message: StringUtil.Format(Modules.WDACModuleFnExportWithNestedModulesLogMessage, module.Name),
                         fqid: "ModuleExportWithWildcardCharactersNotAllowed");
                     break;
             }
