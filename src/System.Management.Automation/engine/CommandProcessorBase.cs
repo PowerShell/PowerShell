@@ -241,7 +241,7 @@ namespace System.Management.Automation
 
                     SystemPolicy.LogWDACAuditMessage(
                         title: CommandBaseStrings.WDACLogTitle,
-                        message: StringUtil.Format(CommandBaseStrings.WDACLogTitle, (scriptBlock.File ?? string.Empty), scriptBlock.LanguageMode, languageMode),
+                        message: StringUtil.Format(CommandBaseStrings.WDACLogTitle, scriptBlock.File ?? string.Empty, scriptBlock.LanguageMode, languageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed");
                 }
             }

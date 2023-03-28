@@ -550,8 +550,8 @@ namespace System.Management.Automation
 
                                 case SystemScriptFileEnforcement.AllowConstrainedAudit:
                                     SystemPolicy.LogWDACAuditMessage(
-                                        title: "Script File Read",
-                                        message: $"Script file {_path} is not trusted by policy and would run in Constrained Language mode under policy enforcement.",
+                                        title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
+                                        message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path),
                                         fqid: "ScriptFileNotTrustedByPolicy");
                                     DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
                                     break;

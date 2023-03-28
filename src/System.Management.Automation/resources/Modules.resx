@@ -627,4 +627,10 @@
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>Cannot find the built-in module '{0}' that is compatible with the 'Core' edition. Please make sure the PowerShell built-in modules are available. They usually come with the PowerShell package under the $PSHOME module path, and are required for PowerShell to function properly.</value>
   </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Export-ModuleMember Cmdlet</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>Export of module members will fail because module '{0}', has a different language mode '{1}' than the current session '{2}'.</value>
+  </data>
 </root>

@@ -4001,9 +4001,9 @@ namespace System.Management.Automation
                         if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                         {
                             SystemPolicy.LogWDACAuditMessage(
-                                title: "LanguagePrimitives Type Conversion",
-                                message: $"Type conversion from HashTable to {resultType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
-                                fqid: "LanguageTypeConversionNotAllowed");
+                                title: ExtendedTypeSystem.WDACHashTypeLogTitle,
+                                message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
+                                fqid: "LanguageHashtableConversionNotAllowed");
                         }
                         else
                         {
@@ -5659,8 +5659,8 @@ namespace System.Management.Automation
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
-                        title: "LanguagePrimitives Type Conversion",
-                        message: $"Type conversion from {fromType.FullName} to {toType.FullName} would not be allowed in ConstrainedLanguage mode for untrusted script.",
+                        title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
+                        message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
                         fqid: "LanguageTypeConversionNotAllowed");
                 }
             }

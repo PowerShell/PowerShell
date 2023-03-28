@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
 
                         SystemPolicy.LogWDACAuditMessage(
                             title: NewObjectStrings.ComWDACLogTitle,
-                            message: StringUtil.Format(NewObjectStrings.ComWDACLogMessage, (ComObject ?? string.Empty)),
+                            message: StringUtil.Format(NewObjectStrings.ComWDACLogMessage, ComObject ?? string.Empty),
                             fqid: "NewObjectCmdletCannotCreateCOM");
                     }
                 }

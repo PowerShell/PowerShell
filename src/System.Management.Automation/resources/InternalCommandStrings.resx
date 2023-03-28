@@ -184,4 +184,10 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
   <data name="ParallelPipedInputProcessingError" xml:space="preserve">
     <value>An unexpected error has occurred while processing ForEach-Object -Parallel input. This may mean that some of the piped input did not get processed. Error: {0}.</value>
   </data>
+  <data name="WDACLogTitle" xml:space="preserve">
+    <value>ForEach-Object Cmdlet</value>
+  </data>
+  <data name="WDACLogMessage" xml:space="preserve">
+    <value>Method invocation on type '{0}' would not be allowed when run in non-audit policy enforcement mode.</value>
+  </data>
 </root>
