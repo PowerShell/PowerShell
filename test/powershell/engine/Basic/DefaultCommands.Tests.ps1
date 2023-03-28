@@ -540,9 +540,9 @@ Describe "Verify approved aliases list" -Tags "CI" {
                     "Microsoft.PowerShell.Security",
                     "Microsoft.PowerShell.Host",
                     "Microsoft.PowerShell.Diagnostics",
-                    "Microsoft.WSMan.Management"
-                       "Microsoft.PowerShell.Core"
-                       "CimCmdlets"
+                    "Microsoft.WSMan.Management",
+                    "Microsoft.PowerShell.Core",
+                    "CimCmdlets"
                     )
             $getAliases = {
                 param($moduleList)
