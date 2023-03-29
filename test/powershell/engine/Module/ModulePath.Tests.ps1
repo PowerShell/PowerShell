@@ -205,8 +205,13 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
     Context "ModuleIntrinsics.GetPSModulePath API tests" {
         BeforeAll {
             $testCases = @(
-                @{ Name = "User"   ; Expected = (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path }
-                @{ Name = "Shared" ; Expected = (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path }
+                @{ Name = "User"   ; Expected = $IsWindows ?
+                   (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
+                   (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path
+                    }
+                @{ Name = "Shared" ; Expected = $IsWindows ?
+                    [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
+                    (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path }
                 @{ Name = "PSHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
             )
             # resolve the paths to ensure they are in the correct format
