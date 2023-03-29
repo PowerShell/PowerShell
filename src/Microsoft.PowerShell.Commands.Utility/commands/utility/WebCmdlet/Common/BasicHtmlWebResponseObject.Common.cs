@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
             if (ContentHelper.IsText(contentType))
             {
                 // Fill the Content buffer
-                string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+                string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
                 Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
                 Encoding = encoding;

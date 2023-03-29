@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands
             return result.ToString();
         }
 
-        internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding)
         {
             bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
 
@@ -419,11 +419,13 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        internal static bool TryGetEncoding(string? characterSet, out Encoding encoding)
         {
             bool result = false;
             try
             {
+                ArgumentException.ThrowIfNullOrEmpty(characterSet);
+
                 encoding = Encoding.GetEncoding(characterSet);
                 result = true;
             }
