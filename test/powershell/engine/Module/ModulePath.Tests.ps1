@@ -205,9 +205,12 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
     Context "ModuleIntrinsics.GetPSModulePath API tests" {
         BeforeAll {
             $testCases = @(
-                @{ Name = "User"   ; Expected = "" }
-                @{ Name = "Shared" ; Expected = "" }
-                @{ Name = "PsHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
+                @{ Name = "User"   ; Expected = (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path }
+                @{ Name = "Shared" ; Expected = (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path }
+                @{ Name = "PSHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
+            )
+            # resolve the paths to ensure they are in the correct format
+            $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
         }
 
         It "The GetPSModulePath api is available" {
@@ -222,6 +225,12 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             if ( $name -eq "PSHOME") {
                 $result | Should -Be $Expected
             }
+        }
+
+        It "The current module path should contain the expected paths for '<Name>'" -testcase $testCases {
+            param ( $Name, $Expected )
+            $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+            $currentModulePathElements | Should -Contain $mPath
         }
     }
 }

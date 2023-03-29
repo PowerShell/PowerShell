@@ -1181,24 +1181,24 @@ namespace System.Management.Automation
             User,
 
             /// <summary>The PSHOME module path.</summary>
-            PsHome,
+            PSHome,
 
             /// <summary>The shared module path.</summary>
             Shared
         }
 
         /// <summary>
-        /// Retrieve the current PSModulePath.
+        /// Retrieve the current PSModulePath of the specified type.
         /// </summary>
-        /// <param name="type">The type of module path to retrieve. This can be User, PsHome, or Shared.</param>
-        /// <returns>The string represting the requested module path type.</returns>
+        /// <param name="type">The type of module path to retrieve. This can be User, PSHome, or Shared.</param>
+        /// <returns>The string representing the requested module path type.</returns>
         public static string GetPSModulePath(ModulePathType type)
         {
             if (type == ModulePathType.User)
             {
                 return GetPersonalModulePath();
             }
-            else if (type == ModulePathType.PsHome)
+            else if (type == ModulePathType.PSHome)
             {
                 return GetPSHomeModulePath();
             }
