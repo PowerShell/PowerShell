@@ -951,7 +951,8 @@ namespace Microsoft.PowerShell.Commands
         // Handle Exited event and display process information.
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            if (System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0)
+            int decremented = System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor);
+            if ((decremented == 0) || (Any && decremented < _initialNumberOfProcesses))
             {
                 _waitHandle?.Set();
             }
@@ -966,6 +967,7 @@ namespace Microsoft.PowerShell.Commands
         // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
         private int _numberOfProcessesToWaitFor;
+        private int _initialNumberOfProcesses;
 
         /// <summary>
         /// Gets the list of process.
@@ -990,6 +992,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 _processList.Add(process);
+                _initialNumberOfProcesses += 1;
             }
         }
 
@@ -1019,7 +1022,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if ((_numberOfProcessesToWaitFor > 0) && ((!_any) || (_any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses)))
+            if ((_numberOfProcessesToWaitFor > 0) && ((!Any) || (Any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses)))
             {
                 if (_timeOutSpecified)
                 {
@@ -1031,7 +1034,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if ((!_any) || (_any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses))
+            if ((!Any) || (Any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses))
             {
                 foreach (Process process in _processList)
                 {
