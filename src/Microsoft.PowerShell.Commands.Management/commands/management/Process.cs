@@ -1286,7 +1286,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if (PassThru)
-                    WriteObject(process);                
+                    WriteObject(process);
             }
         }
 
