@@ -3,12 +3,19 @@
 
 Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if (-not $host.ui.SupportsVirtualTerminal) {
+            $global:PSDefaultParameterValues["it:skip"] = $true
+        }
+
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
         $originalRendering = $PSStyle.OutputRendering
         $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
         $PSStyle.OutputRendering = $originalRendering
     }
