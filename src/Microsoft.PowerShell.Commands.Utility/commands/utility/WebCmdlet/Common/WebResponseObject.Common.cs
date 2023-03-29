@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the BaseResponse property.
         /// </summary>
-        public HttpResponseMessage? BaseResponse { get; set; }
+        public HttpResponseMessage BaseResponse { get; set; }
 
         /// <summary>
         /// Gets or protected sets the response body content.
@@ -123,6 +123,7 @@ namespace Microsoft.PowerShell.Commands
                                                 || char.IsWhiteSpace(c);
 
         [MemberNotNull(nameof(RawContentStream))]
+        [MemberNotNull(nameof(BaseResponse))]
         private void SetResponse(HttpResponseMessage response, Stream? contentStream)
         {
             ArgumentNullException.ThrowIfNull(response);
