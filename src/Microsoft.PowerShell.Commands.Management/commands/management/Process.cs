@@ -896,6 +896,30 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private bool _any;
+        /// <summary>
+        /// Wait until any of the processes stops, instead of waiting for all of them.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Any
+        {
+            get { return _any; }
+
+            set { _any = value; }
+        }
+
+        private bool _passThru;
+        /// <summary>
+        /// Return the processes that stopped while waiting.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter PassThru
+        {
+            get { return _passThru; }
+            
+            set { _passThru = value; }
+        }
+
         private int _timeout = 0;
         private bool _timeOutSpecified;
 
@@ -995,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_numberOfProcessesToWaitFor > 0)
+            if ((_numberOfProcessesToWaitFor > 0) && ((!_any) || (_any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses)))
             {
                 if (_timeOutSpecified)
                 {
@@ -1007,21 +1031,29 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            foreach (Process process in _processList)
+            if ((!_any) || (_any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses))
             {
-                try
+                foreach (Process process in _processList)
                 {
-                    if (!process.HasExited)
+                    try
                     {
-                        string message = StringUtil.Format(ProcessResources.ProcessNotTerminated, new object[] { process.ProcessName, process.Id });
-                        ErrorRecord errorRecord = new(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
-                        WriteError(errorRecord);
+                        if (!process.HasExited)
+                        {
+                            string message = StringUtil.Format(ProcessResources.ProcessNotTerminated, new object[] { process.ProcessName, process.Id });
+                            ErrorRecord errorRecord = new(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
+                            WriteError(errorRecord);
+                        }
+                    }
+                    catch (Win32Exception exception)
+                    {
+                        WriteNonTerminatingError(process, exception, ProcessResources.ProcessIsNotTerminated, "ProcessNotTerminated", ErrorCategory.CloseError);
                     }
                 }
-                catch (Win32Exception exception)
-                {
-                    WriteNonTerminatingError(process, exception, ProcessResources.ProcessIsNotTerminated, "ProcessNotTerminated", ErrorCategory.CloseError);
-                }
+            }
+            
+            if (PassThru)
+            {
+                WriteObject(_processList, true);
             }
         }
 
@@ -1251,7 +1283,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if (PassThru)
+                {
                     WriteObject(process);
+                }
             }
         }
 
