@@ -204,6 +204,13 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     Context "ModuleIntrinsics.GetPSModulePath API tests" {
         BeforeAll {
+            # create a local repostory and install a module
+            $localSourceName = [Guid]::NewGuid().ToString("n")
+            $localSourceLocation = Join-Path $PSScriptRoot assets
+            Register-PSRepository -Name $localSourceName -SourceLocation $localSourceLocation -InstallationPolicy Trusted -ErrorAction SilentlyContinue
+            Install-Module -Force -Scope AllUsers -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
+            Install-Module -Force -Scope CurrentUser -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
+
             $testCases = @(
                 @{ Name = "User"   ; Expected = $IsWindows ?
                    (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
@@ -211,11 +218,16 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
                     }
                 @{ Name = "Shared" ; Expected = $IsWindows ?
                     [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
-                    (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path }
+                    (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path
+                }
                 @{ Name = "PSHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
             )
             # resolve the paths to ensure they are in the correct format
             $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
+        }
+
+        AfterAll {
+            Unregister-PSRepository -Name $localSourceName -ErrorAction SilentlyContinue
         }
 
         It "The GetPSModulePath api is available" {
