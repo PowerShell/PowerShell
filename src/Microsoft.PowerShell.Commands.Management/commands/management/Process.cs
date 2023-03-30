@@ -897,13 +897,13 @@ namespace Microsoft.PowerShell.Commands
         }
         
         /// <summary>
-        /// Wait until any of the processes stops, instead of waiting for all of them.
+        /// Gets or sets a value indicating whether to return after any one process exits.
         /// </summary>
         [Parameter]
         public SwitchParameter Any { get; set; }
 
         /// <summary>
-        /// Return the processes that stopped while waiting.
+        /// Gets or sets a value indicating whether to return the Process objects after waiting.
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru { get; set; }
@@ -1009,7 +1009,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if ((_numberOfProcessesToWaitFor > 0) && ((!Any) || (Any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses)))
+            if (_numberOfProcessesToWaitFor > 0)
             {
                 if (_timeOutSpecified)
                 {
