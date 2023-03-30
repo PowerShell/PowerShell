@@ -939,8 +939,7 @@ namespace Microsoft.PowerShell.Commands
         // Handle Exited event and display process information.
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            int decremented = System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor);
-            if ((decremented == 0) || (Any && decremented < _initialNumberOfProcesses))
+            if ((System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0) || Any)
             {
                 _waitHandle?.Set();
             }
