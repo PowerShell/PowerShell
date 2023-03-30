@@ -163,11 +163,9 @@ namespace System.Management.Automation
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
             bool isNativeCommand = false;
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                && commandProcessor is NativeCommandProcessor nativeCommandProcessor)
+            if (commandProcessor is NativeCommandProcessor nativeCommandProcessor)
             {
                 isNativeCommand = true;
-                nativeCommandProcessor.UpstreamIsNativeCommand = lastCommandWasNative;
             }
 
             for (int i = commandIndex + 1; i < commandElements.Length; ++i)
@@ -217,7 +215,7 @@ namespace System.Management.Automation
             if (redirections != null)
             {
                 bool shouldProcessMergesFirst = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                    && commandProcessor is NativeCommandProcessor;
+                    && isNativeCommand;
 
                 if (shouldProcessMergesFirst)
                 {
@@ -489,6 +487,7 @@ namespace System.Management.Automation
                         if (lastCommandWasNative)
                         {
                             lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                            nativeCommand.UpstreamIsNativeCommand = true;
                         }
 
                         lastCommandWasNative = true;

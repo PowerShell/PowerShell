@@ -1,3 +1,4 @@
+using System.Threading;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -5,6 +6,7 @@
 
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace System.Management.Automation;
 
@@ -14,16 +16,16 @@ namespace System.Management.Automation;
 /// </summary>
 internal abstract class BytePipe
 {
-    public abstract Stream GetStream();
+    public abstract Task<Stream> GetStream(CancellationToken cancellationToken);
 
     internal AsyncByteStreamTransfer Bind(BytePipe bytePipe)
     {
         Debug.Assert(bytePipe is not null);
         return new AsyncByteStreamTransfer(
             bytePipe,
-            (bytes, _) => GetStream().Write(bytes),
-            callbackArg: null,
-            () => GetStream().Close());
+            (bytes, stream) => stream.Write(bytes),
+            destinationPipe: this,
+            stream => stream.Close());
     }
 }
 
@@ -46,7 +48,19 @@ internal sealed class NativeCommandProcessorBytePipe : BytePipe
         _stdout = stdout;
     }
 
-    public override Stream GetStream() => _nativeCommand.GetStream(_stdout);
+    public override async Task<Stream> GetStream(CancellationToken cancellationToken)
+    {
+        // If the native command we're wrapping is the upstream command then
+        // NativeCommandProcessor.Prepare will have already been called before
+        // the creation of this BytePipe.
+        if (_stdout)
+        {
+            return _nativeCommand.GetStream(stdout: true);
+        }
+
+        await _nativeCommand.WaitForProcessInitializationAsync(cancellationToken);
+        return _nativeCommand.GetStream(stdout: false);
+    }
 }
 
 /// <summary>
@@ -96,5 +110,5 @@ internal sealed class FileBytePipe : BytePipe
         return new FileBytePipe(fileStream);
     }
 
-    public override Stream GetStream() => _stream;
+    public override Task<Stream> GetStream(CancellationToken cancellationToken) => Task.FromResult(_stream);
 }

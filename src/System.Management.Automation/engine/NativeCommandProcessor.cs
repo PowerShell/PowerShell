@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -497,6 +498,29 @@ namespace System.Management.Automation
         /// </summary>
         private readonly object _sync = new object();
 
+        private SemaphoreSlim _processInitialized;
+
+        internal async Task WaitForProcessInitializationAsync(CancellationToken cancellationToken)
+        {
+            SemaphoreSlim processInitialized = _processInitialized;
+            if (processInitialized is null)
+            {
+                lock (_sync)
+                {
+                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
+                }
+            }
+
+            try
+            {
+                await processInitialized.WaitAsync(cancellationToken);
+            }
+            finally
+            {
+                processInitialized.Release();
+            }
+        }
+
         /// <summary>
         /// Creates a pipe representing the streaming of unprocessed bytes.
         /// </summary>
@@ -516,9 +540,16 @@ namespace System.Management.Automation
         /// stdout, <see langword="false" /> for stdin.
         /// </param>
         /// <returns>The specified <see cref="Stream" />.</returns>
-        internal Stream GetStream(bool stdout) => stdout
-            ? _nativeProcess.StandardOutput.BaseStream
-            : _nativeProcess.StandardInput.BaseStream;
+        internal Stream GetStream(bool stdout)
+        {
+            Debug.Assert(
+                _nativeProcess is not null,
+                "Caller should verify that initialization has completed before attempting to get the underlying stream.");
+
+            return stdout
+                ? _nativeProcess.StandardOutput.BaseStream
+                : _nativeProcess.StandardInput.BaseStream;
+        }
 
         /// <summary>
         /// Executes the native command once all of the input has been gathered.
@@ -605,6 +636,19 @@ namespace System.Management.Automation
                     {
                         _nativeProcess = new Process() { StartInfo = startInfo };
                         _nativeProcess.Start();
+                        if (UpstreamIsNativeCommand)
+                        {
+                            SemaphoreSlim processInitialized = _processInitialized;
+                            if (processInitialized is null)
+                            {
+                                lock (_sync)
+                                {
+                                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
+                                }
+                            }
+
+                            processInitialized?.Release();
+                        }
                     }
                     catch (Win32Exception)
                     {
