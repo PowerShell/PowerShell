@@ -895,30 +895,18 @@ namespace Microsoft.PowerShell.Commands
                 _timeOutSpecified = true;
             }
         }
-
-        private bool _any;
+        
         /// <summary>
         /// Wait until any of the processes stops, instead of waiting for all of them.
         /// </summary>
         [Parameter]
-        public SwitchParameter Any
-        {
-            get { return _any; }
+        public SwitchParameter Any { get; set; }
 
-            set { _any = value; }
-        }
-
-        private bool _passThru;
         /// <summary>
         /// Return the processes that stopped while waiting.
         /// </summary>
         [Parameter]
-        public SwitchParameter PassThru
-        {
-            get { return _passThru; }
-            
-            set { _passThru = value; }
-        }
+        public SwitchParameter PassThru { get; set; }
 
         private int _timeout = 0;
         private bool _timeOutSpecified;
