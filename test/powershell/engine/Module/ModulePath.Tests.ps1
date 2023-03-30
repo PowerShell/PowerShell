@@ -187,6 +187,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             Remove-Item -Path $userConfigPath -Force
         }
     }
+}
 
     It 'User PSModulePath has trailing separator' {
         if ($IsWindows) {
@@ -211,43 +212,42 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             Install-Module -Force -Scope AllUsers -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
             Install-Module -Force -Scope CurrentUser -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
 
-            $testCases = @(
-                @{ Name = "User"   ; Expected = $IsWindows ?
-                   (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
-                   (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path
-                    }
-                @{ Name = "Shared" ; Expected = $IsWindows ?
-                    [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
-                    (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path
+        $testCases = @(
+            @{ Name = "User"   ; Expected = $IsWindows ?
+                (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
+                (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path
                 }
-                @{ Name = "PSHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
-            )
-            # resolve the paths to ensure they are in the correct format
-            $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
-        }
-
-        AfterAll {
-            Unregister-PSRepository -Name $localSourceName -ErrorAction SilentlyContinue
-        }
-
-        It "The GetPSModulePath api is available" {
-            { [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath("PSHOME") } | Should -not -throw
-        }
-
-        It "The value '<Name>' should return the proper value" -testcase $testCases {
-            param ( $Name, $Expected )
-            $result = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
-            $result | Should -not -BeNullOrEmpty
-            # spot check pshome
-            if ( $name -eq "PSHOME") {
-                $result | Should -Be $Expected
+            @{ Name = "Shared" ; Expected = $IsWindows ?
+                [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
+                (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path
             }
-        }
+            @{ Name = "PSHome" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
+        )
+        # resolve the paths to ensure they are in the correct format
+        $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
+    }
 
-        It "The current module path should contain the expected paths for '<Name>'" -testcase $testCases {
-            param ( $Name, $Expected )
-            $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
-            $currentModulePathElements | Should -Contain $mPath
+    AfterAll {
+        Unregister-PSRepository -Name $localSourceName -ErrorAction SilentlyContinue
+    }
+
+    It "The GetPSModulePath api is available" {
+        { [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath("PSHOME") } | Should -not -throw
+    }
+
+    It "The value '<Name>' should return the proper value" -testcase $testCases {
+        param ( $Name, $Expected )
+        $result = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+        $result | Should -not -BeNullOrEmpty
+        # spot check pshome
+        if ( $name -eq "PSHOME") {
+            $result | Should -Be $Expected
         }
+    }
+
+    It "The current module path should contain the expected paths for '<Name>'" -testcase $testCases {
+        param ( $Name, $Expected )
+        $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+        $currentModulePathElements | Should -Contain $mPath
     }
 }

@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The available module path types.
         /// </summary>
-        public enum ModulePathType
+        public enum PSModulePathType
         {
             /// <summary>The users module path.</summary>
             User,
@@ -1192,13 +1192,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="type">The type of module path to retrieve. This can be User, PSHome, or Shared.</param>
         /// <returns>The string representing the requested module path type.</returns>
-        public static string GetPSModulePath(ModulePathType type)
+        public static string GetPSModulePath(PSModulePathType type)
         {
-            if (type == ModulePathType.User)
+            if (type == PSModulePathType.User)
             {
                 return GetPersonalModulePath();
             }
-            else if (type == ModulePathType.PSHome)
+            else if (type == PSModulePathType.PSHome)
             {
                 return GetPSHomeModulePath();
             }
