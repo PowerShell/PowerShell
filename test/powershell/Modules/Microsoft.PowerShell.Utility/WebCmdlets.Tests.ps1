@@ -568,6 +568,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-WebRequest -ContentType overwrites Content-Type from -Headers." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        $command = "Invoke-WebRequest -Uri '$uri' -ContentType 'application/json' -Headers @{'Content-Type'='plain/text'} -Method 'POST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.BaseResponse.RequestMessage.Content.Headers.ContentType.MediaType | Should -BeExactly 'application/json'
+    }
+
     It "Invoke-WebRequest supports sending request as UTF-8." {
         $uri = Get-WebListenerUrl -Test 'POST'
         # Body must contain non-ASCII characters
@@ -576,9 +583,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
-        $Result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
+        $result.Output.Encoding.BodyName | Should -BeExactly 'utf-8'
         $object = $Result.Output.Content | ConvertFrom-Json
         $object.Data | Should -BeExactly 'проверка'
+    }
+
+    It "Invoke-WebRequest supports sending XML requests without encoding" {
+        $uri = Get-WebListenerUrl -Test POST
+        $body = '<?xml version="1.0"?><foo />'
+        $result = Invoke-WebRequest -Uri $uri -body ([xml]$body) -ContentType 'text/xml' -method 'POST'
+
+        $object = $result.Content | ConvertFrom-Json
+        $object.Data | Should -BeExactly $body
     }
 
     It "Invoke-WebRequest supports request that returns page containing CodPage 936 data." {
@@ -617,7 +633,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         param($proxy_address, $name, $protocol)
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
@@ -719,6 +735,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
+    It "Invoke-WebRequest -OutFile folder Downloads the file and names it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        Invoke-WebRequest -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -752,9 +781,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ($result.Output.Content | ConvertFrom-Json).method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
-        $uri = Get-WebListenerUrl -Test 'Post'
-        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
+    It "Validate Invoke-WebRequest default ContentType for CustomMethod <method>" -TestCases @(
+        @{method = "POST"}
+        @{method = "PUT"}
+    ) {
+        param($method)
+
+        $uri = Get-WebListenerUrl -Test $method
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod $method -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $jsonResult = $result.Output.Content | ConvertFrom-Json
         $jsonResult.form.testparam | Should -Be "testvalue"
@@ -967,6 +1001,42 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Content.Headers."Authorization" | Should -BeExactly "test"
+        }
+
+        It "Validates Invoke-WebRequest with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session variable on multiple redirects: <redirectType>" -TestCases $redirectTests {
+            param($redirectType)
+
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
+            $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+            $credential = [pscredential]::new("testuser", $token)
+            $certificate = Get-WebListenerClientCertificate
+            $headers = @{"Authorization" = "test"}
+            $proxy = (Get-WebListenerUrl).Authority
+            $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.MaximumRedirection = 2
+            $session.MaximumRetryCount = 2
+            $session.RetryIntervalInSeconds = 2
+            $session.UseDefaultCredentials = $true
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+            $session.MaximumRedirection | Should -BeExactly 2
+            $session.MaximumRetryCount | Should -BeExactly 2
+            $session.RetryIntervalInSeconds | Should -BeExactly 2
+            $session.UseDefaultCredentials | Should -BeExactly $true
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.Credentials = $credential
+            $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
+            $session.Credentials.UserName | Should -BeExactly $credential.UserName
+            $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
+            $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+
+            $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+            $session.Proxy = [System.Net.WebProxy]::new($proxy)
+            $null = Invoke-WebRequest -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+            $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
         }
 
         It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -1943,6 +2013,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
+        It "Invoke-WebRequest -Resume should fail if -OutFile folder" {
+            { Invoke-WebRequest -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
             $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
@@ -2193,6 +2268,148 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $pathologicalRatio | Should -BeGreaterThan 5
         }
     }
+
+    Context 'Invoke-WebSession: Connection persistence in a WebSession' {
+        # Match verbose message from resource name WebSessionConnectionRecreated with message:
+        # The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.
+        $matchConnRecreatedMessage = [regex]::new('WebSession.+HTTP')
+
+        function RunCheckingPersistence {
+            param(
+                [uri]$Uri,
+                [string]$Command,
+                [object]$Session,
+                [switch]$ExpectConnectionRecreated,
+                [switch]$CaptureSession
+            )
+
+            $pwsh = [PowerShell]::Create()
+            $pwsh.Runspace.SessionStateProxy.SetVariable('uri', $Uri)
+            if ($Session) {
+                $pwsh.Runspace.SessionStateProxy.SetVariable('Session', $Session)
+                $command = "$command -WebSession `$Session"
+            }
+            if ($CaptureSession) {
+                $command = "$command -SessionVariable Session"
+            }
+            $script = "`$null = $command -Verbose"
+            $pwsh.AddScript($script).Invoke()
+            $session = $pwsh.Runspace.SessionStateProxy.GetVariable('Session')
+
+            $expectedConnRecreatedCount = if ($ExpectConnectionRecreated) { 1 } else { 0 }
+            ($pwsh.Streams.Verbose | Where-Object { $matchConnRecreatedMessage.Matches($_.Message) }).Count | Should -Be $expectedConnRecreatedCount
+
+            $pwsh.Dispose()
+
+            return $session
+        }
+
+        It 'Connection persistence maintained' {
+            $uri = Get-WebListenerUrl
+            $Session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            1 .. 3 | ForEach-Object {
+                RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri' -Session $Session
+            }
+        }
+
+        It 'Connection persistence impacted by changing SkipCertificateCheck' {
+            $uri = Get-WebListenerUrl -Https
+            # This first request will throw because the certificate is invalid
+            $session = $null
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            # No change in setting
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck:$false' -Session $session
+            # Skipping cert check changes persistence
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck' -Session $session -ExpectConnectionRecreated
+            # Same settings won't lose persistence
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck' -Session $session
+            # Lose persistence due to changing cert check - this will also throw
+            $session = RunCheckingPersistence -Uri $uri  -Command 'Invoke-WebRequest -Uri $uri -SkipCertificateCheck:$false' -Session $session -ExpectConnectionRecreated
+        }
+
+        It 'Connection persistence is not impacted by changing request headers' {
+            $uri = Get-WebListenerUrl
+            $session = $null
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -Headers @{ A = "B" }' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -Headers @{}' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -Headers @{ A = "C"; B = "D"}' -Session $session
+        }
+
+        It 'Connection persistence is impacted by changing the session cookie jar' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            $session.Cookies = New-Object System.Net.CookieContainer
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session -ExpectConnectionRecreated
+
+            # Adding a cookie to the container does not lose persistence
+            $Session.Cookies.Add('http://localhost', [system.net.cookie]::new('cookie', 'value'))
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+        }
+
+        It 'Connection persistence is not impacted by changing the user agent' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -UserAgent Powershell' -CaptureSession
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -UserAgent "PowerShell Core"' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -UserAgent "PowerShell Core with HttpClient"' -Session $session
+            # Ensure persistence is lost when we change a different setting
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -NoProxy -UserAgent "PowerShell Core"' -Session $session -ExpectConnectionRecreated
+        }
+
+        It 'Connection persistence is not impacted when NoProxy parameter is not supplied' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            # Explicitly prevent proxy - connection lost
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -NoProxy' -Session $session -ExpectConnectionRecreated
+            # Provide explicit switch value - connection maintained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -NoProxy:$true' -Session $session
+            # No spec for proxy - connection maintained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            # Two follow up calls without altering anything do not lose connection
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+        }
+
+        It 'Connection persistence is not impacted when SslProtocol parameter is not supplied' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SslProtocol Tls12' -CaptureSession
+            # No SslProtocol provided - keeps last value - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            # Explicit default - loses connection
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SslProtocol Default' -Session $session -ExpectConnectionRecreated
+            # No SslProtocol provided - keeps last value - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -Session $session
+            # Explicitly set to same value as last time it was set - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri -SslProtocol Default' -Session $session
+        }
+
+        It 'Connection persistence is not impacted by Proxy and NoProxy unless changed parameters are used between invocations' {
+            $uri = Get-WebListenerUrl
+            $session = RunCheckingPersistence -Uri $uri -Command 'Invoke-WebRequest -Uri $uri' -CaptureSession
+            $proxy = 'http://127.0.0.1:8080'
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
+            # same proxy - do not lose persistence
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session
+            # No proxy at all - use previous setting and don't lose connection
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+
+            # NoProxy toggles proxy off - loses connection
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -NoProxy" -Session $session -ExpectConnectionRecreated
+            # No setting at all - retains NoProxy setting
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+
+            # Use proxy again - lose connection
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
+            # No proxy specified - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+
+            # Proxy changed - lose connection
+            $proxy = 'http://localhost:8080'
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri -proxy $proxy" -Session $session -ExpectConnectionRecreated
+            # No proxy specified - connection retained
+            $session = RunCheckingPersistence -Uri $uri -Command "Invoke-WebRequest -Uri $uri" -Session $session
+        }
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
@@ -2338,6 +2555,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
+    It "Invoke-RestMethod -ContentType overwrites Content-Type from -Headers." {
+        $uri = Get-WebListenerUrl -Test 'POST'
+        $command = "Invoke-RestMethod -Uri '$uri' -ContentType 'application/json' -Headers @{'Content-Type'='plain/text'} -Method 'POST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.headers."Content-Type" | Should -BeExactly 'application/json'
+    }
+
     It "Invoke-RestMethod supports sending requests as UTF8" {
         $uri = Get-WebListenerUrl -Test POST
         # Body must contain non-ASCII characters
@@ -2345,6 +2569,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $result = ExecuteWebCommand -command $command
         $Result.Output.Data | Should -BeExactly 'проверка'
+    }
+
+    It "Invoke-RestMethod supports sending XML requests without encoding" {
+        $uri = Get-WebListenerUrl -Test POST
+        $body = '<?xml version="1.0"?><foo />'
+        $result = Invoke-RestMethod -Uri $uri -body ([xml]$body) -ContentType 'text/xml' -method 'POST'
+
+        $result.Data | Should -BeExactly $body
     }
 
     It "Invoke-RestMethod supports request that returns page containing Code Page 936 data." {
@@ -2477,6 +2709,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
+    It "Invoke-RestMethod -OutFile folder Downloads the file and names it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        Invoke-RestMethod -Uri $uri -OutFile $TestDrive
+
+        Test-Path $outFile | Should -Be $true
+        Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
     It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -2509,9 +2754,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
-        $uri = Get-WebListenerUrl -Test 'Post'
-        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
+    It "Validate Invoke-RestMethod default ContentType for CustomMethod <method>" -TestCases @(
+        @{method = "POST"}
+        @{method = "PUT"}
+    ) {
+        param($method)
+        $uri = Get-WebListenerUrl -Test $method
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod $method -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should -Be "testvalue"
         $result.Output.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"
@@ -2704,6 +2953,42 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $response.Error | Should -BeNullOrEmpty
         # ensure Authorization header was stripped
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
+    }
+
+    It "Validates Invoke-RestMethod with -WebSession and -PreserveAuthorizationOnRedirect doesn't change session variable on multiple redirects: <redirectType>" -TestCases $redirectTests {
+        param($redirectType)
+
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
+        $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+        $credential = [pscredential]::new("testuser", $token)
+        $certificate = Get-WebListenerClientCertificate
+        $headers = @{"Authorization" = "test"}
+        $proxy = (Get-WebListenerUrl).Authority
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 2 -Query @{type = $redirectType}
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.MaximumRedirection = 2
+        $session.MaximumRetryCount = 2
+        $session.RetryIntervalInSeconds = 2
+        $session.UseDefaultCredentials = $true
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -AllowUnencryptedAuthentication -Headers $headers
+        $session.MaximumRedirection | Should -BeExactly 2
+        $session.MaximumRetryCount | Should -BeExactly 2
+        $session.RetryIntervalInSeconds | Should -BeExactly 2
+        $session.UseDefaultCredentials | Should -BeExactly $true
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.Credentials = $credential
+        $session.Certificates = [System.Security.Cryptography.X509Certificates.X509CertificateCollection]::new([X509Certificate]$certificate)
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -SkipCertificateCheck -Headers $headers
+        $session.Credentials.UserName | Should -BeExactly $credential.UserName
+        $session.Credentials.Password | Should -BeExactly $credential.GetNetworkCredential().Password
+        $session.Certificates.Thumbprint | Should -BeExactly $certificate.Thumbprint
+
+        $session = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $session.Proxy = [System.Net.WebProxy]::new($proxy)
+        $null = Invoke-RestMethod -Uri $uri -PreserveAuthorizationOnRedirect -WebSession $session -Headers $headers
+        $session.Proxy.GetProxy($uri).Authority | Should -BeExactly $proxy
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
@@ -3625,6 +3910,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-RestMethod -Resume requires -OutFile" {
             { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+        It "Invoke-RestMethod -Resume should fail if -OutFile folder" {
+            { Invoke-RestMethod -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Invoke-RestMethod -Resume Downloads the whole file when the file does not exist" {

@@ -4,13 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Net.Http;
 
 namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseHelper
     {
-        internal static string GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType.CharSet;
+        internal static string GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet;
 
         internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
         {
@@ -32,6 +33,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return headers;
+        }
+
+        internal static string GetOutFilePath(HttpResponseMessage response, string _qualifiedOutFile)
+        {
+            // Get file name from last segment of Uri
+            string lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]);
+
+            return Directory.Exists(_qualifiedOutFile) ? Path.Join(_qualifiedOutFile, lastUriSegment) : _qualifiedOutFile;
         }
 
         internal static string GetProtocol(HttpResponseMessage response) => string.Create(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");

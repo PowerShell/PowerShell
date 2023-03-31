@@ -1784,7 +1784,10 @@ namespace System.Management.Automation.Remoting.Client
         /// <returns>True if a session create retry has been started.</returns>
         private bool RetrySessionCreation(int sessionCreateErrorCode)
         {
-            if (_connectionRetryCount >= ConnectionInfo.MaxConnectionRetryCount) { return false; }
+            if (_connectionRetryCount >= ConnectionInfo.MaxConnectionRetryCount)
+            {
+                return false;
+            }
 
             bool retryConnect;
             switch (sessionCreateErrorCode)
@@ -2617,7 +2620,10 @@ namespace System.Management.Automation.Remoting.Client
         private void DisposeWSManAPIDataAsync()
         {
             WSManAPIDataCommon tempWSManApiData = WSManAPIData;
-            if (tempWSManApiData == null) { return; }
+            if (tempWSManApiData == null)
+            {
+                return;
+            }
 
             WSManAPIData = null;
 
@@ -2720,7 +2726,10 @@ namespace System.Management.Automation.Remoting.Client
             {
                 lock (_syncObject)
                 {
-                    if (_isDisposed) { return; }
+                    if (_isDisposed)
+                    {
+                        return;
+                    }
 
                     _isDisposed = true;
                 }

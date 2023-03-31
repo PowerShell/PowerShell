@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
 
-            var baseResponseStream = StreamHelper.GetResponseStream(response);
+            Stream baseResponseStream = StreamHelper.GetResponseStream(response);
 
             if (ShouldWriteToPipeline)
             {
@@ -89,21 +89,16 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // determine the response type
+                    // Determine the response type
                     RestReturnType returnType = CheckReturnType(response);
 
                     // Try to get the response encoding from the ContentType header.
-                    Encoding encoding = null;
-                    string charSet = response.Content.Headers.ContentType?.CharSet;
-                    if (!string.IsNullOrEmpty(charSet))
-                    {
-                        StreamHelper.TryGetEncoding(charSet, out encoding);
-                    }
+                    string charSet = WebResponseHelper.GetCharacterSet(response);
+
+                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding);
 
                     object obj = null;
                     Exception ex = null;
-
-                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
 
                     string encodingVerboseName;
                     try
@@ -140,8 +135,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             else if (ShouldSaveToOutFile)
-            {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+            {   
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(baseResponseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))
@@ -315,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (JsonException ex)
             {
-                var msg = string.Format(System.Globalization.CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, ex.Message);
+                string msg = string.Format(System.Globalization.CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, ex.Message);
                 exRef = new ArgumentException(msg, ex);
                 obj = null;
             }

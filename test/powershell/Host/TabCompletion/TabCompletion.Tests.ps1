@@ -541,11 +541,16 @@ using `
     It 'Should show multiple constructors in the tooltip' {
         $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
         $res.CompletionMatches | Should -HaveCount 1
-        $completionText = $res.CompletionMatches.ToolTip | Should -BeExactly @'
+        $completionText = $res.CompletionMatches.ToolTip
+        $completionText.replace("`r`n", [System.Environment]::NewLine).trim()
+
+        $expected = @'
 ConstructorTestClass(string s)
 ConstructorTestClass(int i)
 ConstructorTestClass(int i, bool b)
 '@
+        $expected.replace("`r`n", [System.Environment]::NewLine).trim()
+        $completionText.replace("`r`n", [System.Environment]::NewLine).trim() | Should -BeExactly $expected
     }
 
     It 'Should complete parameter in param block' {
@@ -626,6 +631,13 @@ ConstructorTestClass(int i, bool b)
         $res = TabExpansion2 -inputScript $TestString
         $res | Should -HaveCount 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
+    }
+
+    It 'Should complete psobject members for variable' {
+        $TestVar = Get-Command Get-Command | Select-Object CommandType
+        $res = TabExpansion2 -inputScript '$TestVar | ForEach-Object {$_.commandtype'
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CommandType'
     }
 
     Context "Format cmdlet's View paramter completion" {
@@ -857,6 +869,18 @@ class InheritedClassTest : System.Attribute
         $this.
 '@
         $res.CompletionMatches.CompletionText | Should -Contain 'TypeId'
+    }
+
+    it 'Should not complete parameter aliases if the real parameter is in the completion results' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -p'
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '-proga'
+        $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
+    }
+
+    it 'Should not complete parameter aliases if the real parameter is in the completion results (Non ambiguous parameters)' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -prog'
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '-proga'
+        $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
     Context "Script name completion" {
@@ -1229,12 +1253,8 @@ class InheritedClassTest : System.Attribute
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
-            if (!$env:HOMEDRIVE) {
-                Set-ItResult -Skipped -Because "Homerdrive is not set"
-            }
-            $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
-            $beforeTab = "\\localhost\$homeDrive\wind"
-            $afterTab = "& '\\localhost\$homeDrive\Windows'"
+            $beforeTab = "\\localhost\ADMIN$\boo"
+            $afterTab = "& '\\localhost\ADMIN$\Boot'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -1638,15 +1658,15 @@ dir -Recurse `
         It "Test completion with exact match" {
             $inputStr = 'get-content -wa'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Wait,-WarningAction,-WarningVariable"
         }
 
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 6
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-ProgressAction,-PSPath"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -2101,7 +2121,7 @@ dir -Recurse `
 
     Context "Tab completion help test" {
         BeforeAll {
-            if ([System.Management.Automation.Platform]::IsWindows) {
+            if ($IsWindows) {
                 $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
             } else {
                 $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
@@ -2110,33 +2130,89 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
-            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
+            $helpName = "about_Splatting"
+            $helpFileName = "${helpName}.help.txt"
+            $inputScript = "get-help about_spla"
+            $culture = "en-US"
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot $culture
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME $culture
+            $expectedCompletionCount = 0
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
-            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
-            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
+            $userHelpPath = Join-Path $aboutHelpPathUserScope $helpFileName
+            $userScopeHelp = Test-Path $userHelpPath
+            if ($userScopeHelp) {
+                $expectedCompletionCount++
+            } else {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                if (Test-Path $userHelpPath) {
+                    $expectedCompletionCount++
+                }
             }
 
-            # If help content is present on both scopes, expect 2 or else expect 1 completion.
-            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+            $allUserScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersScope $helpFileName)
+            if ($allUserScopeHelpPath) {
+                $expectedCompletionCount++
+            }
 
-            $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-            $res.CompletionMatches | Should -HaveCount $expectedCompletions
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $inputScript.Length
+            $res.CompletionMatches | Should -HaveCount $expectedCompletionCount
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
         }
+
         It 'Should complete about help topic regardless of culture' {
             try
             {
                 ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
                 $OriginalCulture = [cultureinfo]::CurrentCulture
-                [cultureinfo]::CurrentCulture="da-DK"
+                $defaultCulture = "en-US"
+                $culture = "da-DK"
+                [cultureinfo]::CurrentCulture = $culture
+                $helpName = "about_Splatting"
+                $helpFileName = "${helpName}.help.txt"
+
+                $aboutHelpPathUserScope = Join-Path $userHelpRoot $culture
+                $aboutHelpPathAllUsersScope = Join-Path $PSHOME $culture
+                $expectedCompletionCount = 0
+
+                ## If help content does not exist, tab completion will not work. So update it first.
+                $userHelpPath = Join-Path $aboutHelpPathUserScope $helpFileName
+                $userScopeHelp = Test-Path $userHelpPath
+                if ($userScopeHelp) {
+                    $expectedCompletionCount++
+                }
+                else {                    Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                    if (Test-Path $userHelpPath) {
+                        $expectedCompletionCount++
+                    }
+                    else {
+                        $aboutHelpPathUserScope = Join-Path $userHelpRoot $defaultCulture
+                        $aboutHelpPathAllUsersScope = Join-Path $PSHOME $defaultCulture
+                        $userHelpDefaultPath = Join-Path $aboutHelpPathUserScope $helpFileName
+                        $userDefaultScopeHelp = Test-Path $userHelpDefaultPath
+
+                        if ($userDefaultScopeHelp) {
+                            $expectedCompletionCount++
+                        }
+                    }
+                }
+
+                $allUserScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersScope $helpFileName)
+                if ($allUserScopeHelpPath) {
+                    $expectedCompletionCount++
+                }
+                else {
+                    $aboutHelpPathAllUsersDefaultScope = Join-Path $PSHOME $defaultCulture
+                    $allUsersDefaultScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersDefaultScope $helpFileName)
+
+                    if ($allUsersDefaultScopeHelpPath) {
+                        $expectedCompletionCount++
+                    }
+                }
 
                 $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-                $res.CompletionMatches | Should -HaveCount 1
-                $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+                $res.CompletionMatches | Should -HaveCount $expectedCompletionCount
+                $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
             }
             finally
             {
@@ -2351,7 +2427,7 @@ function MyFunction ($param1, $param2)
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
-        if ($IsWindows) {
+        if ($IsWindows -and -not (Test-IsWinWow64)) {
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace

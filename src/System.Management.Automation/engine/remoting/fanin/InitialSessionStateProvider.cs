@@ -812,8 +812,12 @@ namespace System.Management.Automation.Remoting
         public override InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo)
         {
             InitialSessionState result = InitialSessionState.CreateDefault2();
+
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8"))
+            {
+                PSSessionConfigurationData.IsServerManager = true;
+            }
 
             return result;
         }
@@ -852,7 +856,10 @@ namespace System.Management.Automation.Remoting
             }
 
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8"))
+            {
+                PSSessionConfigurationData.IsServerManager = true;
+            }
 
             return sessionState;
         }
