@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseHelper
     {
-        internal static string? GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet;
+        internal static string GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet ?? string.Empty;
 
         internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
         {

@@ -96,9 +96,9 @@ namespace Microsoft.PowerShell.Commands
                     RestReturnType returnType = CheckReturnType(response);
 
                     // Try to get the response encoding from the ContentType header.
-                    string? charSet = WebResponseHelper.GetCharacterSet(response);
+                    string characterSet = WebResponseHelper.GetCharacterSet(response);
 
-                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding);
+                    string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding);
 
                     object? obj = null;
                     Exception? ex = null;
