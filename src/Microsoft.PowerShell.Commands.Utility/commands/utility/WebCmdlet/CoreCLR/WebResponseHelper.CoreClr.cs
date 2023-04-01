@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     internal static class WebResponseHelper
     {
         internal static string? GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet;
+
         internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
         {
             var headers = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
