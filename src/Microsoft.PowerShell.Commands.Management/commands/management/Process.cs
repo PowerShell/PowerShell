@@ -954,7 +954,6 @@ namespace Microsoft.PowerShell.Commands
         // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
         private int _numberOfProcessesToWaitFor;
-        private int _initialNumberOfProcesses;
 
         /// <summary>
         /// Gets the list of process.
@@ -979,7 +978,6 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 _processList.Add(process);
-                _initialNumberOfProcesses += 1;
             }
         }
 
@@ -1009,11 +1007,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            bool hasTimedOut = false;
             if (_numberOfProcessesToWaitFor > 0)
             {
                 if (_timeOutSpecified)
                 {
-                    _waitHandle.WaitOne(_timeout * 1000);
+                    hasTimedOut = !_waitHandle.WaitOne(_timeout * 1000);
                 }
                 else
                 {
@@ -1021,7 +1020,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if ((!Any) || (Any && _numberOfProcessesToWaitFor == _initialNumberOfProcesses))
+            if (hasTimedOut)
             {
                 foreach (Process process in _processList)
                 {
