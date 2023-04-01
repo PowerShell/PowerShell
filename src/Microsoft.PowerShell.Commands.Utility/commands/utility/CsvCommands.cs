@@ -1274,7 +1274,6 @@ namespace Microsoft.PowerShell.Commands
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
             ArgumentNullException.ThrowIfNull(cmdlet); 
-
             ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;

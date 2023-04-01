@@ -108,6 +108,11 @@ namespace Microsoft.PowerShell.Commands
         internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
+        /// Maximum number of Redirects to follow.
+        /// </summary>
+        internal int _maximumRedirection;
+
+        /// <summary>
         /// Parse Rel Links.
         /// </summary>
         internal bool _parseRelLink = false;
@@ -517,154 +522,154 @@ namespace Microsoft.PowerShell.Commands
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
 
-                using (HttpClient client = GetHttpClient(handleRedirect))
+                using HttpClient client = GetHttpClient(handleRedirect);
+
+                int followedRelLink = 0;
+                Uri uri = Uri;
+                do
                 {
-                    int followedRelLink = 0;
-                    Uri uri = Uri;
-                    do
+                    if (followedRelLink > 0)
                     {
-                        if (followedRelLink > 0)
+                        string linkVerboseMsg = string.Format(
+                            CultureInfo.CurrentCulture,
+                            WebCmdletStrings.FollowingRelLinkVerboseMsg,
+                            uri.AbsoluteUri);
+
+                        WriteVerbose(linkVerboseMsg);
+                    }
+
+                    using (HttpRequestMessage request = GetRequest(uri))
+                    {
+                        FillRequestStream(request);
+                        try
                         {
-                            string linkVerboseMsg = string.Format(
+                            long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
+
+                            string reqVerboseMsg = string.Format(
                                 CultureInfo.CurrentCulture,
-                                WebCmdletStrings.FollowingRelLinkVerboseMsg,
-                                uri.AbsoluteUri);
+                                WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                                request.Version,
+                                request.Method,
+                                requestContentLength);
 
-                            WriteVerbose(linkVerboseMsg);
-                        }
+                            WriteVerbose(reqVerboseMsg);
 
-                        using (HttpRequestMessage request = GetRequest(uri))
-                        {
-                            FillRequestStream(request);
-                            try
+                            _maximumRedirection = WebSession.MaximumRedirection;
+
+                            using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
+
+                            string contentType = ContentHelper.GetContentType(response);
+                            long? contentLength = response.Content.Headers.ContentLength;
+                            string respVerboseMsg = contentLength is null
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                            
+                            WriteVerbose(respVerboseMsg);
+
+                            bool _isSuccess = response.IsSuccessStatusCode;
+
+                            // Check if the Resume range was not satisfiable because the file already completed downloading.
+                            // This happens when the local file is the same size as the remote file.
+                            if (Resume.IsPresent
+                                && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                                && response.Content.Headers.ContentRange.HasLength
+                                && response.Content.Headers.ContentRange.Length == _resumeFileSize)
                             {
-                                long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
-
-                                string reqVerboseMsg = string.Format(
+                                _isSuccess = true;
+                                WriteVerbose(string.Format(
                                     CultureInfo.CurrentCulture,
-                                    WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                                    request.Version,
-                                    request.Method,
-                                    requestContentLength);
+                                    WebCmdletStrings.OutFileWritingSkipped,
+                                    OutFile));
 
-                                WriteVerbose(reqVerboseMsg);
-
-                                using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
-
-                                string contentType = ContentHelper.GetContentType(response);
-                                string respVerboseMsg = string.Format(
-                                    CultureInfo.CurrentCulture,
-                                    WebCmdletStrings.WebResponseVerboseMsg,
-                                    response.Content.Headers.ContentLength,
-                                    contentType);
-
-                                WriteVerbose(respVerboseMsg);
-
-                                bool _isSuccess = response.IsSuccessStatusCode;
-
-                                // Check if the Resume range was not satisfiable because the file already completed downloading.
-                                // This happens when the local file is the same size as the remote file.
-                                if (Resume.IsPresent
-                                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                                    && response.Content.Headers.ContentRange.HasLength
-                                    && response.Content.Headers.ContentRange.Length == _resumeFileSize)
-                                {
-                                    _isSuccess = true;
-                                    WriteVerbose(string.Format(
-                                        CultureInfo.CurrentCulture,
-                                        WebCmdletStrings.OutFileWritingSkipped,
-                                        OutFile));
-
-                                    // Disable writing to the OutFile.
-                                    OutFile = null;
-                                }
-                                
-                                // Detect insecure redirection
-                                if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
-                                {
-                                        ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
-                                        ThrowTerminatingError(er);
-                                }
-                                
-                                if (ShouldCheckHttpStatus && !_isSuccess)
-                                {
-                                    string message = string.Format(
-                                        CultureInfo.CurrentCulture,
-                                        WebCmdletStrings.ResponseStatusCodeFailure,
-                                        (int)response.StatusCode,
-                                        response.ReasonPhrase);
-
-                                    HttpResponseException httpEx = new(message, response);
-                                    ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                    string detailMsg = string.Empty;
-                                    StreamReader reader = null;
-                                    try
-                                    {
-                                        reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        detailMsg = FormatErrorMessage(reader.ReadToEnd(), contentType);
-                                    }
-                                    catch
-                                    {
-                                        // Catch all
-                                    }
-                                    finally
-                                    {
-                                        reader?.Dispose();
-                                    }
-
-                                    if (!string.IsNullOrEmpty(detailMsg))
-                                    {
-                                        er.ErrorDetails = new ErrorDetails(detailMsg);
-                                    }
-
-                                    ThrowTerminatingError(er);
-                                }
-
-                                if (_parseRelLink || _followRelLink)
-                                {
-                                    ParseLinkHeader(response);
-                                }
-
-                                ProcessResponse(response);
-                                UpdateSession(response);
-
-                                // If we hit our maximum redirection count, generate an error.
-                                // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
-                                // impossible to detect programmatically when we hit this limit. By handling this ourselves
-                                // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
-                                {
-                                    ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
-                                    WriteError(er);
-                                }
+                                // Disable writing to the OutFile.
+                                OutFile = null;
                             }
-                            catch (HttpRequestException ex)
+
+                            // Detect insecure redirection
+                            if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
                             {
-                                ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                if (ex.InnerException is not null)
+                                ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
+                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
+                                ThrowTerminatingError(er);
+                            }
+
+                            if (ShouldCheckHttpStatus && !_isSuccess)
+                            {
+                                string message = string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    WebCmdletStrings.ResponseStatusCodeFailure,
+                                    (int)response.StatusCode,
+                                    response.ReasonPhrase);
+
+                                HttpResponseException httpEx = new(message, response);
+                                ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                string detailMsg = string.Empty;
+                                StreamReader reader = null;
+                                try
                                 {
-                                    er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
+                                    reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                                    detailMsg = FormatErrorMessage(reader.ReadToEnd(), contentType);
+                                }
+                                catch
+                                {
+                                    // Catch all
+                                }
+                                finally
+                                {
+                                    reader?.Dispose();
+                                }
+
+                                if (!string.IsNullOrEmpty(detailMsg))
+                                {
+                                    er.ErrorDetails = new ErrorDetails(detailMsg);
                                 }
 
                                 ThrowTerminatingError(er);
                             }
 
-                            if (_followRelLink)
+                            if (_parseRelLink || _followRelLink)
                             {
-                                if (!_relationLink.ContainsKey("next"))
-                                {
-                                    return;
-                                }
+                                ParseLinkHeader(response);
+                            }
 
-                                uri = new Uri(_relationLink["next"]);
-                                followedRelLink++;
+                            ProcessResponse(response);
+                            UpdateSession(response);
+
+                            // If we hit our maximum redirection count, generate an error.
+                            // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
+                            // impossible to detect programmatically when we hit this limit. By handling this ourselves
+                            // (and still writing out the result), users can debug actual HTTP redirect problems.
+                            if (WebSession.MaximumRedirection == 0 && IsRedirectCode(response.StatusCode))
+                            {
+                                ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                WriteError(er);
                             }
                         }
+                        catch (HttpRequestException ex)
+                        {
+                            ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                            if (ex.InnerException is not null)
+                            {
+                                er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
+                            }
+
+                            ThrowTerminatingError(er);
+                        }
+
+                        if (_followRelLink)
+                        {
+                            if (!_relationLink.ContainsKey("next"))
+                            {
+                                return;
+                            }
+
+                            uri = new Uri(_relationLink["next"]);
+                            followedRelLink++;
+                        }
                     }
-                    while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
                 }
+                while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
             }
             catch (CryptographicException ex)
             {
@@ -903,11 +908,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
                 }
-                else if (ProxyUseDefaultCredentials)
+                else
                 {
-                    // If both ProxyCredential and ProxyUseDefaultCredentials are passed,
-                    // UseDefaultCredentials will overwrite the supplied credentials.
-                    webProxy.UseDefaultCredentials = true;
+                    webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
                 }
 
                 WebSession.Proxy = webProxy;
@@ -929,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
                     // We silently ignore header if value is null.
                     if (value is not null)
                     {
-                        // Add the header value (or overwrite it if already present)
+                        // Add the header value (or overwrite it if already present).
                         WebSession.Headers[key] = value.ToString();
                     }
                 }
@@ -943,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
         }
-        
+
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             HttpClientHandler handler = new();
@@ -1231,7 +1234,7 @@ namespace Microsoft.PowerShell.Commands
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
                 if (handleRedirect
-                    && WebSession.MaximumRedirection is not 0
+                    && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
                     && response.Headers.Location is not null)
                 {
@@ -1239,9 +1242,9 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken = null;
 
                     // If explicit count was provided, reduce it for this redirection.
-                    if (WebSession.MaximumRedirection > 0)
+                    if (_maximumRedirection > 0)
                     {
-                        WebSession.MaximumRedirection--;
+                        _maximumRedirection--;
                     }
 
                     // For selected redirects, GET must be used with the redirected Location.
@@ -1287,7 +1290,7 @@ namespace Microsoft.PowerShell.Commands
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
                             requestContentLength);
-                        
+
                         WriteVerbose(reqVerboseMsg);
 
                         response.Dispose();
@@ -1304,9 +1307,9 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter)) 
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
                     {
-                        try 
+                        try
                         {
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
@@ -1319,7 +1322,7 @@ namespace Microsoft.PowerShell.Commands
                             // Ignore broken header.
                         }
                     }
-                    
+
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
@@ -1389,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
-        
+
         private static string FormatDictionary(IDictionary content)
         {
             ArgumentNullException.ThrowIfNull(content);
@@ -1486,16 +1489,18 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
-            
+
             Encoding encoding = null;
-            if (ContentType is not null)
+            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
+
+            if (contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
                 try
                 {
-                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(ContentType);
+                    MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse(contentType);
                     if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
@@ -1506,7 +1511,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!SkipHeaderValidation)
                     {
                         ValidationMetadataException outerEx = new(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ErrorRecord er = new(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, contentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1566,7 +1571,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(multipartContent);
-            
+
             // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
             WebSession.ContentHeaders.Clear();
 
@@ -1736,7 +1741,8 @@ namespace Microsoft.PowerShell.Commands
                     XmlDocument doc = new();
                     doc.LoadXml(error);
 
-                    XmlWriterSettings settings = new XmlWriterSettings {
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
                         Indent = true,
                         NewLineOnAttributes = true,
                         OmitXmlDeclaration = true
