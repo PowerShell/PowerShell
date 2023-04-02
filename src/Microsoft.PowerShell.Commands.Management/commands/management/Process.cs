@@ -1020,7 +1020,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (hasTimedOut)
+            if (hasTimedOut || (!Any && _numberOfProcessesToWaitFor > 0))
             {
                 foreach (Process process in _processList)
                 {
