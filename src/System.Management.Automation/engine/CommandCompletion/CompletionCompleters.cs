@@ -4380,27 +4380,38 @@ namespace System.Management.Automation
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
             var results = new List<CompletionResult>();
 
-            // First, try to match \\server\share
-            // support both / and \ when entering UNC paths for typing convenience (#17111)
-            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
+            // Matches file shares with and without the provider name and with either slash direction.
+            // Avoids matching Windows device paths like \\.\CDROM0 and \\?\Volume{b8f3fc1c-5cd6-4553-91e2-d6814c4cd375}\
+            var shareMatch = Regex.Match(
+                wordToComplete,
+                @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
+                RegexOptions.IgnoreCase);
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.
-                var server = shareMatch.Groups[1].Value;
-                var sharePattern = WildcardPattern.Get(shareMatch.Groups[2].Value + "*", WildcardOptions.IgnoreCase);
+                var provider = shareMatch.Groups[1].Value;
+                var server = shareMatch.Groups[2].Value;
+                var sharePattern = WildcardPattern.Get(shareMatch.Groups[3].Value + "*", WildcardOptions.IgnoreCase);
                 var ignoreHidden = context.GetOption("IgnoreHiddenShares", @default: false);
                 var shares = GetFileShares(server, ignoreHidden);
                 foreach (var share in shares)
                 {
                     if (sharePattern.IsMatch(share))
                     {
-                        string shareFullPath = "\\\\" + server + "\\" + share;
-                        if (quote != string.Empty)
+                        string sharePath = $"\\\\{server}\\{share}";
+                        string completionText;
+                        if (quote == string.Empty)
                         {
-                            shareFullPath = quote + shareFullPath + quote;
+                            completionText = share.Contains(' ')
+                                ? $"'{provider}{sharePath}'"
+                                : $"{provider}{sharePath}";
+                        }
+                        else
+                        {
+                            completionText = $"{quote}{provider}{sharePath}{quote}";
                         }
 
-                        results.Add(new CompletionResult(shareFullPath, shareFullPath, CompletionResultType.ProviderContainer, shareFullPath));
+                        results.Add(new CompletionResult(completionText, share, CompletionResultType.ProviderContainer, sharePath));
                     }
                 }
             }
