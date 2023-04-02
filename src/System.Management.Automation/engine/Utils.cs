@@ -1251,6 +1251,15 @@ namespace System.Management.Automation
 #endif
         }
 
+        internal static bool PathIsDevicePath(string path)
+        {
+#if UNIX
+            return false;
+#else
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\");
+#endif
+        }
+
         internal static readonly string PowerShellAssemblyStrongNameFormat =
             "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 

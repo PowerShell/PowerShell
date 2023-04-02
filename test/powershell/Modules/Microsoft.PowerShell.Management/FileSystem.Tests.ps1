@@ -529,6 +529,11 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Test-Path -LiteralPath $testPath2 | Should -BeTrue
         }
     }
+
+    It "Handle wildcards in root of device path" -Skip:(!$IsWindows) {
+        $Res = Get-ChildItem -Path '\\.\C:\*'
+        $Res.Count | Should -BeGreaterThan 0
+    }
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
