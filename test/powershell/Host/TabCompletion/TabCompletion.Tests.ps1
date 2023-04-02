@@ -1270,9 +1270,8 @@ class InheritedClassTest : System.Attribute
         }
 
         It "Tab completion UNC path with filesystem provider" -Skip:(!$IsWindows) {
-            $afterTab = "\\localhost\ADMIN$"
             $res = TabExpansion2 -inputScript 'Filesystem::\\localhost\admin'
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\admin$'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
         }
 
 
