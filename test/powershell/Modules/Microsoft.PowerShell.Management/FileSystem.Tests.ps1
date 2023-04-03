@@ -536,9 +536,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
     }
 
     It "Handle wildcards in root of device path with '?'" -Skip:(!$IsWindows) {
-        $DeviceId = Get-CimInstance -ClassName Win32_Volume | Select-Object -First 1 -ExpandProperty DeviceId
-        $EscapedDeviceId = [WildcardPattern]::Escape($DeviceId)
-        $Res = Get-ChildItem -Path "$EscapedDeviceId*"
+        $Res = Get-ChildItem -Path '\\`?\C:\*'
         $Res.Count | Should -BeGreaterThan 0
     }
 }
