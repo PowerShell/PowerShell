@@ -1069,9 +1069,10 @@ namespace System.Management.Automation
                 }
                 else if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                 {
+                    string scriptBlockId = $"{this.Id}+{this.GetFileName() ?? string.Empty}";
                     SystemPolicy.LogWDACAuditMessage(
                         title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,
-                        message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, this.GetFileName() ?? string.Empty, this.LanguageMode, context.LanguageMode),
+                        message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, scriptBlockId, this.LanguageMode, context.LanguageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed");
 
                     // Since we are in audit mode, go ahead and allow the language transition.

@@ -549,6 +549,7 @@ namespace System.Management.Automation
                                     break;
 
                                 case SystemScriptFileEnforcement.AllowConstrainedAudit:
+                                    // TODO: this.ScriptBlock.Id
                                     SystemPolicy.LogWDACAuditMessage(
                                         title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
                                         message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path),

@@ -133,7 +133,7 @@ namespace System.Management.Automation.Security
             // First check latest WDAC APIs if available.
             // Revert to legacy APIs if system policy is in AUDIT mode or debug hook is in effect.
             Exception errorException = null;
-            if (s_wldpCanExecuteAvailable && systemLockdownPolicy != SystemEnforcementMode.Audit && !s_allowDebugOverridePolicy)
+            if (s_wldpCanExecuteAvailable && systemLockdownPolicy == SystemEnforcementMode.Enforce)
             {
                 try
                 {
@@ -196,6 +196,7 @@ namespace System.Management.Automation.Security
                 return SystemScriptFileEnforcement.None;
             }
 
+            // Check policy for file.
             switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
             {
                 case SystemEnforcementMode.Enforce:

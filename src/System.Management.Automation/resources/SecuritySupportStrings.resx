@@ -163,6 +163,6 @@
     <value>Script File Read</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Script file '{0}' is not trusted by policy and weill run in ConstrainedLanguage mode.</value>
+    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
   </data>
 </root>
