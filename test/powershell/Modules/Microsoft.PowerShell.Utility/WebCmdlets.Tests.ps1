@@ -4184,7 +4184,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
     }
 }
 
-Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through CTRL-C' -Tags "CI", "RequireAdminOnWindows", "CTRLC" {
+Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through CTRL-C' -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $oldProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
