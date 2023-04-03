@@ -121,7 +121,11 @@ namespace System.Management.Automation
                 errorPosition = invocationInfo.ScriptPosition;
             }
 
-            if (invocationInfo == null) return;
+            if (invocationInfo == null)
+            {
+                return;
+            }
+
             _errorRecord = new ErrorRecord(
               new ParentContainsErrorRecordException(this),
                 _errorId,

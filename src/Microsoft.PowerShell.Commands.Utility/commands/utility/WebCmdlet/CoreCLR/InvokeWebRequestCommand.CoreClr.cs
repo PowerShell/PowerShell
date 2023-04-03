@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {
-            this._parseRelLink = true;
+            _parseRelLink = true;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                     StreamHelper.ChunkSize,
                     this,
                     response.Content.Headers.ContentLength.GetValueOrDefault());
-                WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream) : new WebResponseObject(response, responseStream);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
@@ -56,7 +56,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
         }
 

@@ -383,53 +383,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
         {
-            try
-            {
-                encoding = Encoding.GetEncoding(characterSet);
-            }
-            catch (ArgumentException)
-            {
-                encoding = null;
-            }
-
-            return DecodeStream(stream, ref encoding);
-        }
-
-        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
-        {
-            bool result = false;
-            try
-            {
-                encoding = Encoding.GetEncoding(characterSet);
-                result = true;
-            }
-            catch (ArgumentException)
-            {
-                encoding = null;
-            }
-
-            return result;
-        }
-
-        private static readonly Regex s_metaRegex = new(
-                @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
-            );
-        
-        private static readonly Regex s_xmlRegex = new(
-                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
-                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
-            ); 
-
-        internal static string DecodeStream(Stream stream, ref Encoding encoding)
-        {
-            bool isDefaultEncoding = false;
-            if (encoding is null)
-            {
-                // Use the default encoding if one wasn't provided
-                encoding = ContentHelper.GetDefaultEncoding();
-                isDefaultEncoding = true;
-            }
+            bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
 
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
@@ -449,10 +403,9 @@ namespace Microsoft.PowerShell.Commands
                 
                 if (match.Success)
                 {
-                    Encoding localEncoding = null;
-                    string characterSet = match.Groups["charset"].Value;
+                    characterSet = match.Groups["charset"].Value;
 
-                    if (TryGetEncoding(characterSet, out localEncoding))
+                    if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
                         content = StreamToString(stream, localEncoding);
@@ -464,6 +417,33 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
+        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        {
+            bool result = false;
+            try
+            {
+                encoding = Encoding.GetEncoding(characterSet);
+                result = true;
+            }
+            catch (ArgumentException)
+            {
+                // Use the default encoding if one wasn't provided
+                encoding = ContentHelper.GetDefaultEncoding();
+            }
+
+            return result;
+        }
+
+        private static readonly Regex s_metaRegex = new(
+                @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
+            );
+        
+        private static readonly Regex s_xmlRegex = new(
+                @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
+                RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
+            ); 
+
         internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
             // Just use the default encoding if one wasn't provided
@@ -471,6 +451,8 @@ namespace Microsoft.PowerShell.Commands
 
             return encoding.GetBytes(str);
         }
+
+        internal static string GetResponseString(HttpResponseMessage response) => response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
         internal static Stream GetResponseStream(HttpResponseMessage response) => response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
 

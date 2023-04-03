@@ -301,5 +301,43 @@ Describe -Name "Windows MSI" -Fixture {
                 Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
             } | Should -Not -Throw
         }
+
+        Context "Disable Telemetry" {
+            It "MSI should set POWERSHELL_TELEMETRY_OPTOUT env variable when MSI property DISABLE_TELEMETRY is set to 1" -Skip:(!(Test-Elevated)) {
+                try {
+                    $originalValue = [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine)
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '0', [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{DISABLE_TELEMETRY = 1 }
+                    } | Should -Not -Throw
+                    [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine) |
+                        Should -Be 1
+                }
+                finally {
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', $originalValue, [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+                    } | Should -Not -Throw
+                }
+            }
+
+            It "MSI should not change POWERSHELL_TELEMETRY_OPTOUT env variable when MSI property DISABLE_TELEMETRY not set" -Skip:(!(Test-Elevated)) {
+                try {
+                    $originalValue = [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine)
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'untouched', [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Install -MsiPath $msiX64Path
+                    } | Should -Not -Throw
+                    [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine) |
+                        Should -Be 'untouched'
+                }
+                finally {
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', $originalValue, [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+                    } | Should -Not -Throw
+                }
+            }
+        }
     }
 }

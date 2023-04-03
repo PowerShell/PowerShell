@@ -61,28 +61,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsJson(string contentType)
         {
-            contentType = GetContentTypeSignature(contentType);
-            return CheckIsJson(contentType);
-        }
-
-        internal static bool IsText(string contentType)
-        {
-            contentType = GetContentTypeSignature(contentType);
-            return CheckIsText(contentType);
-        }
-
-        internal static bool IsXml(string contentType)
-        {
-            contentType = GetContentTypeSignature(contentType);
-            return CheckIsXml(contentType);
-        }
-
-        #endregion Internal Methods
-
-        #region Private Helper Methods
-
-        private static bool CheckIsJson(string contentType)
-        {
             if (string.IsNullOrEmpty(contentType))
             {
                 return false;
@@ -102,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
             return isJson;
         }
 
-        private static bool CheckIsText(string contentType)
+        internal static bool IsText(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -111,8 +89,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Any text, xml or json types are text
             bool isText = contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
-                        || CheckIsXml(contentType)
-                        || CheckIsJson(contentType);
+                        || IsXml(contentType)
+                        || IsJson(contentType);
 
             // Further content type analysis is available on Windows
             if (Platform.IsWindows && !isText)
@@ -141,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
             return isText;
         }
 
-        private static bool CheckIsXml(string contentType)
+        internal static bool IsXml(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -157,17 +135,6 @@ namespace Microsoft.PowerShell.Commands
             return isXml;
         }
 
-        private static string GetContentTypeSignature(string contentType)
-        {
-            if (string.IsNullOrEmpty(contentType))
-            {
-                return null;
-            }
-
-            string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
-            return sig;
-        }
-
-        #endregion Private Helper Methods
+        #endregion Internal Methods
     }
 }

@@ -80,7 +80,10 @@ namespace System.Management.Automation.Language
             foreach (Assembly assembly in assemblies)
             {
                 // Skip the assemblies that we already searched and found no matching type.
-                if (searchedAssemblies.Contains(assembly)) { continue; }
+                if (searchedAssemblies.Contains(assembly))
+                {
+                    continue;
+                }
 
                 try
                 {

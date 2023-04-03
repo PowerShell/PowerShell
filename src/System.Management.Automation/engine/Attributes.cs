@@ -2053,7 +2053,10 @@ namespace System.Management.Automation
             {
                 // If the element of the collection is of value type, then no need to check for null
                 // because a value-type value cannot be null.
-                if (isElementValueType) { return; }
+                if (isElementValueType)
+                {
+                    return;
+                }
 
                 IEnumerator enumerator = LanguagePrimitives.GetEnumerator(arguments);
                 while (enumerator.MoveNext())
@@ -2137,7 +2140,10 @@ namespace System.Management.Automation
             {
                 bool isEmpty = true;
                 IEnumerator enumerator = LanguagePrimitives.GetEnumerator(arguments);
-                if (enumerator.MoveNext()) { isEmpty = false; }
+                if (enumerator.MoveNext())
+                {
+                    isEmpty = false;
+                }
 
                 // If the element of the collection is of value type, then no need to check for null
                 // because a value-type value cannot be null.

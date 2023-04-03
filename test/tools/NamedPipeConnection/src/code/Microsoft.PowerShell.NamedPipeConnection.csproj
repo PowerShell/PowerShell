@@ -8,15 +8,13 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
     <InformationalVersion>1.0.0</InformationalVersion>
-    <TargetFrameworks>net7.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <Reference Include="System.Management.Automation">
-      <HintPath>.\Ref\System.Management.Automation.dll</HintPath>
-    </Reference>
+    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.1" />
   </ItemGroup>
 </Project>

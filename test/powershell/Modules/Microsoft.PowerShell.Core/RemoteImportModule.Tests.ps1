@@ -5,7 +5,7 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $modulePath = "$testdrive\Modules\TestImport"
-        if (!$IsWindows) {
+        if (!$IsWindows -or (Test-IsWinWow64)) {
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
             $pssession = New-RemoteSession

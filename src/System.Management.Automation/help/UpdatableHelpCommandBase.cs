@@ -60,7 +60,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null) return;
+                if (value == null)
+                {
+                    return;
+                }
+
                 _language = new string[value.Length];
                 for (int index = 0; index < value.Length; index++)
                 {
@@ -443,7 +447,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
         {
-            if (modules == null || !modules.Any()) { return; }
+            if (modules == null || !modules.Any())
+            {
+                return;
+            }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();
 

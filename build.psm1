@@ -159,6 +159,7 @@ function Get-EnvironmentInformation
     }
 
     if ($environment.IsLinux) {
+        $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
         $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore | Select-Object -First 1
         if ($lsb_release) {
@@ -455,6 +456,9 @@ Fix steps:
 
     if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
         $Arguments += "/property:IsWindows=true"
+        if(!$environment.IsWindows) {
+            $Arguments += "/property:EnableWindowsTargeting=true"
+        }
     }
     else {
         $Arguments += "/property:IsWindows=false"
@@ -648,7 +652,7 @@ Fix steps:
         (Test-IsPreview $psVersion) -and
         -not (Test-IsReleaseCandidate $psVersion)
     ) {
-        if (-not $env:PS_RELEASE_BUILD -and -not $Runtime.Contains("arm") -and -not ($Runtime -like 'fxdependent*')) {
+        if ((Test-ShouldGenerateExperimentalFeatures -Runtime $Options.Runtime)) {
             Write-Verbose "Build experimental feature list by running 'Get-ExperimentalFeature'" -Verbose
             $json = & $publishPath\pwsh -noprofile -command {
                 $expFeatures = Get-ExperimentalFeature | ForEach-Object -MemberName Name
@@ -695,6 +699,45 @@ Fix steps:
         }
         Save-PSOptions -PSOptionsPath $PSOptionsPath -Options $Options
     }
+}
+
+function Test-ShouldGenerateExperimentalFeatures
+{
+    param(
+        [Parameter(Mandatory)]
+        $Runtime
+    )
+
+    if ($env:PS_RELEASE_BUILD) {
+        return $false
+    }
+
+    if ($Runtime -like 'fxdependent*') {
+        return $false
+    }
+
+    $runtimePattern = 'unknown-'
+    if ($environment.IsWindows) {
+        $runtimePattern = '^win.*-'
+    }
+
+    if ($environment.IsMacOS) {
+        $runtimePattern = '^osx.*-'
+    }
+
+    if ($environment.IsLinux) {
+        $runtimePattern = '^linux.*-'
+    }
+
+    $runtimePattern += $environment.OSArchitecture.ToString()
+    Write-Verbose "runtime pattern check: $Runtime -match $runtimePattern" -Verbose
+    if ($Runtime -match $runtimePattern) {
+        Write-Verbose "Generating experimental feature list" -Verbose
+        return $true
+    }
+
+    Write-Verbose "Skipping generating experimental feature list" -Verbose
+    return $false
 }
 
 function Restore-PSPackage
@@ -750,6 +793,10 @@ function Restore-PSPackage
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
+        }
+
+        if ($Options.Runtime -like 'win*') {
+            $RestoreArguments += "/property:EnableWindowsTargeting=True"
         }
 
         if ($InteractiveAuth) {
@@ -830,8 +877,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net7.0")]
-        [string]$Framework = "net7.0",
+        [ValidateSet("net8.0")]
+        [string]$Framework = "net8.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1071,17 +1118,6 @@ function Publish-CustomConnectionTestModule
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
-    $refPath = "${sourcePath}/src/code/Ref"
-
-    # Copy the current SMA build to the refPath.
-    $smaPath = Join-Path -Path (Split-Path -Path (Get-PSOutput)) -ChildPath 'System.Management.Automation.dll'
-    if (! (Test-Path -Path $smaPath)) {
-        throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
-    }
-    if (! (Test-Path -Path $refPath)) {
-        $null = New-Item -Path $refPath -ItemType Directory -Force
-    }
-    Copy-Item -Path $smapath -Destination $refPath -Force
 
     Find-DotNet
 
@@ -1099,7 +1135,6 @@ function Publish-CustomConnectionTestModule
 
         # Clean up build artifacts
         ./build.ps1 -Clean
-        Remove-Item -Path $refPath -Recurse -Force -ErrorAction SilentlyContinue
     }
     finally {
         Pop-Location
@@ -1172,6 +1207,9 @@ function Publish-PSTestTools {
 
     # `dotnet restore` on test project is not called if product projects have been restored unless -Force is specified.
     Copy-PSGalleryModules -Destination "${PSScriptRoot}/test/tools/Modules" -CsProjPath "$PSScriptRoot/test/tools/Modules/PSGalleryTestModules.csproj" -Force
+
+    # Publish the Microsoft.PowerShell.NamedPipeConnection module
+    Publish-CustomConnectionTestModule
 }
 
 function Get-ExperimentalFeatureTests {
@@ -3437,7 +3475,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v7.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v8.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

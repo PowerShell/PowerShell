@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0-preview.2.23153.2" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-preview.2.23128.3" />
   </ItemGroup>
 
   <ItemGroup>

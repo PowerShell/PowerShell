@@ -613,7 +613,10 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
 
                 ret = Win32Native.RegDeleteKeyTransacted(_hkey, subkey, 0, 0, safeTransactionHandle, IntPtr.Zero);
-                if (ret != 0) Win32Error(ret, null);
+                if (ret != 0)
+                {
+                    Win32Error(ret, null);
+                }
             }
             else
             {
@@ -653,7 +656,10 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
 
                 ret = Win32Native.RegDeleteKeyTransacted(_hkey, subkey, 0, 0, safeTransactionHandle, IntPtr.Zero);
-                if (ret != 0) Win32Error(ret, null);
+                if (ret != 0)
+                {
+                    Win32Error(ret, null);
+                }
             }
             else
             {

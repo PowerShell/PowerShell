@@ -25,7 +25,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.30.4"
+          "Version": "0.31.0"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +45,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Bcl.AsyncInterfaces",
-          "Version": "7.0.0"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.4.0"
+          "Version": "4.5.0"
         }
       },
       "DevelopmentDependency": false
@@ -75,20 +75,10 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.4.0"
+          "Version": "4.5.0"
         }
       },
       "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Microsoft.CodeAnalysis.NetAnalyzers",
-          "Version": "7.0.0"
-        }
-      },
-      "DevelopmentDependency": true
     },
     {
       "Component": {
@@ -105,7 +95,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.2"
+          "Version": "5.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -205,7 +195,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Win32.Registry",
-          "Version": "5.0.0"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -785,7 +775,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.DiagnosticSource",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -835,7 +825,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -936,16 +926,6 @@
         "Nuget": {
           "Name": "System.Management",
           "Version": "7.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Memory",
-          "Version": "4.5.5"
         }
       },
       "DevelopmentDependency": false
@@ -1065,7 +1045,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "5.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1185,7 +1165,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1195,7 +1175,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.ProtectedData",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1205,7 +1185,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Xml",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1246,6 +1226,16 @@
         "Nuget": {
           "Name": "System.ServiceModel.Http",
           "Version": "4.10.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "System.ServiceModel.NetFramingBase",
+          "Version": "6.0.0-preview1.23060.3"
         }
       },
       "DevelopmentDependency": false
@@ -1345,7 +1335,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Threading.AccessControl",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1385,7 +1375,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.10.0"
+          "Version": "4.9.0"
         }
       },
       "DevelopmentDependency": false

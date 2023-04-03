@@ -18,15 +18,10 @@ namespace Microsoft.PowerShell.Cmdletization
         internal void Initialize(PSCmdlet cmdlet, string className, string classVersion, IDictionary<string, string> privateData)
         {
             ArgumentNullException.ThrowIfNull(cmdlet);
-
-            if (string.IsNullOrEmpty(className))
-            {
-                throw new ArgumentNullException(nameof(className));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(className);
 
             // possible and ok to have classVersion==string.Empty
             ArgumentNullException.ThrowIfNull(classVersion);
-
             ArgumentNullException.ThrowIfNull(privateData);
 
             _cmdlet = cmdlet;

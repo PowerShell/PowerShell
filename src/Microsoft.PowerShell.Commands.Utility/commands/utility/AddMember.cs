@@ -524,7 +524,10 @@ namespace Microsoft.PowerShell.Commands
             // Respect the type shortcut
             Type type;
             string typeNameInUse = _typeName;
-            if (LanguagePrimitives.TryConvertTo(_typeName, out type)) { typeNameInUse = type.FullName; }
+            if (LanguagePrimitives.TryConvertTo(_typeName, out type))
+            {
+                typeNameInUse = type.FullName;
+            }
 
             _inputObject.TypeNames.Insert(0, typeNameInUse);
         }

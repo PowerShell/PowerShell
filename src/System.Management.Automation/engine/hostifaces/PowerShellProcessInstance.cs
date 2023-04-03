@@ -189,10 +189,18 @@ namespace System.Management.Automation.Runspaces
 
         private void Dispose(bool disposing)
         {
-            if (_isDisposed) return;
+            if (_isDisposed)
+            {
+                return;
+            }
+
             lock (_syncObject)
             {
-                if (_isDisposed) return;
+                if (_isDisposed)
+                {
+                    return;
+                }
+
                 _isDisposed = true;
             }
 

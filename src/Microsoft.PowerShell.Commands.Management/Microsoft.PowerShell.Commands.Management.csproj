@@ -47,7 +47,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0-preview.2.23128.3" />
   </ItemGroup>
 
 </Project>

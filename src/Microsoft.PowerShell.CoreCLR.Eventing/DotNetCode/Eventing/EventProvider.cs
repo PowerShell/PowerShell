@@ -131,7 +131,10 @@ namespace System.Diagnostics.Eventing
             //
             // check if the object has been already disposed
             //
-            if (_disposed == 1) return;
+            if (_disposed == 1)
+            {
+                return;
+            }
 
             if (Interlocked.Exchange(ref _disposed, 1) != 0)
             {
