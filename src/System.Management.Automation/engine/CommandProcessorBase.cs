@@ -239,9 +239,10 @@ namespace System.Management.Automation
                         throw new CmdletInvocationException(errorRecord);
                     }
 
+                    string scriptBlockId = $"{scriptBlock.Id}+{scriptBlock.GetFileName() ?? string.Empty}";
                     SystemPolicy.LogWDACAuditMessage(
                         title: CommandBaseStrings.WDACLogTitle,
-                        message: StringUtil.Format(CommandBaseStrings.WDACLogTitle, scriptBlock.File ?? string.Empty, scriptBlock.LanguageMode, languageMode),
+                        message: StringUtil.Format(CommandBaseStrings.WDACLogMessage, scriptBlockId, scriptBlock.LanguageMode, languageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed");
                 }
             }
