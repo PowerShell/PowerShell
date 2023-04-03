@@ -44,10 +44,13 @@ namespace Microsoft.PowerShell.Commands
 
             string contentDisposition = response.Content.Headers.ContentDisposition?.FileNameStar ?? response.Content.Headers.ContentDisposition?.FileName;
 
-            if (!string.IsNullOrEmpty(contentDisposition)) 
+            if (!string.IsNullOrEmpty(contentDisposition))
             {
+                char[] charsToStrip = { '"', '\'' };
+                string strippedContentDisposition = Path.GetFileName(contentDisposition.Trim(charsToStrip));
+
                 // Get file name from Content-Disposition header if present
-                return Path.Join(qualifiedOutFile, contentDisposition);
+                return Path.Join(qualifiedOutFile, strippedContentDisposition);
             }
 
             if (response.RequestMessage.RequestUri.PathAndQuery != "/")
