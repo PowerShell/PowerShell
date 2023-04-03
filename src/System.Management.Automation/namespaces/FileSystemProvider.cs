@@ -4915,7 +4915,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (!parentPath.EndsWith(StringLiterals.DefaultPathSeparator)
-                && Utils.PathIsDevicePath(parentPath)
+                && Utils.PathIsDevicePath(parentPath, pathIsUnescaped: true)
                 && parentPath.Length - parentPath.Replace(StringLiterals.DefaultPathSeparatorString, string.Empty).Length == 3)
             {
                 // Device paths start with either "\\.\" or "\\?\"

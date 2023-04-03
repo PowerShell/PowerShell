@@ -534,6 +534,13 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         $Res = Get-ChildItem -Path '\\.\C:\*'
         $Res.Count | Should -BeGreaterThan 0
     }
+
+    It "Handle wildcards in root of device path with '?'" -Skip:(!$IsWindows) {
+        $DeviceId = Get-CimInstance -ClassName Win32_Volume | Select-Object -First 1 -ExpandProperty DeviceId
+        $EscapedDeviceId = [WildcardPattern]::Escape($DeviceId)
+        $Res = Get-ChildItem -Path "$EscapedDeviceId*"
+        $Res.Count | Should -BeGreaterThan 0
+    }
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {

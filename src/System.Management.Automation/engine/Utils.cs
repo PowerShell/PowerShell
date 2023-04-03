@@ -1251,12 +1251,12 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool PathIsDevicePath(string path)
+        internal static bool PathIsDevicePath(string path, bool pathIsUnescaped)
         {
 #if UNIX
             return false;
 #else
-            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\");
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\") || (pathIsUnescaped && path.StartsWith(@"\\`?\"));
 #endif
         }
 
