@@ -63,7 +63,8 @@ namespace System.Management.Automation
                         SystemPolicy.LogWDACAuditMessage(
                             title: ParserStrings.WDACParserModuleScopeCallOperatorLogTitle,
                             message: ParserStrings.WDACParserModuleScopeCallOperatorLogMessage,
-                            fqid: "ModuleScopeCallOperatorNotAllowed");
+                            fqid: "ModuleScopeCallOperatorNotAllowed",
+                            dropIntoDebugger: true);
                     }
                     else
                     {
@@ -3015,7 +3016,8 @@ namespace System.Management.Automation
                                         SystemPolicy.LogWDACAuditMessage(
                                             title: ParserStrings.WDACParserForEachOperatorLogTitle,
                                             message: StringUtil.Format(ParserStrings.WDACParserForEachOperatorLogMessage, method.Name ?? string.Empty),
-                                            fqid: "ForEachOperatorMethodInvocationNotAllowed");
+                                            fqid: "ForEachOperatorMethodInvocationNotAllowed",
+                                            dropIntoDebugger: true);
                                     }
                                 }
 

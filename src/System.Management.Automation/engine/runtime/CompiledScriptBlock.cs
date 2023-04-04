@@ -1073,7 +1073,8 @@ namespace System.Management.Automation
                     SystemPolicy.LogWDACAuditMessage(
                         title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,
                         message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, scriptBlockId, this.LanguageMode, context.LanguageMode),
-                        fqid: "ScriptBlockDotSourceNotAllowed");
+                        fqid: "ScriptBlockDotSourceNotAllowed",
+                        dropIntoDebugger: true);
 
                     // Since we are in audit mode, go ahead and allow the language transition.
                     oldLanguageMode = context.LanguageMode;

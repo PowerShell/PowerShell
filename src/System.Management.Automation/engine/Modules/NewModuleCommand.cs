@@ -185,7 +185,8 @@ namespace Microsoft.PowerShell.Commands
                     SystemPolicy.LogWDACAuditMessage(
                         title: Modules.WDACNewModuleCommandLogTitle,
                         message: Modules.WDACNewModuleCommandLogMessage,
-                        fqid: "NewModuleCmdletWitFullLanguageScriptblockNotAllowed");
+                        fqid: "NewModuleCmdletWitFullLanguageScriptblockNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 string gs = System.Guid.NewGuid().ToString();

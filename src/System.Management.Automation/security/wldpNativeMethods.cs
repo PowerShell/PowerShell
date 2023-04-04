@@ -79,12 +79,30 @@ namespace System.Management.Automation.Security
         /// <param name="title">Audit message title.</param>
         /// <param name="message">Audit message message.</param>
         /// <param name="fqid">Fully Qualified ID.</param>
+        /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
         internal static void LogWDACAuditMessage(
             string title,
             string message,
-            string fqid)
+            string fqid,
+            bool dropIntoDebugger = false)
         {
             PSEtwLog.LogWDACAuditEvent(title, message, fqid);
+
+            if (dropIntoDebugger is false)
+            {
+                return;
+            }
+
+            var context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            if (context is not null && context._debugger is not null && context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) && !context._debugger.IsRemote)
+            {
+                System.Console.WriteLine(string.Empty);
+                System.Console.WriteLine($"WDAC Audit Log: {title}-{message}-{fqid}");
+                System.Console.WriteLine("Stopping script execution in debugger...");
+                System.Console.WriteLine(string.Empty);
+
+                context?._debugger?.SetDebuggerStepMode(true);
+            }
         }
 
         /// <summary>

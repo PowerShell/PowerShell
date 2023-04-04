@@ -2987,7 +2987,8 @@ namespace System.Management.Automation.Language
                     SystemPolicy.LogWDACAuditMessage(
                         title: ParserStrings.WDACParserConfigKeywordLogTitle,
                         message: ParserStrings.WDACParserConfigKeywordLogMessage,
-                        fqid: "ConfigurationLanguageKeywordNotAllowed");
+                        fqid: "ConfigurationLanguageKeywordNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 // Configuration is not supported on ARM or in ConstrainedLanguage
@@ -4213,7 +4214,8 @@ namespace System.Management.Automation.Language
                 SystemPolicy.LogWDACAuditMessage(
                     title: ParserStrings.WDACParserClassKeywordLogTitle,
                     message: ParserStrings.WDACParserClassKeywordLogMessage,
-                    fqid: "ClassLanguageKeywordNotAllowed");
+                    fqid: "ClassLanguageKeywordNotAllowed",
+                    dropIntoDebugger: true);
             }
             else if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {

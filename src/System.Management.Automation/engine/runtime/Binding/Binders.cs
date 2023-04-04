@@ -5530,7 +5530,8 @@ namespace System.Management.Automation.Language
                     SystemPolicy.LogWDACAuditMessage(
                         title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
                         message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, name, targetName ?? string.Empty),
-                        fqid: "BinderMethodOrPropertyInvocationNotAllowed");
+                        fqid: "BinderMethodOrPropertyInvocationNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
 
@@ -7703,7 +7704,8 @@ namespace System.Management.Automation.Language
                 SystemPolicy.LogWDACAuditMessage(
                     title: ParameterBinderStrings.WDACBinderTypeCreationLogTitle,
                     message: StringUtil.Format(ParameterBinderStrings.WDACBinderTypeCreationLogMessage, targetName ?? string.Empty),
-                    fqid: "BinderTypeCreationNotAllowed");
+                    fqid: "BinderTypeCreationNotAllowed",
+                    dropIntoDebugger: true);
             }
 
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));

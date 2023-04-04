@@ -163,7 +163,8 @@ namespace Microsoft.PowerShell.Commands
                         SystemPolicy.LogWDACAuditMessage(
                             title: ImportLocalizedDataStrings.WDACLogTitle,
                             message: ImportLocalizedDataStrings.WDACLogMessage,
-                            fqid: "SupportedCommandsDisabled");
+                            fqid: "SupportedCommandsDisabled",
+                            dropIntoDebugger: true);
                         break;
                 }
             }

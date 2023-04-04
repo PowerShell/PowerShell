@@ -205,7 +205,8 @@ namespace Microsoft.PowerShell.Commands
                             SystemPolicy.LogWDACAuditMessage(
                                 title: NewObjectStrings.TypeWDACLogTitle,
                                 message: StringUtil.Format(NewObjectStrings.TypeWDACLogMessage, type.FullName),
-                                fqid: "NewObjectCmdletCannotCreateType");
+                                fqid: "NewObjectCmdletCannotCreateType",
+                                dropIntoDebugger: true);
                         }
 
                         break;
@@ -331,7 +332,8 @@ namespace Microsoft.PowerShell.Commands
                         SystemPolicy.LogWDACAuditMessage(
                             title: NewObjectStrings.ComWDACLogTitle,
                             message: StringUtil.Format(NewObjectStrings.ComWDACLogMessage, ComObject ?? string.Empty),
-                            fqid: "NewObjectCmdletCannotCreateCOM");
+                            fqid: "NewObjectCmdletCannotCreateCOM",
+                            dropIntoDebugger: true);
                     }
                 }
 

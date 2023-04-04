@@ -1836,7 +1836,8 @@ namespace System.Management.Automation.Language
                     SystemPolicy.LogWDACAuditMessage(
                         title: ParserStrings.WDACParserDSSupportedCommandLogTitle,
                         message: ParserStrings.WDACParserDSSupportedCommandLogMessage,
-                        fqid: "SupportedCommandInDataSectionNotSupported");
+                        fqid: "SupportedCommandInDataSectionNotSupported",
+                        dropIntoDebugger: true);
                     break;
 
                 case PSLanguageMode.ConstrainedLanguage:

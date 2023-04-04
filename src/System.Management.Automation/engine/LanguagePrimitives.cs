@@ -4003,7 +4003,8 @@ namespace System.Management.Automation
                             SystemPolicy.LogWDACAuditMessage(
                                 title: ExtendedTypeSystem.WDACHashTypeLogTitle,
                                 message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
-                                fqid: "LanguageHashtableConversionNotAllowed");
+                                fqid: "LanguageHashtableConversionNotAllowed",
+                                dropIntoDebugger: true);
                         }
                         else
                         {
@@ -5661,7 +5662,8 @@ namespace System.Management.Automation
                     SystemPolicy.LogWDACAuditMessage(
                         title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
                         message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
-                        fqid: "LanguageTypeConversionNotAllowed");
+                        fqid: "LanguageTypeConversionNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
 

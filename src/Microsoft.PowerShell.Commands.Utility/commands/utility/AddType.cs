@@ -572,7 +572,8 @@ namespace Microsoft.PowerShell.Commands
                 SystemPolicy.LogWDACAuditMessage(
                     title: AddTypeStrings.AddTypeLogTitle,
                     message: AddTypeStrings.AddTypeLogMessage,
-                    fqid: "AddTypeCmdletDisabled");
+                    fqid: "AddTypeCmdletDisabled",
+                    dropIntoDebugger: true);
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core

@@ -2006,7 +2006,8 @@ namespace System.Management.Automation
                             SystemPolicy.LogWDACAuditMessage(
                                 title: SessionStateStrings.WDACSessionStateVarLogTitle,
                                 message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
-                                fqid: "AllScopeVariableNotAllowed");
+                                fqid: "AllScopeVariableNotAllowed",
+                                dropIntoDebugger: true);
                         }
 
                         break;

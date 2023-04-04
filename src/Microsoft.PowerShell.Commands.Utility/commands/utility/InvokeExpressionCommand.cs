@@ -49,7 +49,8 @@ namespace Microsoft.PowerShell.Commands
                 SystemPolicy.LogWDACAuditMessage(
                     title: UtilityCommonStrings.IEXWDACLogTitle,
                     message: UtilityCommonStrings.IEXWDACLogMessage,
-                    fqid: "InvokeExpressionCmdletConstrained");
+                    fqid: "InvokeExpressionCmdletConstrained",
+                    dropIntoDebugger: true);
             }
 
             var emptyArray = Array.Empty<object>();
