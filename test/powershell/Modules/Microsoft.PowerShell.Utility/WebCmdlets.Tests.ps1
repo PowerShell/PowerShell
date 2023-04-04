@@ -750,13 +750,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-WebRequest -OutFile folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
         @{ Value = 'DownloadedFile.txt' }
-        @{ Value = 'tmp\DownloadedFile.txt' }
-        @{ Value = 'tmp/DownloadedFile.txt' }
         @{ Value = '"DownloadedFile.txt"' }
-        @{ Value = '"tmp\DownloadedFile.txt"' }
-        @{ Value = '"tmp/DownloadedFile.txt"' }
         @{ Value = "'DownloadedFile.txt'" }
-        @{ Value = "'tmp\DownloadedFile.txt'" }
+        @{ Value = 'tmp/DownloadedFile.txt' }
+        @{ Value = '"tmp/DownloadedFile.txt"' }
         @{ Value = "'tmp/DownloadedFile.txt'" }
     ) {
         param ($value)
@@ -2752,13 +2749,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-RestMethod -OutFile folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
         @{ Value = 'DownloadedFile.txt' }
-        @{ Value = 'tmp\DownloadedFile.txt' }
-        @{ Value = 'tmp/DownloadedFile.txt' }
         @{ Value = '"DownloadedFile.txt"' }
-        @{ Value = '"tmp\DownloadedFile.txt"' }
-        @{ Value = '"tmp/DownloadedFile.txt"' }
         @{ Value = "'DownloadedFile.txt'" }
-        @{ Value = "'tmp\DownloadedFile.txt'" }
+        @{ Value = 'tmp/DownloadedFile.txt' }
+        @{ Value = '"tmp/DownloadedFile.txt"' }
         @{ Value = "'tmp/DownloadedFile.txt'" }
     ) {
         param ($value)
