@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
 
-            Stream responseStream = StreamHelper.GetResponseStream(response);
+            Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
             if (ShouldWriteToPipeline)
             {
                 // Creating a MemoryStream wrapper to response stream here to support IsStopping.
@@ -44,8 +44,9 @@ namespace Microsoft.PowerShell.Commands
                     responseStream,
                     StreamHelper.ChunkSize,
                     this,
-                    response.Content.Headers.ContentLength.GetValueOrDefault());
-                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream) : new WebResponseObject(response, responseStream);
+                    response.Content.Headers.ContentLength.GetValueOrDefault(),
+                    _cancelToken.Token);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, _cancelToken.Token) : new WebResponseObject(response, responseStream, _cancelToken.Token);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
