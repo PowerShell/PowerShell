@@ -779,6 +779,7 @@ namespace System.Management.Automation
                     {
                         if (lastCommandWasNative)
                         {
+                            nativeCommand.UpstreamIsNativeCommand = true;
                             lastNativeCommand.DownStreamNativeCommand = nativeCommand;
                         }
 
