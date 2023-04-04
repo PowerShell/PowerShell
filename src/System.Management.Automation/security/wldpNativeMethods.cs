@@ -111,7 +111,7 @@ namespace System.Management.Automation.Security
                 System.Console.WriteLine("Stopping script execution in debugger...");
                 System.Console.WriteLine(string.Empty);
 
-                context?._debugger?.SetDebuggerStepMode(true);
+                context._debugger.Break();
             }
         }
 
