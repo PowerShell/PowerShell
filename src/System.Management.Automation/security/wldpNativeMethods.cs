@@ -88,16 +88,26 @@ namespace System.Management.Automation.Security
         {
             PSEtwLog.LogWDACAuditEvent(title, message, fqid);
 
-            if (dropIntoDebugger is false)
+            // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
+            if (dropIntoDebugger is false || System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id != 1)
             {
                 return;
             }
 
+            // Debugger must be available for local script debugging, and user must select debugger option via the
+            // '$DebugPreference' built-in variable.
             var context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (context is not null && context._debugger is not null && context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) && !context._debugger.IsRemote)
+            if (context is not null &&
+                context._debugger is not null &&
+                context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
+                !context._debugger.IsRemote &&
+                context.DebugPreferenceVariable.HasFlag(ActionPreference.Break))
             {
                 System.Console.WriteLine(string.Empty);
-                System.Console.WriteLine($"WDAC Audit Log: {title}-{message}-{fqid}");
+                System.Console.WriteLine("WDAC Audit Log:");
+                System.Console.WriteLine($"Title: {title}");
+                System.Console.WriteLine($"Message: {message}");
+                System.Console.WriteLine($"FullyQualifedId: {fqid}");
                 System.Console.WriteLine("Stopping script execution in debugger...");
                 System.Console.WriteLine(string.Empty);
 

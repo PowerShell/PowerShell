@@ -3432,7 +3432,8 @@ namespace Microsoft.PowerShell.Commands
                             SystemPolicy.LogWDACAuditMessage(
                                 title: Modules.WDACImplicitFunctionExportLogTitle,
                                 message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage, manifestScriptInfo.ModuleName),
-                                fqid: "ModuleImplicitFunctionExportNotAllowed");
+                                fqid: "ModuleImplicitFunctionExportNotAllowed",
+                                dropIntoDebugger: true);
                             fnMatchPattern = MatchAll;
                         }
 
@@ -5655,7 +5656,8 @@ namespace Microsoft.PowerShell.Commands
                 SystemPolicy.LogWDACAuditMessage(
                     title: Modules.WDACScriptFileImportLogTitle,
                     message: StringUtil.Format(Modules.WDACScriptFileImportLogMessage, fileName),
-                    fqid: "ModuleImportScriptFilesNotAllowed");
+                    fqid: "ModuleImportScriptFilesNotAllowed",
+                    dropIntoDebugger: true);
             }
 
             // If MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
@@ -5758,7 +5760,8 @@ namespace Microsoft.PowerShell.Commands
                                         SystemPolicy.LogWDACAuditMessage(
                                             title: Modules.WDACImplicitFunctionExportLogTitle,
                                             message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage2, module.Name),
-                                            fqid: "ModuleImplicitFunctionExportNotAllowed");
+                                            fqid: "ModuleImplicitFunctionExportNotAllowed",
+                                            dropIntoDebugger: true);
                                         fnMatchPattern = MatchAll;
                                     }
 
@@ -6144,7 +6147,8 @@ namespace Microsoft.PowerShell.Commands
                     SystemPolicy.LogWDACAuditMessage(
                         title: Modules.WDACModuleDotSourceLogTitle,
                         message: StringUtil.Format(Modules.WDACModuleDotSourceLogMessage, moduleInfo.Name),
-                        fqid: "ModuleImportDotSourceNotAllowed");
+                        fqid: "ModuleImportDotSourceNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
         }
@@ -6165,7 +6169,8 @@ namespace Microsoft.PowerShell.Commands
                     SystemPolicy.LogWDACAuditMessage(
                         title: Modules.WDACModuleFnExportWithNestedModulesLogTitle,
                         message: StringUtil.Format(Modules.WDACModuleFnExportWithNestedModulesLogMessage, module.Name),
-                        fqid: "ModuleExportWithWildcardCharactersNotAllowed");
+                        fqid: "ModuleExportWithWildcardCharactersNotAllowed",
+                        dropIntoDebugger: true);
                     break;
             }
         }
