@@ -748,13 +748,25 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
-    It "Invoke-WebRequest -OutFile folder Downloads the file and names it as the Content-Disposition header if present." {
+    It "Invoke-WebRequest -OutFile folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
+        @{ Value = 'DownloadedFile.txt' }
+        @{ Value = 'tmp\DownloadedFile.txt' }
+        @{ Value = 'tmp/DownloadedFile.txt' }
+        @{ Value = '"DownloadedFile.txt"' }
+        @{ Value = '"tmp\DownloadedFile.txt"' }
+        @{ Value = '"tmp/DownloadedFile.txt"' }
+        @{ Value = "'DownloadedFile.txt'" }
+        @{ Value = "'tmp\DownloadedFile.txt'" }
+        @{ Value = "'tmp/DownloadedFile.txt'" }
+    ) {
+        param ($value)
+
         $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
-        $ContentDisposition.FileName = 'DownloadedFile.txt'
+        $ContentDisposition.FileName = $value
 
         $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{ "Content-Disposition" = $ContentDisposition }
         $content = Invoke-WebRequest -Uri $uri
-        $outFile = Join-Path $TestDrive $ContentDisposition.FileName
+        $outFile = Join-Path $TestDrive 'DownloadedFile.txt'
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
@@ -2738,13 +2750,25 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
-    It "Invoke-RestMethod -OutFile folder Downloads the file and names it as the Content-Disposition header if present." {
+    It "Invoke-RestMethod -OutFile folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
+        @{ Value = 'DownloadedFile.txt' }
+        @{ Value = 'tmp\DownloadedFile.txt' }
+        @{ Value = 'tmp/DownloadedFile.txt' }
+        @{ Value = '"DownloadedFile.txt"' }
+        @{ Value = '"tmp\DownloadedFile.txt"' }
+        @{ Value = '"tmp/DownloadedFile.txt"' }
+        @{ Value = "'DownloadedFile.txt'" }
+        @{ Value = "'tmp\DownloadedFile.txt'" }
+        @{ Value = "'tmp/DownloadedFile.txt'" }
+    ) {
+        param ($value)
+
         $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
-        $ContentDisposition.FileName = 'DownloadedFile.txt'
+        $ContentDisposition.FileName = $value
 
         $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{ "Content-Disposition" = $ContentDisposition }
         $content = Invoke-WebRequest -Uri $uri
-        $outFile = Join-Path $TestDrive $ContentDisposition.FileName
+        $outFile = Join-Path $TestDrive 'DownloadedFile.txt'
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
