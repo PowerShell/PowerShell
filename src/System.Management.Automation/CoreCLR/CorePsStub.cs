@@ -441,10 +441,12 @@ namespace System.Management.Automation.Security
         /// <param name="title">Audit message title.</param>
         /// <param name="message">Audit message message.</param>
         /// <param name="fqid">Fully Qualified ID.</param>
+        /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
         internal static void LogWDACAuditMessage(
             string title,
             string message,
-            string fqid)
+            string fqid,
+            bool dropIntoDebugger = false)
         {
         }
 
