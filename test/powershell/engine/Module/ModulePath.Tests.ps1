@@ -237,9 +237,9 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It "The value '<Name>' should return the proper value" -testcase $testCases {
         param ( $Name, $Expected )
-        $result = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+        $result = [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name)
         $result | Should -not -BeNullOrEmpty
-        # spot check pshome
+        # spot check pshome, the user and shared paths may not be present
         if ( $name -eq "PSHOME") {
             $result | Should -Be $Expected
         }
