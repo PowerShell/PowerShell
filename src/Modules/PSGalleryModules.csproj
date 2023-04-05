@@ -11,7 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PowerShellGet" Version="2.2.5" />
+    <PackageReference Include="PowerShellGet" Version="3.0.20-beta20" />
+    <PackageReference Include="PowerShellGetCompat" Version="0.0.1" />
     <PackageReference Include="PackageManagement" Version="1.4.8.1" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.2.6" />
