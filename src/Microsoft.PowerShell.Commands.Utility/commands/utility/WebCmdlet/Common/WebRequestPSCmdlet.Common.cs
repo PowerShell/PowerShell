@@ -1747,6 +1747,7 @@ namespace Microsoft.PowerShell.Commands
 
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
             result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
+            result.Headers.ContentDisposition.FileNameStar = "\"" + file.Name + "\"";
 
             return result;
         }
