@@ -127,21 +127,22 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 }
 
 try {
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
-
-    # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
-    $osInfo = [System.Environment]::OSVersion.Version
-    $isSrv2k12R2 = $osInfo.Major -eq 6 -and $osInfo.Minor -eq 3
-
-    $PSDefaultParameterValues["it:skip"] = !$IsWindows -or $isSrv2k12R2
-
     Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
         BeforeAll {
-            if ($IsWindows) {
+            if (Test-IsWinServer2012R2) {
+                $defaultParamValues = $global:PSdefaultParameterValues.Clone()
+
+                # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
+                $global:PSDefaultParameterValues["it:skip"] = $true
+            }
+            elseif ($IsWindows) {
                 $originalTimeZoneId = (Get-TimeZone).Id
             }
         }
         AfterAll {
+            if (Test-IsWinServer2012R2) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
             if ($IsWindows) {
                 Set-TimeZone -Id $originalTimeZoneId
             }
@@ -165,12 +166,20 @@ try {
 
     Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
         BeforeAll {
-            if ($IsWindows)
-            {
+            if (Test-IsWinServer2012R2) {
+                $defaultParamValues = $global:PSdefaultParameterValues.Clone()
+
+                # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
+                $global:PSDefaultParameterValues["it:skip"] = $true
+            }
+            elseif ($IsWindows) {
                 $originalTimeZoneId = (Get-TimeZone).Id
             }
         }
         AfterAll {
+            if (Test-IsWinServer2012R2) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
             if ($IsWindows) {
                 Set-TimeZone -Id $originalTimeZoneId
             }
