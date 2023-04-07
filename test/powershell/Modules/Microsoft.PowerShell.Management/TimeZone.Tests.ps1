@@ -129,7 +129,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 try {
     Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
         BeforeAll {
-            if (Test-IsWinServer2012R2) {
+            if (Test-IsWinServer2012R2 -or -not $IsWindows) {
                 $defaultParamValues = $global:PSdefaultParameterValues.Clone()
 
                 # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
@@ -140,7 +140,7 @@ try {
             }
         }
         AfterAll {
-            if (Test-IsWinServer2012R2) {
+            if (Test-IsWinServer2012R2 -or -not $IsWindows) {
                 $global:PSDefaultParameterValues = $defaultParamValues
             }
             if ($IsWindows) {
@@ -166,7 +166,7 @@ try {
 
     Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
         BeforeAll {
-            if (Test-IsWinServer2012R2) {
+            if (Test-IsWinServer2012R2 -or -not $IsWindows) {
                 $defaultParamValues = $global:PSdefaultParameterValues.Clone()
 
                 # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
@@ -177,7 +177,7 @@ try {
             }
         }
         AfterAll {
-            if (Test-IsWinServer2012R2) {
+            if (Test-IsWinServer2012R2 -or -not $IsWindows) {
                 $global:PSDefaultParameterValues = $defaultParamValues
             }
             if ($IsWindows) {
