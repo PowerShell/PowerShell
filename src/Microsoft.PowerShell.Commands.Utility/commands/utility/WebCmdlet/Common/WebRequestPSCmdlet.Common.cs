@@ -592,8 +592,12 @@ namespace Microsoft.PowerShell.Commands
                                 OutFile = null;
                             }
 
+                            // Skip insecure redirection detection if the URIs are relative 
+                            bool destinationIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
+                            bool originIsHttp = response.Headers.Location?.IsAbsoluteUri && response.Headers.Location?.Scheme == "http";
+
                             // Detect insecure redirection
-                            if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
+                            if (!AllowInsecureRedirect && destinationIsHttps && originIsHttp)
                             {
                                 ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
