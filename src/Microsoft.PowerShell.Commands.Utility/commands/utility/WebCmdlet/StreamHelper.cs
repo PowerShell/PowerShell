@@ -348,6 +348,7 @@ namespace Microsoft.PowerShell.Commands
             await reader.ReadBlockAsync(buffer.AsMemory(), cancellationToken);
             encoding = reader.CurrentEncoding;
             stream.Seek(0, SeekOrigin.Begin);
+
             if (isDefaultEncoding)
             {
                 string substring = new(buffer);
@@ -371,6 +372,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return encoding;
         }
 
