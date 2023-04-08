@@ -5,8 +5,9 @@ Describe 'OutputRendering tests' -Tag 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         # Console host does not support VT100 escape sequences on Windows 2012R2 or earlier
-        if ($IsWindows -and [System.Environment]::OSVersion.Version -le [version]::new(6, 3)) {
-            $PSDefaultParameterValues["it:skip"] = $true
+
+        if (-not $host.ui.SupportsVirtualTerminal) {
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
     }
 

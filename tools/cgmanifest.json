@@ -55,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Analyzers",
-          "Version": "3.3.3"
+          "Version": "3.3.4"
         }
       },
       "DevelopmentDependency": true
@@ -235,7 +235,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Newtonsoft.Json",
-          "Version": "13.0.2"
+          "Version": "13.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -775,7 +775,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.DiagnosticSource",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -1215,7 +1215,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Duplex",
-          "Version": "4.10.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
@@ -1225,7 +1225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Http",
-          "Version": "4.10.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
@@ -1245,7 +1245,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
-          "Version": "4.10.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
@@ -1255,7 +1255,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Primitives",
-          "Version": "4.10.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
@@ -1265,7 +1265,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Security",
-          "Version": "4.10.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
