@@ -1707,9 +1707,7 @@ namespace Microsoft.PowerShell.Commands
         private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
             StringContent result = new(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
@@ -1725,9 +1723,7 @@ namespace Microsoft.PowerShell.Commands
         private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
             StreamContent result = new(stream);
             result.Headers.ContentDisposition = contentDisposition;
@@ -1745,9 +1741,8 @@ namespace Microsoft.PowerShell.Commands
         {
             StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
 
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
-            result.Headers.ContentDisposition.FileNameStar = "\"" + file.Name + "\"";
+            result.Headers.ContentDisposition.FileName = file.Name;
+            result.Headers.ContentDisposition.FileNameStar = file.Name;
 
             return result;
         }
