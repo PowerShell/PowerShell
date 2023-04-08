@@ -592,16 +592,19 @@ namespace Microsoft.PowerShell.Commands
                                 OutFile = null;
                             }
 
-                            // Skip insecure redirection detection if the URIs are relative 
-                            bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
-                            bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
-
                             // Detect insecure redirection
-                            if (!AllowInsecureRedirect && originIsHttps && destinationIsHttp)
+                            if (!AllowInsecureRedirect)
                             {
-                                ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
-                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
-                                ThrowTerminatingError(er);
+                                // Skip insecure redirection detection if the URIs are relative 
+                                bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
+                                bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
+
+                                if (originIsHttps && destinationIsHttp)
+                                {
+                                    ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
+                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
+                                    ThrowTerminatingError(er);
+                                }
                             }
 
                             if (ShouldCheckHttpStatus && !_isSuccess)
