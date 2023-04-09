@@ -89,21 +89,20 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // Determine the response type
-                    RestReturnType returnType = CheckReturnType(response);
-
                     // Try to get the response encoding from the ContentType header.
                     string charSet = WebResponseHelper.GetCharacterSet(response);
 
                     string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding);
 
-                    object obj = null;
-                    Exception ex = null;
-
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encoding.HeaderName}"));
-                    
+
+                    // Determine the response type
+                    RestReturnType returnType = CheckReturnType(response);
+
                     bool convertSuccess = false;
+                    object obj = null;
+                    Exception ex = null;
 
                     if (returnType == RestReturnType.Json)
                     {
