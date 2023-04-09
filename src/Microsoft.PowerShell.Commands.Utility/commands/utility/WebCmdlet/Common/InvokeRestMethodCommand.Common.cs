@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
-                    // default to try xml first since it's more common
+                    // Default to try xml first since it's more common
                     else
                     {
                         convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!convertSuccess)
                     {
-                        // fallback to string
+                        // Fallback to string
                         obj = str;
                     }
 
