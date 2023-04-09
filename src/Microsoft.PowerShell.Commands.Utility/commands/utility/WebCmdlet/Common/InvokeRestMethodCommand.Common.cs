@@ -166,11 +166,8 @@ namespace Microsoft.PowerShell.Commands
 
             RestReturnType rt = RestReturnType.Detect;
             string contentType = ContentHelper.GetContentType(response);
-            if (string.IsNullOrEmpty(contentType))
-            {
-                rt = RestReturnType.Detect;
-            }
-            else if (ContentHelper.IsJson(contentType))
+
+            if (ContentHelper.IsJson(contentType))
             {
                 rt = RestReturnType.Json;
             }
