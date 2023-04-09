@@ -100,18 +100,8 @@ namespace Microsoft.PowerShell.Commands
                     object obj = null;
                     Exception ex = null;
 
-                    string encodingVerboseName;
-                    try
-                    {
-                        encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
-                    }
-                    catch (NotSupportedException)
-                    {
-                        encodingVerboseName = encoding.EncodingName;
-                    }
-
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
+                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encoding.HeaderName}"));
                     
                     bool convertSuccess = false;
 
