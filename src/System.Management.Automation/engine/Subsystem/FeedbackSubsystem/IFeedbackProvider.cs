@@ -4,15 +4,36 @@
 #nullable enable
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [Flags]
+    public enum FeedbackTrigger
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        Success = 1,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Error = 2,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Comment = 4,
+    }
+
     /// <summary>
     /// Layout for displaying the recommended actions.
     /// </summary>
@@ -27,6 +48,67 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// Display all recommended actions in the same row.
         /// </summary>
         Landscape,
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public sealed class FeedbackContext
+    {
+        /// <summary>
+        /// Gets the last command line that was just executed.
+        /// </summary>
+        public string CommandLine => CommandLineAst.Extent.Text;
+
+        /// <summary>
+        /// Gets the abstract syntax tree (AST) generated from parsing the last command line.
+        /// </summary>
+        public Ast CommandLineAst { get; }
+
+        /// <summary>
+        /// Gets the tokens generated from parsing the user input.
+        /// </summary>
+        public IReadOnlyList<Token> CommandLineTokens { get; }
+
+        /// <summary>
+        /// Gets the last error record generated from executing the last command line.
+        /// </summary>
+        public ErrorRecord? LastError { get; }
+
+        /// <summary>
+        /// Gets the current location of the default session.
+        /// It returns null if there is no default Runspace or if the default is a remote Runspace.
+        /// </summary>
+        public PathInfo? CurrentLocation { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="commandLine"></param>
+        /// <param name="lastError"></param>
+        /// <param name="cwd"></param>
+        public FeedbackContext(string commandLine, ErrorRecord? lastError, PathInfo? cwd)
+        {
+            CommandLineAst = Parser.ParseInput(commandLine, out Token[] tokens, out _);
+            CommandLineTokens = tokens;
+            LastError = lastError;
+            CurrentLocation = cwd;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ast"></param>
+        /// <param name="tokens"></param>
+        /// <param name="lastError"></param>
+        /// <param name="cwd"></param>
+        internal FeedbackContext(Ast ast, Token[] tokens, ErrorRecord? lastError, PathInfo? cwd)
+        {
+            CommandLineAst = ast;
+            CommandLineTokens = tokens;
+            LastError = lastError;
+            CurrentLocation = cwd;
+        }
     }
 
     /// <summary>
