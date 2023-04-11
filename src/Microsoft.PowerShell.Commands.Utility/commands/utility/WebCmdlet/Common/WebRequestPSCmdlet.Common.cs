@@ -592,10 +592,11 @@ namespace Microsoft.PowerShell.Commands
                                 OutFile = null;
                             }
 
-                            // Detect insecure redirection
+                            // Detect insecure redirection.
                             if (!AllowInsecureRedirect)
                             {
-                                // Skip insecure redirection detection if the URIs are relative 
+                                // We are skipping detection if the URIs are relative, because Scheme property is not supported on relative URIs.
+                                // If we skip the check, there may be a failure due to https-to-http redirect being forbidden by default.
                                 bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
                                 bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
 
