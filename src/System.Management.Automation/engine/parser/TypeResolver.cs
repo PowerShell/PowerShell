@@ -165,17 +165,20 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        private static Type ResolveTypeNameWorker(TypeName typeName,
-                                                  SessionStateScope currentScope,
-                                                  IEnumerable<Assembly> loadedAssemblies,
-                                                  HashSet<Assembly> searchedAssemblies,
-                                                  TypeResolutionState typeResolutionState,
-                                                  bool onlySearchInGivenAssemblies,
-                                                  bool reportAmbiguousException,
-                                                  out Exception exception)
+        private static Type ResolveTypeNameWorker(
+            TypeName typeName,
+            SessionStateScope currentScope,
+            IEnumerable<Assembly> loadedAssemblies,
+            HashSet<Assembly> searchedAssemblies,
+            TypeResolutionState typeResolutionState,
+            bool onlySearchInGivenAssemblies,
+            bool reportAmbiguousException,
+            out Exception exception,
+            out bool wasTypeAccelerator)
         {
             Type result;
             exception = null;
+            wasTypeAccelerator = false;
 
             if (!onlySearchInGivenAssemblies)
             {
@@ -207,7 +210,7 @@ namespace System.Management.Automation.Language
             {
                 lock (TypeAccelerators.userTypeAccelerators)
                 {
-                    TypeAccelerators.userTypeAccelerators.TryGetValue(typeName.Name, out result);
+                    wasTypeAccelerator = TypeAccelerators.userTypeAccelerators.TryGetValue(typeName.Name, out result);
                 }
             }
 
@@ -230,12 +233,15 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// A helper method to call ResolveTypeNameWorker in steps.
         /// </summary>
-        private static Type CallResolveTypeNameWorkerHelper(TypeName typeName,
-                                                            ExecutionContext context,
-                                                            IEnumerable<Assembly> assemblies,
-                                                            bool isAssembliesExplicitlyPassedIn,
-                                                            TypeResolutionState typeResolutionState,
-                                                            out Exception exception)
+        /// <returns>The resolved type.</returns>
+        private static Type CallResolveTypeNameWorkerHelper(
+            TypeName typeName,
+            ExecutionContext context,
+            IEnumerable<Assembly> assemblies,
+            bool isAssembliesExplicitlyPassedIn,
+            TypeResolutionState typeResolutionState,
+            out Exception exception,
+            out bool wasTypeAccelerator)
         {
             if (t_searchedAssemblies == null)
             {
@@ -251,8 +257,16 @@ namespace System.Management.Automation.Language
             {
                 exception = null;
                 var currentScope = context?.EngineSessionState.CurrentScope;
-                Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
-                                                    /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
+                Type result = ResolveTypeNameWorker(
+                    typeName,
+                    currentScope,
+                    typeResolutionState.assemblies,
+                    t_searchedAssemblies,
+                    typeResolutionState,
+                    /*onlySearchInGivenAssemblies*/ false,
+                    /* reportAmbiguousException */ true,
+                    out exception,
+                    out wasTypeAccelerator);
                 if (exception == null && result == null)
                 {
                     if (context != null && !isAssembliesExplicitlyPassedIn)
@@ -260,15 +274,31 @@ namespace System.Management.Automation.Language
                         // If the assemblies to search from is not specified by the caller of 'ResolveTypeNameWithContext',
                         // then we search our assembly cache first, so as to give preference to resolving the type against
                         // assemblies explicitly loaded by powershell, for example, via importing module/snapin.
-                        result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, t_searchedAssemblies, typeResolutionState,
-                                                    /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                        result = ResolveTypeNameWorker(
+                            typeName,
+                            currentScope,
+                            context.AssemblyCache.Values,
+                            t_searchedAssemblies,
+                            typeResolutionState,
+                            /*onlySearchInGivenAssemblies*/ true,
+                            /* reportAmbiguousException */ false,
+                            out exception,
+                            out wasTypeAccelerator);
                     }
 
                     if (result == null)
                     {
                         // Search from the assembly list passed in.
-                        result = ResolveTypeNameWorker(typeName, currentScope, assemblies, t_searchedAssemblies, typeResolutionState,
-                                                    /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                        result = ResolveTypeNameWorker(
+                            typeName,
+                            currentScope,
+                            assemblies,
+                            t_searchedAssemblies,
+                            typeResolutionState,
+                            /*onlySearchInGivenAssemblies*/ true,
+                            /* reportAmbiguousException */ false,
+                            out exception,
+                            out wasTypeAccelerator);
                     }
                 }
 
@@ -380,12 +410,24 @@ namespace System.Management.Automation.Language
             // Otherwise, retrieve all currently loaded assemblies.
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
             var isAssembliesExplicitlyPassedIn = assemblies != null;
+            bool wasTypeAccelerator = false;
 
-            result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            result = CallResolveTypeNameWorkerHelper(
+                typeName,
+                context,
+                assemList,
+                isAssembliesExplicitlyPassedIn,
+                typeResolutionState,
+                out exception,
+                out wasTypeAccelerator);
 
             if (result != null)
             {
-                TypeCache.Add(typeName, typeResolutionState, result);
+                if (!wasTypeAccelerator)
+                {
+                    TypeCache.Add(typeName, typeResolutionState, result);
+                }
+
                 return result;
             }
 
@@ -405,7 +447,14 @@ namespace System.Management.Automation.Language
                         assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
                     }
 #endif
-                    var newResult = CallResolveTypeNameWorkerHelper(newTypeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+                    var newResult = CallResolveTypeNameWorkerHelper(
+                        newTypeName,
+                        context,
+                        assemList,
+                        isAssembliesExplicitlyPassedIn,
+                        typeResolutionState,
+                        out exception,
+                        out wasTypeAccelerator);
 
                     if (exception != null)
                     {
@@ -440,7 +489,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (result != null)
+            if (result != null && !wasTypeAccelerator)
             {
                 TypeCache.Add(typeName, typeResolutionState, result);
             }
@@ -841,7 +890,7 @@ namespace System.Management.Automation
     /// A class to view and modify the type accelerators used by the PowerShell engine.  Builtin
     /// type accelerators are read only, but user defined type accelerators may be added.
     /// </summary>
-    internal static class TypeAccelerators
+    public static class TypeAccelerators
     {
         // builtins are not exposed publicly in a direct manner so they can't be changed at all
         internal static readonly Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
@@ -884,6 +933,7 @@ namespace System.Management.Automation
             builtinTypeAccelerators.Add("psnoteproperty", typeof(PSNoteProperty));
             builtinTypeAccelerators.Add("psaliasproperty", typeof(PSAliasProperty));
             builtinTypeAccelerators.Add("psvariableproperty", typeof(PSVariableProperty));
+            builtinTypeAccelerators.Add("typeaccelerators", typeof(TypeAccelerators));
         }
 
         internal static string FindBuiltinAccelerator(Type type, string expectedKey = null)
