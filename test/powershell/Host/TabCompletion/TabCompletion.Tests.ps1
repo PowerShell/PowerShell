@@ -1098,6 +1098,25 @@ class InheritedClassTest : System.Attribute
             $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
+
+        It "Should keep '~' in completiontext when it's used to refer to home in input" {
+            $res = TabExpansion2 -inputScript "~$separator"
+            $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*"
+        }
+
+        It "Should use '~' as relative filter text when not followed by separator" {
+            try
+            {
+                $TempDirPath = ".$separator~TempDir"
+                $TempDir = New-Item -Path $TempDirPath -ItemType Directory -Force
+                $res = TabExpansion2 -inputScript ~
+                $res.CompletionMatches[0].CompletionText | Should -Be $TempDirPath
+            }
+            finally
+            {
+                Remove-Item -Path $TempDirPath -Force
+            }
+        }
     }
 
     Context "Cmdlet name completion" {
@@ -1272,7 +1291,7 @@ class InheritedClassTest : System.Attribute
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
-            $afterTab = 'registry::HKEY_LOCAL_MACHINE'
+            $afterTab = 'Registry::HKEY_LOCAL_MACHINE'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -1280,7 +1299,7 @@ class InheritedClassTest : System.Attribute
 
         It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
             $beforeTab = 'wsman::localh'
-            $afterTab = 'wsman::localhost'
+            $afterTab = 'WSMan::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -1293,7 +1312,7 @@ class InheritedClassTest : System.Attribute
                 New-Item -ItemType Directory -Path "$tempFolder/helloworld" > $null
                 $tempFolder | Should -Exist
                 $beforeTab = 'filesystem::{0}hello' -f $tempFolder
-                $afterTab = 'filesystem::{0}helloworld' -f $tempFolder
+                $afterTab = 'FileSystem::{0}helloworld' -f $tempFolder
                 $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
                 $res.CompletionMatches.Count | Should -BeGreaterThan 0
                 $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab

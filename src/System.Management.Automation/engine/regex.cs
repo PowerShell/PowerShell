@@ -314,6 +314,38 @@ namespace System.Management.Automation
             return result;
         }
 
+        internal static bool ContainsRangeWildcard(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                return false;
+            }
+
+            bool foundStart = false;
+            bool result = false;
+            for (int index = 0; index < pattern.Length; ++index)
+            {
+                if (pattern[index] is '[')
+                {
+                    foundStart = true;
+                    continue;
+                }
+                
+                if (foundStart && pattern[index] is ']')
+                {
+                    result = true;
+                    break;
+                }
+
+                if (pattern[index] == escapeChar)
+                {
+                    ++index;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Unescapes any escaped characters in the input string.
         /// </summary>
