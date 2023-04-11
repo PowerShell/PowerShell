@@ -68,7 +68,7 @@ try {
                     (Get-Help -Name Get-Disk -ErrorAction Stop).Name | Should -Be 'Get-Disk'
                 }
                 catch {
-                    $_.ToString | Should -Be null
+                    $_.ToString | Should -Be $null
                 }
                 finally
                 {
@@ -532,10 +532,10 @@ ZoneId=$FileType
 
         Context "Prereq: Validate that 'Microsoft.PowerShell.Archive' is signed" {
             It "'Microsoft.PowerShell.Archive' should have a signature" {
-                $script:archiveAllCert | Should -Not -Be null
+                $script:archiveAllCert | Should -Not -Be $null
             }
             It "'Microsoft.PowerShell.Archive' should have a valid signature" {
-                $script:archiveCert | Should -Not -Be null
+                $script:archiveCert | Should -Not -Be $null
             }
         }
 
