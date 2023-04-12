@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
             // Method
             if (UnixSocket is not null && Socket.OSSupportsUnixDomainSockets is false)
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.UnixDomainSocketsNotSupported, "UnixDomainSocketsNotSupportedException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.UnixSocketPlatformNotSupported, "UnixSocketPlatformNotSupportedException");
                 ThrowTerminatingError(error);
             }
 
