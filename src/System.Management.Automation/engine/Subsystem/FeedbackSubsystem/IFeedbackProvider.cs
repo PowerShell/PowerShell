@@ -13,25 +13,37 @@ using System.Threading;
 namespace System.Management.Automation.Subsystem.Feedback
 {
     /// <summary>
-    /// 
+    /// Types of trigger for the feedback provider.
     /// </summary>
     [Flags]
     public enum FeedbackTrigger
     {
         /// <summary>
-        /// 
+        /// The last command line is comment only.
         /// </summary>
-        Success = 1,
+        Comment = 0x0001,
 
         /// <summary>
-        /// 
+        /// The last command line executed successfully.
         /// </summary>
-        Error = 2,
+        Success = 0x0002,
 
         /// <summary>
-        /// 
+        /// The last command line failed due to a command-not-found error.
+        /// This is a special case of <see cref="Error"/>.
         /// </summary>
-        Comment = 4,
+        CommandNotFound = 0x0004,
+
+        /// <summary>
+        /// The last command line failed with an error record.
+        /// This includes the case of command-not-found error.
+        /// </summary>
+        Error = CommandNotFound | 0x0008,
+
+        /// <summary>
+        /// All possible triggers.
+        /// </summary>
+        All = Comment | Success | Error
     }
 
     /// <summary>
@@ -56,9 +68,14 @@ namespace System.Management.Automation.Subsystem.Feedback
     public sealed class FeedbackContext
     {
         /// <summary>
+        /// Gets the feedback trigger.
+        /// </summary>
+        public FeedbackTrigger Trigger { get; }
+
+        /// <summary>
         /// Gets the last command line that was just executed.
         /// </summary>
-        public string CommandLine => CommandLineAst.Extent.Text;
+        public string CommandLine { get; }
 
         /// <summary>
         /// Gets the abstract syntax tree (AST) generated from parsing the last command line.
@@ -66,9 +83,14 @@ namespace System.Management.Automation.Subsystem.Feedback
         public Ast CommandLineAst { get; }
 
         /// <summary>
-        /// Gets the tokens generated from parsing the user input.
+        /// Gets the tokens generated from parsing the last command line.
         /// </summary>
         public IReadOnlyList<Token> CommandLineTokens { get; }
+
+        /// <summary>
+        /// Gets the current location of the default session.
+        /// </summary>
+        public PathInfo CurrentLocation { get; }
 
         /// <summary>
         /// Gets the last error record generated from executing the last command line.
@@ -76,19 +98,19 @@ namespace System.Management.Automation.Subsystem.Feedback
         public ErrorRecord? LastError { get; }
 
         /// <summary>
-        /// Gets the current location of the default session.
-        /// It returns null if there is no default Runspace or if the default is a remote Runspace.
+        /// Initializes a new instance of the <see cref="FeedbackContext"/> class.
         /// </summary>
-        public PathInfo? CurrentLocation { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="commandLine"></param>
-        /// <param name="lastError"></param>
-        /// <param name="cwd"></param>
-        public FeedbackContext(string commandLine, ErrorRecord? lastError, PathInfo? cwd)
+        /// <param name="trigger">The trigger of this feedback call.</param>
+        /// <param name="commandLine">The command line that was just executed.</param>
+        /// <param name="cwd">The current location of the default session.</param>
+        /// <param name="lastError">The error that was triggerd by the last command line.</param>
+        public FeedbackContext(FeedbackTrigger trigger, string commandLine, PathInfo cwd, ErrorRecord? lastError)
         {
+            ArgumentException.ThrowIfNullOrEmpty(commandLine);
+            ArgumentNullException.ThrowIfNull(cwd);
+
+            Trigger = trigger;
+            CommandLine = commandLine;
             CommandLineAst = Parser.ParseInput(commandLine, out Token[] tokens, out _);
             CommandLineTokens = tokens;
             LastError = lastError;
@@ -96,16 +118,23 @@ namespace System.Management.Automation.Subsystem.Feedback
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="FeedbackContext"/> class.
         /// </summary>
-        /// <param name="ast"></param>
-        /// <param name="tokens"></param>
-        /// <param name="lastError"></param>
-        /// <param name="cwd"></param>
-        internal FeedbackContext(Ast ast, Token[] tokens, ErrorRecord? lastError, PathInfo? cwd)
+        /// <param name="trigger">The trigger of this feedback call.</param>
+        /// <param name="commandLineAst">The abstract syntax tree (AST) from parsing the last command line.</param>
+        /// <param name="commandLineTokens">The tokens from parsing the last command line.</param>
+        /// <param name="cwd">The current location of the default session.</param>
+        /// <param name="lastError">The error that was triggerd by the last command line.</param>
+        public FeedbackContext(FeedbackTrigger trigger, Ast commandLineAst, Token[] commandLineTokens, PathInfo cwd, ErrorRecord? lastError)
         {
-            CommandLineAst = ast;
-            CommandLineTokens = tokens;
+            ArgumentNullException.ThrowIfNull(commandLineAst);
+            ArgumentNullException.ThrowIfNull(commandLineTokens);
+            ArgumentNullException.ThrowIfNull(cwd);
+
+            Trigger = trigger;
+            CommandLine = commandLineAst.Extent.Text;
+            CommandLineAst = commandLineAst;
+            CommandLineTokens = commandLineTokens;
             LastError = lastError;
             CurrentLocation = cwd;
         }
@@ -191,13 +220,20 @@ namespace System.Management.Automation.Subsystem.Feedback
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
+        /// Gets the types of trigger for this feedback provider.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation triggers a feedback provider by <see cref="FeedbackTrigger.CommandNotFound"/> only.
+        /// </remarks>
+        FeedbackTrigger Trigger => FeedbackTrigger.CommandNotFound;
+
+        /// <summary>
         /// Gets feedback based on the given commandline and error record.
         /// </summary>
-        /// <param name="commandLine">The command line that was just executed.</param>
-        /// <param name="lastError">The error that was triggerd by the command line.</param>
+        /// <param name="context">The context for the feedback call.</param>
         /// <param name="token">The cancellation token to cancel the operation.</param>
         /// <returns>The feedback item.</returns>
-        FeedbackItem? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token);
+        FeedbackItem? GetFeedback(FeedbackContext context, CancellationToken token);
     }
 
     internal sealed class GeneralCommandErrorFeedback : IFeedbackProvider
@@ -215,7 +251,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         public string Description => "The built-in general feedback source for command errors.";
 
-        public FeedbackItem? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token)
+        public FeedbackItem? GetFeedback(FeedbackContext context, CancellationToken token)
         {
             var rsToUse = Runspace.DefaultRunspace;
             if (rsToUse is null)
@@ -223,47 +259,47 @@ namespace System.Management.Automation.Subsystem.Feedback
                 return null;
             }
 
-            if (lastError.FullyQualifiedErrorId == "CommandNotFoundException")
+            // This feedback provider is only triggered by 'CommandNotFound' error, so the
+            // 'LastError' property is guaranteed to be not null.
+            ErrorRecord lastError = context.LastError!;
+            SessionState sessionState = rsToUse.ExecutionContext.SessionState;
+
+            var target = (string)lastError.TargetObject;
+            CommandInvocationIntrinsics invocation = sessionState.InvokeCommand;
+
+            // See if target is actually an executable file in current directory.
+            var localTarget = Path.Combine(".", target);
+            var command = invocation.GetCommand(
+                localTarget,
+                CommandTypes.Application | CommandTypes.ExternalScript);
+
+            if (command is not null)
             {
-                EngineIntrinsics context = rsToUse.ExecutionContext.EngineIntrinsics;
+                return new FeedbackItem(
+                    StringUtil.Format(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory, target),
+                    new List<string> { localTarget });
+            }
 
-                var target = (string)lastError.TargetObject;
-                CommandInvocationIntrinsics invocation = context.SessionState.InvokeCommand;
+            // Check fuzzy matching command names.
+            if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
+            {
+                var pwsh = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                var results = pwsh.AddCommand("Get-Command")
+                        .AddParameter("UseFuzzyMatching")
+                        .AddParameter("FuzzyMinimumDistance", 1)
+                        .AddParameter("Name", target)
+                    .AddCommand("Select-Object")
+                        .AddParameter("First", 5)
+                        .AddParameter("Unique")
+                        .AddParameter("ExpandProperty", "Name")
+                    .Invoke<string>();
 
-                // See if target is actually an executable file in current directory.
-                var localTarget = Path.Combine(".", target);
-                var command = invocation.GetCommand(
-                    localTarget,
-                    CommandTypes.Application | CommandTypes.ExternalScript);
-
-                if (command is not null)
+                if (results.Count > 0)
                 {
                     return new FeedbackItem(
-                        StringUtil.Format(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory, target),
-                        new List<string> { localTarget });
-                }
-
-                // Check fuzzy matching command names.
-                if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
-                {
-                    var pwsh = PowerShell.Create(RunspaceMode.CurrentRunspace);
-                    var results = pwsh.AddCommand("Get-Command")
-                            .AddParameter("UseFuzzyMatching")
-                            .AddParameter("FuzzyMinimumDistance", 1)
-                            .AddParameter("Name", target)
-                        .AddCommand("Select-Object")
-                            .AddParameter("First", 5)
-                            .AddParameter("Unique")
-                            .AddParameter("ExpandProperty", "Name")
-                        .Invoke<string>();
-
-                    if (results.Count > 0)
-                    {
-                        return new FeedbackItem(
-                            SuggestionStrings.Suggestion_CommandNotFound,
-                            new List<string>(results),
-                            FeedbackDisplayLayout.Landscape);
-                    }
+                        SuggestionStrings.Suggestion_CommandNotFound,
+                        new List<string>(results),
+                        FeedbackDisplayLayout.Landscape);
                 }
             }
 
