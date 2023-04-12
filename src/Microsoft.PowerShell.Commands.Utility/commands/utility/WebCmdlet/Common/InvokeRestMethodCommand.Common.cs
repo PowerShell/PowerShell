@@ -33,9 +33,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("FL")]
         public SwitchParameter FollowRelLink
         {
-            get => _followRelLink;
+            get => base._followRelLink;
 
-            set => _followRelLink = value;
+            set => base._followRelLink = value;
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int MaximumFollowRelLink
         {
-            get => _maximumFollowRelLink;
+            get => base._maximumFollowRelLink;
 
-            set => _maximumFollowRelLink = value;
+            set => base._maximumFollowRelLink = value;
         }
 
         /// <summary>
