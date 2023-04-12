@@ -44,13 +44,13 @@ steps:
     Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
 
     $sharedModules | Foreach-Object {
-      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\$_.dll"
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net7.0\refint\$_.dll"
       Write-Verbose -Verbose "RefAssembly: $refFile"
       Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net8.0\$_.xml"
+      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net7.0\$_.xml"
       if (-not (Test-Path $refDoc)) {
         Write-Warning "$refDoc not found"
-        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\" | Out-String | Write-Verbose -Verbose
+        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net7.0\" | Out-String | Write-Verbose -Verbose
       }
       else {
         Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -60,13 +60,13 @@ steps:
     Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
 
     $winOnlyModules | Foreach-Object {
-      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net7.0\refint\*.dll"
       Write-Verbose -Verbose 'RefAssembly: $refFile'
       Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net8.0\$_.xml"
+      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net7.0\$_.xml"
       if (-not (Test-Path $refDoc)) {
         Write-Warning "$refDoc not found"
-        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0" | Out-String | Write-Verbose -Verbose
+        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net7.0" | Out-String | Write-Verbose -Verbose
       }
       else {
         Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
