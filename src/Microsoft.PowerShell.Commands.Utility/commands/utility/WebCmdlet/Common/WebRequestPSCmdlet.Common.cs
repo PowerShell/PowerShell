@@ -368,24 +368,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public virtual UnixDomainSocketEndPoint UnixSocket 
-        { 
-            get => _unixSocket; 
-            set
-            {
-                if (Socket.OSSupportsUnixDomainSockets is true)
-                {
-                    _unixSocket = value;
-                }
-                else
-                {
-                    ErrorRecord error = GetValidationError(WebCmdletStrings.UnixDomainSocketsNotSupported, "UnixDomainSocketsNotSupportedException");
-                    ThrowTerminatingError(error);
-                }
-            }
-        }
-
-        private UnixDomainSocketEndPoint _unixSocket;
+        public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
         #endregion Method
 
@@ -783,6 +766,13 @@ namespace Microsoft.PowerShell.Commands
             if (UseDefaultCredentials && Credential is not null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
+                ThrowTerminatingError(error);
+            }
+            
+            // Method
+            if (UnixSocket is not null && Socket.OSSupportsUnixDomainSockets is false)
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.UnixDomainSocketsNotSupported, "UnixDomainSocketsNotSupportedException");
                 ThrowTerminatingError(error);
             }
 
