@@ -768,13 +768,6 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict, "WebCmdletCredentialConflictException");
                 ThrowTerminatingError(error);
             }
-            
-            // Method
-            if (UnixSocket is not null && Socket.OSSupportsUnixDomainSockets is false)
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.UnixSocketPlatformNotSupported, "UnixSocketPlatformNotSupportedException");
-                ThrowTerminatingError(error);
-            }
 
             // Proxy server
             if (ProxyUseDefaultCredentials && ProxyCredential is not null)
