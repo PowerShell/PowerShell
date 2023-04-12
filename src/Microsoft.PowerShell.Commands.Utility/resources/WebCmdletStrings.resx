@@ -210,6 +210,9 @@
   <data name="ThumbprintNotFound" xml:space="preserve">
     <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
   </data>
+  <data name="UnixDomainSocketsNotSupported" xml:space="preserve">
+    <value>UnixDomainSockets are not supported on this platform. Reissue the command removing the -UnixSocket parameter. </value>
+  </data>
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Web request completed. (Number of bytes processed: {0})</value>
   </data>

@@ -353,9 +353,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod { get => _custommethod; set => _custommethod = value.ToUpperInvariant(); }
+        public virtual string CustomMethod { get => _customMethod; set => _customMethod = value.ToUpperInvariant(); }
 
-        private string _custommethod;
+        private string _customMethod;
 
         /// <summary>
         /// Gets or sets the PreserveHttpMethodOnRedirect property.
@@ -368,7 +368,24 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
+        public virtual UnixDomainSocketEndPoint UnixSocket 
+        { 
+            get => _unixSocket; 
+            set
+            {
+                if (Socket.OSSupportsUnixDomainSockets is true)
+                {
+                    _unixSocket = value;
+                }
+                else
+                {
+                    ErrorRecord error = GetValidationError(WebCmdletStrings.UnixDomainSocketsNotSupported, "UnixDomainSocketsNotSupportedException");
+                    ThrowTerminatingError(error);
+                }
+            }
+        }
+
+        private UnixDomainSocketEndPoint _unixSocket;
 
         #endregion Method
 
