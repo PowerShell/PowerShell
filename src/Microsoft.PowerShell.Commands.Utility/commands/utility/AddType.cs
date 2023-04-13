@@ -653,8 +653,8 @@ namespace Microsoft.PowerShell.Commands
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
-        private static readonly HashSet<string> s_sourceTypesCache = new();
-        private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new();
+        private static readonly ConcurrentDictionary<string, object> s_sourceTypesCache = new();
+        private static readonly ConcurrentDictionary<int, Assembly> s_sourceAssemblyCache = new();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
 
@@ -963,7 +963,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool isSourceCodeUpdated(List<SyntaxTree> syntaxTrees, out Assembly assembly)
+        private bool IsSourceCodeUpdated(List<SyntaxTree> syntaxTrees, out Assembly assembly)
         {
             Diagnostics.Assert(syntaxTrees.Count != 0, "syntaxTrees should contains a source code.");
 
@@ -1048,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // if the source code was already compiled and loaded and not changed
                 // we get the assembly from the cache.
-                if (isSourceCodeUpdated(syntaxTrees, out Assembly assembly))
+                if (IsSourceCodeUpdated(syntaxTrees, out Assembly assembly))
                 {
                     CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
                 }
@@ -1138,7 +1138,7 @@ namespace Microsoft.PowerShell.Commands
                 // It is namespace-fully-qualified name
                 var symbolFullName = symbol.ToString();
 
-                if (s_sourceTypesCache.TryGetValue(symbolFullName, out _))
+                if (s_sourceTypesCache.ContainsKey(symbolFullName))
                 {
                     DuplicateSymbols.Add(symbolFullName);
                 }
@@ -1153,13 +1153,13 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var typeName in newTypes)
             {
-                s_sourceTypesCache.Add(typeName);
+                s_sourceTypesCache.TryAdd(typeName, null);
             }
         }
 
         private void CacheAssembly(Assembly assembly)
         {
-            s_sourceAssemblyCache.Add(_syntaxTreesHash, assembly);
+            s_sourceAssemblyCache.TryAdd(_syntaxTreesHash, assembly);
         }
 
         private void DoEmitAndLoadAssembly(Compilation compilation, EmitOptions emitOptions)
@@ -1178,8 +1178,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (emitResult.Success)
                     {
-                        // TODO:  We could use Assembly.LoadFromStream() in future.
-                        // See https://github.com/dotnet/corefx/issues/26994
                         ms.Seek(0, SeekOrigin.Begin);
                         Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 
