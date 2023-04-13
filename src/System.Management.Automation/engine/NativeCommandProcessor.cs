@@ -1572,7 +1572,7 @@ namespace System.Management.Automation
         /// <param name="redirectInput"></param>
         private void CalculateIORedirection(bool isWindowsApplication, out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
-            redirectInput = this.Command.MyInvocation.ExpectingInput || UpstreamIsNativeCommand;
+            redirectInput = this.Command.MyInvocation.ExpectingInput;
             redirectOutput = true;
             redirectError = true;
 
