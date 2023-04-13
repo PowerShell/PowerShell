@@ -86,21 +86,30 @@ namespace System.Management.Automation.Security
             string fqid,
             bool dropIntoDebugger = false)
         {
-            PSEtwLog.LogWDACAuditEvent(title, message, fqid);
+            string messageToWrite = message;
 
-            // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
-            if (dropIntoDebugger is false || System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id != 1)
+            // Augment the log message with current script information from the script debugger, if available.
+            var context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            bool debuggerAvailable = context is not null &&
+                                     context._debugger is not null &&
+                                     context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
+                                     !context._debugger.IsRemote;
+
+            if (debuggerAvailable)
             {
-                return;
+                var scriptPosMessage = context._debugger.GetCurrentScriptPosition();
+                if (!string.IsNullOrEmpty(scriptPosMessage))
+                {
+                    messageToWrite = message + "scriptPosMessage";
+                }
             }
 
-            // Debugger must be available for local script debugging, and user must select debugger option via the
-            // '$DebugPreference' built-in variable.
-            var context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (context is not null &&
-                context._debugger is not null &&
-                context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
-                !context._debugger.IsRemote &&
+            PSEtwLog.LogWDACAuditEvent(title, messageToWrite, fqid);
+
+            // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
+            if (debuggerAvailable &&
+                dropIntoDebugger is true && 
+                System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id == 1 &&
                 context.DebugPreferenceVariable.HasFlag(ActionPreference.Break))
             {
                 System.Console.WriteLine(string.Empty);
