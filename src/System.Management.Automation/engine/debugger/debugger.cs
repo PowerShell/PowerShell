@@ -2536,21 +2536,15 @@ namespace System.Management.Automation
         /// <returns>Script position message string.</returns>
         internal override string GetCurrentScriptPosition()
         {
-            if (_callStack.Count > 0)
+            using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
             {
-                var fnContext = _callStack[0].FunctionContext;
-                if (fnContext is not null)
+                if (enumerator.MoveNext())
                 {
-                    var invocationInfo = new InvocationInfo(null, fnContext.CurrentPosition, _context);
-                    string scriptText = invocationInfo.GetFullScript();
-                    if (!string.IsNullOrEmpty(scriptText))
+                    var fnContext = enumerator.Current.FunctionContext;
+                    if (fnContext is not null)
                     {
-                        string[] scriptLines = scriptText.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                        if (scriptLines.Length > invocationInfo.ScriptLineNumber)
-                        {
-                            string scriptLine = scriptLines[invocationInfo.ScriptLineNumber];
-                            return $"{invocationInfo.PositionMessage ?? string.Empty} : \n{scriptLine ?? string.Empty}";
-                        }
+                        var invocationInfo = new InvocationInfo(null, fnContext.CurrentPosition, _context);
+                        return $"\n{invocationInfo.PositionMessage}";
                     }
                 }
             }

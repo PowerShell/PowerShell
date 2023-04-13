@@ -100,7 +100,7 @@ namespace System.Management.Automation.Security
                 var scriptPosMessage = context._debugger.GetCurrentScriptPosition();
                 if (!string.IsNullOrEmpty(scriptPosMessage))
                 {
-                    messageToWrite = message + "scriptPosMessage";
+                    messageToWrite = message + scriptPosMessage;
                 }
             }
 
