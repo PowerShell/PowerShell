@@ -2064,11 +2064,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            object baseObjInput = input;
-            if (input is PSObject pso)
-            {
-                baseObjInput = pso.BaseObject;
-            }
+            object baseObjInput = PSObject.Base(input);
 
             if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
             {
