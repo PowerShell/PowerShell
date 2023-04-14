@@ -144,11 +144,11 @@ namespace System.Management.Automation.Subsystem.Feedback
             List<FeedbackResult>? resultList = null;
             if (generalFeedback is not null)
             {
-                FeedbackResult? builtinResult = GetBuiltinFeedback(generalFeedback, localRunspace, feedbackContext, questionMarkValue);
-                if (builtinResult is not null)
+                FeedbackResult? builtInResult = GetBuiltInFeedback(generalFeedback, localRunspace, feedbackContext, questionMarkValue);
+                if (builtInResult is not null)
                 {
                     resultList ??= new List<FeedbackResult>(count);
-                    resultList.Add(builtinResult);
+                    resultList.Add(builtInResult);
                 }
             }
 
@@ -198,8 +198,8 @@ namespace System.Management.Automation.Subsystem.Feedback
             return canSkip;
         }
 
-        private static FeedbackResult? GetBuiltinFeedback(
-            IFeedbackProvider builtinFeedback,
+        private static FeedbackResult? GetBuiltInFeedback(
+            IFeedbackProvider builtInFeedback,
             LocalRunspace localRunspace,
             FeedbackContext feedbackContext,
             bool questionMarkValue)
@@ -215,10 +215,10 @@ namespace System.Management.Automation.Subsystem.Feedback
                     Runspace.DefaultRunspace = localRunspace;
                 }
 
-                FeedbackItem? item = builtinFeedback.GetFeedback(feedbackContext, CancellationToken.None);
+                FeedbackItem? item = builtInFeedback.GetFeedback(feedbackContext, CancellationToken.None);
                 if (item is not null)
                 {
-                    return new FeedbackResult(builtinFeedback.Id, builtinFeedback.Name, item);
+                    return new FeedbackResult(builtInFeedback.Id, builtInFeedback.Name, item);
                 }
             }
             finally
