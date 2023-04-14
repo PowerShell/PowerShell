@@ -144,33 +144,11 @@ namespace System.Management.Automation.Subsystem.Feedback
             List<FeedbackResult>? resultList = null;
             if (generalFeedback is not null)
             {
-                bool changedDefault = false;
-                Runspace? oldDefault = Runspace.DefaultRunspace;
-
-                try
+                FeedbackResult? builtinResult = GetBuiltinFeedback(generalFeedback, localRunspace, feedbackContext, questionMarkValue);
+                if (builtinResult is not null)
                 {
-                    if (oldDefault != localRunspace)
-                    {
-                        changedDefault = true;
-                        Runspace.DefaultRunspace = localRunspace;
-                    }
-
-                    FeedbackItem? item = generalFeedback.GetFeedback(feedbackContext, CancellationToken.None);
-                    if (item is not null)
-                    {
-                        resultList ??= new List<FeedbackResult>(count);
-                        resultList.Add(new FeedbackResult(generalFeedback.Id, generalFeedback.Name, item));
-                    }
-                }
-                finally
-                {
-                    if (changedDefault)
-                    {
-                        Runspace.DefaultRunspace = oldDefault;
-                    }
-
-                    // Restore $? for the target Runspace.
-                    executionContext.QuestionMarkVariableValue = questionMarkValue;
+                    resultList ??= new List<FeedbackResult>(count);
+                    resultList.Add(builtinResult);
                 }
             }
 
@@ -218,6 +196,43 @@ namespace System.Management.Automation.Subsystem.Feedback
             }
 
             return canSkip;
+        }
+
+        private static FeedbackResult? GetBuiltinFeedback(
+            IFeedbackProvider builtinFeedback,
+            LocalRunspace localRunspace,
+            FeedbackContext feedbackContext,
+            bool questionMarkValue)
+        {
+            bool changedDefault = false;
+            Runspace? oldDefault = Runspace.DefaultRunspace;
+
+            try
+            {
+                if (oldDefault != localRunspace)
+                {
+                    changedDefault = true;
+                    Runspace.DefaultRunspace = localRunspace;
+                }
+
+                FeedbackItem? item = builtinFeedback.GetFeedback(feedbackContext, CancellationToken.None);
+                if (item is not null)
+                {
+                    return new FeedbackResult(builtinFeedback.Id, builtinFeedback.Name, item);
+                }
+            }
+            finally
+            {
+                if (changedDefault)
+                {
+                    Runspace.DefaultRunspace = oldDefault;
+                }
+
+                // Restore $? for the target Runspace.
+                localRunspace.ExecutionContext.QuestionMarkVariableValue = questionMarkValue;
+            }
+
+            return null;
         }
 
         private static bool TryGetFeedbackContext(
