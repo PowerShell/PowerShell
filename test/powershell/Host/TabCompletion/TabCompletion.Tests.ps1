@@ -883,6 +883,20 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
+    It 'Should complete dynamic parameters with partial input' {
+        # See issue: #19498
+        try
+        {
+            Push-Location function:
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -LiteralPath $PSHOME -File'
+            $res.CompletionMatches[0].CompletionText | Should -Be '-File'
+        }
+        finally
+        {
+            Pop-Location
+        }
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
