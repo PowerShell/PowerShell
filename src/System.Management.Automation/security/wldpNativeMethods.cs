@@ -92,8 +92,7 @@ namespace System.Management.Automation.Security
             var context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             bool debuggerAvailable = context is not null &&
                                      context._debugger is not null &&
-                                     context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
-                                     !context._debugger.IsRemote;
+                                     context._debugger is ScriptDebugger;
 
             if (debuggerAvailable)
             {
@@ -109,6 +108,7 @@ namespace System.Management.Automation.Security
             // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
             if (debuggerAvailable &&
                 dropIntoDebugger is true && 
+                context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
                 System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id == 1 &&
                 context.DebugPreferenceVariable.HasFlag(ActionPreference.Break))
             {
