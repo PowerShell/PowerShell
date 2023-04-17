@@ -63,7 +63,7 @@ namespace System.Management.Automation.Subsystem.Feedback
     }
 
     /// <summary>
-    /// 
+    /// Context information about the last command line.
     /// </summary>
     public sealed class FeedbackContext
     {
