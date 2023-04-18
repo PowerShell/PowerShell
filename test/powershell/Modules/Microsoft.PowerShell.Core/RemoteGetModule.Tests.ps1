@@ -12,11 +12,11 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
             if ($skipTest)
             {
-                $global:PSDefaultParameterValues["it:skip"] = $true
+                $PSDefaultParameterValues["it:skip"] = $true
             }
             elseif ($pendingTest)
             {
-                $global:PSDefaultParameterValues["it:pending"] = $true
+                $PSDefaultParameterValues["it:pending"] = $true
             }
 
             return
