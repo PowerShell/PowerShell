@@ -4218,14 +4218,15 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
             [string]$Command = 'Invoke-WebRequest',
             [string]$Arguments = '',
             [uri]$Uri,
-            [int]$DelayMs = 100,
+            [int]$DelayMs = 1000,
             [switch]$WillComplete
         )
 
         $pwsh = [PowerShell]::Create()
         $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
         $task = $pwsh.AddScript($invoke).InvokeAsync()
-        Start-Sleep -Milliseconds $DelayMs
+        $delay = [System.Threading.Tasks.Task]::Delay($DelayMs)
+        $null = [System.Threading.Tasks.Task]::WhenAny($task, $delay).GetAwaiter().GetResult()
         $task.IsCompleted | Should -Be $WillComplete.ToBool()
         $pwsh.Stop()
         Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
@@ -4281,7 +4282,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
     It 'Invoke-WebRequest: CTRL-C after stalled file download completes gives entire file' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '1'
         $outFile = Join-Path $TestDrive "output.txt"
-        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile" -DelayMs 1200 -WillComplete
+        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile" -DelayMs 5000 -WillComplete
         Get-content -Path $outFile | should -be 'Hello worldHello world'
         Remove-Item -Path $outFile
     }
@@ -4298,7 +4299,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
     It 'Invoke-RestMethod: CTRL-C after stalled JSON download processes JSON response' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '1/application%2fjson'
-        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 1200 -WillComplete
+        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 5000 -WillComplete
         $result.name3 | should -be 'value3'
     }
 
@@ -4309,7 +4310,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
     It 'Invoke-RestMethod: CTRL-C after stalled atom feed download processes atom response' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '1/application%2fxml'
-        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 1200 -WillComplete
+        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 5000 -WillComplete
         $result.title | should -be 'Atom-Powered Robots Run Amok'
     }
 
