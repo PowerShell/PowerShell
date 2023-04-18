@@ -11,14 +11,14 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
         $pendingTest = (Test-IsWinWow64)
         $skipTest = !$IsWindows -or !(Test-CanWriteToPsHome)
 
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
         if ($pendingTest) {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:pending"] = $true
             return
         }
 
         if ($skipTest) {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
             return
         }

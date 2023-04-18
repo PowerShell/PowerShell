@@ -6,10 +6,10 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         $pendingTest = (Test-IsWinWow64)
         $skipTest = !$IsWindows
 
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
         if ($pendingTest -or $skipTest)
         {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
             if ($skipTest)
             {
                 $PSDefaultParameterValues["it:skip"] = $true
