@@ -4225,9 +4225,10 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         $pwsh = [PowerShell]::Create()
         $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
         $task = $pwsh.AddScript($invoke).InvokeAsync()
-        Start-Sleep -Milliseconds $DelayMs
-        $task.IsCompleted | Should -Be $WillComplete.ToBool()
+        # if this times out, it really means that we didn't get there in a reasonable time.
+        Wait-UntilTrue { $task.IsCompleted -eq $WillComplete.ToBool() } | Should -BeTrue
         $pwsh.Stop()
+        # this check handles the case that WillComplete was false above
         Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
         $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
         $pwsh.Dispose()
