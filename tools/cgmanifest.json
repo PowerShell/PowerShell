@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -566,7 +565,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Private.ServiceModel",
-          "Version": "4.10.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
@@ -705,16 +704,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.ServiceModel.NetFramingBase",
-          "Version": "6.0.0-preview1.23060.3"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
           "Version": "4.10.2"
         }
@@ -805,16 +794,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.Threading.Tasks.Extensions",
-          "Version": "4.5.4"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Web.Services.Description",
           "Version": "4.9.0"
         }
@@ -831,5 +810,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }
