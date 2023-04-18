@@ -36,6 +36,10 @@
     <PackageReference Include="System.Threading.AccessControl" Version="8.0.0-preview.2.23128.3" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.0-preview.2.23128.3" />
     <PackageReference Include="NJsonSchema" Version="10.8.0" />
+    <!-- NJsonSchema brings in an old version of CSharp
+      So, we are forcing a newer version.
+    -->
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
 </Project>
