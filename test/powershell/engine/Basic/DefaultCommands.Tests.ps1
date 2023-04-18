@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Verify approved aliases list" -Tags "CI" {
+Describe "Verify aliases and cmdlets" -Tags "CI" {
     BeforeAll {
         function ConvertTo-Hashtable {
             [CmdletBinding()]
@@ -612,9 +612,9 @@ Describe "Verify approved aliases list" -Tags "CI" {
     }
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
-        $expectedCmdletList = $commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}).Name | Sort-Object
-        $observedCmdletList = $currentCmdletList.Name | Sort-Object
-        $observedCmdletList  | Should -Be $expectedCmdletList
+        $observedCmdletNames = $currentCmdletList.ForEach({"{0}" -f $_.Name}) | Sort-Object
+        $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name}) | Sort-Object
+        $observedCmdletNames | Should -Be $expectedCmdletNames
     }
 
     It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $commandHashtableList {
