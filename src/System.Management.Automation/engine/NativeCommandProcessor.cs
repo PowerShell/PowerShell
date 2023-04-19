@@ -1595,8 +1595,7 @@ namespace System.Management.Automation
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count it as a redirection.
-                if (StdOutDestination is null
-                    && IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
+                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
                 {
                     redirectOutput = false;
                 }
