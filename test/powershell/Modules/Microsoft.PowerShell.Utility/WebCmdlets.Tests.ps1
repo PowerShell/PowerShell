@@ -4226,13 +4226,14 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
         $task = $pwsh.AddScript($invoke).InvokeAsync()
         $delay = [System.Threading.Tasks.Task]::Delay($DelayMs)
+
+        # Stop sleeping as soon as the main task ends or vice versa
         $null = [System.Threading.Tasks.Task]::WhenAny($task, $delay).GetAwaiter().GetResult()
         $task.IsCompleted | Should -Be $WillComplete.ToBool()
         $pwsh.Stop()
         Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
         $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
         $pwsh.Dispose()
-
         return $result
     }
 
