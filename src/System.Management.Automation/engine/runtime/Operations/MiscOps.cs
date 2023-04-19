@@ -61,6 +61,7 @@ namespace System.Management.Automation
                     {
                         // In audit mode, report but don't enforce.
                         SystemPolicy.LogWDACAuditMessage(
+                            context: context,
                             title: ParserStrings.WDACParserModuleScopeCallOperatorLogTitle,
                             message: ParserStrings.WDACParserModuleScopeCallOperatorLogMessage,
                             fqid: "ModuleScopeCallOperatorNotAllowed",
@@ -3014,6 +3015,7 @@ namespace System.Management.Automation
                                         }
 
                                         SystemPolicy.LogWDACAuditMessage(
+                                            context: context,
                                             title: ParserStrings.WDACParserForEachOperatorLogTitle,
                                             message: StringUtil.Format(ParserStrings.WDACParserForEachOperatorLogMessage, method.Name ?? string.Empty),
                                             fqid: "ForEachOperatorMethodInvocationNotAllowed",

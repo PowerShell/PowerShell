@@ -2985,6 +2985,7 @@ namespace System.Management.Automation.Language
                 if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
                 {
                     SystemPolicy.LogWDACAuditMessage(
+                        context: Runspace.DefaultRunspace?.ExecutionContext,
                         title: ParserStrings.WDACParserConfigKeywordLogTitle,
                         message: ParserStrings.WDACParserConfigKeywordLogMessage,
                         fqid: "ConfigurationLanguageKeywordNotAllowed",
@@ -4212,6 +4213,7 @@ namespace System.Management.Automation.Language
             if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
             {
                 SystemPolicy.LogWDACAuditMessage(
+                    context: Runspace.DefaultRunspace?.ExecutionContext,
                     title: ParserStrings.WDACParserClassKeywordLogTitle,
                     message: ParserStrings.WDACParserClassKeywordLogMessage,
                     fqid: "ClassLanguageKeywordNotAllowed",

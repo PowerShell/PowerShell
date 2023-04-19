@@ -203,6 +203,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!CoreTypes.Contains(type))
                         {
                             SystemPolicy.LogWDACAuditMessage(
+                                context: Context,
                                 title: NewObjectStrings.TypeWDACLogTitle,
                                 message: StringUtil.Format(NewObjectStrings.TypeWDACLogMessage, type.FullName),
                                 fqid: "NewObjectCmdletCannotCreateType",
@@ -330,6 +331,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         SystemPolicy.LogWDACAuditMessage(
+                            context: Context,
                             title: NewObjectStrings.ComWDACLogTitle,
                             message: StringUtil.Format(NewObjectStrings.ComWDACLogMessage, ComObject ?? string.Empty),
                             fqid: "NewObjectCmdletCannotCreateCOM",

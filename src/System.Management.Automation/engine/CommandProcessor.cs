@@ -780,7 +780,7 @@ namespace System.Management.Automation
             // If the script has been dotted, throw an error if it's from a different language mode.
             if (!this.UseLocalScope)
             {
-                ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context.LanguageMode, Command.MyInvocation);
+                ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context, Command.MyInvocation);
             }
         }
 

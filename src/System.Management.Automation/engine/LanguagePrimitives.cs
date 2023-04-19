@@ -4001,6 +4001,7 @@ namespace System.Management.Automation
                         if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                         {
                             SystemPolicy.LogWDACAuditMessage(
+                                context: ecFromTLS,
                                 title: ExtendedTypeSystem.WDACHashTypeLogTitle,
                                 message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
                                 fqid: "LanguageHashtableConversionNotAllowed",
@@ -5660,6 +5661,7 @@ namespace System.Management.Automation
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
+                        context: context,
                         title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
                         message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
                         fqid: "LanguageTypeConversionNotAllowed",

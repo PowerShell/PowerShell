@@ -850,6 +850,7 @@ namespace System.Management.Automation
                 }
 
                 SystemPolicy.LogWDACAuditMessage(
+                    context: executionContext,
                     title: CommandBaseStrings.SearcherWDACLogTitle,
                     message: StringUtil.Format(CommandBaseStrings.SearcherWDACLogMessage, result.Name, result.ModuleName ?? string.Empty),
                     fqid: "CommandSearchFailureForUntrustedCommand");

@@ -2004,6 +2004,7 @@ namespace System.Management.Automation
                         if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
                         {
                             SystemPolicy.LogWDACAuditMessage(
+                                context: context,
                                 title: SessionStateStrings.WDACSessionStateVarLogTitle,
                                 message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
                                 fqid: "AllScopeVariableNotAllowed",

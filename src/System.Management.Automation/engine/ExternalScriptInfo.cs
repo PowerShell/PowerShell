@@ -554,6 +554,7 @@ namespace System.Management.Automation
                                     // for WDAC in Audit mode, the performance degradation is acceptable.
                                     GetScriptBlockAst();
                                     SystemPolicy.LogWDACAuditMessage(
+                                        context: Context,
                                         title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
                                         message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path, _scriptBlock?.Id ?? Guid.Empty),
                                         fqid: "ScriptFileNotTrustedByPolicy");

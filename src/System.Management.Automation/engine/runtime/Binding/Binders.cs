@@ -5528,6 +5528,7 @@ namespace System.Management.Automation.Language
 
                     string targetName = (targetValue as Type)?.FullName;
                     SystemPolicy.LogWDACAuditMessage(
+                        context: context,
                         title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
                         message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, name, targetName ?? string.Empty),
                         fqid: "BinderMethodOrPropertyInvocationNotAllowed",
@@ -7702,6 +7703,7 @@ namespace System.Management.Automation.Language
 
                 string targetName = instanceType?.FullName;
                 SystemPolicy.LogWDACAuditMessage(
+                    context: context,
                     title: ParameterBinderStrings.WDACBinderTypeCreationLogTitle,
                     message: StringUtil.Format(ParameterBinderStrings.WDACBinderTypeCreationLogMessage, targetName ?? string.Empty),
                     fqid: "BinderTypeCreationNotAllowed",

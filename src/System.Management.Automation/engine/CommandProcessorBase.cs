@@ -194,11 +194,11 @@ namespace System.Management.Automation
         /// be used when a script block is being dotted.
         /// </summary>
         /// <param name="scriptBlock">The script block being dotted.</param>
-        /// <param name="languageMode">The current language mode.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="invocationInfo">The invocation info about the command.</param>
         protected static void ValidateCompatibleLanguageMode(
             ScriptBlock scriptBlock,
-            PSLanguageMode languageMode,
+            ExecutionContext context,
             InvocationInfo invocationInfo)
         {
             // If we are in a constrained language mode (Core or Restricted), block it.
@@ -207,6 +207,7 @@ namespace System.Management.Automation
             //      functions that were never designed to handle untrusted data.
             // This function won't be called for NoLanguage mode so the only direction checked is trusted
             // (FullLanguage mode) script running in a constrained/restricted session.
+            var languageMode = context.LanguageMode;
             if ((scriptBlock.LanguageMode.HasValue) &&
                 (scriptBlock.LanguageMode != languageMode) &&
                 ((languageMode == PSLanguageMode.RestrictedLanguage) ||
@@ -241,6 +242,7 @@ namespace System.Management.Automation
 
                     string scriptBlockId = $"{scriptBlock.Id}+{scriptBlock.GetFileName() ?? string.Empty}";
                     SystemPolicy.LogWDACAuditMessage(
+                        context: context,
                         title: CommandBaseStrings.WDACLogTitle,
                         message: StringUtil.Format(CommandBaseStrings.WDACLogMessage, scriptBlockId, scriptBlock.LanguageMode, languageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed",

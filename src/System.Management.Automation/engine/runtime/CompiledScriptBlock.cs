@@ -1071,6 +1071,7 @@ namespace System.Management.Automation
                 {
                     string scriptBlockId = $"{this.Id}+{this.GetFileName() ?? string.Empty}";
                     SystemPolicy.LogWDACAuditMessage(
+                        context: context,
                         title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,
                         message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, scriptBlockId, this.LanguageMode, context.LanguageMode),
                         fqid: "ScriptBlockDotSourceNotAllowed",

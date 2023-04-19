@@ -3430,6 +3430,7 @@ namespace Microsoft.PowerShell.Commands
                         if (fnMatchPattern == null && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                         {
                             SystemPolicy.LogWDACAuditMessage(
+                                context: Context,
                                 title: Modules.WDACImplicitFunctionExportLogTitle,
                                 message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage, manifestScriptInfo.ModuleName),
                                 fqid: "ModuleImplicitFunctionExportNotAllowed",
@@ -5654,6 +5655,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
                     title: Modules.WDACScriptFileImportLogTitle,
                     message: StringUtil.Format(Modules.WDACScriptFileImportLogMessage, fileName),
                     fqid: "ModuleImportScriptFilesNotAllowed",
@@ -5758,6 +5760,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (fnMatchPattern == null && systemLockdownPolicy == SystemEnforcementMode.Audit)
                                     {
                                         SystemPolicy.LogWDACAuditMessage(
+                                            context: Context,
                                             title: Modules.WDACImplicitFunctionExportLogTitle,
                                             message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage2, module.Name),
                                             fqid: "ModuleImplicitFunctionExportNotAllowed",
@@ -5783,7 +5786,7 @@ namespace Microsoft.PowerShell.Commands
                                     // exported functions only come from this module and not from any imported nested modules.
                                     // Unless there is a parent manifest that explicitly filters all exported functions (no wildcards).
                                     // This prevents unintended public exposure of imported functions running in FullLanguage.
-                                    RemoveNestedModuleFunctions(module, systemLockdownPolicy);
+                                    RemoveNestedModuleFunctions(Context, module, systemLockdownPolicy);
                                 }
 
                                 CheckForDisallowedDotSourcing(module, psm1ScriptInfo, options);
@@ -6145,6 +6148,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
                         title: Modules.WDACModuleDotSourceLogTitle,
                         message: StringUtil.Format(Modules.WDACModuleDotSourceLogMessage, moduleInfo.Name),
                         fqid: "ModuleImportDotSourceNotAllowed",
@@ -6153,7 +6157,10 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         
-        private static void RemoveNestedModuleFunctions(PSModuleInfo module, SystemEnforcementMode systemLockdownPolicy)
+        private static void RemoveNestedModuleFunctions(
+            ExecutionContext context,
+            PSModuleInfo module,
+            SystemEnforcementMode systemLockdownPolicy)
         {
             var input = module.SessionState?.Internal?.ExportedFunctions;
             if ((input == null) || (input.Count == 0))
@@ -6167,6 +6174,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case SystemEnforcementMode.Audit:
                     SystemPolicy.LogWDACAuditMessage(
+                        context: context,
                         title: Modules.WDACModuleFnExportWithNestedModulesLogTitle,
                         message: StringUtil.Format(Modules.WDACModuleFnExportWithNestedModulesLogMessage, module.Name),
                         fqid: "ModuleExportWithWildcardCharactersNotAllowed",

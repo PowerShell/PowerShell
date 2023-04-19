@@ -177,6 +177,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
                     title: Modules.WDACExportModuleCommandLogTitle,
                     message: StringUtil.Format(Modules.WDACExportModuleCommandLogMessage, Context.EngineSessionState.Module.Name, Context.EngineSessionState.Module.LanguageMode, Context.LanguageMode),
                     fqid: "ExportModuleMemberCmdletNotAllowed",

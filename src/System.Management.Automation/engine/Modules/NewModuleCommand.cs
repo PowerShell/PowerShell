@@ -183,6 +183,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
                         title: Modules.WDACNewModuleCommandLogTitle,
                         message: Modules.WDACNewModuleCommandLogMessage,
                         fqid: "NewModuleCmdletWitFullLanguageScriptblockNotAllowed",

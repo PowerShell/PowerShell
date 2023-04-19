@@ -1220,6 +1220,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
                         title: InternalCommandStrings.WDACLogTitle,
                         message: StringUtil.Format(InternalCommandStrings.WDACLogMessage, objectType.FullName),
                         fqid: "ForEachObjectCmdletMethodInvocationNotAllowed",

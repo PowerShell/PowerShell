@@ -76,11 +76,13 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Writes to PowerShell WDAC Audit mode ETW log.
         /// </summary>
+        /// <param name="context">Current execution context.</param>
         /// <param name="title">Audit message title.</param>
         /// <param name="message">Audit message message.</param>
         /// <param name="fqid">Fully Qualified ID.</param>
         /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
         internal static void LogWDACAuditMessage(
+            ExecutionContext context,
             string title,
             string message,
             string fqid,
@@ -89,7 +91,7 @@ namespace System.Management.Automation.Security
             string messageToWrite = message;
 
             // Augment the log message with current script information from the script debugger, if available.
-            var context = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            context ??= System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             bool debuggerAvailable = context is not null &&
                                      context._debugger is not null &&
                                      context._debugger is ScriptDebugger;

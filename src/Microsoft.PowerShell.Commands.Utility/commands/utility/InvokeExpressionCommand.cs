@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
             if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
             {
                 SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
                     title: UtilityCommonStrings.IEXWDACLogTitle,
                     message: UtilityCommonStrings.IEXWDACLogMessage,
                     fqid: "InvokeExpressionCmdletConstrained",

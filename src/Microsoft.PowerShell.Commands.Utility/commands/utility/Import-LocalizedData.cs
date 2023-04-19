@@ -161,6 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
                     case PSLanguageMode.ConstrainedLanguageAudit:
                         SystemPolicy.LogWDACAuditMessage(
+                            context: Context,
                             title: ImportLocalizedDataStrings.WDACLogTitle,
                             message: ImportLocalizedDataStrings.WDACLogMessage,
                             fqid: "SupportedCommandsDisabled",
