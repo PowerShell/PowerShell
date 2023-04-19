@@ -43,7 +43,7 @@ namespace PSTests.Sequential
 
         public string Description => _description;
 
-        public FeedbackItem GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token)
+        public FeedbackItem GetFeedback(FeedbackContext context, CancellationToken token)
         {
             if (_delay)
             {
@@ -54,7 +54,7 @@ namespace PSTests.Sequential
 
             return new FeedbackItem(
                 "slow-feedback-caption",
-                new List<string> { $"{commandLine}+{errorRecord.FullyQualifiedErrorId}" });
+                new List<string> { $"{context.CommandLine}+{context.LastError.FullyQualifiedErrorId}" });
         }
     }
 
