@@ -163,7 +163,7 @@ namespace System.Management.Automation
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
             bool isNativeCommand = false;
-            if (commandProcessor is NativeCommandProcessor nativeCommandProcessor)
+            if (commandProcessor is NativeCommandProcessor)
             {
                 isNativeCommand = true;
             }
