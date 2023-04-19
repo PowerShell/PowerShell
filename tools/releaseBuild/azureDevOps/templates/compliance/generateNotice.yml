@@ -46,6 +46,10 @@ jobs:
     inputs:
       sourceScanPath: '$(Build.SourcesDirectory)\tools'
 
+  - pwsh: |
+      ./tools/clearlyDefined/ClearlyDefined.ps1 -TestAndHarvest
+    displayName: Verify that packages have license data
+
   - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
     displayName: 'NOTICE File Generator'
     inputs:
