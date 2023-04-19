@@ -1,4 +1,3 @@
-using System.Threading;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -6,6 +5,7 @@ using System.Threading;
 
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation;
