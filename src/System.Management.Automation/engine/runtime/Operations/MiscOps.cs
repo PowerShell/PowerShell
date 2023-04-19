@@ -469,33 +469,12 @@ namespace System.Management.Automation
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
                 bool lastCommandWasNative = false;
-                NativeCommandProcessor lastNativeCommand = null;
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
                     commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context, lastCommandWasNative);
-
-                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
-                    {
-                        continue;
-                    }
-
-                    if (commandProcessor is NativeCommandProcessor nativeCommand)
-                    {
-                        if (lastCommandWasNative)
-                        {
-                            lastNativeCommand.DownStreamNativeCommand = nativeCommand;
-                            nativeCommand.UpstreamIsNativeCommand = true;
-                        }
-
-                        lastCommandWasNative = true;
-                        lastNativeCommand = nativeCommand;
-                        continue;
-                    }
-
-                    lastCommandWasNative = false;
                 }
 
                 var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
@@ -769,30 +748,9 @@ namespace System.Management.Automation
             }
 
             bool lastCommandWasNative = false;
-            NativeCommandProcessor lastNativeCommand = null;
             foreach (var commandTuple in commandTuples)
             {
                 var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context, lastCommandWasNative);
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
-                {
-                    if (commandProcessor is NativeCommandProcessor nativeCommand)
-                    {
-                        if (lastCommandWasNative)
-                        {
-                            nativeCommand.UpstreamIsNativeCommand = true;
-                            lastNativeCommand.DownStreamNativeCommand = nativeCommand;
-                        }
-
-                        lastCommandWasNative = true;
-                        lastNativeCommand = nativeCommand;
-                    }
-                    else
-                    {
-                        lastCommandWasNative = false;
-                        lastNativeCommand = null;
-                    }
-                }
-
                 commandProcessor.Command.CommandOriginInternal = commandOrigin;
                 commandProcessor.CommandScope.ScopeOrigin = commandOrigin;
                 commandProcessor.Command.MyInvocation.CommandOrigin = commandOrigin;

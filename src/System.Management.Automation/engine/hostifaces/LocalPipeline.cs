@@ -830,8 +830,6 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                bool lastCommandWasNative = false;
-                NativeCommandProcessor lastNativeCommand = null;
                 foreach (Command command in commands)
                 {
                     CommandProcessorBase commandProcessorBase;
@@ -889,25 +887,6 @@ namespace System.Management.Automation.Runspaces
                                 CommandParameterInternal internalParameter = CommandParameter.ToCommandParameterInternal(publicParameter, false);
                                 commandProcessorBase.AddParameter(internalParameter);
                             }
-                        }
-                    }
-
-                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
-                    {
-                        if (commandProcessorBase is NativeCommandProcessor nativeCommandProcessor)
-                        {
-                            nativeCommandProcessor.UpstreamIsNativeCommand = lastCommandWasNative;
-                            if (lastCommandWasNative)
-                            {
-                                lastNativeCommand.DownStreamNativeCommand = nativeCommandProcessor;
-                            }
-
-                            lastCommandWasNative = true;
-                            lastNativeCommand = nativeCommandProcessor;
-                        }
-                        else
-                        {
-                            lastCommandWasNative = false;
                         }
                     }
 
