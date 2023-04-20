@@ -4218,14 +4218,14 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
             [string]$Command = 'Invoke-WebRequest',
             [string]$Arguments = '',
             [uri]$Uri,
-            [int]$TimeoutMS = 5000,
+            [int]$DelayBeforeStopSimulationMs = 5000,
             [switch]$WillComplete
         )
 
         $pwsh = [PowerShell]::Create()
         $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
         $task = $pwsh.AddScript($invoke).InvokeAsync()
-        $delay = [System.Threading.Tasks.Task]::Delay($TimeoutMS)
+        $delay = [System.Threading.Tasks.Task]::Delay($DelayBeforeStopSimulationMs)
 
         # Simulate CTRL-C as soon as the timeout expires or the main task ends
         $null = [System.Threading.Tasks.Task]::WaitAny($task, $delay)
@@ -4239,7 +4239,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
     It 'Invoke-WebRequest: CTRL-C Cancels request before request headers received' {
         $uri = Get-WebListenerUrl -test Delay -TestValue 30
-        RunWithCancellation -Uri $uri
+        RunWithCancellation -Uri $uri -DelayBeforeStopSimulationMs 1000
     }
 
     It 'Invoke-WebRequest: CTRL-C Cancels request after request headers received' {
@@ -4302,7 +4302,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
     It 'Invoke-RestMethod: CTRL-C Cancels request before request headers received' {
         $uri = Get-WebListenerUrl -test Delay -TestValue 30
-        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri
+        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayBeforeStopSimulationMs 1000
     }
 
     It 'Invoke-RestMethod: CTRL-C Cancels request after JSON request headers received' {
