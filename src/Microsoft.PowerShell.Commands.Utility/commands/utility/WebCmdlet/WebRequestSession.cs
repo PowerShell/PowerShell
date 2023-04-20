@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -16,12 +18,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class WebRequestSession : IDisposable
     {
-        private HttpClient _client;
+        #region Fields
+
+        private HttpClient? _client;
         private CookieContainer _cookies;
         private bool _useDefaultCredentials;
-        private ICredentials _credentials;
-        private X509CertificateCollection _certificates;
-        private IWebProxy _proxy;
+        private ICredentials? _credentials;
+        private X509CertificateCollection? _certificates;
+        private IWebProxy? _proxy;
         private int _maximumRedirection;
         private WebSslProtocol _sslProtocol;
         private bool _allowAutoRedirect;
@@ -34,6 +38,8 @@ namespace Microsoft.PowerShell.Commands
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
         /// </summary>
         private bool _disposedClient;
+
+        #endregion Fields
 
         /// <summary>
         /// Gets or sets the Header property.
@@ -61,15 +67,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Credentials property.
         /// </summary>
-        public ICredentials Credentials { get => _credentials; set => SetClassVar(ref _credentials, value); }
+        public ICredentials? Credentials { get => _credentials; set => SetClassVar(ref _credentials, value); }
 
         /// <summary>
         /// Gets or sets the Certificates property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public X509CertificateCollection Certificates { get => _certificates; set => SetClassVar(ref _certificates, value); }
+        public X509CertificateCollection? Certificates { get => _certificates; set => SetClassVar(ref _certificates, value); }
 
-        #endregion
+        #endregion Credentials
 
         /// <summary>
         /// Gets or sets the UserAgent property.
@@ -79,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Proxy property.
         /// </summary>
-        public IWebProxy Proxy
+        public IWebProxy? Proxy
         {
             get => _proxy;
             set
@@ -238,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
             };
         }
 
-        private void SetClassVar<T>(ref T oldValue, T newValue) where T : class
+        private void SetClassVar<T>(ref T oldValue, T newValue) where T : class?
         {
             if (oldValue != newValue)
             {

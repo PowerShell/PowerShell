@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
 
-            Stream responseStream = StreamHelper.GetResponseStream(response);
+            Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
             if (ShouldWriteToPipeline)
             {
                 // creating a MemoryStream wrapper to response stream here to support IsStopping.
@@ -42,8 +42,9 @@ namespace Microsoft.PowerShell.Commands
                     responseStream,
                     StreamHelper.ChunkSize,
                     this,
-                    response.Content.Headers.ContentLength.GetValueOrDefault());
-                WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
+                    response.Content.Headers.ContentLength.GetValueOrDefault(),
+                    _cancelToken.Token);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, _cancelToken.Token) : new WebResponseObject(response, responseStream, _cancelToken.Token);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
@@ -56,7 +57,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
         }
 
