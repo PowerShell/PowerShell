@@ -4218,7 +4218,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
             [string]$Command = 'Invoke-WebRequest',
             [string]$Arguments = '',
             [uri]$Uri,
-            [int]$TimeoutMS = 10000,
+            [int]$TimeoutMS = 5000,
             [switch]$WillComplete
         )
 
