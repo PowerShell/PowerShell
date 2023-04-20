@@ -4231,6 +4231,10 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         $null = [System.Threading.Tasks.Task]::WaitAny($task, $delay)
         $task.IsCompleted | Should -Be $WillComplete.ToBool()
         $pwsh.Stop()
+
+        # The download stall is normally 30 seconds from the web listener based
+        # on the first slash separated parameter in the -TestValue provided to
+        # Get-WebListenerUrl -test Stall -TestValue duration/content-type.
         Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
         $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
         $pwsh.Dispose()
