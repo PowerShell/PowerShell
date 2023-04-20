@@ -1388,7 +1388,7 @@ namespace System.Management.Automation
         ///     <code>
         ///         PowerShell shell = PowerShell.Create().
         ///                                     AddCommand("Get-Process")
-        ///                                     AddCommand("Select-Object").AddParameter("Name");
+        ///                                     AddCommand("Select-Object").AddArgument("Name");
         ///     </code>
         /// This will add the value "Name" to the positional parameter list of "Select-Object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
