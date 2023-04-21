@@ -6,6 +6,7 @@
   </annotation>
   <!-- include and import declarations -->
   <include schemaLocation="base.xsd"/>
+  <include schemaLocation="shellExecute.xsd" />
   <!-- element declarations -->
   <!-- language markup -->
   <element name="acronym" type="maml:textType">
