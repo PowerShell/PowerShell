@@ -150,7 +150,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="cancellationToken">The cancellation token.</param>
         [MemberNotNull(nameof(Content))]
         protected void InitializeContent(CancellationToken cancellationToken)
-
         {
             string? contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
