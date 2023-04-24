@@ -21,11 +21,7 @@ internal abstract class BytePipe
     internal AsyncByteStreamTransfer Bind(BytePipe bytePipe)
     {
         Debug.Assert(bytePipe is not null);
-        return new AsyncByteStreamTransfer(
-            bytePipe,
-            (bytes, stream) => stream.Write(bytes),
-            destinationPipe: this,
-            stream => stream.Close());
+        return new AsyncByteStreamTransfer(bytePipe, destinationPipe: this);
     }
 }
 

@@ -18,10 +18,6 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
 {
     private const int DefaultBufferSize = 1024;
 
-    private readonly SpanAction<byte, Stream> _callback;
-
-    private readonly Action<Stream> _callbackCompleted;
-
     private readonly BytePipe _bytePipe;
 
     private readonly BytePipe _destinationPipe;
@@ -34,14 +30,10 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
 
     public AsyncByteStreamTransfer(
         BytePipe bytePipe,
-        SpanAction<byte, Stream> callback,
-        BytePipe destinationPipe,
-        Action<Stream> completedCallback)
+        BytePipe destinationPipe)
     {
         _bytePipe = bytePipe;
         _destinationPipe = destinationPipe;
-        _callback = callback;
-        _callbackCompleted = completedCallback;
         _buffer = new byte[DefaultBufferSize];
     }
 
@@ -57,44 +49,49 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
     private async Task ReadBufferAsync()
     {
         Stream stream;
-        Stream destinationStream;
+        Stream? destinationStream = null;
         try
         {
-            stream = await _bytePipe.GetStream(_cts.Token);
-            destinationStream = await _destinationPipe.GetStream(_cts.Token);
-        }
-        catch (IOException)
-        {
-            return;
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
-
-        while (true)
-        {
-            int bytesRead;
             try
             {
-                bytesRead = await stream.ReadAsync(_buffer, _cts.Token);
-                if (bytesRead is 0)
-                {
-                    break;
-                }
+                stream = await _bytePipe.GetStream(_cts.Token);
+                destinationStream = await _destinationPipe.GetStream(_cts.Token);
             }
             catch (IOException)
             {
-                break;
+                return;
             }
             catch (OperationCanceledException)
             {
-                break;
+                return;
             }
 
-            _callback(_buffer.Span.Slice(0, bytesRead), destinationStream);
-        }
+            while (true)
+            {
+                int bytesRead;
+                try
+                {
+                    bytesRead = await stream.ReadAsync(_buffer, _cts.Token);
+                    if (bytesRead is 0)
+                    {
+                        break;
+                    }
+                }
+                catch (IOException)
+                {
+                    break;
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
 
-        _callbackCompleted(destinationStream);
+                destinationStream.Write(_buffer.Span.Slice(0, bytesRead));
+            }
+        }
+        finally
+        {
+            destinationStream?.Close();
+        }
     }
 }
