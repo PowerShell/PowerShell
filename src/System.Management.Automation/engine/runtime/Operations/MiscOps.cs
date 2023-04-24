@@ -161,11 +161,7 @@ namespace System.Management.Automation
             commandProcessor.UseLocalScope = !dotSource &&
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
-            bool isNativeCommand = false;
-            if (commandProcessor is NativeCommandProcessor)
-            {
-                isNativeCommand = true;
-            }
+            bool isNativeCommand = commandProcessor is NativeCommandProcessor;
 
             for (int i = commandIndex + 1; i < commandElements.Length; ++i)
             {
