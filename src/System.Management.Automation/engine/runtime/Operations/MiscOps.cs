@@ -463,13 +463,12 @@ namespace System.Management.Automation
 
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
-                bool lastCommandWasNative = false;
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
                     commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
-                                                  commandRedirection, context, lastCommandWasNative);
+                                                  commandRedirection, context);
                 }
 
                 var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
@@ -742,10 +741,9 @@ namespace System.Management.Automation
                 }
             }
 
-            bool lastCommandWasNative = false;
             foreach (var commandTuple in commandTuples)
             {
-                var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context, lastCommandWasNative);
+                var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context);
                 commandProcessor.Command.CommandOriginInternal = commandOrigin;
                 commandProcessor.CommandScope.ScopeOrigin = commandOrigin;
                 commandProcessor.Command.MyInvocation.CommandOrigin = commandOrigin;
