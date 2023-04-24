@@ -1,11 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 using Newtonsoft.Json;
@@ -55,13 +59,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("RHV")]
-        public string ResponseHeadersVariable { get; set; }
+        public string? ResponseHeadersVariable { get; set; }
 
         /// <summary>
         /// Gets or sets the variable name to use for storing the status code from the response.
         /// </summary>
         [Parameter]
-        public string StatusCodeVariable { get; set; }
+        public string? StatusCodeVariable { get; set; }
 
         #endregion Parameters
 
@@ -74,12 +78,13 @@ namespace Microsoft.PowerShell.Commands
         internal override void ProcessResponse(HttpResponseMessage response)
         {
             ArgumentNullException.ThrowIfNull(response);
+            ArgumentNullException.ThrowIfNull(_cancelToken);
 
-            Stream baseResponseStream = StreamHelper.GetResponseStream(response);
+            Stream baseResponseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
 
             if (ShouldWriteToPipeline)
             {
-                using var responseStream = new BufferingStreamReader(baseResponseStream);
+                using var responseStream = new BufferingStreamReader(baseResponseStream, _cancelToken.Token);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -93,12 +98,12 @@ namespace Microsoft.PowerShell.Commands
                     RestReturnType returnType = CheckReturnType(response);
 
                     // Try to get the response encoding from the ContentType header.
-                    string charSet = WebResponseHelper.GetCharacterSet(response);
+                    string? characterSet = WebResponseHelper.GetCharacterSet(response);
 
-                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding);
+                    string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding, _cancelToken.Token);
 
-                    object obj = null;
-                    Exception ex = null;
+                    object? obj = null;
+                    Exception? ex = null;
 
                     string encodingVerboseName;
                     try
@@ -112,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
-                    
+
                     bool convertSuccess = false;
 
                     if (returnType == RestReturnType.Json)
@@ -135,8 +140,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             else if (ShouldSaveToOutFile)
-            {
-                StreamHelper.SaveStreamToFile(baseResponseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+            {   
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(baseResponseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))
@@ -161,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(response);
 
             RestReturnType rt = RestReturnType.Detect;
-            string contentType = ContentHelper.GetContentType(response);
+            string? contentType = ContentHelper.GetContentType(response);
             if (string.IsNullOrEmpty(contentType))
             {
                 rt = RestReturnType.Detect;
@@ -217,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                            )
                         {
                             // This one will do reader.Read() internally
-                            XmlNode result = workingDocument.ReadNode(reader);
+                            XmlNode? result = workingDocument.ReadNode(reader);
                             WriteObject(result);
                         }
                         else
@@ -227,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException) 
+            catch (XmlException)
             {
                 // Catch XmlException
             }
@@ -256,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             return xrs;
         }
 
-        private static bool TryConvertToXml(string xml, out object doc, ref Exception exRef)
+        private static bool TryConvertToXml(string xml, [NotNullWhen(true)] out object? doc, ref Exception? exRef)
         {
             try
             {
@@ -278,13 +287,12 @@ namespace Microsoft.PowerShell.Commands
             return doc != null;
         }
 
-        private static bool TryConvertToJson(string json, out object obj, ref Exception exRef)
+        private static bool TryConvertToJson(string json, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
         {
             bool converted = false;
             try
             {
-                ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(json, out error);
+                obj = JsonObject.ConvertFromJson(json, out ErrorRecord error);
 
                 if (obj == null)
                 {
@@ -334,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Json return type.
             /// </summary>
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
             Json,
 
             /// <summary>
@@ -345,17 +353,19 @@ namespace Microsoft.PowerShell.Commands
 
         internal class BufferingStreamReader : Stream
         {
-            internal BufferingStreamReader(Stream baseStream)
+            internal BufferingStreamReader(Stream baseStream, CancellationToken cancellationToken)
             {
                 _baseStream = baseStream;
                 _streamBuffer = new MemoryStream();
                 _length = long.MaxValue;
                 _copyBuffer = new byte[4096];
+                _cancellationToken = cancellationToken;
             }
 
             private readonly Stream _baseStream;
             private readonly MemoryStream _streamBuffer;
             private readonly byte[] _copyBuffer;
+            private readonly CancellationToken _cancellationToken;
 
             public override bool CanRead => true;
 
@@ -389,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we
                     // may cache 4095 bytes more than what is required by the Read operation.
-                    int bytesRead = _baseStream.Read(_copyBuffer, 0, _copyBuffer.Length);
+                    int bytesRead = _baseStream.ReadAsync(_copyBuffer, 0, _copyBuffer.Length, _cancellationToken).GetAwaiter().GetResult();
 
                     if (_streamBuffer.Position < _streamBuffer.Length)
                     {

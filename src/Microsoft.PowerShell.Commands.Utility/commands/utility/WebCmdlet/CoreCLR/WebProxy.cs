@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Net;
 
@@ -8,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class WebProxy : IWebProxy, IEquatable<WebProxy>
     {
-        private ICredentials _credentials;
+        private ICredentials? _credentials;
         private readonly Uri _proxyAddress;
 
         internal WebProxy(Uri address)
@@ -18,11 +20,11 @@ namespace Microsoft.PowerShell.Commands
             _proxyAddress = address;
         }
 
-        public override bool Equals(object obj) => Equals(obj as WebProxy);
+        public override bool Equals(object? obj) => Equals(obj as WebProxy);
 
         public override int GetHashCode() => HashCode.Combine(_proxyAddress, _credentials, BypassProxyOnLocal);
 
-        public bool Equals(WebProxy other)
+        public bool Equals(WebProxy? other)
         {
             if (other is null)
             {
@@ -35,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
                 && BypassProxyOnLocal == other.BypassProxyOnLocal;
         }
 
-        public ICredentials Credentials
+        public ICredentials? Credentials
         {
             get => _credentials;
 

@@ -491,6 +491,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
+        internal string _qualifiedOutFile;
+
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
         /// <summary>
@@ -596,12 +598,20 @@ namespace Microsoft.PowerShell.Commands
                                 OutFile = null;
                             }
 
-                            // Detect insecure redirection
-                            if (!AllowInsecureRedirect && response.RequestMessage?.RequestUri?.Scheme == "https" && response.Headers.Location?.Scheme == "http")
+                            // Detect insecure redirection.
+                            if (!AllowInsecureRedirect)
                             {
-                                ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
-                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
-                                ThrowTerminatingError(er);
+                                // We will skip detection if either of the URIs is relative, because the 'Scheme' property is not supported on a relative URI.
+                                // If we have to skip the check, an error may be thrown later if it's actually an insecure https-to-http redirect.
+                                bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
+                                bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
+
+                                if (originIsHttps && destinationIsHttp)
+                                {
+                                    ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
+                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
+                                    ThrowTerminatingError(er);
+                                }
                             }
 
                             if (ShouldCheckHttpStatus && !_isSuccess)
@@ -618,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 try
                                 {
-                                    string error = StreamHelper.GetResponseString(response);
+                                    string error = StreamHelper.GetResponseString(response, _cancelToken.Token);
                                     detailMsg = FormatErrorMessage(error, contentType);
                                 }
                                 catch
@@ -662,6 +672,11 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             ThrowTerminatingError(er);
+                        }
+                        finally 
+                        {
+                            _cancelToken?.Dispose();
+                            _cancelToken = null;
                         }
 
                         if (_followRelLink && _relationLink is not null)
@@ -859,7 +874,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Output ??
-            if (PassThru && OutFile is null)
+            if (PassThru.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
@@ -869,6 +884,15 @@ namespace Microsoft.PowerShell.Commands
             if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
+                ThrowTerminatingError(error);
+            }
+
+            _qualifiedOutFile = ShouldSaveToOutFile ? QualifiedOutFile : null;
+
+            // OutFile must not be a directory to use Resume.
+            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
                 ThrowTerminatingError(error);
             }
         }
@@ -1097,6 +1121,7 @@ namespace Microsoft.PowerShell.Commands
             if (Resume.IsPresent)
             {
                 FileInfo fileInfo = new(QualifiedOutFile);
+
                 if (fileInfo.Exists)
                 {
                     request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
