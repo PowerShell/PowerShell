@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -25,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly long? _contentLength;
         private readonly Stream _originalStreamToProxy;
-        private readonly Cmdlet _ownerCmdlet;
+        private readonly Cmdlet? _ownerCmdlet;
         private readonly CancellationToken _cancellationToken;
         private bool _isInitialized = false;
 
@@ -40,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
@@ -361,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
                 while (!completed)
                 {
                     // If this is the last input data, flush the decoder's internal buffer and state.
-                    bool flush = bytesRead == 0;
+                    bool flush = bytesRead is 0;
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex, chars, 0, useBufferSize, flush, out int bytesUsed, out int charsUsed, out completed);
 
                     // The conversion produced the number of characters indicated by charsUsed. Write that number
@@ -386,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
             return result.ToString();
         }
 
-        internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding, CancellationToken cancellationToken)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, CancellationToken cancellationToken)
         {
             bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
 
@@ -422,12 +424,12 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        internal static bool TryGetEncoding(string? characterSet, out Encoding encoding)
         {
             bool result = false;
             try
             {
-                encoding = Encoding.GetEncoding(characterSet);
+                encoding = Encoding.GetEncoding(characterSet!);
                 result = true;
             }
             catch (ArgumentException)
