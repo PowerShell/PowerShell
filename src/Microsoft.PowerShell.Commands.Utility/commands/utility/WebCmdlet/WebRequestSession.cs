@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 handler.Credentials = Credentials;
             }
-            else
+            else if (UseDefaultCredentials)
             {
                 handler.Credentials = CredentialCache.DefaultCredentials;
             }
