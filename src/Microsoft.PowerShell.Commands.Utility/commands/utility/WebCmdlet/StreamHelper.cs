@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell.Commands
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
             );
 
-        internal static byte[] EncodeToBytes(string str, Encoding encoding)
+        internal static byte[] EncodeToBytes(string str, Encoding? encoding)
         {
             // Just use the default encoding if one wasn't provided
             encoding ??= ContentHelper.GetDefaultEncoding();

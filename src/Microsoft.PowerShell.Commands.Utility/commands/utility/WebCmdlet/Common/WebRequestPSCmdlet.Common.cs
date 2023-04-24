@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
-        internal string _qualifiedOutFile;
+        internal string? _qualifiedOutFile;
 
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
 
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
-                            string contentType = ContentHelper.GetContentType(response);
+                            string? contentType = ContentHelper.GetContentType(response);
                             long? contentLength = response.Content.Headers.ContentLength;
                             string respVerboseMsg = contentLength is null
                                 ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
