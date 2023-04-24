@@ -83,10 +83,12 @@ These topics include (but are not limited to):
 
 ### Members
 
+* @theJasonHelmick
 * @daxian-dbw (PSReadline / IntelliSense)
 * @adityapatwardhan (Markdown / help system)
 * @JamesWTruher (cmdlet design)
 * @SeeminglyScience
+* @sdwheeler
 * @kilasuit
 
 ## Language
