@@ -78,6 +78,10 @@ Describe 'conversion syntax' -Tags "CI" {
             $result -join ";" | Should -Be ($Elements -join ";")
         }
     }
+
+    It 'Should not convert invalid strings to type name' {
+        'int]whatever' -as [type] | Should -Be $null
+    }
 }
 
 Describe "Type resolution should prefer assemblies in powershell assembly cache" -Tags "Feature" {
