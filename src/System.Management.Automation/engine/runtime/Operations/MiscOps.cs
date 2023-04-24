@@ -31,8 +31,7 @@ namespace System.Management.Automation
                                                        CommandParameterInternal[] commandElements,
                                                        CommandBaseAst commandBaseAst,
                                                        CommandRedirection[] redirections,
-                                                       ExecutionContext context,
-                                                       bool lastCommandWasNative)
+                                                       ExecutionContext context)
         {
             var commandAst = commandBaseAst as CommandAst;
             var invocationToken = commandAst != null ? commandAst.InvocationOperator : TokenKind.Unknown;
