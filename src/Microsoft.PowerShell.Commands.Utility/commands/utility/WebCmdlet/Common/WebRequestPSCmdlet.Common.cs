@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -156,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
-        [System.Diagnostics.CodeAnalysis.DisallowNullAttribute]
+        [DisallowNull]
         public virtual Uri Uri { get; set; } = null!;
 
         #endregion URI
@@ -179,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        [System.Diagnostics.CodeAnalysis.DisallowNullAttribute]
+        [DisallowNull]
         public virtual WebRequestSession WebSession { get; set; } = new WebRequestSession();
 
         /// <summary>
@@ -281,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Headers property.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Parameter]
         public virtual IDictionary? Headers { get; set; }
 
@@ -358,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        [System.Diagnostics.CodeAnalysis.DisallowNullAttribute]
+        [DisallowNull]
         public virtual string? CustomMethod
         {
             get => _custommethod;
@@ -491,7 +492,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
-        internal string? _qualifiedOutFile;
+        [System.Diagnostics.CodeAnalysis.AllowNull]
+        internal string _qualifiedOutFile;
 
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
 
