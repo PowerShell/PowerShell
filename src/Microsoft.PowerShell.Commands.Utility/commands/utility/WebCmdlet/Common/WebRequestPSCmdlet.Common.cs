@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // We will skip detection if either of the URIs is relative, because the 'Scheme' property is not supported on a relative URI.
                                 // If we have to skip the check, an error may be thrown later if it's actually an insecure https-to-http redirect.
-                                bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
+                                bool originIsHttps = response.RequestMessage?.RequestUri is not null && response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
                                 bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
 
                                 if (originIsHttps && destinationIsHttp)
@@ -1772,7 +1772,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static string FormatErrorMessage(string error, string contentType)
+        private static string FormatErrorMessage(string error, string? contentType)
         {
             string? formattedError = null;
 
