@@ -247,15 +247,15 @@
     <value>The key '{0}' has already been added to the dictionary.</value>
   </data>
   <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
-    <value>Parameter Binder Invocation</value>
+    <value>Method or Property Invocation Not Allowed</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
     <value>Method or Property '{0}' on type '{1}' invocation will not be allowed in ConstrainedLanguage mode.</value>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
-    <value>Parameter Binder Type Creation</value>
+    <value>Type Creation Not Allowed</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Will not be able to create type '{0}' during binding in ConstrainedLanguage mode.</value>
+    <value>Will not be able to create type '{0}' during parameter binding in ConstrainedLanguage mode.</value>
   </data>
 </root>

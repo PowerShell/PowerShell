@@ -208,11 +208,11 @@ namespace System.Management.Automation
             // This function won't be called for NoLanguage mode so the only direction checked is trusted
             // (FullLanguage mode) script running in a constrained/restricted session.
             var languageMode = context.LanguageMode;
-            if ((scriptBlock.LanguageMode.HasValue) &&
-                (scriptBlock.LanguageMode != languageMode) &&
-                ((languageMode == PSLanguageMode.RestrictedLanguage) ||
-                 (languageMode == PSLanguageMode.ConstrainedLanguage) ||
-                 (languageMode == PSLanguageMode.ConstrainedLanguageAudit)))
+            if (scriptBlock.LanguageMode.HasValue &&
+                scriptBlock.LanguageMode != languageMode &&
+                (languageMode == PSLanguageMode.RestrictedLanguage ||
+                 languageMode == PSLanguageMode.ConstrainedLanguage ||
+                 languageMode == PSLanguageMode.ConstrainedLanguageAudit))
             {
                 // Finally check if script block is really just PowerShell commands plus parameters.
                 // If so then it is safe to dot source across language mode boundaries.

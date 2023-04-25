@@ -5531,7 +5531,7 @@ namespace System.Management.Automation.Language
                         context: context,
                         title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
                         message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, name, targetName ?? string.Empty),
-                        fqid: "BinderMethodOrPropertyInvocationNotAllowed",
+                        fqid: "MethodOrPropertyInvocationNotAllowed",
                         dropIntoDebugger: true);
                 }
             }
@@ -7706,7 +7706,7 @@ namespace System.Management.Automation.Language
                     context: context,
                     title: ParameterBinderStrings.WDACBinderTypeCreationLogTitle,
                     message: StringUtil.Format(ParameterBinderStrings.WDACBinderTypeCreationLogMessage, targetName ?? string.Empty),
-                    fqid: "BinderTypeCreationNotAllowed",
+                    fqid: "TypeCreationNotAllowed",
                     dropIntoDebugger: true);
             }
 

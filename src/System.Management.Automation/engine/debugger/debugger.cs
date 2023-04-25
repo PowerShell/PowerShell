@@ -2540,10 +2540,10 @@ namespace System.Management.Automation
             {
                 if (enumerator.MoveNext())
                 {
-                    var fnContext = enumerator.Current.FunctionContext;
-                    if (fnContext is not null)
+                    var functionContext = enumerator.Current.FunctionContext;
+                    if (functionContext is not null)
                     {
-                        var invocationInfo = new InvocationInfo(null, fnContext.CurrentPosition, _context);
+                        var invocationInfo = new InvocationInfo(null, functionContext.CurrentPosition, _context);
                         return $"\n{invocationInfo.PositionMessage}";
                     }
                 }
