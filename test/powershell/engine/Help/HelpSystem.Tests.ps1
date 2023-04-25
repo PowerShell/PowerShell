@@ -69,6 +69,10 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
 Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
 
     It "Help doesn't fail when strict mode is on" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
@@ -312,10 +316,6 @@ Describe "Get-Help should find help info within help files" -Tags @('CI') {
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
 
-    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
-    # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
-    # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
-
     BeforeAll {
         $helpFile1 = "about_testCase1.help.txt"
         $helpFile2 = "about_testCase.2.help.txt"
@@ -349,7 +349,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
     )
 
-    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases -Pending: (-not $IsWindows) {
+    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases {
         param (
             $command,
             $result
@@ -408,16 +408,28 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should return full view even with -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
     }

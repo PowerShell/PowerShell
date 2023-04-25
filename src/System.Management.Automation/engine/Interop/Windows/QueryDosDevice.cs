@@ -41,7 +41,7 @@ internal static partial class Interop
                     {
                         if (buffer.StartsWith("\\??\\"))
                         {
-                            // QueryDosDevice always return array of NULL-terinating strings with additional final NULL
+                            // QueryDosDevice always return array of NULL-terminating strings with additional final NULL
                             // so the buffer has always two NULL-s on end.
                             //
                             // "\\??\\UNC\\localhost\\c$\\tmp\0\0" -> "UNC\\localhost\\c$\\tmp\0\0"

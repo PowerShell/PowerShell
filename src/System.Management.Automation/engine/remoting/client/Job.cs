@@ -641,7 +641,7 @@ namespace System.Management.Automation
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Success status of the command execution.
         /// </summary>
         public abstract string StatusMessage { get; }
@@ -1011,11 +1011,17 @@ namespace System.Management.Automation
         /// </summary>
         public void LoadJobStreams()
         {
-            if (_jobStreamsLoaded) return;
+            if (_jobStreamsLoaded)
+            {
+                return;
+            }
 
             lock (syncObject)
             {
-                if (_jobStreamsLoaded) return;
+                if (_jobStreamsLoaded)
+                {
+                    return;
+                }
 
                 _jobStreamsLoaded = true;
             }
@@ -3307,8 +3313,7 @@ namespace System.Management.Automation
                     errorId = "InvalidSessionState";
                     if (!string.IsNullOrEmpty(failureException.Source))
                     {
-                        errorId = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                            "{0},{1}", errorId, failureException.Source);
+                        errorId = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{errorId},{failureException.Source}");
                     }
                 }
 

@@ -348,7 +348,11 @@ namespace Microsoft.PowerShell
             foreach (char c in str)
             {
                 length++;
-                if (c == '\'') { length++; }
+
+                if (c == '\'')
+                {
+                    length++;
+                }
             }
 
             return length;

@@ -119,6 +119,11 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error uses Error color for Message and PositionMessage members' {
+
+        if (-not $host.ui.SupportsVirtualTerminal) {
+            Set-ItResult -Skipped -Because 'Windows Server 2012 R2 does not support VT100 escape sequences'
+        }
+
         $suppressVT = $false
         if (Test-Path env:/__SuppressAnsiEscapeSequences) {
             $suppressVT = $true
@@ -144,5 +149,10 @@ Describe 'Get-Error tests' -Tag CI {
                 $env:__SuppressAnsiEscapeSequences = 1
             }
         }
+    }
+
+    It 'Get-Error works with strict mode' {
+        $out = pwsh -noprofile -command 'Set-StrictMode -Version Latest; $PSStyle.OutputRendering = "PlainText"; 1/0; Get-Error' | Out-String
+        $out | Should -Match "Message : Attempted to divide by zero."
     }
 }

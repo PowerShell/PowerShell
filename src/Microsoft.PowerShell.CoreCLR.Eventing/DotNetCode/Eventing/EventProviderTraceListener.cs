@@ -41,8 +41,7 @@ namespace System.Diagnostics.Eventing
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(Delimiter));
+                ArgumentNullException.ThrowIfNull(value, nameof(Delimiter));
 
                 if (value.Length == 0)
                     throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);

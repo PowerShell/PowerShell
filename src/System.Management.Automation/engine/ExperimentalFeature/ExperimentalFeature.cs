@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
+        internal const string PSCommandWithArgs = "PSCommandWithArgs";
 
         #endregion
 
@@ -128,6 +129,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
+                new ExperimentalFeature(
+                    name: PSCommandWithArgs,
+                    description: "Enable `-CommandWithArgs` parameter for pwsh"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
@@ -154,13 +158,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// We need to notify which features were not enabled.
+        /// </summary>
+        private static void SendTelemetryForDeactivatedFeatures(ReadOnlyBag<string> enabledFeatures)
+        {
+            foreach (var feature in EngineExperimentalFeatures)
+            {
+                if (!enabledFeatures.Contains(feature.Name))
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureDeactivation, feature.Name);
+                }
+            }
+        }
+
+        /// <summary>
         /// Process the array of enabled feature names retrieved from configuration.
         /// Ignore invalid feature names and unavailable engine feature names, and
         /// return an ReadOnlyBag of the valid enabled feature names.
         /// </summary>
         private static ReadOnlyBag<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            if (enabledFeatures.Length == 0) { return ReadOnlyBag<string>.Empty; }
+            if (enabledFeatures.Length == 0)
+            {
+                return ReadOnlyBag<string>.Empty;
+            }
 
             var list = new List<string>(enabledFeatures.Length);
             foreach (string name in enabledFeatures)
@@ -191,7 +212,9 @@ namespace System.Management.Automation
                 }
             }
 
-            return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
+            ReadOnlyBag<string> features = new(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
+            SendTelemetryForDeactivatedFeatures(features);
+            return features;
         }
 
         /// <summary>

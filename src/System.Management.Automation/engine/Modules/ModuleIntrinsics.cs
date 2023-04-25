@@ -859,7 +859,10 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (string.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName))
+                            {
+                                continue;
+                            }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -1139,16 +1142,23 @@ namespace System.Management.Automation
                         if (insertPosition == -1) // append subPathToAdd to the end
                         {
                             bool endsWithPathSeparator = false;
-                            if (result.Length > 0) endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            if (result.Length > 0)
+                            {
+                                endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            }
 
                             if (endsWithPathSeparator)
+                            {
                                 result.Append(subPathToAdd);
+                            }
                             else
+                            {
                                 result.Append(Path.PathSeparator + subPathToAdd);
+                            }
                         }
                         else if (insertPosition > result.Length)
                         {
-                            // handle case where path is a singleton with no path seperator already
+                            // handle case where path is a singleton with no path separator already
                             result.Append(Path.PathSeparator).Append(subPathToAdd);
                         }
                         else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
@@ -1248,7 +1258,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         /// <summary>
-        /// Returns a PSModulePath suiteable for Windows PowerShell by removing PowerShell's specific
+        /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
         /// paths from current PSModulePath.
         /// </summary>
         /// <returns>
@@ -1711,7 +1721,7 @@ namespace System.Management.Automation
         /// <summary>Module version was greater than the maximum version.</summary>
         MaximumVersion,
 
-        /// <summary>The module specifcation passed in was null.</summary>
+        /// <summary>The module specification passed in was null.</summary>
         NullModuleSpecification,
     }
 

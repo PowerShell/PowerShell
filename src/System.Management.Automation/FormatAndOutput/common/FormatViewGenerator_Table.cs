@@ -223,6 +223,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TableHeaderInfo thi = new TableHeaderInfo();
 
             thi.hideHeader = this.HideHeaders;
+            thi.repeatHeader = this.RepeatHeader;
 
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {

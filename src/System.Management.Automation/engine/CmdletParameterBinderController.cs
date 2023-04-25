@@ -1620,7 +1620,10 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
                             {
-                                if (e is ProviderInvocationException) { throw; }
+                                if (e is ProviderInvocationException)
+                                {
+                                    throw;
+                                }
 
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(
@@ -2983,7 +2986,7 @@ namespace System.Management.Automation
 
             foreach (MergedCompiledCommandParameter missingParameter in missingMandatoryParameters)
             {
-                missingParameters.AppendFormat(CultureInfo.InvariantCulture, " {0}", missingParameter.Parameter.Name);
+                missingParameters.Append(CultureInfo.InvariantCulture, $" {missingParameter.Parameter.Name}");
             }
 
             return missingParameters.ToString();
@@ -3321,7 +3324,11 @@ namespace System.Management.Automation
                 if (needToPrioritizeOneSpecificParameterSet && i == 0)
                 {
                     // If the prioritized set can be bound successfully, there is no need to do the second round binding
-                    if (_currentParameterSetFlag == _parameterSetToBePrioritizedInPipelineBinding) break;
+                    if (_currentParameterSetFlag == _parameterSetToBePrioritizedInPipelineBinding)
+                    {
+                        break;
+                    }
+
                     validParameterSets = _currentParameterSetFlag & (~_parameterSetToBePrioritizedInPipelineBinding);
                 }
             }
@@ -4379,7 +4386,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            if (!(key is string strKey)) { return false; }
+            if (!(key is string strKey))
+            {
+                return false;
+            }
 
             string keyAfterTrim = strKey.Trim();
             return base.ContainsKey(keyAfterTrim);
@@ -4448,9 +4458,15 @@ namespace System.Management.Automation
         {
             get
             {
-                if (key == null) { throw PSTraceSource.NewArgumentNullException(nameof(key)); }
+                if (key == null)
+                {
+                    throw PSTraceSource.NewArgumentNullException(nameof(key));
+                }
 
-                if (!(key is string strKey)) { return null; }
+                if (!(key is string strKey))
+                {
+                    return null;
+                }
 
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
@@ -4473,7 +4489,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            if (!(key is string strKey)) { return; }
+            if (!(key is string strKey))
+            {
+                return;
+            }
 
             string keyAfterTrim = strKey.Trim();
             if (base.ContainsKey(keyAfterTrim))

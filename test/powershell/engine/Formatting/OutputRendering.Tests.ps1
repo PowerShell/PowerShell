@@ -5,8 +5,9 @@ Describe 'OutputRendering tests' -Tag 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         # Console host does not support VT100 escape sequences on Windows 2012R2 or earlier
-        if ($IsWindows -and [System.Environment]::OSVersion.Version -le [version]::new(6, 3)) {
-            $PSDefaultParameterValues["it:skip"] = $true
+
+        if (-not $host.ui.SupportsVirtualTerminal) {
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
     }
 
@@ -81,11 +82,11 @@ Describe 'OutputRendering tests' -Tag 'CI' {
     }
 
     It 'ToString(OutputRendering) works correctly' {
-        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + 'Hello')
+        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + "Hello`e[m.")
         $s.IsDecorated | Should -BeTrue
-        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
-        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
-        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello'
+        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello`e[m."
+        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello`e[m."
+        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello.'
         { $s.ToString([System.Management.Automation.OutputRendering]::Host) } | Should -Throw -ErrorId 'ArgumentException'
     }
 }

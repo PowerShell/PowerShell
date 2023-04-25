@@ -8,7 +8,7 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
 
     BeforeAll {
 
-        if ($IsWindows -and (Test-CanWriteToPsHome))
+        if ($IsWindows -and (Test-CanWriteToPsHome) -and -not (Test-IsWinWow64))
         {
             $configName = "restrictedV"
             $configPath = Join-Path $TestDrive ($configName + ".pssc")
@@ -19,9 +19,19 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
 
             $remoteRunspacePool = New-RemoteRunspacePool -ConfigurationName $configName
         }
+        elseif (Test-IsWinWow64)
+        {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
     }
 
     AfterAll {
+
+        if (Test-IsWinWow64) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
+        }
 
         if ($IsWindows -and (Test-CanWriteToPsHome))
         {

@@ -7,7 +7,7 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (! $IsWindows)
+        if (! $IsWindows -or (Test-IsWinWow64))
         {
             $PSDefaultParameterValues["it:skip"] = $true
             return

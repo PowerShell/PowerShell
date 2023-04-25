@@ -214,10 +214,7 @@ namespace Microsoft.Management.UI.Internal
         {
             ArgumentNullException.ThrowIfNull(element);
 
-            if (parent == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            ArgumentNullException.ThrowIfNull(parent, nameof(element));
 
             ContentControl parentContentControl = parent as ContentControl;
 
@@ -370,10 +367,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static T FindVisualAncestor<T>(this DependencyObject @object) where T : class
         {
-            if (@object == null)
-            {
-                throw new ArgumentNullException("object");
-            }
+            ArgumentNullException.ThrowIfNull(@object, nameof(@object));
 
             DependencyObject parent = VisualTreeHelper.GetParent(@object);
 
@@ -424,11 +418,7 @@ namespace Microsoft.Management.UI.Internal
         public static T GetOptionalTemplateChild<T>(Control templateParent, string childName) where T : FrameworkElement
         {
             ArgumentNullException.ThrowIfNull(templateParent);
-
-            if (string.IsNullOrEmpty(childName))
-            {
-                throw new ArgumentNullException("childName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(childName);
 
             object templatePart = templateParent.Template.FindName(childName, templateParent);
             T item = templatePart as T;

@@ -639,8 +639,7 @@ namespace Microsoft.PowerShell
                     {
                         int actualNumberOfInput = ConsoleControl.ReadConsoleInput(handle, ref inputRecords);
                         Dbg.Assert(actualNumberOfInput == 1,
-                            string.Format(CultureInfo.InvariantCulture, "ReadConsoleInput returns {0} number of input event records",
-                                actualNumberOfInput));
+                            string.Create(CultureInfo.InvariantCulture, $"ReadConsoleInput returns {actualNumberOfInput} number of input event records"));
                         if (actualNumberOfInput == 1)
                         {
                             if (((ConsoleControl.InputRecordEventTypes)inputRecords[0].EventType) ==
@@ -1532,7 +1531,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+                return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
             }
         }
 
@@ -1548,7 +1547,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top},{Right},{Bottom}");
             }
         }
 
