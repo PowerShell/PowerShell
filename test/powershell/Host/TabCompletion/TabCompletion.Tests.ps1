@@ -2427,7 +2427,10 @@ function MyFunction ($param1, $param2)
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
-        if ($IsWindows -and -not (Test-IsWinWow64)) {
+        $skipTest = -not $IsWindows
+        $pendingTest = $IsWindows -and (Test-IsWinWow64)
+
+        if (-not $skipTest -and -not $pendingTest) {
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace
@@ -2445,11 +2448,16 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminO
             )
         } else {
             $defaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["It:Skip"] = $true
+
+            if ($skipTest) {
+                $PSDefaultParameterValues["It:Skip"] = $true
+            } elseif ($pendingTest) {
+                $PSDefaultParameterValues["It:Pending"] = $true
+            }
         }
     }
     AfterAll {
-        if ($IsWindows) {
+        if (-not $skipTest -and -not $pendingTest) {
             Remove-PSSession $session
             $powershell.Dispose()
         } else {
