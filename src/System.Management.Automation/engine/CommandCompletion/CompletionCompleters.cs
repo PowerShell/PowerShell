@@ -7284,11 +7284,11 @@ namespace System.Management.Automation
                             object value;
                             if (SafeExprEvaluator.TrySafeEval(pair.Item1, completionContext.ExecutionContext, out value))
                             {
-                                var stringValue = value as string;
-                                if (stringValue is null)
+                                if (value is not string stringValue)
                                 {
                                     return null;
                                 }
+
                                 nestedHashtableKeys.Add(stringValue);
                                 break;
                             }
