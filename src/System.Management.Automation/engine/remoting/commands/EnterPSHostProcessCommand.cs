@@ -212,10 +212,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             RemoteRunspace connectingRunspace = _connectingRemoteRunspace;
-            if (connectingRunspace != null)
-            {
-                connectingRunspace.AbortOpen();
-            }
+            connectingRunspace?.AbortOpen();
         }
 
         #endregion
@@ -675,7 +672,10 @@ namespace Microsoft.PowerShell.Commands
                                             }
                                         }
 
-                                        if (!found) { continue; }
+                                        if (!found)
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
                                 else

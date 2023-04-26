@@ -4,8 +4,11 @@ resources:
 - repo: self
   clean: true
 
-queue:
-  name: Hosted VS2017
+pool:
+  name: 1es
+  demands:
+    - ImageOverride -equals PSMMS2019-Minimal
+
 steps:
   - pwsh: |
       $minVer = [version]"2.2.3"

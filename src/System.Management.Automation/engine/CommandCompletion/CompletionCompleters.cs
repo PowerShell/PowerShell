@@ -195,7 +195,7 @@ namespace System.Management.Automation
                 if (commandInfos != null && commandInfos.Count > 1)
                 {
                     // OrderBy is using stable sorting
-                    var sortedCommandInfos = commandInfos.OrderBy(static a => a, new CommandNameComparer());
+                    var sortedCommandInfos = commandInfos.Order(new CommandNameComparer());
                     completionResults = MakeCommandsUnique(sortedCommandInfos, useModulePrefix, addAmpersandIfNecessary, quote);
                 }
                 else
@@ -333,10 +333,7 @@ namespace System.Management.Automation
                 var commandList = keyValuePair.Value as List<object>;
                 if (commandList != null)
                 {
-                    if (endResults == null)
-                    {
-                        endResults = new List<CompletionResult>();
-                    }
+                    endResults ??= new List<CompletionResult>();
 
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
                     // in that case, we should add the module name qualification because if the module is not in the module path, calling
@@ -495,8 +492,7 @@ namespace System.Management.Automation
             DynamicKeywordStatementAst keywordAst = null;
             for (int i = context.RelatedAsts.Count - 1; i >= 0; i--)
             {
-                if (keywordAst == null)
-                    keywordAst = context.RelatedAsts[i] as DynamicKeywordStatementAst;
+                keywordAst ??= context.RelatedAsts[i] as DynamicKeywordStatementAst;
                 parameterAst = (context.RelatedAsts[i] as CommandParameterAst);
                 if (parameterAst != null) break;
             }
@@ -533,6 +529,7 @@ namespace System.Management.Automation
                 return result;
             }
 
+            bool bindPositionalParameters = true;
             if (parameterAst != null)
             {
                 // Parent must be a command
@@ -551,10 +548,24 @@ namespace System.Management.Automation
                 // Parent must be a command
                 commandAst = (CommandAst)dashAst.Parent;
                 partialName = string.Empty;
+
+                // If the user tries to tab complete a new parameter in front of a positional argument like: dir -<Tab> C:\
+                // the user may want to add the parameter name so we don't want to bind positional arguments
+                if (commandAst is not null)
+                {
+                    foreach (var element in commandAst.CommandElements)
+                    {
+                        if (element.Extent.StartOffset > context.TokenAtCursor.Extent.StartOffset)
+                        {
+                            bindPositionalParameters = element is CommandParameterAst;
+                            break;
+                        }
+                    }
+                }
             }
 
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
-                                                .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
+                                                .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion, bindPositionalParameters);
             // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function.
             // Try completing as if it the parameter is a command argument for native command completion.
             if (pseudoBinding == null)
@@ -708,13 +719,21 @@ namespace System.Management.Automation
                 string tooltip = parameterType + matchedParameterName;
                 result.Add(new CompletionResult(completionText, matchedParameterName, CompletionResultType.ParameterName, tooltip));
             }
-
-            // Process alias when there is partial input
-            result.AddRange(from alias in param.Parameter.Aliases
-                            where pattern.IsMatch(alias)
-                            select
-                                new CompletionResult("-" + alias + colonSuffix, alias, CompletionResultType.ParameterName,
-                                                     parameterType + alias));
+            else
+            {
+                // Process alias when there is partial input
+                foreach (var alias in param.Parameter.Aliases)
+                {
+                    if (pattern.IsMatch(alias))
+                    {
+                        result.Add(new CompletionResult(
+                            $"-{alias}{colonSuffix}",
+                            alias,
+                            CompletionResultType.ParameterName,
+                            parameterType + alias));
+                    }
+                }
+            }
 
             return result;
         }
@@ -780,15 +799,20 @@ namespace System.Management.Automation
                                                            tooltip));
                     }
                 }
-
-                if (parameterName != string.Empty)
+                else if (parameterName != string.Empty)
                 {
                     // Process alias when there is partial input
-                    listInUse.AddRange(from alias in param.Parameter.Aliases
-                                       where pattern.IsMatch(alias)
-                                       select
-                                         new CompletionResult("-" + alias + colonSuffix, alias, CompletionResultType.ParameterName,
-                                                              type + alias));
+                    foreach (var alias in param.Parameter.Aliases)
+                    {
+                        if (pattern.IsMatch(alias))
+                        {
+                            listInUse.Add(new CompletionResult(
+                                $"-{alias}{colonSuffix}",
+                                alias,
+                                CompletionResultType.ParameterName,
+                                type + alias));
+                        }
+                    }
                 }
             }
 
@@ -879,7 +903,7 @@ namespace System.Management.Automation
                             partialPathAst.StringConstantType == StringConstantType.BareWord &&
                             secondToLastAst.Extent.EndLineNumber == partialPathAst.Extent.StartLineNumber &&
                             secondToLastAst.Extent.EndColumnNumber == partialPathAst.Extent.StartColumnNumber &&
-                            partialPathAst.Value.IndexOfAny(Utils.Separators.Directory) == 0)
+                            partialPathAst.Value.AsSpan().IndexOfAny('\\', '/') == 0)
                         {
                             var secondToLastStringConstantAst = secondToLastAst as StringConstantExpressionAst;
                             var secondToLastExpandableStringAst = secondToLastAst as ExpandableStringExpressionAst;
@@ -1259,7 +1283,7 @@ namespace System.Management.Automation
                 // Treat it as the file name completion
                 // Handle this scenario: & 'c:\a b'\<tab>
                 string fileName = pathAst.Value;
-                if (commandAst.InvocationOperator != TokenKind.Unknown && fileName.IndexOfAny(Utils.Separators.Directory) == 0 &&
+                if (commandAst.InvocationOperator != TokenKind.Unknown && fileName.AsSpan().IndexOfAny('\\', '/') == 0 &&
                     commandAst.CommandElements.Count == 2 && commandAst.CommandElements[0] is StringConstantExpressionAst &&
                     commandAst.CommandElements[0].Extent.EndLineNumber == expressionAst.Extent.StartLineNumber &&
                     commandAst.CommandElements[0].Extent.EndColumnNumber == expressionAst.Extent.StartColumnNumber)
@@ -1575,13 +1599,20 @@ namespace System.Management.Automation
                                               (defaultParameterSetFlag & validParameterSetFlags) != 0;
             MergedCompiledCommandParameter positionalParam = null;
 
+            MergedCompiledCommandParameter bestMatchParam = null;
+            ParameterSetSpecificMetadata bestMatchSet = null;
+
+            // Finds the parameter with the position closest to the specified position
             foreach (MergedCompiledCommandParameter param in parameters)
             {
                 bool isInParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
                 if (!isInParameterSet)
+                {
                     continue;
+                }
 
                 var parameterSetDataCollection = param.Parameter.GetMatchingParameterSetData(validParameterSetFlags);
+
                 foreach (ParameterSetSpecificMetadata parameterSetData in parameterSetDataCollection)
                 {
                     // in the first pass, we skip the remaining argument ones
@@ -1593,36 +1624,45 @@ namespace System.Management.Automation
                     // Check the position
                     int positionInParameterSet = parameterSetData.Position;
 
-                    if (positionInParameterSet == int.MinValue || positionInParameterSet != position)
+                    if (positionInParameterSet < position)
                     {
-                        // The parameter is not positional, or its position is not what we want
+                        // The parameter is not positional (position == int.MinValue), or its position is lower than what we want.
                         continue;
                     }
 
-                    if (isDefaultParameterSetValid)
+                    if (bestMatchSet is null
+                        || bestMatchSet.Position > positionInParameterSet
+                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
                     {
-                        if (parameterSetData.ParameterSetFlag == defaultParameterSetFlag)
+                        bestMatchParam = param;
+                        bestMatchSet = parameterSetData;
+                        if (positionInParameterSet == position)
                         {
-                            ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                            isProcessedAsPositional = result.Count > 0;
                             break;
                         }
-                        else
-                        {
-                            if (positionalParam == null)
-                                positionalParam = param;
-                        }
+                    }
+                }
+            }
+
+            if (bestMatchParam is not null)
+            {
+                if (isDefaultParameterSetValid)
+                {
+                    if (bestMatchSet.ParameterSetFlag == defaultParameterSetFlag)
+                    {
+                        ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
+                        isProcessedAsPositional = result.Count > 0;
                     }
                     else
                     {
-                        isProcessedAsPositional = true;
-                        ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                        break;
+                        positionalParam ??= bestMatchParam;
                     }
                 }
-
-                if (isProcessedAsPositional)
-                    break;
+                else
+                {
+                    isProcessedAsPositional = true;
+                    ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
+                }
             }
 
             if (!isProcessedAsPositional && positionalParam != null)
@@ -2001,7 +2041,7 @@ namespace System.Management.Automation
             string parameterName = parameter.Name;
 
             // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
-            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // This allows for editors and other tools using CompleteInput with Script/AST definitions to get values from RegisteredArgumentCompleters to better match the console experience.
             // See issue https://github.com/PowerShell/PowerShell/issues/10567
             string actualCommandName = string.IsNullOrEmpty(commandName)
                         ? commandAst.GetCommandName()
@@ -2291,6 +2331,11 @@ namespace System.Management.Automation
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
+                        }
+                        else if (parameterName.Equals("Value", StringComparison.OrdinalIgnoreCase)
+                            && boundArguments?["Property"] is AstPair pair && pair.Argument is StringConstantExpressionAst stringAst)
+                        {
+                            NativeCompletionMemberValue(context, result, commandAst, stringAst.Value);
                         }
 
                         break;
@@ -2669,7 +2714,7 @@ namespace System.Management.Automation
             WildcardPattern resultClassNamePattern = WildcardPattern.Get(context.WordToComplete + "*", WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             result.AddRange(resultClassNames
                 .Where(resultClassNamePattern.IsMatch)
-                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", pseudoboundClassName, x))));
+                .Select(x => new CompletionResult(x, x, CompletionResultType.Type, string.Create(CultureInfo.InvariantCulture, $"{pseudoboundClassName} -> {x}"))));
         }
 
         private static void NativeCompletionCimMethodName(
@@ -2894,7 +2939,7 @@ namespace System.Management.Automation
             string prefixOfChildNamespace = string.Empty;
             if (!string.IsNullOrEmpty(context.WordToComplete))
             {
-                int lastSlashOrBackslash = context.WordToComplete.LastIndexOfAny(Utils.Separators.Directory);
+                int lastSlashOrBackslash = context.WordToComplete.AsSpan().LastIndexOfAny('\\', '/');
                 if (lastSlashOrBackslash != (-1))
                 {
                     containerNamespace = context.WordToComplete.Substring(0, lastSlashOrBackslash);
@@ -3953,7 +3998,7 @@ namespace System.Management.Automation
 
         private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo, bool propertiesOnly = true)
         {
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            IEnumerable<PSTypeName> prevType = TypeInferenceVisitor.GetInferredEnumeratedTypes(GetInferenceTypes(context, commandAst));
             if (prevType is not null)
             {
                 HashSet<string> excludedMembers = null;
@@ -3963,7 +4008,39 @@ namespace System.Management.Automation
                 }
 
                 Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers, addMethodParenthesis: false);
+            }
+
+            result.Add(CompletionResult.Null);
+        }
+
+        private static void NativeCompletionMemberValue(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, string propertyName)
+        {
+            string wordToComplete = context.WordToComplete.Trim('"', '\'');
+            IEnumerable<PSTypeName> prevTypes = GetInferenceTypes(context, commandAst);
+            if (prevTypes is not null)
+            {
+                foreach (var type in prevTypes)
+                {
+                    if (type.Type is null)
+                    {
+                        continue;
+                    }
+
+                    PropertyInfo property = type.Type.GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    if (property is not null && property.PropertyType.IsEnum)
+                    {
+                        foreach (var value in property.PropertyType.GetEnumNames())
+                        {
+                            if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, value));
+                            }
+                        }
+
+                        break;
+                    }
+                }
             }
 
             result.Add(CompletionResult.Null);
@@ -4333,7 +4410,7 @@ namespace System.Management.Automation
                 // specified a drive or portion of the path.
                 var executionContext = context.ExecutionContext;
                 var defaultRelative = string.IsNullOrWhiteSpace(wordToComplete)
-                                      || (wordToComplete.IndexOfAny(Utils.Separators.Directory) != 0 &&
+                                      || (wordToComplete.AsSpan().IndexOfAny('\\', '/') != 0 &&
                                           !Regex.Match(wordToComplete, @"^~[\\/]+.*").Success &&
                                           !executionContext.LocationGlobber.IsAbsolutePath(wordToComplete, out _));
                 var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
@@ -4501,7 +4578,7 @@ namespace System.Management.Automation
                     }
 
                     // Sorting the results by the path
-                    var sortedPsobjs = psobjs.OrderBy(static a => a, new ItemPathComparer());
+                    var sortedPsobjs = psobjs.Order(new ItemPathComparer());
 
                     foreach (PSObject psobj in sortedPsobjs)
                     {
@@ -4554,7 +4631,7 @@ namespace System.Management.Automation
                             }
                             catch (Exception)
                             {
-                                // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
+                                // The object at the specified path is not accessible, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
                                 continue;
                             }
@@ -4677,47 +4754,48 @@ namespace System.Management.Automation
             public string remark;
         }
 
-        private const int MAX_PREFERRED_LENGTH = -1;
-        private const int NERR_Success = 0;
-        private const int ERROR_MORE_DATA = 234;
-        private const int STYPE_DISKTREE = 0;
-        private const int STYPE_MASK = 0x000000FF;
-
         private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
 
-        [DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
-        private static extern int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,
-                                               out uint entriesRead, out uint totalEntries, ref uint resumeHandle);
-
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
 #if UNIX
             return new List<string>();
 #else
-            IntPtr shBuf;
-            uint numEntries;
+            nint shBuf = nint.Zero;
+            uint numEntries = 0;
             uint totalEntries;
             uint resumeHandle = 0;
-            int result = NetShareEnum(machine, 1, out shBuf,
-                                        MAX_PREFERRED_LENGTH, out numEntries, out totalEntries,
-                                        ref resumeHandle);
+            int result = Interop.Windows.NetShareEnum(
+                machine,
+                level: 1,
+                out shBuf,
+                Interop.Windows.MAX_PREFERRED_LENGTH,
+                out numEntries,
+                out totalEntries,
+                ref resumeHandle);
 
             var shares = new List<string>();
-            if (result == NERR_Success || result == ERROR_MORE_DATA)
+            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
-                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
+                    nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
                     SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
-                    if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
+                    if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                    {
                         continue;
+                    }
+
                     if (ignoreHidden && shareInfo.netname.EndsWith('$'))
+                    {
                         continue;
+                    }
+
                     shares.Add(shareInfo.netname);
                 }
             }
@@ -4774,6 +4852,7 @@ namespace System.Management.Automation
             var lastAst = context.RelatedAsts?.Last();
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
+            bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -4919,7 +4998,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + provider + name
                                                 : prefix + "{" + provider + name + "}";
                         AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -4942,7 +5021,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(name))
                         {
                             name = "env:" + name;
-                            var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                            var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                     ? prefix + name
                                                     : prefix + "{" + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, "[string]" + name);
@@ -4957,7 +5036,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = (specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completedName = (!tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -4983,7 +5062,7 @@ namespace System.Management.Automation
                             var name = driveInfo.Name;
                             if (name != null && !string.IsNullOrWhiteSpace(name) && name.Length > 1)
                             {
-                                var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                                var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                         ? prefix + name + ":"
                                                         : prefix + "{" + name + ":}";
 
@@ -4999,7 +5078,7 @@ namespace System.Management.Automation
                 {
                     if (scopePattern.IsMatch(scope))
                     {
-                        var completedName = (scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + scope
                                                 : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
@@ -5746,9 +5825,9 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                else if (targetExpr is null)
+                else
                 {
-                    targetExpr = parentAsMemberExpression.Expression;
+                    targetExpr ??= parentAsMemberExpression.Expression;
                 }
             }
             else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
@@ -5887,25 +5966,68 @@ namespace System.Management.Automation
             return results;
         }
 
+        internal static List<CompletionResult> CompleteComparisonOperatorValues(CompletionContext context, ExpressionAst operatorLeftValue)
+        {
+            var result = new List<CompletionResult>();
+            var resolvedTypes = new List<Type>();
+
+            if (SafeExprEvaluator.TrySafeEval(operatorLeftValue, context.ExecutionContext, out object value) && value is not null)
+            {
+                resolvedTypes.Add(value.GetType());
+            }
+            else
+            {
+                var inferredTypes = AstTypeInference.InferTypeOf(operatorLeftValue, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                foreach (var type in inferredTypes)
+                {
+                    if (type.Type is not null)
+                    {
+                        resolvedTypes.Add(type.Type);
+                    }
+                }
+            }
+
+            foreach (var type in resolvedTypes)
+            {
+                if (type.IsEnum)
+                {
+                    foreach (var name in type.GetEnumNames())
+                    {
+                        if (name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Add(new CompletionResult($"'{name}'", name, CompletionResultType.ParameterValue, name));
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach'
         /// </summary>
-        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results)
+        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true)
         {
             var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
-            CompleteExtensionMethods(pattern, results);
+            CompleteExtensionMethods(pattern, results, addMethodParenthesis);
         }
 
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern.
         /// </summary>
-        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results)
+        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodParenthesis)
         {
-            results.AddRange(from member in s_extensionMethods
-                             where pattern.IsMatch(member.Item1)
-                             select
-                                 new CompletionResult(member.Item1 + "(", member.Item1,
-                                                      CompletionResultType.Method, member.Item2));
+            foreach (var member in s_extensionMethods)
+            {
+                if (pattern.IsMatch(member.Item1))
+                {
+                    string completionText = addMethodParenthesis ? $"{member.Item1}(" : member.Item1;
+                    results.Add(new CompletionResult(completionText, member.Item1, CompletionResultType.Method, member.Item2));
+                }
+            }
         }
 
         /// <summary>
@@ -5933,6 +6055,42 @@ namespace System.Management.Automation
         private static bool IsInDscContext(ExpressionAst expression)
         {
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
+        }
+
+        internal static List<CompletionResult> CompleteIndexExpression(CompletionContext context, ExpressionAst indexTarget)
+        {
+            var result = new List<CompletionResult>();
+            object value;
+            if (SafeExprEvaluator.TrySafeEval(indexTarget, context.ExecutionContext, out value)
+                && value is not null
+                && PSObject.Base(value) is IDictionary dictionary)
+            {
+                foreach (var key in dictionary.Keys)
+                {
+                    if (key is string keyAsString && keyAsString.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult($"'{keyAsString}'", keyAsString, CompletionResultType.Property, keyAsString));
+                    }
+                }
+            }
+            else
+            {
+                var inferredTypes = AstTypeInference.InferTypeOf(indexTarget, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                foreach (var type in inferredTypes)
+                {
+                    if (type is PSSyntheticTypeName synthetic)
+                    {
+                        foreach (var member in synthetic.Members)
+                        {
+                            if (member.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(new CompletionResult($"'{member.Name}'", member.Name, CompletionResultType.Property, member.Name));
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         private static void CompleteFormatViewByInferredType(CompletionContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
@@ -5988,7 +6146,15 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic, HashSet<string> excludedMembers = null)
+        internal static void CompleteMemberByInferredType(
+            TypeInferenceContext context,
+            IEnumerable<PSTypeName> inferredTypes,
+            List<CompletionResult> results,
+            string memberName,
+            Func<object, bool> filter,
+            bool isStatic,
+            HashSet<string> excludedMembers = null,
+            bool addMethodParenthesis = true)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -6004,7 +6170,7 @@ namespace System.Management.Automation
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
-                    AddInferredMember(member, memberNamePattern, results, excludedMembers);
+                    AddInferredMember(member, memberNamePattern, results, excludedMembers, addMethodParenthesis);
                 }
 
                 // Check if we need to complete against the extension methods 'Where' and 'ForEach'
@@ -6012,7 +6178,7 @@ namespace System.Management.Automation
                 {
                     // Complete extension methods 'Where' and 'ForEach' for Enumerable types
                     extensionMethodsAdded = true;
-                    CompleteExtensionMethods(memberNamePattern, results);
+                    CompleteExtensionMethods(memberNamePattern, results, addMethodParenthesis);
                 }
             }
 
@@ -6030,7 +6196,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers, bool addMethodParenthesis)
         {
             string memberName = null;
             bool isMethod = false;
@@ -6056,7 +6222,7 @@ namespace System.Management.Automation
             {
                 memberName = methodCacheEntry[0].method.Name;
                 isMethod = true;
-                getToolTip = () => string.Join("\n", methodCacheEntry.methodInformationStructures.Select(static m => m.methodDefinition));
+                getToolTip = () => string.Join('\n', methodCacheEntry.methodInformationStructures.Select(static m => m.methodDefinition));
             }
 
             var psMemberInfo = member as PSMemberInfo;
@@ -6101,7 +6267,19 @@ namespace System.Management.Automation
             }
 
             var completionResultType = isMethod ? CompletionResultType.Method : CompletionResultType.Property;
-            var completionText = isMethod ? memberName + "(" : memberName;
+            string completionText;
+            if (isMethod && addMethodParenthesis)
+            {
+                completionText = $"{memberName}(";
+            }
+            else if (memberName.IndexOfAny(s_charactersRequiringQuotes) != -1)
+            {
+                completionText = $"'{memberName}'";
+            }
+            else
+            {
+                completionText = memberName;
+            }
 
             results.Add(new CompletionResult(completionText, memberName, completionResultType, getToolTip()));
         }
@@ -6346,7 +6524,7 @@ namespace System.Management.Automation
                     if (i != 0) tooltip.Append(", ");
                     tooltip.Append(GenericArgumentCount == 1
                                        ? "T"
-                                       : string.Format(CultureInfo.InvariantCulture, "T{0}", i + 1));
+                                       : string.Create(CultureInfo.InvariantCulture, $"T{i + 1}"));
                 }
 
                 tooltip.Append(']');

@@ -385,10 +385,11 @@ namespace Microsoft.PowerShell.Commands
         private void InitParallelParameterSet()
         {
             // The following common parameters are not (yet) supported in this parameter set.
-            //  ErrorAction, WarningAction, InformationAction, PipelineVariable.
+            //  ErrorAction, WarningAction, InformationAction, ProgressAction, PipelineVariable.
             if (MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ErrorAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.WarningAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.InformationAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ProgressAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.PipelineVariable)))
             {
                 ThrowTerminatingError(
@@ -684,7 +685,10 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // if inputObject is of IDictionary, get the value
-                if (GetValueFromIDictionaryInput()) { return; }
+                if (GetValueFromIDictionaryInput())
+                {
+                    return;
+                }
 
                 PSMemberInfo member = null;
                 if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
@@ -700,7 +704,7 @@ namespace Microsoft.PowerShell.Commands
                         StringBuilder possibleMatches = new StringBuilder();
                         foreach (PSMemberInfo item in members)
                         {
-                            possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                            possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                         }
 
                         WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousPropertyOrMethodName,
@@ -919,17 +923,14 @@ namespace Microsoft.PowerShell.Commands
                 // because it allows you to parameterize a command - for example you might allow
                 // for actions before and after the main processing script. They could be null
                 // by default and therefore ignored then filled in later...
-                if (_scripts[i] != null)
-                {
-                    _scripts[i].InvokeUsingCmdlet(
-                        contextCmdlet: this,
-                        useLocalScope: false,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: InputObject,
-                        input: new object[] { InputObject },
-                        scriptThis: AutomationNull.Value,
-                        args: Array.Empty<object>());
-                }
+                _scripts[i]?.InvokeUsingCmdlet(
+                    contextCmdlet: this,
+                    useLocalScope: false,
+                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                    dollarUnder: InputObject,
+                    input: new object[] { InputObject },
+                    scriptThis: AutomationNull.Value,
+                    args: Array.Empty<object>());
             }
         }
 
@@ -1021,7 +1022,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(GenerateNameParameterError(
@@ -1051,7 +1052,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
                 for (int i = 1; i < _arguments.Length; i++)
                 {
-                    arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
+                    arglist.Append(CultureInfo.InvariantCulture, $", {GetStringRepresentation(_arguments[i])}");
                 }
 
                 string methodAction = string.Format(CultureInfo.InvariantCulture,
@@ -2357,7 +2358,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in members)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(
@@ -2657,7 +2658,7 @@ namespace Microsoft.PowerShell.Commands
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                if (!PSVersionInfo.IsValidPSVersion(version))
                 {
                     // No conversion succeeded so throw and exception...
                     throw new ValidationMetadataException(

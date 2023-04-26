@@ -116,10 +116,7 @@ namespace Microsoft.PowerShell
                 er = new ErrorRecord(er, ex);
             }
 
-            if (er == null)
-            {
-                er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
-            }
+            er ??= new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
 
             _parent.ErrorSerializer.Serialize(er);
         }
@@ -602,11 +599,9 @@ namespace Microsoft.PowerShell
         internal void ResumeCommandOutput()
         {
             RemotePipeline remotePipeline = _pipeline as RemotePipeline;
-            if (remotePipeline != null)
-            {
-                // Resumes data flow.
-                remotePipeline.ResumeIncomingData();
-            }
+
+            // Resumes data flow.
+            remotePipeline?.ResumeIncomingData();
         }
 
         /// <summary>
@@ -700,10 +695,7 @@ namespace Microsoft.PowerShell
                 temp = s_currentExecutor;
             }
 
-            if (temp != null)
-            {
-                temp.Cancel();
-            }
+            temp?.Cancel();
         }
 
         // These statics are threadsafe, as there can be only one instance of ConsoleHost in a process at a time, and access

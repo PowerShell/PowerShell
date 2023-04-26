@@ -761,6 +761,7 @@ namespace System.Management.Automation
         private const string AliasesFormat = @"{0}[Alias({1})]";
         private const string ValidateLengthFormat = @"{0}[ValidateLength({1}, {2})]";
         private const string ValidateRangeRangeKindFormat = @"{0}[ValidateRange([System.Management.Automation.ValidateRangeKind]::{1})]";
+        private const string ValidateRangeEnumFormat = @"{0}[ValidateRange([{3}]::{1}, [{3}]::{2})]";
         private const string ValidateRangeFloatFormat = @"{0}[ValidateRange({1:R}, {2:R})]";
         private const string ValidateRangeFormat = @"{0}[ValidateRange({1}, {2})]";
         private const string ValidatePatternFormat = "{0}[ValidatePattern('{1}')]";
@@ -769,6 +770,7 @@ namespace System.Management.Automation
         private const string ValidateSetFormat = @"{0}[ValidateSet({1})]";
         private const string ValidateNotNullFormat = @"{0}[ValidateNotNull()]";
         private const string ValidateNotNullOrEmptyFormat = @"{0}[ValidateNotNullOrEmpty()]";
+        private const string ValidateNotNullOrWhiteSpaceFormat = @"{0}[ValidateNotNullOrWhiteSpace()]";
         private const string AllowNullFormat = @"{0}[AllowNull()]";
         private const string AllowEmptyStringFormat = @"{0}[AllowEmptyString()]";
         private const string AllowEmptyCollectionFormat = @"{0}[AllowEmptyCollection()]";
@@ -931,6 +933,10 @@ namespace System.Management.Automation
                     {
                         format = ValidateRangeFloatFormat;
                     }
+                    else if (rangeType.IsEnum)
+                    {
+                        format = ValidateRangeEnumFormat;
+                    }
                     else
                     {
                         format = ValidateRangeFormat;
@@ -941,7 +947,8 @@ namespace System.Management.Automation
                         format,
                         prefix,
                         validRangeAttrib.MinRange,
-                        validRangeAttrib.MaxRange);
+                        validRangeAttrib.MaxRange,
+                        rangeType.FullName);
                     return result;
                 }
             }
@@ -976,7 +983,7 @@ namespace System.Management.Automation
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
                 string or = string.Empty;
-                string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
+                string[] regexOptionEnumValues = Enum.GetNames<System.Text.RegularExpressions.RegexOptions>();
 
                 foreach (string regexOption in regexOptionEnumValues)
                 {
@@ -1022,6 +1029,14 @@ namespace System.Management.Automation
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullOrEmptyFormat, prefix);
+                return result;
+            }
+
+            ValidateNotNullOrWhiteSpaceAttribute notNullWhiteSpaceAttrib = attrib as ValidateNotNullOrWhiteSpaceAttribute;
+            if (notNullWhiteSpaceAttrib != null)
+            {
+                result = string.Format(CultureInfo.InvariantCulture,
+                    ValidateNotNullOrWhiteSpaceFormat, prefix);
                 return result;
             }
 

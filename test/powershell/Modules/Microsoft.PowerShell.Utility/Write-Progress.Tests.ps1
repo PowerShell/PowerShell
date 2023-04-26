@@ -24,6 +24,13 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
     }
 
     It 'Activity longer than console width works' {
-        { Write-Progress -Activity ('a' * ([console]::WindowWidth + 1)) -Status ('b' * ([console]::WindowWidth + 1)) -Id 1 } | Should -Not -Throw
+        try {
+            $activity = 'a' * ([console]::WindowWidth + 1)
+        } catch {
+            Set-ItResult -Skipped -Because 'Console width is not supported'
+        }
+
+        { Write-Progress -Activity $activity -Status ('b' * ([console]::WindowWidth + 1)) -Id 1 } | Should -Not -Throw
+        Write-Progress -Activity $activity -Id 1 -Completed
     }
 }

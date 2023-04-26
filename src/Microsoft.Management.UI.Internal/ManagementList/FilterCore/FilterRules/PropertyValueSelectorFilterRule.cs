@@ -66,20 +66,10 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public PropertyValueSelectorFilterRule(string propertyName, string propertyDisplayName, IEnumerable<FilterRule> rules)
         {
-            if (string.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentNullException("propertyName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(propertyName);
+            ArgumentException.ThrowIfNullOrEmpty(propertyDisplayName);
 
-            if (string.IsNullOrEmpty(propertyDisplayName))
-            {
-                throw new ArgumentNullException("propertyDisplayName");
-            }
-
-            if (rules == null)
-            {
-                throw new ArgumentNullException("rules");
-            }
+            ArgumentNullException.ThrowIfNull(rules);
 
             this.PropertyName = propertyName;
             this.DisplayName = propertyDisplayName;

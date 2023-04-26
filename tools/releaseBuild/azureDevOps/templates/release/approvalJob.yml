@@ -16,9 +16,13 @@ parameters:
     values:
         - resume
         - reject
+  - name: dependsOnJob
+    type: string
+    default: ''
 
 jobs:
   - job: ${{ parameters.jobName }}
+    dependsOn: ${{ parameters.dependsOnJob }}
     displayName: ${{ parameters.displayName }}
     pool: server
     timeoutInMinutes: 4320 # job times out in 3 days

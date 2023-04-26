@@ -217,6 +217,29 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should list the folder present when path length equal to MAX_PATH" {
             (Get-ChildItem -Path TestDrive:\$item_I -Recurse -Force).Name.Length | Should -BeGreaterThan 0
         }
+
+        It 'Trailing slash for -Path should treat it as a folder only when used with -recurse' {
+            $foo = New-Item -ItemType Directory -Path TestDrive:\foo
+            $foo2 = New-Item -ItemType Directory -Path TestDrive:\foo\foo
+            $bar = New-Item -ItemType File -Path TestDrive:\foo\bar
+            $bar2 = New-Item -ItemType File -Path TestDrive:\foo\foo\bar
+
+            { Get-ChildItem -Path testdrive:/foo/bar/ -Recurse -ErrorAction Stop } | Should -Throw -ErrorId 'ItemNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+            $barFiles = Get-ChildItem -Path testdrive:/foo/bar -Recurse
+            $barFiles.Count | Should -Be 2
+        }
+
+        It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
+            $volume = (Get-Volume -DriveLetter $env:SystemDrive[0]).Path
+            $items = Get-ChildItem -LiteralPath "${volume}Windows"
+            $items[0].Parent | Should -BeExactly "${volume}Windows"
+            $items | Should -HaveCount (Get-ChildItem $env:SystemRoot).Count
+        }
+
+        It 'Works with Windows pipes' -Skip:(!$IsWindows) {
+            $out = pwsh -noprofile -custompipename myTestPipe { Get-ChildItem \\.\pipe\myTestPipe }
+            $out.Name | Should -BeExactly 'myTestPipe'
+        }
     }
 
     Context 'Env: Provider' {

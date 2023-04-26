@@ -661,11 +661,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (rootedPath == null)
-                {
-                    // Check for full-qualified paths - either absolute or relative
-                    rootedPath = ResolveRootedFilePath(name, this.Context);
-                }
+                // If null check for full-qualified paths - either absolute or relative
+                rootedPath ??= ResolveRootedFilePath(name, this.Context);
 
                 bool alreadyLoaded = false;
                 var manifestProcessingFlags = ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.NullOnFirstError;
@@ -998,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
                 string errorMessageTemplate = string.Format(
                     CultureInfo.InvariantCulture,
                     Modules.RemoteDiscoveryRemotePsrpCommandFailed,
-                    string.Format(CultureInfo.InvariantCulture, "Import-Module -Name '{0}'", moduleName));
+                    string.Create(CultureInfo.InvariantCulture, $"Import-Module -Name '{moduleName}'"));
                 remotelyImportedModules = RemoteDiscoveryHelper.InvokePowerShell(
                     powerShell,
                     this,
@@ -1413,10 +1410,7 @@ namespace Microsoft.PowerShell.Commands
                 goodEntries = new List<string>();
             }
 
-            if (goodEntries == null)
-            {
-                goodEntries = new List<string>();
-            }
+            goodEntries ??= new List<string>();
 
             List<string> badEntries;
             if (!this.GetListOfStringsFromData(manifestData, null, badKey, 0, out badEntries))
@@ -1424,10 +1418,7 @@ namespace Microsoft.PowerShell.Commands
                 badEntries = new List<string>();
             }
 
-            if (badEntries == null)
-            {
-                badEntries = new List<string>();
-            }
+            badEntries ??= new List<string>();
 
             bool presentInGoodEntries = IsPs1xmlFileHelper_IsPresentInEntries(cimModuleFile, goodEntries);
             bool presentInBadEntries = IsPs1xmlFileHelper_IsPresentInEntries(cimModuleFile, badEntries);

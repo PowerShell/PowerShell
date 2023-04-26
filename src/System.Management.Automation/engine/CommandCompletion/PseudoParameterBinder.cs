@@ -949,8 +949,9 @@ namespace System.Management.Automation.Language
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
         /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at.</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
+        /// <param name="bindPositional">Indicates if the pseudo binding should bind positional parameters</param>
         /// <returns>PseudoBindingInfo.</returns>
-        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
+        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType, bool bindPositional = true)
         {
             if (command == null)
             {
@@ -1008,12 +1009,15 @@ namespace System.Management.Automation.Language
                 unboundArguments = BindNamedParameters();
                 _bindingEffective = _currentParameterSetFlag != 0;
 
-                // positional binding
-                unboundArguments = BindPositionalParameter(
-                    unboundArguments,
-                    _currentParameterSetFlag,
-                    _defaultParameterSetFlag,
-                    bindingType);
+                if (bindPositional)
+                {
+                    // positional binding
+                    unboundArguments = BindPositionalParameter(
+                        unboundArguments,
+                        _currentParameterSetFlag,
+                        _defaultParameterSetFlag,
+                        bindingType);
+                }
 
                 // VFRA/pipeline binding if the given command is a binary cmdlet or a script cmdlet
                 if (!_function)
@@ -1212,9 +1216,6 @@ namespace System.Management.Automation.Language
             bool implementsDynamicParameters = commandProcessor != null &&
                                                commandProcessor.CommandInfo.ImplementsDynamicParameters;
 
-            var argumentsToGetDynamicParameters = implementsDynamicParameters
-                                                      ? new List<object>(_commandElements.Count)
-                                                      : null;
             if (commandProcessor != null || scriptProcessor != null)
             {
                 // Pre-processing the arguments -- command arguments
@@ -1223,9 +1224,31 @@ namespace System.Management.Automation.Language
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {
-                        if (argumentsToGetDynamicParameters != null)
+                        if (implementsDynamicParameters)
                         {
-                            argumentsToGetDynamicParameters.Add(parameter.Extent.Text);
+                            CommandParameterInternal paramToAdd;
+                            if (parameter.Argument is null)
+                            {
+                                paramToAdd = CommandParameterInternal.CreateParameter(parameter.ParameterName, parameter.Extent.Text);
+                            }
+                            else
+                            {
+                                object value;
+                                if (!SafeExprEvaluator.TrySafeEval(parameter.Argument, context, out value))
+                                {
+                                    value = parameter.Argument.Extent.Text;
+                                }
+
+                                paramToAdd = CommandParameterInternal.CreateParameterWithArgument(
+                                    parameterAst: null,
+                                    parameterName: parameter.ParameterName,
+                                    parameterText: parameter.Extent.Text,
+                                    argumentAst: null,
+                                    value: value,
+                                    spaceAfterParameter: false);
+                            }
+
+                            commandProcessor.AddParameter(paramToAdd);
                         }
 
                         AstPair parameterArg = parameter.Argument != null
@@ -1236,21 +1259,40 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        var dash = _commandElements[commandIndex] as StringConstantExpressionAst;
-                        if (dash != null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        object valueToAdd;
+                        ExpressionAst expressionToAdd;
+                        if (_commandElements[commandIndex] is ConstantExpressionAst constant)
                         {
-                            // "-" is represented by StringConstantExpressionAst. Most likely the user type a tab here,
-                            // and we don't want it be treated as an argument
+                            if (constant.Extent.Text.Equals("-", StringComparison.Ordinal))
+                            {
+                                // A value of "-" is most likely the user trying to tab here,
+                                // and we don't want it be treated as an argument
+                                continue;
+                            }
+
+                            valueToAdd = constant.Value;
+                            expressionToAdd = constant;
+                        }
+                        else if (_commandElements[commandIndex] is ExpressionAst expression)
+                        {
+                            if (!SafeExprEvaluator.TrySafeEval(expression, context, out valueToAdd))
+                            {
+                                valueToAdd = expression.Extent.Text;
+                            }
+
+                            expressionToAdd = expression;
+                        }
+                        else
+                        {
                             continue;
                         }
 
-                        var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
-                        if (expressionArgument != null)
+                        if (implementsDynamicParameters)
                         {
-                            argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
-
-                            _arguments.Add(new AstPair(null, expressionArgument));
+                            commandProcessor.AddParameter(CommandParameterInternal.CreateArgument(valueToAdd));
                         }
+
+                        _arguments.Add(new AstPair(null, expressionToAdd));
                     }
                 }
             }
@@ -1260,7 +1302,6 @@ namespace System.Management.Automation.Language
                 _function = false;
                 if (implementsDynamicParameters)
                 {
-                    ParameterBinderController.AddArgumentsToCommandProcessor(commandProcessor, argumentsToGetDynamicParameters.ToArray());
                     bool retryWithNoArgs = false, alreadyRetried = false;
 
                     do

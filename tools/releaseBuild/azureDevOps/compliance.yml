@@ -30,6 +30,7 @@ variables:
   - group: 'Azure Blob variable group'
   # Defines the variables CgPat, CgOrganization, and CgProject
   - group: 'ComponentGovernance'
+  - group: 'PoolNames'
 
 stages:
   - stage: compliance
@@ -37,6 +38,13 @@ stages:
     dependsOn: []
     jobs:
       - template: templates/compliance/compliance.yml
+        parameters:
+          parentJobs: []
+  - stage: APIScan
+    displayName: 'ApiScan'
+    dependsOn: []
+    jobs:
+      - template: templates/compliance/apiscan.yml
         parameters:
           parentJobs: []
   - stage: notice

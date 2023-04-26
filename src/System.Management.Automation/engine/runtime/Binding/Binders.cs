@@ -94,7 +94,7 @@ namespace System.Management.Automation.Language
             {
                 var effectiveArgType = Adapter.EffectiveArgumentType(obj.Value);
                 var methodInfo = effectiveArgType != typeof(object[])
-                    ? CachedReflectionInfo.PSInvokeMemberBinder_IsHomogenousArray.MakeGenericMethod(effectiveArgType.GetElementType())
+                    ? CachedReflectionInfo.PSInvokeMemberBinder_IsHomogeneousArray.MakeGenericMethod(effectiveArgType.GetElementType())
                     : CachedReflectionInfo.PSInvokeMemberBinder_IsHeterogeneousArray;
 
                 BindingRestrictions restrictions;
@@ -955,7 +955,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "MultiAssignRHSBinder {0}", _elements);
+            return string.Create(CultureInfo.InvariantCulture, $"MultiAssignRHSBinder {_elements}");
         }
 
         public override Type ReturnType { get { return typeof(IList); } }
@@ -2239,7 +2239,12 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSBinaryOperationBinder {0}{1} ver:{2}", GetOperatorText(), _scalarCompare ? " scalarOnly" : string.Empty, _version);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "PSBinaryOperationBinder {0}{1} ver:{2}",
+                GetOperatorText(),
+                _scalarCompare ? " scalarOnly" : string.Empty,
+                _version);
         }
 
         internal static void InvalidateCache()
@@ -3488,7 +3493,7 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSUnaryOperationBinder {0}", this.Operation);
+            return string.Create(CultureInfo.InvariantCulture, $"PSUnaryOperationBinder {this.Operation}");
         }
 
         internal DynamicMetaObject Not(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
@@ -3790,7 +3795,11 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSConvertBinder [{0}]  ver:{1}", Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true), _version);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "PSConvertBinder [{0}]  ver:{1}",
+                Microsoft.PowerShell.ToStringCodeMethods.Type(this.Type, true),
+                _version);
         }
 
         internal static void InvalidateCache()
@@ -3959,12 +3968,13 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                                 "PSGetIndexBinder indexCount={0}{1}{2} ver:{3}",
-                                 this.CallInfo.ArgumentCount,
-                                 _allowSlicing ? string.Empty : " slicing disallowed",
-                                 _constraints == null ? string.Empty : " constraints: " + _constraints,
-                                 _version);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "PSGetIndexBinder indexCount={0}{1}{2} ver:{3}",
+                this.CallInfo.ArgumentCount,
+                _allowSlicing ? string.Empty : " slicing disallowed",
+                _constraints == null ? string.Empty : " constraints: " + _constraints,
+                _version);
         }
 
         internal static void InvalidateCache()
@@ -4548,8 +4558,12 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "PSSetIndexBinder indexCnt={0}{1} ver:{2}",
-                CallInfo.ArgumentCount, _constraints == null ? string.Empty : " constraints: " + _constraints, _version);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "PSSetIndexBinder indexCnt={0}{1} ver:{2}",
+                CallInfo.ArgumentCount,
+                _constraints == null ? string.Empty : " constraints: " + _constraints,
+                _version);
         }
 
         internal static void InvalidateCache()
@@ -5144,8 +5158,13 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "GetMember: {0}{1}{2} ver:{3}",
-                Name, _static ? " static" : string.Empty, _nonEnumerating ? " nonEnumerating" : string.Empty, _version);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "GetMember: {0}{1}{2} ver:{3}",
+                Name,
+                _static ? " static" : string.Empty,
+                _nonEnumerating ? " nonEnumerating" : string.Empty,
+                _version);
         }
 
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
@@ -5343,13 +5362,9 @@ namespace System.Management.Automation.Language
                 if (!isGeneric || genericTypeArg != null)
                 {
                     var temp = Expression.Variable(typeof(object));
-                    if (expr == null)
-                    {
-                        // If expr is not null, it's the fallback when no member exists.  If it is null,
-                        // the fallback is the result from PropertyDoesntExist.
-
-                        expr = (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).Expression;
-                    }
+                    // If expr is not null, it's the fallback when no member exists.  If it is null,
+                    // the fallback is the result from PropertyDoesntExist.
+                    expr ??= (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).Expression;
 
                     var method = isGeneric
                         ? CachedReflectionInfo.PSGetMemberBinder_TryGetGenericDictionaryValue.MakeGenericMethod(genericTypeArg)
@@ -5682,19 +5697,13 @@ namespace System.Management.Automation.Language
             restrictions = versionRestriction;
 
             // When returning aliasRestrictions always include the version restriction
-            if (aliasRestrictions != null)
-            {
-                aliasRestrictions.Add(versionRestriction);
-            }
+            aliasRestrictions?.Add(versionRestriction);
 
             var alias = memberInfo as PSAliasProperty;
             if (alias != null)
             {
                 aliasConversionType = alias.ConversionType;
-                if (aliasRestrictions == null)
-                {
-                    aliasRestrictions = new List<BindingRestrictions>();
-                }
+                aliasRestrictions ??= new List<BindingRestrictions>();
 
                 memberInfo = ResolveAlias(alias, target, aliases, aliasRestrictions);
                 if (memberInfo == null)
@@ -5745,10 +5754,7 @@ namespace System.Management.Automation.Language
                                 var methodInfo = member as MethodInfo;
                                 if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
                                 {
-                                    if (candidateMethods == null)
-                                    {
-                                        candidateMethods = new List<MethodBase>();
-                                    }
+                                    candidateMethods ??= new List<MethodBase>();
 
                                     candidateMethods.Add(methodInfo);
                                 }
@@ -5841,10 +5847,7 @@ namespace System.Management.Automation.Language
             }
 
             var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
-            if (memberInfo == null)
-            {
-                memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
-            }
+            memberInfo ??= adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
 
             if (memberInfo == null && adapterSet.DotNetAdapter != null)
             {
@@ -5993,7 +5996,12 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "SetMember: {0}{1} ver:{2}", _static ? "static " : string.Empty, Name, _getMemberBinder._version);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "SetMember: {0}{1} ver:{2}",
+                _static ? "static " : string.Empty,
+                Name,
+                _getMemberBinder._version);
         }
 
         private static Expression GetTransformedExpression(IEnumerable<ArgumentTransformationAttribute> transformationAttributes, Expression originalExpression)
@@ -6445,10 +6453,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
-                if (memberInfo == null)
-                {
-                    memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
-                }
+                memberInfo ??= adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
 
                 if (memberInfo == null && adapterSet.DotNetAdapter != null)
                 {
@@ -6600,9 +6605,15 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "PSInvokeMember: {0}{1}{2} ver:{3} args:{4} constraints:<{5}>", _static ? "static " : string.Empty, _propertySetter ? "propset " : string.Empty,
-                Name, _getMemberBinder._version, CallInfo.ArgumentCount, _invocationConstraints != null ? _invocationConstraints.ToString() : string.Empty);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "PSInvokeMember: {0}{1}{2} ver:{3} args:{4} constraints:<{5}>",
+                _static ? "static " : string.Empty,
+                _propertySetter ? "propset " : string.Empty,
+                Name,
+                _getMemberBinder._version,
+                CallInfo.ArgumentCount,
+                _invocationConstraints != null ? _invocationConstraints.ToString() : string.Empty);
         }
 
         public override DynamicMetaObject FallbackInvokeMember(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
@@ -6910,22 +6921,19 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAMSIMethodInvocationLogging))
-                {
-                    // Expression block runs two expressions in order:
-                    //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
-                    //  - Invoke method
-                    string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
-                    expr = Expression.Block(
-                        Expression.Call(
-                            CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                            Expression.Constant(targetName),
-                            Expression.Constant(name),
-                            Expression.NewArrayInit(
-                                typeof(object),
-                                args.Select(static e => e.Expression.Cast(typeof(object))))),
-                        expr);
-                }
+                // Expression block runs two expressions in order:
+                //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+                //  - Invoke method
+                string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
+                expr = Expression.Block(
+                    Expression.Call(
+                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                        Expression.Constant(targetName),
+                        Expression.Constant(name),
+                        Expression.NewArrayInit(
+                            typeof(object),
+                            args.Select(static e => e.Expression.Cast(typeof(object))))),
+                    expr);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
@@ -7260,14 +7268,11 @@ namespace System.Management.Automation.Language
         private static DynamicMetaObject GetTargetAsEnumerable(DynamicMetaObject target)
         {
             var enumerableTarget = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerableTarget == null)
-            {
-                // Wrap the target in an array.
-                enumerableTarget = PSEnumerableBinder.IsEnumerable(
-                    new DynamicMetaObject(
-                        Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
-                        target.GetSimpleTypeRestriction()));
-            }
+            // If null wrap the target in an array.
+            enumerableTarget ??= PSEnumerableBinder.IsEnumerable(
+                new DynamicMetaObject(
+                    Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
+                    target.GetSimpleTypeRestriction()));
 
             return enumerableTarget;
         }
@@ -7367,18 +7372,22 @@ namespace System.Management.Automation.Language
 
         #region Runtime helpers
 
-        internal static bool IsHomogenousArray<T>(object[] args)
+        internal static bool IsHomogeneousArray<T>(object[] args)
         {
             if (args.Length == 0)
             {
                 return false;
             }
 
-            return args.All(element =>
-                            {
-                                var obj = PSObject.Base(element);
-                                return obj != null && obj.GetType().Equals(typeof(T));
-                            });
+            foreach (object element in args)
+            {
+                if (Adapter.GetObjectType(element, debase: true) != typeof(T))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static bool IsHeterogeneousArray(object[] args)
@@ -7406,11 +7415,15 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            return args.Skip(1).Any(element =>
-                                    {
-                                        var obj = PSObject.Base(element);
-                                        return obj == null || !firstType.Equals(obj.GetType());
-                                    });
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (Adapter.GetObjectType(args[i], debase: true) != firstType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
@@ -7594,8 +7607,12 @@ namespace System.Management.Automation.Language
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture,
-                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints != null ? _constraints.ToString() : string.Empty);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>",
+                _version,
+                _callInfo.ArgumentCount,
+                _constraints != null ? _constraints.ToString() : string.Empty);
         }
 
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)

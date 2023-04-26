@@ -21,10 +21,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_plaintextcontent == null)
-                {
-                    _plaintextcontent = ValueStringDecorated.AnsiRegex.Replace(_text, string.Empty);
-                }
+                _plaintextcontent ??= ValueStringDecorated.AnsiRegex.Replace(_text, string.Empty);
 
                 return _plaintextcontent;
             }
@@ -94,17 +91,14 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_plaintextcontent == null)
-                {
-                    _plaintextcontent = AnsiRegex.Replace(_text, string.Empty);
-                }
+                _plaintextcontent ??= AnsiRegex.Replace(_text, string.Empty);
 
                 return _plaintextcontent;
             }
         }
 
         // graphics/color mode ESC[1;2;...m
-        private const string GraphicsRegex = @"(\x1b\[\d+(;\d+)*m)";
+        private const string GraphicsRegex = @"(\x1b\[\d*(;\d+)*m)";
 
         // CSI escape sequences
         private const string CsiRegex = @"(\x1b\[\?\d+[hl])";

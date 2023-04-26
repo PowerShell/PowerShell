@@ -152,30 +152,11 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
 
             error = null;
             try
             {
-                // JsonConvert.DeserializeObject does not throw an exception when an invalid Json array is passed.
-                // This issue is being tracked by https://github.com/JamesNK/Newtonsoft.Json/issues/1930.
-                // To work around this, we need to identify when input is a Json array, and then try to parse it via JArray.Parse().
-
-                // If input starts with '[' (ignoring white spaces).
-                if (Regex.Match(input, @"^\s*\[").Success)
-                {
-                    // JArray.Parse() will throw a JsonException if the array is invalid.
-                    // This will be caught by the catch block below, and then throw an
-                    // ArgumentException - this is done to have same behavior as the JavaScriptSerializer.
-                    JArray.Parse(input);
-
-                    // Please note that if the Json array is valid, we don't do anything,
-                    // we just continue the deserialization.
-                }
-
                 var obj = JsonConvert.DeserializeObject(
                     input,
                     new JsonSerializerSettings

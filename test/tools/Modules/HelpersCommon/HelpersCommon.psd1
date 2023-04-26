@@ -18,24 +18,29 @@ Description = 'Temporary module contains functions for using in tests'
 
 FunctionsToExport = @(
         'Add-TestDynamicType'
-        'Test-CanWriteToPsHome'
         'Disable-Testhook'
         'Enable-Testhook'
+        'Get-PlatformInfo'
         'Get-RandomFileName'
-        'New-RandomHexString'
+        'Get-WSManSupport'
         'New-ComplexPassword'
+        'New-RandomHexString'
         'Send-VstsLogFile'
         'Set-TesthookResult'
         'Start-NativeExecution'
+        'Test-CanWriteToPsHome'
         'Test-IsElevated'
+        'Test-IsPreview',
+        'Test-IsReleaseCandidate'
         'Test-IsRoot'
         'Test-IsVstsLinux'
         'Test-IsVstsWindows'
+        'Test-IsWindowsArm64'
+        'Test-IsWinServer2012R2'
+        'Test-IsWinWow64'
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
-        'Get-PlatformInfo'
-        'Get-WSManSupport'
     )
 
 CmdletsToExport= @()

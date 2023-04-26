@@ -524,6 +524,24 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be "System.String"
     }
 
+    It "Infers typeof Get-Random with pipeline input" {
+        $res = [AstTypeInference]::InferTypeOf( { "Hello","World" | Get-Random }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It "Infers typeof Get-Random with astpair input" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-Random -InputObject Hello,World }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String[]"
+    }
+
+    It "Infers typeof Get-Random with no input" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-Random }.Ast)
+        $res.Count | Should -Be 3
+        $res.Name -join ', ' | Should -Be "System.Int32, System.Int64, System.Double"
+    }
+
     It "Infers typeof Group-Object Group" {
         $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | ForEach-Object Group  }.Ast)
         $res.Count | Should -Be 3
@@ -794,6 +812,11 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type from empty Return statement' {
+        $res = [AstTypeInference]::InferTypeOf( { return }.Ast)
+        $res.Count | Should -Be 0
     }
 
     It 'Infers type from New-Object statement' {
@@ -1079,6 +1102,43 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Exception
     }
 
+    It 'Infers type of variable $_ in pipeline with more than one element' {
+        $memberAst = { Get-Date | New-Guid | Select-Object -Property {$_} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.Guid
+    }
+
+    It 'Infers type of variable $_ in array of calculated properties' {
+        $variableAst = { New-TimeSpan | Select-Object -Property Day,@{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.TimeSpan
+    }
+
+    It 'Infers type of variable $_ in switch statement' {
+        $variableAst = {
+        switch ("Hello","World")
+        {
+            'Hello'
+            {
+                $_
+            }
+        } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.String
+    }
+
+    It 'Does not infer string in pipeline as char' {
+        $variableAst = { "Hello" | Select-Object -Property @{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+        $res.Name | Should -Be System.String
+    }
+
     $catchClauseTypes = @(
         @{ Type = 'System.ArgumentException' }
         @{ Type = 'System.ArgumentNullException' }
@@ -1145,6 +1205,55 @@ Describe "Type inference Tests" -tags "CI" {
         $res | Should -HaveCount 2
         $res[0].Name | Should -Be System.ArgumentException
         $res[1].Name | Should -Be System.Exception
+    }
+
+    It 'falls back to a generic ErrorRecord if catch exception type is invalid' {
+        $VariableAst = {
+            try {}
+            catch [ThisTypeDoesNotExist] { $_ }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($VariableAst)
+
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
+    }
+
+    It 'Infers type of trap statement' {
+        $VariableAst = {
+            trap { $_ }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($VariableAst)
+
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
+    }
+
+    It 'Infers type of exception in typed trap statement' {
+        $memberAst = {
+            trap [System.DivideByZeroException] { $_.Exception }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res.Name | Should -Be System.DivideByZeroException
+    }
+
+    It 'falls back to a generic ErrorRecord if trap exception type is invalid' {
+        $VariableAst = {
+            trap [ThisTypeDoesNotExist] { $_ }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($VariableAst)
+
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
     }
 
     It 'Infers type of function member' {
@@ -1250,6 +1359,60 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { [array]::Empty[int]() }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Int32[]'
+    }
+
+    It 'Infers type of index item in an ICollection' -Skip:(!$IsWindows) {
+        $res = [AstTypeInference]::InferTypeOf( { (Get-Acl -Path C:\).Access[0] }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Security.AccessControl.AuthorizationRule'
+    }
+
+    It 'Enumerates the inferred type after *-Object commands' {
+        $res = [AstTypeInference]::InferTypeOf( { (([System.Management.Automation.Language.Ast]$null).FindAll() | Select-Object -First 1) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.Language.Ast'
+    }
+
+    It 'Infers type of hashtable key with multiple types' {
+        $res = [AstTypeInference]::InferTypeOf( { (@{RandomKey = Get-ChildItem $HOME}).RandomKey }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
+    }
+
+    It 'Infers type of index expression on hashtable with synthetic type' {
+        $res = [AstTypeInference]::InferTypeOf( { (@{RandomKey = Get-ChildItem $HOME})['RandomKey'] }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
+    }
+
+    It 'Infers type of $null after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $null = "Hello";$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of all scope variable after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $true = "Hello";$true }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers type of all scope variable host after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $Host = "Hello";$Host }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
+    }
+
+    It 'Infers type of external applications' {
+        $res = [AstTypeInference]::InferTypeOf( { pwsh }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Should not throw when inferring $_ in switch condition' {
+        $FoundAst = { switch($_){default{}} }.Ast.Find(
+            {param($Ast) $Ast -is [Language.VariableExpressionAst]},
+            $true
+        )
+        $null = [AstTypeInference]::InferTypeOf($FoundAst)
     }
 }
 

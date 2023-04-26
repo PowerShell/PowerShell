@@ -18,10 +18,7 @@ namespace System.Management.Automation.InteropServices
         public void AddHandler(int dispid, object func)
         {
             ComEventsMethod method = FindMethod(dispid);
-            if (method == null)
-            {
-                method = AddMethod(dispid);
-            }
+            method ??= AddMethod(dispid);
 
             if (func is Delegate d)
             {

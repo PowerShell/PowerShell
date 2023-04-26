@@ -139,20 +139,14 @@ namespace Microsoft.PowerShell
         void
         PreWrite()
         {
-            if (_progPane != null)
-            {
-                _progPane.Hide();
-            }
+            _progPane?.Hide();
         }
 
         private
         void
         PostWrite()
         {
-            if (_progPane != null)
-            {
-                _progPane.Show();
-            }
+            _progPane?.Show();
         }
 
         private
@@ -178,20 +172,14 @@ namespace Microsoft.PowerShell
         void
         PreRead()
         {
-            if (_progPane != null)
-            {
-                _progPane.Hide();
-            }
+            _progPane?.Hide();
         }
 
         private
         void
         PostRead()
         {
-            if (_progPane != null)
-            {
-                _progPane.Show();
-            }
+            _progPane?.Show();
         }
 
         private
