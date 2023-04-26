@@ -817,7 +817,7 @@ function Invoke-PRBackport {
     }
 
     try {
-    Invoke-NativeCommand { git cherry-pick $commitId }
+        Invoke-NativeCommand { git cherry-pick $commitId }
     }
     catch {
         Test-ShouldContinue -Message "Fix any conflicts with the cherry-pick."
@@ -828,4 +828,21 @@ function Invoke-PRBackport {
     }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport
+function Invoke-PRBackportApproved {
+    param(
+        [Parameter(Mandatory)]
+        [semver]
+        $Version
+    )
+
+    $tagVersion = "$($Version.Major).$($Version.Minor)"
+    $target = "release/$ReleaseTag"
+
+    Get-PRBackportReport -Version $tagVersion |
+        ForEach-Object {
+            $prNumber = $_.Number
+            Invoke-PRBackport -ErrorAction Stop -PrNumber $prNumber -Target $target
+        }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved
