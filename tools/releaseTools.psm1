@@ -759,6 +759,23 @@ function Invoke-PRBackport {
             throw "$ScriptBlock fail with $LASTEXITCODE"
         }
     }
+    function script:Test-ShouldContinue {
+        param (
+            $Message
+        )
+        $continue = $false
+        while(!$continue) {
+            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter> to exit")
+            switch($input) {
+                'yes' {
+                    $continue= $true
+                }
+                'no' {
+                    throw "User abort"
+                }
+            }
+        }
+    }
     $ErrorActionPreference = 'stop'
 
     $pr = gh pr view $PrNumber --json 'mergeCommit,state,title' | ConvertFrom-Json
@@ -799,7 +816,12 @@ function Invoke-PRBackport {
         Invoke-NativeCommand { git switch upstream/$Target $switch $branchName }
     }
 
+    try {
     Invoke-NativeCommand { git cherry-pick $commitId }
+    }
+    catch {
+        Test-ShouldContinue -Message "Fix any conflicts with the cherry-pick."
+    }
 
     if ($PSCmdlet.ShouldProcess("Create the PR")) {
         gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber"
