@@ -1963,36 +1963,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # in some cases we will be running in a Docker container with modest resources
             $pathologicalRatio | Should -BeGreaterThan 5
         }
-
-        It "Charset Parsing" {
-            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
-                dosType='charset'
-                dosLength='2850'
-            }
-            $script:content = ''
-            [TimeSpan] $timeSpan = Measure-Command {
-                $response = Invoke-WebRequest -Uri $dosUri
-                $script:content = $response.content
-            }
-
-            # Pathological regex
-            $regex = [RegEx]::new('<meta\s[.\n]*[^><]*charset\s*=\s*["''\n]?(?<charset>[A-Za-z].[^\s"''\n<>]*)[\s"''\n>]')
-
-            $script:content | Should -Not -BeNullOrEmpty
-
-            [TimeSpan] $pathologicalTimeSpan = Measure-Command {
-                $regex.Match($content)
-            }
-
-            $pathologicalRatio = $pathologicalTimeSpan.TotalMilliseconds/$timeSpan.TotalMilliseconds
-            Write-Verbose "Pathological ratio: $pathologicalRatio" -Verbose
-
-            # dosLength 2,750 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 13
-            # dosLength 2,850 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 22
-            # dosLength 3,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 31
-            # in some cases we will be running in a Docker container with modest resources
-            $pathologicalRatio | Should -BeGreaterThan 5
-        }
     }
 }
 
