@@ -231,10 +231,6 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         Unregister-PSRepository -Name $localSourceName -ErrorAction SilentlyContinue
     }
 
-    It "The GetPSModulePath api is available" {
-        { [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath("PSHOME") } | Should -not -throw
-    }
-
     It "The value '<Name>' should return the proper value" -testcase $testCases {
         param ( $Name, $Expected )
         $result = [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name)
