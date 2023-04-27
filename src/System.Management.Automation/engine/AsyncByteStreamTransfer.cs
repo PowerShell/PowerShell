@@ -52,42 +52,28 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
         Stream? destinationStream = null;
         try
         {
-            try
-            {
-                stream = await _bytePipe.GetStream(_cts.Token);
-                destinationStream = await _destinationPipe.GetStream(_cts.Token);
-            }
-            catch (IOException)
-            {
-                return;
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
+            stream = await _bytePipe.GetStream(_cts.Token);
+            destinationStream = await _destinationPipe.GetStream(_cts.Token);
 
             while (true)
             {
                 int bytesRead;
-                try
-                {
-                    bytesRead = await stream.ReadAsync(_buffer, _cts.Token);
-                    if (bytesRead is 0)
-                    {
-                        break;
-                    }
-                }
-                catch (IOException)
-                {
-                    break;
-                }
-                catch (OperationCanceledException)
+                bytesRead = await stream.ReadAsync(_buffer, _cts.Token);
+                if (bytesRead is 0)
                 {
                     break;
                 }
 
                 destinationStream.Write(_buffer.Span.Slice(0, bytesRead));
             }
+        }
+        catch (IOException)
+        {
+            return;
+        }
+        catch (OperationCanceledException)
+        {
+            return;
         }
         finally
         {
