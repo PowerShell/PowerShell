@@ -45,6 +45,8 @@ namespace System.Management.Automation.Internal
 
         private NativeCommandProcessor _lastNativeCommand;
 
+        private bool _haveReportedNativePipeUsage;
+
 #if !CORECLR // Impersonation Not Supported On CSS
         // This is the security context when the pipeline was allocated
         internal System.Security.SecurityContext SecurityContext =
@@ -265,6 +267,15 @@ namespace System.Management.Automation.Internal
                 {
                     if (_lastNativeCommand is not null)
                     {
+                        // Only report experimental feature usage once per pipeline.
+                        if (!_haveReportedNativePipeUsage)
+                        {
+                            ApplicationInsightsTelemetry.SendExperimentalUseData(
+                                ExperimentalFeature.PSNativeCommandPreserveBytePipe,
+                                "native to native created");
+                            _haveReportedNativePipeUsage = true;
+                        }
+
                         _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
                         nativeCommand.UpstreamIsNativeCommand = true;
                     }
