@@ -183,7 +183,7 @@ namespace PowerShell.Hosting.SDK.Tests
             Assert.Equal(42, ret);
         }
 
-        /* Test disabled because CommandLineParser is static and can only be intialized once (above in TestConsoleShellScenario)
+        /* Test disabled because CommandLineParser is static and can only be initialized once (above in TestConsoleShellScenario)
         /// <summary>
         /// ConsoleShell cannot start with both InitialSessionState and -ConfigurationFile argument configurations specified.
         /// </summary>

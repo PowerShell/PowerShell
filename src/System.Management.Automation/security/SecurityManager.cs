@@ -160,7 +160,10 @@ namespace Microsoft.PowerShell
                     }
                     catch (System.ComponentModel.Win32Exception)
                     {
-                        if (saferAttempt > 4) { throw; }
+                        if (saferAttempt > 4)
+                        {
+                            throw;
+                        }
 
                         saferAttempt++;
                         System.Threading.Thread.Sleep(100);
@@ -180,7 +183,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            // WLDP and Applocker takes priority over powershell exeuction policy.
+            // WLDP and Applocker takes priority over powershell execution policy.
             // See if they want to bypass the authorization manager
             if (_executionPolicy == ExecutionPolicy.Bypass)
             {
@@ -443,7 +446,12 @@ namespace Microsoft.PowerShell
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
                 if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
-                    if (!IsUntrustedPublisher(signature, file)) return true;
+                {
+                    if (!IsUntrustedPublisher(signature, file))
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -640,9 +648,16 @@ namespace Microsoft.PowerShell
                     else
                     {
                         bool etwEnabled = ParserEventSource.Log.IsEnabled();
-                        if (etwEnabled) ParserEventSource.Log.CheckSecurityStart(si.Path);
+                        if (etwEnabled)
+                        {
+                            ParserEventSource.Log.CheckSecurityStart(si.Path);
+                        }
+
                         allowRun = CheckPolicy(si, host, out reason);
-                        if (etwEnabled) ParserEventSource.Log.CheckSecurityStop(si.Path);
+                        if (etwEnabled)
+                        {
+                            ParserEventSource.Log.CheckSecurityStop(si.Path);
+                        }
                     }
 
                     break;

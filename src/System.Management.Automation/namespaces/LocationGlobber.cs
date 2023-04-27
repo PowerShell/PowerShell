@@ -2065,7 +2065,10 @@ namespace System.Management.Automation
                 driveRootRelativeWorkingPath = driveRootRelativeWorkingPath.Substring(drive.Root.Length);
             }
 
-            if (escapeCurrentLocation) { driveRootRelativeWorkingPath = WildcardPattern.Escape(driveRootRelativeWorkingPath); }
+            if (escapeCurrentLocation)
+            {
+                driveRootRelativeWorkingPath = WildcardPattern.Escape(driveRootRelativeWorkingPath);
+            }
 
             // These are static strings that we will parse and
             // interpret if they are leading the path. Otherwise

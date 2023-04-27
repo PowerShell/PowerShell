@@ -36,8 +36,8 @@ param (
     [ValidateSet("Debug", "Release")]
     [string] $BuildConfiguration = "Debug",
 
-    [ValidateSet("net7.0")]
-    [string] $BuildFramework = "net7.0"
+    [ValidateSet("net8.0")]
+    [string] $BuildFramework = "net8.0"
 )
 
 $script:ModuleName = 'Microsoft.PowerShell.NamedPipeConnection'

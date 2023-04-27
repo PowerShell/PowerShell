@@ -733,7 +733,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a new collection of typenames without "Deserialization." prefix
-        /// in the typename. This will allow to map type info/format info of the orignal type
+        /// in the typename. This will allow to map type info/format info of the original type
         /// for deserialized objects.
         /// </summary>
         /// <param name="typeNames"></param>
@@ -2159,7 +2159,10 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Assert(key != null, "Dictionary keys should never be null");
-                    if (key == null) break;
+                    if (key == null)
+                    {
+                        break;
+                    }
 
                     WriteStartElement(SerializationStrings.DictionaryEntryTag);
                     WriteOneObject(key, null, SerializationStrings.DictionaryKey, depth);
@@ -3988,7 +3991,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utilitily class for ReadDictionary(), supporting ordered or non-ordered Dictionaty methods.
+        /// Utility class for ReadDictionary(), supporting ordered or non-ordered Dictionary methods.
         /// </summary>
         private class PSDictionary
         {
@@ -6523,7 +6526,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If originalHash contains PSVersionTable, then just returns the Cloned copy of
-        /// the original hash. Othewise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
+        /// the original hash. Otherwise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
         /// to the clone and returns.
         /// </summary>
         /// <param name="originalHash"></param>

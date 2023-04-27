@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cat">Category specified by the user.</param>
         /// <exception cref="ArgumentException">
-        /// If the request cant be serviced.
+        /// If the request can't be serviced.
         /// </exception>
         private void ValidateAndThrowIfError(HelpCategory cat)
         {

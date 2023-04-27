@@ -3036,7 +3036,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Issue appropriate errors and remove members as necessary if:
         ///     - The serialization settings do not fall into one of the combinations of the table below
-        ///     - If the serialization settings notes' values cannot be converted to the propper type
+        ///     - If the serialization settings notes' values cannot be converted to the proper type
         ///     - If serialization settings members are of the wrong member type
         ///     - DefaultDisplayPropertySet is not an PSPropertySet
         ///     - DefaultDisplayProperty is not an PSPropertyInfo

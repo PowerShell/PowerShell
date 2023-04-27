@@ -719,13 +719,21 @@ namespace System.Management.Automation
                 string tooltip = parameterType + matchedParameterName;
                 result.Add(new CompletionResult(completionText, matchedParameterName, CompletionResultType.ParameterName, tooltip));
             }
-
-            // Process alias when there is partial input
-            result.AddRange(from alias in param.Parameter.Aliases
-                            where pattern.IsMatch(alias)
-                            select
-                                new CompletionResult("-" + alias + colonSuffix, alias, CompletionResultType.ParameterName,
-                                                     parameterType + alias));
+            else
+            {
+                // Process alias when there is partial input
+                foreach (var alias in param.Parameter.Aliases)
+                {
+                    if (pattern.IsMatch(alias))
+                    {
+                        result.Add(new CompletionResult(
+                            $"-{alias}{colonSuffix}",
+                            alias,
+                            CompletionResultType.ParameterName,
+                            parameterType + alias));
+                    }
+                }
+            }
 
             return result;
         }
@@ -791,15 +799,20 @@ namespace System.Management.Automation
                                                            tooltip));
                     }
                 }
-
-                if (parameterName != string.Empty)
+                else if (parameterName != string.Empty)
                 {
                     // Process alias when there is partial input
-                    listInUse.AddRange(from alias in param.Parameter.Aliases
-                                       where pattern.IsMatch(alias)
-                                       select
-                                         new CompletionResult("-" + alias + colonSuffix, alias, CompletionResultType.ParameterName,
-                                                              type + alias));
+                    foreach (var alias in param.Parameter.Aliases)
+                    {
+                        if (pattern.IsMatch(alias))
+                        {
+                            listInUse.Add(new CompletionResult(
+                                $"-{alias}{colonSuffix}",
+                                alias,
+                                CompletionResultType.ParameterName,
+                                type + alias));
+                        }
+                    }
                 }
             }
 
@@ -2028,7 +2041,7 @@ namespace System.Management.Automation
             string parameterName = parameter.Name;
 
             // Fall back to the commandAst command name if a command name is not found. This can be caused by a script block or AST with the matching function definition being passed to CompleteInput
-            // This allows for editors and other tools using CompleteInput with Script/AST definations to get values from RegisteredArgumentCompleters to better match the console experience.
+            // This allows for editors and other tools using CompleteInput with Script/AST definitions to get values from RegisteredArgumentCompleters to better match the console experience.
             // See issue https://github.com/PowerShell/PowerShell/issues/10567
             string actualCommandName = string.IsNullOrEmpty(commandName)
                         ? commandAst.GetCommandName()
@@ -4618,7 +4631,7 @@ namespace System.Management.Automation
                             }
                             catch (Exception)
                             {
-                                // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
+                                // The object at the specified path is not accessible, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
                                 continue;
                             }

@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
-                //  - If the current module is a nested module, then the parent module will be specifeid.
+                //  - If the current module is a nested module, then the parent module will be specified.
                 //  - If the current module is a root module, then the parent module will not be specified.
                 string moduleName = parentModule?.Name ?? ModuleIntrinsics.GetModuleName(moduleSpecification.Name);
                 rootedPath = FixFileName(moduleName, moduleBase, moduleSpecification.Name, extension: null, canLoadAssembly: importingModule);
@@ -4608,7 +4608,7 @@ namespace Microsoft.PowerShell.Commands
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
         /// <remarks>
-        /// When fixing up an assembly file, this method loads the resovled assembly if it's in the process of actually loading a module.
+        /// When fixing up an assembly file, this method loads the resolved assembly if it's in the process of actually loading a module.
         /// Read the comments in the method for the detailed information.
         /// </remarks>
         /// <param name="moduleName">Name of the module that we are processing, used for caching purpose when we need to load an assembly.</param>
@@ -7192,6 +7192,9 @@ namespace Microsoft.PowerShell.Commands
                     CommandOrigin.Internal,
                     targetSessionState.ExecutionContext);
 
+                // Note that the module 'func' and the function table 'functionInfo' instances are now linked
+                // together (see 'CopiedCommand' in CommandInfo class), so setting visibility on one also 
+                // sets it on the other.
                 SetCommandVisibility(isImportModulePrivate, functionInfo);
                 functionInfo.Module = sourceModule;
 

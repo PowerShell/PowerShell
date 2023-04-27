@@ -434,7 +434,11 @@ namespace Microsoft.PowerShell.Commands
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
                     List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
-                    if (tempExprResults == null) continue;
+                    if (tempExprResults == null)
+                    {
+                        continue;
+                    }
+
                     foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                     {
                         expressionResults.Add(mshExpRes);
@@ -525,7 +529,10 @@ namespace Microsoft.PowerShell.Commands
             if (r.Exception == null)
             {
                 // ignore the property value if it's null
-                if (r.Result == null) { return; }
+                if (r.Result == null)
+                {
+                    return;
+                }
 
                 System.Collections.IEnumerable results = LanguagePrimitives.GetEnumerable(r.Result);
                 if (results == null)
@@ -545,7 +552,10 @@ namespace Microsoft.PowerShell.Commands
                 foreach (object expandedValue in results)
                 {
                     // ignore the element if it's null
-                    if (expandedValue == null) { continue; }
+                    if (expandedValue == null)
+                    {
+                        continue;
+                    }
 
                     // add NoteProperties if there is any
                     // If expandedValue is a base object, we don't want to associate the NoteProperty

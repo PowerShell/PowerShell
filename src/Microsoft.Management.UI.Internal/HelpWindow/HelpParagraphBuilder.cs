@@ -147,7 +147,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">PSObject that contains another PSObject as a property.</param>
         /// <param name="psObjectName">Property name that contains the PSObject.</param>
-        /// <param name="propertyName">Property name in thye inner PSObject.</param>
+        /// <param name="propertyName">Property name in the inner PSObject.</param>
         /// <returns>The string from the inner psObject property or null if it could not be retrieved.</returns>
         private static string GetInnerPSObjectPropertyString(PSObject psObj, string psObjectName, string propertyName)
         {

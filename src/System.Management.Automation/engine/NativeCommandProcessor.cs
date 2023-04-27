@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.PowerShell.Telemetry;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -991,8 +992,36 @@ namespace System.Management.Automation
 
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        || !Command.Context.GetBooleanPreference(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath, defaultPref: false, out _))
+                    // Feature is not enabled, so return
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
+                    {
+                        return;
+                    }
+
+                    // We send telemetry information only if the feature is enabled.
+                    // This shouldn't be done once, because it's a run-time check we should send telemetry every time.
+                    // Report on the following conditions:
+                    // - The variable is not present
+                    // - The value is not set (variable is null)
+                    // - The value is set to true or false
+                    bool useDefaultSetting;
+                    bool nativeErrorActionPreferenceSetting = Command.Context.GetBooleanPreference(
+                        SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
+                        defaultPref: false,
+                        out useDefaultSetting);
+
+                    // The variable is unset
+                    if (useDefaultSetting)
+                    {
+                        ApplicationInsightsTelemetry.SendExperimentalUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, "unset");
+                        return;
+                    }
+
+                    // Send the value that was set.
+                    ApplicationInsightsTelemetry.SendExperimentalUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, nativeErrorActionPreferenceSetting.ToString());
+
+                    // if it was explicitly set to false, return
+                    if (!nativeErrorActionPreferenceSetting)
                     {
                         return;
                     }
@@ -1265,7 +1294,11 @@ namespace System.Management.Automation
         {
             lock (_sync)
             {
-                if (_stopped) return;
+                if (_stopped)
+                {
+                    return;
+                }
+
                 _stopped = true;
             }
 
@@ -1787,9 +1820,15 @@ namespace System.Management.Automation
 
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
-            if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
+            if (process.StartInfo.RedirectStandardOutput)
+            {
+                _refCount++;
+            }
 
-            if (process.StartInfo.RedirectStandardError) { _refCount++; }
+            if (process.StartInfo.RedirectStandardError)
+            {
+                _refCount++;
+            }
 
             // once we have _refCount, we can start processing
             if (process.StartInfo.RedirectStandardError)

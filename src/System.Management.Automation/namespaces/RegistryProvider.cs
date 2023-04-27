@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
                 // should not be done.
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
-                    // This text element needs espacing
+                    // This text element needs escaping
                     result.Append('`');
                 }
 
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
                 // should not be done.
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
-                    // This text element needs espacing
+                    // This text element needs escaping
                     result.Append('`');
                 }
 

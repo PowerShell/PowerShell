@@ -97,7 +97,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                         // We only care about public types
                         TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
                         // The visibility mask is used to mask out the bits that contain the visibility.
-                        // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
+                        // The visibilities are not combinable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
                         TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
                         if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
                         {
@@ -175,7 +175,11 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                     // Attribute is defined in the same module
                     MethodDefinition methodDef = reader.GetMethodDefinition((MethodDefinitionHandle)customAttribute.Constructor);
                     TypeDefinitionHandle declaringTypeDefHandle = methodDef.GetDeclaringType();
-                    if (declaringTypeDefHandle.IsNil) { /* Global method */ return false; }
+                    if (declaringTypeDefHandle.IsNil)
+                    {
+                        // Global method
+                        return false;
+                    }
 
                     TypeDefinition declaringTypeDef = reader.GetTypeDefinition(declaringTypeDefHandle);
                     attributeFullName = GetTypeFullName(reader, declaringTypeDef);
@@ -256,7 +260,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
             }
 
             // Convert bytes to hex format strings in lower case.
-            string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes).Replace("-", string.Empty).ToLowerInvariant();
+            string publicKeyTokenString = Convert.ToHexString(publicKeyTokenBytes).ToLowerInvariant();
             string strongAssemblyName = string.Create(CultureInfo.InvariantCulture, $"{asmName}, Version={asmVersion}, Culture={asmCulture}, PublicKeyToken={publicKeyTokenString}");
 
             return strongAssemblyName;

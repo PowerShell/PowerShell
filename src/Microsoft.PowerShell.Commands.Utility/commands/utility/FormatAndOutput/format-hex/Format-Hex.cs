@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         private const int BUFFERSIZE = 16;
 
         /// <summary>
-        /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
+        /// For cases where a homogeneous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
         private readonly List<byte> _inputBuffer = new();
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _groupInput = true;
 
         /// <summary>
-        /// Keep track of prior input types to determine if we're given a heterogenous collection.
+        /// Keep track of prior input types to determine if we're given a heterogeneous collection.
         /// </summary>
         private Type _lastInputType;
 
