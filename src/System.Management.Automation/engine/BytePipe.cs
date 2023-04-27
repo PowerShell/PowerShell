@@ -106,7 +106,7 @@ internal sealed class FileBytePipe : BytePipe
 
         ApplicationInsightsTelemetry.SendExperimentalUseData(
             ExperimentalFeature.PSNativeCommandPreserveBytePipe,
-            "native to file created");
+            "f");
 
         return new FileBytePipe(fileStream);
     }

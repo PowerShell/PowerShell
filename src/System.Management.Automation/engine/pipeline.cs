@@ -272,7 +272,7 @@ namespace System.Management.Automation.Internal
                         {
                             ApplicationInsightsTelemetry.SendExperimentalUseData(
                                 ExperimentalFeature.PSNativeCommandPreserveBytePipe,
-                                "native to native created");
+                                "p");
                             _haveReportedNativePipeUsage = true;
                         }
 
