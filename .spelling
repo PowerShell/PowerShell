@@ -1031,6 +1031,7 @@ ubuntu22.04
 uint
 un-versioned
 unicode
+UnixSocket
 unregister-event
 unregister-packagesource
 unregister-psrepository
