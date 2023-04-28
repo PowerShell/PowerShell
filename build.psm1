@@ -1153,8 +1153,9 @@ function Publish-PSTestTools {
     $tools = @(
         @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
         @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/UnixSocket";  Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
     )
 
     $Options = Get-PSOptions -DefaultToNew

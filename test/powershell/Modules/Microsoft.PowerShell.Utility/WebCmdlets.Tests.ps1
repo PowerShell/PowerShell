@@ -4147,3 +4147,22 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
     }
 }
+
+Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $WebListener = Start-UnixSocket
+    }
+
+    It "Execute Invoke-WebRequest with -UnixSocket" {
+        $uri = Get-UnixSocketUri
+        $result = Invoke-WebRequest $uri -UnixSocket "/tmp/foo.sock"
+        $result.StatusCode | Should -Be "200"
+        $result.Content | Should -Be "Hello World Unix Socket."
+    }
+
+    It "Execute Invoke-RestMethod with -UnixSocket" {
+        $uri = Get-UnixSocketUri
+        $result = Invoke-RestMethod  $uri -UnixSocket "/tmp/foo.sock"
+        $result | Should -Be "Hello World Unix Socket."
+    }
+}

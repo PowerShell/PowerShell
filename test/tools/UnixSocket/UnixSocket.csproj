@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <Import Project="..\..\Test.Common.props" />
+
+  <PropertyGroup>
+    <Description>A very simple ASP.NET Core app to provide an UnixSocket server for testing.</Description>
+    <AssemblyName>UnixSocket</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
+    <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+</Project>
