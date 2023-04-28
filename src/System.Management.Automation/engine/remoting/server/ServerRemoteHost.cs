@@ -407,7 +407,10 @@ namespace System.Management.Automation.Remoting
 
         private void AddPSEditForRunspace(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace.Events == null) { return; }
+            if (remoteRunspace.Events == null)
+            {
+                return;
+            }
 
             // Add event handler.
             remoteRunspace.Events.ReceivedEvents.PSEventReceived += HandleRemoteSessionForwardedEvent;
@@ -427,7 +430,10 @@ namespace System.Management.Automation.Remoting
 
         private void RemovePSEditFromRunspace(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace.Events == null) { return; }
+            if (remoteRunspace.Events == null)
+            {
+                return;
+            }
 
             // It is possible for the popped runspace to be in a bad state after an error.
             if ((remoteRunspace.RunspaceStateInfo.State != RunspaceState.Opened) || (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available))
@@ -453,7 +459,10 @@ namespace System.Management.Automation.Remoting
 
         private void HandleRemoteSessionForwardedEvent(object sender, PSEventArgs args)
         {
-            if ((Runspace == null) || (Runspace.Events == null)) { return; }
+            if ((Runspace == null) || (Runspace.Events == null))
+            {
+                return;
+            }
 
             // Forward events from nested pushed session to parent session.
             try

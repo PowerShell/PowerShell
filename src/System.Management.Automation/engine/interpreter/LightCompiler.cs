@@ -68,7 +68,10 @@ namespace System.Management.Automation.Interpreter
 
         public bool IsBetterThan(ExceptionHandler other)
         {
-            if (other == null) return true;
+            if (other == null)
+            {
+                return true;
+            }
 
             Debug.Assert(StartIndex == other.StartIndex && EndIndex == other.EndIndex, "we only need to compare handlers for the same try block");
             return HandlerStartIndex < other.HandlerStartIndex;

@@ -545,7 +545,10 @@ namespace System.Management.Automation
                 // If the module is not binary, it may also have functions...
                 if (DeclaredFunctionExports != null)
                 {
-                    if (DeclaredFunctionExports.Count == 0) { return exports; }
+                    if (DeclaredFunctionExports.Count == 0)
+                    {
+                        return exports;
+                    }
 
                     foreach (string fn in DeclaredFunctionExports)
                     {
@@ -707,7 +710,10 @@ namespace System.Management.Automation
 
                 if (DeclaredCmdletExports != null)
                 {
-                    if (DeclaredCmdletExports.Count == 0) { return exports; }
+                    if (DeclaredCmdletExports.Count == 0)
+                    {
+                        return exports;
+                    }
 
                     foreach (string fn in DeclaredCmdletExports)
                     {

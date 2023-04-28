@@ -871,6 +871,18 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain 'TypeId'
     }
 
+    it 'Should not complete parameter aliases if the real parameter is in the completion results' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -p'
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '-proga'
+        $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
+    }
+
+    it 'Should not complete parameter aliases if the real parameter is in the completion results (Non ambiguous parameters)' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -prog'
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '-proga'
+        $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
@@ -1646,15 +1658,15 @@ dir -Recurse `
         It "Test completion with exact match" {
             $inputStr = 'get-content -wa'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Wait,-WarningAction,-WarningVariable"
         }
 
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 6
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-ProgressAction,-PSPath"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -2415,7 +2427,10 @@ function MyFunction ($param1, $param2)
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
-        if ($IsWindows -and -not (Test-IsWinWow64)) {
+        $skipTest = -not $IsWindows
+        $pendingTest = $IsWindows -and (Test-IsWinWow64)
+
+        if (-not $skipTest -and -not $pendingTest) {
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace
@@ -2433,11 +2448,16 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminO
             )
         } else {
             $defaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["It:Skip"] = $true
+
+            if ($skipTest) {
+                $PSDefaultParameterValues["It:Skip"] = $true
+            } elseif ($pendingTest) {
+                $PSDefaultParameterValues["It:Pending"] = $true
+            }
         }
     }
     AfterAll {
-        if ($IsWindows) {
+        if (-not $skipTest -and -not $pendingTest) {
             Remove-PSSession $session
             $powershell.Dispose()
         } else {

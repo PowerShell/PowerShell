@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.PowerShell.Telemetry;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -339,15 +340,15 @@ namespace System.Management.Automation
             }
         }
 
+        internal NativeCommandProcessor DownStreamNativeCommand { get; set; }
+
+        internal bool UpstreamIsNativeCommand { get; set; }
+
+        internal BytePipe StdOutDestination { get; set; }
+
         #endregion ctor/native command properties
 
         #region parameter binder
-
-        /// <summary>
-        /// Variable which is set to true when prepare is called.
-        /// Parameter Binder should only be created after Prepare method is called.
-        /// </summary>
-        private bool _isPreparedCalled = false;
 
         /// <summary>
         /// Parameter binder used by this command processor.
@@ -365,8 +366,6 @@ namespace System.Management.Automation
         /// </returns>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");
-
             if (_isMiniShell)
             {
                 _nativeParameterBinderController =
@@ -405,8 +404,6 @@ namespace System.Management.Automation
         /// </summary>
         internal override void Prepare(IDictionary psDefaultParameterValues)
         {
-            _isPreparedCalled = true;
-
             // Check if the application is minishell
             _isMiniShell = IsMiniShell();
 
@@ -436,9 +433,15 @@ namespace System.Management.Automation
         {
             try
             {
-                while (Read())
+                // If upstream is a native command it'll be writing directly to our stdin stream
+                // so we can skip reading here.
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && !UpstreamIsNativeCommand)
                 {
-                    _inputWriter.Add(Command.CurrentPipelineObject);
+                    while (Read())
+                    {
+                        _inputWriter.Add(Command.CurrentPipelineObject);
+                    }
                 }
 
                 ConsumeAvailableNativeProcessOutput(blocking: false);
@@ -495,6 +498,59 @@ namespace System.Management.Automation
         /// Pipeline thread.
         /// </summary>
         private readonly object _sync = new object();
+
+        private SemaphoreSlim _processInitialized;
+
+        internal async Task WaitForProcessInitializationAsync(CancellationToken cancellationToken)
+        {
+            SemaphoreSlim processInitialized = _processInitialized;
+            if (processInitialized is null)
+            {
+                lock (_sync)
+                {
+                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
+                }
+            }
+
+            try
+            {
+                await processInitialized.WaitAsync(cancellationToken);
+            }
+            finally
+            {
+                processInitialized.Release();
+            }
+        }
+
+        /// <summary>
+        /// Creates a pipe representing the streaming of unprocessed bytes.
+        /// </summary>
+        /// <param name="stdout">
+        /// The stream that the pipe should represent. <see langword="true" />
+        /// for stdout, <see langword="false" /> for stdin.
+        /// </param>
+        /// <returns>A new byte pipe representing the specified stream.</returns>
+        internal BytePipe CreateBytePipe(bool stdout) => new NativeCommandProcessorBytePipe(this, stdout);
+
+        /// <summary>
+        /// Gets the specified base <see cref="Stream" /> for the underlying
+        /// <see cref="Process" />.
+        /// </summary>
+        /// <param name="stdout">
+        /// The stream that should be retrieved. <see langword="true" /> for
+        /// stdout, <see langword="false" /> for stdin.
+        /// </param>
+        /// <returns>The specified <see cref="Stream" />.</returns>
+        internal Stream GetStream(bool stdout)
+        {
+            Debug.Assert(
+                _nativeProcess is not null,
+                "Caller should verify that initialization has completed before attempting to get the underlying stream.");
+
+            return stdout
+                ? _nativeProcess.StandardOutput.BaseStream
+                : _nativeProcess.StandardInput.BaseStream;
+        }
 
         /// <summary>
         /// Executes the native command once all of the input has been gathered.
@@ -581,6 +637,19 @@ namespace System.Management.Automation
                     {
                         _nativeProcess = new Process() { StartInfo = startInfo };
                         _nativeProcess.Start();
+                        if (UpstreamIsNativeCommand)
+                        {
+                            SemaphoreSlim processInitialized = _processInitialized;
+                            if (processInitialized is null)
+                            {
+                                lock (_sync)
+                                {
+                                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
+                                }
+                            }
+
+                            processInitialized?.Release();
+                        }
                     }
                     catch (Win32Exception)
                     {
@@ -691,7 +760,9 @@ namespace System.Management.Automation
 
                         lock (_sync)
                         {
-                            if (!_stopped)
+                            if (!_stopped
+                                && (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                                || !UpstreamIsNativeCommand))
                             {
                                 _inputWriter.Start(_nativeProcess, inputFormat);
                             }
@@ -740,6 +811,8 @@ namespace System.Management.Automation
             }
         }
 
+        private AsyncByteStreamTransfer _stdOutByteTransfer;
+
         private void InitOutputQueue()
         {
             // if output is redirected, start reading output of process in queue.
@@ -749,9 +822,38 @@ namespace System.Management.Automation
                 {
                     if (!_stopped)
                     {
+                        if (CommandRuntime.ErrorMergeTo is MshCommandRuntime.MergeDataStream.Output)
+                        {
+                            StdOutDestination = null;
+                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+                            {
+                                if (DownStreamNativeCommand is not null)
+                                {
+                                    DownStreamNativeCommand.UpstreamIsNativeCommand = false;
+                                    DownStreamNativeCommand = null;
+                                }
+                            }
+                        }
+
                         _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
                         // we don't assign the handler to anything, because it's used only for objects marshaling
-                        new ProcessOutputHandler(_nativeProcess, _nativeProcessOutputQueue);
+                        BytePipe stdOutDestination = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                            ? StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe(stdout: false)
+                            : null;
+
+                        BytePipe stdOutSource = null;
+                        if (stdOutDestination is not null)
+                        {
+                            stdOutSource = CreateBytePipe(stdout: true);
+                        }
+
+                        _ = new ProcessOutputHandler(
+                            _nativeProcess,
+                            _nativeProcessOutputQueue,
+                            stdOutDestination,
+                            stdOutSource,
+                            out _stdOutByteTransfer);
+
                     }
                 }
             }
@@ -761,6 +863,13 @@ namespace System.Management.Automation
         {
             if (blocking)
             {
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && _stdOutByteTransfer is not null)
+                {
+                    _stdOutByteTransfer.EOF.GetAwaiter().GetResult();
+                    return null;
+                }
+
                 // If adding was completed and collection is empty (IsCompleted == true)
                 // there is no need to do a blocking Take(), we should just return.
                 if (!_nativeProcessOutputQueue.IsCompleted)
@@ -784,6 +893,12 @@ namespace System.Management.Automation
             }
             else
             {
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && _stdOutByteTransfer is not null)
+                {
+                    return null;
+                }
+
                 ProcessOutputObject record = null;
                 _nativeProcessOutputQueue.TryTake(out record);
                 return record;
@@ -822,7 +937,11 @@ namespace System.Management.Automation
                 if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
-                    _inputWriter.Done();
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                        || !UpstreamIsNativeCommand)
+                    {
+                        _inputWriter.Done();
+                    }
 
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
@@ -1188,8 +1307,13 @@ namespace System.Management.Automation
                 if (!_runStandAlone)
                 {
                     // Stop input writer
-                    _inputWriter.Stop();
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                        || !UpstreamIsNativeCommand)
+                    {
+                        _inputWriter.Stop();
+                    }
 
+                    _stdOutByteTransfer?.Dispose();
                     KillProcess(_nativeProcess);
                 }
             }
@@ -1675,7 +1799,19 @@ namespace System.Management.Automation
         private bool _isXmlCliError;
         private readonly string _processFileName;
 
+        private readonly AsyncByteStreamTransfer _stdOutDrainer;
+
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
+            : this(process, queue, null, null, out _)
+        {
+        }
+
+        public ProcessOutputHandler(
+            Process process,
+            BlockingCollection<ProcessOutputObject> queue,
+            BytePipe stdOutDestination,
+            BytePipe stdOutSource,
+            out AsyncByteStreamTransfer stdOutDrainer)
         {
             Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
             _refCount = 0;
@@ -1695,14 +1831,6 @@ namespace System.Management.Automation
             }
 
             // once we have _refCount, we can start processing
-            if (process.StartInfo.RedirectStandardOutput)
-            {
-                _isFirstOutput = true;
-                _isXmlCliOutput = false;
-                process.OutputDataReceived += OutputHandler;
-                process.BeginOutputReadLine();
-            }
-
             if (process.StartInfo.RedirectStandardError)
             {
                 _isFirstError = true;
@@ -1710,6 +1838,26 @@ namespace System.Management.Automation
                 process.ErrorDataReceived += ErrorHandler;
                 process.BeginErrorReadLine();
             }
+
+            stdOutDrainer = null;
+
+            if (!process.StartInfo.RedirectStandardOutput)
+            {
+                return;
+            }
+
+            if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                || stdOutDestination is null)
+            {
+                _isFirstOutput = true;
+                _isXmlCliOutput = false;
+                process.OutputDataReceived += OutputHandler;
+                process.BeginOutputReadLine();
+                return;
+            }
+
+            stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(stdOutSource);
+            stdOutDrainer.BeginReadChunks();
         }
 
         private void decrementRefCount()
@@ -1948,14 +2096,30 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (_inputFormat == NativeCommandIOFormat.Text)
-            {
-                AddTextInput(input);
-            }
-            else // Xml
+            if (_inputFormat is not NativeCommandIOFormat.Text)
             {
                 AddXmlInput(input);
+                return;
             }
+
+            object baseObjInput = PSObject.Base(input);
+
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            {
+                if (baseObjInput is byte[] bytes)
+                {
+                    _streamWriter.BaseStream.Write(bytes, 0, bytes.Length);
+                    return;
+                }
+
+                if (baseObjInput is byte b)
+                {
+                    _streamWriter.BaseStream.WriteByte(b);
+                    return;
+                }
+            }
+
+            AddTextInput(input);
         }
 
         private void AddTextInput(object input)
