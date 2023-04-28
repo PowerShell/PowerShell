@@ -16,9 +16,8 @@ using Debug = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements get-random cmdlet.
+    /// This class implements Get-SecureRandom cmdlet.
     /// </summary>
-    /// <!-- author: LukaszA -->
     [Cmdlet(VerbsCommon.Get, "SecureRandom", DefaultParameterSetName = GetSecureRandomCommand.RandomNumberParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(int), typeof(long), typeof(double))]
@@ -379,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the BeginProcessing method for get-random command.
+        /// This method implements the BeginProcessing method for Get-SecureRandom command.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -485,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         // which proves that P_final(I) = K / N for all values of I.  QED.
 
         /// <summary>
-        /// This method implements the ProcessRecord method for get-random command.
+        /// This method implements the ProcessRecord method for Get-SecureRandom command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -529,7 +528,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for get-random command.
+        /// This method implements the EndProcessing method for Get-SecureRandom command.
         /// </summary>
         protected override void EndProcessing()
         {
