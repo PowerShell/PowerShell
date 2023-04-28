@@ -7253,8 +7253,16 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            currentType = new PSTypeName(memberAst.PropertyType.TypeName);
+                            if (memberAst.PropertyType.TypeName is ArrayTypeName arrayType)
+                            {
+                                currentType = new PSTypeName(arrayType.ElementType);
+                            }
+                            else
+                            {
+                                currentType = new PSTypeName(memberAst.PropertyType.TypeName);
+                            }
                         }
+
                         break;
                     }
                 }
@@ -7271,69 +7279,86 @@ namespace System.Management.Automation
             var nestedHashtableKeys = new List<string>();
 
             // This loop determines if it's a nested hashtable and what the outermost hashtable is used for (Dynamic keyword, command argument, etc.)
+            // Note this also considers hashtables with arrays of hashtables to be nested to support scenarios like this:
+            // class Level1
+            // {
+            //     [Level2[]] $Prop1
+            // }
+            // class Level2
+            // {
+            //     [string] $Prop2
+            // }
+            // [Level1] @{
+            //     Prop1 = @(
+            //         @{Prop2="Hello"}
+            //         @{Pro<Tab>}
+            //     )
+            // }
             while (parentAst is not null)
             {
-                if (parentAst is HashtableAst parentTable)
+                switch (parentAst)
                 {
-                    foreach (var pair in parentTable.KeyValuePairs)
-                    {
-                        if (pair.Item2 == previousAst)
+                    case HashtableAst parentTable:
+                        foreach (var pair in parentTable.KeyValuePairs)
                         {
-                            // Try to get the value of the hashtable key in the nested hashtable.
-                            // If we fail to get the value then return early because we can't generate any useful completions
-                            object value;
-                            if (SafeExprEvaluator.TrySafeEval(pair.Item1, completionContext.ExecutionContext, out value))
+                            if (pair.Item2 == previousAst)
                             {
-                                if (value is not string stringValue)
+                                // Try to get the value of the hashtable key in the nested hashtable.
+                                // If we fail to get the value then return early because we can't generate any useful completions
+                                if (SafeExprEvaluator.TrySafeEval(pair.Item1, completionContext.ExecutionContext, out object value))
+                                {
+                                    if (value is not string stringValue)
+                                    {
+                                        return null;
+                                    }
+
+                                    nestedHashtableKeys.Add(stringValue);
+                                    break;
+                                }
+                                else
                                 {
                                     return null;
                                 }
-
-                                nestedHashtableKeys.Add(stringValue);
-                                break;
-                            }
-                            else
-                            {
-                                return null;
                             }
                         }
-                    }
-                }
+                        break;
 
-                if (parentAst is DynamicKeywordStatementAst dynamicKeyword)
-                {
-                    return CompleteHashtableKeyForDynamicKeyword(completionContext, dynamicKeyword, hashtableAst);
-                }
+                    case DynamicKeywordStatementAst dynamicKeyword:
+                        return CompleteHashtableKeyForDynamicKeyword(completionContext, dynamicKeyword, hashtableAst);
 
-                if (parentAst is CommandParameterAst cmdParam && cmdParam.Parent is CommandAst)
-                {
-                    parameterName = cmdParam.ParameterName;
-                    parentAst = cmdParam.Parent;
-                    break;
-                }
+                    case CommandParameterAst cmdParam:
+                        parameterName = cmdParam.ParameterName;
+                        parentAst = cmdParam.Parent;
+                        goto ExitWhileLoop;
 
-                if (parentAst is AssignmentStatementAst assignment)
-                {
-                    if (assignment.Left is MemberExpressionAst or ConvertExpressionAst)
-                    {
-                        parentAst = assignment.Left;
-                    }
-                    break;
-                }
+                    case AssignmentStatementAst assignment:
+                        if (assignment.Left is MemberExpressionAst or ConvertExpressionAst)
+                        {
+                            parentAst = assignment.Left;
+                        }
+                        goto ExitWhileLoop;
 
-                if (parentAst is CommandAst or ConvertExpressionAst or UsingStatementAst)
-                {
-                    break;
+                    case CommandAst:
+                    case ConvertExpressionAst:
+                    case UsingStatementAst:
+                        goto ExitWhileLoop;
+
+                    case CommandExpressionAst:
+                    case PipelineAst:
+                    case StatementBlockAst:
+                    case ArrayExpressionAst:
+                    case ArrayLiteralAst:
+                        break;
+
+                    default:
+                        return null;
                 }
 
                 previousAst = parentAst;
                 parentAst = parentAst.Parent;
             }
 
-            if (parentAst is null)
-            {
-                return null;
-            }
+            ExitWhileLoop:
 
             bool hashtableIsNested = nestedHashtableKeys.Count > 0;
             int cursorOffset = completionContext.CursorPosition.Offset;
@@ -7497,7 +7522,9 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "Get-WinEvent":
-                                if (nestedHashtableKeys.Count == 1 && nestedHashtableKeys[0].Equals("SuppressHashFilter", StringComparison.OrdinalIgnoreCase))
+                                if (nestedHashtableKeys.Count == 1
+                                    && nestedHashtableKeys[0].Equals("SuppressHashFilter", StringComparison.OrdinalIgnoreCase)
+                                    && hashtableAst.Parent.Parent.Parent is HashtableAst)
                                 {
                                     return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
                                     "StartTime", "EndTime", "UserID", "Data");
@@ -7507,6 +7534,7 @@ namespace System.Management.Automation
                                     return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
                                     "StartTime", "EndTime", "UserID", "Data", "SuppressHashFilter");
                                 }
+
                                 return null;
                         }
                     }
