@@ -828,6 +828,9 @@ function Invoke-PRBackport {
     }
 }
 
+# Backport all approved backports
+# Usage:
+#      Invoke-PRBackportApproved -Version 7.2.12
 function Invoke-PRBackportApproved {
     param(
         [Parameter(Mandatory)]
