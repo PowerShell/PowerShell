@@ -4888,7 +4888,7 @@ namespace System.Management.Automation
                         ? varName
                         : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
 
-                    var completionText = (varName.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completionText = !tokenAtCursorUsedBraces && varName.IndexOfAny(s_charactersRequiringQuotes) == -1
                         ? prefix + varName
                         : prefix + "{" + varName + "}";
                     AddUniqueVariable(hashedResults, results, completionText, varName, toolTip);
@@ -4911,7 +4911,7 @@ namespace System.Management.Automation
                         var completionText = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
                             ? prefix + name
                             : prefix + "{" + name + "}";
-                        AddUniqueVariable(hashedResults, tempResults, prefix + name, key, key);
+                        AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
                     }
                 }
 
@@ -4961,7 +4961,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                            var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
                                                     ? prefix + provider + name
                                                     : prefix + "{" + provider + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -4992,7 +4992,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = (!tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completedName = !tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -5028,7 +5028,7 @@ namespace System.Management.Automation
                 {
                     if (wildcardPattern.IsMatch(scope))
                     {
-                        var completedName = (!tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = !tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1
                             ? prefix + scope
                             : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
