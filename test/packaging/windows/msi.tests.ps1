@@ -205,6 +205,9 @@ Describe -Name "Windows MSI" -Fixture {
             $regKeyPath | Should -Exist
             $productCode = Get-ItemPropertyValue -Path $regKeyPath -Name 'ProductCode'
             $productCode | Should -Not -BeNullOrEmpty
+            $productCodeGuid = [Guid]$productCode
+            $productCodeGuid | Should -BeOfType "Guid"
+            $productCodeGuid.Guid | Should -Not -Be $msiUpgradeCode
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
