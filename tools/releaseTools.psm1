@@ -759,6 +759,23 @@ function Invoke-PRBackport {
             throw "$ScriptBlock fail with $LASTEXITCODE"
         }
     }
+    function script:Test-ShouldContinue {
+        param (
+            $Message
+        )
+        $continue = $false
+        while(!$continue) {
+            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($input) {
+                'yes' {
+                    $continue= $true
+                }
+                'no' {
+                    throw "User abort"
+                }
+            }
+        }
+    }
     $ErrorActionPreference = 'stop'
 
     $pr = gh pr view $PrNumber --json 'mergeCommit,state,title' | ConvertFrom-Json
@@ -799,11 +816,36 @@ function Invoke-PRBackport {
         Invoke-NativeCommand { git switch upstream/$Target $switch $branchName }
     }
 
-    Invoke-NativeCommand { git cherry-pick $commitId }
+    try {
+        Invoke-NativeCommand { git cherry-pick $commitId }
+    }
+    catch {
+        Test-ShouldContinue -Message "Fix any conflicts with the cherry-pick."
+    }
 
     if ($PSCmdlet.ShouldProcess("Create the PR")) {
         gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber"
     }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport
+# Backport all approved backports
+# Usage:
+#      Invoke-PRBackportApproved -Version 7.2.12
+function Invoke-PRBackportApproved {
+    param(
+        [Parameter(Mandatory)]
+        [semver]
+        $Version
+    )
+
+    $tagVersion = "$($Version.Major).$($Version.Minor)"
+    $target = "release/$ReleaseTag"
+
+    Get-PRBackportReport -Version $tagVersion |
+        ForEach-Object {
+            $prNumber = $_.Number
+            Invoke-PRBackport -ErrorAction Stop -PrNumber $prNumber -Target $target
+        }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved
