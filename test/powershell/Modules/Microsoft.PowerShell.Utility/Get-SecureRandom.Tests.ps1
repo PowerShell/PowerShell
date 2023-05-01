@@ -178,6 +178,6 @@ Describe "Get-SecureRandom" -Tags "CI" {
     }
 
     It 'Should not have a -SetSeed parameter' {
-        (get-command -ParameterName SetSeed).Name | Should -Not -Contain 'Get-SecureRandom'
+        (Get-Command Get-SecureRandom).Parameters['SetSeed'] | Should -BeNullOrEmpty
     }
 }
