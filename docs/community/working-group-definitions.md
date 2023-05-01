@@ -117,7 +117,6 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 ### Members
 
 * @anmenaga
-* @jborean93
 * @PaulHigin
 * @TravisEz13
 
@@ -143,7 +142,8 @@ These modules include:
 
 ### Members
 
-* PowerShell Committee as interim members
+* JamesWTruher
+* SteveL-MSFT
 * @jdhitsolutions
 * @TobiasPSP
 * @doctordns
