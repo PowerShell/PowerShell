@@ -22,6 +22,7 @@ Today, DSC is integrated into the PowerShell language, and we need to manage it 
 * @anmenaga
 * @gaelcolas
 * @michaeltlombardi
+* @SteveL-MSFT
 
 ## Developer Experience
 
@@ -142,8 +143,8 @@ These modules include:
 
 ### Members
 
-* JamesWTruher
-* SteveL-MSFT
+* @JamesWTruher
+* @SteveL-MSFT
 * @jdhitsolutions
 * @TobiasPSP
 * @doctordns
