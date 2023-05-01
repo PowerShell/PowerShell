@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
                 // cache MyParameterSet enum instead of doing string comparison every time
                 if (_effectiveParameterSet == MyParameterSet.Unknown)
                 {
-                    if ((MyInvocation.ExpectingInput) && (Maximum == null) && (Minimum == null))
+                    if (MyInvocation.ExpectingInput && (Maximum == null) && (Minimum == null))
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (ParameterSetName.Equals(GetSecureRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
                     {
-                        if ((Maximum != null) && (Maximum.GetType().IsArray))
+                        if ((Maximum != null) && Maximum.GetType().IsArray)
                         {
                             InputObject = (object[])Maximum;
                             _effectiveParameterSet = MyParameterSet.RandomListItem;
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         private PolymorphicRandomNumberGenerator _generator;
 
         /// <summary>
-        /// Gets and sets generator associated with the current runspace.
+        /// Gets and sets generator associated with the current cmdlet and runspace.
         /// </summary>
         internal PolymorphicRandomNumberGenerator Generator
         {
@@ -195,13 +195,13 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters for RandomNumberParameterSet
 
         /// <summary>
-        /// Maximum number to generate.
+        /// Gets or sets the maximum number to generate.
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet, Position = 0)]
         public object Maximum { get; set; }
 
         /// <summary>
-        /// Minimum number to generate.
+        /// Gets or sets the minimum number to generate.
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet)]
         public object Minimum { get; set; }
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
         private int _numberOfProcessedListItems;
 
         /// <summary>
-        /// List from which random elements are chosen.
+        /// Gets or sets the list from which random elements are chosen.
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [Parameter(ParameterSetName = ShuffleParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
         public object[] InputObject { get; set; }
 
         /// <summary>
-        /// Number of items to output (number of list items or of numbers).
+        /// Gets or sets the number of items to output (number of list items or of numbers).
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet)]
         [Parameter(ParameterSetName = RandomListItemParameterSet)]
@@ -307,13 +307,12 @@ namespace Microsoft.PowerShell.Commands
             // Performance in the normal case is not impacted much.
             // In low-precision situations we should converge to a solution quickly
             // (diff gets smaller at a quick pace).
-
             if (double.IsInfinity(diff))
             {
                 do
                 {
                     double r = Generator.NextDouble();
-                    randomNumber = minValue + r * maxValue - r * minValue;
+                    randomNumber = minValue + (r * maxValue) - (r * minValue);
                 }
                 while (randomNumber >= maxValue);
             }
@@ -322,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     double r = Generator.NextDouble();
-                    randomNumber = minValue + r * diff;
+                    randomNumber = minValue + (r * diff);
                     diff *= r;
                 }
                 while (randomNumber >= maxValue);
@@ -334,9 +333,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get a random Int64 type number.
         /// </summary>
-        /// <param name="minValue"></param>
-        /// <param name="maxValue"></param>
-        /// <returns></returns>
+        /// <param name="minValue">Minimum value.</param>
+        /// <param name="maxValue">Maximum value.</param>
+        /// <returns>Rnadom long.</returns>
         private long GetRandomInt64(long minValue, long maxValue)
         {
             // Randomly generate eight bytes and convert the byte array to UInt64
@@ -362,8 +361,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 diffCopy >>= 1;
             }
+
             // Get the mask for the number of bits
-            ulong mask = (0xffffffffffffffff >> (64 - bitsToRepresentDiff));
+            ulong mask = 0xffffffffffffffff >> (64 - bitsToRepresentDiff);
             do
             {
                 // Randomly fill the buffer
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
                 randomUint64 &= mask;
             } while (uint64Diff <= randomUint64);
 
-            double randomNumber = minValue * 1.0 + randomUint64 * 1.0;
+            double randomNumber = (minValue * 1.0) + (randomUint64 * 1.0);
             return (long)randomNumber;
         }
 
@@ -576,8 +576,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Initializes a new instance using pseudorandom generator instead of the cryptographic one.
+        /// Initializes a new instance of the <see cref="PolymorphicRandomNumberGenerator"/> using pseudorandom generator instead of the cryptographic one.
         /// </summary>
+        /// <param name="seed">The seed value.</param>
         internal PolymorphicRandomNumberGenerator(int seed)
         {
             _cryptographicGenerator = null;
@@ -627,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns a random integer that is within a specified range.
         /// </summary>
         /// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
-        /// <returns></returns>
+        /// <returns>Next random integer.</returns>
         internal int Next(int maxValue)
         {
             if (maxValue < 0)
@@ -643,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="minValue">The inclusive lower bound of the random number returned.</param>
         /// <param name="maxValue">The exclusive upper bound of the random number returned. maxValue must be greater than or equal to minValue.</param>
-        /// <returns></returns>
+        /// <returns>Next random integer.</returns>
         public int Next(int minValue, int maxValue)
         {
             if (minValue > maxValue)
@@ -656,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
             long range = (long)maxValue - (long)minValue;
             if (range <= int.MaxValue)
             {
-                randomNumber = ((int)(NextDouble() * range) + minValue);
+                randomNumber = (int)(NextDouble() * range) + minValue;
             }
             else
             {
@@ -703,7 +704,7 @@ namespace Microsoft.PowerShell.Commands
         /// not need to be in the range of -Double.MaxValue .. Double.MaxValue,
         /// just 0.. (2 * Int32.MaxValue) - 1 .
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A random double.</returns>
         private double InternalSampleLargeRange()
         {
             double randomNumber;
@@ -711,7 +712,8 @@ namespace Microsoft.PowerShell.Commands
             do
             {
                 randomNumber = InternalSample();
-            } while (randomNumber == int.MaxValue);
+            }
+            while (randomNumber == int.MaxValue);
 
             randomNumber += int.MaxValue;
             return randomNumber;
