@@ -641,7 +641,7 @@ ConstructorTestClass(int i, bool b)
     }
 
     It 'Should not complete variables that appear after the cursor' {
-        $Script = '$TestVar1 = 1; $TestVar^ ; $TestVar2 = 2'
+        $TestString = '$TestVar1 = 1; $TestVar^ ; $TestVar2 = 2'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res | Should -HaveCount 1
@@ -649,14 +649,14 @@ ConstructorTestClass(int i, bool b)
     }
 
     It 'Should not complete pipeline variables outside the pipeline' {
-        $Script = 'Get-ChildItem -PipelineVariable TestVar1;$TestVar^'
+        $TestString = 'Get-ChildItem -PipelineVariable TestVar1;$TestVar^'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-        $res | Should -HaveCount 0
+        $res.CompletionMatches | Should -HaveCount 0
     }
 
     It 'Should complete pipeline variables inside the pipeline' {
-        $Script = 'Get-ChildItem -PipelineVariable TestVar1 | ForEach-Object -Process {$TestVar^}'
+        $TestString = 'Get-ChildItem -PipelineVariable TestVar1 | ForEach-Object -Process {$TestVar^}'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res | Should -HaveCount 1
