@@ -130,7 +130,7 @@
     <value>Can not open JSON schema file: {0}</value>
   </data>
   <data name="InvalidUriScheme" xml:space="preserve">
-    <value>URI scheme '{0}' is not supported.  Only HTTP(S) and local file system URIs are allowed.</value>
+    <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
   </data>
   <data name="InvalidJsonAgainstSchema" xml:space="preserve">
     <value>The JSON is not valid with the schema.</value>
