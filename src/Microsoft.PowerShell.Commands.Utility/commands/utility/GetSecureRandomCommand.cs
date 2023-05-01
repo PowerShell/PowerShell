@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Numerics;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 
@@ -51,12 +52,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
-                    else if (ParameterSetName == GetRandomCommand.RandomListItemParameterSet
-                        || ParameterSetName == GetRandomCommand.ShuffleParameterSet)
+                    else if (ParameterSetName == GetSecureRandomCommand.RandomListItemParameterSet
+                        || ParameterSetName == GetSecureRandomCommand.ShuffleParameterSet)
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
-                    else if (ParameterSetName.Equals(GetRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
+                    else if (ParameterSetName.Equals(GetSecureRandomCommand.RandomNumberParameterSet, StringComparison.OrdinalIgnoreCase))
                     {
                         if ((Maximum != null) && (Maximum.GetType().IsArray))
                         {
@@ -110,8 +111,8 @@ namespace Microsoft.PowerShell.Commands
 
         private static readonly ReaderWriterLockSlim s_runspaceGeneratorMapLock = new();
 
-        // 1-to-1 mapping of runspaces and random number generators
-        private static readonly Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new();
+        // 1-to-1 mapping of cmdlet + runspacesId and random number generators
+        private static readonly Dictionary<string, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new();
 
         private static void CurrentRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
         {
@@ -121,12 +122,12 @@ namespace Microsoft.PowerShell.Commands
                 case RunspaceState.Closed:
                     try
                     {
-                        GetRandomCommand.s_runspaceGeneratorMapLock.EnterWriteLock();
-                        GetRandomCommand.s_runspaceGeneratorMap.Remove(((Runspace)sender).InstanceId);
+                        GetSecureRandomCommand.s_runspaceGeneratorMapLock.EnterWriteLock();
+                        GetSecureRandomCommand.s_runspaceGeneratorMap.Remove(MethodBase.GetCurrentMethod().DeclaringType.Name + ((Runspace)sender).InstanceId.ToString());
                     }
                     finally
                     {
-                        GetRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
+                        GetSecureRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
                     }
 
                     break;
@@ -144,17 +145,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_generator == null)
                 {
-                    Guid runspaceId = Context.CurrentRunspace.InstanceId;
+                    string runspaceId = Context.CurrentRunspace.InstanceId.ToString();
 
                     bool needToInitialize = false;
                     try
                     {
-                        GetRandomCommand.s_runspaceGeneratorMapLock.EnterReadLock();
-                        needToInitialize = !GetRandomCommand.s_runspaceGeneratorMap.TryGetValue(runspaceId, out _generator);
+                        GetSecureRandomCommand.s_runspaceGeneratorMapLock.EnterReadLock();
+                        needToInitialize = !GetSecureRandomCommand.s_runspaceGeneratorMap.TryGetValue(this.GetType().Name + runspaceId, out _generator);
                     }
                     finally
                     {
-                        GetRandomCommand.s_runspaceGeneratorMapLock.ExitReadLock();
+                        GetSecureRandomCommand.s_runspaceGeneratorMapLock.ExitReadLock();
                     }
 
                     if (needToInitialize)
@@ -173,18 +174,18 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    GetRandomCommand.s_runspaceGeneratorMapLock.EnterWriteLock();
-                    if (!GetRandomCommand.s_runspaceGeneratorMap.ContainsKey(myRunspace.InstanceId))
+                    GetSecureRandomCommand.s_runspaceGeneratorMapLock.EnterWriteLock();
+                    if (!GetSecureRandomCommand.s_runspaceGeneratorMap.ContainsKey(this.GetType().Name + myRunspace.InstanceId.ToString()))
                     {
                         // make sure we won't leave the generator around after runspace exits
                         myRunspace.StateChanged += CurrentRunspace_StateChanged;
                     }
 
-                    GetRandomCommand.s_runspaceGeneratorMap[myRunspace.InstanceId] = _generator;
+                    GetSecureRandomCommand.s_runspaceGeneratorMap[this.GetType().Name + myRunspace.InstanceId.ToString()] = _generator;
                 }
                 finally
                 {
-                    GetRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
+                    GetSecureRandomCommand.s_runspaceGeneratorMapLock.ExitWriteLock();
                 }
             }
         }
@@ -574,6 +575,9 @@ namespace Microsoft.PowerShell.Commands
             _pseudoGenerator = null;
         }
 
+        /// <summary>
+        /// Initializes a new instance using pseudorandom generator instead of the cryptographic one.
+        /// </summary>
         internal PolymorphicRandomNumberGenerator(int seed)
         {
             _cryptographicGenerator = null;

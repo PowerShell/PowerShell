@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetSecureRandomCommand.RandomNumberParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097016", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(int), typeof(long), typeof(double))]
-    public class GetRandomCommand : GetSecureRandomCommand
+    public sealed class GetRandomCommand : GetSecureRandomCommand
     {
         /// <summary>
         /// Seed used to reinitialize random numbers generator.
