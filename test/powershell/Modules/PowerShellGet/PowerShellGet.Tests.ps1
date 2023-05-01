@@ -83,20 +83,16 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 function Initialize
 {
-    # Cleaned up commands whose output to console by deleting or piping to Out-Null
-    Import-Module PackageManagement
-    Get-PackageProvider -ListAvailable | Out-Null
-
-    $repo = Get-PSRepository -ErrorAction SilentlyContinue |
+    $repo = Get-PSResourceRepository -ErrorAction SilentlyContinue |
                 Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
     {
         $script:RepositoryName = $repo.Name
-        Set-PackageSource -Name $repo.Name -Trusted
+        Set-PSResourceRepository -Name $repo.Name -Trusted
     }
     else
     {
-        Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -InstallationPolicy Trusted
+        Register-PSResourceRepository -PSGallery -Trusted
     }
 }
 
@@ -104,7 +100,7 @@ function Initialize
 
 function Remove-InstalledModules
 {
-    Get-InstalledModule -Name $TestModule -AllVersions -ErrorAction SilentlyContinue | PowerShellGet\Uninstall-Module -Force
+    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | PowerShellGet\Uninstall-PSResource -Force
 }
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
@@ -121,14 +117,14 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 
     It "Should find a module correctly" {
-        $psgetModuleInfo = Find-Module -Name $TestModule -Repository $RepositoryName
+        $psgetModuleInfo = Find-PSResource -Name $TestModule -Repository $RepositoryName
         $psgetModuleInfo.Name | Should -Be $TestModule
         $psgetModuleInfo.Repository | Should -Be $RepositoryName
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
-        Install-Module -Name $TestModule -Repository $RepositoryName
-        $installedModuleInfo = Get-InstalledModule -Name $TestModule
+        Install-PSResource -Name $TestModule -Repository $RepositoryName
+        $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
 
         $installedModuleInfo | Should -Not -BeNullOrEmpty
         $installedModuleInfo.Name | Should -Be $TestModule
@@ -158,8 +154,8 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a module correctly to the required location with AllUsers scope" {
-        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers
-        $installedModuleInfo = Get-InstalledModule -Name $TestModule
+        Install-PSResource -Name $TestModule -Repository $RepositoryName -Scope AllUsers
+        $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
 
         $installedModuleInfo | Should -Not -BeNullOrEmpty
         $installedModuleInfo.Name | Should -Be $TestModule
@@ -177,7 +173,7 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
 function Remove-InstalledScripts
 {
-    Get-InstalledScript -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
+    Get-InstalledPSResource -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-PSResource -Force
 }
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {
@@ -194,14 +190,14 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 
     It "Should find a script correctly" {
-        $psgetScriptInfo = Find-Script -Name $TestScript -Repository $RepositoryName
+        $psgetScriptInfo = Find-PSResource -Name $TestScript -Repository $RepositoryName
         $psgetScriptInfo.Name | Should -Be $TestScript
         $psgetScriptInfo.Repository | Should -Be $RepositoryName
     }
 
     It "Should install a script correctly to the required location with default CurrentUser scope" {
-        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate
-        $installedScriptInfo = Get-InstalledScript -Name $TestScript
+        Install-PSResource -Name $TestScript -Repository $RepositoryName
+        $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
@@ -227,8 +223,8 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
-        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
-        $installedScriptInfo = Get-InstalledScript -Name $TestScript
+        Install-PSResource -Name $TestScript -Repository $RepositoryName -Scope AllUsers
+        $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
@@ -237,37 +233,5 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledScripts
-    }
-}
-
-Describe 'PowerShellGet Type tests' -tags @('CI') {
-    BeforeAll {
-        Import-Module PowerShellGet -Force
-    }
-
-    It 'Ensure PowerShellGet Types are available' {
-        $PowerShellGetNamespace = 'Microsoft.PowerShell.Commands.PowerShellGet'
-        $PowerShellGetTypeDetails = @{
-            InternalWebProxy = @('GetProxy', 'IsBypassed')
-        }
-
-        if((IsWindows)) {
-            $PowerShellGetTypeDetails['CERT_CHAIN_POLICY_PARA'] = @('cbSize','dwFlags','pvExtraPolicyPara')
-            $PowerShellGetTypeDetails['CERT_CHAIN_POLICY_STATUS'] = @('cbSize','dwError','lChainIndex','lElementIndex','pvExtraPolicyStatus')
-            $PowerShellGetTypeDetails['InternalSafeHandleZeroOrMinusOneIsInvalid'] = @('IsInvalid')
-            $PowerShellGetTypeDetails['InternalSafeX509ChainHandle'] = @('CertFreeCertificateChain','ReleaseHandle','InvalidHandle')
-            $PowerShellGetTypeDetails['Win32Helpers'] = @('CertVerifyCertificateChainPolicy', 'CertDuplicateCertificateChain', 'IsMicrosoftCertificate')
-        }
-
-        if('Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI' -as [Type]) {
-            $PowerShellGetTypeDetails['Telemetry'] = @('TraceMessageArtifactsNotFound', 'TraceMessageNonPSGalleryRegistration')
-        }
-
-        $PowerShellGetTypeDetails.GetEnumerator() | ForEach-Object {
-            $ClassName = $_.Name
-            $Type = "$PowerShellGetNamespace.$ClassName" -as [Type]
-            $Type | Select-Object -ExpandProperty Name | Should -Be $ClassName
-            $_.Value | ForEach-Object { $Type.DeclaredMembers.Name -contains $_ | Should -BeTrue }
-        }
     }
 }
