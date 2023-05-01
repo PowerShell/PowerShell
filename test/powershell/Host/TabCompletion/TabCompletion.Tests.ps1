@@ -640,6 +640,29 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CommandType'
     }
 
+    It 'Should not complete variables that appear after the cursor' {
+        $Script = '$TestVar1 = 1; $TestVar^ ; $TestVar2 = 2'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
+    }
+
+    It 'Should not complete pipeline variables outside the pipeline' {
+        $Script = 'Get-ChildItem -PipelineVariable TestVar1;$TestVar^'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res | Should -HaveCount 0
+    }
+
+    It 'Should complete pipeline variables inside the pipeline' {
+        $Script = 'Get-ChildItem -PipelineVariable TestVar1 | ForEach-Object -Process {$TestVar^}'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'

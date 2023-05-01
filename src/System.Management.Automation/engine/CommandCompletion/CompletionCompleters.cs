@@ -4861,7 +4861,13 @@ namespace System.Management.Automation
             if (lastAst is not null)
             {
                 Ast parent = lastAst.Parent;
-                var findVariablesVisitor = new FindVariablesVisitor { CompletionVariableAst = lastAst, StopSearchOffset = lastAst.Extent.StartOffset };
+                var findVariablesVisitor = new FindVariablesVisitor
+                {
+                    CompletionVariableAst = lastAst,
+                    StopSearchOffset =
+                    lastAst.Extent.StartOffset,
+                    Context = context.TypeInferenceContext
+                };
                 while (parent != null)
                 {
                     if (parent is IParameterMetadataProvider)
@@ -5075,6 +5081,12 @@ namespace System.Management.Automation
 
         };
 
+        private static readonly string[] s_pipelineVariableParameters = new string[]
+        {
+            "PipelineVariable",
+            "pv"
+        };
+
         private sealed class VariableInfo
         {
             internal Type LastDeclaredConstraint;
@@ -5088,6 +5100,7 @@ namespace System.Management.Automation
             internal readonly List<string> FoundVariables = new();
             internal readonly Dictionary<string, VariableInfo> VariableInfoTable = new(StringComparer.OrdinalIgnoreCase);
             internal int StopSearchOffset;
+            internal TypeInferenceContext Context;
 
             private static Type GetInferredVarTypeFromAst(Ast ast)
             {
@@ -5230,7 +5243,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                var bindResult = StaticParameterBinder.BindCommand(commandAst, resolve: false, s_outVarParameters);
+                var bindResult = StaticParameterBinder.BindCommand(commandAst, resolve: false);
                 if (bindResult is not null)
                 {
                     foreach (var parameterName in s_outVarParameters)
@@ -5241,6 +5254,25 @@ namespace System.Management.Automation
                             if (varName is not null)
                             {
                                 SaveVariableInfo(varName, typeof(ArrayList), isConstraint: false);
+                            }
+                        }
+                    }
+
+                    if (commandAst.Parent is PipelineAst pipeline && pipeline.Extent.EndOffset > CompletionVariableAst.Extent.StartOffset)
+                    {
+                        foreach (var parameterName in s_pipelineVariableParameters)
+                        {
+                            if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult outVarBind))
+                            {
+                                var varName = outVarBind.ConstantValue as string;
+                                if (varName is not null)
+                                {
+                                    var inferredTypes = AstTypeInference.InferTypeOf(commandAst, Context, TypeInferenceRuntimePermissions.AllowSafeEval);
+                                    Type varType = inferredTypes.Count == 0
+                                        ? null
+                                        : inferredTypes[0].Type;
+                                    SaveVariableInfo(varName, varType, isConstraint: false);
+                                }
                             }
                         }
                     }
