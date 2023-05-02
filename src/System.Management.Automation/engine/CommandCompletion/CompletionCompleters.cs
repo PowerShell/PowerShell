@@ -7407,7 +7407,7 @@ namespace System.Management.Automation
                 }
 
                 var result = new List<CompletionResult>();
-                foreach (var key in s_requiresModuleSpecKeys.Keys)
+                foreach (var key in s_requiresModuleSpecKeys)
                 {
                     if (excludedKeys.Contains(key)
                         || (wordToComplete is not null && !key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
@@ -7416,7 +7416,13 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
-                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, s_requiresModuleSpecKeys[key]));
+
+                    string toolTip = ResourceManagerCache.GetResourceString(
+                        typeof(CompletionCompleters).Assembly,
+                        "System.Management.Automation.resources.TabCompletionStrings",
+                        $"RequiresModuleSpec{key}Description");
+
+                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, toolTip));
                 }
 
                 return result;
