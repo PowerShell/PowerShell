@@ -362,6 +362,7 @@ Cannot be used with "Exact" and "Regex"</value>
     <value>[string[]]
 Allows the specified commands to be used inside the data section.
 Each command name should be separated by a comma and should not be quoted.</value>
+  </data>
   <data name="AssemblyKeywordDescription" xml:space="preserve">
     <value>Specifies the path to a .NET assembly to load.
 
