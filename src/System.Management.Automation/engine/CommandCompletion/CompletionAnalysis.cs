@@ -1122,17 +1122,12 @@ namespace System.Management.Automation
 
                 if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
-                    int previousTokenIndex = -1;
-                    for (int i = 0; i < _tokens.Length; i++)
-                    {
-                        if (_tokens[i].Extent.StartOffset == tokenAtCursor.Extent.StartOffset)
-                        {
-                            previousTokenIndex = i - 1;
-                            break;
-                        }
-                    }
+                    // Handles Type name completion when we don't have a TypeExpressionAst but know it's a type anyway
+                    // Like: [System.Linq.Enumerable]::Select[int, f<Tab>]()
+                    int previousTokenIndex = Array.IndexOf(_tokens, tokenAtCursor) - 1;
 
-                    if (previousTokenIndex >= 0 && _tokens[previousTokenIndex].Kind != TokenKind.Type)
+                    // Ensures we don't complete type names for type aliases, like: using type s<Tab>
+                    if (_tokens[previousTokenIndex].Kind != TokenKind.Type)
                     {
                         typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
                     }

@@ -6951,7 +6951,7 @@ namespace System.Management.Automation
             var completionTextSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var wordToComplete = context.WordToComplete;
             string usedNamespaceAlias = null;
-            var usingInfo = GetUsingAliasInfo(context);
+            UsingAliasInfo usingInfo = GetUsingAliasInfo(context);
 
             if (wordToComplete.Contains('.'))
             {
