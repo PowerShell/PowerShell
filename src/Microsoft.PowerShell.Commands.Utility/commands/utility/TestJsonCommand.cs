@@ -164,12 +164,10 @@ namespace Microsoft.PowerShell.Commands
                         result = validationResults.IsValid;
                         if (!result)
                         {
-                            Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
-
                             if (validationResults.Message != null)
                             {
+                                Exception exception = new(string.Format(TestJsonCmdletStrings.InvalidJsonAgainstSchemaDetailed, validationResults.Message, validationResults.InstanceLocation));
                                 ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
-                                errorRecord.ErrorDetails = new ErrorDetails(typeof(TestJsonCommand).Assembly, "TestJsonCmdletStrings", "InvalidJsonAgainstSchemaDetailed", validationResults.Message, validationResults.InstanceLocation);
                                 WriteError(errorRecord);
                             }
 
@@ -182,8 +180,8 @@ namespace Microsoft.PowerShell.Commands
                                         continue;
                                     }
 
+                                    Exception exception = new(string.Format(TestJsonCmdletStrings.InvalidJsonAgainstSchemaDetailed, nestedResult.Message, nestedResult.InstanceLocation));
                                     ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
-                                    errorRecord.ErrorDetails = new ErrorDetails(typeof(TestJsonCommand).Assembly, "TestJsonCmdletStrings", "InvalidJsonAgainstSchemaDetailed", nestedResult.Message, nestedResult.InstanceLocation);
                                     WriteError(errorRecord);
                                 }
                             }
