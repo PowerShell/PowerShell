@@ -3,11 +3,11 @@
 
 Describe "Test-Json" -Tags "CI" {
     BeforeAll {
-        $validSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid_schema_reference.json
-
-        $invalidSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_schema_reference.json
-
-        $missingSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
+        $assetsPath = Join-Path $PSScriptRoot -ChildPath assets
+        $validSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_reference.json
+        $invalidSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_schema_reference.json
+        $missingSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
+        $missingJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
 
         $validSchemaJson = @'
             {
