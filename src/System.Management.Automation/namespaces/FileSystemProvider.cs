@@ -2484,46 +2484,36 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        if (Force)
+                        // Junctions cannot have files
+                        if (!Force && DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
                         {
-                            try
-                            {
-                                pathDirInfo.Delete();
-                            }
-                            catch (Exception exception)
-                            {
-                                if ((exception is DirectoryNotFoundException) ||
-                                    (exception is UnauthorizedAccessException) ||
-                                    (exception is System.Security.SecurityException) ||
-                                    (exception is IOException))
-                                {
-                                    WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
-                                }
-                                else
-                                {
-                                    throw;
-                                }
-                            }
+                            string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
+                            WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
+                            return;
+                        }
 
-                            CreateDirectory(path, false);
-                            pathDirInfo = new DirectoryInfo(path);
-                        }
-                        else
+                        try
                         {
-                            // Junctions cannot have files
-                            if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
+                            pathDirInfo.Delete();
+                        }
+                        catch (Exception exception)
+                        {
+                            if ((exception is DirectoryNotFoundException) ||
+                                (exception is UnauthorizedAccessException) ||
+                                (exception is System.Security.SecurityException) ||
+                                (exception is IOException))
                             {
-                                string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
-                                WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
-                                return;
+                                WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
+                            }
+                            else
+                            {
+                                throw;
                             }
                         }
                     }
-                    else
-                    {
-                        CreateDirectory(path, false);
-                        pathDirInfo = new DirectoryInfo(path);
-                    }
+
+                    CreateDirectory(path, streamOutput: false);
+                    pathDirInfo = new DirectoryInfo(path);
 
                     try
                     {
