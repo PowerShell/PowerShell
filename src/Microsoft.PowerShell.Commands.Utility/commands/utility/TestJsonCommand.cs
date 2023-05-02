@@ -209,30 +209,31 @@ namespace Microsoft.PowerShell.Commands
         {
             bool result = true;
 
+            string jsonToParse = string.Empty;
+
+            if (Json != null)
+            {
+                jsonToParse = Json;
+            }
+            else if (Path != null)
+            {
+                string resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
+
+                if (!File.Exists(resolvedPath))
+                {
+                    ItemNotFoundException exception = new(
+                        Path,
+                        "PathNotFound",
+                        SessionStateStrings.PathNotFound);
+
+                    ThrowTerminatingError(exception.ErrorRecord);
+                }
+
+                jsonToParse = File.ReadAllText(resolvedPath);
+            }
+
             try
             {
-                string jsonToParse = string.Empty;
-
-                if (Json != null)
-                {
-                    jsonToParse = Json;
-                }
-                else if (Path != null)
-                {
-                    string resolvedPath = PathUtils.ResolveFilePath(Path, this, _isLiteralPath);
-
-                    if (!File.Exists(resolvedPath))
-                    {
-                        ItemNotFoundException exception = new(
-                            Path,
-                            "PathNotFound",
-                            SessionStateStrings.PathNotFound);
-
-                        ThrowTerminatingError(exception.ErrorRecord);
-                    }
-
-                    jsonToParse = File.ReadAllText(resolvedPath);
-                }
 
                 var parsedJson = JsonNode.Parse(jsonToParse);
 
