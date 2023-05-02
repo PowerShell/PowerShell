@@ -550,6 +550,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         $nonFile = Join-Path $TestPath "not-a-file"
         $fileContent = "some text"
         $realDir = Join-Path $TestPath "subdir"
+        $realDir2 = Join-Path $TestPath "second-subdir"
         $nonDir = Join-Path $TestPath "not-a-dir"
         $hardLinkToFile = Join-Path $TestPath "hard-to-file.txt"
         $symLinkToFile = Join-Path $TestPath "sym-link-to-file.txt"
@@ -560,6 +561,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
         New-Item -ItemType File -Path $realFile -Value $fileContent > $null
         New-Item -ItemType Directory -Path $realDir > $null
+        New-Item -ItemType Directory -Path $realDir2 > $null
     }
 
     Context "New-Item and hard/symbolic links" {
@@ -627,6 +629,17 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It 'New-Item will fail to forcibly create hardlink to itself' {
             $i = New-Item -ItemType File -Path "$TestDrive\file.txt" -Force -ErrorAction Ignore
             { New-Item -ItemType HardLink -Path $i -Target $i -Force -ErrorAction Stop } | Should -Throw -ErrorId "TargetIsSameAsLink,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
+
+        It "New-Item -Force can overwrite a junction" -Skip:(-Not $IsWindows){
+            $rd2 = Get-Item -Path $realDir2
+            New-Item -Name testfile.txt -ItemType file -Path $realDir
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
+            Test-Path $junctionToDir | Should -BeTrue
+            { New-Item -ItemType Junction -Path $junctionToDir -Value $realDir -ErrorAction Stop > $null } | Should -Throw -ErrorId "DirectoryNotEmpty,Microsoft.PowerShell.Commands.NewItemCommand"
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir2 -Force > $null
+            $Junction = Get-Item -Path $junctionToDir
+            $Junction.Target | Should -BeExactly $rd2.ToString()
         }
     }
 
