@@ -7384,7 +7384,7 @@ namespace System.Management.Automation
                 parentAst = parentAst.Parent;
             }
 
-            ExitWhileLoop:
+        ExitWhileLoop:
 
             bool hashtableIsNested = nestedHashtableKeys.Count > 0;
             int cursorOffset = completionContext.CursorPosition.Offset;
@@ -7502,44 +7502,47 @@ namespace System.Management.Automation
 
                     if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                     {
-                        switch (binding.CommandName)
+                        if (!hashtableIsNested)
                         {
-                            case "New-Object":
-                                var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
-                                var result = new List<CompletionResult>();
-                                CompleteMemberByInferredType(
-                                    completionContext.TypeInferenceContext, inferredType,
-                                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
-                                return result;
-                            case "Select-Object":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
-                            case "Sort-Object":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
-                            case "Group-Object":
-                            case "Compare-Object":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
-                            case "ConvertTo-Html":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Label", "Width", "Alignment");
-                            case "Format-Table":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
-                            case "Format-List":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
-                            case "Format-Wide":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString");
-                            case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
-                            case "Set-CimInstance":
-                            case "New-CimInstance":
-                                var results = new List<CompletionResult>();
-                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
-                                // this method adds a null CompletionResult to the list but we don't want that here.
-                                if (results.Count > 1)
-                                {
-                                    results.RemoveAt(results.Count - 1);
+                            switch (binding.CommandName)
+                            {
+                                case "New-Object":
+                                    var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                                    results = new List<CompletionResult>();
+                                    CompleteMemberByInferredType(
+                                        completionContext.TypeInferenceContext, inferredType,
+                                        results, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                                     return results;
-                                }
-
-                                return null;
+                                case "Select-Object":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
+                                case "Sort-Object":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
+                                case "Group-Object":
+                                case "Compare-Object":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
+                                case "ConvertTo-Html":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Label", "Width", "Alignment");
+                                case "Format-Table":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
+                                case "Format-List":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
+                                case "Format-Wide":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString");
+                                case "Format-Custom":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
+                                case "Set-CimInstance":
+                                case "New-CimInstance":
+                                    results = new List<CompletionResult>();
+                                    NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                    // this method adds a null CompletionResult to the list but we don't want that here.
+                                    if (results.Count > 1)
+                                    {
+                                        results.RemoveAt(results.Count - 1);
+                                        return results;
+                                    }
+                                    return null;
+                            }
+                            return null;
                         }
                     }
 
