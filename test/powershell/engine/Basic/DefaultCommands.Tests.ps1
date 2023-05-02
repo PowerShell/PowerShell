@@ -333,6 +333,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "Get-Random",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Runspace",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-RunspaceDebug",                "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Get-SecureRandom",                 "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Service",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-TimeZone",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-TraceSource",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
