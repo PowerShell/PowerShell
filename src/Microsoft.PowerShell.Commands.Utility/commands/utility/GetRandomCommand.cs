@@ -16,13 +16,13 @@ using Debug = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements get-random cmdlet.
+    /// This class implements `Get-Random` cmdlet.
     /// </summary>
     /// <!-- author: LukaszA -->
-    [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetSecureRandomCommand.RandomNumberParameterSet,
+    [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetRandomCommandBase.RandomNumberParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097016", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(int), typeof(long), typeof(double))]
-    public sealed class GetRandomCommand : GetSecureRandomCommand
+    public sealed class GetRandomCommand : GetRandomCommandBase
     {
         /// <summary>
         /// Seed used to reinitialize random numbers generator.
