@@ -272,6 +272,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The full text of the invocation statement, may span multiple lines.
+        /// </summary>
+        /// <value>Statement that was entered to invoke this command.</value>
+        public string Statement
+        {
+            get
+            {
+                return ScriptPosition.Text;
+            }
+        }
+
+        /// <summary>
         /// Formatted message indicating where the cmdlet appeared
         /// in the line.
         /// </summary>

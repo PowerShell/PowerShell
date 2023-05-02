@@ -79,8 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal static T GetFirst<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
-            if (string.IsNullOrEmpty(wmiClassName))
-                throw new ArgumentException("String argument may not be null or empty", nameof(wmiClassName));
+            ArgumentException.ThrowIfNullOrEmpty(wmiClassName);
 
             try
             {
@@ -132,9 +131,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
-            if (string.IsNullOrEmpty(wmiClassName))
-                throw new ArgumentException("String argument may not be null or empty", nameof(wmiClassName));
-
+            ArgumentException.ThrowIfNullOrEmpty(wmiClassName);
+            
             var rv = new List<T>();
 
             try

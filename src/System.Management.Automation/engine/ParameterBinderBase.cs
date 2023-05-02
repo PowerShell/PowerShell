@@ -770,7 +770,10 @@ namespace System.Management.Automation
 
             // Note - we explicitly don't pass the context here because we don't want
             // the overhead of the calls that check for stopping.
-            if (ParserOps.MoveNext(null, null, ienum)) { isEmpty = false; }
+            if (ParserOps.MoveNext(null, null, ienum))
+            {
+                isEmpty = false;
+            }
 
             // If the element of the collection is of value type, then no need to check for null
             // because a value-type value cannot be null.
@@ -1447,7 +1450,7 @@ namespace System.Management.Automation
         /// could not be created.
         /// </exception>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplyfing it")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplifying it")]
         private object EncodeCollection(
             CommandParameterInternal argument,
             string parameterName,

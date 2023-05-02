@@ -110,7 +110,7 @@ namespace System.Management.Automation.Security
         {
             SafeHandle fileHandle = fileStream.SafeFileHandle;
 
-            // First check latest WDAC APIs if available.  Also revert to legacy APIs if debug hook is in effect.
+            // First check latest WDAC APIs if available. Also revert to legacy APIs if debug hook is in effect.
             Exception errorException = null;
             if (s_wldpCanExecuteAvailable && !s_allowDebugOverridePolicy)
             {
@@ -357,23 +357,38 @@ namespace System.Management.Automation.Security
                                 IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
                                 IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
-                            catch (System.IO.IOException)
+                            catch (IO.IOException)
                             {
-                                if (iteration == 2) throw;
+                                if (iteration == 2)
+                                {
+                                    throw;
+                                }
+
                                 error = true;
                             }
-                            catch (System.UnauthorizedAccessException)
+                            catch (UnauthorizedAccessException)
                             {
-                                if (iteration == 2) throw;
+                                if (iteration == 2)
+                                {
+                                    throw;
+                                }
+
                                 error = true;
                             }
                             catch (System.Security.SecurityException)
                             {
-                                if (iteration == 2) throw;
+                                if (iteration == 2)
+                                {
+                                    throw;
+                                }
+
                                 error = true;
                             }
 
-                            if (!error) { break; }
+                            if (!error)
+                            {
+                                break;
+                            }
 
                             // Try again with the AppData\LocalLow\Temp path using known folder id:
                             // https://msdn.microsoft.com/library/dd378457.aspx

@@ -244,8 +244,8 @@ namespace System.Management.Automation.Tracing
         {
             if (provider.IsEnabled(PSLevel.Verbose, keyword))
             {
-                string payLoadData = BitConverter.ToString(fragmentData.blob, fragmentData.offset, fragmentData.length);
-                payLoadData = string.Format(CultureInfo.InvariantCulture, "0x{0}", payLoadData.Replace("-", string.Empty));
+                string payLoadData = Convert.ToHexString(fragmentData.blob, fragmentData.offset, fragmentData.length);
+                payLoadData = string.Create(CultureInfo.InvariantCulture, $"0x{payLoadData}");
 
                 provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword,
                                     objectId, fragmentId, isStartFragment, isEndFragment, fragmentLength,

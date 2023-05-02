@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -18,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -57,6 +59,8 @@ namespace Microsoft.PowerShell.Commands
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
         // copy script will accommodate the new value.
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
+
+        private const int COPY_FILE_ACTIVITY_ID = 0;
 
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
@@ -1957,7 +1961,7 @@ namespace Microsoft.PowerShell.Commands
         public static string LastWriteTimeString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? string.Format(CultureInfo.CurrentCulture, "{0,10:d} {0,8:t}", fileInfo.LastWriteTime)
+                ? string.Create(CultureInfo.CurrentCulture, $"{fileInfo.LastWriteTime,10:d} {fileInfo.LastWriteTime,8:t}")
                 : string.Empty;
         }
 
@@ -2481,40 +2485,35 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Junctions cannot have files
-                        if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
+                        if (!Force && DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
                             WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
                             return;
                         }
 
-                        if (Force)
+                        try
                         {
-                            try
+                            pathDirInfo.Delete();
+                        }
+                        catch (Exception exception)
+                        {
+                            if ((exception is DirectoryNotFoundException) ||
+                                (exception is UnauthorizedAccessException) ||
+                                (exception is System.Security.SecurityException) ||
+                                (exception is IOException))
                             {
-                                pathDirInfo.Delete();
+                                WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                             }
-                            catch (Exception exception)
+                            else
                             {
-                                if ((exception is DirectoryNotFoundException) ||
-                                    (exception is UnauthorizedAccessException) ||
-                                    (exception is System.Security.SecurityException) ||
-                                    (exception is IOException))
-                                {
-                                    WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
-                                }
-                                else
-                                {
-                                    throw;
-                                }
+                                throw;
                             }
                         }
                     }
-                    else
-                    {
-                        CreateDirectory(path, false);
-                        pathDirInfo = new DirectoryInfo(path);
-                    }
+
+                    CreateDirectory(path, streamOutput: false);
+                    pathDirInfo = new DirectoryInfo(path);
 
                     try
                     {
@@ -2881,7 +2880,10 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(fsinfo.FullName))
                             {
-                                if (!p.IsMatch(stream.Stream)) { continue; }
+                                if (!p.IsMatch(stream.Stream))
+                                {
+                                    continue;
+                                }
 
                                 foundStream = true;
 
@@ -3548,12 +3550,71 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else // Copy-Item local
                 {
+                    if (Context != null && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
+                    {
+                        {
+                            Task.Run(() =>
+                            {
+                                GetTotalFiles(path, recurse);
+                            });
+                            _copyStopwatch.Start();
+                        }
+                    }
+
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
+                    if (_totalFiles > 0)
+                    {
+                        _copyStopwatch.Stop();
+                        var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
+                        progress.RecordType = ProgressRecordType.Completed;
+                        WriteProgress(progress);
+                    }
                 }
             }
 
             _excludeMatcher.Clear();
             _excludeMatcher = null;
+        }
+
+        private void GetTotalFiles(string path, bool recurse)
+        {
+            bool isContainer = IsItemContainer(path);
+
+            try
+            {
+                if (isContainer)
+                {
+                    var enumOptions = new EnumerationOptions()
+                    {
+                        IgnoreInaccessible = true,
+                        AttributesToSkip = 0,
+                        RecurseSubdirectories = recurse
+                    };
+
+                    var directory = new DirectoryInfo(path);
+                    foreach (var file in directory.EnumerateFiles("*", enumOptions))
+                    {
+                        if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
+                        {
+                            _totalFiles++;
+                            _totalBytes += file.Length;
+                        }
+                    }
+                }
+                else
+                {
+                    var file = new FileInfo(path);
+                    if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
+                    {
+                        _totalFiles++;
+                        _totalBytes += file.Length;
+                    }
+                }
+            }
+            catch
+            {
+                // ignore exception
+            }
         }
 
         private void CopyItemFromRemoteSession(string path, string destinationPath, bool recurse, bool force, PSSession fromSession)
@@ -3864,6 +3925,22 @@ namespace Microsoft.PowerShell.Commands
 
                             FileInfo result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
+
+                            if (_totalFiles > 0)
+                            {
+                                _copiedFiles++;
+                                _copiedBytes += file.Length;
+                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
+                                var progress = new ProgressRecord(
+                                    COPY_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                );
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
+                                progress.PercentComplete = percentComplete;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                            }
                         }
                         else
                         {
@@ -4377,7 +4454,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionsPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyToRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -4385,7 +4465,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             const string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyToSessionHelper -ea SilentlyContinue -Force
@@ -4788,6 +4871,12 @@ namespace Microsoft.PowerShell.Commands
             return pathIsReservedDeviceName;
         }
 
+        private long _totalFiles;
+        private long _totalBytes;
+        private long _copiedFiles;
+        private long _copiedBytes;
+        private readonly Stopwatch _copyStopwatch = new Stopwatch();
+
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider members
@@ -5016,7 +5105,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                             // We don't use the Directory.EnumerateFiles() for Unix because the path
                             // may contain additional globbing patterns such as '[ab]'
-                            // which Directory.EnumerateFiles() processes, giving undesireable
+                            // which Directory.EnumerateFiles() processes, giving undesirable
                             // results in this context.
                             if (!File.Exists(result) && !Directory.Exists(result))
                             {
@@ -7875,15 +7964,9 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return false;
 #else
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
+            ArgumentException.ThrowIfNullOrEmpty(target);
 
-            if (string.IsNullOrEmpty(target))
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
             using (SafeHandle handle = WinOpenReparsePoint(path, FileAccess.Write))
             {
                 byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
@@ -8013,7 +8096,10 @@ namespace System.Management.Automation.Internal
 
                 // Directories don't normally have alternate streams, so this is not an exceptional state.
                 // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
-                if (error == NativeMethods.ERROR_HANDLE_EOF)
+                // If the file system (such as FAT32) does not support alternate streams, then 
+                // ERROR_INVALID_PARAMETER is returned by FindFirstStreamW. See documentation:
+                // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirststreamw
+                if (error == NativeMethods.ERROR_HANDLE_EOF || error == NativeMethods.ERROR_INVALID_PARAMETER)
                 {
                     return alternateStreams;
                 }
@@ -8050,7 +8136,9 @@ namespace System.Management.Automation.Internal
 
                 int lastError = Marshal.GetLastWin32Error();
                 if (lastError != NativeMethods.ERROR_HANDLE_EOF)
+                {
                     throw new Win32Exception(lastError);
+                }
             }
             finally { handle.Dispose(); }
 

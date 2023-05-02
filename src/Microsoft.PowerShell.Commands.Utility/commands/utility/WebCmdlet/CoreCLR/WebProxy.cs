@@ -1,14 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Net;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class WebProxy : IWebProxy
+    internal class WebProxy : IWebProxy, IEquatable<WebProxy>
     {
-        private ICredentials _credentials;
+        private ICredentials? _credentials;
         private readonly Uri _proxyAddress;
 
         internal WebProxy(Uri address)
@@ -18,7 +20,24 @@ namespace Microsoft.PowerShell.Commands
             _proxyAddress = address;
         }
 
-        public ICredentials Credentials
+        public override bool Equals(object? obj) => Equals(obj as WebProxy);
+
+        public override int GetHashCode() => HashCode.Combine(_proxyAddress, _credentials, BypassProxyOnLocal);
+
+        public bool Equals(WebProxy? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            // _proxyAddress cannot be null as it is set in the constructor            
+            return other._credentials == _credentials
+                && _proxyAddress.Equals(other._proxyAddress)
+                && BypassProxyOnLocal == other.BypassProxyOnLocal;
+        }
+
+        public ICredentials? Credentials
         {
             get => _credentials;
 
@@ -38,12 +57,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(destination);
 
-            if (destination.IsLoopback)
-            {
-                return destination;
-            }
-
-            return _proxyAddress;
+            return destination.IsLoopback ? destination : _proxyAddress;
         }
 
         public bool IsBypassed(Uri host) => host.IsLoopback;

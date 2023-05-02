@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 var halPath = CIMHelper.EscapePath(System.IO.Path.Combine(systemDirectory, "hal.dll"));
-                var query = string.Format("SELECT * FROM CIM_DataFile Where Name='{0}'", halPath);
+                var query = string.Create(CultureInfo.InvariantCulture, $"SELECT * FROM CIM_DataFile Where Name='{halPath}'");
                 var instance = session.QueryFirstInstance(query);
 
                 if (instance != null)
@@ -1190,7 +1190,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// A Nullable<typeparamref name="T"/> enum object. If the value
-        /// is convertable to a valid enum value, the returned object's
+        /// is convertible to a valid enum value, the returned object's
         /// value will contain the converted value, otherwise the returned
         /// object will be null.
         /// </returns>
@@ -3055,7 +3055,7 @@ namespace Microsoft.PowerShell.Commands
         public ulong? OsFreeSpaceInPagingFiles { get; internal set; }
 
         /// <summary>
-        /// Array of fiel paths to the operating system's paging files.
+        /// Array of file paths to the operating system's paging files.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] OsPagingFiles { get; internal set; }

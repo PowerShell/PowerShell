@@ -435,8 +435,8 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHeterogeneousArray =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), StaticFlags);
 
-        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), StaticFlags);
+        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogeneousArray =
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogeneousArray), StaticFlags);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), StaticFlags);
@@ -1149,7 +1149,7 @@ namespace System.Management.Automation.Language
 
         internal ParameterExpression NewTemp(Type type, string name)
         {
-            return Expression.Variable(type, string.Format(CultureInfo.InvariantCulture, "{0}{1}", name, _tempCounter++));
+            return Expression.Variable(type, string.Create(CultureInfo.InvariantCulture, $"{name}{_tempCounter++}"));
         }
 
         internal static Type GetTypeConstraintForMethodResolution(ExpressionAst expr)
@@ -3601,7 +3601,7 @@ namespace System.Management.Automation.Language
             var dispatchTargets = new List<LabelTarget>();
             var tryBodyExprs = new List<Expression>()
             {
-                null, // Add a slot for the inital switch/case that we'll come back to
+                null, // Add a slot for the initial switch/case that we'll come back to
             };
 
             // L0: dispatchIndex = 1; pipeline1

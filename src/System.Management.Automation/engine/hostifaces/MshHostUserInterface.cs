@@ -1294,7 +1294,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
@@ -1413,7 +1416,7 @@ namespace System.Management.Automation.Host
                 if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
+                        string.Create(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }

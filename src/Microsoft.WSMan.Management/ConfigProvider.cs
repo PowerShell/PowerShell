@@ -617,7 +617,10 @@ namespace Microsoft.WSMan.Management
                 SessionObjCache.TryGetValue(host, out sessionobj);
 
                 XmlDocument xmlResource = FindResourceValue(sessionobj, uri, null);
-                if (xmlResource == null) { return; }
+                if (xmlResource == null)
+                {
+                    return;
+                }
 
                 // if endswith '\', removes it.
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -3413,10 +3416,7 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private PSObject GetItemValue(string path)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(path);
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
 
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))

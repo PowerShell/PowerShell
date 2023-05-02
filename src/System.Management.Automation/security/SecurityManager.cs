@@ -160,7 +160,10 @@ namespace Microsoft.PowerShell
                     }
                     catch (System.ComponentModel.Win32Exception)
                     {
-                        if (saferAttempt > 4) { throw; }
+                        if (saferAttempt > 4)
+                        {
+                            throw;
+                        }
 
                         saferAttempt++;
                         System.Threading.Thread.Sleep(100);
@@ -180,7 +183,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            // WLDP and Applocker takes priority over powershell exeuction policy.
+            // WLDP and Applocker takes priority over powershell execution policy.
             // See if they want to bypass the authorization manager
             if (_executionPolicy == ExecutionPolicy.Bypass)
             {
@@ -443,7 +446,12 @@ namespace Microsoft.PowerShell
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
                 if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
-                    if (!IsUntrustedPublisher(signature, file)) return true;
+                {
+                    if (!IsUntrustedPublisher(signature, file))
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -534,22 +542,33 @@ namespace Microsoft.PowerShell
 
             // try harder to validate the signature by being explicit about encoding
             // and providing the script contents
-            string verificationContents = Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
-            signature = SignatureHelper.GetSignature(path, verificationContents);
+            byte[] bytesWithBom = GetContentBytesWithBom(script.OriginalEncoding, script.ScriptContents);
+            signature = SignatureHelper.GetSignature(path, bytesWithBom);
 
             // A last ditch effort -
             // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
             if (signature.Status != SignatureStatus.Valid
                 && script.OriginalEncoding != Encoding.Unicode)
             {
-                verificationContents = Encoding.Unicode.GetString(Encoding.Unicode.GetPreamble()) + script.ScriptContents;
-                Signature fallbackSignature = SignatureHelper.GetSignature(path, verificationContents);
+                bytesWithBom = GetContentBytesWithBom(Encoding.Unicode, script.ScriptContents);
+                Signature fallbackSignature = SignatureHelper.GetSignature(path, bytesWithBom);
 
                 if (fallbackSignature.Status == SignatureStatus.Valid)
                     signature = fallbackSignature;
             }
 
             return signature;
+        }
+
+        private static byte[] GetContentBytesWithBom(Encoding encoding, string scriptContent)
+        {
+            ReadOnlySpan<byte> bomBytes = encoding.Preamble;
+            byte[] contentBytes = encoding.GetBytes(scriptContent);
+            byte[] bytesWithBom = new byte[bomBytes.Length + contentBytes.Length];
+
+            bomBytes.CopyTo(bytesWithBom);
+            contentBytes.CopyTo(bytesWithBom, index: bomBytes.Length);
+            return bytesWithBom;
         }
 
         #endregion signing check
@@ -640,9 +659,16 @@ namespace Microsoft.PowerShell
                     else
                     {
                         bool etwEnabled = ParserEventSource.Log.IsEnabled();
-                        if (etwEnabled) ParserEventSource.Log.CheckSecurityStart(si.Path);
+                        if (etwEnabled)
+                        {
+                            ParserEventSource.Log.CheckSecurityStart(si.Path);
+                        }
+
                         allowRun = CheckPolicy(si, host, out reason);
-                        if (etwEnabled) ParserEventSource.Log.CheckSecurityStop(si.Path);
+                        if (etwEnabled)
+                        {
+                            ParserEventSource.Log.CheckSecurityStop(si.Path);
+                        }
                     }
 
                     break;
