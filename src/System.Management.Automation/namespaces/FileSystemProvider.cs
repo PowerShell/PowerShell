@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -18,6 +19,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -57,6 +59,8 @@ namespace Microsoft.PowerShell.Commands
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
         // copy script will accommodate the new value.
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
+
+        private const int COPY_FILE_ACTIVITY_ID = 0;
 
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
@@ -474,9 +478,9 @@ namespace Microsoft.PowerShell.Commands
             if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17134, 0))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
+                if (Interop.Windows.RtlQueryProcessPlaceholderCompatibilityMode() == Interop.Windows.PHCM_DISGUISE_PLACEHOLDER)
                 {
-                    NativeMethods.RtlSetProcessPlaceholderCompatibilityMode(NativeMethods.PHCM_EXPOSE_PLACEHOLDERS);
+                    Interop.Windows.RtlSetProcessPlaceholderCompatibilityMode(Interop.Windows.PHCM_EXPOSE_PLACEHOLDERS);
                 }
             }
 #endif
@@ -528,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // MapNetworkDrive facilitates to map the newly
                 // created PS Drive to a network share.
-                this.MapNetworkDrive(drive);
+                MapNetworkDrive(drive);
             }
 
             // The drive is valid if the item exists or the
@@ -587,35 +591,18 @@ namespace Microsoft.PowerShell.Commands
         /// MapNetworkDrive facilitates to map the newly created PS Drive to a network share.
         /// </summary>
         /// <param name="drive">The PSDrive info that would be used to create a new PS drive.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Can be static on Unix but not on Windows.")]
+
         private void MapNetworkDrive(PSDriveInfo drive)
         {
+#if UNIX
+            throw new PlatformNotSupportedException();
+#else
             // Porting note: mapped network drives are only supported on Windows
-            if (Platform.IsWindows)
-            {
-                WinMapNetworkDrive(drive);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-        }
-
-        private static bool _WNetApiAvailable = true;
-
-        private void WinMapNetworkDrive(PSDriveInfo drive)
-        {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
             {
-                const int CONNECT_UPDATE_PROFILE = 0x00000001;
-                const int CONNECT_NOPERSIST = 0x00000000;
-                const int RESOURCE_GLOBALNET = 0x00000002;
-                const int RESOURCETYPE_ANY = 0x00000000;
-                const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
-                const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
-                const int ERROR_NO_NETWORK = 1222;
-
                 // By default the connection is not persisted.
-                int CONNECT_TYPE = CONNECT_NOPERSIST;
+                int connectType = Interop.Windows.CONNECT_NOPERSIST;
 
                 string driveName = null;
                 byte[] passwd = null;
@@ -625,13 +612,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (IsSupportedDriveForPersistence(drive))
                     {
-                        CONNECT_TYPE = CONNECT_UPDATE_PROFILE;
+                        connectType = Interop.Windows.CONNECT_UPDATE_PROFILE;
                         driveName = drive.Name + ":";
                         drive.DisplayRoot = drive.Root;
                     }
                     else
                     {
-                        // error.
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.InvalidDriveName), "DriveNameNotSupportedForPersistence", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
@@ -647,37 +633,15 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    NetResource resource = new NetResource();
-                    resource.Comment = null;
-                    resource.DisplayType = RESOURCEDISPLAYTYPE_GENERIC;
-                    resource.LocalName = driveName;
-                    resource.Provider = null;
-                    resource.RemoteName = drive.Root;
-                    resource.Scope = RESOURCE_GLOBALNET;
-                    resource.Type = RESOURCETYPE_ANY;
-                    resource.Usage = RESOURCEUSAGE_CONNECTABLE;
+                    int errorCode = Interop.Windows.WNetAddConnection2(driveName, drive.Root, passwd, userName, connectType);
 
-                    int code = ERROR_NO_NETWORK;
-
-                    if (_WNetApiAvailable)
+                    if (errorCode != Interop.Windows.ERROR_SUCCESS)
                     {
-                        try
-                        {
-                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
-                        }
-                        catch (System.DllNotFoundException)
-                        {
-                            _WNetApiAvailable = false;
-                        }
-                    }
-
-                    if (code != 0)
-                    {
-                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                        ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(errorCode), "CouldNotMapNetworkDrive", ErrorCategory.InvalidOperation, drive);
                         ThrowTerminatingError(er);
                     }
 
-                    if (CONNECT_TYPE == CONNECT_UPDATE_PROFILE)
+                    if (connectType == Interop.Windows.CONNECT_UPDATE_PROFILE)
                     {
                         // Update the current PSDrive to be a persisted drive.
                         drive.IsNetworkDrive = true;
@@ -692,10 +656,11 @@ namespace Microsoft.PowerShell.Commands
                     // Clear the password in the memory.
                     if (passwd != null)
                     {
-                        Array.Clear(passwd, 0, passwd.Length - 1);
+                        Array.Clear(passwd);
                     }
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -725,23 +690,14 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return drive;
 #else
-            return WinRemoveDrive(drive);
-#endif
-        }
-
-        private PSDriveInfo WinRemoveDrive(PSDriveInfo drive)
-        {
             if (IsNetworkMappedDrive(drive))
             {
-                const int CONNECT_UPDATE_PROFILE = 0x00000001;
-                const int ERROR_NO_NETWORK = 1222;
-
-                int flags = 0;
+                int flags = Interop.Windows.CONNECT_NOPERSIST;
                 string driveName;
                 if (drive.IsNetworkDrive)
                 {
                     // Here we are removing only persisted network drives.
-                    flags = CONNECT_UPDATE_PROFILE;
+                    flags = Interop.Windows.CONNECT_UPDATE_PROFILE;
                     driveName = drive.Name + ":";
                 }
                 else
@@ -752,28 +708,17 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = ERROR_NO_NETWORK;
+                int errorCode = Interop.Windows.WNetCancelConnection2(driveName, flags, force: true);
 
-                if (_WNetApiAvailable)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
-                    try
-                    {
-                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
-                    }
-                    catch (System.DllNotFoundException)
-                    {
-                        _WNetApiAvailable = false;
-                    }
-                }
-
-                if (code != 0)
-                {
-                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(code), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
+                    ErrorRecord er = new ErrorRecord(new System.ComponentModel.Win32Exception(errorCode), "CouldRemoveNetworkDrive", ErrorCategory.InvalidOperation, drive);
                     ThrowTerminatingError(er);
                 }
             }
 
             return drive;
+#endif
         }
 
         /// <summary>
@@ -811,57 +756,19 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             return driveName;
 #else
-            return WinGetUNCForNetworkDrive(driveName);
-#endif
-        }
-
-        private static string WinGetUNCForNetworkDrive(string driveName)
-        {
-            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
-                int bufferSize = 300;
-#if DEBUG
-                // In Debug mode buffer size is initially set to 3 and if additional buffer is required, the
-                // required buffer size is allocated and the WNetGetConnection API is executed with the newly
-                // allocated buffer size.
-                bufferSize = 3;
-#endif
+                int errorCode = Interop.Windows.GetUNCForNetworkDrive(driveName[0], out uncPath);
 
-                StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                driveName += ':';
-
-                // Call the windows API
-                int errorCode = ERROR_NO_NETWORK;
-
-                try
-                {
-                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                }
-                catch (System.DllNotFoundException)
-                {
-                    return null;
-                }
-
-                // error code 234 is returned whenever the required buffer size is greater
-                // than the specified buffer size.
-                if (errorCode == 234)
-                {
-                    uncBuffer = new StringBuilder(bufferSize);
-                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                }
-
-                if (errorCode != 0)
+                if (errorCode != Interop.Windows.ERROR_SUCCESS)
                 {
                     throw new System.ComponentModel.Win32Exception(errorCode);
                 }
-
-                uncPath = uncBuffer.ToString();
             }
 
             return uncPath;
+#endif
         }
 
         /// <summary>
@@ -879,9 +786,9 @@ namespace Microsoft.PowerShell.Commands
         {
 #if UNIX
             throw new PlatformNotSupportedException();
+        }
 #else
             return WinGetSubstitutedPathForNetworkDosDevice(driveName);
-#endif
         }
 
         private static string WinGetSubstitutedPathForNetworkDosDevice(string driveName)
@@ -889,76 +796,12 @@ namespace Microsoft.PowerShell.Commands
             string associatedPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
-                int bufferSize = 300;
-                var pathInfo = new StringBuilder(bufferSize);
-                driveName += ':';
-
-                // Call the windows API
-                while (true)
-                {
-                    pathInfo.EnsureCapacity(bufferSize);
-                    int retValue = NativeMethods.QueryDosDevice(driveName, pathInfo, bufferSize);
-                    if (retValue > 0)
-                    {
-                        // If the drive letter is a substed path, the result will be in the format of
-                        //  - "\??\C:\RealPath" for local path
-                        //  - "\??\UNC\RealPath" for network path
-                        associatedPath = pathInfo.ToString();
-                        if (associatedPath.StartsWith("\\??\\", StringComparison.OrdinalIgnoreCase))
-                        {
-                            associatedPath = associatedPath.Remove(0, 4);
-                            if (associatedPath.StartsWith("UNC", StringComparison.OrdinalIgnoreCase))
-                            {
-                                associatedPath = associatedPath.Remove(0, 3);
-                                associatedPath = "\\" + associatedPath;
-                            }
-                            else if (associatedPath.EndsWith(':'))
-                            {
-                                // The substed path is the root path of a drive. For example: subst Y: C:\
-                                associatedPath += Path.DirectorySeparatorChar;
-                            }
-                        }
-                        else
-                        {
-                            // The drive name is not a substed path, then we return the root path of the drive
-                            associatedPath = driveName + "\\";
-                        }
-
-                        break;
-                    }
-
-                    // Windows API call failed
-                    int errorCode = Marshal.GetLastWin32Error();
-                    if (errorCode != 122)
-                    {
-                        // ERROR_INSUFFICIENT_BUFFER = 122
-                        // For an error other than "insufficient buffer", throw it
-                        throw new Win32Exception((int)errorCode);
-                    }
-
-                    // We got the "insufficient buffer" error. In this case we extend
-                    // the buffer size, unless it's unreasonably too large.
-                    if (bufferSize >= 32767)
-                    {
-                        // "The Windows API has many functions that also have Unicode versions to permit
-                        // an extended-length path for a maximum total path length of 32,767 characters"
-                        // See https://msdn.microsoft.com/library/aa365247.aspx#maxpath
-                        string errorMsg = StringUtil.Format(FileSystemProviderStrings.SubstitutePathTooLong, driveName);
-                        throw new InvalidOperationException(errorMsg);
-                    }
-
-                    // Extend the buffer size and try again.
-                    bufferSize *= 10;
-                    if (bufferSize > 32767)
-                    {
-                        bufferSize = 32767;
-                    }
-                }
+                associatedPath = Interop.Windows.GetDosDeviceForNetworkPath(driveName[0]);
             }
 
             return associatedPath;
         }
+#endif
 
         /// <summary>
         /// Get the root path for a network drive or MS-DOS device.
@@ -2118,7 +1961,7 @@ namespace Microsoft.PowerShell.Commands
         public static string LastWriteTimeString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? string.Format(CultureInfo.CurrentCulture, "{0,10:d} {0,8:t}", fileInfo.LastWriteTime)
+                ? string.Create(CultureInfo.CurrentCulture, $"{fileInfo.LastWriteTime,10:d} {fileInfo.LastWriteTime,8:t}")
                 : string.Empty;
         }
 
@@ -2263,7 +2106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the file or directory to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Specify "file" to create a file.
         /// Specify "directory" or "container" to create a directory.
         /// </param>
@@ -2412,6 +2255,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
+                            // for hardlinks we resolve the target to an absolute path
+                            if (!IsAbsolutePath(strTargetPath))
+                            {
+                                // there is already a check before here so that strTargetPath should only resolve to 1 path
+                                strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                            }
+
                             exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
                         }
                     }
@@ -2454,6 +2304,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (Force)
                     {
+                        if (itemType == ItemType.HardLink && string.Equals(path, strTargetPath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string message = StringUtil.Format(FileSystemProviderStrings.NewItemTargetIsSameAsLink, path);
+                            WriteError(new ErrorRecord(new InvalidOperationException(message), "TargetIsSameAsLink", ErrorCategory.InvalidOperation, path));
+                            return;
+                        }
+
                         try
                         {
                             if (!isSymLinkDirectory && symLinkExists)
@@ -2510,7 +2367,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                         success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
 #else
-                        success = WinCreateHardLink(path, strTargetPath);
+                        success = Interop.Windows.CreateHardLink(path, strTargetPath, IntPtr.Zero);
 #endif
                     }
 
@@ -2713,25 +2570,21 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+#if !UNIX
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
-            var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
+            var flags = isDirectory ? Interop.Windows.SymbolicLinkFlags.Directory : Interop.Windows.SymbolicLinkFlags.File;
 
             if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 14972, 0))
             {
-                flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
+                flags |= Interop.Windows.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
 
-            var created = NativeMethods.CreateSymbolicLink(path, strTargetPath, flags);
+            var created = Interop.Windows.CreateSymbolicLink(path, strTargetPath, flags);
             return created;
         }
-
-        private static bool WinCreateHardLink(string path, string strTargetPath)
-        {
-            bool success = NativeMethods.CreateHardLink(path, strTargetPath, IntPtr.Zero);
-            return success;
-        }
+#endif
 
         private static bool WinCreateJunction(string path, string strTargetPath)
         {
@@ -3032,7 +2885,10 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(fsinfo.FullName))
                             {
-                                if (!p.IsMatch(stream.Stream)) { continue; }
+                                if (!p.IsMatch(stream.Stream))
+                                {
+                                    continue;
+                                }
 
                                 foundStream = true;
 
@@ -3699,12 +3555,71 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else // Copy-Item local
                 {
+                    if (Context != null && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference && progressPreference == ActionPreference.Continue)
+                    {
+                        {
+                            Task.Run(() =>
+                            {
+                                GetTotalFiles(path, recurse);
+                            });
+                            _copyStopwatch.Start();
+                        }
+                    }
+
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
+                    if (_totalFiles > 0)
+                    {
+                        _copyStopwatch.Stop();
+                        var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
+                        progress.RecordType = ProgressRecordType.Completed;
+                        WriteProgress(progress);
+                    }
                 }
             }
 
             _excludeMatcher.Clear();
             _excludeMatcher = null;
+        }
+
+        private void GetTotalFiles(string path, bool recurse)
+        {
+            bool isContainer = IsItemContainer(path);
+
+            try
+            {
+                if (isContainer)
+                {
+                    var enumOptions = new EnumerationOptions()
+                    {
+                        IgnoreInaccessible = true,
+                        AttributesToSkip = 0,
+                        RecurseSubdirectories = recurse
+                    };
+
+                    var directory = new DirectoryInfo(path);
+                    foreach (var file in directory.EnumerateFiles("*", enumOptions))
+                    {
+                        if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
+                        {
+                            _totalFiles++;
+                            _totalBytes += file.Length;
+                        }
+                    }
+                }
+                else
+                {
+                    var file = new FileInfo(path);
+                    if (!SessionStateUtilities.MatchesAnyWildcardPattern(file.Name, _excludeMatcher, defaultValue: false))
+                    {
+                        _totalFiles++;
+                        _totalBytes += file.Length;
+                    }
+                }
+            }
+            catch
+            {
+                // ignore exception
+            }
         }
 
         private void CopyItemFromRemoteSession(string path, string destinationPath, bool recurse, bool force, PSSession fromSession)
@@ -4015,6 +3930,22 @@ namespace Microsoft.PowerShell.Commands
 
                             FileInfo result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
+
+                            if (_totalFiles > 0)
+                            {
+                                _copiedFiles++;
+                                _copiedBytes += file.Length;
+                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
+                                var progress = new ProgressRecord(
+                                    COPY_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                );
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
+                                progress.PercentComplete = percentComplete;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                            }
                         }
                         else
                         {
@@ -4528,7 +4459,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionsPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyToRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -4536,7 +4470,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             const string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyToSessionHelper -ea SilentlyContinue -Force
@@ -4939,6 +4876,12 @@ namespace Microsoft.PowerShell.Commands
             return pathIsReservedDeviceName;
         }
 
+        private long _totalFiles;
+        private long _totalBytes;
+        private long _copiedFiles;
+        private long _copiedBytes;
+        private readonly Stopwatch _copyStopwatch = new Stopwatch();
+
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider members
@@ -5167,7 +5110,7 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                             // We don't use the Directory.EnumerateFiles() for Unix because the path
                             // may contain additional globbing patterns such as '[ab]'
-                            // which Directory.EnumerateFiles() processes, giving undesireable
+                            // which Directory.EnumerateFiles() processes, giving undesirable
                             // results in this context.
                             if (!File.Exists(result) && !Directory.Exists(result))
                             {
@@ -6610,7 +6553,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Defaults for the file read operation
             string delimiter = "\n";
-            Encoding encoding = ClrFacade.GetDefaultEncoding();
+            Encoding encoding = Encoding.Default;
             bool waitForChanges = false;
 
             bool streamTypeSpecified = false;
@@ -6792,7 +6735,7 @@ namespace Microsoft.PowerShell.Commands
             // If this is true, then the content will be read as bytes
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
-            Encoding encoding = ClrFacade.GetDefaultEncoding();
+            Encoding encoding = Encoding.Default;
             const FileMode filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
@@ -7145,96 +7088,14 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
+#if !UNIX
+        /// <summary>
+        /// The API 'PathIsNetworkPath' is not available in CoreSystem.
+        /// This implementation is based on the 'PathIsNetworkPath' API.
+        /// </summary>
+        /// <param name="path">A file system path.</param>
+        /// <returns>True if the path is a network path.</returns>
         internal static bool WinPathIsNetworkPath(string path)
-        {
-            return NativeMethods.PathIsNetworkPath(path); // call the native method
-        }
-
-        private static class NativeMethods
-        {
-            /// <summary>
-            /// WNetAddConnection2 API makes a connection to a network resource
-            /// and can redirect a local device to the network resource.
-            /// This API simulates the "new Use" functionality used to connect to
-            /// network resource.
-            /// </summary>
-            /// <param name="netResource">
-            /// The netResource structure contains information
-            /// about a network resource.</param>
-            /// <param name="password">
-            /// The password used to get connected to network resource.
-            /// </param>
-            /// <param name="username">
-            /// The username used to get connected to network resource.
-            /// </param>
-            /// <param name="flags">
-            /// The flags parameter is used to indicate if the created network
-            /// resource has to be persisted or not.
-            /// </param>
-            /// <returns>If connection is established to the network resource
-            /// then success is returned or else the error code describing the
-            /// type of failure that occurred while establishing
-            /// the connection is returned.</returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
-
-            /// <summary>
-            /// WNetCancelConnection2 function cancels an existing network connection.
-            /// </summary>
-            /// <param name="driveName">
-            /// PSDrive Name.
-            /// </param>
-            /// <param name="flags">
-            /// Connection Type.
-            /// </param>
-            /// <param name="force">
-            /// Specifies whether the disconnection should occur if there are open files or jobs
-            /// on the connection. If this parameter is FALSE, the function fails
-            /// if there are open files or jobs.
-            /// </param>
-            /// <returns>If connection is removed then success is returned or
-            /// else the error code describing the type of failure that occurred while
-            /// trying to remove the connection is returned.
-            /// </returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetCancelConnection2(string driveName, int flags, bool force);
-
-            /// <summary>
-            /// WNetGetConnection function retrieves the name of the network resource associated with a local device.
-            /// </summary>
-            /// <param name="localName">
-            /// Local name of the PSDrive.
-            /// </param>
-            /// <param name="remoteName">
-            /// The remote name to which the PSDrive is getting mapped to.
-            /// </param>
-            /// <param name="remoteNameLength">
-            /// length of the remote name of the created PSDrive.
-            /// </param>
-            /// <returns></returns>
-            [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
-            internal static extern int WNetGetConnection(string localName, StringBuilder remoteName, ref int remoteNameLength);
-
-#if CORECLR // TODO:CORECLR Win32 function 'PathIsNetworkPath' is in an extension API set which is currently not on CSS.
-            /// <summary>
-            /// Searches a path for a drive letter within the range of 'A' to 'Z' and returns the corresponding drive number.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed
-            /// </param>
-            /// <returns>Returns 0 through 25 (corresponding to 'A' through 'Z') if the path has a drive letter, or -1 otherwise.</returns>
-            [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
-            internal static extern int PathGetDriveNumber(string path);
-
-            private static bool _WNetApiAvailable = true;
-
-            /// <summary>
-            /// The API 'PathIsNetworkPath' is not available in CoreSystem.
-            /// This implementation is based on the 'PathIsNetworkPath' API.
-            /// </summary>
-            /// <param name="path"></param>
-            /// <returns></returns>
-            internal static bool PathIsNetworkPath(string path)
             {
                 if (string.IsNullOrEmpty(path))
                 {
@@ -7246,33 +7107,16 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
-                if (!_WNetApiAvailable)
+                if (path.Length > 1 && path[1] == ':' && char.IsAsciiLetter(path[0]))
                 {
-                    return false;
-                }
-
-                // 0 - 25 corresponding to 'A' - 'Z'
-                int driveId = PathGetDriveNumber(path);
-                if (driveId >= 0 && driveId < 26)
-                {
-                    string driveName = (char)('A' + driveId) + ":";
-
-                    int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
-                    StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                    int errorCode = -1;
-                    try
-                    {
-                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
-                    }
-                    catch (System.DllNotFoundException)
-                    {
-                        _WNetApiAvailable = false;
-                        return false;
-                    }
+                    // path[0] is ASCII letter, e.g. is in 'A'-'Z' or 'a'-'z'.
+                    int errorCode = Interop.Windows.GetUNCForNetworkDrive(path[0], out string _);
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
-                    if (errorCode == 0 || errorCode == 1201 || errorCode == 31)
+                    if (errorCode == Interop.Windows.ERROR_SUCCESS ||
+                        errorCode == Interop.Windows.ERROR_CONNECTION_UNAVAIL ||
+                        errorCode == Interop.Windows.ERROR_GEN_FAILURE)
                     {
                         return true;
                     }
@@ -7280,132 +7124,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return false;
             }
-#else
-            /// <summary>
-            /// Facilitates to validate if the supplied path exists locally or on the network share.
-            /// </summary>
-            /// <param name="path">
-            /// Path of the file being executed.
-            /// </param>
-            /// <returns>True if the path is a network path or else returns false.</returns>
-            [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool PathIsNetworkPath(string path);
 #endif
-
-            /// <summary>
-            /// The function can obtain the current mapping for a particular MS-DOS device name.
-            ///
-            /// If lpDeviceName is non-NULL, the function retrieves information about the particular MS-DOS device specified by lpDeviceName.
-            /// The first null-terminated string stored into the buffer is the current mapping for the device.
-            /// The other null-terminated strings represent undeleted prior mappings for the device.
-            /// </summary>
-            /// <param name="lpDeviceName">
-            /// The particular MS-DOS device name.
-            /// </param>
-            /// <param name="lpTargetPath">
-            /// The buffer to receive the result of the query.
-            /// </param>
-            /// <param name="ucchMax">
-            /// The maximum number of characters that can be stored into the buffer
-            /// </param>
-            /// <returns></returns>
-            [DllImport(PinvokeDllNames.QueryDosDeviceDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int QueryDosDevice(string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
-
-            /// <summary>
-            /// Creates a symbolic link using the native API.
-            /// </summary>
-            /// <param name="name">Path of the symbolic link.</param>
-            /// <param name="destination">Path of the target of the symbolic link.</param>
-            /// <param name="symbolicLinkFlags">Flag values from SymbolicLinkFlags enum.</param>
-            /// <returns>1 on successful creation.</returns>
-            [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool CreateSymbolicLink(string name, string destination, SymbolicLinkFlags symbolicLinkFlags);
-
-            /// <summary>
-            /// Flags used when creating a symbolic link.
-            /// </summary>
-            [Flags]
-            internal enum SymbolicLinkFlags
-            {
-                /// <summary>
-                /// Symbolic link is a file.
-                /// </summary>
-                File = 0,
-
-                /// <summary>
-                /// Symbolic link is a directory.
-                /// </summary>
-                Directory = 1,
-
-                /// <summary>
-                /// Allow creation of symbolic link without elevation.  Requires Developer mode.
-                /// </summary>
-                AllowUnprivilegedCreate = 2,
-            }
-
-            /// <summary>
-            /// Creates a hard link using the native API.
-            /// </summary>
-            /// <param name="name">Name of the hard link.</param>
-            /// <param name="existingFileName">Path to the target of the hard link.</param>
-            /// <param name="SecurityAttributes"></param>
-            /// <returns></returns>
-            [DllImport(PinvokeDllNames.CreateHardLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool CreateHardLink(string name, string existingFileName, IntPtr SecurityAttributes);
-
-            // OneDrive placeholder support
-#if !UNIX
-            /// <summary>
-            /// Returns the placeholder compatibility mode for the current process.
-            /// </summary>
-            /// <returns>The process's placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [DllImport("ntdll.dll")]
-            internal static extern sbyte RtlQueryProcessPlaceholderCompatibilityMode();
-
-            /// <summary>
-            /// Sets the placeholder compatibility mode for the current process.
-            /// </summary>
-            /// <param name="pcm">The placeholder compatibility mode to set.</param>
-            /// <returns>The process's previous placeholder compatibily mode (PHCM_xxx), or a negative value on error (PCHM_ERROR_xxx).</returns>
-            [DllImport("ntdll.dll")]
-            internal static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
-
-            internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
-            internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
-            internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
-            internal const sbyte PHCM_MAX = 2;
-            internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
-            internal const sbyte PHCM_ERROR_NO_TEB = -2;
-#endif
-        }
-
-        /// <summary>
-        /// Managed equivalent of NETRESOURCE structure of WNet API.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        private struct NetResource
-        {
-            public int Scope;
-            public int Type;
-            public int DisplayType;
-            public int Usage;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string LocalName;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string RemoteName;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string Comment;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string Provider;
-        }
 
         #region InodeTracker
         /// <summary>
@@ -7668,7 +7387,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Return file contents as a byte stream or create file from a series of bytes.
@@ -7870,15 +7589,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class to find the symbolic link target.
     /// </summary>
-    public static class InternalSymbolicLinkLinkCodeMethods
+    public static partial class InternalSymbolicLinkLinkCodeMethods
     {
-        // This size comes from measuring the size of the header of REPARSE_GUID_DATA_BUFFER
-        private const int REPARSE_GUID_DATA_BUFFER_HEADER_SIZE = 24;
-
-        // Maximum reparse buffer info size. The max user defined reparse
-        // data is 16KB, plus there's a header.
-        private const int MAX_REPARSE_SIZE = (16 * 1024) + REPARSE_GUID_DATA_BUFFER_HEADER_SIZE;
-
         private const int FSCTL_GET_REPARSE_POINT = 0x000900A8;
 
         private const int FSCTL_SET_REPARSE_POINT = 0x000900A4;
@@ -7892,62 +7604,6 @@ namespace Microsoft.PowerShell.Commands
         private const uint IO_REPARSE_TAG_APPEXECLINK = 0x8000001B;
 
         private const string NonInterpretedPathPrefix = @"\??\";
-
-        private const int MAX_PATH = 260;
-
-        [Flags]
-        // dwDesiredAccess of CreateFile
-        internal enum FileDesiredAccess : uint
-        {
-            GenericZero = 0,
-            GenericRead = 0x80000000,
-            GenericWrite = 0x40000000,
-            GenericExecute = 0x20000000,
-            GenericAll = 0x10000000,
-        }
-
-        [Flags]
-        // dwShareMode of CreateFile
-        internal enum FileShareMode : uint
-        {
-            None = 0x00000000,
-            Read = 0x00000001,
-            Write = 0x00000002,
-            Delete = 0x00000004,
-        }
-
-        // dwCreationDisposition of CreateFile
-        internal enum FileCreationDisposition : uint
-        {
-            New = 1,
-            CreateAlways = 2,
-            OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5,
-        }
-
-        [Flags]
-        // dwFlagsAndAttributes
-        internal enum FileAttributes : uint
-        {
-            Readonly = 0x00000001,
-            Hidden = 0x00000002,
-            System = 0x00000004,
-            Archive = 0x00000020,
-            Encrypted = 0x00004000,
-            Write_Through = 0x80000000,
-            Overlapped = 0x40000000,
-            NoBuffering = 0x20000000,
-            RandomAccess = 0x10000000,
-            SequentialScan = 0x08000000,
-            DeleteOnClose = 0x04000000,
-            BackupSemantics = 0x02000000,
-            PosixSemantics = 0x01000000,
-            OpenReparsePoint = 0x00200000,
-            OpenNoRecall = 0x00100000,
-            SessionAware = 0x00800000,
-            Normal = 0x00000080
-        }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct REPARSE_DATA_BUFFER_SYMBOLICLINK
@@ -7984,9 +7640,9 @@ namespace Microsoft.PowerShell.Commands
         private struct BY_HANDLE_FILE_INFORMATION
         {
             public uint FileAttributes;
-            public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
-            public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+            public FILE_TIME CreationTime;
+            public FILE_TIME LastAccessTime;
+            public FILE_TIME LastWriteTime;
             public uint VolumeSerialNumber;
             public uint FileSizeHigh;
             public uint FileSizeLow;
@@ -7995,84 +7651,24 @@ namespace Microsoft.PowerShell.Commands
             public uint FileIndexLow;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct GUID
+        internal struct FILE_TIME
         {
-            public uint Data1;
-            public ushort Data2;
-            public ushort Data3;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public char[] Data4;
+            public uint dwLowDateTime;
+            public uint dwHighDateTime;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct REPARSE_GUID_DATA_BUFFER
-        {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public GUID ReparseGuid;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
-            public char[] DataBuffer;
-        }
-
-        [DllImport(PinvokeDllNames.DeviceIoControlDllName, CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
-        private static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
+        [LibraryImport(PinvokeDllNames.DeviceIoControlDllName, StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
             IntPtr InBuffer, int nInBufferSize,
             IntPtr OutBuffer, int nOutBufferSize,
             out int pBytesReturned, IntPtr lpOverlapped);
 
-        [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        [LibraryImport(PinvokeDllNames.GetFileInformationByHandleDllName)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetFileInformationByHandle(
+        private static partial bool GetFileInformationByHandle(
                 IntPtr hFile,
                 out BY_HANDLE_FILE_INFORMATION lpFileInformation);
-
-        [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern IntPtr CreateFile(
-            string lpFileName,
-            FileDesiredAccess dwDesiredAccess,
-            FileShareMode dwShareMode,
-            IntPtr lpSecurityAttributes,
-            FileCreationDisposition dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
-
-        internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
-        {
-            private SafeFindHandle() : base(true) { }
-
-            protected override bool ReleaseHandle()
-            {
-                return FindClose(this.handle);
-            }
-
-            [DllImport(PinvokeDllNames.FindCloseDllName)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool FindClose(IntPtr handle);
-        }
-
-        // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
-        // See https://github.com/PowerShell/PowerShell/issues/16804
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal unsafe struct WIN32_FIND_DATA
-        {
-            internal uint dwFileAttributes;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-            internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal uint dwReserved0;
-            internal uint dwReserved1;
-            internal fixed char cFileName[MAX_PATH];
-            internal fixed char cAlternateFileName[14];
-        }
 
         /// <summary>
         /// Gets the target of the specified reparse point.
@@ -8131,16 +7727,14 @@ namespace Microsoft.PowerShell.Commands
 
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows)
-            {
-                return WinInternalGetLinkType(fileInfo.FullName);
-            }
-            else
-            {
-                return Platform.NonWindowsInternalGetLinkType(fileInfo);
-            }
+#if UNIX
+            return Platform.NonWindowsInternalGetLinkType(fileInfo);
+#else
+            return WinInternalGetLinkType(fileInfo.FullName);
+#endif
         }
 
+#if !UNIX
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetLinkType(string filePath)
         {
@@ -8148,7 +7742,7 @@ namespace Microsoft.PowerShell.Commands
             // If this parameter is zero, the application can query certain metadata
             // such as file, directory, or device attributes without accessing
             // that file or device, even if GENERIC_READ access would have been denied.
-            using (SafeFileHandle handle = WinOpenReparsePoint(filePath, FileDesiredAccess.GenericZero))
+            using (SafeFileHandle handle = WinOpenReparsePoint(filePath, (FileAccess)0))
             {
                 int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
 
@@ -8180,7 +7774,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!result)
                     {
                         // It's not a reparse point or the file system doesn't support reparse points.
-                        return IsHardLink(ref dangerousHandle) ? "HardLink" : null;
+                        return WinIsHardLink(ref dangerousHandle) ? "HardLink" : null;
                     }
 
                     REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
@@ -8213,13 +7807,28 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+#endif
 
         internal static bool IsHardLink(FileSystemInfo fileInfo)
         {
 #if UNIX
             return Platform.NonWindowsIsHardLink(fileInfo);
 #else
-            return WinIsHardLink(fileInfo);
+            bool isHardLink = false;
+
+            // only check for hard link if the item is not directory
+            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
+            {
+                SafeFileHandle handle = Interop.Windows.CreateFileWithSafeFileHandle(fileInfo.FullName, FileAccess.Read, FileShare.Read, FileMode.Open, Interop.Windows.FileAttributes.Normal);
+
+                using (handle)
+                {
+                    var dangerousHandle = handle.DangerousGetHandle();
+                    isHardLink = InternalSymbolicLinkLinkCodeMethods.WinIsHardLink(ref dangerousHandle);
+                }
+            }
+
+            return isHardLink;
 #endif
         }
 
@@ -8239,14 +7848,8 @@ namespace Microsoft.PowerShell.Commands
                 return !InternalTestHooks.OneDriveTestRecurseOn;
             }
 
-            WIN32_FIND_DATA data = default;
-            string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
-            if (fullPath.Length >= MAX_PATH)
-            {
-                fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
-            }
-
-            using (SafeFindHandle handle = FindFirstFile(fullPath, ref data))
+            Interop.Windows.WIN32_FIND_DATA data = default;
+            using (Interop.Windows.SafeFindHandle handle = Interop.Windows.FindFirstFile(fileInfo.FullName, ref data))
             {
                 if (handle.IsInvalid)
                 {
@@ -8279,43 +7882,6 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
-        internal static bool WinIsHardLink(FileSystemInfo fileInfo)
-        {
-            bool isHardLink = false;
-
-            // only check for hard link if the item is not directory
-            if ((fileInfo.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
-            {
-                IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
-                    fileInfo.FullName,
-                    InternalSymbolicLinkLinkCodeMethods.FileDesiredAccess.GenericRead,
-                    InternalSymbolicLinkLinkCodeMethods.FileShareMode.Read,
-                    IntPtr.Zero,
-                    InternalSymbolicLinkLinkCodeMethods.FileCreationDisposition.OpenExisting,
-                    InternalSymbolicLinkLinkCodeMethods.FileAttributes.Normal,
-                    IntPtr.Zero);
-
-                using (SafeFileHandle handle = new SafeFileHandle(nativeHandle, true))
-                {
-                    bool success = false;
-
-                    try
-                    {
-                        handle.DangerousAddRef(ref success);
-                        IntPtr dangerousHandle = handle.DangerousGetHandle();
-                        isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(ref dangerousHandle);
-                    }
-                    finally
-                    {
-                        if (success)
-                            handle.DangerousRelease();
-                    }
-                }
-            }
-
-            return isHardLink;
-        }
-
         internal static bool IsSameFileSystemItem(string pathOne, string pathTwo)
         {
 #if UNIX
@@ -8328,13 +7894,10 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
         {
-            const FileAccess access = FileAccess.Read;
-            const FileShare share = FileShare.Read;
-            const FileMode creation = FileMode.Open;
-            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.PosixSemantics;
 
-            using (var sfOne = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathOne, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
-            using (var sfTwo = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathTwo, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (var sfOne = Interop.Windows.CreateFileWithSafeFileHandle(pathOne, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
+            using (var sfTwo = Interop.Windows.CreateFileWithSafeFileHandle(pathTwo, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
@@ -8367,12 +7930,9 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         private static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            const FileAccess access = FileAccess.Read;
-            const FileShare share = FileShare.Read;
-            const FileMode creation = FileMode.Open;
-            const FileAttributes attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+            const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.PosixSemantics;
 
-            using (var sf = AlternateDataStreamUtilities.NativeMethods.CreateFile(path, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (var sf = Interop.Windows.CreateFileWithSafeFileHandle(path, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
             {
                 if (!sf.IsInvalid)
                 {
@@ -8396,15 +7956,6 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-        internal static bool IsHardLink(ref IntPtr handle)
-        {
-#if UNIX
-            return Platform.NonWindowsIsHardLink(ref handle);
-#else
-            return WinIsHardLink(ref handle);
-#endif
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static bool WinIsHardLink(ref IntPtr handle)
         {
@@ -8415,29 +7966,13 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool CreateJunction(string path, string target)
         {
-            // this is a purely Windows specific feature, no feature flag used for that reason.
-            if (Platform.IsWindows)
-            {
-                return WinCreateJunction(path, target);
-            }
-
+#if UNIX
             return false;
-        }
+#else
+            ArgumentException.ThrowIfNullOrEmpty(path);
+            ArgumentException.ThrowIfNullOrEmpty(target);
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static bool WinCreateJunction(string path, string target)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
-
-            if (string.IsNullOrEmpty(target))
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
-
-            using (SafeHandle handle = WinOpenReparsePoint(path, FileDesiredAccess.GenericWrite))
+            using (SafeHandle handle = WinOpenReparsePoint(path, FileAccess.Write))
             {
                 byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
 
@@ -8484,25 +8019,27 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#endif
         }
 
-        private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
+#if !UNIX
+        private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileAccess accessMode)
         {
-            IntPtr nativeHandle = CreateFile(reparsePoint, accessMode,
-                FileShareMode.Read | FileShareMode.Write | FileShareMode.Delete,
-                IntPtr.Zero, FileCreationDisposition.OpenExisting,
-                FileAttributes.BackupSemantics | FileAttributes.OpenReparsePoint,
-                IntPtr.Zero);
+            const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.OpenReparsePoint;
 
-            int lastError = Marshal.GetLastWin32Error();
+            SafeFileHandle reparsePointHandle = Interop.Windows.CreateFileWithSafeFileHandle(reparsePoint, accessMode, FileShare.ReadWrite | FileShare.Delete, FileMode.Open, Attributes);
 
-            if (lastError != 0)
+            if (reparsePointHandle.IsInvalid)
+            {
+                // Save last error since Dispose() will do another pinvoke.
+                int lastError = Marshal.GetLastPInvokeError();
+                reparsePointHandle.Dispose();
                 throw new Win32Exception(lastError);
-
-            SafeFileHandle reparsePointHandle = new SafeFileHandle(nativeHandle, true);
+            }
 
             return reparsePointHandle;
         }
+#endif
     }
 
     #endregion
@@ -8539,7 +8076,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed by both the FileSystem provider and Unblock-File cmdlet.")]
-    public static class AlternateDataStreamUtilities
+    public static partial class AlternateDataStreamUtilities
     {
         /// <summary>
         /// List all of the streams on a file.
@@ -8548,7 +8085,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The list of streams (and their size) in the file.</returns>
         internal static List<AlternateStreamData> GetStreams(string path)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
 
@@ -8564,7 +8101,10 @@ namespace System.Management.Automation.Internal
 
                 // Directories don't normally have alternate streams, so this is not an exceptional state.
                 // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
-                if (error == NativeMethods.ERROR_HANDLE_EOF)
+                // If the file system (such as FAT32) does not support alternate streams, then 
+                // ERROR_INVALID_PARAMETER is returned by FindFirstStreamW. See documentation:
+                // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirststreamw
+                if (error == NativeMethods.ERROR_HANDLE_EOF || error == NativeMethods.ERROR_INVALID_PARAMETER)
                 {
                     return alternateStreams;
                 }
@@ -8592,7 +8132,7 @@ namespace System.Management.Automation.Internal
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
                     data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(Utils.Separators.Colon);
+                    data.FileName = data.FileName.Trim(':');
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();
@@ -8601,7 +8141,9 @@ namespace System.Management.Automation.Internal
 
                 int lastError = Marshal.GetLastWin32Error();
                 if (lastError != NativeMethods.ERROR_HANDLE_EOF)
+                {
                     throw new Win32Exception(lastError);
+                }
             }
             finally { handle.Dispose(); }
 
@@ -8641,15 +8183,9 @@ namespace System.Management.Automation.Internal
         /// <returns>True if the stream was successfully created, otherwise false.</returns>
         internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
         {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+            ArgumentNullException.ThrowIfNull(path);
 
-            if (streamName == null)
-            {
-                throw new ArgumentNullException(nameof(streamName));
-            }
+            ArgumentNullException.ThrowIfNull(streamName);
 
             if (mode == FileMode.Append)
             {
@@ -8676,8 +8212,9 @@ namespace System.Management.Automation.Internal
         /// <param name="streamName">The name of the alternate data stream to delete.</param>
         internal static void DeleteFileStream(string path, string streamName)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
-            if (streamName == null) throw new ArgumentNullException(nameof(streamName));
+            ArgumentNullException.ThrowIfNull(path);
+
+            ArgumentNullException.ThrowIfNull(streamName);
 
             string adjustedStreamName = streamName.Trim();
             if (adjustedStreamName.IndexOf(':') != 0)
@@ -8704,15 +8241,15 @@ namespace System.Management.Automation.Internal
             // the code above seems cleaner and more robust than the IAttachmentExecute approach
         }
 
-        internal static class NativeMethods
+        internal static partial class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
             internal const int ERROR_INVALID_PARAMETER = 87;
 
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 
-            [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern SafeFileHandle CreateFile(string lpFileName,
+            [LibraryImport(PinvokeDllNames.CreateFileDllName, EntryPoint = "CreateFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+            internal static partial SafeFileHandle CreateFile(string lpFileName,
                 FileAccess dwDesiredAccess, FileShare dwShareMode,
                 IntPtr lpSecurityAttributes, FileMode dwCreationDisposition,
                 int dwFlagsAndAttributes, IntPtr hTemplateFile);
@@ -8733,7 +8270,7 @@ namespace System.Management.Automation.Internal
                 AlternateStreamNativeData lpFindStreamData);
         }
 
-        internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
+        internal sealed partial class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
             private SafeFindHandle() : base(true) { }
 
@@ -8742,9 +8279,9 @@ namespace System.Management.Automation.Internal
                 return FindClose(this.handle);
             }
 
-            [DllImport(PinvokeDllNames.FindCloseDllName)]
+            [LibraryImport(PinvokeDllNames.FindCloseDllName)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool FindClose(IntPtr handle);
+            private static partial bool FindClose(IntPtr handle);
         }
 
         /// <summary>

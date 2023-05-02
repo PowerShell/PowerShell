@@ -44,12 +44,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleName">The module name.</param>
         public ModuleSpecification(string moduleName)
         {
-            if (string.IsNullOrEmpty(moduleName))
-            {
-                throw new ArgumentNullException(nameof(moduleName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(moduleName);
 
             this.Name = moduleName;
+
             // Alias name of miniumVersion
             this.Version = null;
             this.RequiredVersion = null;
@@ -67,10 +65,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecification">The module specification as a hashtable.</param>
         public ModuleSpecification(Hashtable moduleSpecification)
         {
-            if (moduleSpecification == null)
-            {
-                throw new ArgumentNullException(nameof(moduleSpecification));
-            }
+            ArgumentNullException.ThrowIfNull(moduleSpecification);
 
             var exception = ModuleSpecificationInitHelper(this, moduleSpecification);
             if (exception != null)
@@ -130,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             // catch all exceptions here, we are going to report them via return value.
-            // Example of catched exception: one of conversions to Version failed.
+            // Example of caught exception: one of conversions to Version failed.
             catch (Exception e)
             {
                 return e;
@@ -172,10 +167,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ModuleSpecification(PSModuleInfo moduleInfo)
         {
-            if (moduleInfo == null)
-            {
-                throw new ArgumentNullException(nameof(moduleInfo));
-            }
+            ArgumentNullException.ThrowIfNull(moduleInfo);
 
             this.Name = moduleInfo.Name;
             this.Version = moduleInfo.Version;

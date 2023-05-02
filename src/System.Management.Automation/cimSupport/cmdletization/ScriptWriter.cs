@@ -249,7 +249,7 @@ function __cmdletization_BindCommonParameters
                     ? ("'" + CodeGeneration.EscapeSingleQuotedStringContent(cmdletMetadata.Obsolete.Message) + "'")
                     : string.Empty;
                 string newline = (attributes.Length > 0) ? Environment.NewLine : string.Empty;
-                attributes.AppendFormat(CultureInfo.InvariantCulture, "{0}[Obsolete({1})]", newline, obsoleteMsg);
+                attributes.Append(CultureInfo.InvariantCulture, $"{newline}[Obsolete({obsoleteMsg})]");
             }
 
             return attributes.ToString();
@@ -517,13 +517,53 @@ function __cmdletization_BindCommonParameters
             Dbg.Assert(typeMetadata != null, "Caller should verify typeMetadata != null");
 
             string psTypeText;
-            List<EnumMetadataEnum> matchingEnums = (_cmdletizationMetadata.Enums ?? Enumerable.Empty<EnumMetadataEnum>())
-                .Where(e => Regex.IsMatch(
-                    typeMetadata.PSType,
-                    string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
-                    RegexOptions.CultureInvariant))
-                .ToList();
-            EnumMetadataEnum matchingEnum = matchingEnums.Count == 1 ? matchingEnums[0] : null;
+            EnumMetadataEnum matchingEnum = null;
+
+            if (_cmdletizationMetadata.Enums is not null)
+            {
+                string psType = typeMetadata.PSType;
+                foreach (EnumMetadataEnum e in _cmdletizationMetadata.Enums)
+                {
+                    int index = psType.IndexOf(e.EnumName, StringComparison.Ordinal);
+                    if (index == -1)
+                    {
+                        // Fast return if 'PSType' doesn't contain the enum name at all.
+                        continue;
+                    }
+
+                    bool matchFound = false;
+                    if (index == 0)
+                    {
+                        // Handle 2 common cases here (cover over 99% of how enum name is used in 'PSType'):
+                        //  - 'PSType' is exactly the enum name.
+                        //  - 'PSType' is the array format of the enum.
+                        ReadOnlySpan<char> remains = psType.AsSpan(e.EnumName.Length);
+                        matchFound = remains.Length is 0 || remains.Equals("[]", StringComparison.Ordinal);
+                    }
+
+                    if (!matchFound)
+                    {
+                        // Now we have to fall back to the expensive regular expression matching, because 'PSType'
+                        // could be a composite type like 'Nullable<enum_name>' or 'Dictionary<enum_name, object>',
+                        // but we don't want the case where the enum name is part of another type's name.
+                        matchFound = Regex.IsMatch(psType, $@"\b{Regex.Escape(e.EnumName)}\b");
+                    }
+
+                    if (matchFound)
+                    {
+                        if (matchingEnum is null)
+                        {
+                            matchingEnum = e;
+                            continue;
+                        }
+
+                        // If more than one matching enum names were found, we treat it as no match found.
+                        matchingEnum = null;
+                        break;
+                    }
+                }
+            }
+
             if (matchingEnum != null)
             {
                 psTypeText = typeMetadata.PSType.Replace(matchingEnum.EnumName, EnumWriter.GetEnumFullName(matchingEnum));
@@ -1162,7 +1202,11 @@ function __cmdletization_BindCommonParameters
                             MultiplyParameterSets(
                                 GetMethodParameterSet(method), StaticMethodParameterSetTemplate, commonParameterSets))
                     {
-                        if (!firstParameterSet) output.Write(", ");
+                        if (!firstParameterSet)
+                        {
+                            output.Write(", ");
+                        }
+
                         firstParameterSet = false;
                         output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                     }
@@ -1313,7 +1357,11 @@ function __cmdletization_BindCommonParameters
             bool firstParameterSet = true;
             foreach (string parameterSetName in MultiplyParameterSets(GetMethodParameterSet(method), InstanceMethodParameterSetTemplate, commonParameterSets, queryParameterSets))
             {
-                if (!firstParameterSet) output.Write(", ");
+                if (!firstParameterSet)
+                {
+                    output.Write(", ");
+                }
+
                 firstParameterSet = false;
                 output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
             }
@@ -1455,7 +1503,11 @@ function __cmdletization_BindCommonParameters
             foreach (string queryParameterSetName in cmdletParameterMetadata.ParameterSets.Keys)
                 foreach (string parameterSetName in MultiplyParameterSets(queryParameterSetName, InstanceQueryParameterSetTemplate, commonParameterSets, methodParameterSets))
                 {
-                    if (!firstParameterSet) output.Write(", ");
+                    if (!firstParameterSet)
+                    {
+                        output.Write(", ");
+                    }
+
                     firstParameterSet = false;
                     output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                 }

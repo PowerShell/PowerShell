@@ -1167,8 +1167,8 @@ namespace System.Management.Automation.Host
             // bytes of randomness (2^48 = 2.8e14) would take an attacker about 891 years to guess
             // a filename (assuming they knew the time the transcript was started).
             // (5 bytes = 3 years, 4 bytes = about a month)
-            byte[] randomBytes = new byte[6];
-            System.Security.Cryptography.RandomNumberGenerator.Create().GetBytes(randomBytes);
+            Span<byte> randomBytes = stackalloc byte[6];
+            System.Security.Cryptography.RandomNumberGenerator.Fill(randomBytes);
             string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         "PowerShell_transcript.{0}.{1}.{2:yyyyMMddHHmmss}.txt",
@@ -1294,7 +1294,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
@@ -1413,7 +1416,7 @@ namespace System.Management.Automation.Host
                 if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
+                        string.Create(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }
@@ -1430,7 +1433,7 @@ namespace System.Management.Automation.Host
         /// <param name="hotkeysAndPlainLabels"></param>
         /// <returns>
         /// Returns the index into the choices array matching the response string, or -1 if there is no match.
-        ///</returns>
+        /// </returns>
         internal static int DetermineChoicePicked(string response, Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
             Diagnostics.Assert(choices != null, "choices: expected a value");

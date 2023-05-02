@@ -1439,7 +1439,7 @@ namespace System.Management.Automation
 
                 // If the command contains any path separators, we can't
                 // do the path lookup
-                if (possiblePath.IndexOfAny(Utils.Separators.Directory) != -1)
+                if (possiblePath.AsSpan().IndexOfAny('\\', '/') != -1)
                 {
                     result = CanDoPathLookupResult.DirectorySeparator;
                     break;

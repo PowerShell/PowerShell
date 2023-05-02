@@ -168,10 +168,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 _culture = value;
             }
@@ -191,10 +188,7 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 _uiCulture = value;
             }
@@ -284,10 +278,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="options"></param>
         public virtual void SetSessionOptions(PSSessionOption options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             if (options.Culture != null)
             {
@@ -1029,10 +1020,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public override void SetSessionOptions(PSSessionOption options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             if ((options.ProxyAccessType == ProxyAccessType.None) && (options.ProxyCredential != null))
             {
@@ -1387,7 +1375,7 @@ namespace System.Management.Automation.Runspaces
         private string _appName = s_defaultAppName;
         private Uri _connectionUri = new Uri(LocalHostUriString);          // uri of this connection
         private PSCredential _credential;    // credentials to be used for this connection
-        private string _shellUri = DefaultShellUri;            // shell thats specified by the user
+        private string _shellUri = DefaultShellUri;            // shell that's specified by the user
         private string _thumbPrint;
         private AuthenticationMechanism _proxyAuthentication;
         private PSCredential _proxyCredential;
@@ -1944,7 +1932,7 @@ namespace System.Management.Automation.Runspaces
         /// Default value for subsystem.
         /// </summary>
         private const string DefaultSubsystem = "powershell";
-        
+
         /// <summary>
         /// Default value is infinite timeout.
         /// </summary>
@@ -2000,6 +1988,7 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
         /// The SSH options to pass to OpenSSH.
         /// Gets or sets the SSH options to pass to OpenSSH.
         /// </summary>
@@ -2030,7 +2019,10 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
+            if (computerName == null)
+            {
+                throw new PSArgumentNullException(nameof(computerName));
+            }
 
             UserName = userName;
             ComputerName = computerName;
@@ -2250,24 +2242,24 @@ namespace System.Management.Automation.Runspaces
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
                 }
 
-                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
+                startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-i ""{this.KeyFilePath}"""));
             }
 
             // pass "-l login_name" command line argument to ssh if UserName is set
             // if UserName is not set, then ssh will use User from ssh_config if defined else the environment user by default
             if (!string.IsNullOrEmpty(this.UserName))
             {
-                var parts = this.UserName.Split(Utils.Separators.Backslash);
+                var parts = this.UserName.Split('\\');
                 if (parts.Length == 2)
                 {
                     // convert DOMAIN\user to user@DOMAIN
                     var domainName = parts[0];
                     var userName = parts[1];
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1}", userName, domainName));
+                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-l {userName}@{domainName}"));
                 }
                 else
                 {
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}", this.UserName));
+                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-l {this.UserName}"));
                 }
             }
 
@@ -2275,21 +2267,21 @@ namespace System.Management.Automation.Runspaces
             // if Port is not set, then ssh will use Port from ssh_config if defined else 22 by default
             if (this.Port != 0)
             {
-                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+                startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-p {this.Port}"));
             }
 
             // pass "-o option=value" command line argument to ssh if options are provided
-            if (this.Options != null) 
+            if (this.Options != null)
             {
-                foreach (DictionaryEntry pair in this.Options) 
+                foreach (DictionaryEntry pair in this.Options)
                 {
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-o {0}={1}", pair.Key, pair.Value));
+                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-o {pair.Key}={pair.Value}"));
                 }
             }
 
             // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination
             // note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them if present
-            startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-s {0} {1}", this.ComputerName.TrimStart('[').TrimEnd(']'), this.Subsystem));
+            startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-s {this.ComputerName.TrimStart('[').TrimEnd(']')} {this.Subsystem}"));
 
             startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;
@@ -2470,7 +2462,7 @@ namespace System.Management.Automation.Runspaces
             var argvList = new List<string>();
             argvList.Add(psi.FileName);
 
-            var argsToParse = String.Join(" ", psi.ArgumentList).Trim();
+            var argsToParse = String.Join(' ', psi.ArgumentList).Trim();
             var argsLength = argsToParse.Length;
             for (int i = 0; i < argsLength; )
             {
@@ -2698,9 +2690,9 @@ namespace System.Management.Automation.Runspaces
             stdInPipeServer = null;
             stdOutPipeServer = null;
             stdErrPipeServer = null;
-            SafePipeHandle stdInPipeClient = null;
-            SafePipeHandle stdOutPipeClient = null;
-            SafePipeHandle stdErrPipeClient = null;
+            SafeFileHandle stdInPipeClient = null;
+            SafeFileHandle stdOutPipeClient = null;
+            SafeFileHandle stdErrPipeClient = null;
             string randomName = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetRandomFileName());
 
             try
@@ -2746,9 +2738,9 @@ namespace System.Management.Automation.Runspaces
                     startInfo.FileName,
                     string.Join(' ', startInfo.ArgumentList));
 
-                lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
-                lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
-                lpStartupInfo.hStdError = new SafeFileHandle(stdErrPipeClient.DangerousGetHandle(), false);
+                lpStartupInfo.hStdInput = stdInPipeClient;
+                lpStartupInfo.hStdOutput = stdOutPipeClient;
+                lpStartupInfo.hStdError = stdErrPipeClient;
                 lpStartupInfo.dwFlags = 0x100;
 
                 // No new window: Inherit the parent process's console window
@@ -2808,25 +2800,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static SafePipeHandle GetNamedPipeHandle(string pipeName)
+        private static SafeFileHandle GetNamedPipeHandle(string pipeName)
         {
-            // Get handle to pipe.
-            var fileHandle = PlatformInvokes.CreateFileW(
-                lpFileName: pipeName,
-                dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                dwShareMode: 0,
-                lpSecurityAttributes: new PlatformInvokes.SECURITY_ATTRIBUTES(), // Create an inheritable handle.
-                dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
-                dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED, // Open in asynchronous mode.
-                hTemplateFile: IntPtr.Zero);
-
-            int lastError = Marshal.GetLastWin32Error();
-            if (fileHandle == PlatformInvokes.INVALID_HANDLE_VALUE)
-            {
-                throw new System.ComponentModel.Win32Exception(lastError);
-            }
-
-            return new SafePipeHandle(fileHandle, true);
+            SafeFileHandle sf = File.OpenHandle(pipeName, FileMode.Open, FileAccess.ReadWrite, FileShare.Inheritable, FileOptions.Asynchronous);
+            return sf;
         }
 
         private static SafePipeHandle CreateNamedPipe(

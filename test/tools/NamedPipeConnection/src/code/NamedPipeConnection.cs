@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
     /// a client side named pipe object that can connect to a running PowerShell 
     /// process by its process Id.
     /// </summary>
-    internal sealed class NamedPipeClient
+    internal sealed class NamedPipeClient : IDisposable
     {
         #region Members
 
@@ -402,7 +402,10 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo == null) { throw new PSArgumentException("connectionInfo"); }
+            if (connectionInfo == null)
+            {
+                throw new PSArgumentException("connectionInfo");
+            }
 
             _connectionInfo = connectionInfo;
         }

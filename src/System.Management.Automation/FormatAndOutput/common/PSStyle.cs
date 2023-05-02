@@ -431,6 +431,42 @@ namespace System.Management.Automation
             }
 
             private string _debug = "\x1b[33;1m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback provider names.
+            /// </summary>
+            public string FeedbackName
+            {
+                get => _feedbackName;
+                set => _feedbackName = ValidateNoContent(value);
+            }
+
+            // Yellow by default.
+            private string _feedbackName = "\x1b[33m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback message.
+            /// </summary>
+            public string FeedbackText
+            {
+                get => _feedbackText;
+                set => _feedbackText = ValidateNoContent(value);
+            }
+
+            // BrightCyan by default.
+            private string _feedbackText = "\x1b[96m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback actions.
+            /// </summary>
+            public string FeedbackAction
+            {
+                get => _feedbackAction;
+                set => _feedbackAction = ValidateNoContent(value);
+            }
+
+            // BrightWhite by default.
+            private string _feedbackAction = "\x1b[97m";
         }
 
         /// <summary>
@@ -631,6 +667,16 @@ namespace System.Management.Automation
         public string Bold { get; } = "\x1b[1m";
 
         /// <summary>
+        /// Gets value to turn off dim.
+        /// </summary>
+        public string DimOff { get; } = "\x1b[22m";
+
+        /// <summary>
+        /// Gets value to turn on dim.
+        /// </summary>
+        public string Dim { get; } = "\x1b[2m";
+
+        /// <summary>
         /// Gets value to turn on hidden.
         /// </summary>
         public string Hidden { get; } = "\x1b[8m";
@@ -729,10 +775,7 @@ namespace System.Management.Automation
 
         private static string ValidateNoContent(string text)
         {
-            if (text is null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
+            ArgumentNullException.ThrowIfNull(text);
 
             var decorartedString = new ValueStringDecorated(text);
             if (decorartedString.ContentLength > 0)

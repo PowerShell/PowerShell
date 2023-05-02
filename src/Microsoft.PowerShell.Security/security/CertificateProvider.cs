@@ -926,7 +926,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the certificate store to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Ignored.
         /// Only support store.
         /// </param>
@@ -3547,7 +3547,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get a list of store names at the specified location.
         /// </summary>
-        [ArchitectureSensitive]
         internal static List<string> GetStoreNamesAtLocation(StoreLocation location)
         {
             SMASecurity.NativeMethods.CertStoreFlags locationFlag =

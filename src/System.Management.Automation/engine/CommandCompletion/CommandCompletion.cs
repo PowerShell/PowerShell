@@ -558,11 +558,11 @@ namespace System.Management.Automation
                 TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                     completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
-            return new CommandCompletion(
-                new Collection<CompletionResult>(completionResults),
-                -1,
-                replacementIndex,
-                replacementLength);
+                return new CommandCompletion(
+                    new Collection<CompletionResult>(completionResults),
+                    -1,
+                    replacementIndex,
+                    replacementLength);
             }
         }
 

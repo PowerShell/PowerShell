@@ -13,21 +13,45 @@ namespace System.Management.Automation.Internal
 {
     internal static class ModuleUtils
     {
+        // These are documented members FILE_ATTRIBUTE, they just have not yet been
+        // added to System.IO.FileAttributes yet.
+        private const int FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS = 0x400000;
+
+        private const int FILE_ATTRIBUTE_RECALL_ON_OPEN = 0x40000;
+
         // Default option for local file system enumeration:
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
         private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributesToSkip };
+
+        private static readonly FileAttributes FileAttributesToSkip;
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
         private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden, BufferSize = 16384 };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributesToSkip, BufferSize = 16384 };
 
         private static readonly string EnCulturePath = Path.DirectorySeparatorChar + "en";
         private static readonly string EnUsCulturePath = Path.DirectorySeparatorChar + "en-us";
+
+        static ModuleUtils()
+        {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSModuleAutoLoadSkipOfflineFilesFeatureName))
+            {
+                FileAttributesToSkip = FileAttributes.Hidden
+                    // Skip OneDrive files/directories that are not fully on disk.
+                    | FileAttributes.Offline
+                    | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
+                    | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
+
+                return;
+            }
+
+            FileAttributesToSkip = FileAttributes.Hidden;
+        }
 
         /// <summary>
         /// Check if a directory is likely a localized resources folder.
@@ -276,6 +300,11 @@ namespace System.Management.Automation.Internal
                     manifestPath += StringLiterals.PowerShellDataFileExtension;
                     if (File.Exists(manifestPath))
                     {
+                        if (HasSkippedFileAttribute(manifestPath))
+                        {
+                            continue;
+                        }
+
                         isModuleDirectory = true;
                         yield return manifestPath;
                     }
@@ -288,6 +317,11 @@ namespace System.Management.Automation.Internal
                         string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
                         if (File.Exists(moduleFile))
                         {
+                            if (HasSkippedFileAttribute(moduleFile))
+                            {
+                                continue;
+                            }
+
                             isModuleDirectory = true;
                             yield return moduleFile;
 
@@ -335,6 +369,25 @@ namespace System.Management.Automation.Internal
             }
 
             return versionFolders;
+        }
+
+        private static bool HasSkippedFileAttribute(string path)
+        {
+            try
+            {
+                FileAttributes attributes = File.GetAttributes(path);
+                if ((attributes & FileAttributesToSkip) is not 0)
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Ignore failures so that we keep the current behavior of failing
+                // later in the search.
+            }
+
+            return false;
         }
 
         private static void ProcessPossibleVersionSubdirectories(IEnumerable<string> subdirectories, List<Version> versionFolders)

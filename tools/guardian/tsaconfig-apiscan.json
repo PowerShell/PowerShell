@@ -1,0 +1,6 @@
+{
+  "codebaseName": "PowerShellCore_201906",
+  "tools": [
+      "APIScan"
+  ]
+}

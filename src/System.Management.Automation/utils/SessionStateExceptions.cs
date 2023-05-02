@@ -95,10 +95,7 @@ namespace System.Management.Automation
             : base(RuntimeException.RetrieveMessage(errorRecord),
                     RuntimeException.RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _message = base.Message;
             _providerInfo = provider;

@@ -278,7 +278,9 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _parameterNames = value ?? throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
+
+                _parameterNames = value;
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
@@ -303,10 +305,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
                 List<PSTypeName> filteredParameterTypes = new List<PSTypeName>(value.Length);
@@ -481,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
             if ((_names == null) || (_nameContainsWildcard))
             {
                 // Use the stable sorting to sort the result list
-                _accumulatedResults = _accumulatedResults.OrderBy(static a => a, new CommandInfoComparer()).ToList();
+                _accumulatedResults = _accumulatedResults.Order(new CommandInfoComparer()).ToList();
             }
 
             OutputResultsHelper(_accumulatedResults);
@@ -565,7 +564,7 @@ namespace Microsoft.PowerShell.Commands
 
             // No telemetry here - capturing the name of a command which we are not familiar with
             // may be confidential customer information
-            // We want telementry on commands people look for but don't exist - this should give us an idea
+            // We want telemetry on commands people look for but don't exist - this should give us an idea
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
             // current directory for scripts/exes in the current directory and '.' is not in the path.
@@ -1688,7 +1687,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return nouns.OrderBy(static noun => noun).Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns.Order().Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
         }
     }
 }

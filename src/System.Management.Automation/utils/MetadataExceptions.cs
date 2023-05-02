@@ -48,7 +48,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of MetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public MetadataException(string message, Exception innerException) : base(message, innerException)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ValidationMetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ValidationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
         internal ValidationMetadataException(
@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ArgumentTransformationMetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ArgumentTransformationMetadataException(string message, Exception innerException)
             : base(message, innerException) { }
 
@@ -246,7 +246,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ParsingMetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ParsingMetadataException(string message, Exception innerException)
             : base(message, innerException) { }
 

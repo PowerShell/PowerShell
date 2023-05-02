@@ -2,6 +2,15 @@
 # Licensed under the MIT License.
 
 Describe 'OutputRendering tests' -Tag 'CI' {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        # Console host does not support VT100 escape sequences on Windows 2012R2 or earlier
+
+        if (-not $host.ui.SupportsVirtualTerminal) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
     BeforeEach {
         if ($null -ne $PSStyle) {
             $oldOutputRendering = $PSStyle.OutputRendering
@@ -12,6 +21,10 @@ Describe 'OutputRendering tests' -Tag 'CI' {
         if ($null -ne $PSStyle) {
             $PSStyle.OutputRendering = $oldOutputRendering
         }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It 'OutputRendering works for "<outputRendering>" to the host' -TestCases @(
@@ -69,11 +82,11 @@ Describe 'OutputRendering tests' -Tag 'CI' {
     }
 
     It 'ToString(OutputRendering) works correctly' {
-        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + 'Hello')
+        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + "Hello`e[m.")
         $s.IsDecorated | Should -BeTrue
-        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
-        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
-        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello'
+        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello`e[m."
+        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello`e[m."
+        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello.'
         { $s.ToString([System.Management.Automation.OutputRendering]::Host) } | Should -Throw -ErrorId 'ArgumentException'
     }
 }

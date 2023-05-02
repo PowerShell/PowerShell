@@ -886,14 +886,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
         private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
         private static string ManifestComment(string insert, StreamWriter streamWriter)
@@ -963,7 +961,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Length))
             {
-                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(',', CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);
                 var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
                 ThrowTerminatingError(er);

@@ -105,7 +105,10 @@ namespace System.Management.Automation
                 for (int i = 0; i < typeattr.cFuncs; i++)
                 {
                     COM.FUNCDESC funcdesc = GetFuncDesc(_typeinfo, i);
-                    if (funcdesc.memid == DISPID_NEWENUM) { NewEnumInvokeKind = funcdesc.invkind; }
+                    if (funcdesc.memid == DISPID_NEWENUM)
+                    {
+                        NewEnumInvokeKind = funcdesc.invkind;
+                    }
 
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
@@ -203,7 +206,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
         {
             IntPtr pTypeAttr;
@@ -218,7 +220,6 @@ namespace System.Management.Automation
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
         {
             IntPtr pFuncDesc;

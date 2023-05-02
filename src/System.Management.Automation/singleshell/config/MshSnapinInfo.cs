@@ -69,7 +69,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains information about a mshsnapin.
+    /// Contains information about a PSSnapin.
     /// </summary>
     public class PSSnapInInfo
     {
@@ -189,22 +189,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Unique Name of the mshsnapin.
+        /// Unique Name of the PSSnapin.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Is this mshsnapin default mshsnapin.
+        /// Is this PSSnapin default PSSnapin.
         /// </summary>
         public bool IsDefault { get; }
 
         /// <summary>
-        /// Returns applicationbase for mshsnapin.
+        /// Returns applicationbase for PSSnapin.
         /// </summary>
         public string ApplicationBase { get; }
 
         /// <summary>
-        /// Strong name of mshSnapIn assembly.
+        /// Strong name of PSSnapin assembly.
         /// </summary>
         public string AssemblyName { get; }
 
@@ -231,12 +231,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Monad version used by mshsnapin.
+        /// PowerShell version used by PSSnapin.
         /// </summary>
         public Version PSVersion { get; }
 
         /// <summary>
-        /// Version of mshsnapin.
+        /// Version of PSSnapin.
         /// </summary>
         public Version Version { get; }
 
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         private readonly string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
-        /// Description of mshsnapin.
+        /// Description of PSSnapin.
         /// </summary>
         public string Description
         {
@@ -273,7 +273,7 @@ namespace System.Management.Automation
         private readonly string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
-        /// Vendor of mshsnapin.
+        /// Vendor of PSSnapin.
         /// </summary>
         public string Vendor
         {
@@ -870,13 +870,13 @@ namespace System.Management.Automation
             applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(
                 !string.IsNullOrEmpty(applicationBase),
-                string.Format(CultureInfo.CurrentCulture, "{0} is empty or null", RegistryStrings.MonadEngine_ApplicationBase));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_ApplicationBase} is empty or null"));
 
             // Get the PSVersion from Utils..this is hardcoded
             psVersion = PSVersionInfo.PSVersion;
             Dbg.Assert(
                 psVersion != null,
-                string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_MonadVersion} is null"));
 
             // Get version number in x.x.x.x format
             // This information is available from the executing assembly
@@ -939,8 +939,13 @@ namespace System.Management.Automation
                          "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
-            string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
-                s_coreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken);
+            string strongName = string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
+                s_coreSnapin.AssemblyName,
+                assemblyVersion,
+                culture,
+                publicKeyToken);
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 

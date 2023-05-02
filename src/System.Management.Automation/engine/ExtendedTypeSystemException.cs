@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ExtendedTypeSystemException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ExtendedTypeSystemException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public MethodException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodInvocationException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public MethodInvocationException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public GetValueException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -319,7 +319,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public PropertyNotFoundException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -388,7 +388,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueInvocationException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public GetValueInvocationException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public SetValueException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -522,7 +522,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueInvocationException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public SetValueInvocationException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of PSInvalidCastException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public PSInvalidCastException(string message, Exception innerException)
             : base(message, innerException)
         {

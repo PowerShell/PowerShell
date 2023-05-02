@@ -48,7 +48,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set the date.
         /// </summary>
-        [ArchitectureSensitive]
         protected override void ProcessRecord()
         {
             DateTime dateToUse;
