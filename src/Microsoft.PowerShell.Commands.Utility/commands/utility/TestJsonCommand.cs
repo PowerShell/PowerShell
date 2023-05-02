@@ -72,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
                 Path = value;
             }
         }
+
         /// <summary>
         /// Gets or sets schema to validate the JSON against.
         /// This is optional parameter.
