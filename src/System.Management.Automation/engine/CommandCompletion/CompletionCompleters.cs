@@ -6676,7 +6676,7 @@ namespace System.Management.Automation
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
-                return GetCompletionResult(keyMatched, prefix, suffix, null);
+                return GetCompletionResult(keyMatched, prefix, suffix, namespaceToRemove: null);
             }
         }
 

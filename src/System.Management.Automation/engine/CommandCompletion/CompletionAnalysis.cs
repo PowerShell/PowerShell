@@ -2065,6 +2065,7 @@ namespace System.Management.Automation
                                 {
                                     result = CompletionCompleters.CompleteNamespace(completionContext);
                                 }
+
                                 return result;
                             case UsingStatementKind.Type:
                                 break;
