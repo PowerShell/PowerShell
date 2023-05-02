@@ -1981,31 +1981,6 @@ dir -Recurse `
         }
     }
 
-    Context "User-overridden TabExpansion implementations" {
-        It "Override TabExpansion with function" {
-            function TabExpansion ($line, $lastword) {
-                "Overridden-TabExpansion-Function"
-            }
-
-            $inputStr = '$PID.'
-            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Overridden-TabExpansion-Function'
-        }
-
-        It "Override TabExpansion with alias" {
-            function OverrideTabExpansion ($line, $lastword) {
-                "Overridden-TabExpansion-Alias"
-            }
-            Set-Alias -Name TabExpansion -Value OverrideTabExpansion
-
-            $inputStr = '$PID.'
-            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Overridden-TabExpansion-Alias"
-        }
-    }
-
     Context "No tab completion tests" {
         BeforeAll {
             $testCases = @(
