@@ -636,8 +636,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -Name testfile.txt -ItemType file -Path $realDir
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
-            { New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null -ErrorAction Stop } | Should -Throw -ErrorId "DirectoryNotEmpty,Microsoft.PowerShell.Commands.NewItemCommand"
-            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir2 > $null -Force
+            { New-Item -ItemType Junction -Path $junctionToDir -Value $realDir -ErrorAction Stop > $null } | Should -Throw -ErrorId "DirectoryNotEmpty,Microsoft.PowerShell.Commands.NewItemCommand"
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir2 -Force > $null
             $Junction = Get-Item -Path $junctionToDir
             $Junction.Target | Should -BeExactly $rd2.ToString()
         }
