@@ -1117,7 +1117,10 @@ namespace Microsoft.PowerShell.Commands
                 string removeFileTarget = UpdateDataStrings.UpdateTarget;
 
                 Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
-                if (typeFileTotal.Count == 0) { return; }
+                if (typeFileTotal.Count == 0)
+                {
+                    return;
+                }
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
@@ -1129,7 +1132,10 @@ namespace Microsoft.PowerShell.Commands
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
                         string fileName = Context.InitialSessionState.Types[index].FileName;
-                        if (fileName == null) { continue; }
+                        if (fileName == null)
+                        {
+                            continue;
+                        }
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
@@ -1160,10 +1166,7 @@ namespace Microsoft.PowerShell.Commands
                     indicesToRemove.Sort();
                     for (int i = indicesToRemove.Count - 1; i >= 0; i--)
                     {
-                        if (Context.InitialSessionState != null)
-                        {
-                            Context.InitialSessionState.Types.RemoveItem(indicesToRemove[i]);
-                        }
+                        Context.InitialSessionState?.Types.RemoveItem(indicesToRemove[i]);
                     }
 
                     try

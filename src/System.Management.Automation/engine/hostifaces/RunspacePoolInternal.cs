@@ -231,10 +231,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 lock (this.syncObject)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 

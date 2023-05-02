@@ -201,7 +201,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The location can be either a fully qualified provider path
-        /// or an Msh path. This is the location that is substituted for the ~.
+        /// or a PowerShell path. This is the location that is substituted for the ~.
         /// </remarks>
         public string Home { get; set; }
 
@@ -368,7 +368,7 @@ namespace System.Management.Automation
         /// The description of the provider.
         /// </param>
         /// <param name="home">
-        /// The home path for the provider. This must be an MSH path.
+        /// The home path for the provider. This must be a PowerShell path.
         /// </param>
         /// <param name="helpFile">
         /// The help file for the provider.

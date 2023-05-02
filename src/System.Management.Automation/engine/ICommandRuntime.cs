@@ -15,8 +15,8 @@ namespace System.Management.Automation
     /// When a cmdlet is instantiated and run directly, all calls to the stream APIs will be proxied
     /// through to an instance of this class. For example, when a cmdlet calls WriteObject, the
     /// WriteObject implementation on the instance of the class implementing this interface will be
-    /// called. The Monad implementation provides a default implementation of this class for use with
-    /// standalone cmdlets as well as the implementation provided for running in the monad engine itself.
+    /// called. PowerShell implementation provides a default implementation of this class for use with
+    /// standalone cmdlets as well as the implementation provided for running in the engine itself.
     ///
     /// If you do want to run Cmdlet instances standalone and capture their output with more
     /// fidelity than is provided for with the default implementation, then you should create your own
@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to PowerShell log under log category "Pipeline execution detail"
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>

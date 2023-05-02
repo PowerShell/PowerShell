@@ -188,10 +188,7 @@ namespace System.Management.Automation.Remoting
             }
             finally
             {
-                if (remoteRunspaceToClose != null)
-                {
-                    remoteRunspaceToClose.Close();
-                }
+                remoteRunspaceToClose?.Close();
             }
         }
 

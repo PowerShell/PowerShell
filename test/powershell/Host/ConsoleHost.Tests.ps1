@@ -24,6 +24,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
         }
 
         It 'gets the error stream from minishell' {
+            $PSNativeCommandUseErrorActionPreference = $false
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
             ($output | Measure-Object).Count | Should -Be 1
             $output | Should -BeOfType System.Management.Automation.ErrorRecord
@@ -92,6 +93,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
     }
 
     It "Clear-Host does not injects data into PowerShell output stream" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+        }
+
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
     }
 
@@ -420,14 +425,15 @@ export $envVarName='$guid'
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
             $p = [Diagnostics.Process]::new()
             $p.StartInfo.FileName = "pwsh"
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('$ErrorView="NormalView";throw "boom"'))
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('throw "boom"'))
             $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
             $p.StartInfo.UseShellExecute = $false
             $p.StartInfo.RedirectStandardError = $true
             $p.Start() | Out-Null
             $out = $p.StandardError.ReadToEnd()
             $out | Should -Not -BeNullOrEmpty
-            $out.Split([Environment]::NewLine)[0] | Should -BeExactly "boom"
+            $out = $out.Split([Environment]::NewLine)[0]
+            [System.Management.Automation.Internal.StringDecorated]::new($out).ToString("PlainText") | Should -BeExactly "Exception: boom"
         }
     }
 
@@ -915,6 +921,28 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out[0] | Should -MatchExactly $expectedPromptPattern
         }
     }
+
+    Context 'CommandWithArgs tests' {
+        It 'Should be able to run a pipeline with arguments using <param>' -TestCases @(
+            @{ param = '-commandwithargs' }
+            @{ param = '-cwa' }
+        ){
+            param($param)
+            $out = pwsh -nologo -noprofile $param '$args | % { "[$_]" }'  '$fun' '@times'
+            $out.Count | Should -Be 2 -Because ($out | Out-String)
+            $out[0] | Should -BeExactly '[$fun]'
+            $out[1] | Should -BeExactly '[@times]'
+        }
+
+        It 'Should be able to handle boolean switch: <param>' -TestCases @(
+            @{ param = '-switch:$true'; expected = 'True'}
+            @{ param = '-switch:$false'; expected = 'False'}
+        ){
+            param($param, $expected)
+            $out = pwsh -nologo -noprofile -cwa 'param([switch]$switch) $switch.IsPresent' $param
+            $out | Should -Be $expected
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {
@@ -972,6 +1000,10 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
+
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+        }
 
         try {
             $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
@@ -1106,8 +1138,7 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 }
 
 Describe 'Console host name' -Tag CI {
-    It 'Name is pwsh' -Pending {
-        # waiting on https://github.com/dotnet/runtime/issues/33673
+    It 'Name is pwsh' {
         (Get-Process -Id $PID).Name | Should -BeExactly 'pwsh'
     }
 }

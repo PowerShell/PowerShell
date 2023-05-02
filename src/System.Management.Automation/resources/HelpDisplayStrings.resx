@@ -183,9 +183,6 @@
   <data name="ContentColon" xml:space="preserve">
     <value>Content:</value>
   </data>
-  <data name="OutputColon" xml:space="preserve">
-    <value>Output:</value>
-  </data>
   <data name="ProviderName" xml:space="preserve">
     <value>PROVIDER NAME</value>
   </data>
@@ -267,9 +264,6 @@
   <data name="CmdletsSupported" xml:space="preserve">
     <value>Cmdlets Supported: </value>
   </data>
-  <data name="CmdletsSupportedCaps" xml:space="preserve">
-    <value>CMDLETS SUPPORTED</value>
-  </data>
   <data name="AliasesSection" xml:space="preserve">
     <value>ALIASES</value>
   </data>
@@ -305,6 +299,10 @@
   </data>
   <data name="HelpCultureNotSupported" xml:space="preserve">
     <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
+  </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+{0}</value>
   </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
     <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
@@ -356,9 +354,6 @@
   </data>
   <data name="UnzipFailure" xml:space="preserve">
     <value>Error extracting Help content.</value>
-  </data>
-  <data name="InstallationFailed" xml:space="preserve">
-    <value>Error installing help content.</value>
   </data>
   <data name="UnableToConnect" xml:space="preserve">
     <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>

@@ -178,15 +178,8 @@ namespace Microsoft.WSMan.Management
             string resourceName,
             object[] args)
         {
-            if (resourceManager == null)
-            {
-                throw new ArgumentNullException(nameof(resourceManager));
-            }
-
-            if (string.IsNullOrEmpty(resourceName))
-            {
-                throw new ArgumentNullException(nameof(resourceName));
-            }
+            ArgumentNullException.ThrowIfNull(resourceManager);
+            ArgumentException.ThrowIfNullOrEmpty(resourceName);
 
             string template = resourceManager.GetString(resourceName);
 
@@ -370,17 +363,8 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                if (_sr != null)
-                {
-                    // _sr.Close();
-                    _sr.Dispose();
-                }
-
-                if (_fs != null)
-                {
-                    // _fs.Close();
-                    _fs.Dispose();
-                }
+                _sr?.Dispose();
+                _fs?.Dispose();
             }
 
             return strOut;
@@ -627,7 +611,7 @@ namespace Microsoft.WSMan.Management
             if ((credential != null) && (certificateThumbprint != null))
             {
                 string message = FormatResourceMsgFromResourcetextS(
-                    "AmbiguosAuthentication",
+                    "AmbiguousAuthentication",
                         "CertificateThumbPrint", "credential");
 
                 throw new InvalidOperationException(message);
@@ -638,7 +622,7 @@ namespace Microsoft.WSMan.Management
                 (certificateThumbprint != null))
             {
                 string message = FormatResourceMsgFromResourcetextS(
-                    "AmbiguosAuthentication",
+                    "AmbiguousAuthentication",
                         "CertificateThumbPrint", authentication.ToString());
 
                 throw new InvalidOperationException(message);
@@ -1078,13 +1062,10 @@ namespace Microsoft.WSMan.Management
         {
             try
             {
-                string filepath = System.Environment.ExpandEnvironmentVariables("%Windir%") + "\\System32\\Winrm\\" +
-#if CORECLR
-                    "0409" /* TODO: don't assume it is always English on CSS? */
-#else
-                    string.Concat("0", string.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
-#endif
-                    + "\\" + "winrm.ini";
+                string winDir = System.Environment.ExpandEnvironmentVariables("%Windir%");
+                uint lcid = checked((uint)CultureInfo.CurrentUICulture.LCID);
+                string filepath = string.Create(CultureInfo.CurrentCulture, $@"{winDir}\System32\Winrm\0{lcid:x2}\winrm.ini");
+
                 if (File.Exists(filepath))
                 {
                     FileStream _fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);

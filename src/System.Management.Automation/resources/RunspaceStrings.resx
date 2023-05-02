@@ -162,9 +162,6 @@
   <data name="NoSessionStateProxyWhenPipelineInProgress" xml:space="preserve">
     <value>A pipeline is already running. Concurrent SessionStateProxy method calls are not allowed.</value>
   </data>
-  <data name="ParameterNameOrValueNeeded" xml:space="preserve">
-    <value>Parameter name or value must be specified.</value>
-  </data>
   <data name="ChangePropertyAfterOpen" xml:space="preserve">
     <value>This property cannot be changed after the runspace has been opened.</value>
   </data>
@@ -206,9 +203,6 @@
   </data>
   <data name="CannotConnect" xml:space="preserve">
     <value>Cannot connect the PSSession because the session is not in the Disconnected state, or is not available for connection.</value>
-  </data>
-  <data name="CmdletNotFoundWhileLoadingModulesOnRunspaceOpen" xml:space="preserve">
-    <value>One or more errors occurred while processing the module '{0}' that is specified in the InitialSessionState object used to create this runspace. For a complete list of errors, see the ErrorRecords property.</value>
   </data>
   <data name="InvalidMyResultError" xml:space="preserve">
     <value>Value for parameter cannot be PipelineResultTypes.None or PipelineResultTypes.Output.</value>

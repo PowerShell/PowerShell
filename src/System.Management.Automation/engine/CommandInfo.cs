@@ -17,7 +17,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the types of commands that MSH can execute.
+    /// Defines the types of commands that PowerShell can execute.
     /// </summary>
     [Flags]
     public enum CommandTypes
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         Cmdlet = 0x0008,
 
         /// <summary>
-        /// An MSH script (*.ps1 file)
+        /// An PowerShell script (*.ps1 file)
         /// </summary>
         ExternalScript = 0x0010,
 
@@ -110,10 +110,7 @@ namespace System.Management.Automation
             // The name can be empty for functions and filters but it
             // can't be null
 
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             Name = name;
             CommandType = type;
@@ -288,10 +285,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Rename(string newName)
         {
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(newName);
 
             Name = newName;
         }
@@ -467,11 +461,8 @@ namespace System.Management.Automation
                         processInCurrentThread: true,
                         waitForCompletionInCurrentThread: true);
 
-                    if (eventArgs.Exception != null)
-                    {
-                        // An exception happened on a different thread, rethrow it here on the correct thread.
-                        eventArgs.Exception.Throw();
-                    }
+                    // An exception happened on a different thread, rethrow it here on the correct thread.
+                    eventArgs.Exception?.Throw();
 
                     return eventArgs.Result;
                 }

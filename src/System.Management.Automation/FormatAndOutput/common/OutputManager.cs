@@ -92,19 +92,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void EndProcessing()
         {
             // shut down only if we ever processed a pipeline object
-            if (_mgr != null)
-                _mgr.ShutDown();
+            _mgr?.ShutDown();
         }
 
         internal override void StopProcessing()
         {
             lock (_syncRoot)
             {
-                if (_lo != null)
-                {
-                    _lo.StopProcessing();
-                }
-
+                _lo?.StopProcessing();
                 _isStopped = true;
             }
         }

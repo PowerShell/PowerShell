@@ -16,8 +16,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>Breakpoint on a line within a script</summary>
         Line,
 
-        /// <summary>
-        /// Breakpoint on a variable</summary>
+        /// <summary>Breakpoint on a variable</summary>
         Variable,
 
         /// <summary>Breakpoint on a command</summary>

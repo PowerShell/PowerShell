@@ -325,9 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatInfoData DeserializeObject(PSObject so)
         {
             FormatInfoData fid = FormatInfoDataClassFactory.CreateInstance(so, this);
-
-            if (fid != null)
-                fid.Deserialize(so, this);
+            fid?.Deserialize(so, this);
             return fid;
         }
 

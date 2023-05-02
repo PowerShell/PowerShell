@@ -5,14 +5,14 @@
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="PowerShellGet" Version="2.2.5" />
-    <PackageReference Include="PackageManagement" Version="1.4.7" />
+    <PackageReference Include="PackageManagement" Version="1.4.8.1" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.2.6" />
     <PackageReference Include="ThreadJob" Version="2.0.3" />

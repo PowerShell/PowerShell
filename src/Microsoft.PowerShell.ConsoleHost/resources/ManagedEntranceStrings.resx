@@ -120,6 +120,15 @@
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}</value>
   </data>
+  <data name="ShellBannerCLMode" xml:space="preserve">
+    <value>[Constrained Language Mode]</value>
+  </data>
+  <data name="ShellBannerNLMode" xml:space="preserve">
+    <value>[No Language Mode]</value>
+  </data>
+  <data name="ShellBannerRLMode" xml:space="preserve">
+    <value>[Restricted Language Mode]</value>
+  </data>
   <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
     <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
   </data>
@@ -145,12 +154,15 @@
     <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
-                  [-ConfigurationName &lt;string&gt;] [-CustomPipeName &lt;string&gt;]
-                  [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
+                  [-ConfigurationName &lt;string&gt;] [-ConfigurationFile &lt;filePath&gt;]
+                  [-CustomPipeName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
-                  [-Version] [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
+                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}] 
+                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA] 
+                  [-Version] [-WindowStyle &lt;style&gt;] 
+                  [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -279,6 +291,25 @@ All parameters are case-insensitive.</value>
     (runspace-terminating) error, such as a throw or -ErrorAction Stop, occurs
     or when execution is interrupted with Ctrl-C.
 
+-CommandWithArgs | -cwa
+
+    [Experimental]
+    Executes a PowerShell command with arguments.  Unlike `-Command`, this
+    parameter populates the `$args built-in variable which can be used by the
+    command.
+
+    The first string is the command and subsequent strings delimited by whitespace
+    are the arguments.
+
+    For example:
+
+        pwsh -CommandWithArgs '$args | % { "arg: $_" }' arg1 arg2
+
+    This example produces the following output:
+
+        arg: arg1
+        arg: arg2
+
 -ConfigurationName | -config
 
     Specifies a configuration endpoint in which PowerShell is run. This can be
@@ -391,13 +422,19 @@ All parameters are case-insensitive.</value>
 
 -NonInteractive | -noni
 
-    Does not present an interactive prompt to the user. Any attempts to use
-    interactive features, like Read-Host or confirmation prompts, result in
-    statement-terminating errors.
+    This switch is used to create sessions that shouldn't require user input.
+    This is useful for scripts that run in scheduled tasks or CI/CD pipelines.
+    Any attempts to use interactive features, like 'Read-Host' or confirmation
+    prompts, result in statement terminating errors rather than hanging.
 
 -NoProfile | -nop
 
     Does not load the PowerShell profiles.
+
+-NoProfileLoadTime
+
+    Hides the PowerShell profile load time text shown at startup when the load
+    time exceeds 500 milliseconds.
 
 -OutputFormat | -o | -of
 
@@ -406,7 +443,7 @@ All parameters are case-insensitive.</value>
 
     Example: "pwsh -o XML -c Get-Date"
 
-    When called withing a PowerShell session, you get deserialized objects as
+    When called within a PowerShell session, you get deserialized objects as
     output rather plain strings. When called from other shells, the output is
     string data formatted as CLIXML text.
 

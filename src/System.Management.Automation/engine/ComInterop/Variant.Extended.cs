@@ -282,10 +282,7 @@ namespace System.Management.Automation.InteropServices
             }
         }
 
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.CurrentCulture, "Variant ({0})", VariantType);
-        }
+        public override string ToString() => $"Variant ({VariantType})";
 
         public void SetAsIConvertible(IConvertible value)
         {

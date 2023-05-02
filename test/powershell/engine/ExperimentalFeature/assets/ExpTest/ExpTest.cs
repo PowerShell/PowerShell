@@ -61,9 +61,15 @@ namespace ExperimentalFeatureTest
             string message = $"Hello World {Name}.";
             if (ExperimentalFeature.IsEnabled("ExpTest.FeatureOne"))
             {
-                if (SwitchOne.IsPresent) { message += "-SwitchOne is on."; }
+                if (SwitchOne.IsPresent)
+                {
+                    message += "-SwitchOne is on.";
+                }
 
-                if (SwitchTwo.IsPresent) { message += "-SwitchTwo is on."; }
+                if (SwitchTwo.IsPresent)
+                {
+                    message += "-SwitchTwo is on.";
+                }
             }
 
             WriteObject(message);

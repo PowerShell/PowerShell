@@ -236,10 +236,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Unblock the data collection.
             PSDataCollection<PSStreamObject> debugCollection = _debugBlockingCollection;
-            if (debugCollection != null)
-            {
-                debugCollection.Complete();
-            }
+            debugCollection?.Complete();
 
             // Unblock any new command wait.
             _newRunningScriptEvent.Set();
@@ -273,7 +270,10 @@ namespace Microsoft.PowerShell.Commands
                     // Wait for running script.
                     _newRunningScriptEvent.Wait();
 
-                    if (!_debugging) { return; }
+                    if (!_debugging)
+                    {
+                        return;
+                    }
 
                     AddDataEventHandlers();
 
@@ -334,9 +334,8 @@ namespace Microsoft.PowerShell.Commands
         private void AddDataEventHandlers()
         {
             // Create new collection objects.
-            if (_debugBlockingCollection != null) { _debugBlockingCollection.Dispose(); }
-
-            if (_debugAccumulateCollection != null) { _debugAccumulateCollection.Dispose(); }
+            _debugBlockingCollection?.Dispose();
+            _debugAccumulateCollection?.Dispose();
 
             _debugBlockingCollection = new PSDataCollection<PSStreamObject>();
             _debugBlockingCollection.BlockingEnumerator = true;
@@ -507,7 +506,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddToDebugBlockingCollection(PSStreamObject streamItem)
         {
-            if (!_debugBlockingCollection.IsOpen) { return; }
+            if (!_debugBlockingCollection.IsOpen)
+            {
+                return;
+            }
 
             if (streamItem != null)
             {

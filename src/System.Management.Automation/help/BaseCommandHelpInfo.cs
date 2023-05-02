@@ -214,8 +214,7 @@ namespace System.Management.Automation
             string commandToSearch = commandName;
             if (!string.IsNullOrEmpty(moduleName))
             {
-                commandToSearch = string.Format(CultureInfo.InvariantCulture,
-                    "{0}\\{1}", moduleName, commandName);
+                commandToSearch = string.Create(CultureInfo.InvariantCulture, $"{moduleName}\\{commandName}");
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
@@ -252,7 +251,7 @@ namespace System.Management.Automation
                         // Split the string based on <s> (space). We decided to go with this approach as
                         // UX localization authors use spaces. Correctly extracting only the wellformed URI
                         // is out-of-scope for this fix.
-                        string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
+                        string[] tempUriSplitArray = uriString.Split(' ');
                         uriString = tempUriSplitArray[0];
                     }
 
@@ -319,7 +318,7 @@ namespace System.Management.Automation
                             // Split the string based on <s> (space). We decided to go with this approach as
                             // UX localization authors use spaces. Correctly extracting only the wellformed URI
                             // is out-of-scope for this fix.
-                            string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
+                            string[] tempUriSplitArray = uriString.Split(' ');
                             uriString = tempUriSplitArray[0];
                         }
 
@@ -356,15 +355,9 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (synopsis == null)
-            {
-                synopsis = string.Empty;
-            }
+            synopsis ??= string.Empty;
 
-            if (detailedDescription == null)
-            {
-                detailedDescription = string.Empty;
-            }
+            detailedDescription ??= string.Empty;
 
             return pattern.IsMatch(synopsis) || pattern.IsMatch(detailedDescription);
         }

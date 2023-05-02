@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
                 if (!found)
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    if (name.AsSpan().IndexOfAny('\\', '/') == -1)
                     {
                         qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                     }
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
-                //  - If the current module is a nested module, then the parent module will be specifeid.
+                //  - If the current module is a nested module, then the parent module will be specified.
                 //  - If the current module is a root module, then the parent module will not be specified.
                 string moduleName = parentModule?.Name ?? ModuleIntrinsics.GetModuleName(moduleSpecification.Name);
                 rootedPath = FixFileName(moduleName, moduleBase, moduleSpecification.Name, extension: null, canLoadAssembly: importingModule);
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool containsWildCards = false;
 
-                string modulePath = mp.TrimEnd(Utils.Separators.Backslash);
+                string modulePath = mp.TrimEnd('\\');
 
                 // If the given path contains wildcards, we won't throw error if no match module path is found.
                 if (WildcardPattern.ContainsWildcardCharacters(modulePath))
@@ -2564,30 +2564,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // without ModuleToProcess a manifest will export everything by default
                 // (otherwise we want to honour exports from ModuleToProcess)
-                if (exportedFunctions == null)
-                {
-                    exportedFunctions = MatchAll;
-                }
-
-                if (exportedCmdlets == null)
-                {
-                    exportedCmdlets = MatchAll;
-                }
-
-                if (exportedVariables == null)
-                {
-                    exportedVariables = MatchAll;
-                }
-
-                if (exportedAliases == null)
-                {
-                    exportedAliases = MatchAll;
-                }
-
-                if (exportedDscResources == null)
-                {
-                    exportedDscResources = MatchAll;
-                }
+                exportedAliases ??= MatchAll;
+                exportedCmdlets ??= MatchAll;
+                exportedDscResources ??= MatchAll;
+                exportedFunctions ??= MatchAll;
+                exportedVariables ??= MatchAll;
             }
 
             manifestInfo.Description = description;
@@ -3218,16 +3199,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.RootModule == null)
-                {
-                    newManifestInfo.RootModule = manifestInfo.RootModule;
-                }
+                newManifestInfo.RootModule ??= manifestInfo.RootModule;
                 // If may be the case that a script has already set the PrivateData field in the module
                 // info object, in which case we won't overwrite it.
-                if (newManifestInfo.PrivateData == null)
-                {
-                    newManifestInfo.PrivateData = manifestInfo.PrivateData;
-                }
+                newManifestInfo.PrivateData ??= manifestInfo.PrivateData;
 
                 // Assign the PowerShellGet related properties from the module manifest
                 foreach (var tag in manifestInfo.Tags)
@@ -3352,10 +3327,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.RootModuleForManifest == null)
-                {
-                    newManifestInfo.RootModuleForManifest = manifestInfo.RootModuleForManifest;
-                }
+                newManifestInfo.RootModuleForManifest ??= manifestInfo.RootModuleForManifest;
 
                 if (newManifestInfo.DeclaredCmdletExports == null || newManifestInfo.DeclaredCmdletExports.Count == 0)
                 {
@@ -4570,7 +4542,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparamref name="T"/>)</c>.
         /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
@@ -4636,7 +4608,7 @@ namespace Microsoft.PowerShell.Commands
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
         /// <remarks>
-        /// When fixing up an assembly file, this method loads the resovled assembly if it's in the process of actually loading a module.
+        /// When fixing up an assembly file, this method loads the resolved assembly if it's in the process of actually loading a module.
         /// Read the comments in the method for the detailed information.
         /// </remarks>
         /// <param name="moduleName">Name of the module that we are processing, used for caching purpose when we need to load an assembly.</param>
@@ -4967,7 +4939,7 @@ namespace Microsoft.PowerShell.Commands
                 using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                 ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
                 ps.AddParameter("Session", compatSession);
-                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Create(CultureInfo.InvariantCulture, $"Set-Location -Path '{args.NewPath.Path}'")));
                 ps.Invoke();
             }
         }
@@ -5041,17 +5013,14 @@ namespace Microsoft.PowerShell.Commands
                 if (Context.Modules.ModuleTable.ContainsKey(module.Path))
                 {
                     // We should try to run OnRemove as the very first thing
-                    if (module.OnRemove != null)
-                    {
-                        module.OnRemove.InvokeUsingCmdlet(
-                            contextCmdlet: this,
-                            useLocalScope: true,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: new object[] { module });
-                    }
+                    module.OnRemove?.InvokeUsingCmdlet(
+                        contextCmdlet: this,
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: AutomationNull.Value,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { module });
 
                     if (module.ImplementingAssembly != null && !module.ImplementingAssembly.IsDynamic)
                     {
@@ -5754,7 +5723,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
-                                    // Implict function export is allowed when any of the following is true:
+                                    // Implicit function export is allowed when any of the following is true:
                                     //  - Nested modules are allowed by module manifest
                                     //  - The import context language mode is FullLanguage
                                     //  - This script module not running as trusted (FullLanguage)
@@ -6591,10 +6560,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string binaryPath = fileName;
                 modulePath = fileName;
-                if (binaryPath == null)
-                {
-                    binaryPath = System.IO.Path.Combine(moduleBase, moduleName);
-                }
+                binaryPath ??= System.IO.Path.Combine(moduleBase, moduleName);
 
                 BinaryAnalysisResult analysisResult = GetCmdletsFromBinaryModuleImplementation(binaryPath, manifestProcessingFlags, out assemblyVersion);
                 detectedCmdlets = analysisResult.DetectedCmdlets;
@@ -6924,10 +6890,7 @@ namespace Microsoft.PowerShell.Commands
                 targetSessionState.ModuleTableKeys.Add(moduleTableKey);
             }
 
-            if (targetSessionState.Module != null)
-            {
-                targetSessionState.Module.AddNestedModule(module);
-            }
+            targetSessionState.Module?.AddNestedModule(module);
         }
 
         /// <summary>
@@ -7229,6 +7192,9 @@ namespace Microsoft.PowerShell.Commands
                     CommandOrigin.Internal,
                     targetSessionState.ExecutionContext);
 
+                // Note that the module 'func' and the function table 'functionInfo' instances are now linked
+                // together (see 'CopiedCommand' in CommandInfo class), so setting visibility on one also 
+                // sets it on the other.
                 SetCommandVisibility(isImportModulePrivate, functionInfo);
                 functionInfo.Module = sourceModule;
 
@@ -7390,7 +7356,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// Note that module loading order is important with this check when the system is *locked down with DeviceGuard*.
         /// If a submodule that does not explicitly export any functions is imported from the command line, its useless
-        /// because no functions are exported (default fn export is explictly disallowed on locked down systems).
+        /// because no functions are exported (default fn export is explicitly disallowed on locked down systems).
         /// But if a parentmodule that imports the submodule is then imported, it will get the useless version of the
         /// module from the ModuleTable and the parent module will not work.
         ///   $mSub = import-module SubModule  # No functions exported, useless
@@ -7398,7 +7364,7 @@ namespace Microsoft.PowerShell.Commands
         ///   $mParent.DoSomething  # This will likely be broken because SubModule functions are not accessible
         /// But this is not a realistic scenario because SubModule is useless with DeviceGuard lock down and must explicitly
         /// export its functions to become useful, at which point this check is no longer in effect and there is no issue.
-        ///   $mSub = import-module SubModule  # Explictly exports functions, useful
+        ///   $mSub = import-module SubModule  # Explicitly exports functions, useful
         ///   $mParent = import-module ParentModule  # This internally imports SubModule
         ///   $mParent.DoSomething  # This works because SubModule functions are exported and accessible.
         /// </summary>

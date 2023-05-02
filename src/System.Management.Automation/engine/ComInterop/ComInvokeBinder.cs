@@ -114,10 +114,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                if (_paramVariants == null)
-                {
-                    _paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
-                }
+                _paramVariants ??= Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
                 return _paramVariants;
             }
         }
@@ -140,10 +137,7 @@ namespace System.Management.Automation.ComInterop
             if (isByRef)
             {
                 // Null just means that null was supplied.
-                if (marshalType == null)
-                {
-                    marshalType = mo.Expression.Type;
-                }
+                marshalType ??= mo.Expression.Type;
                 marshalType = marshalType.MakeByRefType();
             }
             return marshalType;
@@ -173,7 +167,10 @@ namespace System.Management.Automation.ComInterop
 
         private static void AddNotNull(List<ParameterExpression> list, ParameterExpression var)
         {
-            if (var != null) list.Add(var);
+            if (var != null)
+            {
+                list.Add(var);
+            }
         }
 
         private Expression CreateScope(Expression expression)
@@ -398,7 +395,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Create a stub for the target of the optimized lopop.
+        /// Create a stub for the target of the optimized loop.
         /// </summary>
         /// <returns></returns>
         private Expression MakeIDispatchInvokeTarget()

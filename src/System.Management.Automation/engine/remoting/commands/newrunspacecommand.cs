@@ -385,11 +385,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds forwarded events to the local queue.
         /// </summary>
-        private void OnRunspacePSEventReceived(object sender, PSEventArgs e)
-        {
-            if (this.Events != null)
-                this.Events.AddForwardedEvent(e);
-        }
+        private void OnRunspacePSEventReceived(object sender, PSEventArgs e) => this.Events?.AddForwardedEvent(e);
 
         /// <summary>
         /// When the client remote session reports a URI redirection, this method will report the
@@ -524,10 +520,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (reason == null)
-                        {
-                            reason = new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
-                        }
+                        reason ??= new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
 
                         string fullyQualifiedErrorId = WSManTransportManagerUtils.GetFQEIDFromTransportError(
                             transErrorCode,
@@ -1392,7 +1385,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// There are two problems that need to be handled.
         /// 1) We need to make sure that the ThrottleManager StartComplete and StopComplete
-        ///    operation events are called or the ThrottleManager will never end (will stop reponding).
+        ///    operation events are called or the ThrottleManager will never end (will stop responding).
         /// 2) The HandleRunspaceStateChanged event handler remains in the Runspace
         ///    StateChanged event call chain until this object is disposed.  We have to
         ///    disallow the HandleRunspaceStateChanged event from running and throwing

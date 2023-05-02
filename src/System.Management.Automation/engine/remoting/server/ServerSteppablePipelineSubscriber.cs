@@ -274,11 +274,8 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
-                {
-                    _eventManager.GenerateEvent(_startSubscriber.SourceIdentifier, this,
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
-                }
+                _eventManager?.GenerateEvent(_startSubscriber.SourceIdentifier, this,
+                    new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
             }
         }
 
@@ -290,11 +287,8 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
-                {
-                    _eventManager.GenerateEvent(_processSubscriber.SourceIdentifier, this,
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
-                }
+                _eventManager?.GenerateEvent(_processSubscriber.SourceIdentifier, this,
+                    new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
             }
         }
 

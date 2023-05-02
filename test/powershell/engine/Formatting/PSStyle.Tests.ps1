@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Tests for $PSStyle automatic variable' {
+Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
     BeforeAll {
         $styleDefaults = @{
             Reset = "`e[0m"
@@ -9,6 +9,8 @@ Describe 'Tests for $PSStyle automatic variable' {
             Blink = "`e[5m"
             BoldOff = "`e[22m"
             Bold = "`e[1m"
+            DimOff = "`e[22m"
+            Dim = "`e[2m"
             HiddenOff = "`e[28m"
             Hidden = "`e[8m"
             ReverseOff = "`e[27m"
@@ -24,6 +26,7 @@ Describe 'Tests for $PSStyle automatic variable' {
         $formattingDefaults = @{
             FormatAccent = "`e[32;1m"
             TableHeader = "`e[32;1m"
+            CustomTableHeaderLabel = "`e[32;1;3m"
             ErrorAccent = "`e[36;1m"
             Error = "`e[31;1m"
             Debug = "`e[33;1m"
@@ -191,11 +194,30 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.OutputRendering = 'Ansi'
             $PSStyle.Formatting.TableHeader = ''
             $out = $PSVersionTable | Format-Table | Out-String
-            $out.Contains("`e[") | Should -BeFalse
+            $out.Replace($PSStyle.Reset,'').Contains("`e[") | Should -BeFalse
         }
         finally {
             $PSStyle.OutputRendering = $oldRender
             $PSStyle.Formatting.TableHeader = $old
+        }
+    }
+
+    It '$PSStyle.Formatting.CustomTableHeaderLabel is applied to Format-Table' {
+        $old = $PSStyle.Formatting.CustomTableHeaderLabel
+        $oldRender = $PSStyle.OutputRendering
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            $PSStyle.Formatting.CustomTableHeaderLabel = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
+            $out = Get-Process pwsh | Select-Object -First 1 | Format-Table | Out-String
+            $format = $PSStyle.Formatting.CustomTableHeaderLabel.Replace('[',"``[")
+            $header = $PSStyle.Formatting.TableHeader.Replace('[',"``[")
+            $reset = $PSStyle.Reset.Replace('[',"``[")
+            $out | Should -BeLike "*${format}*NPM(K)${reset}*${format}*PM(M)${reset}*${format}*WS(M)${reset}*${format}*CPU(s)${reset}*${header}*Id${reset}*${header}*SI${reset}*${header}*ProcessName${reset}*"
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            $PSStyle.Formatting.CustomTableHeaderLabel = $old
         }
     }
 
@@ -205,6 +227,8 @@ Describe 'Tests for $PSStyle automatic variable' {
         @{ Submember = 'Blink' }
         @{ Submember = 'BoldOff' }
         @{ Submember = 'Bold' }
+        @{ Submember = 'DimOff' }
+        @{ Submember = 'Dim' }
         @{ Submember = 'HiddenOff' }
         @{ Submember = 'Hidden' }
         @{ Submember = 'ItalicOff' }
@@ -215,6 +239,7 @@ Describe 'Tests for $PSStyle automatic variable' {
         @{ Submember = 'Strikethrough' }
         @{ Member = 'Formatting'; Submember = 'FormatAccent' }
         @{ Member = 'Formatting'; Submember = 'TableHeader' }
+        @{ Member = 'Formatting'; Submember = 'CustomTableHeaderLabel' }
         @{ Member = 'Formatting'; Submember = 'ErrorAccent' }
         @{ Member = 'Formatting'; Submember = 'Error' }
         @{ Member = 'Formatting'; Submember = 'Warning' }
@@ -359,7 +384,7 @@ Describe 'Tests for $PSStyle automatic variable' {
     }
 }
 
-Describe 'Handle strings with escape sequences in formatting' {
+Describe 'Handle strings with escape sequences in formatting' -Tag 'CI' {
 
     BeforeAll {
         function Get-DemoObjects {
@@ -380,8 +405,8 @@ Describe 'Handle strings with escape sequences in formatting' {
 
     It 'Truncation for strings with no escape sequences' {
         $expected = @"
-`e[32;1mName       Role            YIR`e[0m
-`e[32;1m----       ----            ---`e[0m
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
 Bob Saggat Developer         2
 John Seym… Sw Engineer       6
 Billy Bob… Senior DevOps …  13
@@ -398,8 +423,8 @@ Billy Bob… Senior DevOps …  13
 
     It "Truncation for strings with escape sequences - TableView-1" {
         $expected = @"
-`e[32;1mName       Role            YIR`e[0m
-`e[32;1m----       ----            ---`e[0m
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
 `e[32mBob Saggat`e[39m`e[0m Developer         2
 `e[33mJohn Seym…`e[0m Sw Engineer       6
 `e[31mBilly Bob…`e[0m Senior DevOps …  13
@@ -420,8 +445,8 @@ Billy Bob… Senior DevOps …  13
 
     It "Truncation for strings with escape sequences - TableView-2" {
         $expected = @"
-`e[32;1mName       Role            YIR`e[0m
-`e[32;1m----       ----            ---`e[0m
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
 `e[32mBob Saggat`e[39m`e[0m Developer`e[0m         2
 `e[33mJohn Seym…`e[0m `e[1;33mSw Engineer`e[0m       6
 `e[31mBilly Bob…`e[0m `e[42m`e[1;33mSenior DevOps …`e[0m  13
@@ -491,10 +516,10 @@ Billy Bob… Senior DevOps …  13
     It "Wrapping long word with escape sequences" {
         $expected = @"
 `e[32;1mb : `e[0m`e[33mC:\repos\PowerShell\src\powershell-w`e[0m
-    `e[33min-core\bin\Debug\net7.0\win7-x64\pu`e[0m
+    `e[33min-core\bin\Debug\net8.0\win7-x64\pu`e[0m
     `e[33mblish\pwsh.exe`e[0m
 "@
-        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish\pwsh.exe" }
+        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish\pwsh.exe" }
         $obj | Format-List | Out-String -Width 40 | Out-File $outFile
 
         $text = Get-Content $outFile -Raw

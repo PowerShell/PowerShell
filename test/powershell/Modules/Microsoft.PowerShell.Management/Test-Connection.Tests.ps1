@@ -32,7 +32,8 @@ function GetExternalHostAddress([string]$HostName)
     }
 }
 
-# Adding RequireSudoOnUnix due to issue: https://github.com/dotnet/runtime/issues/66746
+# Adding RequireSudoOnUnix due to an intentional breaking change.
+# See https://github.com/dotnet/runtime/issues/66746
 Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
@@ -320,12 +321,48 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $UnreachableAddress = "10.11.12.13"
     }
 
-    It "Test connection to local host port 80" {
+    It "Test connection to local host on working port" {
         Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort | Should -BeTrue
     }
 
     It "Test connection to unreachable host port 80" {
         Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
+    }
+
+    It "Test detailed connection to local host on working port" {
+        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Detailed
+
+        $result.Count | Should -Be 1
+        $result[0].Id | Should -BeExactly 1
+        $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
+        $result[0].Port | Should -Be $WebListener.HttpPort
+        $result[0].Latency | Should -BeGreaterOrEqual 0
+        $result[0].Connected | Should -BeTrue
+        $result[0].Status | Should -BeExactly 'Success'
+    }
+
+    It "Test detailed connection to local host on working port with modified count" {
+        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Detailed -Count 2
+
+        $result.Count | Should -Be 2
+        $result[0].Id | Should -BeExactly 1
+        $result[0].TargetAddress | Should -BeExactly '127.0.0.1'
+        $result[0].Port | Should -Be $WebListener.HttpPort
+        $result[0].Latency | Should -BeGreaterOrEqual 0
+        $result[0].Connected | Should -BeTrue
+        $result[0].Status | Should -BeExactly 'Success'
+    }
+
+    It "Test detailed connection to unreachable host port 80" {
+        $result = Test-Connection $UnreachableAddress -TcpPort 80 -Detailed -TimeOut 1
+
+        $result.Count | Should -Be 1
+        $result[0].Id | Should -BeExactly 1
+        $result[0].TargetAddress | Should -BeExactly $UnreachableAddress
+        $result[0].Port | Should -Be 80
+        $result[0].Latency | Should -BeExactly 0
+        $result[0].Connected | Should -BeFalse
+        $result[0].Status | Should -Not -BeExactly 'Success'
     }
 }
 

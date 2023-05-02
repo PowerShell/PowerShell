@@ -60,7 +60,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null) return;
+                if (value == null)
+                {
+                    return;
+                }
+
                 _language = new string[value.Length];
                 for (int index = 0; index < value.Length; index++)
                 {
@@ -443,7 +447,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
         {
-            if (modules == null || !modules.Any()) { return; }
+            if (modules == null || !modules.Any())
+            {
+                return;
+            }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();
 
@@ -509,6 +516,7 @@ namespace Microsoft.PowerShell.Commands
             // Win8: 572882 When the system locale is English and the UI is JPN,
             // running "update-help" still downs English help content.
             var cultures = _language ?? _helpSystem.GetCurrentUICulture();
+            UpdatableHelpSystemException implicitCultureNotSupported = null;
 
             foreach (string culture in cultures)
             {
@@ -558,6 +566,12 @@ namespace Microsoft.PowerShell.Commands
                             // Display the error message only if we are not using the fallback chain
                             ProcessException(module.ModuleName, culture, e);
                         }
+                        else
+                        {
+                            // Hold first exception, it will be displayed if fallback chain fails
+                            WriteVerbose(StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupportedFallback, e.Message));
+                            implicitCultureNotSupported ??= e;
+                        }
                     }
                     else
                     {
@@ -581,12 +595,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // If -Language is not specified, we only install
+                // If -UICulture is not specified, we only install
                 // one culture from the fallback chain
                 if (_language == null && installed)
                 {
-                    break;
+                    return;
                 }
+            }
+
+            // If the exception is not null and did not return early, then all of the fallback chain failed
+            if (implicitCultureNotSupported != null)
+            {
+                ProcessException(module.ModuleName, cultures.First(), implicitCultureNotSupported);
             }
         }
 
@@ -886,6 +906,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Save the help content to the user directory.
+        /// </summary>
         CurrentUser,
 
         /// <summary>

@@ -12,7 +12,7 @@
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <TargetPlatformVersion>7.0</TargetPlatformVersion>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
@@ -29,7 +29,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\..\LICENSE.txt;..\..\ThirdPartyNotices.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.admx;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.adml;..\..\assets\GroupPolicy\InstallPSCorePolicyDefinitions.ps1">
+    <Content Include="..\..\LICENSE.txt;..\..\ThirdPartyNotices.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1;..\..\assets\MicrosoftUpdate\RegisterMicrosoftUpdate.ps1;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.admx;..\..\assets\GroupPolicy\PowerShellCoreExecutionPolicy.adml;..\..\assets\GroupPolicy\InstallPSCorePolicyDefinitions.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
