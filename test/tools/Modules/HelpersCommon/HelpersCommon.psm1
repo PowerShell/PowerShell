@@ -446,3 +446,13 @@ function Test-IsReleaseCandidate
 
     return $false
 }
+
+function Test-IsWinServer2012R2
+{
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 6 -and $osInfo.Minor -eq 3)
+}

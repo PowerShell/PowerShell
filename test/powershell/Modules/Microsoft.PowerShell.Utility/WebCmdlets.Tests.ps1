@@ -1149,6 +1149,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result = ExecuteWebCommand -command $command
             $result.Error.FullyQualifiedErrorId | Should -Be "InsecureRedirection,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
+
+        It "Validate Invoke-WebRequest Https to Http (No Scheme) redirect without -AllowInsecureRedirect" {
+            $httpUri = Get-WebListenerUrl -Test 'Get'
+            $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri.Authority}
+            $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
+
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
     }
 
 
@@ -3100,6 +3109,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "InsecureRedirection,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
+    It "Validate Invoke-RestMethod Https to Http (No Scheme) redirect without -AllowInsecureRedirect" {
+        $httpUri = Get-WebListenerUrl -Test 'Get'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Https -Query @{destination = $httpUri.Authority}
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
     #endregion Redirect tests
 
     Context "Invoke-RestMethod SkipHeaderVerification Tests" {
@@ -4181,5 +4199,140 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         { Invoke-WebRequest -Uri $uri -ContentType $null } | Should -Not -Throw
         { Invoke-RestMethod -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
         { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
+    }
+}
+
+Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through CTRL-C' -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+        $WebListener = Start-WebListener
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
+    }
+
+    function RunWithCancellation {
+        param(
+            [string]$Command = 'Invoke-WebRequest',
+            [string]$Arguments = '',
+            [uri]$Uri,
+            [int]$DelayBeforeStopSimulationMs = 5000,
+            [switch]$WillComplete
+        )
+
+        $pwsh = [PowerShell]::Create()
+        $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
+        $task = $pwsh.AddScript($invoke).InvokeAsync()
+        $delay = [System.Threading.Tasks.Task]::Delay($DelayBeforeStopSimulationMs)
+
+        # Simulate CTRL-C as soon as the timeout expires or the main task ends
+        $null = [System.Threading.Tasks.Task]::WaitAny($task, $delay)
+        $task.IsCompleted | Should -Be $WillComplete.ToBool()
+        $pwsh.Stop()
+
+        # The download stall is normally 30 seconds from the web listener based
+        # on the first slash separated parameter in the -TestValue provided to
+        # Get-WebListenerUrl -test Stall -TestValue duration/content-type.
+        Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
+        $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
+        $pwsh.Dispose()
+        return $result
+    }
+
+    It 'Invoke-WebRequest: CTRL-C Cancels request before request headers received' {
+        $uri = Get-WebListenerUrl -test Delay -TestValue 30
+        RunWithCancellation -Uri $uri -DelayBeforeStopSimulationMs 1000
+    }
+
+    It 'Invoke-WebRequest: CTRL-C Cancels request after request headers received' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: HTTPS CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Https -Test Stall -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri -Arguments "-SkipCertificateCheck"
+    }
+
+    It 'Invoke-WebRequest: Brotli Compression CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Test StallBrotli -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: Gzip Compression CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Test StallGzip -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: Defalate Compression CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Test StallDeflate -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: HTTPS with Brotli compression CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Https -Test StallBrotli -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
+    }
+
+    It 'Invoke-WebRequest: HTTPS with Gzip compression CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Https -Test StallGzip -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
+    }
+
+    It 'Invoke-WebRequest: HTTPS with Defalte compression CTRL-C Cancels request after request headers' {
+        $uri = Get-WebListenerUrl -Https -Test StallDeflate -TestValue '30/application%2fjson'
+        RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
+    }
+
+    It 'Invoke-WebRequest: CTRL-C Cancels file download request after request headers received' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue '30'
+        $outFile = Join-Path $TestDrive "output.txt"
+        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile"
+        # No guarantee the file will be present since the D/L is interrupted
+        if (Test-Path -Path $outFile) {
+            Remove-Item -Path $outFile
+        }
+    }
+
+    It 'Invoke-WebRequest: CTRL-C after stalled file download completes gives entire file' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '1'
+        $outFile = Join-Path $TestDrive "output.txt"
+        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile" -WillComplete
+        Get-content -Path $outFile | should -be 'Hello worldHello world'
+        Remove-Item -Path $outFile
+    }
+
+    It 'Invoke-RestMethod: CTRL-C Cancels request before request headers received' {
+        $uri = Get-WebListenerUrl -test Delay -TestValue 30
+        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayBeforeStopSimulationMs 1000
+    }
+
+    It 'Invoke-RestMethod: CTRL-C Cancels request after JSON request headers received' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '30/application%2fjson'
+        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri
+    }
+
+    It 'Invoke-RestMethod: CTRL-C after stalled JSON download processes JSON response' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '1/application%2fjson'
+        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -WillComplete
+        $result.name3 | should -be 'value3'
+    }
+
+    It 'Invoke-RestMethod: CTRL-C Cancels request after plain request headers received' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '30'
+        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri
+    }
+
+    It 'Invoke-RestMethod: CTRL-C after stalled atom feed download processes atom response' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '1/application%2fxml'
+        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -WillComplete
+        $result.title | should -be 'Atom-Powered Robots Run Amok'
+    }
+
+    It 'Invoke-RestMethod: CTRL-C Cancels request in XML atom processing' {
+        $uri = Get-WebListenerUrl -test Stall -TestValue '30/application%2fxml'
+        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri
     }
 }

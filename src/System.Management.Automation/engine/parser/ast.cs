@@ -754,14 +754,6 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<ModuleSpecification> RequiredModules { get; internal set; }
 
         /// <summary>
-        /// The snapins this script requires, specified like:
-        ///     <code>#requires -PSSnapin Snapin</code>
-        ///     <code>#requires -PSSnapin Snapin -Version 2</code>
-        /// If no snapins are required, this property is an empty collection.
-        /// </summary>
-        public ReadOnlyCollection<PSSnapInSpecification> RequiresPSSnapIns { get; internal set; }
-
-        /// <summary>
         /// The assemblies this script requires, specified like:
         ///     <code>#requires -Assembly path\to\foo.dll</code>
         ///     <code>#requires -Assembly "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"</code>

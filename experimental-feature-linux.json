@@ -6,5 +6,6 @@
   "PSLoadAssemblyFromNativeCode",
   "PSModuleAutoLoadSkipOfflineFiles",
   "PSNativeCommandErrorActionPreference",
+  "PSNativeCommandPreserveBytePipe",
   "PSSubsystemPluginModel"
 ]
