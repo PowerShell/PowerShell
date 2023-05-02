@@ -672,7 +672,10 @@ namespace Microsoft.PowerShell.Commands
                                             }
                                         }
 
-                                        if (!found) { continue; }
+                                        if (!found)
+                                        {
+                                            continue;
+                                        }
                                     }
                                 }
                                 else

@@ -2777,22 +2777,6 @@ namespace Microsoft.PowerShell.Commands
         internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
 
         /// <summary>
-        /// AssignProcessToJobObject API is used to assign a process to an existing job object.
-        /// </summary>
-        /// <param name="hJob">
-        /// A handle to the job object to which the process will be associated.
-        /// </param>
-        /// <param name="hProcess">
-        /// A handle to the process to associate with the job object.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.
-        /// </returns>
-        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AssignProcessToJobObject(SafeHandle hJob, IntPtr hProcess);
-
-        /// <summary>
         /// Retrieves job state information from the job object.
         /// </summary>
         /// <param name="hJob">

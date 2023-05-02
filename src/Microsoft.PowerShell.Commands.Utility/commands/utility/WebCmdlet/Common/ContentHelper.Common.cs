@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         #region Internal Methods
 
         // ContentType may not exist in response header.  Return null if not.
-        internal static string GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
+        internal static string? GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
 
         internal static Encoding GetDefaultEncoding() => Encoding.UTF8;
 
@@ -35,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
             HttpHeaders[] headerCollections =
             {
                 response.Headers,
-                response.Content?.Headers
+                response.Content.Headers
             };
 
             foreach (var headerCollection in headerCollections)
@@ -59,29 +62,7 @@ namespace Microsoft.PowerShell.Commands
             return raw;
         }
 
-        internal static bool IsJson(string contentType)
-        {
-            contentType = GetContentTypeSignature(contentType);
-            return CheckIsJson(contentType);
-        }
-
-        internal static bool IsText(string contentType)
-        {
-            contentType = GetContentTypeSignature(contentType);
-            return CheckIsText(contentType);
-        }
-
-        internal static bool IsXml(string contentType)
-        {
-            contentType = GetContentTypeSignature(contentType);
-            return CheckIsXml(contentType);
-        }
-
-        #endregion Internal Methods
-
-        #region Private Helper Methods
-
-        private static bool CheckIsJson(string contentType)
+        internal static bool IsJson([NotNullWhen(true)] string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -102,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
             return isJson;
         }
 
-        private static bool CheckIsText(string contentType)
+        internal static bool IsText([NotNullWhen(true)] string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -111,26 +92,25 @@ namespace Microsoft.PowerShell.Commands
 
             // Any text, xml or json types are text
             bool isText = contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
-                        || CheckIsXml(contentType)
-                        || CheckIsJson(contentType);
+                        || IsXml(contentType)
+                        || IsJson(contentType);
 
             // Further content type analysis is available on Windows
             if (Platform.IsWindows && !isText)
             {
                 // Media types registered with Windows as having a perceived type of text, are text
-                using (RegistryKey contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
+                using (RegistryKey? contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
                 {
                     if (contentTypeKey != null)
                     {
-                        string extension = contentTypeKey.GetValue("Extension") as string;
-                        if (extension != null)
+                        if (contentTypeKey.GetValue("Extension") is string extension)
                         {
-                            using (RegistryKey extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
+                            using (RegistryKey? extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
                             {
                                 if (extensionKey != null)
                                 {
-                                    string perceivedType = extensionKey.GetValue("PerceivedType") as string;
-                                    isText = (perceivedType == "text");
+                                    string? perceivedType = extensionKey.GetValue("PerceivedType") as string;
+                                    isText = perceivedType == "text";
                                 }
                             }
                         }
@@ -141,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             return isText;
         }
 
-        private static bool CheckIsXml(string contentType)
+        internal static bool IsXml([NotNullWhen(true)] string? contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -157,17 +137,6 @@ namespace Microsoft.PowerShell.Commands
             return isXml;
         }
 
-        private static string GetContentTypeSignature(string contentType)
-        {
-            if (string.IsNullOrEmpty(contentType))
-            {
-                return null;
-            }
-
-            string sig = contentType.Split(';', 2)[0].ToUpperInvariant();
-            return sig;
-        }
-
-        #endregion Private Helper Methods
+        #endregion Internal Methods
     }
 }

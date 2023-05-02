@@ -475,7 +475,10 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (proxyType != null) break;
+                if (proxyType != null) 
+                {
+                    break;
+                }
             }
 
             System.Management.Automation.Diagnostics.Assert(

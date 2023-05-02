@@ -3601,7 +3601,7 @@ namespace System.Management.Automation.Language
             var dispatchTargets = new List<LabelTarget>();
             var tryBodyExprs = new List<Expression>()
             {
-                null, // Add a slot for the inital switch/case that we'll come back to
+                null, // Add a slot for the initial switch/case that we'll come back to
             };
 
             // L0: dispatchIndex = 1; pipeline1

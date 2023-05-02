@@ -295,7 +295,10 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                if (IsDisposed) { return; }
+                if (IsDisposed)
+                {
+                    return;
+                }
 
                 IsDisposed = true;
             }
@@ -445,7 +448,10 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                if (IsDisposed) { return; }
+                if (IsDisposed)
+                {
+                    return;
+                }
 
                 IsDisposed = true;
             }

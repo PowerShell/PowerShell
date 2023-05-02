@@ -770,7 +770,10 @@ namespace System.Management.Automation
 
             // Note - we explicitly don't pass the context here because we don't want
             // the overhead of the calls that check for stopping.
-            if (ParserOps.MoveNext(null, null, ienum)) { isEmpty = false; }
+            if (ParserOps.MoveNext(null, null, ienum))
+            {
+                isEmpty = false;
+            }
 
             // If the element of the collection is of value type, then no need to check for null
             // because a value-type value cannot be null.

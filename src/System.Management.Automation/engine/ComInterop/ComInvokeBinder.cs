@@ -167,7 +167,10 @@ namespace System.Management.Automation.ComInterop
 
         private static void AddNotNull(List<ParameterExpression> list, ParameterExpression var)
         {
-            if (var != null) list.Add(var);
+            if (var != null)
+            {
+                list.Add(var);
+            }
         }
 
         private Expression CreateScope(Expression expression)

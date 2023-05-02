@@ -685,7 +685,10 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // if inputObject is of IDictionary, get the value
-                if (GetValueFromIDictionaryInput()) { return; }
+                if (GetValueFromIDictionaryInput())
+                {
+                    return;
+                }
 
                 PSMemberInfo member = null;
                 if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))

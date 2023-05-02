@@ -269,44 +269,87 @@ switch ($x)
         $completionText -join ' ' | Should -BeExactly 'Ascending Descending Expression'
     }
 
-    It 'Should complete New-Object hashtable' {
-        class X {
-            $A
-            $B
-            $C
+    context TypeConstructionWithHashtable {
+        BeforeAll {
+            class RandomTestType {
+                $A
+                $B
+                $C
+            }
+            function RandomTestTypeClassTestCompletion([RandomTestType]$Param1){}
+            Class LevelOneClass {
+                [LevelTwoClass] $Property1
+            }
+            class LevelTwoClass {
+                [string] $Property2
+            }
+            function LevelOneClassTestCompletion([LevelOneClass[]]$Param1){}
+            Add-Type -TypeDefinition 'public interface IRandomInterfaceTest{string DemoProperty { get; set; }}'
+            function functionWithInterfaceParam ([IRandomInterfaceTest]$Param1){}
         }
-        $res = TabExpansion2 -inputScript 'New-Object -TypeName X -Property @{ ' -cursorColumn 'New-Object -TypeName X -Property @{ '.Length
-        $res.CompletionMatches | Should -HaveCount 3
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
-    }
-    It 'Complete hashtable key without duplicate keys' {
-        class X {
-            $A
-            $B
-            $C
+        It 'Should complete New-Object hashtable' {
+            $res = TabExpansion2 -inputScript 'New-Object -TypeName RandomTestType -Property @{ '
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
         }
-        $TestString = '[x]@{A="";^}'
-        $CursorIndex = $TestString.IndexOf('^')
-        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
-        $res.CompletionMatches | Should -HaveCount 2
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
-    }
-    It 'Complete hashtable key on empty line after key/value pair' {
-        class X {
-            $A
-            $B
-            $C
+
+        It 'Complete hashtable key without duplicate keys' {
+            $TestString = '[RandomTestType]@{A="";^}'
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
         }
-        $TestString = @'
-[x]@{
+
+        It 'Complete hashtable key on empty line after key/value pair' {
+            $TestString = @'
+[RandomTestType]@{
     B=""
     ^
 }
 '@
-        $CursorIndex = $TestString.IndexOf('^')
-        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
-        $res.CompletionMatches | Should -HaveCount 2
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+        }
+
+        It 'Should complete class properties for typed variable declaration with hashtable' {
+            $res = TabExpansion2 -inputScript '[RandomTestType]$TestVar = @{'
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
+        }
+
+        It 'Should complete class properties for typed command parameter with hashtable input' {
+            $res = TabExpansion2 -inputScript 'RandomTestTypeClassTestCompletion -Param1 @{'
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
+        }
+
+        It 'Should complete class properties for nested hashtable' {
+            $res = TabExpansion2 -inputScript '[LevelOneClass]@{Property1=@{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Property2'
+        }
+
+        It 'Should complete class properties for underlying type in array parameter' {
+            $res = TabExpansion2 -inputScript 'LevelOneClassTestCompletion @{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Property1'
+        }
+
+        It 'Should complete class properties for new class assignment to property' {
+            $res = TabExpansion2 -inputScript '$Var=[LevelOneClass]::new();$Var.Property1=@{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Property2'
+        }
+
+        It 'Should not complete class properties from class with constructor that takes arguments' {
+            $res = TabExpansion2 -inputScript 'class ClassWithCustomConstructor {ClassWithCustomConstructor ($Param){}$A};[ClassWithCustomConstructor]@{'
+            $res.CompletionMatches[0].CompletionText | Should -BeNullOrEmpty
+        }
+
+        It 'Should complete class properties for function with an interface type' {
+            $res = TabExpansion2 -inputScript 'functionWithInterfaceParam -Param1 @{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'DemoProperty'
+        }
     }
 
     It 'Complete hashtable keys for Get-WinEvent FilterHashtable' -Skip:(!$IsWindows) {
@@ -315,6 +358,18 @@ switch ($x)
         $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
         $res.CompletionMatches | Should -HaveCount 11
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data SuppressHashFilter'
+    }
+
+    It 'Complete hashtable keys for Get-WinEvent SuppressHashFilter' -Skip:(!$IsWindows) {
+        $TestString = 'Get-WinEvent -FilterHashtable @{SuppressHashFilter=@{'
+        $res = TabExpansion2 -inputScript $TestString
+        $res.CompletionMatches | Should -HaveCount 10
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data'
+    }
+
+    It 'Complete hashtable keys for hashtable in array of arguments' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Table -Property Attributes,@{'
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'Expression FormatString Label Width Alignment'
     }
 
     It 'Complete hashtable keys for a hashtable used for splatting' {
@@ -541,11 +596,16 @@ using `
     It 'Should show multiple constructors in the tooltip' {
         $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
         $res.CompletionMatches | Should -HaveCount 1
-        $completionText = $res.CompletionMatches.ToolTip | Should -BeExactly @'
+        $completionText = $res.CompletionMatches.ToolTip
+        $completionText.replace("`r`n", [System.Environment]::NewLine).trim()
+
+        $expected = @'
 ConstructorTestClass(string s)
 ConstructorTestClass(int i)
 ConstructorTestClass(int i, bool b)
 '@
+        $expected.replace("`r`n", [System.Environment]::NewLine).trim()
+        $completionText.replace("`r`n", [System.Environment]::NewLine).trim() | Should -BeExactly $expected
     }
 
     It 'Should complete parameter in param block' {
@@ -626,6 +686,13 @@ ConstructorTestClass(int i, bool b)
         $res = TabExpansion2 -inputScript $TestString
         $res | Should -HaveCount 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
+    }
+
+    It 'Should complete psobject members for variable' {
+        $TestVar = Get-Command Get-Command | Select-Object CommandType
+        $res = TabExpansion2 -inputScript '$TestVar | ForEach-Object {$_.commandtype'
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CommandType'
     }
 
     Context "Format cmdlet's View paramter completion" {
@@ -857,6 +924,18 @@ class InheritedClassTest : System.Attribute
         $this.
 '@
         $res.CompletionMatches.CompletionText | Should -Contain 'TypeId'
+    }
+
+    it 'Should not complete parameter aliases if the real parameter is in the completion results' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -p'
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '-proga'
+        $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
+    }
+
+    it 'Should not complete parameter aliases if the real parameter is in the completion results (Non ambiguous parameters)' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -prog'
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '-proga'
+        $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
     Context "Script name completion" {
@@ -1229,12 +1308,8 @@ class InheritedClassTest : System.Attribute
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
-            if (!$env:HOMEDRIVE) {
-                Set-ItResult -Skipped -Because "Homerdrive is not set"
-            }
-            $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
-            $beforeTab = "\\localhost\$homeDrive\wind"
-            $afterTab = "& '\\localhost\$homeDrive\Windows'"
+            $beforeTab = "\\localhost\ADMIN$\boo"
+            $afterTab = "& '\\localhost\ADMIN$\Boot'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -1638,15 +1713,15 @@ dir -Recurse `
         It "Test completion with exact match" {
             $inputStr = 'get-content -wa'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
+            $res.CompletionMatches | Should -HaveCount 3
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Wait,-WarningAction,-WarningVariable"
         }
 
         It "Test completion with splatted variable" {
             $inputStr = 'Get-Content @Splat -P'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 6
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-proga,-ProgressAction,-PSPath,-pv"
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-ProgressAction,-PSPath"
         }
 
         It "Test completion for HttpVersion parameter name" {
@@ -1906,31 +1981,6 @@ dir -Recurse `
         }
     }
 
-    Context "User-overridden TabExpansion implementations" {
-        It "Override TabExpansion with function" {
-            function TabExpansion ($line, $lastword) {
-                "Overridden-TabExpansion-Function"
-            }
-
-            $inputStr = '$PID.'
-            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Overridden-TabExpansion-Function'
-        }
-
-        It "Override TabExpansion with alias" {
-            function OverrideTabExpansion ($line, $lastword) {
-                "Overridden-TabExpansion-Alias"
-            }
-            Set-Alias -Name TabExpansion -Value OverrideTabExpansion
-
-            $inputStr = '$PID.'
-            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Overridden-TabExpansion-Alias"
-        }
-    }
-
     Context "No tab completion tests" {
         BeforeAll {
             $testCases = @(
@@ -2101,7 +2151,7 @@ dir -Recurse `
 
     Context "Tab completion help test" {
         BeforeAll {
-            if ([System.Management.Automation.Platform]::IsWindows) {
+            if ($IsWindows) {
                 $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
             } else {
                 $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
@@ -2110,33 +2160,89 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
-            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
+            $helpName = "about_Splatting"
+            $helpFileName = "${helpName}.help.txt"
+            $inputScript = "get-help about_spla"
+            $culture = "en-US"
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot $culture
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME $culture
+            $expectedCompletionCount = 0
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
-            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
-            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
+            $userHelpPath = Join-Path $aboutHelpPathUserScope $helpFileName
+            $userScopeHelp = Test-Path $userHelpPath
+            if ($userScopeHelp) {
+                $expectedCompletionCount++
+            } else {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                if (Test-Path $userHelpPath) {
+                    $expectedCompletionCount++
+                }
             }
 
-            # If help content is present on both scopes, expect 2 or else expect 1 completion.
-            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+            $allUserScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersScope $helpFileName)
+            if ($allUserScopeHelpPath) {
+                $expectedCompletionCount++
+            }
 
-            $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-            $res.CompletionMatches | Should -HaveCount $expectedCompletions
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $inputScript.Length
+            $res.CompletionMatches | Should -HaveCount $expectedCompletionCount
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
         }
+
         It 'Should complete about help topic regardless of culture' {
             try
             {
                 ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
                 $OriginalCulture = [cultureinfo]::CurrentCulture
-                [cultureinfo]::CurrentCulture="da-DK"
+                $defaultCulture = "en-US"
+                $culture = "da-DK"
+                [cultureinfo]::CurrentCulture = $culture
+                $helpName = "about_Splatting"
+                $helpFileName = "${helpName}.help.txt"
+
+                $aboutHelpPathUserScope = Join-Path $userHelpRoot $culture
+                $aboutHelpPathAllUsersScope = Join-Path $PSHOME $culture
+                $expectedCompletionCount = 0
+
+                ## If help content does not exist, tab completion will not work. So update it first.
+                $userHelpPath = Join-Path $aboutHelpPathUserScope $helpFileName
+                $userScopeHelp = Test-Path $userHelpPath
+                if ($userScopeHelp) {
+                    $expectedCompletionCount++
+                }
+                else {                    Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+                    if (Test-Path $userHelpPath) {
+                        $expectedCompletionCount++
+                    }
+                    else {
+                        $aboutHelpPathUserScope = Join-Path $userHelpRoot $defaultCulture
+                        $aboutHelpPathAllUsersScope = Join-Path $PSHOME $defaultCulture
+                        $userHelpDefaultPath = Join-Path $aboutHelpPathUserScope $helpFileName
+                        $userDefaultScopeHelp = Test-Path $userHelpDefaultPath
+
+                        if ($userDefaultScopeHelp) {
+                            $expectedCompletionCount++
+                        }
+                    }
+                }
+
+                $allUserScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersScope $helpFileName)
+                if ($allUserScopeHelpPath) {
+                    $expectedCompletionCount++
+                }
+                else {
+                    $aboutHelpPathAllUsersDefaultScope = Join-Path $PSHOME $defaultCulture
+                    $allUsersDefaultScopeHelpPath = Test-Path (Join-Path $aboutHelpPathAllUsersDefaultScope $helpFileName)
+
+                    if ($allUsersDefaultScopeHelpPath) {
+                        $expectedCompletionCount++
+                    }
+                }
 
                 $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-                $res.CompletionMatches | Should -HaveCount 1
-                $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+                $res.CompletionMatches | Should -HaveCount $expectedCompletionCount
+                $res.CompletionMatches[0].CompletionText | Should -BeExactly $helpName
             }
             finally
             {
@@ -2347,7 +2453,7 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
     }
-    
+
     Context "Using statement related tests" {
         It 'Should complete <ScriptText>' -TestCases @(
             #@{
@@ -2391,11 +2497,19 @@ function MyFunction ($param1, $param2)
         $res.CompletionMatches | Should -HaveCount 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly "Parameter"
     }
+
+    It 'Should complete module specification keys in using module statement' {
+        $res = TabExpansion2 -inputScript 'using module @{'
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "GUID MaximumVersion ModuleName ModuleVersion RequiredVersion"
+    }
 }
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
-        if ($IsWindows) {
+        $skipTest = -not $IsWindows
+        $pendingTest = $IsWindows -and (Test-IsWinWow64)
+
+        if (-not $skipTest -and -not $pendingTest) {
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace
@@ -2413,11 +2527,16 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminO
             )
         } else {
             $defaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["It:Skip"] = $true
+
+            if ($skipTest) {
+                $PSDefaultParameterValues["It:Skip"] = $true
+            } elseif ($pendingTest) {
+                $PSDefaultParameterValues["It:Pending"] = $true
+            }
         }
     }
     AfterAll {
-        if ($IsWindows) {
+        if (-not $skipTest -and -not $pendingTest) {
             Remove-PSSession $session
             $powershell.Dispose()
         } else {

@@ -263,12 +263,18 @@ namespace System.Management.Automation
                     else
                     {
                         Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
-                        if (!match.Success) { continue; }
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
 
                         // Match found. Validate ZoneId value.
                         string zoneIdRawValue = match.Groups[1].Value;
                         match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
-                        if (!match.Success) { return SecurityZone.NoZone; }
+                        if (!match.Success)
+                        {
+                            return SecurityZone.NoZone;
+                        }
 
                         string zoneId = match.Groups[0].Value;
                         SecurityZone result;

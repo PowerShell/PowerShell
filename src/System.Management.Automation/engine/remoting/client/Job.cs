@@ -1011,11 +1011,17 @@ namespace System.Management.Automation
         /// </summary>
         public void LoadJobStreams()
         {
-            if (_jobStreamsLoaded) return;
+            if (_jobStreamsLoaded)
+            {
+                return;
+            }
 
             lock (syncObject)
             {
-                if (_jobStreamsLoaded) return;
+                if (_jobStreamsLoaded)
+                {
+                    return;
+                }
 
                 _jobStreamsLoaded = true;
             }
