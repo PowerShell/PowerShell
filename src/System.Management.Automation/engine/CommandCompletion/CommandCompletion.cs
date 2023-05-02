@@ -550,6 +550,7 @@ namespace System.Management.Automation
                     }
                     */
                 }
+
                 var completionResults = results ?? EmptyCompletionResult;
 
 #if LEGACYTELEMETRY
