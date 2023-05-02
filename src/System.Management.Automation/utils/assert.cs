@@ -166,7 +166,10 @@ namespace System.Management.Automation
             string whyThisShouldNeverHappen, string detailMessage)
         {
             // Early out avoids some slower code below (mostly the locking done in ThrowInsteadOfAssert).
-            if (condition) return;
+            if (condition)
+            {
+                return;
+            }
 
 #if ASSERTIONS_TRACE
             if (!condition)

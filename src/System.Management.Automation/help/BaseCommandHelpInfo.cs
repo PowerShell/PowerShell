@@ -214,8 +214,7 @@ namespace System.Management.Automation
             string commandToSearch = commandName;
             if (!string.IsNullOrEmpty(moduleName))
             {
-                commandToSearch = string.Format(CultureInfo.InvariantCulture,
-                    "{0}\\{1}", moduleName, commandName);
+                commandToSearch = string.Create(CultureInfo.InvariantCulture, $"{moduleName}\\{commandName}");
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();

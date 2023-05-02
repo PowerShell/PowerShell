@@ -16,25 +16,21 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.1" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="System.Web.Services.Description" Version="4.10.0" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="7.0.0" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="7.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
+    <PackageReference Include="System.IO.Packaging" Version="8.0.0-preview.3.23174.8" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.0-preview.3.23174.8" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0-preview.3.23174.8" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.0" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.2" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.2" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.2" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.2" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.10.2" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0-preview.3.23174.8" />
   </ItemGroup>
 
 </Project>

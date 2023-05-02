@@ -382,14 +382,20 @@ namespace System.Management.Automation
         {
             if (!string.IsNullOrEmpty(preReleaseLabel))
             {
-                if (!Regex.IsMatch(preReleaseLabel, LabelUnitRegEx)) throw new FormatException(nameof(preReleaseLabel));
+                if (!Regex.IsMatch(preReleaseLabel, LabelUnitRegEx))
+                {
+                    throw new FormatException(nameof(preReleaseLabel));
+                }
 
                 PreReleaseLabel = preReleaseLabel;
             }
 
             if (!string.IsNullOrEmpty(buildLabel))
             {
-                if (!Regex.IsMatch(buildLabel, LabelUnitRegEx)) throw new FormatException(nameof(buildLabel));
+                if (!Regex.IsMatch(buildLabel, LabelUnitRegEx))
+                {
+                    throw new FormatException(nameof(buildLabel));
+                }
 
                 BuildLabel = buildLabel;
             }
@@ -415,7 +421,10 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(label))
             {
                 var match = Regex.Match(label, LabelRegEx);
-                if (!match.Success) throw new FormatException(nameof(label));
+                if (!match.Success)
+                {
+                    throw new FormatException(nameof(label));
+                }
 
                 PreReleaseLabel = match.Groups["preLabel"].Value;
                 BuildLabel = match.Groups["buildLabel"].Value;
@@ -433,9 +442,20 @@ namespace System.Management.Automation
         /// </exception>
         public SemanticVersion(int major, int minor, int patch)
         {
-            if (major < 0) throw PSTraceSource.NewArgumentException(nameof(major));
-            if (minor < 0) throw PSTraceSource.NewArgumentException(nameof(minor));
-            if (patch < 0) throw PSTraceSource.NewArgumentException(nameof(patch));
+            if (major < 0)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(major));
+            }
+
+            if (minor < 0)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(minor));
+            }
+
+            if (patch < 0) 
+            {
+                throw PSTraceSource.NewArgumentException(nameof(patch));
+            }
 
             Major = major;
             Minor = minor;
@@ -477,8 +497,15 @@ namespace System.Management.Automation
         /// </exception>
         public SemanticVersion(Version version)
         {
-            if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
-            if (version.Revision > 0) throw PSTraceSource.NewArgumentException(nameof(version));
+            if (version == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(version));
+            }
+
+            if (version.Revision > 0)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(version));
+            }
 
             Major = version.Major;
             Minor = version.Minor;
@@ -565,8 +592,15 @@ namespace System.Management.Automation
         /// <exception cref="OverflowException"></exception>
         public static SemanticVersion Parse(string version)
         {
-            if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
-            if (version == string.Empty) throw new FormatException(nameof(version));
+            if (version == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(version));
+            }
+
+            if (version == string.Empty)
+            {
+                throw new FormatException(nameof(version));
+            }
 
             var r = new VersionResult();
             r.Init(true);
@@ -886,9 +920,15 @@ namespace System.Management.Automation
             // Numeric identifiers always have lower precedence than non-numeric identifiers.
             // A larger set of pre-release fields has a higher precedence than a smaller set,
             // if all of the preceding identifiers are equal.
-            if (string.IsNullOrEmpty(preLabel1)) { return string.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+            if (string.IsNullOrEmpty(preLabel1))
+            {
+                return string.IsNullOrEmpty(preLabel2) ? 0 : 1;
+            }
 
-            if (string.IsNullOrEmpty(preLabel2)) { return -1; }
+            if (string.IsNullOrEmpty(preLabel2))
+            {
+                return -1;
+            }
 
             var units1 = preLabel1.Split('.');
             var units2 = preLabel2.Split('.');
@@ -905,16 +945,28 @@ namespace System.Management.Automation
 
                 if (isNumber1 && isNumber2)
                 {
-                    if (number1 != number2) { return number1 < number2 ? -1 : 1; }
+                    if (number1 != number2)
+                    {
+                        return number1 < number2 ? -1 : 1;
+                    }
                 }
                 else
                 {
-                    if (isNumber1) { return -1; }
+                    if (isNumber1)
+                    {
+                        return -1;
+                    }
 
-                    if (isNumber2) { return 1; }
+                    if (isNumber2)
+                    {
+                        return 1;
+                    }
 
                     int result = string.CompareOrdinal(ac, bc);
-                    if (result != 0) { return result; }
+                    if (result != 0)
+                    {
+                        return result;
+                    }
                 }
             }
 

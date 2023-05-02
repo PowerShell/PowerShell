@@ -369,14 +369,25 @@ namespace System.Management.Automation
         internal void AddChildJobWithoutBlocking(StartableJob childJob, ChildJobFlags flags, Action jobEnqueuedAction = null)
         {
             ArgumentNullException.ThrowIfNull(childJob);
-            if (childJob.JobStateInfo.State != JobState.NotStarted) throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, nameof(childJob));
+            if (childJob.JobStateInfo.State != JobState.NotStarted)
+            {
+                throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, nameof(childJob));
+            }
+                
             this.AssertNotDisposed();
 
             JobStateInfo newJobStateInfo = null;
             lock (_lockObject)
             {
-                if (this.IsEndOfChildJobs) throw new InvalidOperationException(RemotingErrorIdStrings.ThrottlingJobChildAddedAfterEndOfChildJobs);
-                if (_isStopping) { return; }
+                if (this.IsEndOfChildJobs)
+                {
+                    throw new InvalidOperationException(RemotingErrorIdStrings.ThrottlingJobChildAddedAfterEndOfChildJobs);
+                }
+
+                if (_isStopping)
+                {
+                    return;
+                }
 
                 if (_countOfAllChildJobs == 0)
                 {

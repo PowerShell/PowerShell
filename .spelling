@@ -106,6 +106,7 @@ brcrista
 breakpoint
 brianbunke
 britishben
+brotli
 brucepay
 bugfix
 build.json
@@ -1280,6 +1281,41 @@ CommonCommandParameters.cs
 preview.6.22352.1
 v2.2.6
 ResultsComparer
+pre-defined
+System.Runtime.CompilerServices.Unsafe
+TabExpansion
+PSv2
+System.Data.SqlClient
+Microsoft.CSharp
+v7.2.10
+7.2.x
+v7.3.3
+http
+webcmdlet
+argumentexception.throwifnullorempty
+bitconverter.tostring
+convert.tohexstring
+requires.notnullorempty
+argumentoutofrangeexception.throwifnegativeorzero
+callerargumentexpression
+requires.notnull
+argumentnullexception
+throwifnull
+process.cs
+setrequestcontent
+streamhelper.cs
+invokerestmethodcommand.common.cs
+gethttpmethod
+httpmethod
+removenulls
+notnull
+argumentnullexception.throwifnull
+disable_telemetry
+langversion
+microsoft.extensions.objectpool
+microsoft.codeanalysis.analyzers
+benchmarkdotnet
+winforms
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1662,5 +1698,22 @@ ci.psm1
 jcotton42
 centos-7
 Security.types.ps1xml
+optout
  - ADOPTERS.md
 MicrosoftPowerBIMgmt
+ - tools/clearlyDefined/readme.md
+ClearlyDefined
+ - CHANGELOG/preview.md
+stevenebutler
+spaette
+syntax-tm
+URIs
+typeDataXmlLoader.cs
+GetResponseObject
+ContentHelper
+BasicHtmlWebResponseObject
+WebRequestSession.cs
+dkattan
+preview.3.23178.7
+PoolNames
+techguy16

@@ -2777,22 +2777,6 @@ namespace Microsoft.PowerShell.Commands
         internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
 
         /// <summary>
-        /// AssignProcessToJobObject API is used to assign a process to an existing job object.
-        /// </summary>
-        /// <param name="hJob">
-        /// A handle to the job object to which the process will be associated.
-        /// </param>
-        /// <param name="hProcess">
-        /// A handle to the process to associate with the job object.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.
-        /// </returns>
-        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AssignProcessToJobObject(SafeHandle hJob, IntPtr hProcess);
-
-        /// <summary>
         /// Retrieves job state information from the job object.
         /// </summary>
         /// <param name="hJob">
@@ -2955,20 +2939,20 @@ namespace Microsoft.PowerShell.Commands
     #endregion NativeMethods
 
     #region ServiceStartupType
-    ///<summary>
-    ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
-    ///</summary>
+    /// <summary>
+    /// Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
+    /// </summary>
     public enum ServiceStartupType
     {
-        ///<summary>Invalid service</summary>
+        /// <summary>Invalid service</summary>
         InvalidValue = -1,
-        ///<summary>Automatic service</summary>
+        /// <summary>Automatic service</summary>
         Automatic = 2,
-        ///<summary>Manual service</summary>
+        /// <summary>Manual service</summary>
         Manual = 3,
-        ///<summary>Disabled service</summary>
+        /// <summary>Disabled service</summary>
         Disabled = 4,
-        ///<summary>Automatic (Delayed Start) service</summary>
+        /// <summary>Automatic (Delayed Start) service</summary>
         AutomaticDelayedStart = 10
     }
     #endregion ServiceStartupType

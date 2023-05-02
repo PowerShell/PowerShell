@@ -1375,7 +1375,7 @@ namespace System.Management.Automation.Runspaces
         private string _appName = s_defaultAppName;
         private Uri _connectionUri = new Uri(LocalHostUriString);          // uri of this connection
         private PSCredential _credential;    // credentials to be used for this connection
-        private string _shellUri = DefaultShellUri;            // shell thats specified by the user
+        private string _shellUri = DefaultShellUri;            // shell that's specified by the user
         private string _thumbPrint;
         private AuthenticationMechanism _proxyAuthentication;
         private PSCredential _proxyCredential;
@@ -1988,6 +1988,7 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
         /// The SSH options to pass to OpenSSH.
         /// Gets or sets the SSH options to pass to OpenSSH.
         /// </summary>
@@ -2018,7 +2019,10 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
+            if (computerName == null)
+            {
+                throw new PSArgumentNullException(nameof(computerName));
+            }
 
             UserName = userName;
             ComputerName = computerName;
@@ -2238,7 +2242,7 @@ namespace System.Management.Automation.Runspaces
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
                 }
 
-                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
+                startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-i ""{this.KeyFilePath}"""));
             }
 
             // pass "-l login_name" command line argument to ssh if UserName is set
@@ -2251,11 +2255,11 @@ namespace System.Management.Automation.Runspaces
                     // convert DOMAIN\user to user@DOMAIN
                     var domainName = parts[0];
                     var userName = parts[1];
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1}", userName, domainName));
+                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-l {userName}@{domainName}"));
                 }
                 else
                 {
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-l {0}", this.UserName));
+                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-l {this.UserName}"));
                 }
             }
 
@@ -2263,7 +2267,7 @@ namespace System.Management.Automation.Runspaces
             // if Port is not set, then ssh will use Port from ssh_config if defined else 22 by default
             if (this.Port != 0)
             {
-                startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+                startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-p {this.Port}"));
             }
 
             // pass "-o option=value" command line argument to ssh if options are provided
@@ -2271,13 +2275,13 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (DictionaryEntry pair in this.Options)
                 {
-                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-o {0}={1}", pair.Key, pair.Value));
+                    startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-o {pair.Key}={pair.Value}"));
                 }
             }
 
             // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination
             // note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them if present
-            startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-s {0} {1}", this.ComputerName.TrimStart('[').TrimEnd(']'), this.Subsystem));
+            startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-s {this.ComputerName.TrimStart('[').TrimEnd(']')} {this.Subsystem}"));
 
             startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;

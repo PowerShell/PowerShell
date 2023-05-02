@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 byte[] bytehash = ComputeHash(InputStream);
 
-                string hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
+                string hash = Convert.ToHexString(bytehash);
                 WriteHashResult(Algorithm, hash, string.Empty);
             }
         }
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
                 openfilestream = File.OpenRead(path);
                 byte[] bytehash = ComputeHash(openfilestream);
 
-                hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
+                hash = Convert.ToHexString(bytehash);
             }
             catch (FileNotFoundException ex)
             {

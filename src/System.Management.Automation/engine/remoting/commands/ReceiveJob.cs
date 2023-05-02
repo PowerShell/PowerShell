@@ -1163,14 +1163,21 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_syncObject)
             {
-                if (_isDisposed) return;
+                if (_isDisposed)
+                {
+                    return;
+                }
             }
 
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
             {
-                if (!_results.IsOpen) return;
+                if (!_results.IsOpen)
+                {
+                    return;
+                }
+
                 PSDataCollection<ErrorRecord> errorRecords = sender as PSDataCollection<ErrorRecord>;
                 Diagnostics.Assert(errorRecords != null, "PSDataCollection is raising an inappropriate event");
                 ErrorRecord errorRecord = GetData(errorRecords, e.Index);

@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(PingMtuStatus), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
+    [OutputType(typeof(TcpPortStatus), ParameterSetName = new string[] { TcpPortParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
         #region Parameter Set Names
@@ -134,6 +135,7 @@ namespace Microsoft.PowerShell.Commands
         /// The default (from Windows) is 4 times.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Count { get; set; } = 4;
 
@@ -143,6 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Delay { get; set; } = 1;
 
@@ -169,6 +172,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = RepeatPingParameterSet)]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         [Alias("Continuous")]
         public SwitchParameter Repeat { get; set; }
 
@@ -179,6 +183,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter Quiet { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether to enable detailed output mode while running a TCP connection test.
+        /// Without this flag, the TCP test will return a boolean result.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Detailed;
 
         /// <summary>
         /// Gets or sets the timeout value for an individual ping in seconds.
@@ -227,6 +238,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// BeginProcessing implementation for TestConnectionCommand.
+        /// Sets Count for different types of tests unless specified explicitly.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -234,6 +246,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 case RepeatPingParameterSet:
                     Count = int.MaxValue;
+                    break;
+                case TcpPortParameterSet:
+                    SetCountForTcpTest();
                     break;
             }
         }
@@ -281,6 +296,18 @@ namespace Microsoft.PowerShell.Commands
 
         #region ConnectionTest
 
+        private void SetCountForTcpTest()
+        {
+            if (Repeat.IsPresent)
+            {
+                Count = int.MaxValue;
+            }
+            else if (!MyInvocation.BoundParameters.ContainsKey(nameof(Count)))
+            {
+                Count = 1;
+            }
+        }
+
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
@@ -293,42 +320,80 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            TcpClient client = new();
+            int timeoutMilliseconds = TimeoutSeconds * 1000;
+            int delayMilliseconds = Delay * 1000;
 
-            try
+            for (var i = 1; i <= Count; i++)
             {
-                Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
-                string targetString = targetAddress.ToString();
+                long latency = 0;
+                SocketError status = SocketError.SocketError;
 
-                for (var i = 1; i <= TimeoutSeconds; i++)
+                Stopwatch stopwatch = new Stopwatch();
+
+                using var client = new TcpClient();
+
+                try
                 {
-                    Task timeoutTask = Task.Delay(millisecondsDelay: 1000);
-                    Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
+                    stopwatch.Start();
 
-                    if (timeoutTask.Status == TaskStatus.Faulted || timeoutTask.Status == TaskStatus.Canceled)
+                    if (client.ConnectAsync(targetAddress, TcpPort).Wait(timeoutMilliseconds, _dnsLookupCancel.Token))
                     {
-                        // Waiting is interrupted by Ctrl-C.
-                        WriteObject(false);
-                        return;
+                        latency = stopwatch.ElapsedMilliseconds;
+                        status = SocketError.Success;
                     }
-
-                    if (connectionTask.Status == TaskStatus.RanToCompletion)
+                    else
                     {
-                        WriteObject(true);
-                        return;
+                        status = SocketError.TimedOut;
                     }
                 }
-            }
-            catch
-            {
-                // Silently ignore connection errors.
-            }
-            finally
-            {
-                client.Close();
-            }
+                catch (AggregateException ae)
+                {
+                    ae.Handle((ex) =>
+                    {
+                        if (ex is TaskCanceledException)
+                        {
+                            throw new PipelineStoppedException();
+                        }
+                        if (ex is SocketException socketException)
+                        {
+                            status = socketException.SocketErrorCode;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    });
+                }
+                finally
+                {
+                    stopwatch.Reset();
+                }
 
-            WriteObject(false);
+                if (!Detailed.IsPresent)
+                {
+                    WriteObject(status == SocketError.Success);
+                    return;
+                }
+                else
+                {
+                    WriteObject(new TcpPortStatus(
+                        i,
+                        Source,
+                        targetNameOrAddress,
+                        targetAddress,
+                        TcpPort,
+                        latency,
+                        status == SocketError.Success,
+                        status
+                    ));
+                }
+
+                if (i < Count)
+                {
+                    Task.Delay(delayMilliseconds).Wait(_dnsLookupCancel.Token);
+                }
+            }
         }
 
         #endregion ConnectionTest
@@ -875,6 +940,75 @@ namespace Microsoft.PowerShell.Commands
                 _sender?.Dispose();
                 _sender = null;
             }
+        }
+
+        /// <summary>
+        /// The class contains information about the TCP connection test.
+        /// </summary>
+        public class TcpPortStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TcpPortStatus"/> class.
+            /// </summary>
+            /// <param name="id">The number of this test.</param>
+            /// <param name="source">The source machine name or IP of the test.</param>
+            /// <param name="target">The target machine name or IP of the test.</param>
+            /// <param name="targetAddress">The resolved IP from the target.</param>
+            /// <param name="port">The port used for the connection.</param>
+            /// <param name="latency">The latency of the test.</param>
+            /// <param name="connected">If the test connection succeeded.</param>
+            /// <param name="status">Status of the underlying socket.</param>
+            internal TcpPortStatus(int id, string source, string target, IPAddress targetAddress, int port, long latency, bool connected, SocketError status)
+            {
+                Id = id;
+                Source = source;
+                Target = target;
+                TargetAddress = targetAddress;
+                Port = port;
+                Latency = latency;
+                Connected = connected;
+                Status = status;
+            }
+
+            /// <summary>
+            /// Gets and sets the count of the test.
+            /// </summary>
+            public int Id { get; set; }
+
+            /// <summary>
+            /// Gets the source from which the test was sent.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Gets the target name.
+            /// </summary>
+            public string Target { get; }
+
+            /// <summary>
+            /// Gets the resolved address for the target.
+            /// </summary>
+            public IPAddress TargetAddress { get; }
+
+            /// <summary>
+            /// Gets the port used for the test.
+            /// </summary>
+            public int Port { get; }
+
+            /// <summary>
+            /// Gets or sets the latancy of the connection.
+            /// </summary>
+            public long Latency { get; set; }
+
+            /// <summary>
+            /// Gets or sets the result of the test.
+            /// </summary>
+            public bool Connected { get; set; }
+
+            /// <summary>
+            /// Gets or sets the state of the socket after the test.
+            /// </summary>
+            public SocketError Status { get; set; }
         }
 
         /// <summary>

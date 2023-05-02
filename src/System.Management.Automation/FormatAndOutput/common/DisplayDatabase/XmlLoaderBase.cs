@@ -600,8 +600,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 path.Insert(0, "/");
                 if (sf.index != -1)
                 {
-                    path.Insert(1, string.Format(CultureInfo.InvariantCulture,
-                        "{0}[{1}]", sf.node.Name, sf.index + 1));
+                    path.Insert(1, string.Create(CultureInfo.InvariantCulture, $"{sf.node.Name}[{sf.index + 1}]"));
                 }
                 else
                 {

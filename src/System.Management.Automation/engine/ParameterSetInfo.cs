@@ -246,15 +246,19 @@ namespace System.Management.Automation
 
                 if (parameter.IsMandatory)
                 {
-                    result.AppendFormat(CultureInfo.InvariantCulture,
-                                        parameter.Position != int.MinValue ? "[-{0}] <{1}>" : "-{0} <{1}>",
-                                        parameter.Name, parameterTypeString);
+                    result.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        parameter.Position != int.MinValue ? "[-{0}] <{1}>" : "-{0} <{1}>",
+                        parameter.Name,
+                        parameterTypeString);
                 }
                 else
                 {
-                    result.AppendFormat(CultureInfo.InvariantCulture,
-                                        parameter.Position != int.MinValue ? "[[-{0}] <{1}>]" : "[-{0} <{1}>]",
-                                        parameter.Name, parameterTypeString);
+                    result.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        parameter.Position != int.MinValue ? "[[-{0}] <{1}>]" : "[-{0} <{1}>]",
+                        parameter.Name,
+                        parameterTypeString);
                 }
             }
         }
