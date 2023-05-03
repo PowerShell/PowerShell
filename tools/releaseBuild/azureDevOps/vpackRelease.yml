@@ -16,6 +16,10 @@ variables:
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
   - group: Azure Blob variable group
+  # adds the pat to publish the vPack
+  # instructions to create are in the description of the library
+  - group: vPack
+
 
 stages:
 - stage: prep

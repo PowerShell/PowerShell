@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
                     int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
                     if (position == -1) // subPathToAdd not found - add it
                     {
-                        if (insertPosition == -1) // append subPathToAdd to the end
+                        if (insertPosition == -1 || insertPosition > basePath.Length) // append subPathToAdd to the end
                         {
                             bool endsWithPathSeparator = false;
                             if (result.Length > 0)
@@ -1223,23 +1223,23 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
-                int insertIndex = 0;
-                if (!string.IsNullOrEmpty(personalModulePathToUse))
+                currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
+                int insertIndex = currentProcessModulePath.IndexOf(Path.PathSeparator, PathContainsSubstring(currentProcessModulePath, personalModulePathToUse));
+                if (insertIndex != -1)
                 {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, insertIndex);
-                    insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
+                    // advance past the path separator
+                    insertIndex++;
                 }
 
-                if (!string.IsNullOrEmpty(sharedModulePath))
+                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
+                insertIndex = currentProcessModulePath.IndexOf(Path.PathSeparator, PathContainsSubstring(currentProcessModulePath, sharedModulePath));
+                if (insertIndex != -1)
                 {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                    insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
+                    // advance past the path separator
+                    insertIndex++;
                 }
 
-                if (!string.IsNullOrEmpty(systemModulePathToUse))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
-                }
+                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
 
             return currentProcessModulePath;

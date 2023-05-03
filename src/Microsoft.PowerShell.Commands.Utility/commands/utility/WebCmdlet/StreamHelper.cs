@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -25,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly long? _contentLength;
         private readonly Stream _originalStreamToProxy;
-        private readonly Cmdlet _ownerCmdlet;
+        private readonly Cmdlet? _ownerCmdlet;
         private readonly CancellationToken _cancellationToken;
         private bool _isInitialized = false;
 
@@ -40,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
@@ -335,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
             WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
         }
 
-        private static async Task<Encoding> GetStreamEncodingAsync(Stream stream, string characterSet, CancellationToken cancellationToken)
+        private static async Task<Encoding> GetStreamEncodingAsync(Stream stream, string? characterSet, CancellationToken cancellationToken)
         {
             bool isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out Encoding encoding);
             using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
@@ -383,12 +385,12 @@ namespace Microsoft.PowerShell.Commands
             return new StreamReader(stream, encoding, leaveOpen: true).ReadToEndAsync(cancellationToken).GetAwaiter().GetResult();
         }
 
-        internal static bool TryGetEncodingFromCharset(string characterSet, out Encoding encoding)
+        internal static bool TryGetEncodingFromCharset(string? characterSet, out Encoding encoding)
         {
             bool result = false;
             try
             {
-                encoding = Encoding.GetEncoding(characterSet);
+                encoding = Encoding.GetEncoding(characterSet!);
                 result = true;
             }
             catch (ArgumentException)

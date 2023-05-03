@@ -282,6 +282,59 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
+Microsoft.CSharp 4.7.0 - MIT
+
+
+(c) Microsoft Corporation.
+Copyright (c) .NET Foundation.
+Copyright (c) 2011, Google Inc.
+(c) 1997-2005 Sean Eron Anderson.
+Copyright (c) 2007 James Newton-King
+Copyright (c) 1991-2017 Unicode, Inc.
+Copyright (c) 2013-2017, Alfred Klomp
+Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2005-2007, Nick Galbreath
+Portions (c) International Organization
+Copyright (c) 2015 The Chromium Authors.
+Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) .NET Foundation Contributors
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
+Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
 Microsoft.Management.Infrastructure 2.0.0 - MIT
 
 
@@ -593,57 +646,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.0 - MIT
+Microsoft.Windows.Compatibility 7.0.1 - MIT
 
 
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright 2019 LLVM Project
-Copyright 2018 Daniel Lemire
-Copyright (c) .NET Foundation
-Copyright (c) 2011, Google Inc.
-Copyright (c) 2020 Dan Shechter
-(c) 1997-2005 Sean Eron Anderson
-Copyright (c) 1998 Microsoft. To
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) 2005-2020 Rich Felker
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2022 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright 2012 the V8 project authors
-Copyright (c) 1999 Lucent Technologies
-Copyright (c) 2008-2016, Wojciech Mula
-Copyright (c) 2011-2020 Microsoft Corp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2021 csFastFloat authors
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2015 The Chromium Authors
-Copyright (c) 2018 Alexander Chermyanin
-Copyright (c) The Internet Society 1997
-Portions (c) International Organization
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) The Internet Society (2003)
-Copyright (c) .NET Foundation Contributors
-Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright (c) 1980, 1986, 1993 The Regents of the University of California
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -692,7 +697,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Newtonsoft.Json 13.0.2 - MIT
+Newtonsoft.Json 13.0.3 - MIT
 
 
 Copyright James Newton-King 2008
@@ -1895,9 +1900,57 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.DiagnosticSource 7.0.1 - MIT
+System.Diagnostics.DiagnosticSource 7.0.2 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
+Copyright 2018 Daniel Lemire
+Copyright (c) .NET Foundation
+Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
+Copyright (c) 1998 Microsoft. To
+Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
+Copyright (c) Microsoft Corporation
+Copyright (c) 2007 James Newton-King
+Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2022 Unicode, Inc.
+Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 1999 Lucent Technologies
+Copyright (c) 2008-2016, Wojciech Mula
+Copyright (c) 2011-2020 Microsoft Corp
+Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2021 csFastFloat authors
+Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
+Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
+Portions (c) International Organization
+Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2013-2017, Milosz Krajewski
+Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
+Copyright (c) .NET Foundation Contributors
+Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
+Copyright (c) 2019 Microsoft Corporation, Daan Leijen
+Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
+Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
+Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright (c) 1980, 1986, 1993 The Regents of the University of California
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2657,57 +2710,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Management 7.0.0 - MIT
+System.Management 7.0.1 - MIT
 
 
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright 2019 LLVM Project
-Copyright 2018 Daniel Lemire
-Copyright (c) .NET Foundation
-Copyright (c) 2011, Google Inc.
-Copyright (c) 2020 Dan Shechter
-(c) 1997-2005 Sean Eron Anderson
-Copyright (c) 1998 Microsoft. To
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) 2005-2020 Rich Felker
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2022 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright 2012 the V8 project authors
-Copyright (c) 1999 Lucent Technologies
-Copyright (c) 2008-2016, Wojciech Mula
-Copyright (c) 2011-2020 Microsoft Corp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2021 csFastFloat authors
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2015 The Chromium Authors
-Copyright (c) 2018 Alexander Chermyanin
-Copyright (c) The Internet Society 1997
-Portions (c) International Organization
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) The Internet Society (2003)
-Copyright (c) .NET Foundation Contributors
-Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright (c) 1980, 1986, 1993 The Regents of the University of California
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2866,9 +2871,12 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Private.ServiceModel 4.10.0 - MIT
+System.Private.ServiceModel 4.10.2 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 
@@ -3680,73 +3688,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Duplex 4.10.0 - MIT
-
-
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.ServiceModel.Http 4.10.0 - MIT
-
-
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.ServiceModel.NetFramingBase 6.0.0-preview1.23060.3 - MIT
+System.ServiceModel.Duplex 4.10.2 - MIT
 
 
 (c) Microsoft Corporation
@@ -3782,9 +3724,12 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.NetTcp 4.10.0 - MIT
+System.ServiceModel.Http 4.10.2 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 
@@ -3815,9 +3760,12 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Primitives 4.10.0 - MIT
+System.ServiceModel.NetTcp 4.10.2 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 
@@ -3848,9 +3796,48 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Security 4.10.0 - MIT
+System.ServiceModel.Primitives 4.10.2 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+System.ServiceModel.Security 4.10.2 - MIT
+
+
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 
@@ -4337,53 +4324,6 @@ Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.Threading.Tasks.Extensions 4.5.4 - MIT
-
-
-(c) Microsoft Corporation.
-Copyright (c) 2011, Google Inc.
-(c) 1997-2005 Sean Eron Anderson.
-Copyright (c) 1991-2017 Unicode, Inc.
-Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) .NET Foundation Contributors
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
 
 The MIT License (MIT)
 

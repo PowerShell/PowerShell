@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -26,14 +28,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or protected sets the response body content.
         /// </summary>
-        public byte[] Content { get; protected set; }
+        public byte[]? Content { get; protected set; }
 
         /// <summary>
         /// Gets the Headers property.
         /// </summary>
         public Dictionary<string, IEnumerable<string>> Headers => _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
 
-        private Dictionary<string, IEnumerable<string>> _headers = null;
+        private Dictionary<string, IEnumerable<string>>? _headers;
 
         /// <summary>
         /// Gets or protected sets the full response content.
@@ -41,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// Full response content, including the HTTP status line, headers, and body.
         /// </value>
-        public string RawContent { get; protected set; }
+        public string? RawContent { get; protected set; }
 
         /// <summary>
         /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
@@ -56,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the RelationLink property.
         /// </summary>
-        public Dictionary<string, string> RelationLink { get; internal set; }
+        public Dictionary<string, string>? RelationLink { get; internal set; }
 
         /// <summary>
         /// Gets the response status code.
@@ -77,8 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response">The Http response.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public WebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken)
-        { }
+        public WebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class
@@ -87,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response">Http response.</param>
         /// <param name="contentStream">The http content stream.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken)
+        public WebResponseObject(HttpResponseMessage response, Stream? contentStream, CancellationToken cancellationToken)
         {
             SetResponse(response, contentStream, cancellationToken);
             InitializeContent();
@@ -111,9 +112,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
 
             // Use ASCII encoding for the RawContent visual view of the content.
-            if (Content.Length > 0)
+            if (Content?.Length > 0)
             {
-                raw.Append(this.ToString());
+                raw.Append(ToString());
             }
 
             RawContent = raw.ToString();
@@ -125,26 +126,23 @@ namespace Microsoft.PowerShell.Commands
                                                 || char.IsSymbol(c)
                                                 || char.IsWhiteSpace(c);
 
-        private void SetResponse(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken)
+        [MemberNotNull(nameof(RawContentStream))]
+        [MemberNotNull(nameof(BaseResponse))]
+        private void SetResponse(HttpResponseMessage response, Stream? contentStream, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(response);
 
             BaseResponse = response;
 
-            MemoryStream ms = contentStream as MemoryStream;
-            if (ms is not null)
+            if (contentStream is MemoryStream ms)
             {
                 RawContentStream = ms;
             }
             else
             {
-                Stream st = contentStream;
-                if (contentStream is null)
-                {
-                    st = StreamHelper.GetResponseStream(response, cancellationToken);
-                }
+                Stream st = contentStream ?? StreamHelper.GetResponseStream(response, cancellationToken);
 
-                long contentLength = response.Content.Headers.ContentLength.Value;
+                long contentLength = response.Content.Headers.ContentLength.GetValueOrDefault();
                 if (contentLength <= 0)
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
@@ -164,7 +162,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of this web response.</returns>
         public sealed override string ToString()
         {
-            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
+            if (Content is null)
+            {
+                return string.Empty;
+            }
+
+            char[] stringContent = Encoding.ASCII.GetChars(Content);
             for (int counter = 0; counter < stringContent.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))
