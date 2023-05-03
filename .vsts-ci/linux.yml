@@ -44,6 +44,7 @@ pr:
     - test/common/markdown/*
     - test/perf/*
     - tools/releaseBuild/*
+    - tools/install*
     - tools/releaseBuild/azureDevOps/templates/*
     - README.md
     - .spelling

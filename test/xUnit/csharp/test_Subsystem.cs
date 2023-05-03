@@ -65,23 +65,13 @@ namespace PSTests.Sequential
 
         #region IFeedbackProvider
 
-        public FeedbackItem GetFeedback(string commandLine, ErrorRecord errorRecord, CancellationToken token) => new FeedbackItem("nothing", null);
+        public FeedbackItem GetFeedback(FeedbackContext context, CancellationToken token) => new FeedbackItem("nothing", null);
 
         #endregion
 
         #region ICommandPredictor
 
-        public bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback) => false;
-
         public SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken) => default;
-
-        public void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history) { }
-
-        public void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex) { }
-
-        public void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion) { }
-
-        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success) { }
 
         #endregion
     }

@@ -838,7 +838,7 @@ namespace PowershellTestConfigNamespace
             }
 
             if ($IsNotSkipped) {
-                Enable-PSRemoting
+                Enable-PSRemoting -SkipNetworkProfileCheck -Force
             }
         }
 

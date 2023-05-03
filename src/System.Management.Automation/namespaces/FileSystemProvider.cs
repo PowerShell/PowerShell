@@ -2485,40 +2485,35 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Junctions cannot have files
-                        if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
+                        if (!Force && DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
                             WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
                             return;
                         }
 
-                        if (Force)
+                        try
                         {
-                            try
+                            pathDirInfo.Delete();
+                        }
+                        catch (Exception exception)
+                        {
+                            if ((exception is DirectoryNotFoundException) ||
+                                (exception is UnauthorizedAccessException) ||
+                                (exception is System.Security.SecurityException) ||
+                                (exception is IOException))
                             {
-                                pathDirInfo.Delete();
+                                WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                             }
-                            catch (Exception exception)
+                            else
                             {
-                                if ((exception is DirectoryNotFoundException) ||
-                                    (exception is UnauthorizedAccessException) ||
-                                    (exception is System.Security.SecurityException) ||
-                                    (exception is IOException))
-                                {
-                                    WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
-                                }
-                                else
-                                {
-                                    throw;
-                                }
+                                throw;
                             }
                         }
                     }
-                    else
-                    {
-                        CreateDirectory(path, false);
-                        pathDirInfo = new DirectoryInfo(path);
-                    }
+
+                    CreateDirectory(path, streamOutput: false);
+                    pathDirInfo = new DirectoryInfo(path);
 
                     try
                     {
@@ -2885,7 +2880,10 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(fsinfo.FullName))
                             {
-                                if (!p.IsMatch(stream.Stream)) { continue; }
+                                if (!p.IsMatch(stream.Stream))
+                                {
+                                    continue;
+                                }
 
                                 foundStream = true;
 
@@ -4456,7 +4454,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitializeFunctionsPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             ps.AddScript(CopyFileRemoteUtils.AllCopyToRemoteScripts);
             SafeInvokeCommand.Invoke(ps, this, null, false);
@@ -4464,7 +4465,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void RemoveFunctionPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
-            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
+            if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace))
+            {
+                return;
+            }
 
             const string remoteScript = @"
                 Microsoft.PowerShell.Management\Remove-Item function:PSCopyToSessionHelper -ea SilentlyContinue -Force

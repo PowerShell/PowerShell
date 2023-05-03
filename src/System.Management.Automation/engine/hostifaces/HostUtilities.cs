@@ -42,7 +42,7 @@ namespace System.Management.Automation
     {
         #region Internal Access
 
-        private static readonly char s_actionIndicator = HostSupportUnicode() ? '\u2b9e' : '>';
+        private static readonly char s_actionIndicator = HostSupportUnicode() ? '\u27a4' : '>';
 
         private static readonly string s_checkForCommandInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
@@ -306,7 +306,10 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            if (!(runspace is LocalRunspace localRunspace)) { return new List<string>(); }
+            if (!(runspace is LocalRunspace localRunspace))
+            {
+                return new List<string>();
+            }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
@@ -514,48 +517,6 @@ namespace System.Management.Automation
             }
 
             return returnSuggestions;
-        }
-
-        /// <summary>
-        /// Remove the GUID from the message if the message is in the pre-defined format.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="matchPattern"></param>
-        /// <returns></returns>
-        internal static string RemoveGuidFromMessage(string message, out bool matchPattern)
-        {
-            matchPattern = false;
-            if (string.IsNullOrEmpty(message))
-                return message;
-
-            const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:).*";
-            Match matchResult = Regex.Match(message, pattern);
-            if (matchResult.Success)
-            {
-                string partToRemove = matchResult.Groups[1].Captures[0].Value;
-                message = message.Remove(0, partToRemove.Length);
-                matchPattern = true;
-            }
-
-            return message;
-        }
-
-        internal static string RemoveIdentifierInfoFromMessage(string message, out bool matchPattern)
-        {
-            matchPattern = false;
-            if (string.IsNullOrEmpty(message))
-                return message;
-
-            const string pattern = @"^([\d\w]{8}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{4}\-[\d\w]{12}:\[.*\]:).*";
-            Match matchResult = Regex.Match(message, pattern);
-            if (matchResult.Success)
-            {
-                string partToRemove = matchResult.Groups[1].Captures[0].Value;
-                message = message.Remove(0, partToRemove.Length);
-                matchPattern = true;
-            }
-
-            return message;
         }
 
         /// <summary>

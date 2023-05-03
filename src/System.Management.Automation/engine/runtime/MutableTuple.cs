@@ -281,7 +281,11 @@ namespace System.Management.Automation
             // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             int count = 0;
-            lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
+            lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count))
+            {
+                return count;
+            }
+
             Stack<Type> types = new Stack<Type>(tupleType.GetGenericArguments());
 
             while (types.Count != 0)
@@ -298,7 +302,10 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (t == typeof(DynamicNull)) continue;
+                if (t == typeof(DynamicNull))
+                {
+                    continue;
+                }
 
                 count++;
             }

@@ -154,6 +154,7 @@
       <ComponentRef Id="SharedRegistryEntries"/>
       <ComponentRef Id="SetPath"/>
       <ComponentRef Id="Telemetry"/>
+      <ComponentRef Id="DisableTelemetry"/>
       <ComponentRef Id="ExplorerContextMenu"/>
       <ComponentRef Id="PowerShellFileContextMenu"/>
     </Feature>
@@ -193,7 +194,7 @@
             </Component>
             <Component Id="MURegistryEntries">
               <Condition>USE_MU=1</Condition>
-              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  -->
+              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  We don't want to uninstall because it's used by both Preview and Stable and the detection relies on PS7 being installed for this to take effect. -->
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes">
                   <RegistryValue Type="integer" Value="1" Name="UseMU"  KeyPath="yes"/>
               </RegistryKey>
@@ -212,6 +213,10 @@
                   <!-- As a shared path, the last one to install will overwrite any previous value. It also needs to be in its own component to properly ref-count and be removed when appropriate. -->
                   <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
               </RegistryKey>
+            </Component>
+            <Component Id="DisableTelemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
+              <Condition>DISABLE_TELEMETRY</Condition>
+              <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath">
@@ -320,8 +325,9 @@
       <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
-      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
+      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="0" Text="Disable Telemetry (Reboot or Restart of processes may be required)" ToolTip="Sets environment variable POWERSHELL_TELEMETRY_OPTOUT to 1, see https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
       <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>

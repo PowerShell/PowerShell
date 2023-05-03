@@ -703,7 +703,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">Runspace is not opened.
         /// </exception>
-        internal System.Management.Automation.ExecutionContext ExecutionContext
+        internal ExecutionContext ExecutionContext
         {
             get
             {
@@ -1513,7 +1513,10 @@ namespace System.Management.Automation.Runspaces
 
                 if (count > 0)
                 {
-                    if (count == 1) { _baseRunningPowerShell = null; }
+                    if (count == 1)
+                    {
+                        _baseRunningPowerShell = null;
+                    }
 
                     return _runningPowerShells.Pop();
                 }
@@ -1574,7 +1577,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the execution context.
         /// </summary>
-        internal abstract System.Management.Automation.ExecutionContext GetExecutionContext
+        internal abstract ExecutionContext GetExecutionContext
         {
             get;
         }

@@ -238,7 +238,9 @@ namespace System.Management.Automation.Remoting.Internal
             }
 
             if (!Guid.TryParse(parts[0], out jobInstanceId))
+            {
                 jobInstanceId = Guid.Empty;
+            }
 
             computerName = parts[1];
         }
@@ -458,6 +460,7 @@ namespace System.Management.Automation.Remoting.Internal
             var newMessage = new StringBuilder(instanceId.ToString());
             newMessage.Append(':');
             newMessage.Append(message);
+
             return newMessage.ToString();
         }
 
@@ -470,6 +473,7 @@ namespace System.Management.Automation.Remoting.Internal
 
             errorRecord.ErrorDetails ??= new ErrorDetails(string.Empty);
             errorRecord.ErrorDetails.RecommendedAction = CreateInformationalMessage(sourceId, errorRecord.ErrorDetails.RecommendedAction);
+
             return errorRecord;
         }
     }
