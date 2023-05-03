@@ -2669,7 +2669,9 @@ namespace System.Management.Automation.Language
                 typesToAdd = LoadUsingsImpl(usingStatements, out assemblies, out typeAliases);
                 trs = new TypeResolutionState(
                     TypeOps.GetNamespacesForTypeResolutionState(usingStatements, out namespaceAliases),
-                    assemblies, typeAliases, namespaceAliases);
+                    assemblies,
+                    typeAliases,
+                    namespaceAliases);
             }
 
             exprs.Add(Expression.Call(
