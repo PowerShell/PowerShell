@@ -3658,7 +3658,14 @@ function New-MSIXPackage
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
     $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
-    Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
+    $xml = [xml]$appxManifest
+    if ($isPreview) {
+        $aliasNode = $xml.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Clone()
+        $aliasNode.alias = "pwsh-preview.exe"
+        $xml.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.AppendChild($aliasNode) | Out-Null
+    }
+    $xml.Save("$ProductSourcePath\AppxManifest.xml")
+
     # Necessary image assets need to be in source assets folder
     $assets = @(
         'Square150x150Logo'
