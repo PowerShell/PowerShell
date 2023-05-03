@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -25,8 +27,9 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly long? _contentLength;
         private readonly Stream _originalStreamToProxy;
+        private readonly Cmdlet? _ownerCmdlet;
+        private readonly CancellationToken _cancellationToken;
         private bool _isInitialized = false;
-        private readonly Cmdlet _ownerCmdlet;
 
         #endregion Data
 
@@ -34,15 +37,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseContentMemoryStream"/> class.
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="initialCapacity"></param>
+        /// <param name="stream">Response stream.</param>
+        /// <param name="initialCapacity">Presize the memory stream.</param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength) : base(initialCapacity)
+        /// <param name="cancellationToken">Cancellation token.</param>
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
+            _cancellationToken = cancellationToken;
         }
         #endregion Constructors
 
@@ -77,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
         {
-            Initialize();
+            Initialize(cancellationToken);
             return base.CopyToAsync(destination, bufferSize, cancellationToken);
         }
 
@@ -102,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            Initialize();
+            Initialize(cancellationToken);
             return base.ReadAsync(buffer, offset, count, cancellationToken);
         }
 
@@ -153,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            Initialize();
+            Initialize(cancellationToken);
             return base.WriteAsync(buffer, offset, count, cancellationToken);
         }
 
@@ -182,13 +187,16 @@ namespace Microsoft.PowerShell.Commands
             base.Dispose(disposing);
         }
 
-        /// <summary>
-        /// </summary>
-        private void Initialize()
+        private void Initialize(CancellationToken cancellationToken = default)
         {
-            if (_isInitialized) 
+            if (_isInitialized)
             {
                 return;
+            }
+
+            if (cancellationToken == default)
+            {
+                cancellationToken = _cancellationToken;
             }
 
             _isInitialized = true;
@@ -220,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    read = _originalStreamToProxy.Read(buffer, 0, buffer.Length);
+                    read = _originalStreamToProxy.ReadAsync(buffer, 0, buffer.Length, cancellationToken).GetAwaiter().GetResult();
 
                     if (read > 0)
                     {
@@ -237,11 +245,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // Make sure the length is set appropriately
                 base.SetLength(totalRead);
-                base.Seek(0, SeekOrigin.Begin);
+                Seek(0, SeekOrigin.Begin);
             }
             catch (Exception)
             {
-                base.Dispose();
+                Dispose();
                 throw;
             }
         }
@@ -329,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
             WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
         }
 
-        private static string StreamToString(Stream stream, Encoding encoding)
+        private static string StreamToString(Stream stream, Encoding encoding, CancellationToken cancellationToken)
         {
             StringBuilder result = new(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
@@ -347,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Read at most the number of bytes that will fit in the input buffer. The
                 // return value is the actual number of bytes read, or zero if no bytes remain.
-                bytesRead = stream.Read(bytes, 0, useBufferSize * 4);
+                bytesRead = stream.ReadAsync(bytes, 0, useBufferSize * 4, cancellationToken).GetAwaiter().GetResult();
 
                 bool completed = false;
                 int byteIndex = 0;
@@ -355,10 +363,8 @@ namespace Microsoft.PowerShell.Commands
                 while (!completed)
                 {
                     // If this is the last input data, flush the decoder's internal buffer and state.
-                    bool flush = (bytesRead == 0);
-                    decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
-                                    chars, 0, useBufferSize, flush,
-                                    out int bytesUsed, out int charsUsed, out completed);
+                    bool flush = bytesRead is 0;
+                    decoder.Convert(bytes, byteIndex, bytesRead - byteIndex, chars, 0, useBufferSize, flush, out int bytesUsed, out int charsUsed, out completed);
 
                     // The conversion produced the number of characters indicated by charsUsed. Write that number
                     // of characters to our result buffer
@@ -376,16 +382,17 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
-            } while (bytesRead != 0);
+            }
+            while (bytesRead != 0);
 
             return result.ToString();
         }
 
-        internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, CancellationToken cancellationToken)
         {
             bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
 
-            string content = StreamToString(stream, encoding);
+            string content = StreamToString(stream, encoding, cancellationToken);
             if (isDefaultEncoding)
             {
                 // We only look within the first 1k characters as the meta element and
@@ -394,13 +401,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // Check for a charset attribute on the meta element to override the default
                 Match match = s_metaRegex.Match(substring);
-                
+
                 // Check for a encoding attribute on the xml declaration to override the default
                 if (!match.Success)
                 {
                     match = s_xmlRegex.Match(substring);
                 }
-                
+
                 if (match.Success)
                 {
                     characterSet = match.Groups["charset"].Value;
@@ -408,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
                     if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding);
+                        content = StreamToString(stream, localEncoding, cancellationToken);
                         encoding = localEncoding;
                     }
                 }
@@ -417,12 +424,12 @@ namespace Microsoft.PowerShell.Commands
             return content;
         }
 
-        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        internal static bool TryGetEncoding(string? characterSet, out Encoding encoding)
         {
             bool result = false;
             try
             {
-                encoding = Encoding.GetEncoding(characterSet);
+                encoding = Encoding.GetEncoding(characterSet!);
                 result = true;
             }
             catch (ArgumentException)
@@ -438,11 +445,11 @@ namespace Microsoft.PowerShell.Commands
                 @"<meta\s.*[^.><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
             );
-        
+
         private static readonly Regex s_xmlRegex = new(
                 @"<\?xml\s.*[^.><]*encoding\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]",
                 RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.NonBacktracking
-            ); 
+            );
 
         internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
@@ -452,9 +459,9 @@ namespace Microsoft.PowerShell.Commands
             return encoding.GetBytes(str);
         }
 
-        internal static string GetResponseString(HttpResponseMessage response) => response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        internal static string GetResponseString(HttpResponseMessage response, CancellationToken cancellationToken) => response.Content.ReadAsStringAsync(cancellationToken).GetAwaiter().GetResult();
 
-        internal static Stream GetResponseStream(HttpResponseMessage response) => response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+        internal static Stream GetResponseStream(HttpResponseMessage response, CancellationToken cancellationToken) => response.Content.ReadAsStreamAsync(cancellationToken).GetAwaiter().GetResult();
 
         #endregion Static Methods
     }

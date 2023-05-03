@@ -708,6 +708,11 @@ namespace System.Management.Automation
             // [PSObject] @{ Key = "Value" } and the [PSCustomObject] @{ Key = "Value" } case.
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
 
+            if (type is null && convertExpressionAst.Type.TypeName is TypeName unavailableType && unavailableType._typeDefinitionAst is not null)
+            {
+                return new[] { new PSTypeName(unavailableType._typeDefinitionAst) };
+            }
+
             if (type == typeof(PSObject) && convertExpressionAst.Child is HashtableAst hashtableAst)
             {
                 if (InferTypes(hashtableAst).FirstOrDefault() is PSSyntheticTypeName syntheticTypeName)
@@ -739,19 +744,28 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitErrorStatement(ErrorStatementAst errorStatementAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            foreach (var ast in errorStatementAst.Conditions)
+            if (errorStatementAst.Conditions is not null)
             {
-                inferredTypes.AddRange(InferTypes(ast));
+                foreach (var ast in errorStatementAst.Conditions)
+                {
+                    inferredTypes.AddRange(InferTypes(ast));
+                }
             }
 
-            foreach (var ast in errorStatementAst.Bodies)
+            if (errorStatementAst.Bodies is not null)
             {
-                inferredTypes.AddRange(InferTypes(ast));
+                foreach (var ast in errorStatementAst.Bodies)
+                {
+                    inferredTypes.AddRange(InferTypes(ast));
+                }
             }
 
-            foreach (var ast in errorStatementAst.NestedAst)
+            if (errorStatementAst.NestedAst is not null)
             {
-                inferredTypes.AddRange(InferTypes(ast));
+                foreach (var ast in errorStatementAst.NestedAst)
+                {
+                    inferredTypes.AddRange(InferTypes(ast));
+                }
             }
 
             return inferredTypes;
@@ -1944,7 +1958,8 @@ namespace System.Management.Automation
                     {
                         break;
                     }
-                    else if (parent is SwitchStatementAst switchStatement)
+                    else if (parent is SwitchStatementAst switchStatement
+                        && switchStatement.Condition.Extent.EndOffset < variableExpressionAst.Extent.StartOffset)
                     {
                         parent = switchStatement.Condition;
                         break;

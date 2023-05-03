@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseHelper
     {
-        internal static string GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet;
+        internal static string? GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet;
 
         internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
         {
@@ -55,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (response.RequestMessage.RequestUri.PathAndQuery != "/")
             {
-                string lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage.RequestUri.Segments[^1]);
+                string? lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage?.RequestUri?.Segments[^1]);
 
                 // Get file name from last segment of Uri
                 return Path.Join(qualifiedOutFile, lastUriSegment);
@@ -74,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool IsText(HttpResponseMessage response)
         {
             // ContentType may not exist in response header.
-            string contentType = ContentHelper.GetContentType(response);
+            string? contentType = ContentHelper.GetContentType(response);
             return ContentHelper.IsText(contentType);
         }
     }

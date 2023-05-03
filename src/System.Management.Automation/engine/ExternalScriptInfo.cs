@@ -458,15 +458,6 @@ namespace System.Management.Automation
             get { return 0; }
         }
 
-        internal IEnumerable<PSSnapInSpecification> RequiresPSSnapIns
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data?.RequiresPSSnapIns;
-            }
-        }
-
         /// <summary>
         /// Gets the original contents of the script.
         /// </summary>

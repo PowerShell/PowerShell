@@ -19,7 +19,7 @@ CmdletsToExport = @(
   'New-Object', 'Select-Object', 'Sort-Object', 'Tee-Object', 'Register-ObjectEvent', 'Write-Output',
   'Import-PowerShellDataFile', 'Write-Progress', 'Disable-PSBreakpoint', 'Enable-PSBreakpoint',
   'Get-PSBreakpoint', 'Remove-PSBreakpoint', 'Set-PSBreakpoint', 'Get-PSCallStack', 'Export-PSSession',
-  'Import-PSSession', 'Get-Random', 'Invoke-RestMethod', 'Debug-Runspace', 'Get-Runspace',
+  'Import-PSSession', 'Get-Random', 'Get-SecureRandom', 'Invoke-RestMethod', 'Debug-Runspace', 'Get-Runspace',
   'Disable-RunspaceDebug', 'Enable-RunspaceDebug', 'Get-RunspaceDebug', 'Start-Sleep', 'Join-String',
   'Out-String', 'Select-String', 'ConvertFrom-StringData', 'Format-Table', 'New-TemporaryFile', 'New-TimeSpan',
   'Get-TraceSource', 'Set-TraceSource', 'Add-Type', 'Get-TypeData', 'Remove-TypeData', 'Update-TypeData',
