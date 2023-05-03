@@ -2456,7 +2456,7 @@ function MyFunction ($param1, $param2)
 
     It 'Should complete module specification keys in using module statement' {
         $res = TabExpansion2 -inputScript 'using module @{'
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "GUID MaximumVersion ModuleName ModuleVersion RequiredVersion"
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "ModuleName GUID ModuleVersion RequiredVersion MaximumVersion"
     }
 }
 
