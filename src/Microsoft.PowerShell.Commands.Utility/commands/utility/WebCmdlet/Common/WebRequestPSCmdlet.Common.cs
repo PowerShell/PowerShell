@@ -387,6 +387,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
+        [ValidateNotNullOrEmpty]
         public virtual Uri Proxy { get; set; }
 
         /// <summary>
@@ -962,8 +963,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Proxy is not null)
                 {
-                    WebProxy webProxy = new(Proxy);
-                    webProxy.BypassProxyOnLocal = false;
+                    WebProxy webProxy = new(Proxy, BypassOnLocal: false);
+
                     if (ProxyCredential is not null)
                     {
                         webProxy.Credentials = ProxyCredential.GetNetworkCredential();
