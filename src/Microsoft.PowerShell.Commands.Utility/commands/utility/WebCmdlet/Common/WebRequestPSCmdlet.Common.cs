@@ -1,10 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -95,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cancellation token source.
         /// </summary>
-        internal CancellationTokenSource _cancelToken = null;
+        internal CancellationTokenSource? _cancelToken = null;
 
         /// <summary>
         /// Automatically follow Rel Links.
@@ -120,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Automatically follow Rel Links.
         /// </summary>
-        internal Dictionary<string, string> _relationLink = null;
+        internal Dictionary<string, string>? _relationLink = null;
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -154,7 +157,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
-        public virtual Uri Uri { get; set; }
+        [DisallowNull]
+        public virtual Uri Uri { get; set; } = null!;
 
         #endregion URI
 
@@ -166,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ArgumentToVersionTransformation]
         [HttpVersionCompletions]
-        public virtual Version HttpVersion { get; set; }
+        public virtual Version? HttpVersion { get; set; }
 
         #endregion HTTP Version
 
@@ -175,14 +179,17 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Session property.
         /// </summary>
         [Parameter]
-        public virtual WebRequestSession WebSession { get; set; }
+        [ValidateNotNull]
+        [DisallowNull]
+        public virtual WebRequestSession WebSession { get; set; } = new WebRequestSession();
 
         /// <summary>
         /// Gets or sets the SessionVariable property.
         /// </summary>
         [Parameter]
         [Alias("SV")]
-        public virtual string SessionVariable { get; set; }
+        [ValidateNotNullOrWhiteSpace]
+        public virtual string? SessionVariable { get; set; }
 
         #endregion Session
 
@@ -209,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Credential]
-        public virtual PSCredential Credential { get; set; }
+        public virtual PSCredential? Credential { get; set; }
 
         /// <summary>
         /// Gets or sets the UseDefaultCredentials property.
@@ -222,14 +229,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public virtual string CertificateThumbprint { get; set; }
+        public virtual string? CertificateThumbprint { get; set; }
 
         /// <summary>
         /// Gets or sets the Certificate property.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public virtual X509Certificate Certificate { get; set; }
+        public virtual X509Certificate? Certificate { get; set; }
 
         /// <summary>
         /// Gets or sets the SkipCertificateCheck property.
@@ -247,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
         /// </summary>
         [Parameter]
-        public virtual SecureString Token { get; set; }
+        public virtual SecureString? Token { get; set; }
 
         #endregion Authorization and Credentials
 
@@ -257,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the UserAgent property.
         /// </summary>
         [Parameter]
-        public virtual string UserAgent { get; set; }
+        public virtual string? UserAgent { get; set; }
 
         /// <summary>
         /// Gets or sets the DisableKeepAlive property.
@@ -275,9 +282,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Headers property.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Parameter]
-        public virtual IDictionary Headers { get; set; }
+        public virtual IDictionary? Headers { get; set; }
 
         /// <summary>
         /// Gets or sets the SkipHeaderValidation property.
@@ -352,14 +359,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod
+        [DisallowNull]
+        public virtual string? CustomMethod
         {
             get => _custommethod;
 
             set => _custommethod = value.ToUpperInvariant();
         }
 
-        private string _custommethod;
+        private string? _custommethod;
 
         /// <summary>
         /// Gets or sets the PreserveHttpMethodOnRedirect property.
@@ -387,7 +395,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
-        public virtual Uri Proxy { get; set; }
+        public virtual Uri? Proxy { get; set; }
 
         /// <summary>
         /// Gets or sets the ProxyCredential property.
@@ -395,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
         [Credential]
-        public virtual PSCredential ProxyCredential { get; set; }
+        public virtual PSCredential? ProxyCredential { get; set; }
 
         /// <summary>
         /// Gets or sets the ProxyUseDefaultCredentials property.
@@ -412,7 +420,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Body property.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public virtual object Body { get; set; }
+        public virtual object? Body { get; set; }
 
         /// <summary>
         /// Dictionary for use with RFC-7578 multipart/form-data submissions.
@@ -420,32 +428,32 @@ namespace Microsoft.PowerShell.Commands
         /// A value may be a collection of form values or single form value.
         /// </summary>
         [Parameter]
-        public virtual IDictionary Form { get; set; }
+        public virtual IDictionary? Form { get; set; }
 
         /// <summary>
         /// Gets or sets the ContentType property.
         /// </summary>
         [Parameter]
-        public virtual string ContentType { get; set; }
+        public virtual string? ContentType { get; set; }
 
         /// <summary>
         /// Gets or sets the TransferEncoding property.
         /// </summary>
         [Parameter]
         [ValidateSet("chunked", "compress", "deflate", "gzip", "identity", IgnoreCase = true)]
-        public virtual string TransferEncoding { get; set; }
+        public virtual string? TransferEncoding { get; set; }
 
         /// <summary>
         /// Gets or sets the InFile property.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public virtual string InFile { get; set; }
+        public virtual string? InFile { get; set; }
 
         /// <summary>
         /// Keep the original file path after the resolved provider path is assigned to InFile.
         /// </summary>
-        private string _originalFilePath;
+        private string? _originalFilePath;
 
         #endregion Input
 
@@ -456,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public virtual string OutFile { get; set; }
+        public virtual string? OutFile { get; set; }
 
         /// <summary>
         /// Gets or sets the PassThrough property.
@@ -484,6 +492,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal string QualifiedOutFile => QualifyFilePath(OutFile);
 
+        [System.Diagnostics.CodeAnalysis.AllowNull]
         internal string _qualifiedOutFile;
 
         internal bool ShouldCheckHttpStatus => !SkipHttpErrorCheck;
@@ -550,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
                         FillRequestStream(request);
                         try
                         {
-                            long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
+                            long? requestContentLength = request.Content?.Headers.ContentLength.GetValueOrDefault();
 
                             string reqVerboseMsg = string.Format(
                                 CultureInfo.CurrentCulture,
@@ -565,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
 
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
-                            string contentType = ContentHelper.GetContentType(response);
+                            string? contentType = ContentHelper.GetContentType(response);
                             long? contentLength = response.Content.Headers.ContentLength;
                             string respVerboseMsg = contentLength is null
                                 ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
@@ -579,8 +588,7 @@ namespace Microsoft.PowerShell.Commands
                             // This happens when the local file is the same size as the remote file.
                             if (Resume.IsPresent
                                 && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                                && response.Content.Headers.ContentRange.HasLength
-                                && response.Content.Headers.ContentRange.Length == _resumeFileSize)
+                                && response.Content.Headers.ContentRange?.Length.GetValueOrDefault() == _resumeFileSize)
                             {
                                 _isSuccess = true;
                                 WriteVerbose(string.Format(
@@ -597,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // We will skip detection if either of the URIs is relative, because the 'Scheme' property is not supported on a relative URI.
                                 // If we have to skip the check, an error may be thrown later if it's actually an insecure https-to-http redirect.
-                                bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
+                                bool originIsHttps = response.RequestMessage?.RequestUri is not null && response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
                                 bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
 
                                 if (originIsHttps && destinationIsHttp)
@@ -619,6 +627,7 @@ namespace Microsoft.PowerShell.Commands
                                 HttpResponseException httpEx = new(message, response);
                                 ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                                 string detailMsg = string.Empty;
+
                                 try
                                 {
                                     string error = StreamHelper.GetResponseString(response, _cancelToken.Token);
@@ -672,7 +681,7 @@ namespace Microsoft.PowerShell.Commands
                             _cancelToken = null;
                         }
 
-                        if (_followRelLink)
+                        if (_followRelLink && _relationLink is not null)
                         {
                             if (!_relationLink.ContainsKey("next"))
                             {
@@ -714,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing && !IsPersistentSession())
                 {
                     WebSession?.Dispose();
-                    WebSession = null;
+                    WebSession = null!;
                 }
 
                 _disposed = true;
@@ -737,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void ValidateParameters()
         {
             // Sessions
-            if (WebSession is not null && SessionVariable is not null)
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WebSession)) && MyInvocation.BoundParameters.ContainsKey(nameof(SessionVariable)))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict, "WebCmdletSessionConflictException");
                 ThrowTerminatingError(error);
@@ -815,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
             // Validate InFile path
             if (InFile is not null)
             {
-                ErrorRecord errorRecord = null;
+                ErrorRecord? errorRecord = null;
 
                 try
                 {
@@ -892,9 +901,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void PrepareSession()
         {
-            // Make sure we have a valid WebRequestSession object to work with
-            WebSession ??= new WebRequestSession();
-
             if (SessionVariable is not null)
             {
                 // Save the session back to the PS environment if requested
@@ -1000,7 +1006,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in Headers.Keys)
                 {
-                    object value = Headers[key];
+                    object? value = Headers[key];
 
                     // null is not valid value for header.
                     // We silently ignore header if value is null.
@@ -1035,9 +1041,9 @@ namespace Microsoft.PowerShell.Commands
             return client;
         }
 
-        internal virtual HttpRequestMessage GetRequest(Uri uri)
+        internal virtual HttpRequestMessage GetRequest(Uri? uri)
         {
-            Uri requestUri = PrepareUri(uri);
+            Uri? requestUri = PrepareUri(uri);
             HttpMethod httpMethod = string.IsNullOrEmpty(CustomMethod) ? GetHttpMethod(Method) : new HttpMethod(CustomMethod);
 
             // Create the base WebRequest object
@@ -1079,7 +1085,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set 'User-Agent' if WebSession.Headers doesn't already contain it
-            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out string userAgent))
+            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out string? userAgent))
             {
                 WebSession.UserAgent = userAgent;
             }
@@ -1144,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
             else if (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
-                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
+                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string? contentType);
                 if (string.IsNullOrEmpty(contentType))
                 {
                     WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = "application/x-www-form-urlencoded";
@@ -1255,12 +1261,12 @@ namespace Microsoft.PowerShell.Commands
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
             HttpRequestMessage currentRequest = request;
-            HttpResponseMessage response = null;
+            HttpResponseMessage? response = null;
 
             do
             {
                 // Track the current URI being used by various requests and re-requests.
-                Uri currentUri = currentRequest.RequestUri;
+                Uri? currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
@@ -1286,7 +1292,7 @@ namespace Microsoft.PowerShell.Commands
                         CustomMethod = string.Empty;
                     }
 
-                    currentUri = new Uri(request.RequestUri, response.Headers.Location);
+                    currentUri = request.RequestUri is null ? response.Headers.Location : new Uri(request.RequestUri, response.Headers.Location);
 
                     // Continue to handle redirection
                     using HttpRequestMessage redirectRequest = GetRequest(currentUri);
@@ -1299,10 +1305,9 @@ namespace Microsoft.PowerShell.Commands
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
                 if (Resume.IsPresent
                     && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                    && (response.Content.Headers.ContentRange.HasLength
-                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
+                    && response.Content.Headers.ContentRange?.Length != _resumeFileSize)
                 {
-                    _cancelToken.Cancel();
+                    _cancelToken?.Cancel();
 
                     WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
 
@@ -1314,7 +1319,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         FillRequestStream(requestWithoutRange);
 
-                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
+                        long? requestContentLength = requestWithoutRange.Content?.Headers.ContentLength.GetValueOrDefault();
 
                         string reqVerboseMsg = string.Format(
                             CultureInfo.CurrentCulture,
@@ -1339,7 +1344,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
+                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string>? retryAfter)) 
                     {
                         try
                         {
@@ -1388,7 +1393,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Virtual Methods
 
         #region Helper Methods
-        private Uri PrepareUri(Uri uri)
+        private Uri PrepareUri(Uri? uri)
         {
             uri = CheckProtocol(uri);
 
@@ -1416,14 +1421,12 @@ namespace Microsoft.PowerShell.Commands
             return uri;
         }
 
-        private static Uri CheckProtocol(Uri uri)
+        private static Uri CheckProtocol(Uri? uri)
         {
-            ArgumentNullException.ThrowIfNull(uri);
-
-            return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
+            return uri is not null && uri.IsAbsoluteUri ? uri : new Uri("http://" + uri?.OriginalString);
         }
 
-        private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
+        private string QualifyFilePath(string? path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
 
         private static string FormatDictionary(IDictionary content)
         {
@@ -1437,11 +1440,11 @@ namespace Microsoft.PowerShell.Commands
                     bodyBuilder.Append('&');
                 }
 
-                object value = content[key];
+                object? value = content[key];
 
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
-                string encodedValue = value is null ? string.Empty : WebUtility.UrlEncode(value.ToString());
+                string? encodedValue = value is null ? string.Empty : WebUtility.UrlEncode(value.ToString());
 
                 bodyBuilder.Append($"{encodedKey}={encodedValue}");
             }
@@ -1464,8 +1467,8 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            string password = new NetworkCredential(string.Empty, Credential.Password).Password;
-            string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential.UserName}:{password}");
+            string password = new NetworkCredential(string.Empty, Credential?.Password).Password;
+            string unencoded = string.Create(CultureInfo.InvariantCulture, $"{Credential?.UserName}:{password}");
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
             return string.Create(CultureInfo.InvariantCulture, $"Basic {Convert.ToBase64String(bytes)}");
         }
@@ -1523,8 +1526,9 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(content);
+            
+            Encoding? encoding = null;
 
-            Encoding encoding = null;
             string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
 
             if (contentType is not null)
@@ -1560,8 +1564,8 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(xmlNode);
 
-            byte[] bytes = null;
-            XmlDocument doc = xmlNode as XmlDocument;
+            byte[]? bytes = null;
+            XmlDocument? doc = xmlNode as XmlDocument;
             if (doc?.FirstChild is XmlDeclaration decl && !string.IsNullOrEmpty(decl.Encoding))
             {
                 Encoding encoding = Encoding.GetEncoding(decl.Encoding);
@@ -1623,7 +1627,13 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ParseLinkHeader(HttpResponseMessage response)
         {
-            Uri requestUri = response.RequestMessage.RequestUri;
+            Uri? requestUri = response.RequestMessage?.RequestUri;
+
+            if (requestUri is null)
+            {
+                return;
+            }
+
             if (_relationLink is null)
             {
                 // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
@@ -1637,7 +1647,7 @@ namespace Microsoft.PowerShell.Commands
             // We only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
             const string Pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
-            if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
+            if (response.Headers.TryGetValues("Link", out IEnumerable<string>? links))
             {
                 foreach (string linkHeader in links)
                 {
@@ -1666,7 +1676,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use.</param>
         /// <param name="formData">The <see cref="MultipartFormDataContent"/> to update.</param>
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
-        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        private void AddMultipartContent(object fieldName, object? fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             ArgumentNullException.ThrowIfNull(formData);
 
@@ -1717,7 +1727,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/></param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
-        private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
+        private static StringContent GetMultipartStringContent(object fieldName, object? fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
 
@@ -1759,14 +1769,14 @@ namespace Microsoft.PowerShell.Commands
             StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
 
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
+            result.Headers.ContentDisposition!.FileName = "\"" + file.Name + "\"";
 
             return result;
         }
 
-        private static string FormatErrorMessage(string error, string contentType)
+        private static string FormatErrorMessage(string error, string? contentType)
         {
-            string formattedError = null;
+            string? formattedError = null;
 
             try
             {
@@ -1796,9 +1806,9 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ContentHelper.IsJson(contentType))
                 {
-                    JsonNode jsonNode = JsonNode.Parse(error);
+                    JsonNode? jsonNode = JsonNode.Parse(error);
                     JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-                    string jsonString = jsonNode.ToJsonString(options);
+                    string jsonString = jsonNode?.ToJsonString(options) ?? throw new ArgumentNullException();
 
                     formattedError = Environment.NewLine + jsonString;
                 }
