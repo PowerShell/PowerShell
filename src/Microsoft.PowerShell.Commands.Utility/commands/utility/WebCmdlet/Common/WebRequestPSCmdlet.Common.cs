@@ -1263,7 +1263,7 @@ namespace Microsoft.PowerShell.Commands
                 Uri currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
-                response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                response = client.Send(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token);
 
                 if (handleRedirect
                     && _maximumRedirection is not 0
