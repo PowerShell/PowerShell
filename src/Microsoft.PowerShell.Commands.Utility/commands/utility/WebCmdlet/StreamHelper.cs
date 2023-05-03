@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
             return encoding;
         }
 
-        internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding, CancellationToken cancellationToken)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, CancellationToken cancellationToken)
         {
             encoding = GetStreamEncodingAsync(stream, characterSet, cancellationToken).GetAwaiter().GetResult();
 
