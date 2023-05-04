@@ -435,8 +435,8 @@ namespace System.Management.Automation
             {
                 // If upstream is a native command it'll be writing directly to our stdin stream
                 // so we can skip reading here.
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                    && !UpstreamIsNativeCommand)
+                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    || !UpstreamIsNativeCommand)
                 {
                     while (Read())
                     {
