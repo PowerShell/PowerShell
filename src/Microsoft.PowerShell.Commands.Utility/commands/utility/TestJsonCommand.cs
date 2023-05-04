@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -240,20 +239,20 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                        EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
-                        result = evaluationResults.IsValid;
-                        if (!result)
-                        {
-                            HandleValidationErrors(evaluationResults);
+                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
+                    result = evaluationResults.IsValid;
+                    if (!result)
+                    {
+                        HandleValidationErrors(evaluationResults);
 
-                            if (evaluationResults.HasDetails)
+                        if (evaluationResults.HasDetails)
+                        {
+                            foreach (var nestedResult in evaluationResults.Details)
                             {
-                                foreach (var nestedResult in evaluationResults.Details)
-                                {
-                                    HandleValidationErrors(nestedResult);
-                                }
+                                HandleValidationErrors(nestedResult);
                             }
                         }
+                    }
                 }
             }
             catch (JsonSchemaReferenceResolutionException jsonExc)
