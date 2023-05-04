@@ -162,6 +162,7 @@ namespace System.Management.Automation
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
             bool isNativeCommand = commandProcessor is NativeCommandProcessor;
+
             for (int i = commandIndex + 1; i < commandElements.Length; ++i)
             {
                 var cpi = commandElements[i];
@@ -208,9 +209,27 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
-                foreach (var redirection in redirections)
+                bool shouldProcessMergesFirst = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && isNativeCommand;
+
+                if (shouldProcessMergesFirst)
                 {
-                    redirection.Bind(pipe, commandProcessor, context);
+                    foreach (CommandRedirection redirection in redirections)
+                    {
+                        if (redirection is MergingRedirection)
+                        {
+                            redirection.Bind(pipe, commandProcessor, context);
+                        }
+                    }
+                }
+
+                foreach (CommandRedirection redirection in redirections)
+                {
+                    if (!shouldProcessMergesFirst || redirection is not MergingRedirection)
+                    {
+                        redirection.Bind(pipe, commandProcessor, context);
+                    }
+
                     switch (redirection.FromStream)
                     {
                         case RedirectionStream.Error:
@@ -1050,6 +1069,18 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            {
+                if (commandProcessor is NativeCommandProcessor nativeCommand
+                    && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
+                    && FromStream is RedirectionStream.Output
+                    && !string.IsNullOrWhiteSpace(File))
+                {
+                    nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
+                    return;
+                }
+            }
+
             Pipe pipe = GetRedirectionPipe(context, pipelineProcessor);
 
             switch (FromStream)
@@ -3627,7 +3658,7 @@ namespace System.Management.Automation
             }
             catch (PSSecurityException)
             {
-                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which
                 // must be propagated.
                 throw;
             }

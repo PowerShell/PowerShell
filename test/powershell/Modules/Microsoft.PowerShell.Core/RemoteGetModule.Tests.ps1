@@ -3,11 +3,22 @@
 Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
+        $pendingTest = (Test-IsWinWow64)
+        $skipTest = !$IsWindows
 
-        if (!$IsWindows -or (Test-IsWinWow64))
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if ($pendingTest -or $skipTest)
         {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+            if ($skipTest)
+            {
+                $PSDefaultParameterValues["it:skip"] = $true
+            }
+            elseif ($pendingTest)
+            {
+                $PSDefaultParameterValues["it:pending"] = $true
+            }
+
             return
         }
 
@@ -18,7 +29,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     AfterAll {
 
-        if (!$IsWindows)
+        if ($pendingTest -or $skipTest)
         {
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
             return

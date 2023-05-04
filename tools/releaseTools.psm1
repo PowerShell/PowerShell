@@ -41,6 +41,8 @@ $Script:powershell_team = @(
     "Andrew Schwartzmeyer"
     "Jason Helmick"
     "Patrick Meinecke"
+    "Steven Bucher"
+    "PowerShell Team Bot"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -722,4 +724,128 @@ function Get-PRBackportReport {
     }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport
+# Backports a PR
+# requires:
+#   * a remote called upstream pointing to powershell/powershell
+#   * the github cli installed and authenticated
+# Usage:
+#     Invoke-PRBackport -PRNumber 1234 -Target release/v7.0.1
+# To overwrite a local branch add -Overwrite
+# To add an postfix to the branch name use -BranchPostFix <postfix>
+function Invoke-PRBackport {
+    [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $PrNumber,
+
+        [Parameter(Mandatory)]
+        [ValidateScript({$_ -match '^release/v\d+\.\d+\.\d+'})]
+        [string]
+        $Target,
+
+        [switch]
+        $Overwrite,
+
+        [string]
+        $BranchPostFix
+    )
+    function script:Invoke-NativeCommand {
+        param(
+            [scriptblock] $ScriptBlock
+        )
+        &$ScriptBlock
+        if ($LASTEXITCODE -ne 0) {
+            throw "$ScriptBlock fail with $LASTEXITCODE"
+        }
+    }
+    function script:Test-ShouldContinue {
+        param (
+            $Message
+        )
+        $continue = $false
+        while(!$continue) {
+            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($input) {
+                'yes' {
+                    $continue= $true
+                }
+                'no' {
+                    throw "User abort"
+                }
+            }
+        }
+    }
+    $ErrorActionPreference = 'stop'
+
+    $pr = gh pr view $PrNumber --json 'mergeCommit,state,title' | ConvertFrom-Json
+
+    $commitId = $pr.mergeCommit.oid
+    $state = $pr.state
+    $originaltitle = $pr.title
+    $backportTitle = "[$Target]$originalTitle"
+
+    Write-Verbose -Verbose "commitId: $commitId; state: $state"
+    Write-Verbose -Verbose "title:$backportTitle"
+
+    if ($state -ne 'MERGED') {
+        throw "PR is not merged ($state)"
+    }
+
+    $upstream = $null
+    $upstreamName = 'powershell/powershell'
+    $upstream = Invoke-NativeCommand { git remote -v } | Where-Object { $_ -match "^upstream.*$upstreamName.*fetch" }
+
+    if (!$upstream) {
+        throw "Please create an upstream remote that points to $upstreamName"
+    }
+
+    Invoke-NativeCommand { git fetch upstream $Target }
+
+    $switch = '-c'
+    if ($Overwrite) {
+        $switch = '-C'
+    }
+
+    $branchName = "backport-$PrNumber"
+    if ($BranchPostFix) {
+        $branchName += "-$BranchPostFix"
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create branch $branchName from upstream/$Target")) {
+        Invoke-NativeCommand { git switch upstream/$Target $switch $branchName }
+    }
+
+    try {
+        Invoke-NativeCommand { git cherry-pick $commitId }
+    }
+    catch {
+        Test-ShouldContinue -Message "Fix any conflicts with the cherry-pick."
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create the PR")) {
+        gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber"
+    }
+}
+
+# Backport all approved backports
+# Usage:
+#      Invoke-PRBackportApproved -Version 7.2.12
+function Invoke-PRBackportApproved {
+    param(
+        [Parameter(Mandatory)]
+        [semver]
+        $Version
+    )
+
+    $tagVersion = "$($Version.Major).$($Version.Minor)"
+    $target = "release/$ReleaseTag"
+
+    Get-PRBackportReport -Version $tagVersion |
+        ForEach-Object {
+            $prNumber = $_.Number
+            Invoke-PRBackport -ErrorAction Stop -PrNumber $prNumber -Target $target
+        }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved

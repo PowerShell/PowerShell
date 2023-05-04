@@ -43,6 +43,10 @@ namespace System.Management.Automation.Internal
         private bool _linkedSuccessOutput = false;
         private bool _linkedErrorOutput = false;
 
+        private NativeCommandProcessor _lastNativeCommand;
+
+        private bool _haveReportedNativePipeUsage;
+
 #if !CORECLR // Impersonation Not Supported On CSS
         // This is the security context when the pipeline was allocated
         internal System.Security.SecurityContext SecurityContext =
@@ -257,6 +261,33 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException"></exception>
         internal int Add(CommandProcessorBase commandProcessor)
         {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            {
+                if (commandProcessor is NativeCommandProcessor nativeCommand)
+                {
+                    if (_lastNativeCommand is not null)
+                    {
+                        // Only report experimental feature usage once per pipeline.
+                        if (!_haveReportedNativePipeUsage)
+                        {
+                            ApplicationInsightsTelemetry.SendExperimentalUseData(
+                                ExperimentalFeature.PSNativeCommandPreserveBytePipe,
+                                "p");
+                            _haveReportedNativePipeUsage = true;
+                        }
+
+                        _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                        nativeCommand.UpstreamIsNativeCommand = true;
+                    }
+
+                    _lastNativeCommand = nativeCommand;
+                }
+                else
+                {
+                    _lastNativeCommand = null;
+                }
+            }
+
             commandProcessor.CommandRuntime.PipelineProcessor = this;
             return AddCommand(commandProcessor, _commands.Count, readErrorQueue: false);
         }
