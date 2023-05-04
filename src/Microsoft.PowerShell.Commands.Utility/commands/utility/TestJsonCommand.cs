@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -239,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                        var evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
+                        EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
                         result = evaluationResults.IsValid;
                         if (!result)
                         {
