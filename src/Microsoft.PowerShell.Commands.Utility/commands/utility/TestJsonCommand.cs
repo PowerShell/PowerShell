@@ -124,42 +124,32 @@ namespace Microsoft.PowerShell.Commands
             // For more information, see https://json-everything.net/json-schema#automatic-resolution
             SchemaRegistry.Global.Fetch = uri =>
             {
-                try
+                string text;
+                switch (uri.Scheme)
                 {
-                    string text;
-                    switch (uri.Scheme)
-                    {
-                        case "http":
-                        case "https":
-                            {
-                                using var client = new HttpClient();
-                                text = client.GetStringAsync(uri).Result;
-                                break;
-                            }
-                        case "file":
-                            var filename = Uri.UnescapeDataString(uri.AbsolutePath);
-                            WriteToConsole($"Fetching: {uri.AbsolutePath}");
-                            WriteToConsole($"Reading file: {filename}");
-                            if (!File.Exists(filename))
-                            {
-                                return null;
-                            }
-
-                            text = File.ReadAllText(filename);
+                    case "http":
+                    case "https":
+                        {
+                            using var client = new HttpClient();
+                            text = client.GetStringAsync(uri).Result;
                             break;
-                        default:
-                            throw new FormatException(string.Format(TestJsonCmdletStrings.InvalidUriScheme, uri.Scheme));
-                    }
+                        }
+                    case "file":
+                        var filename = Uri.UnescapeDataString(uri.AbsolutePath);
+                        WriteToConsole($"Fetching: {uri}");
+                        WriteToConsole($"Reading file: {filename}");
+                        if (!File.Exists(filename))
+                        {
+                            return null;
+                        }
 
-                    return JsonSerializer.Deserialize<JsonSchema>(text);
+                        text = File.ReadAllText(filename);
+                        break;
+                    default:
+                        throw new FormatException(string.Format(TestJsonCmdletStrings.InvalidUriScheme, uri.Scheme));
                 }
-                catch (Exception)
-                {
-                    // If the reference can't be read for some reason,
-                    // JsonSchema.Net will throw a JsonSchemaException with
-                    // a message that the reference couldn't be found.
-                    return null;
-                }
+
+                return JsonSerializer.Deserialize<JsonSchema>(text);
             };
 
             string resolvedpath = string.Empty;
@@ -293,6 +283,15 @@ namespace Microsoft.PowerShell.Commands
 
                 Exception exception = new(TestJsonCmdletStrings.JsonSchemaProcessingFailure, schemaEx);
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaProcessingFailure", ErrorCategory.InvalidData, _jschema));
+            }
+            catch (FormatException formatEx)
+            {
+                result = false;
+
+                WriteToConsole(formatEx.ToString());
+
+                Exception exception = new(TestJsonCmdletStrings.InvalidUriScheme, formatEx);
+                ThrowTerminatingError(new ErrorRecord(exception, "InvalidUriScheme", ErrorCategory.InvalidData, _jschema));
             }
             catch (Exception exc)
             {
