@@ -140,6 +140,11 @@ namespace Microsoft.PowerShell.Commands
                             var filename = Uri.UnescapeDataString(uri.AbsolutePath);
                             WriteToConsole($"Fetching: {uri.AbsolutePath}");
                             WriteToConsole($"Reading file: {filename}");
+                            if (!File.Exists(filename))
+                            {
+                                return null;
+                            }
+
                             text = File.ReadAllText(filename);
                             break;
                         default:
@@ -148,9 +153,12 @@ namespace Microsoft.PowerShell.Commands
 
                     return JsonSerializer.Deserialize<JsonSchema>(text);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    throw new JsonSchemaReferenceResolutionException(e);
+                    // If the reference can't be read for some reason,
+                    // JsonSchema.Net will throw a JsonSchemaException with
+                    // a message that the reference couldn't be found.
+                    return null;
                 }
             };
 
@@ -180,7 +188,8 @@ namespace Microsoft.PowerShell.Commands
                     catch (JsonException e)
                     {
                         Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
-                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, SchemaFile));
+                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData,
+                            SchemaFile));
                     }
                 }
             }
@@ -246,7 +255,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-
                 var parsedJson = JsonNode.Parse(jsonToParse);
 
                 WriteToConsole("JSON instance:");
@@ -277,14 +285,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (JsonSchemaReferenceResolutionException jsonExc)
+            catch (JsonSchemaException schemaEx)
             {
                 result = false;
 
-                WriteToConsole(jsonExc.ToString());
+                WriteToConsole(schemaEx.ToString());
 
-                Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
-                WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, _jschema));
+                Exception exception = new(TestJsonCmdletStrings.JsonSchemaProcessingFailure, schemaEx);
+                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaProcessingFailure", ErrorCategory.InvalidData, _jschema));
             }
             catch (Exception exc)
             {

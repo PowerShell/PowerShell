@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
   </data>
+  <data name="JsonSchemaProcessingFailure" xml:space="preserve">
+    <value>There was an error processing the schema: </value>
+  </data>
 </root>
