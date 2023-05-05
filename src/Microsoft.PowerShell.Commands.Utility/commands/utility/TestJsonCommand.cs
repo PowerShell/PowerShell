@@ -7,8 +7,10 @@ using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Security;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Json.More;
 using Json.Schema;
 
 namespace Microsoft.PowerShell.Commands
@@ -232,14 +234,30 @@ namespace Microsoft.PowerShell.Commands
                 jsonToParse = File.ReadAllText(resolvedPath);
             }
 
+            JsonSerializerOptions serializerOptions = new()
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
             try
             {
 
                 var parsedJson = JsonNode.Parse(jsonToParse);
 
+                Console.WriteLine("JSON instance:");
+                Console.WriteLine(parsedJson.AsJsonString(serializerOptions));
+
                 if (_jschema != null)
                 {
+                    Console.WriteLine("Schema:");
+                    Console.WriteLine(JsonSerializer.Serialize(_jschema, serializerOptions));
+
                     EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
+
+                    Console.WriteLine("Evaluation results:");
+                    Console.WriteLine(JsonSerializer.Serialize(evaluationResults, serializerOptions));
+
                     result = evaluationResults.IsValid;
                     if (!result)
                     {
@@ -259,12 +277,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = false;
 
+                Console.WriteLine(jsonExc);
+
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
                 WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, _jschema));
             }
             catch (Exception exc)
             {
                 result = false;
+
+                Console.WriteLine(exc);
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
                 WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, Json));
