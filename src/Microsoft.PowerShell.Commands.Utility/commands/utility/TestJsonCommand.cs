@@ -183,6 +183,8 @@ namespace Microsoft.PowerShell.Commands
                             SchemaFile));
                     }
                 }
+
+                Console.WriteLine("Schema Base URI: {0}", _jschema.BaseUri);
             }
             catch (Exception e) when (
                 // Handle exceptions related to file access to provide more specific error message
