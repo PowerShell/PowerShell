@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
             // and automatically fetching referenced URIs is likely the preferred behavior.  To do that,
             // this property must be set with a method to retrieve and deserialize the content.
             // For more information, see https://json-everything.net/json-schema#automatic-resolution
-            SchemaRegistry.Global.Fetch = static uri =>
+            SchemaRegistry.Global.Fetch = uri =>
             {
                 try
                 {
@@ -138,6 +138,8 @@ namespace Microsoft.PowerShell.Commands
                             }
                         case "file":
                             var filename = Uri.UnescapeDataString(uri.AbsolutePath);
+                            WriteToConsole($"Fetching: {uri.AbsolutePath}");
+                            WriteToConsole($"Reading file: {filename}");
                             text = File.ReadAllText(filename);
                             break;
                         default:
