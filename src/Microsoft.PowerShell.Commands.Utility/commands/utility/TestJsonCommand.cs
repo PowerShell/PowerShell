@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Json.More;
 using Json.Schema;
+using Markdig.Helpers;
+using static System.Management.Automation.PSStyle;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -245,18 +247,18 @@ namespace Microsoft.PowerShell.Commands
 
                 var parsedJson = JsonNode.Parse(jsonToParse);
 
-                Console.WriteLine("JSON instance:");
-                Console.WriteLine(parsedJson.AsJsonString(serializerOptions));
+                WriteToConsole("JSON instance:");
+                WriteToConsole(parsedJson.AsJsonString(serializerOptions));
 
                 if (_jschema != null)
                 {
-                    Console.WriteLine("Schema:");
-                    Console.WriteLine(JsonSerializer.Serialize(_jschema, serializerOptions));
+                    WriteToConsole("Schema:");
+                    WriteToConsole(JsonSerializer.Serialize(_jschema, serializerOptions));
 
                     EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
 
-                    Console.WriteLine("Evaluation results:");
-                    Console.WriteLine(JsonSerializer.Serialize(evaluationResults, serializerOptions));
+                    WriteToConsole("Evaluation results:");
+                    WriteToConsole(JsonSerializer.Serialize(evaluationResults, serializerOptions));
 
                     result = evaluationResults.IsValid;
                     if (!result)
@@ -277,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = false;
 
-                Console.WriteLine(jsonExc);
+                WriteToConsole(jsonExc.ToString());
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
                 WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, _jschema));
@@ -286,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = false;
 
-                Console.WriteLine(exc);
+                WriteToConsole(exc.ToString());
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
                 WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, Json));
@@ -295,6 +297,13 @@ namespace Microsoft.PowerShell.Commands
             WriteObject(result);
         }
 
+        private void WriteToConsole(string message)
+        {
+            HostInformationMessage informationMessage = new() { Message = message };
+
+            WriteInformation(informationMessage, new[] { "PSHOST" });
+        }
+        
         private void HandleValidationErrors(EvaluationResults evaluationResult)
         {
             if (!evaluationResult.HasErrors)
