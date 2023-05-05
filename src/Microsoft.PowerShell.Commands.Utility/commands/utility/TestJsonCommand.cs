@@ -135,14 +135,15 @@ namespace Microsoft.PowerShell.Commands
                             break;
                         }
                     case "file":
-                        var filename = Uri.UnescapeDataString(uri.AbsolutePath);
+                        var filename = uri.LocalPath;
                         WriteToConsole($"Fetching: {uri}");
                         WriteToConsole($"Reading file: {filename}");
                         if (!File.Exists(filename))
                         {
+                            WriteToConsole("Cannot find file.");
                             return null;
                         }
-
+                        
                         text = File.ReadAllText(filename);
                         break;
                     default:
@@ -152,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 return JsonSerializer.Deserialize<JsonSchema>(text);
             };
 
-            string resolvedpath = string.Empty;
+            string resolvedPath = string.Empty;
 
             try
             {
@@ -172,8 +173,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
-                        _jschema = JsonSchema.FromFile(resolvedpath);
+                        resolvedPath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
+                        _jschema = JsonSchema.FromFile(resolvedPath);
                     }
                     catch (JsonException e)
                     {
@@ -196,14 +197,14 @@ namespace Microsoft.PowerShell.Commands
                     string.Format(
                         CultureInfo.CurrentUICulture,
                         TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
-                        resolvedpath),
+                        resolvedPath),
                     e);
-                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, resolvedpath));
+                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, resolvedPath));
             }
             catch (Exception e)
             {
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
-                ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedpath));
+                ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedPath));
             }
         }
 
