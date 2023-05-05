@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string fileContents = ps1xmlInfo.ScriptContents;
 
             isFullyTrusted = false;
-            if (ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage || ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            if (ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage)
             {
                 isFullyTrusted = true;
             }

@@ -549,14 +549,10 @@ namespace System.Management.Automation
                                     break;
 
                                 case SystemScriptFileEnforcement.AllowConstrainedAudit:
-                                    // This causes the file script to be parsed and cached or retrieved from the cache.
-                                    // This is normally done lazily when needed for performance. But since this is only
-                                    // for WDAC in Audit mode, the performance degradation is acceptable.
-                                    GetScriptBlockAst();
                                     SystemPolicy.LogWDACAuditMessage(
                                         context: Context,
                                         title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
-                                        message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path, _scriptBlock?.Id ?? Guid.Empty),
+                                        message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path),
                                         fqid: "ScriptFileNotTrustedByPolicy");
                                     DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
                                     break;
