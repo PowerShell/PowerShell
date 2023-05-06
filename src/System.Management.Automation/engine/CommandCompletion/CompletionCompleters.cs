@@ -5185,7 +5185,7 @@ namespace System.Management.Automation
                 {
                     if (convertExpression.Child is VariableExpressionAst variableExpression)
                     {
-                        if (variableExpression == CompletionVariableAst)
+                        if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
                         {
                             return AstVisitAction.Continue;
                         }
@@ -5195,7 +5195,7 @@ namespace System.Management.Automation
                 }
                 else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression)
                 {
-                    if (variableExpression == CompletionVariableAst)
+                    if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
                     {
                         return AstVisitAction.Continue;
                     }
@@ -5325,7 +5325,7 @@ namespace System.Management.Automation
 
         private static SortedSet<string> BuildSpecialVariablesCache()
         {
-            var result = new SortedSet<string>();
+            var result = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var member in typeof(SpecialVariables).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
             {
                 if (member.FieldType.Equals(typeof(string)))
