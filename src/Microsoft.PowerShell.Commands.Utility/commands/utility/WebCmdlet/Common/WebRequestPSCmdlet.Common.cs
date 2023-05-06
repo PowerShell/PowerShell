@@ -387,7 +387,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
-        [ValidateNotNullOrEmpty]
         public virtual Uri Proxy { get; set; }
 
         /// <summary>

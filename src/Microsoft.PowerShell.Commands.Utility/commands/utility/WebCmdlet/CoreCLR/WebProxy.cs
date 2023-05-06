@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class WebProxy : System.Net.WebProxy, IEquatable<WebProxy>
     {
-        internal WebProxy(Uri address, bool BypassOnLocal)
+        internal WebProxy(Uri? address, bool BypassOnLocal)
         {
             Address = address;
             BypassProxyOnLocal = BypassOnLocal;
@@ -26,8 +26,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
       
-            //return Credentials == other.Credentials && Address.Equals(other.Address) && BypassProxyOnLocal == other.BypassProxyOnLocal;
-            return GetHashCode() == other.GetHashCode();
+            return Credentials == other.Credentials && Address == other.Address && BypassProxyOnLocal == other.BypassProxyOnLocal;
         }
     }
 }
