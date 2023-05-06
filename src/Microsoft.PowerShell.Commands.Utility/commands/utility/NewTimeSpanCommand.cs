@@ -88,6 +88,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Time")]
         public int Seconds { get; set; }
 
+        /// <summary>
+        /// Allows the user to override the millisecond.
+        /// </summary>
+        [Parameter(ParameterSetName = "Time")]
+        public int Milliseconds { get; set; }
+
         #endregion
 
         #region methods
@@ -119,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case "Time":
-                    result = new TimeSpan(Days, Hours, Minutes, Seconds);
+                    result = new TimeSpan(Days, Hours, Minutes, Seconds, Milliseconds);
                     break;
 
                 default:

@@ -101,15 +101,9 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         protected internal string GetRegexPattern(string pattern, string exactMatchPattern)
         {
-            if (pattern == null)
-            {
-                throw new ArgumentNullException("pattern");
-            }
+            ArgumentNullException.ThrowIfNull(pattern);
 
-            if (exactMatchPattern == null)
-            {
-                throw new ArgumentNullException("exactMatchPattern");
-            }
+            ArgumentNullException.ThrowIfNull(exactMatchPattern);
 
             Debug.Assert(this.IsValid, "is valid");
 

@@ -162,7 +162,7 @@ namespace System.Management.Automation
                             if (!driver.NoInput || isProcessCalled)
                             {
                                 // if there is noInput then we
-                                // need to call process atleast once
+                                // need to call process at least once
                                 break;
                             }
                         }
@@ -274,11 +274,8 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
-                {
-                    _eventManager.GenerateEvent(_startSubscriber.SourceIdentifier, this,
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
-                }
+                _eventManager?.GenerateEvent(_startSubscriber.SourceIdentifier, this,
+                    new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
             }
         }
 
@@ -290,11 +287,8 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
-                {
-                    _eventManager.GenerateEvent(_processSubscriber.SourceIdentifier, this,
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
-                }
+                _eventManager?.GenerateEvent(_processSubscriber.SourceIdentifier, this,
+                    new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
             }
         }
 

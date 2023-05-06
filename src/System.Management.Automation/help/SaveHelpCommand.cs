@@ -260,10 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (helpInfoDrive != null)
-                    {
-                        helpInfoDrive.Dispose();
-                    }
+                    helpInfoDrive?.Dispose();
                 }
             }
 
@@ -407,10 +404,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         finally
                         {
-                            if (helpContentDrive != null)
-                            {
-                                helpContentDrive.Dispose();
-                            }
+                            helpContentDrive?.Dispose();
                         }
                     }
                 }

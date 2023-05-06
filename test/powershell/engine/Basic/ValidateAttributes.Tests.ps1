@@ -52,7 +52,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 
-    Context "ValidateRange - ParameterConstuctors" {
+    Context "ValidateRange - ParameterConstructors" {
         BeforeAll {
             $testCases = @(
                 @{
@@ -263,7 +263,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 
-    Context "ValidateNotNull, ValidateNotNullOrEmpty and Not-Null-Or-Empty check for Mandatory parameter" {
+    Context "ValidateNotNull, ValidateNotNullOrEmpty, ValidateNotNullOrWhiteSpace and Not-Null-Or-Empty check for Mandatory parameter" {
 
         BeforeAll {
             function MandatoryFunc {
@@ -314,6 +314,22 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 }
             }
 
+            function NotNullOrWhiteSpaceFunc {
+                param(
+                    [ValidateNotNullOrWhiteSpace()]
+                    $Value,
+                    [string] $TestType
+                )
+
+                switch ($TestType) {
+                    "COM-Enumerable" { $Value | ForEach-Object Name }
+                    "Enumerator"     {
+                        $items = foreach ($i in $Value) { $i }
+                        $items -join ","
+                    }
+                }
+            }
+
             $filePath  = Join-Path -Path $PSHOME -ChildPath System.Management.Automation.dll
             $byteArray = [System.IO.File]::ReadAllBytes($filePath)
             $byteList  = [System.Collections.Generic.List[byte]] $byteArray
@@ -343,6 +359,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteArray } }
                 @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteList } }
                 @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteCollection } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteCollection } }
             )
         }
 
@@ -351,19 +370,21 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             (Measure-Command $ScriptBlock).Milliseconds | Should -BeLessThan $UpperBoundTime
         }
 
-        It "COM enumerable argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" -Skip:(!$IsWindows) {
+        It "COM enumerable argument should work with 'ValidateNotNull', 'ValidateNotNullOrEmpty' and 'ValidateNotNullOrWhiteSpace'" -Skip:(!$IsWindows) {
             $shell = New-Object -ComObject "Shell.Application"
             $folder = $shell.Namespace("$TESTDRIVE")
             $items = $folder.Items()
 
             NotNullFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
             NotNullOrEmptyFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
+            NotNullOrWhiteSpaceFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
         }
 
-        It "Enumerator argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" {
+        It "Enumerator argument should work with 'ValidateNotNull', 'ValidateNotNullOrEmpty' and 'ValidateNotNullOrWhiteSpace'" {
             $data = @(1,2,3)
             NotNullFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
             NotNullOrEmptyFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
+            NotNullOrWhiteSpaceFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
         }
 
         It "'ValidateNotNull' should throw on null element of a collection argument" {
@@ -380,6 +401,29 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
             { NotNullOrEmptyFunc -Value @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
             { NotNullOrEmptyFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+        }
+
+        It "'ValidateNotNullOrWhiteSpace' should throw on null element of a collection argument, white-space only string element of a collection argument or empty collection/dictionary" {
+            { NotNullOrWhiteSpaceFunc -Value @("string", $null, 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @("string", "", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @("string", " ", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+        }
+
+        It "'ValidateNotNull' should throw on a scalar null value" {
+            { NotNullFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullFunc"
+        }
+
+        It "'ValidateNotNullOrEmpty' should throw on a scalar null value and scalar empty string" {
+            { NotNullOrEmptyFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value "" } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+        }
+
+        It "'ValidateNotNullOrWhiteSpace' should throw on a scalar null value, scalar empty string and scalar white-space string" {
+            { NotNullOrWhiteSpaceFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value "" } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value " " } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
         }
 
         It "Mandatory parameter should throw on empty collection" {

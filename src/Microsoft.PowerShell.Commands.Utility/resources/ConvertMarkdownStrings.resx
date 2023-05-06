@@ -120,9 +120,6 @@
   <data name="InvalidInputObjectType" xml:space="preserve">
     <value>The type of the input object '{0}' is invalid.</value>
   </data>
-  <data name="InputFileNotFound" xml:space="preserve">
-    <value>The file is not found: '{0}'.</value>
-  </data>
   <data name="FileSystemPathsOnly" xml:space="preserve">
     <value>Only FileSystem Provider paths are supported. The file path is not supported: '{0}'.</value>
   </data>

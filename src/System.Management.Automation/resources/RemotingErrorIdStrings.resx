@@ -1360,7 +1360,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell {0} or greater.</value>
+    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
     <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
@@ -1704,5 +1704,14 @@ SSH client process terminated before connection could be established.</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
     <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+  </data>
+  <data name="DISCInvalidConfigKeyType" xml:space="preserve">
+    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+  </data>
+  <data name="DISCUnsupportedConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+  </data>
+  <data name="DISCUnknownConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unknown configuration option: {0}.</value>
   </data>
 </root>

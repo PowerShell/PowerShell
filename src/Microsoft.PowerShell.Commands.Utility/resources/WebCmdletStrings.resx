@@ -159,17 +159,14 @@
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
     <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
   </data>
-  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
-  </data>
-  <data name="ExtendedProfileRequired" xml:space="preserve">
-    <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the installation of the .NET Client Profile, sometimes called the .NET extended profile.</value>
-  </data>
   <data name="IEDomNotSupported" xml:space="preserve">
     <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
   </data>
-  <data name="JsonStringInBadFormat" xml:space="preserve">
-    <value>The converted JSON string is in bad format.</value>
+  <data name="InsecureRedirection" xml:space="preserve">
+    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+  </data> 
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
     <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
@@ -199,16 +196,16 @@
     <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response completed. (Number of bytes read: {0})</value>
+    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response</value>
+    <value>Reading web response stream</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Reading response stream... (Number of bytes read: {0})</value>
+    <value>Downloaded: {0} of {1}</value>
   </data>
-  <data name="RequestTimeout" xml:space="preserve">
-    <value>The operation has timed out.</value>
+   <data name="ResumeNotFilePath" xml:space="preserve">
+    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
@@ -219,23 +216,14 @@
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Web request completed. (Number of bytes processed: {0})</value>
   </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+  </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
     <value>Web request status</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Number of bytes processed: {0}</value>
-  </data>
-  <data name="JsonNetModuleRequired" xml:space="preserve">
-    <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the 'Json.Net' module. {0}</value>
-  </data>
-  <data name="PSModuleAutoloadingPreferenceNotEnable" xml:space="preserve">
-    <value>The cmdlet cannot run because the 'Json.Net' module cannot be loaded. Import the module manually or set the $PSModuleAutoLoadingPreference variable to enable module auto loading. For more information, see 'get-help about_Preference_Variables'.</value>
-  </data>
-  <data name="CouldNotAutoImportJsonNetModule" xml:space="preserve">
-    <value>However, the 'Json.Net' module could not be loaded. For more information, run 'Import-Module Json.Net'.</value>
-  </data>
-  <data name="JsonNetModuleFilesRequired" xml:space="preserve">
-    <value>Ensure 'Json.Net.psd1' and 'Newtonsoft.Json.dll' are available in a versioned subdirectory of '{0}'.</value>
+    <value>Downloaded: {0} of {1}</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
     <value>Conversion from JSON failed with error: {0}</value>
@@ -255,10 +243,16 @@
   <data name="WebResponseVerboseMsg" xml:space="preserve">
     <value>received {0}-byte response of content type {1}</value>
   </data>
+  <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
+    <value>received response of content type {0} of unknown size</value>
+  </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
     <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
     <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+  </data>
+  <data name="WebSessionConnectionRecreated" xml:space="preserve">
+    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
   </data>
 </root>

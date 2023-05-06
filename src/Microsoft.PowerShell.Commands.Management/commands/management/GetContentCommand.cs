@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="holder"></param>
         /// <param name="currentContext"></param>
         /// <returns>
-        /// true if no error occured
+        /// true if no error occurred
         /// false if there was an error
         /// </returns>
         private bool ScanForwardsForTail(in ContentHolder holder, CmdletProviderContext currentContext)

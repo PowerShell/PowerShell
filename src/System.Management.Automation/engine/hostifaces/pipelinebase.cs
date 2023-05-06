@@ -282,7 +282,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stop the running pipeline.
         /// </summary>
-        /// <param name="syncCall">If true pipeline is stoped synchronously
+        /// <param name="syncCall">If true pipeline is stopped synchronously
         /// else asynchronously.</param>
         private void CoreStop(bool syncCall)
         {
@@ -298,7 +298,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     // If pipeline execution has failed or completed or
-                    // stoped, return silently.
+                    // stopped, return silently.
                     case PipelineState.Stopped:
                     case PipelineState.Completed:
                     case PipelineState.Failed:
@@ -331,7 +331,7 @@ namespace System.Management.Automation.Runspaces
             // Raise the event outside the lock
             RaisePipelineStateEvents();
 
-            // A pipeline can be stoped before it is started. See NotStarted
+            // A pipeline can be stopped before it is started. See NotStarted
             // case in above switch statement. This is done to allow stoping a pipeline
             // in another thread before it has been started.
             lock (SyncRoot)
@@ -515,7 +515,7 @@ namespace System.Management.Automation.Runspaces
                 SyncInvokeCall = syncCall;
 
                 // Create event which will be signalled when pipeline execution
-                // is completed/failed/stoped.
+                // is completed/failed/stopped.
                 // Note:Runspace.Close waits for all the running pipeline
                 // to finish.  This Event must be created before pipeline is
                 // added to list of running pipelines. This avoids the race condition
@@ -760,7 +760,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This is queue of all the state change event which have occured for
+        /// This is queue of all the state change event which have occurred for
         /// this pipeline. RaisePipelineStateEvents raises event for each
         /// item in this queue. We don't raise the event with in SetPipelineState
         /// because often SetPipelineState is called with in a lock.
@@ -891,7 +891,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// ManualResetEvent which is signaled when pipeline execution is
-        /// completed/failed/stoped.
+        /// completed/failed/stopped.
         /// </summary>
         internal ManualResetEvent PipelineFinishedEvent { get; private set; }
 

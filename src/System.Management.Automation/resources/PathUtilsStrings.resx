@@ -139,7 +139,7 @@
     <value>The directory '{0}' already exists.  Use the -Force parameter if you want to overwrite the directory and files within the directory.</value>
   </data>
   <data name="ExportPSSession_ErrorModuleNameOrPath" xml:space="preserve">
-    <value>The -OutputModule parameter does not resolve to a path, and a user module path cannot be found for the provided name.</value>
+    <value>The user module path does not exist, and hence a module folder cannot be created for the provided module name '{0}'.</value>
   </data>
   <data name="ExportPSSession_CannotCreateOutputDirectory" xml:space="preserve">
     <value>Cannot create the module {0} due to the following: {1}. Use a different argument for the -OutputModule parameter and retry.</value>

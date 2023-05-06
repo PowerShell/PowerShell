@@ -1090,10 +1090,7 @@ namespace System.Management.Automation.Host
                 // This way, multiple runspaces opened by the same process will share the same transcript.
                 lock (s_systemTranscriptLock)
                 {
-                    if (systemTranscript == null)
-                    {
-                        systemTranscript = PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
-                    }
+                    systemTranscript ??= PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
                 }
             }
 
@@ -1170,8 +1167,8 @@ namespace System.Management.Automation.Host
             // bytes of randomness (2^48 = 2.8e14) would take an attacker about 891 years to guess
             // a filename (assuming they knew the time the transcript was started).
             // (5 bytes = 3 years, 4 bytes = about a month)
-            byte[] randomBytes = new byte[6];
-            System.Security.Cryptography.RandomNumberGenerator.Create().GetBytes(randomBytes);
+            Span<byte> randomBytes = stackalloc byte[6];
+            System.Security.Cryptography.RandomNumberGenerator.Fill(randomBytes);
             string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         "PowerShell_transcript.{0}.{1}.{2:yyyyMMddHHmmss}.txt",
@@ -1246,7 +1243,7 @@ namespace System.Management.Automation.Host
         {
             static Encoding GetPathEncoding(string path)
             {
-                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                using StreamReader reader = new StreamReader(path, Encoding.Default, detectEncodingFromByteOrderMarks: true);
                 _ = reader.Read();
                 return reader.CurrentEncoding;
             }
@@ -1274,7 +1271,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                Utils.utf8NoBom);
+                                Encoding.Default);
                         }
 
                         _contentWriter.AutoFlush = true;
@@ -1297,7 +1294,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation.Host
                 if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
+                        string.Create(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }
@@ -1433,7 +1433,7 @@ namespace System.Management.Automation.Host
         /// <param name="hotkeysAndPlainLabels"></param>
         /// <returns>
         /// Returns the index into the choices array matching the response string, or -1 if there is no match.
-        ///</returns>
+        /// </returns>
         internal static int DetermineChoicePicked(string response, Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
             Diagnostics.Assert(choices != null, "choices: expected a value");

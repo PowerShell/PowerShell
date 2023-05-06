@@ -59,7 +59,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <remarks>
         /// This parameter tells the command to provide Programmer/Support type
-        /// messages to understand what is really occuring and give the user the
+        /// messages to understand what is really occurring and give the user the
         /// opportunity to stop or debug the situation.
         /// </remarks>
         [Parameter]
@@ -121,6 +121,27 @@ namespace System.Management.Automation.Internal
             get { return _commandRuntime.InformationPreference; }
 
             set { _commandRuntime.InformationPreference = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the ProgressAction parameter for the cmdlet.
+        /// </summary>
+        /// <remarks>
+        /// This parameter tells the command what to do when a progress record occurs.
+        /// </remarks>
+        /// <!--
+        /// NOTE: The "proga" alias name does not follow the same alias naming convention used
+        /// with other common parameter aliases that control stream functionality; however,
+        /// "pa" was already taken as a parameter alias in other commands when this parameter
+        /// was added to PowerShell, so "proga" was chosen instead.
+        /// -->
+        [Parameter]
+        [Alias("proga")]
+        public ActionPreference ProgressAction
+        {
+            get { return _commandRuntime.ProgressPreference; }
+
+            set { _commandRuntime.ProgressPreference = value; }
         }
 
         /// <summary>

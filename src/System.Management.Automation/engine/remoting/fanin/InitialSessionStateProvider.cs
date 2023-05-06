@@ -22,6 +22,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
+    #region WSMan endpoint configuration
+
     /// <summary>
     /// This struct is used to represent contents from configuration xml. The
     /// XML is passed to plugins by WSMan API.
@@ -56,6 +58,8 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
+        #region Fields
+
         internal string StartupScript;
         // this field is used only by an Out-Of-Process (IPC) server process
         internal string InitializationScriptForOutOfProcessRunspace;
@@ -70,6 +74,10 @@ namespace System.Management.Automation.Remoting
         internal ApartmentState? ShellThreadApartmentState;
         internal PSSessionConfigurationData SessionConfigurationData;
         internal string ConfigFilePath;
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Using optionName and optionValue updates the current object.
@@ -278,15 +286,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // assign defaults after parsing the xml content.
-            if (result.MaxReceivedObjectSizeMB == null)
-            {
-                result.MaxReceivedObjectSizeMB = BaseTransportManager.MaximumReceivedObjectSize;
-            }
+            result.MaxReceivedObjectSizeMB ??= BaseTransportManager.MaximumReceivedObjectSize;
 
-            if (result.MaxReceivedCommandSizeMB == null)
-            {
-                result.MaxReceivedCommandSizeMB = BaseTransportManager.MaximumReceivedDataSize;
-            }
+            result.MaxReceivedCommandSizeMB ??= BaseTransportManager.MaximumReceivedDataSize;
 
             return result;
         }
@@ -324,6 +326,8 @@ namespace System.Management.Automation.Remoting
             throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                     EndPointConfigurationTypeName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -450,7 +454,8 @@ namespace System.Management.Automation.Remoting
                     ...
                   </InitializationParameters>
          */
-        internal static ConfigurationDataFromXML LoadEndPointConfiguration(string shellId,
+        internal static ConfigurationDataFromXML LoadEndPointConfiguration(
+            string shellId,
             string initializationParameters)
         {
             ConfigurationDataFromXML configData = null;
@@ -798,6 +803,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
+        #region Method overrides
+
         /// <summary>
         /// </summary>
         /// <param name="senderInfo"></param>
@@ -805,22 +812,23 @@ namespace System.Management.Automation.Remoting
         public override InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo)
         {
             InitialSessionState result = InitialSessionState.CreateDefault2();
+
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8"))
+            {
+                PSSessionConfigurationData.IsServerManager = true;
+            }
 
             return result;
         }
 
         public override InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData, PSSenderInfo senderInfo, string configProviderId)
         {
-            if (sessionConfigurationData == null)
-                throw new ArgumentNullException(nameof(sessionConfigurationData));
+            ArgumentNullException.ThrowIfNull(sessionConfigurationData);
 
-            if (senderInfo == null)
-                throw new ArgumentNullException(nameof(senderInfo));
+            ArgumentNullException.ThrowIfNull(senderInfo);
 
-            if (configProviderId == null)
-                throw new ArgumentNullException(nameof(configProviderId));
+            ArgumentNullException.ThrowIfNull(configProviderId);
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
             // now get all the modules in the specified path and import the same
@@ -848,13 +856,22 @@ namespace System.Management.Automation.Remoting
             }
 
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8"))
+            {
+                PSSessionConfigurationData.IsServerManager = true;
+            }
 
             return sessionState;
         }
+
+        #endregion
     }
 
-    #region Declarative Initial Session Configuration
+    #endregion
+
+    #region Declarative InitialSession Configuration
+
+    #region Supporting types
 
     /// <summary>
     /// Specifies type of initial session state to use. Valid values are Empty and Default.
@@ -897,6 +914,10 @@ namespace System.Management.Automation.Remoting
             this.ValidationCallback = callback;
         }
     }
+
+    #endregion
+
+    #region ConfigFileConstants
 
     /// <summary>
     /// Configuration file constants.
@@ -1355,6 +1376,8 @@ namespace System.Management.Automation.Remoting
         }
     }
 
+    #endregion
+
     #region DISC Utilities
 
     /// <summary>
@@ -1681,6 +1704,8 @@ namespace System.Management.Automation.Remoting
 
     #endregion
 
+    #region DISCPowerShellConfiguration
+
     /// <summary>
     /// Creates an initial session state based on the configuration language for PSSC files.
     /// </summary>
@@ -1706,13 +1731,14 @@ namespace System.Management.Automation.Remoting
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
         /// checks windowsPrincipal.IsInRole().
         /// </param>
-        internal DISCPowerShellConfiguration(string configFile, Func<string, bool> roleVerifier)
+        /// <param name="validateFile">Validate file for supported configuration options.</param>
+        internal DISCPowerShellConfiguration(
+            string configFile,
+            Func<string, bool> roleVerifier,
+            bool validateFile = false)
         {
             _configFile = configFile;
-            if (roleVerifier == null)
-            {
-                roleVerifier = static (role) => false;
-            }
+            roleVerifier ??= static (role) => false;
 
             Runspace backupRunspace = Runspace.DefaultRunspace;
 
@@ -1726,6 +1752,12 @@ namespace System.Management.Automation.Remoting
                     configFile, out scriptName);
 
                 _configHash = DISCUtils.LoadConfigFile(Runspace.DefaultRunspace.ExecutionContext, script);
+
+                if (validateFile)
+                {
+                    DISCFileValidation.ValidateContents(_configHash);
+                }
+
                 MergeRoleRulesIntoConfigHash(roleVerifier);
                 MergeRoleCapabilitiesIntoConfigHash();
 
@@ -1901,13 +1933,13 @@ namespace System.Management.Automation.Remoting
             string moduleName = "*";
             if (roleCapability.Contains('\\'))
             {
-                string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
+                string[] components = roleCapability.Split('\\', 2);
                 moduleName = components[0];
                 roleCapability = components[1];
             }
 
             // Go through each directory in the module path
-            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Utils.Separators.PathSeparator);
+            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Path.PathSeparator);
             foreach (string path in modulePaths)
             {
                 try
@@ -2446,7 +2478,7 @@ namespace System.Management.Automation.Remoting
             // Parameters = A dictionary of parameter names -> Modifications
             // Modifications = A dictionary of modification types (ValidatePattern, ValidateSet) to the interim value
             //  for that attribute, as a HashSet of strings. For ValidateSet, this will be used as a collection of strings
-            //  directly during proxy generation. For For ValidatePattern, it will be combined into a regex
+            //  directly during proxy generation. For ValidatePattern, it will be combined into a regex
             //  like: '^(Pattern1|Pattern2|Pattern3)$' during proxy generation.
             Dictionary<string, Hashtable> commandModifications = new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase);
 
@@ -2889,5 +2921,111 @@ namespace System.Management.Automation.Remoting
             return result;
         }
     }
+    #endregion
+
+    #region DISCFileValidation
+
+    internal static class DISCFileValidation
+    {
+        // Set of supported configuration options for a PowerShell InitialSessionState.
+#if UNIX
+        private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "AliasDefinitions",
+            "AssembliesToLoad",
+            "Author",
+            "CompanyName",
+            "Copyright",
+            "Description",
+            "EnvironmentVariables",
+            "FormatsToProcess",
+            "FunctionDefinitions",
+            "GUID",
+            "LanguageMode",
+            "ModulesToImport",
+            "MountUserDrive",
+            "SchemaVersion",
+            "ScriptsToProcess",
+            "SessionType",
+            "TranscriptDirectory",
+            "TypesToProcess",
+            "UserDriveMaximumSize",
+            "VisibleAliases",
+            "VisibleCmdlets",
+            "VariableDefinitions",
+            "VisibleExternalCommands",
+            "VisibleFunctions",
+            "VisibleProviders"
+        };
+#else
+        private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "AliasDefinitions",
+            "AssembliesToLoad",
+            "Author",
+            "CompanyName",
+            "Copyright",
+            "Description",
+            "EnvironmentVariables",
+            "ExecutionPolicy",
+            "FormatsToProcess",
+            "FunctionDefinitions",
+            "GUID",
+            "LanguageMode",
+            "ModulesToImport",
+            "MountUserDrive",
+            "SchemaVersion",
+            "ScriptsToProcess",
+            "SessionType",
+            "TranscriptDirectory",
+            "TypesToProcess",
+            "UserDriveMaximumSize",
+            "VisibleAliases",
+            "VisibleCmdlets",
+            "VariableDefinitions",
+            "VisibleExternalCommands",
+            "VisibleFunctions",
+            "VisibleProviders"
+        };
+#endif
+
+        // These are configuration options for WSMan (WinRM) endpoint configurations, that
+        // appear in .pssc files, but are not part of PowerShell InitialSessionState.
+        private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "GroupManagedServiceAccount",
+            "PowerShellVersion",
+            "RequiredGroups",
+            "RoleDefinitions",
+            "RunAsVirtualAccount",
+            "RunAsVirtualAccountGroups"
+        };
+
+        internal static void ValidateContents(Hashtable configHash)
+        {
+            foreach (var key in configHash.Keys)
+            {
+                if (key is not string keyName)
+                {
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.DISCInvalidConfigKeyType);
+                }
+
+                if (UnsupportedConfigOptions.Contains(keyName))
+                {
+                    throw new PSInvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.DISCUnsupportedConfigName, keyName));
+                }
+
+                if (!SupportedConfigOptions.Contains(keyName))
+                {
+                    throw new PSInvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.DISCUnknownConfigName, keyName));
+                }
+            }
+        }
+    }
+
+    #endregion
+
     #endregion
 }

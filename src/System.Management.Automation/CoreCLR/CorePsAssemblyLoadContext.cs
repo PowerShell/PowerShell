@@ -232,6 +232,9 @@ namespace System.Management.Automation
         ///                     |
         ///                     |--- 'osx-x64' subfolder
         ///                     |       |--- native.dylib
+        ///                     |
+        ///                     |--- 'osx-arm64' subfolder
+        ///                     |       |--- native.dylib
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
@@ -343,9 +346,6 @@ namespace System.Management.Automation
                 return false;
             }
 
-            bool assemblyFound = false;
-            char dirSeparator = IO.Path.DirectorySeparatorChar;
-
             if (string.IsNullOrEmpty(_winDir))
             {
                 // cache value of '_winDir' folder in member variable.
@@ -355,21 +355,21 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(_gacPathMSIL))
             {
                 // cache value of '_gacPathMSIL' folder in member variable.
-                _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
+                _gacPathMSIL = Path.Join(_winDir, "Microsoft.NET", "assembly", "GAC_MSIL");
             }
 
-            assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
+            bool assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
 
             if (!assemblyFound)
             {
-                string gacBitnessAwarePath = null;
+                string gacBitnessAwarePath;
 
                 if (Environment.Is64BitProcess)
                 {
                     if (string.IsNullOrEmpty(_gacPath64))
                     {
-                        // cache value of '_gacPath64' folder in member variable.
-                        _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
+                       var gacName = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "GAC_Arm64" : "GAC_64";
+                        _gacPath64 = Path.Join(_winDir, "Microsoft.NET", "assembly", gacName);
                     }
 
                     gacBitnessAwarePath = _gacPath64;
@@ -378,8 +378,7 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(_gacPath32))
                     {
-                        // cache value of '_gacPath32' folder in member variable.
-                        _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
+                        _gacPath32 = Path.Join(_winDir, "Microsoft.NET", "assembly", "GAC_32");
                     }
 
                     gacBitnessAwarePath = _gacPath32;
@@ -397,13 +396,12 @@ namespace System.Management.Automation
             bool assemblyFound = false;
             assemblyPath = null;
 
-            char dirSeparator = IO.Path.DirectorySeparatorChar;
-            string tempAssemblyDirPath = $"{gacRoot}{dirSeparator}{assemblyName.Name}";
+            string tempAssemblyDirPath = Path.Join(gacRoot, assemblyName.Name);
 
             if (Directory.Exists(tempAssemblyDirPath))
             {
                 // Enumerate all directories, sort by name and select the last. This selects the latest version.
-                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).OrderBy(static d => d).LastOrDefault();
+                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).Order().LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
@@ -552,7 +550,7 @@ namespace System.Management.Automation
             }
             else if (Platform.IsMacOS)
             {
-                folderName = "osx-x64";
+                folderName = "osx-" + processArch;
                 ext = ".dylib";
             }
 
@@ -581,15 +579,14 @@ namespace System.Management.Automation
         /// </param>
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)] string basePaths)
         {
-            if (string.IsNullOrEmpty(basePaths))
-                throw new ArgumentNullException(nameof(basePaths));
+            ArgumentException.ThrowIfNullOrEmpty(basePaths);
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }
     }
 
     /// <summary>
-    /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
+    /// Provides helper functions to facilitate calling managed code from a native PowerShell host.
     /// </summary>
     public static unsafe class PowerShellUnsafeAssemblyLoad
     {

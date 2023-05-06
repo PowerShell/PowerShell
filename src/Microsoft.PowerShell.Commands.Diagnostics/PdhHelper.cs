@@ -267,28 +267,65 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // We only need dwType and lDefaultScale fields from this structure.
         // We access those fields directly. The struct is here for reference only.
         //
-        [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        private struct PDH_COUNTER_INFO
+        [StructLayout(LayoutKind.Sequential)]
+        private unsafe struct PDH_COUNTER_INFO
         {
-            [FieldOffset(0)] public UInt32 dwLength;
-            [FieldOffset(4)] public UInt32 dwType;
-            [FieldOffset(8)] public UInt32 CVersion;
-            [FieldOffset(12)] public UInt32 CStatus;
-            [FieldOffset(16)] public UInt32 lScale;
-            [FieldOffset(20)] public UInt32 lDefaultScale;
-            [FieldOffset(24)] public IntPtr dwUserData;
-            [FieldOffset(32)] public IntPtr dwQueryUserData;
-            [FieldOffset(40)] public string szFullPath;
+            public uint Length;
+            public uint Type;
+            public uint CVersion;
+            public uint CStatus;
+            public int Scale;
+            public int DefaultScale;
+            public ulong UserData;
+            public ulong QueryUserData;
+            public ushort* FullPath;
+            public _Anonymous_e__Union Anonymous;
+            public ushort* ExplainText;
+            public fixed uint DataBuffer[1];
 
-            [FieldOffset(48)] public string szMachineName;
-            [FieldOffset(56)] public string szObjectName;
-            [FieldOffset(64)] public string szInstanceName;
-            [FieldOffset(72)] public string szParentInstance;
-            [FieldOffset(80)] public UInt32 dwInstanceIndex;
-            [FieldOffset(88)] public string szCounterName;
+            [StructLayout(LayoutKind.Explicit)]
+            internal struct _Anonymous_e__Union
+            {
+                [FieldOffset(0)]
+                public PDH_DATA_ITEM_PATH_ELEMENTS_blittable DataItemPath;
 
-            [FieldOffset(96)] public string szExplainText;
-            [FieldOffset(104)] public IntPtr DataBuffer;
+                [FieldOffset(0)]
+                public PDH_COUNTER_PATH_ELEMENTS_blittable CounterPath;
+
+                [FieldOffset(0)]
+                public _Anonymous_e__Struct Anonymous;
+
+                [StructLayout(LayoutKind.Sequential)]
+                internal struct PDH_DATA_ITEM_PATH_ELEMENTS_blittable
+                {
+                    public ushort* MachineName;
+                    public Guid ObjectGUID;
+                    public uint ItemId;
+                    public ushort* InstanceName;
+                }
+
+                [StructLayout(LayoutKind.Sequential)]
+                internal struct PDH_COUNTER_PATH_ELEMENTS_blittable
+                {
+                    public ushort* MachineName;
+                    public ushort* ObjectName;
+                    public ushort* InstanceName;
+                    public ushort* ParentInstance;
+                    public uint InstanceIndex;
+                    public ushort* CounterName;
+                }
+
+                [StructLayout(LayoutKind.Sequential)]
+                internal struct _Anonymous_e__Struct
+                {
+                    public ushort* MachineName;
+                    public ushort* ObjectName;
+                    public ushort* InstanceName;
+                    public ushort* ParentInstance;
+                    public uint InstanceIndex;
+                    public ushort* CounterName;
+                }
+            }
         }
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
@@ -476,8 +513,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 if (res == PdhResults.PDH_CSTATUS_VALID_DATA && bufCounterInfo != IntPtr.Zero)
                 {
                     PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
-                    counterType = pdhCounterInfo.dwType;
-                    defaultScale = pdhCounterInfo.lDefaultScale;
+                    counterType = pdhCounterInfo.Type;
+                    defaultScale = (uint)pdhCounterInfo.DefaultScale;
                 }
             }
             finally

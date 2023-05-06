@@ -41,23 +41,16 @@ namespace Microsoft.PowerShell
             //   (we may load resources which can take some time)
             Task.Run(() =>
             {
-                WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
                 if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                 {
-                    string prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
-
-                    // check using Regex if the window already has Administrator: prefix
-                    // (i.e. from the parent console process)
-                    string titlePattern = ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate;
-                    titlePattern = Regex.Escape(titlePattern)
-                        .Replace(@"\{1}", ".*")
-                        .Replace(@"\{0}", Regex.Escape(prefix));
-                    if (!Regex.IsMatch(this.WindowTitle, titlePattern))
+                    // Check if the window already has the "Administrator: " prefix (i.e. from the parent console process).
+                    ReadOnlySpan<char> prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
+                    ReadOnlySpan<char> windowTitle = WindowTitle;
+                    if (!windowTitle.StartsWith(prefix))
                     {
-                        this.WindowTitle = StringUtil.Format(ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate,
-                            prefix,
-                            this.WindowTitle);
+                        WindowTitle = string.Concat(prefix, windowTitle);
                     }
                 }
             });
@@ -85,9 +78,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor foreground;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out _);
                 return foreground;
             }
 
@@ -135,9 +127,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor background;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out _, out background);
                 return background;
             }
 
@@ -648,8 +639,7 @@ namespace Microsoft.PowerShell
                     {
                         int actualNumberOfInput = ConsoleControl.ReadConsoleInput(handle, ref inputRecords);
                         Dbg.Assert(actualNumberOfInput == 1,
-                            string.Format(CultureInfo.InvariantCulture, "ReadConsoleInput returns {0} number of input event records",
-                                actualNumberOfInput));
+                            string.Create(CultureInfo.InvariantCulture, $"ReadConsoleInput returns {actualNumberOfInput} number of input event records"));
                         if (actualNumberOfInput == 1)
                         {
                             if (((ConsoleControl.InputRecordEventTypes)inputRecords[0].EventType) ==
@@ -1541,7 +1531,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+                return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
             }
         }
 
@@ -1557,7 +1547,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top},{Right},{Bottom}");
             }
         }
 

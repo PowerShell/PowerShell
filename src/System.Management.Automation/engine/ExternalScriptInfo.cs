@@ -14,7 +14,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides information for MSH scripts that are directly executable by MSH
+    /// Provides information for scripts that are directly executable by PowerShell
     /// but are not built into the runspace configuration.
     /// </summary>
     public class ExternalScriptInfo : CommandInfo, IScriptCommandInfo
@@ -188,7 +188,10 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Context == null) return SessionStateEntryVisibility.Public;
+                if (Context == null)
+                {
+                    return SessionStateEntryVisibility.Public;
+                }
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
@@ -384,7 +387,7 @@ namespace System.Management.Automation
 
                 // If we got here, there was some sort of parsing exception.  We'll just
                 // ignore it and assume the script does not implement dynamic parameters.
-                // Futhermore, we'll clear out the fields so that the next attempt to
+                // Furthermore, we'll clear out the fields so that the next attempt to
                 // access ScriptBlock will result in an exception that doesn't get ignored.
                 _scriptBlock = null;
                 _scriptContents = null;
@@ -455,15 +458,6 @@ namespace System.Management.Automation
             get { return 0; }
         }
 
-        internal IEnumerable<PSSnapInSpecification> RequiresPSSnapIns
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data?.RequiresPSSnapIns;
-            }
-        }
-
         /// <summary>
         /// Gets the original contents of the script.
         /// </summary>
@@ -515,9 +509,7 @@ namespace System.Management.Automation
                 {
                     using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
-                        Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
-
-                        using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                        using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
                         {
                             _scriptContents = scriptReader.ReadToEnd();
                             _originalEncoding = scriptReader.CurrentEncoding;

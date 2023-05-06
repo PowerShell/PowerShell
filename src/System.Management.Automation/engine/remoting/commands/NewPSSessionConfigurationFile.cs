@@ -15,7 +15,6 @@ using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
-#if !UNIX
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
     ///
@@ -1126,7 +1125,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
-#endif
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
@@ -1868,12 +1866,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (isExample)
             {
-                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}",
-                    resourceString, nl, key, value, nl, nl);
+                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}",
-                resourceString, nl, key, value, nl, nl);
+            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
         }
 
         /// <summary>
@@ -1884,7 +1880,10 @@ namespace Microsoft.PowerShell.Commands
         internal static string QuoteName(object name)
         {
             if (name == null)
+            {
                 return "''";
+            }
+
             return "'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(name.ToString()) + "'";
         }
 
@@ -1944,7 +1943,7 @@ namespace Microsoft.PowerShell.Commands
 
             sb.Append("@{");
 
-            var keys = table.Keys.Cast<string>().OrderBy(static x => x);
+            var keys = table.Keys.Cast<string>().Order();
             foreach (var key in keys)
             {
                 sb.Append(writer.NewLine);

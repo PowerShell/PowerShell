@@ -153,7 +153,7 @@ namespace Microsoft.Management.UI.Internal
         private void ChangeFromEditToDisplayMode()
         {
             // NOTE : This is to resolve a race condition where clicking
-            // on the rename button causes the the edit box to change and
+            // on the rename button causes the edit box to change and
             // then have re-toggle.
             DependencyObject d = Mouse.DirectlyOver as DependencyObject;
             if (d == null || !(this.renameButton.IsAncestorOf(d) && Mouse.LeftButton == MouseButtonState.Pressed))

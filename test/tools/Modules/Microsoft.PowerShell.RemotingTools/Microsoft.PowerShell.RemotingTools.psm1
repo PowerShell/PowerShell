@@ -85,14 +85,17 @@ class SSHRemotingConfig
     [PlatformInfo] $platformInfo
     [SSHSubSystemEntry[]] $psSubSystemEntries = @()
     [string] $configFilePath
+    [string] $subsystemName
     $configComponents = @()
 
     SSHRemotingConfig(
         [PlatformInfo] $platInfo,
-        [string] $configFilePath)
+        [string] $configFilePath,
+        [string] $subsystemName)
     {
         $this.platformInfo = $platInfo
         $this.configFilePath = $configFilePath
+        $this.subsystemName = $subsystemName
         $this.ParseSSHRemotingConfig()
     }
 
@@ -121,7 +124,7 @@ class SSHRemotingConfig
             $components = $this.SplitConfigLine($line)
             $this.configComponents += @{ Line = $line; Components = $components }
 
-            if (($components[0] -eq "Subsystem") -and ($components[1] -eq "powershell"))
+            if (($components[0] -eq "Subsystem") -and ($components[1] -eq $this.subsystemName))
             {
                 $entry = [SSHSubSystemEntry]::New()
                 $entry.subSystemLine = $line
@@ -143,7 +146,9 @@ function UpdateConfiguration
 {
     param (
         [SSHRemotingConfig] $config,
-        [string] $PowerShellPath
+        [string] $PowerShellPath,
+        [string] $SubsystemName,
+        [string] $ConfigFilePath
     )
 
     #
@@ -152,15 +157,19 @@ function UpdateConfiguration
 
     # Subsystem
     [System.Collections.Generic.List[string]] $newContents = [System.Collections.Generic.List[string]]::new()
-    $psSubSystemEntry = "Subsystem       powershell      {0} {1} {2} {3}" -f $powerShellPath, "-SSHS", "-NoProfile", "-NoLogo"
-    $subSystemAdded = $false
+    $psSubSystemEntry = "Subsystem       {0}      {1} -SSHS -NoProfile -NoLogo" -f $SubsystemName, $powerShellPath
+    if (![string]::IsNullOrEmpty($ConfigFilePath))
+    {
+        $psSubSystemEntry += " -ConfigurationFile {0}" -f $ConfigFilePath
+    }
 
+    $subSystemAdded = $false
     foreach ($lineItem in $config.configComponents)
     {
         $line = $lineItem.Line
         $components = $lineItem.Components
 
-        if ($components[0] -eq "SubSystem")
+        if ($components[0] -eq "Subsystem")
         {
             if (! $subSystemAdded)
             {
@@ -169,7 +178,7 @@ function UpdateConfiguration
                 $subSystemAdded = $true
             }
 
-            if ($components[1] -eq "powershell")
+            if ($components[1] -eq $SubsystemName)
             {
                 # Remove all existing powershell subsystem entries
                 continue
@@ -324,6 +333,10 @@ function Enable-SSHRemoting
 
         [string] $PowerShellFilePath,
 
+        [string] $SubsystemName = "powershell",
+
+        [string] $ConfigFilePath,
+
         [switch] $Force
     )
 
@@ -475,7 +488,7 @@ function Enable-SSHRemoting
     WriteLine "$SSHDConfigFilePath" -AppendLines 1
 
     # Get the SSHD configurtion
-    $sshdConfig = [SSHRemotingConfig]::new($platformInfo, $SSHDConfigFilePath)
+    $sshdConfig = [SSHRemotingConfig]::new($platformInfo, $SSHDConfigFilePath, $SubsystemName)
 
     if ($sshdConfig.psSubSystemEntries.Count -gt 0)
     {
@@ -499,7 +512,7 @@ function Enable-SSHRemoting
     {
         WriteLine "Updating configuration file ..." -PrependLines 1 -AppendLines 1
 
-        UpdateConfiguration $sshdConfig $PowerShellToUse
+        UpdateConfiguration $sshdConfig $PowerShellToUse $SubsystemName $ConfigFilePath
 
         WriteLine "The configuration file has been updated:" -PrependLines 1
         WriteLine $sshdConfig.configFilePath -AppendLines 1

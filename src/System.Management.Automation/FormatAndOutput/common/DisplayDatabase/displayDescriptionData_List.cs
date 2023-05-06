@@ -208,8 +208,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (EntrySelectedBy == null)
-                    EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
+                EntrySelectedBy ??= new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
         }

@@ -133,7 +133,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static bool IsRunspacePushed(PSHost host)
         {
-            if (!(host is IHostSupportsInteractiveSession host2)) { return false; }
+            if (!(host is IHostSupportsInteractiveSession host2))
+            {
+                return false;
+            }
 
             // IsRunspacePushed can throw (not implemented exception)
             try
@@ -159,10 +162,7 @@ namespace System.Management.Automation.Remoting
                 {
                     try
                     {
-                        if (_clientHost.UI != null)
-                        {
-                            _clientHost.UI.WriteErrorLine(errorRecord.ToString());
-                        }
+                        _clientHost.UI?.WriteErrorLine(errorRecord.ToString());
                     }
                     catch (Exception)
                     {

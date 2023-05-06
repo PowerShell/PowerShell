@@ -17,25 +17,12 @@ namespace Microsoft.PowerShell.Cmdletization
     {
         internal void Initialize(PSCmdlet cmdlet, string className, string classVersion, IDictionary<string, string> privateData)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet);
+            ArgumentException.ThrowIfNullOrEmpty(className);
 
-            if (string.IsNullOrEmpty(className))
-            {
-                throw new ArgumentNullException(nameof(className));
-            }
-
-            if (classVersion == null) // possible and ok to have classVersion==string.Empty
-            {
-                throw new ArgumentNullException(nameof(classVersion));
-            }
-
-            if (privateData == null)
-            {
-                throw new ArgumentNullException(nameof(privateData));
-            }
+            // possible and ok to have classVersion==string.Empty
+            ArgumentNullException.ThrowIfNull(classVersion);
+            ArgumentNullException.ThrowIfNull(privateData);
 
             _cmdlet = cmdlet;
             _className = className;
@@ -50,10 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization
                         delegate
                         {
                             var disposable = this as IDisposable;
-                            if (disposable != null)
-                            {
-                                disposable.Dispose();
-                            }
+                            disposable?.Dispose();
                         };
             }
         }

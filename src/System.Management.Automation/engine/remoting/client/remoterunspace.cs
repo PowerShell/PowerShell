@@ -48,7 +48,7 @@ namespace System.Management.Automation
         private long _currentLocalPipelineId = 0;
 
         /// <summary>
-        /// This is queue of all the state change event which have occured for
+        /// This is queue of all the state change event which have occurred for
         /// this runspace. RaiseRunspaceStateEvents raises event for each
         /// item in this queue. We don't raise events from with SetRunspaceState
         /// because SetRunspaceState is often called from with in the a lock.
@@ -634,11 +634,8 @@ namespace System.Management.Automation
                         //
                     }
 
-                    if (_remoteDebugger != null)
-                    {
-                        // Release RunspacePool event forwarding handlers.
-                        _remoteDebugger.Dispose();
-                    }
+                    // Release RunspacePool event forwarding handlers.
+                    _remoteDebugger?.Dispose();
 
                     try
                     {
@@ -1732,10 +1729,7 @@ namespace System.Management.Automation
             System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
                 RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
 
-            if (transportManager != null)
-            {
-                transportManager.AbortConnect();
-            }
+            transportManager?.AbortConnect();
         }
 
         #endregion Internal Methods
@@ -2786,8 +2780,8 @@ namespace System.Management.Automation
             {
                 throw new PSInvalidOperationException(
                     // The remote session to which you are connected does not support remote debugging.
-                    // You must connect to a remote computer that is running PowerShell {0} or greater.
-                    StringUtil.Format(RemotingErrorIdStrings.RemoteDebuggingEndpointVersionError, PSVersionInfo.PSV4Version),
+                    // You must connect to a remote computer that is running PowerShell 4.0 or greater.
+                    RemotingErrorIdStrings.RemoteDebuggingEndpointVersionError,
                     null,
                     "RemoteDebugger:RemoteDebuggingNotSupported",
                     ErrorCategory.NotImplemented,
@@ -2911,10 +2905,7 @@ namespace System.Management.Automation
 
         private void CheckRemoteBreakpointManagementSupport(string breakpointCommandNameToCheck)
         {
-            if (_remoteBreakpointManagementIsSupported == null)
-            {
-                _remoteBreakpointManagementIsSupported = _remoteDebuggingCapability.IsCommandSupported(breakpointCommandNameToCheck);
-            }
+            _remoteBreakpointManagementIsSupported ??= _remoteDebuggingCapability.IsCommandSupported(breakpointCommandNameToCheck);
 
             if (!_remoteBreakpointManagementIsSupported.Value)
             {

@@ -98,7 +98,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Gets the managed type that an object needs to be coverted to in order for it to be able
+        /// Gets the managed type that an object needs to be converted to in order for it to be able
         /// to be represented as a Variant.
         ///
         /// In general, there is a many-to-many mapping between Type and VarEnum. However, this method
@@ -211,7 +211,7 @@ namespace System.Management.Automation.ComInterop
                     if (TypeUtils.IsImplicitlyConvertible(argumentType, candidateManagedType, true))
                     {
                         compatibleComTypes.Add(candidateType);
-                        // Move on to the next type family. We need atmost one type from each family
+                        // Move on to the next type family. We need at most one type from each family
                         break;
                     }
                 }
@@ -429,7 +429,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the COM Variant type that argument should be marshaled as for a call to COM.
+        /// Get the COM Variant type that argument should be marshalled as for a call to COM.
         /// </summary>
         private VariantBuilder GetVariantBuilder(Type argumentType)
         {
@@ -455,7 +455,7 @@ namespace System.Management.Automation.ComInterop
                 if (elementType == typeof(object) || elementType == typeof(DBNull))
                 {
                     //no meaningful value to pass ByRef.
-                    //perhaps the calee will replace it with something.
+                    //perhaps the callee will replace it with something.
                     //need to pass as a variant reference
                     elementVarEnum = VarEnum.VT_VARIANT;
                 }

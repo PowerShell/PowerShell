@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -161,6 +162,7 @@ namespace System.Management.Automation
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
             bool isNativeCommand = commandProcessor is NativeCommandProcessor;
+
             for (int i = commandIndex + 1; i < commandElements.Length; ++i)
             {
                 var cpi = commandElements[i];
@@ -207,9 +209,27 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
-                foreach (var redirection in redirections)
+                bool shouldProcessMergesFirst = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && isNativeCommand;
+
+                if (shouldProcessMergesFirst)
                 {
-                    redirection.Bind(pipe, commandProcessor, context);
+                    foreach (CommandRedirection redirection in redirections)
+                    {
+                        if (redirection is MergingRedirection)
+                        {
+                            redirection.Bind(pipe, commandProcessor, context);
+                        }
+                    }
+                }
+
+                foreach (CommandRedirection redirection in redirections)
+                {
+                    if (!shouldProcessMergesFirst || redirection is not MergingRedirection)
+                    {
+                        redirection.Bind(pipe, commandProcessor, context);
+                    }
+
                     switch (redirection.FromStream)
                     {
                         case RedirectionStream.Error:
@@ -426,10 +446,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
-                {
-                    context.Events.ProcessPendingActions();
-                }
+                context.Events?.ProcessPendingActions();
 
                 if (input == AutomationNull.Value && !ignoreInput)
                 {
@@ -519,10 +536,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
-                {
-                    context.Events.ProcessPendingActions();
-                }
+                context.Events?.ProcessPendingActions();
 
                 CommandProcessorBase commandProcessor = null;
 
@@ -841,10 +855,7 @@ namespace System.Management.Automation
 
         internal static void CheckForInterrupts(ExecutionContext context)
         {
-            if (context.Events != null)
-            {
-                context.Events.ProcessPendingActions();
-            }
+            context.Events?.ProcessPendingActions();
 
             if (context.CurrentPipelineStopping)
             {
@@ -930,7 +941,7 @@ namespace System.Management.Automation
         {
             return FromStream == RedirectionStream.All
                        ? "*>&1"
-                       : string.Format(CultureInfo.InvariantCulture, "{0}>&1", (int)FromStream);
+                       : string.Create(CultureInfo.InvariantCulture, $"{(int)FromStream}>&1");
         }
 
         // private RedirectionStream ToStream { get; set; }
@@ -1039,11 +1050,13 @@ namespace System.Management.Automation
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}> {1}",
-                                 FromStream == RedirectionStream.All
-                                     ? "*"
-                                     : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
-                                 File);
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}> {1}",
+                FromStream == RedirectionStream.All
+                    ? "*"
+                    : ((int)FromStream).ToString(CultureInfo.InvariantCulture),
+                File);
         }
 
         internal string File { get; }
@@ -1056,6 +1069,18 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            {
+                if (commandProcessor is NativeCommandProcessor nativeCommand
+                    && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
+                    && FromStream is RedirectionStream.Output
+                    && !string.IsNullOrWhiteSpace(File))
+                {
+                    nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
+                    return;
+                }
+            }
+
             Pipe pipe = GetRedirectionPipe(context, pipelineProcessor);
 
             switch (FromStream)
@@ -1065,10 +1090,7 @@ namespace System.Management.Automation
                     // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs,
                     // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                    }
+                    context.CurrentCommandProcessor?.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
@@ -1079,10 +1101,7 @@ namespace System.Management.Automation
                     break;
                 case RedirectionStream.Output:
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                    }
+                    context.CurrentCommandProcessor?.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     break;
@@ -1214,11 +1233,8 @@ namespace System.Management.Automation
                 throw;
             }
 
-            if (parentPipelineProcessor != null)
-            {
-                // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
-                parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
-            }
+            // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
+            parentPipelineProcessor?.AddRedirectionPipe(PipelineProcessor);
 
             return new Pipe(context, PipelineProcessor);
         }
@@ -1227,17 +1243,14 @@ namespace System.Management.Automation
         /// After file redirection is done, we need to call 'DoComplete' on the pipeline processor,
         /// so that 'EndProcessing' of Out-File can be called to wrap up the file write operation.
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// 'StartStepping' is called after creating the pipeline processor.
         /// 'Step' is called when an object is added to the pipe created with the pipeline processor.
-        /// </remark>
+        /// </remarks>
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.DoComplete();
-            }
+            PipelineProcessor?.DoComplete();
         }
 
         private bool _disposed;
@@ -1255,10 +1268,7 @@ namespace System.Management.Automation
 
             if (disposing)
             {
-                if (PipelineProcessor != null)
-                {
-                    PipelineProcessor.Dispose();
-                }
+                PipelineProcessor?.Dispose();
             }
 
             _disposed = true;
@@ -1287,7 +1297,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                if (!(exception is RuntimeException rte))
+                if (exception is not RuntimeException rte)
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1465,7 +1475,10 @@ namespace System.Management.Automation
             int handler = FindMatchingHandlerByType(exception.GetType(), types);
 
             // If no handler was found, return without changing the current result.
-            if (handler == -1) { return; }
+            if (handler == -1)
+            {
+                return;
+            }
 
             // New handler was found.
             //  - If new-rank is less than current-rank -- meaning the new handler is more specific,
@@ -1499,7 +1512,7 @@ namespace System.Management.Automation
 
             do
             {
-                // Always assume no need to repeat the search for another interation
+                // Always assume no need to repeat the search for another iteration
                 continueToSearch = false;
                 // The 'ErrorRecord' of the current RuntimeException would be passed to $_
                 ErrorRecord errorRecordToPass = rte.ErrorRecord;
@@ -1644,6 +1657,9 @@ namespace System.Management.Automation
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, funcContext.CurrentPosition);
             }
 
+            // Update the history id if needed to associate the exception with the right history item.
+            InterpreterError.UpdateExceptionErrorRecordHistoryId(rte, funcContext._executionContext);
+
             var context = funcContext._executionContext;
             var outputPipe = funcContext._outputPipe;
 
@@ -1754,10 +1770,7 @@ namespace System.Management.Automation
                     ErrorRecord err = rte.ErrorRecord;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.ForgetScriptException();
-                    }
+                    context.CurrentCommandProcessor?.ForgetScriptException();
 
                     try
                     {
@@ -1951,10 +1964,7 @@ namespace System.Management.Automation
 
             if (rte is not PipelineStoppedException)
             {
-                if (outputPipe != null)
-                {
-                    outputPipe.AppendVariableList(VariableStreamKind.Error, errRec);
-                }
+                outputPipe?.AppendVariableList(VariableStreamKind.Error, errRec);
 
                 context.AppendDollarError(errRec);
             }
@@ -2329,8 +2339,13 @@ namespace System.Management.Automation
                 Diagnostics.Assert(t.Type != null, "TypeDefinitionAst.Type cannot be null");
                 if (t.IsClass)
                 {
-                    var helperType =
-                        t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
+                    if (t.Type.IsDefined(typeof(NoRunspaceAffinityAttribute), inherit: true))
+                    {
+                        // Skip the initialization for session state affinity.
+                        continue;
+                    }
+
+                    var helperType = t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
                     Diagnostics.Assert(helperType != null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
                     foreach (var p in helperType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
                     {
@@ -2801,10 +2816,8 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(enumerator != null, "The ForEach() operator should never receive a null enumerator value from the runtime.");
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+
+            ArgumentNullException.ThrowIfNull(expression);
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
 
@@ -3530,10 +3543,7 @@ namespace System.Management.Automation
                 if (dispose)
                 {
                     var disposable = enumerator as IDisposable;
-                    if (disposable != null)
-                    {
-                        disposable.Dispose();
-                    }
+                    disposable?.Dispose();
                 }
             }
         }
@@ -3578,6 +3588,38 @@ namespace System.Management.Automation
             }
         );
 
+        private static string ArgumentToString(object arg)
+        {
+            object baseObj = PSObject.Base(arg);
+            if (baseObj is null)
+            {
+                // The argument is null or AutomationNull.Value.
+                return "null";
+            }
+
+            // The comparisons below are ordered by the likelihood of arguments being of those types.
+            if (baseObj is string str)
+            {
+                return str;
+            }
+
+            // Special case some types to call 'ToString' on the object. For the rest, we return its
+            // full type name to avoid calling a potentially expensive 'ToString' implementation.
+            Type baseType = baseObj.GetType();
+            if (baseType.IsEnum || baseType.IsPrimitive
+                || baseType == typeof(Guid)
+                || baseType == typeof(Uri)
+                || baseType == typeof(Version)
+                || baseType == typeof(SemanticVersion)
+                || baseType == typeof(BigInteger)
+                || baseType == typeof(decimal))
+            {
+                return baseObj.ToString();
+            }
+
+            return baseType.FullName;
+        }
+
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
         {
             try
@@ -3587,7 +3629,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < args.Length; i++)
                 {
-                    string value = args[i] is null ? "null" : args[i].ToString();
+                    string value = ArgumentToString(args[i]);
 
                     if (i > 0)
                     {
@@ -3616,7 +3658,7 @@ namespace System.Management.Automation
             }
             catch (PSSecurityException)
             {
-                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which
                 // must be propagated.
                 throw;
             }

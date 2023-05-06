@@ -47,7 +47,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = 'testexe -returncode -1 || testexe -returncode -2 && testexe -echoargs "A"'; Output = @('-1', '-2') }
             @{ Statement = 'testexe -returncode -1 || testexe -returncode -2 || testexe -echoargs "B"'; Output = @('-1', '-2', 'Arg 0 is <B>') }
 
-            # Native command and succesful cmdlet
+            # Native command and successful cmdlet
             @{ Statement = 'Test-SuccessfulCommand && testexe -returncode 0'; Output = @('SUCCESS', '0') }
             @{ Statement = 'testexe -returncode 0 && Test-SuccessfulCommand'; Output = @('0', 'SUCCESS') }
             @{ Statement = 'Test-SuccessfulCommand && testexe -returncode 1'; Output = @('SUCCESS', '1') }

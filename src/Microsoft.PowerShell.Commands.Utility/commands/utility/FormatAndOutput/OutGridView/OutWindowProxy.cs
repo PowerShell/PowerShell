@@ -58,20 +58,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="types">An array of types to add.</param>
         internal void AddColumns(string[] propertyNames, string[] displayNames, Type[] types)
         {
-            if (propertyNames == null)
-            {
-                throw new ArgumentNullException(nameof(propertyNames));
-            }
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
-            if (displayNames == null)
-            {
-                throw new ArgumentNullException(nameof(displayNames));
-            }
+            ArgumentNullException.ThrowIfNull(displayNames);
 
-            if (types == null)
-            {
-                throw new ArgumentNullException(nameof(types));
-            }
+            ArgumentNullException.ThrowIfNull(types);
 
             try
             {
@@ -177,10 +168,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal void AddItem(PSObject livePSObject)
         {
-            if (livePSObject == null)
-            {
-                throw new ArgumentNullException(nameof(livePSObject));
-            }
+            ArgumentNullException.ThrowIfNull(livePSObject);
 
             if (_headerInfo == null)
             {
@@ -203,10 +191,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal void AddHeteroViewItem(PSObject livePSObject)
         {
-            if (livePSObject == null)
-            {
-                throw new ArgumentNullException(nameof(livePSObject));
-            }
+            ArgumentNullException.ThrowIfNull(livePSObject);
 
             if (_headerInfo == null)
             {
@@ -230,13 +215,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void BlockUntilClosed()
-        {
-            if (_closedEvent != null)
-            {
-                _closedEvent.WaitOne();
-            }
-        }
+        internal void BlockUntilClosed() => _closedEvent?.WaitOne();
 
         /// <summary>
         /// Implements IDisposable logic.

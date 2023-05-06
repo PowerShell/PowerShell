@@ -41,7 +41,7 @@ namespace System.Management.Automation
             // In case of other modules, the help is under moduleBase/<current_culture> or
             // under moduleBase/<Version>/<current_culture>.
             // The code below creates a similar layout for CurrentUser scope.
-            // If the the scope is AllUsers, then the help goes under moduleBase.
+            // If the scope is AllUsers, then the help goes under moduleBase.
 
             var userHelpPath = GetUserHomeHelpSearchPath();
             string moduleBaseParent = Directory.GetParent(moduleBase).Name;

@@ -237,7 +237,11 @@ namespace System.Management.Automation.Runspaces
         private void CoreOpen(bool syncCall)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.OpenRunspaceStart();
+            }
+
             lock (SyncRoot)
             {
                 // Call fails if RunspaceState is not BeforeOpen.
@@ -260,10 +264,13 @@ namespace System.Management.Automation.Runspaces
             RaiseRunspaceStateEvents();
 
             OpenHelper(syncCall);
-            if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.OpenRunspaceStop();
+            }
 
 #if LEGACYTELEMETRY
-            // We report startup telementry when opening the runspace - because this is the first time
+            // We report startup telemetry when opening the runspace - because this is the first time
             // we are really using PowerShell. This isn't the cleanest place though, because
             // sometimes there are many runspaces created - the callee ensures telemetry is only
             // reported once. Note that if the host implements IHostProvidesTelemetryData, we rely
@@ -661,7 +668,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This is queue of all the state change event which have occured for
+        /// This is queue of all the state change event which have occurred for
         /// this runspace. RaiseRunspaceStateEvents raises event for each
         /// item in this queue. We don't raise events from with SetRunspaceState
         /// because SetRunspaceState is often called from with in the a lock.

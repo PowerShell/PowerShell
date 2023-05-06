@@ -363,8 +363,9 @@ namespace System.Management.Automation.Remoting
             if (!shouldProcess)
             {
                 // we dont support this stream..so ignore the data
-                Dbg.Assert(false,
-                    string.Format(CultureInfo.InvariantCulture, "Data should be from one of the streams : {0} or {1} or {2}",
+                Dbg.Assert(false, string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Data should be from one of the streams : {0} or {1} or {2}",
                     WSManNativeApi.WSMAN_STREAM_ID_STDIN,
                     WSManNativeApi.WSMAN_STREAM_ID_STDOUT,
                     WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE));
@@ -1359,10 +1360,7 @@ namespace System.Management.Automation.Remoting.Server
                                                                             data.Data);
                 if (_isSerializing)
                 {
-                    if (_dataToBeSentQueue == null)
-                    {
-                        _dataToBeSentQueue = new Queue<Tuple<RemoteDataObject, bool, bool>>();
-                    }
+                    _dataToBeSentQueue ??= new Queue<Tuple<RemoteDataObject, bool, bool>>();
 
                     _dataToBeSentQueue.Enqueue(new Tuple<RemoteDataObject, bool, bool>(dataToBeSent, flush, reportPending));
                     return;

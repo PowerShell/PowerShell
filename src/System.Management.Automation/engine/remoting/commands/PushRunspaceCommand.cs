@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // for the console host and Graphical PowerShell host
-            // we want to skip pushing into the the runspace if
+            // we want to skip pushing into the runspace if
             // the host is in a nested prompt
             System.Management.Automation.Internal.Host.InternalHost chost =
                 this.Host as System.Management.Automation.Internal.Host.InternalHost;
@@ -332,7 +332,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If runspace is null then the error record has already been written and we can exit.
-            if (remoteRunspace == null) { return; }
+            if (remoteRunspace == null)
+            {
+                return;
+            }
 
             // If the runspace is in a disconnected state try to connect.
             bool runspaceConnected = false;

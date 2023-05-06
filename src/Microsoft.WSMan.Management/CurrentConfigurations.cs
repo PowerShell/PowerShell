@@ -61,10 +61,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="serverSession">Current server session.</param>
         public CurrentConfigurations(IWSManSession serverSession)
         {
-            if (serverSession == null)
-            {
-                throw new ArgumentNullException(nameof(serverSession));
-            }
+            ArgumentNullException.ThrowIfNull(serverSession);
 
             this.rootDocument = new XmlDocument();
             this.serverSession = serverSession;
@@ -79,10 +76,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation failed.</returns>
         public bool RefreshCurrentConfiguration(string responseOfGet)
         {
-            if (string.IsNullOrEmpty(responseOfGet))
-            {
-                throw new ArgumentNullException(nameof(responseOfGet));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(responseOfGet);
 
             this.rootDocument.LoadXml(responseOfGet);
             this.documentElement = this.rootDocument.DocumentElement;
@@ -98,13 +92,10 @@ namespace Microsoft.WSMan.Management
         /// Issues a PUT request with the ResourceUri provided.
         /// </summary>
         /// <param name="resourceUri">Resource URI to use.</param>
-        /// <returns>False, if operation is not succesful.</returns>
+        /// <returns>False, if operation is not successful.</returns>
         public void PutConfigurationOnServer(string resourceUri)
         {
-            if (string.IsNullOrEmpty(resourceUri))
-            {
-                throw new ArgumentNullException(nameof(resourceUri));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(resourceUri);
 
             this.serverSession.Put(resourceUri, this.rootDocument.InnerXml, 0);
         }
@@ -117,10 +108,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
         public void RemoveOneConfiguration(string pathToNodeFromRoot)
         {
-            if (pathToNodeFromRoot == null)
-            {
-                throw new ArgumentNullException(nameof(pathToNodeFromRoot));
-            }
+            ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
 
             XmlNode nodeToRemove =
                 this.documentElement.SelectSingleNode(
@@ -150,20 +138,9 @@ namespace Microsoft.WSMan.Management
         /// <param name="configurationValue">Value of the configurations.</param>
         public void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
         {
-            if (pathToNodeFromRoot == null)
-            {
-                throw new ArgumentNullException(nameof(pathToNodeFromRoot));
-            }
-
-            if (string.IsNullOrEmpty(configurationName))
-            {
-                throw new ArgumentNullException(nameof(configurationName));
-            }
-
-            if (configurationValue == null)
-            {
-                throw new ArgumentNullException(nameof(configurationValue));
-            }
+            ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
+            ArgumentException.ThrowIfNullOrEmpty(configurationName);
+            ArgumentNullException.ThrowIfNull(configurationValue);
 
             XmlNode nodeToUpdate =
                 this.documentElement.SelectSingleNode(
@@ -195,10 +172,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>Value of the Node, or Null if no node present.</returns>
         public string GetOneConfiguration(string pathFromRoot)
         {
-            if (pathFromRoot == null)
-            {
-                throw new ArgumentNullException(nameof(pathFromRoot));
-            }
+            ArgumentNullException.ThrowIfNull(pathFromRoot);
 
             XmlNode requiredNode =
                 this.documentElement.SelectSingleNode(

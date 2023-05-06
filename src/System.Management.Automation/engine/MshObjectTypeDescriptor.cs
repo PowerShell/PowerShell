@@ -410,10 +410,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (propertyAttributes == null)
-                {
-                    propertyAttributes = new AttributeCollection();
-                }
+                propertyAttributes ??= new AttributeCollection();
 
                 typeDescriptor.WriteLine("Adding property \"{0}\".", propertyInfo.Name);
 

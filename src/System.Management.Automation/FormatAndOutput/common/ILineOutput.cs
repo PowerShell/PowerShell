@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
             // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogage pairs.
+            // for this range and we do not handle surrogate pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
             // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);
@@ -249,6 +249,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     string to be written to the device
         /// </param>
         internal abstract void WriteLine(string s);
+
+        /// <summary>
+        /// Write a line of string as raw text to the output device, with no change to the string.
+        /// For example, keeping VT escape sequences intact in it.
+        /// </summary>
+        /// <param name="s">The raw text to be written to the device.</param>
+        internal virtual void WriteRawText(string s) => WriteLine(s);
 
         internal WriteStreamType WriteStream
         {
@@ -431,7 +438,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// Implementation of the ILineOutput interface accepting an instance of a
     /// TextWriter abstract class.
     /// </summary>
-    internal class TextWriterLineOutput : LineOutput
+    internal sealed class TextWriterLineOutput : LineOutput
     {
         #region ILineOutput methods
 
@@ -467,9 +474,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="s"></param>
         internal override void WriteLine(string s)
         {
-            CheckStopProcessing();
+            WriteRawText(PSHostUserInterface.GetOutputString(s, isHost: false));
+        }
 
-            s = PSHostUserInterface.GetOutputString(s, isHost: false);
+        /// <summary>
+        /// Write a raw text by delegating to the writer underneath, with no change to the text.
+        /// For example, keeping VT escape sequences intact in it.
+        /// </summary>
+        /// <param name="s">The raw text to be written to the device.</param>
+        internal override void WriteRawText(string s)
+        {
+            CheckStopProcessing();
 
             if (_suppressNewline)
             {
@@ -480,6 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _writer.WriteLine(s);
             }
         }
+
         #endregion
 
         /// <summary>

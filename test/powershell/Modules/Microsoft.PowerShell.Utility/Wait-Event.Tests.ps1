@@ -6,7 +6,7 @@ Describe "Wait-Event" -Tags "CI" {
 	It "Should time out when it does not receive a FakeEvent" {
 	    # Don't depend on Measure-Command
 $stopwatch = [System.Diagnostics.Stopwatch]::startNew()
-# Testing the the timeout, so wait for an event that will never be
+# Testing the timeout, so wait for an event that will never be
 # raised because it is fake
 Wait-Event -Timeout 1 -SourceIdentifier "FakeEvent"
 $stopwatch.Stop()

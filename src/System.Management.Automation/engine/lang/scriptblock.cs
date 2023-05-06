@@ -545,7 +545,7 @@ namespace System.Management.Automation
             // is a pipeline that emits nothing then result.Count will
             // be zero so we catch that and "convert" it to null. Note that
             // the return statement is still required in the method, it
-            // just recieves nothing from it's argument.
+            // just receives nothing from it's argument.
             if (result.Count == 0)
             {
                 return default(T);
@@ -1035,10 +1035,7 @@ namespace System.Management.Automation
                     processInCurrentThread: true,
                     waitForCompletionInCurrentThread: true);
 
-                if (scriptBlockInvocationEventArgs.Exception != null)
-                {
-                    scriptBlockInvocationEventArgs.Exception.Throw();
-                }
+                scriptBlockInvocationEventArgs.Exception?.Throw();
             }
         }
 
@@ -1099,15 +1096,9 @@ namespace System.Management.Automation
     {
         internal SteppablePipeline(ExecutionContext context, PipelineProcessor pipeline)
         {
-            if (pipeline == null)
-            {
-                throw new ArgumentNullException(nameof(pipeline));
-            }
+            ArgumentNullException.ThrowIfNull(pipeline);
 
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             _pipeline = pipeline;
             _context = context;
@@ -1131,10 +1122,7 @@ namespace System.Management.Automation
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
-            if (contextToRedirectTo == null)
-            {
-                throw new ArgumentNullException(nameof(contextToRedirectTo));
-            }
+            ArgumentNullException.ThrowIfNull(contextToRedirectTo);
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
@@ -1150,7 +1138,7 @@ namespace System.Management.Automation
         /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
-            if (command == null || command.MyInvocation == null)
+            if (command is null || command.MyInvocation is null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
@@ -1372,7 +1360,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {

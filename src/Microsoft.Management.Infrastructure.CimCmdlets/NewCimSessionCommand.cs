@@ -334,10 +334,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             base.DisposeInternal();
 
             // Dispose managed resources.
-            if (this.cimNewSession != null)
-            {
-                this.cimNewSession.Dispose();
-            }
+            this.cimNewSession?.Dispose();
         }
         #endregion
     }

@@ -348,7 +348,7 @@ else
             string localSDDL = GetLocalSddl();
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             string newPluginSbString = string.Format(CultureInfo.InvariantCulture,
                 newPluginSbFormat,
                 WSManNativeApi.ResourceURIPrefix, localSDDL, RemoteManagementUsersSID, InteractiveUsersSID);
@@ -544,9 +544,7 @@ else
                 string restartServiceTarget = StringUtil.Format(RemotingErrorIdStrings.RestartWSManServiceTarget, "WinRM");
 
                 string restartWSManRequiredForUI = StringUtil.Format(RemotingErrorIdStrings.RestartWSManRequiredShowUI,
-                    string.Format(CultureInfo.InvariantCulture,
-                        "Set-PSSessionConfiguration {0} -ShowSecurityDescriptorUI",
-                        shellName));
+                    string.Create(CultureInfo.InvariantCulture, $"Set-PSSessionConfiguration {shellName} -ShowSecurityDescriptorUI"));
 
                 // gather -WhatIf, -Confirm parameter data and pass it to the script block
                 bool whatIf = false;
@@ -1373,7 +1371,7 @@ else
             Dbg.Assert(!string.IsNullOrEmpty(gmsaAccount), "Should not be null or empty string.");
 
             // Validate account name form (must be DomainName\UserName)
-            var parts = gmsaAccount.Split(Utils.Separators.Backslash);
+            var parts = gmsaAccount.Split('\\');
             if ((parts.Length != 2) ||
                 (string.IsNullOrEmpty(parts[0])) ||
                 (string.IsNullOrEmpty(parts[1]))
@@ -1462,7 +1460,7 @@ else
         {
             if (groups == null) { return string.Empty; }
 
-            return string.Join(";", groups);
+            return string.Join(';', groups);
         }
 
         /// <summary>
@@ -2620,7 +2618,7 @@ else
                 removePluginSbFormat,
                 RemotingConstants.PSPluginDLLName);
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_removePluginSb = ScriptBlock.Create(removePluginScript);
             s_removePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -2836,7 +2834,7 @@ $args[0] | ForEach-Object {{
                 PSSessionConfigurationCommandUtilities.PSCustomShellTypeName,
                 RemotingConstants.PSPluginDLLName);
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_getPluginSb = ScriptBlock.Create(scriptToRun);
             s_getPluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -3260,7 +3258,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 RemotingConstants.PSPluginDLLName, localSDDL, RemoteManagementUsersSID, InteractiveUsersSID);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_setPluginSb = ScriptBlock.Create(setPluginScript);
             s_setPluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4210,7 +4208,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                 enablePluginSbFormat, setWSManConfigCommand, PSSessionConfigurationCommandBase.RemoteManagementUsersSID, PSSessionConfigurationCommandBase.InteractiveUsersSID);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_enablePluginSb = ScriptBlock.Create(enablePluginScript);
             s_enablePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4497,7 +4495,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
                 disablePluginSbFormat);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_disablePluginSb = ScriptBlock.Create(disablePluginScript);
             s_disablePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4904,7 +4902,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
                 RemotingConstants.MaxIdleTimeoutMS, RemotingConstants.PSPluginDLLName);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_enableRemotingSb = ScriptBlock.Create(enableRemotingScript);
             s_enableRemotingSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -5128,7 +5126,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             string disableRemotingScript = string.Format(CultureInfo.InvariantCulture, disablePSRemotingFormat, localSDDL);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_disableRemotingSb = ScriptBlock.Create(disableRemotingScript);
             s_disableRemotingSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -5273,7 +5271,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
                     validator = null;
 
                     // Convert DOMAIN\user to the upn (user@DOMAIN)
-                    string[] upnComponents = this.Username.Split(Utils.Separators.Backslash);
+                    string[] upnComponents = this.Username.Split('\\');
                     if (upnComponents.Length == 2)
                     {
                         this.Username = upnComponents[1] + "@" + upnComponents[0];

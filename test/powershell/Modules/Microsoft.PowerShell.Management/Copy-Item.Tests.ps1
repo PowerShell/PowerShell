@@ -813,7 +813,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             # Copy file to session
             Copy-Item -Path "TestDrive:\Source\testFile1.txt" -Destination "$TestDrive\Destination\testFile1.txt" -ToSession $s
 
-            # Validate the the file was overwritten
+            # Validate the file was overwritten
             $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ErrorAction SilentlyContinue -Raw
             $fileContent | Should -Match $newContent
         }
@@ -823,7 +823,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             # Copy file to session
             Copy-Item -Path "$TestDrive\Source\testFile1.txt" -Destination "TestDrive:\Destination\testFile1.txt" -FromSession $s
 
-            # Validate the the file was overwritten
+            # Validate the file was overwritten
             $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ErrorAction SilentlyContinue -Raw
             $fileContent | Should -Match $newContent
         }

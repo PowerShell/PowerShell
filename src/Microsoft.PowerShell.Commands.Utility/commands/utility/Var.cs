@@ -38,10 +38,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _include = value;
             }
@@ -61,10 +58,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _exclude = value;
             }
@@ -258,10 +252,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = new string[] { "*" };
-                }
+                value ??= new string[] { "*" };
 
                 _name = value;
             }
@@ -741,10 +732,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Value != AutomationNull.Value)
                 {
-                    if (_valueList == null)
-                    {
-                        _valueList = new List<object>();
-                    }
+                    _valueList ??= new List<object>();
 
                     _valueList.Add(Value);
                 }
@@ -871,10 +859,7 @@ namespace Microsoft.PowerShell.Commands
                                 newVarValue,
                                 newOptions);
 
-                        if (Description == null)
-                        {
-                            Description = string.Empty;
-                        }
+                        Description ??= string.Empty;
 
                         varToSet.Description = Description;
 
@@ -1103,10 +1088,7 @@ namespace Microsoft.PowerShell.Commands
             // Removal of variables only happens in the local scope if the
             // scope wasn't explicitly specified by the user.
 
-            if (Scope == null)
-            {
-                Scope = "local";
-            }
+            Scope ??= "local";
 
             foreach (string varName in Name)
             {

@@ -19,7 +19,7 @@ namespace System.Management.Automation.Runspaces
 {
     /// <summary>
     /// This exception is used by Formattable constructor to indicate errors
-    /// occured during construction time.
+    /// occurred during construction time.
     /// </summary>
     [Serializable]
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occurred.
         /// </param>
         internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
             : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
@@ -98,7 +98,7 @@ namespace System.Management.Automation.Runspaces
                 _errors = new Collection<string>();
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     _errors.Add(info.GetString(key));
                 }
             }
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Runspaces
 
                 for (int index = 0; index < errorCount; index++)
                 {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
+                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
                     info.AddValue(key, _errors[index]);
                 }
             }

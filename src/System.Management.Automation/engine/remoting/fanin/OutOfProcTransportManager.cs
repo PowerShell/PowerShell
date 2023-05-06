@@ -75,7 +75,8 @@ namespace System.Management.Automation.Remoting
 
         internal static string CreateDataPacket(byte[] data, DataPriorityType streamType, Guid psGuid)
         {
-            string result = string.Format(CultureInfo.InvariantCulture,
+            string result = string.Format(
+                CultureInfo.InvariantCulture,
                 "<{0} {1}='{2}' {3}='{4}'>{5}</{0}>",
                 PS_OUT_OF_PROC_DATA_TAG,
                 PS_OUT_OF_PROC_STREAM_ATTRIBUTE,
@@ -131,7 +132,8 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static string CreatePSGuidPacket(string element, Guid psGuid)
         {
-            string result = string.Format(CultureInfo.InvariantCulture,
+            string result = string.Format(
+                CultureInfo.InvariantCulture,
                 "<{0} {1}='{2}' />",
                 element,
                 PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
@@ -895,13 +897,11 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    // not throwing the exception in null case as the command might have already
-                    // closed. The RS data structure handler does not wait for the close ack before
-                    // it clears the command transport manager..so this might happen.
-                    cmdTM.OnRemoteCmdDataReceived(rawData, streamTemp);
-                }
+
+                // not throwing the exception in null case as the command might have already
+                // closed. The RS data structure handler does not wait for the close ack before
+                // it clears the command transport manager..so this might happen.
+                cmdTM?.OnRemoteCmdDataReceived(rawData, streamTemp);
             }
         }
 
@@ -916,13 +916,11 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    // not throwing the exception in null case as the command might have already
-                    // closed. The RS data structure handler does not wait for the close ack before
-                    // it clears the command transport manager..so this might happen.
-                    cmdTM.OnRemoteCmdSendCompleted();
-                }
+
+                // not throwing the exception in null case as the command might have already
+                // closed. The RS data structure handler does not wait for the close ack before
+                // it clears the command transport manager..so this might happen.
+                cmdTM?.OnRemoteCmdSendCompleted();
             }
         }
 
@@ -968,10 +966,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    cmdTM.OnRemoteCmdSignalCompleted();
-                }
+                cmdTM?.OnRemoteCmdSignalCompleted();
             }
         }
 
@@ -1001,12 +996,10 @@ namespace System.Management.Automation.Remoting.Client
                 _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.OnCloseAckReceived, in progress command count should be greater than zero: " + commandCount + ", RunSpacePool Id : " + this.RunspacePoolInstanceId + ", psGuid : " + psGuid.ToString());
 
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    // this might legitimately happen if cmd is already closed before we get an
-                    // ACK back from server.
-                    cmdTM.OnCloseCmdCompleted();
-                }
+
+                // this might legitimately happen if cmd is already closed before we get an
+                // ACK back from server.
+                cmdTM?.OnCloseCmdCompleted();
             }
         }
 
@@ -1414,10 +1407,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (isDisposing)
             {
-                if (_client != null)
-                {
-                    _client.Dispose();
-                }
+                _client?.Dispose();
             }
         }
 
@@ -1486,7 +1476,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if (e is ArgumentOutOfRangeException)
                 {
-                    Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
+                    Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
                 string errorMsg = e.Message ?? string.Empty;
@@ -1831,37 +1821,14 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     string error;
 
-                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRemotingSSHTransportErrorHandling))
+                    // Blocking read from StdError stream
+                    error = reader.ReadLine();
+
+                    if (error == null)
                     {
-                        // Blocking read from StdError stream
-                        error = reader.ReadLine();
-
-                        if (error == null)
-                        {
-                            // Stream is closed unexpectedly.
-                            throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-                        }
-
-                        if (error.Length == 0)
-                        {
-                            // Ignore
-                            continue;
-                        }
-
-                        try
-                        {
-                            // Messages in error stream from ssh are unreliable, and may just be warnings or
-                            // banner text.
-                            // So just report the messages but don't act on them.
-                            System.Console.WriteLine(error);
-                        }
-                        catch (IOException)
-                        { }
-
-                        continue;
+                        // Stream is closed unexpectedly.
+                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
                     }
-
-                    error = ReadError(reader);
 
                     if (error.Length == 0)
                     {
@@ -1869,12 +1836,15 @@ namespace System.Management.Automation.Remoting.Client
                         continue;
                     }
 
-                    // Any SSH client error results in a broken session.
-                    PSRemotingTransportException psrte = new PSRemotingTransportException(
-                        PSRemotingErrorId.IPCServerProcessReportedError,
-                        RemotingErrorIdStrings.IPCServerProcessReportedError,
-                        StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
-                    HandleSSHError(psrte);
+                    try
+                    {
+                        // Messages in error stream from ssh are unreliable, and may just be warnings or
+                        // banner text.
+                        // So just report the messages but don't act on them.
+                        System.Console.WriteLine(error);
+                    }
+                    catch (IOException)
+                    { }
                 }
             }
             catch (ObjectDisposedException)
@@ -1898,55 +1868,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
             CloseConnection();
-        }
-
-        private static string ReadError(StreamReader reader)
-        {
-            // Blocking read from StdError stream
-            string error = reader.ReadLine();
-
-            if (error == null)
-            {
-                // Stream is closed unexpectedly.
-                throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-            }
-
-            if ((error.Length == 0) ||
-                error.Contains("WARNING:", StringComparison.OrdinalIgnoreCase))
-            {
-                // Handle as interactive warning message
-                Console.WriteLine(error);
-                return string.Empty;
-            }
-
-            // SSH may return a multi-line error message.
-            // The StdError pipe stream is open ended causing StreamReader read operations to block
-            // if there is no incoming data.  Since we don't know how many error message lines there
-            // will be we use an asynchronous read with timeout to prevent blocking indefinitely.
-            System.Text.StringBuilder sb = new Text.StringBuilder(error);
-            var running = true;
-            while (running)
-            {
-                try
-                {
-                    var task = reader.ReadLineAsync();
-                    if (task.Wait(1000) && (task.Result != null))
-                    {
-                        sb.Append(Environment.NewLine);
-                        sb.Append(task.Result);
-                    }
-                    else
-                    {
-                        running = false;
-                    }
-                }
-                catch (Exception)
-                {
-                    running = false;
-                }
-            }
-
-            return sb.ToString();
         }
 
         private void StartReaderThread(
@@ -1980,10 +1901,10 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
+                    if (data.StartsWith(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
                     {
                         // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix.Length);
+                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix.Length);
                         HandleErrorDataReceived(errorData);
                     }
                     else
@@ -2055,10 +1976,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (isDisposing)
             {
-                if (_clientPipe != null)
-                {
-                    _clientPipe.Dispose();
-                }
+                _clientPipe?.Dispose();
             }
         }
 
@@ -2190,13 +2108,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Aborts an existing connection attempt.
         /// </summary>
-        public void AbortConnect()
-        {
-            if (_clientPipe != null)
-            {
-                _clientPipe.AbortConnect();
-            }
-        }
+        public void AbortConnect() => _clientPipe?.AbortConnect();
 
         #endregion
     }
@@ -2592,6 +2504,12 @@ namespace System.Management.Automation.Remoting.Server
             _stdOutWriter = outWriter;
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
+
+            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            {
+                string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
+                _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));
+            };
         }
 
         #endregion

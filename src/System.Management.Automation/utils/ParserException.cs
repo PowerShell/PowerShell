@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the exception thrown when a syntax error occurs while parsing msh script text.
+    /// Defines the exception thrown when a syntax error occurs while parsing PowerShell script text.
     /// </summary>
     [Serializable]
     public class ParseException : RuntimeException
@@ -127,11 +127,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class with a collection of error messages.
         /// </summary>
         /// <param name="errors">The collection of error messages.</param>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors",
-            Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
-        public ParseException(Language.ParseError[] errors)
+        public ParseException(ParseError[] errors)
         {
-            if ((errors == null) || (errors.Length == 0))
+            if (errors is null || errors.Length == 0)
             {
                 throw new ArgumentNullException(nameof(errors));
             }
@@ -170,7 +168,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the exception thrown when a incomplete parse error occurs while parsing msh script text.
+    /// Defines the exception thrown when a incomplete parse error occurs while parsing PowerShell script text.
     /// </summary>
     /// <remarks>
     /// This is a variation on a parsing error that indicates that the parse was incomplete

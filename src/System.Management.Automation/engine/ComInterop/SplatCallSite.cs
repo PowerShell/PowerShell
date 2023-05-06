@@ -30,10 +30,7 @@ namespace System.Management.Automation.ComInterop
             Debug.Assert(args != null);
 
             // Create a CallSite and invoke it.
-            if (_site == null)
-            {
-                _site = CallSite<Func<CallSite, object, object[], object>>.Create(SplatInvokeBinder.Instance);
-            }
+            _site ??= CallSite<Func<CallSite, object, object[], object>>.Create(SplatInvokeBinder.Instance);
 
             return _site.Target(_site, _callable, args);
         }

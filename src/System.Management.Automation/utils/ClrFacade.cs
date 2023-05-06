@@ -7,7 +7,6 @@ using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Security;
 using System.Text;
@@ -101,23 +100,6 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting default encoding.
-        /// </summary>
-        internal static Encoding GetDefaultEncoding()
-        {
-            if (s_defaultEncoding == null)
-            {
-                // load all available encodings
-                EncodingRegisterProvider();
-                s_defaultEncoding = new UTF8Encoding(false);
-            }
-
-            return s_defaultEncoding;
-        }
-
-        private static volatile Encoding s_defaultEncoding;
-
-        /// <summary>
         /// Facade for getting OEM encoding
         /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows.
         /// </summary>
@@ -125,12 +107,10 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-                // load all available encodings
-                EncodingRegisterProvider();
 #if UNIX
-                s_oemEncoding = new UTF8Encoding(false);
+                s_oemEncoding = Encoding.Default;
 #else
-                uint oemCp = NativeMethods.GetOEMCP();
+                uint oemCp = Interop.Windows.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
@@ -139,14 +119,6 @@ namespace System.Management.Automation
         }
 
         private static volatile Encoding s_oemEncoding;
-
-        private static void EncodingRegisterProvider()
-        {
-            if (s_defaultEncoding == null && s_oemEncoding == null)
-            {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            }
-        }
 
         #endregion Encoding
 
@@ -263,7 +235,7 @@ namespace System.Management.Automation
             }
 
             // If we successfully get the zone data stream, try to read the ZoneId information
-            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
+            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, Encoding.Default))
             {
                 string line = null;
                 bool zoneTransferMatched = false;
@@ -288,12 +260,18 @@ namespace System.Management.Automation
                     else
                     {
                         Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
-                        if (!match.Success) { continue; }
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
 
                         // Match found. Validate ZoneId value.
                         string zoneIdRawValue = match.Groups[1].Value;
                         match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
-                        if (!match.Success) { return SecurityZone.NoZone; }
+                        if (!match.Success)
+                        {
+                            return SecurityZone.NoZone;
+                        }
 
                         string zoneId = match.Groups[0].Value;
                         SecurityZone result;
@@ -356,7 +334,7 @@ namespace System.Management.Automation
             dmtfDateTime += date.Second.ToString(frmInt32).PadLeft(2, '0');
             dmtfDateTime += ".";
 
-            // Construct a DateTime with with the precision to Second as same as the passed DateTime and so get
+            // Construct a DateTime with the precision to Second as same as the passed DateTime and so get
             // the ticks difference so that the microseconds can be calculated
             DateTime dtTemp = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, 0);
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;
@@ -379,17 +357,5 @@ namespace System.Management.Automation
         }
 
         #endregion Misc
-
-        /// <summary>
-        /// Native methods that are used by facade methods.
-        /// </summary>
-        private static class NativeMethods
-        {
-            /// <summary>
-            /// Pinvoke for GetOEMCP to get the OEM code page.
-            /// </summary>
-            [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetOEMCP();
-        }
     }
 }

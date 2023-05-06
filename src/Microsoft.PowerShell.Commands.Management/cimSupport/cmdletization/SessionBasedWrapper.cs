@@ -82,7 +82,8 @@ namespace Microsoft.PowerShell.Cmdletization
 
             set
             {
-                _session = value ?? throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
+                _session = value;
                 _sessionWasSpecified = true;
             }
         }
@@ -577,8 +578,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="passThru"><see langword="true"/> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         public override void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
-            if (objectInstance == null) throw new ArgumentNullException(nameof(objectInstance));
-            if (methodInvocationInfo == null) throw new ArgumentNullException(nameof(methodInvocationInfo));
+            ArgumentNullException.ThrowIfNull(objectInstance);
+
+            ArgumentNullException.ThrowIfNull(methodInvocationInfo);
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(objectInstance))
             {
@@ -603,7 +605,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="methodInvocationInfo">Method invocation details.</param>
         public override void ProcessRecord(MethodInvocationInfo methodInvocationInfo)
         {
-            if (methodInvocationInfo == null) throw new ArgumentNullException(nameof(methodInvocationInfo));
+            ArgumentNullException.ThrowIfNull(methodInvocationInfo);
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(methodInvocationInfo))
             {
@@ -683,10 +685,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public override void StopProcessing()
         {
             Job jobToStop = _parentJob;
-            if (jobToStop != null)
-            {
-                jobToStop.StopJob();
-            }
+            jobToStop?.StopJob();
 
             base.StopProcessing();
         }
