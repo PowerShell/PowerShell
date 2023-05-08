@@ -4,6 +4,8 @@
 #nullable enable
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -29,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
                    && Credentials == other.Credentials
                    && BypassProxyOnLocal == other.BypassProxyOnLocal
                    && UseDefaultCredentials == other.UseDefaultCredentials
-                   && BypassArrayList == other.BypassArrayList;
+                   && (BypassList as IStructuralEquatable).Equals(other.BypassList, EqualityComparer<string>.Default);
         }
     }
 }
