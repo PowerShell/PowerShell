@@ -7015,6 +7015,7 @@ namespace System.Management.Automation
                     {
                         namespaceToRemove = GetNamespaceToRemove(context, completion);
                     }
+
                     var completionResult = completion.GetCompletionResult(entry.Key, prefix, suffix, namespaceToRemove);
 
                     // We might get the same completion result twice. For example, the type cache has:
