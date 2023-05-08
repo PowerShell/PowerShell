@@ -550,20 +550,26 @@ namespace Microsoft.PowerShell.Commands
                         FillRequestStream(request);
                         try
                         {
+                            long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
+
+                            string reqVerboseMsg = string.Format(
+                                CultureInfo.CurrentCulture,
+                                WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                                request.Version,
+                                request.Method,
+                                requestContentLength);
+
+                            WriteVerbose(reqVerboseMsg);
+
                             _maximumRedirection = WebSession.MaximumRedirection;
 
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
 
-                            long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
-                            string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebMethodInvocationVerboseMsg, response.Version, request.Method, requestContentLength);
-
-                            WriteVerbose(reqVerboseMsg);
-
                             string contentType = ContentHelper.GetContentType(response);
                             long? contentLength = response.Content.Headers.ContentLength;
                             string respVerboseMsg = contentLength is null
-                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
-                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
                             
                             WriteVerbose(respVerboseMsg);
 
@@ -1308,13 +1314,19 @@ namespace Microsoft.PowerShell.Commands
                     {
                         FillRequestStream(requestWithoutRange);
 
-                        response.Dispose();
-                        response = GetResponse(client, requestWithoutRange, handleRedirect);
-
                         long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
-                        string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebMethodInvocationVerboseMsg, response.Version, requestWithoutRange.Method, requestContentLength);
+
+                        string reqVerboseMsg = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                        requestWithoutRange.Version,
+                        requestWithoutRange.Method,
+                        requestContentLength);
 
                         WriteVerbose(reqVerboseMsg);
+
+                        response.Dispose();
+                        response = GetResponse(client, requestWithoutRange, handleRedirect);
                     }
                 }
 
