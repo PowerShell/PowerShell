@@ -161,20 +161,6 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     Context "PSCompatibleVersions property" {
-        BeforeAll {
-            [string[]]$expectedItems = @(
-                [version]::new(1, 0)
-                [version]::new(2, 0)
-                [version]::new(3, 0)
-                [version]::new(4, 0)
-                [version]::new(5, 0)
-                [version]::new(5, 1)
-                [version]::new(6, 0)
-                [version]::new(7, 0)
-            )
-            [string[]]$actualItems = $PSVersionTable.PSCompatibleVersions
-        }
-
         It "Is of type System.Version[]" {
             Should -ActualValue $PSVersionTable.PSCompatibleVersions -BeOfType System.Version[]
         }
@@ -186,20 +172,19 @@ Describe "PSVersionTable" -Tags "CI" {
             $PSVersionTable.PSCompatibleVersions | Should -Be $array
         }
 
-        It "Has nil expected items absent" {
-            $expected = ,@()
-            $actual = $expectedItems.Where{$_ -notin $actualItems}
+        It "Has no unexpected items present" {
+            $expectedItems = @(
+                [version]::new(1, 0)
+                [version]::new(2, 0)
+                [version]::new(3, 0)
+                [version]::new(4, 0)
+                [version]::new(5, 0)
+                [version]::new(5, 1)
+                [version]::new(6, 0)
+                [version]::new(7, 0)
+            )
 
-            Should -ActualValue $actual -Be $expected
+            Compare-Object $expectedItems $PSVersionTable.PSCompatibleVersions | Should -Be $null
         }
-
-        It "Has nil unexpected items present" {
-            $expected = ,@()
-            $map = $expectedItems.ForEach{[array]::IndexOf($actualItems, $_)}
-            $actual = [System.Linq.Enumerable]::Where($actualItems, [Func[string,int,bool]]{$args[1] -notin $map})
-
-            $actual | Should -Be $expected
-        }
-
     }
 }
