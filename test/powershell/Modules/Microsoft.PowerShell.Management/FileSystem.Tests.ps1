@@ -531,7 +531,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
     }
 
     Context "Device paths" {
-        # The globber is overly greedy somewhere so you need to escape the escape backtick to preserve the question mark
+        # The globber is overly greedy somewhere so you need to escape the escape backtick to preserve the question mark issue https://github.com/PowerShell/PowerShell/issues/19627
         It "Handle device paths: <path>" -Skip:(!$IsWindows) -TestCases @(
             @{ path = "\\.\${env:SystemDrive}\" }
             @{ path = "\\.\${env:SystemDrive}\*" }
@@ -559,7 +559,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         It "Fails for invalid device path: <path>" -Skip:(!$IsWindows) -TestCases @(
             @{ path = "\\.\INVALID0\" }
             @{ path = "\\``?\INVALID0\" }
-            # @{ path = "\\.\INVALID0\*" }  // problem in globber where this fails but is ignored
+            # @{ path = "\\.\INVALID0\*" }  // problem in globber where this fails but is ignored issue https://github.com/PowerShell/PowerShell/issues/19626
             # @{ path = "\\``?\INVALID0\*" }
         ) {
             param($path)
