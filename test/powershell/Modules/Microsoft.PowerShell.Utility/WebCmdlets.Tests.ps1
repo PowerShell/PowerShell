@@ -1581,6 +1581,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
             $file2Contents | Set-Content $file2Path -Force
+
+            $file3Name = "Kündigung_Mustermann_Max.TTA_2023_01_30.txt"
+            $file3Path = Join-Path $testdrive $file3Name
+            $file3Contents = "Test789"
+            $file3Contents | Set-Content $file3Path -Force
         }
 
         It "Verifies Invoke-WebRequest Supports Multipart String Values" {
@@ -1657,14 +1662,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         It "Verifies Invoke-WebRequest -Form sets Content-Disposition FileName and FileNameStar." {
-            $fileName = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
-            $filePath = Join-Path $testdrive $fileName
-
             $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
             $ContentDisposition.FileName = $fileName
             $ContentDisposition.FileNameStar = $fileName
 
-            $form = @{TestFile = [System.IO.FileInfo]$filePath}
+            $form = @{TestFile = [System.IO.FileInfo]$file3Path}
             $uri = Get-WebListenerUrl -Test 'Multipart'
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
@@ -3332,6 +3334,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
             $file2Contents | Set-Content $file2Path -Force
+
+            $file3Name = "Kündigung_Mustermann_Max.TTA_2023_01_30.txt"
+            $file3Path = Join-Path $testdrive $file3Name
+            $file3Contents = "Test789"
+            $file3Contents | Set-Content $file3Path -Force
         }
 
         It "Verifies Invoke-RestMethod Supports Multipart String Values" {
@@ -3402,14 +3409,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         It "Verifies Invoke-RestMethod -Form sets Content-Disposition FileName and FileNameStar." {
-            $fileName = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
-            $filePath = Join-Path $testdrive $fileName
-
             $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
             $ContentDisposition.FileName = $fileName
             $ContentDisposition.FileNameStar = $fileName
 
-            $form = @{TestFile = [System.IO.FileInfo]$filePath}
+            $form = @{TestFile = [System.IO.FileInfo]$file3Path}
             $uri = Get-WebListenerUrl -Test 'Multipart'
             $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
 
