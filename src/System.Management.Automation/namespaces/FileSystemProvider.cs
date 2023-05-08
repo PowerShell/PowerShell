@@ -4923,6 +4923,7 @@ namespace Microsoft.PowerShell.Commands
                 parentPath += StringLiterals.DefaultPathSeparator;
             }
 #endif
+            s_tracer.WriteLine("GetParentPath returning '{0}'", parentPath);
             return parentPath;
         }
 
