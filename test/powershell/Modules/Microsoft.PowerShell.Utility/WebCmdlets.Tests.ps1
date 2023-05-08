@@ -2147,12 +2147,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Invoke-WebRequest can retry - specified number of times following Retry-After header - error 429" {
 
-            $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 409; failureCount = 2; retryAfter = 2 }
+            $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 429; failureCount = 2; retryAfter = 2 }
             $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
             $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 2 -RetryIntervalSec 1 -Verbose 4>>$verboseFile
 
             $result.StatusCode | Should -Be "200"
-            $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: Conflict"
+            $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: TooManyRequests"
         }
 
         It "Invoke-WebRequest can retry with POST" {
@@ -4048,11 +4048,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Invoke-RestMethod can retry - specified number of times following Retry-After header - error 429" {
 
-            $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 409; failureCount = 2; retryAfter = 2 }
+            $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 429; failureCount = 2; retryAfter = 2 }
             $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
             $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 2 -RetryIntervalSec 1 -Verbose 4>>$verboseFile
 
-            $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: Conflict"
+            $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: TooManyRequests"
         }
 
         It "Invoke-RestMethod can retry with POST" {

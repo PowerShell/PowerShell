@@ -26,7 +26,7 @@ namespace mvc.Controllers
         {
             retryInfo ??= new Dictionary<string, Tuple<int, int, int>>();
 
-            if (failureCode == 409 && retryAfter > 0)
+            if (failureCode == 429 && retryAfter > 0)
             {
                 Response.Headers.Append("Retry-After", $"{retryAfter}");
             }
