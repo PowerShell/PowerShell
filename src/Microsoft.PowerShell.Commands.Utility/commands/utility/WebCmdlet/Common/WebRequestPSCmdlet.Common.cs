@@ -1317,11 +1317,11 @@ namespace Microsoft.PowerShell.Commands
                         long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
 
                         string reqVerboseMsg = string.Format(
-                        CultureInfo.CurrentCulture,
-                        WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                        requestWithoutRange.Version,
-                        requestWithoutRange.Method,
-                        requestContentLength);
+                            CultureInfo.CurrentCulture,
+                            WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                            requestWithoutRange.Version,
+                            requestWithoutRange.Method,
+                            requestContentLength);
 
                         WriteVerbose(reqVerboseMsg);
 
