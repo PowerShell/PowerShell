@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
 
         public override bool Equals(object? obj) => Equals(obj as WebProxy);
 
-        public override int GetHashCode() => HashCode.Combine(Address, Credentials, BypassProxyOnLocal);
+        public override int GetHashCode() => HashCode.Combine(Address, Credentials, BypassProxyOnLocal, UseDefaultCredentials, BypassArrayList);
 
         public bool Equals(WebProxy? other)
         {
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
       
-            return Credentials == other.Credentials && Address == other.Address && BypassProxyOnLocal == other.BypassProxyOnLocal;
+            return GetHashCode() == other.GetHashCode();
         }
     }
 }
