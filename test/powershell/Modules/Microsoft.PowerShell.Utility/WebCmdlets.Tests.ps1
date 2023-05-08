@@ -1672,8 +1672,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
             $result.Files.Count | Should -Be 1
 
-            $result.Files[0].ContentDisposition.FileName | Should $ContentDisposition.FileName
-            $result.Files[0].ContentDisposition.FileNameStar | Should $ContentDisposition.FileNameStar
+            $result.Files[0].ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-WebRequest -Form supports a collection of file values" {
@@ -3416,8 +3416,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
             $result.Files.Count | Should -Be 1
 
-            $result.Files[0].ContentDisposition.FileName | Should $ContentDisposition.FileName
-            $result.Files[0].ContentDisposition.FileNameStar | Should $ContentDisposition.FileNameStar
+            $result.Files[0].ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-RestMethod -Form supports a collection of file values" {
