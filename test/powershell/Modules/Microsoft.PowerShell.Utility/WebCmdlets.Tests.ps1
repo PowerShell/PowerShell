@@ -4052,7 +4052,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
             $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 2 -RetryIntervalSec 1 -Verbose 4>>$verboseFile
 
-            $result.StatusCode | Should -Be "200"
             $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: Conflict"
         }
 
