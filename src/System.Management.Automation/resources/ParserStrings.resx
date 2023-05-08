@@ -1352,7 +1352,4 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="NamespaceExpected" xml:space="preserve">
     <value>Namespace expected.</value>
   </data>
-  <data name="TypeAndNamespaceAliasNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Type and Namespace aliases are not allowed in ConstrainedLanguage mode.</value>
-  </data>
 </root>
