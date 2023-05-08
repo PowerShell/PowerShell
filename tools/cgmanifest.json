@@ -24,6 +24,46 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "JetBrains.Annotations",
+          "Version": "2021.2.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Json.More.Net",
+          "Version": "1.7.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JsonPointer.Net",
+          "Version": "2.2.1"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JsonSchema.Net",
+          "Version": "3.3.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "Markdig.Signed",
           "Version": "0.31.0"
         }
@@ -76,16 +116,6 @@
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
           "Version": "4.5.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Microsoft.CSharp",
-          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -204,28 +234,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Namotion.Reflection",
-          "Version": "2.1.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Newtonsoft.Json",
           "Version": "13.0.3"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "NJsonSchema",
-          "Version": "10.8.0"
         }
       },
       "DevelopmentDependency": false
@@ -776,6 +786,16 @@
         "Nuget": {
           "Name": "System.Text.Encodings.Web",
           "Version": "7.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "System.Text.Json",
+          "Version": "6.0.2"
         }
       },
       "DevelopmentDependency": false

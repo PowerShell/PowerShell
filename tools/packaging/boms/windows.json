@@ -288,6 +288,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "es\\JsonSchema.Net.resources.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -553,6 +557,22 @@
   },
   {
     "Pattern": "ja/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JetBrains.Annotations.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Json.More.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonPointer.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonSchema.Net.dll",
     "FileType": "NonProduct"
   },
   {
@@ -872,19 +892,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Namotion.Reflection.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "netstandard.dll",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "Newtonsoft.Json.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "NJsonSchema.dll",
     "FileType": "NonProduct"
   },
   {
