@@ -958,28 +958,25 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.NoProxy = true;
             }
-            else
+            else if (Proxy is not null)
             {
-                if (Proxy is not null)
+                WebProxy webProxy = new(Proxy);
+
+                if (ProxyCredential is not null)
                 {
-                    WebProxy webProxy = new(Proxy, BypassOnLocal: false);
+                    webProxy.Credentials = ProxyCredential.GetNetworkCredential();
+                }
+                else
+                {
+                    webProxy.UseDefaultCredentials =  ProxyUseDefaultCredentials;
+                }
 
-                    if (ProxyCredential is not null)
-                    {
-                        webProxy.Credentials = ProxyCredential.GetNetworkCredential();
-                    }
-                    else
-                    {
-                        webProxy.UseDefaultCredentials =  ProxyUseDefaultCredentials;
-                    }
-
-                    // We don't want to update the WebSession unless the proxies are different
-                    // as that will require us to create a new HttpClientHandler and lose connection
-                    // persistence.
-                    if (!webProxy.Equals(WebSession.Proxy))
-                    {
-                        WebSession.Proxy = webProxy;
-                    }
+                // We don't want to update the WebSession unless the proxies are different
+                // as that will require us to create a new HttpClientHandler and lose connection
+                // persistence.
+                if (!webProxy.Equals(WebSession.Proxy))
+                {
+                    WebSession.Proxy = webProxy;
                 }
             }
 

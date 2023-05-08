@@ -9,15 +9,14 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class WebProxy : System.Net.WebProxy, IEquatable<WebProxy>
     {
-        internal WebProxy(Uri? address, bool BypassOnLocal)
+        internal WebProxy(Uri? address)
         {
             Address = address;
-            BypassProxyOnLocal = BypassOnLocal;
         }
 
         public override bool Equals(object? obj) => Equals(obj as WebProxy);
 
-        public override int GetHashCode() => HashCode.Combine(Address, Credentials, BypassProxyOnLocal, UseDefaultCredentials, BypassArrayList);
+        public override int GetHashCode() => HashCode.Combine(Address, Credentials, BypassProxyOnLocal);
 
         public bool Equals(WebProxy? other)
         {
@@ -26,7 +25,11 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
       
-            return GetHashCode() == other.GetHashCode();
+            return Address == other.Address
+                   && Credentials == other.Credentials
+                   && BypassProxyOnLocal == other.BypassProxyOnLocal
+                   && UseDefaultCredentials == other.UseDefaultCredentials
+                   && BypassArrayList == other.BypassArrayList;
         }
     }
 }
