@@ -288,6 +288,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "es\\JsonSchema.Net.resources.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
