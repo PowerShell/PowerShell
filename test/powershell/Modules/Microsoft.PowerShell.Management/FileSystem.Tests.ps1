@@ -530,14 +530,41 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         }
     }
 
-    It "Handle wildcards in root of device path" -Skip:(!$IsWindows) {
-        $Res = Get-ChildItem -Path '\\.\C:\*'
-        $Res.Count | Should -BeGreaterThan 0
-    }
+    Context "Device paths" {
+        # The globber is overly greedy somewhere so you need to escape the escape backtick to preserve the question mark
+        It "Handle device paths: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemDrive}\" }
+            @{ path = "\\.\${env:SystemDrive}\*" }
+            @{ path = "\\``?\${env:SystemDrive}\" }
+            @{ path = "\\``?\${env:SystemDrive}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemDrive}\
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
 
-    It "Handle wildcards in root of device path with '?'" -Skip:(!$IsWindows) {
-        $Res = Get-ChildItem -Path '\\`?\C:\*'
-        $Res.Count | Should -BeGreaterThan 0
+        It "Handle folders within a device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemRoot}\" }
+            @{ path = "\\.\${env:SystemRoot}\*" }
+            @{ path = "\\``?\${env:SystemRoot}\" }
+            @{ path = "\\``?\${env:SystemRoot}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemRoot}
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Fails for invalid device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\INVALID0\" }
+            @{ path = "\\``?\INVALID0\" }
+            # @{ path = "\\.\INVALID0\*" }  // problem in globber where this fails but is ignored
+            # @{ path = "\\``?\INVALID0\*" }
+        ) {
+            param($path)
+            { Get-ChildItem -Path $path -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+        }
     }
 }
 
