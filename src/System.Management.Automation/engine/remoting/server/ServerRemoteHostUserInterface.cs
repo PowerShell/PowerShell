@@ -122,6 +122,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void Write(string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.Write1, new object[] { message });
         }
 
@@ -130,6 +131,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.Write2, new object[] { foregroundColor, backgroundColor, message });
         }
 
@@ -146,6 +148,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void WriteLine(string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteLine2, new object[] { message });
         }
 
@@ -154,6 +157,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteLine3, new object[] { foregroundColor, backgroundColor, message });
         }
 
@@ -162,6 +166,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void WriteErrorLine(string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteErrorLine, new object[] { message });
         }
 
@@ -170,6 +175,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void WriteDebugLine(string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteDebugLine, new object[] { message });
         }
 
@@ -186,6 +192,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void WriteVerboseLine(string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteVerboseLine, new object[] { message });
         }
 
@@ -194,6 +201,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void WriteWarningLine(string message)
         {
+            message = GetOutputString(message, supportsVirtualTerminal: true);
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteWarningLine, new object[] { message });
         }
 

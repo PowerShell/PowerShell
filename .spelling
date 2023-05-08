@@ -1698,6 +1698,7 @@ ci.psm1
 jcotton42
 centos-7
 Security.types.ps1xml
+optout
  - ADOPTERS.md
 MicrosoftPowerBIMgmt
  - tools/clearlyDefined/readme.md
@@ -1706,4 +1707,14 @@ ClearlyDefined
 stevenebutler
 spaette
 syntax-tm
+URIs
+typeDataXmlLoader.cs
+GetResponseObject
+ContentHelper
+BasicHtmlWebResponseObject
+WebRequestSession.cs
+dkattan
+preview.3.23178.7
+PoolNames
 techguy16
+sdwheeler

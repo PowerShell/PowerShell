@@ -1,31 +1,7 @@
 [
   {
-    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
-    "FileType": "Product"
-  },
-  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "assets/Powershell_av_colors.ico",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "assets/Powershell_avatar.ico",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "assets/Powershell_black.ico",
-    "FileType": "Product"
-  },
-  {
-    "Pattern": "assets/ps_black_32x32.ico",
-    "FileType": "Product"
   },
   {
     "Pattern": "clretwrc.dll",
@@ -77,22 +53,6 @@
   },
   {
     "Pattern": "cs/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "cs/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "cs/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "cs/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "cs/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -181,22 +141,6 @@
   },
   {
     "Pattern": "de/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "de/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "de/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "de/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "de/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -292,22 +236,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "es/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "es/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "es/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "es/System.ServiceModel.Primitives.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "es/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct"
   },
@@ -360,6 +288,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "es\\JsonSchema.Net.resources.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -389,22 +321,6 @@
   },
   {
     "Pattern": "fr/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "fr/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "fr/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "fr/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "fr/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -508,22 +424,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "it/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "it/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "it/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "it/System.ServiceModel.Primitives.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "it/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct"
   },
@@ -608,22 +508,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "ja/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ja/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ja/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ja/System.ServiceModel.Primitives.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "ja/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct"
   },
@@ -676,6 +560,22 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "JetBrains.Annotations.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Json.More.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonPointer.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonSchema.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -705,22 +605,6 @@
   },
   {
     "Pattern": "ko/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ko/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ko/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ko/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ko/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -774,10 +658,6 @@
   {
     "Pattern": "ko/WindowsFormsIntegration.resources.dll",
     "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "LICENSE.txt",
-    "FileType": "Product"
   },
   {
     "Pattern": "Markdig.Signed.dll",
@@ -1012,19 +892,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Namotion.Reflection.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "netstandard.dll",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "Newtonsoft.Json.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "NJsonSchema.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1061,22 +933,6 @@
   },
   {
     "Pattern": "pl/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pl/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pl/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pl/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pl/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1249,22 +1105,6 @@
   },
   {
     "Pattern": "pt-BR/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pt-BR/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pt-BR/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pt-BR/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pt-BR/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2021,22 +1861,6 @@
   },
   {
     "Pattern": "ru/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ru/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ru/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ru/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ru/System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2940,15 +2764,15 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "System.ServiceModel.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "System.ServiceModel.Duplex.dll",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "System.ServiceModel.Http.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "System.ServiceModel.NetFramingBase.dll",
     "FileType": "NonProduct"
   },
   {
@@ -3188,22 +3012,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "tr/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "tr/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "tr/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "tr/System.ServiceModel.Primitives.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "tr/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct"
   },
@@ -3320,22 +3128,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hans/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hans/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hans/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hans/System.ServiceModel.Primitives.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "zh-Hans/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct"
   },
@@ -3420,22 +3212,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "zh-Hant/System.ServiceModel.Http.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hant/System.ServiceModel.NetFramingBase.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hant/System.ServiceModel.NetTcp.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hant/System.ServiceModel.Primitives.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "zh-Hant/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct"
   },
@@ -3488,11 +3264,39 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/Powershell_av_colors.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/Powershell_avatar.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/Powershell_black.ico",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "assets/ps_black_32x32.ico",
+    "FileType": "Product"
+  },
+  {
     "Pattern": "Install-PowerShellRemoting.ps1",
     "FileType": "Product"
   },
   {
     "Pattern": "InstallPSCorePolicyDefinitions.ps1",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "LICENSE.txt",
     "FileType": "Product"
   },
   {

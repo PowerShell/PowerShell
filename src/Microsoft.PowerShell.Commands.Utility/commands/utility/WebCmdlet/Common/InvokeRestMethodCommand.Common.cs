@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
@@ -56,13 +59,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("RHV")]
-        public string ResponseHeadersVariable { get; set; }
+        public string? ResponseHeadersVariable { get; set; }
 
         /// <summary>
         /// Gets or sets the variable name to use for storing the status code from the response.
         /// </summary>
         [Parameter]
-        public string StatusCodeVariable { get; set; }
+        public string? StatusCodeVariable { get; set; }
 
         #endregion Parameters
 
@@ -92,9 +95,9 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Try to get the response encoding from the ContentType header.
-                    string charSet = WebResponseHelper.GetCharacterSet(response);
+                    string? characterSet = WebResponseHelper.GetCharacterSet(response);
 
-                    string str = StreamHelper.DecodeStream(responseStream, charSet, out Encoding encoding, _cancelToken.Token);
+                    string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding, _cancelToken.Token);
 
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encoding.HeaderName}"));
@@ -209,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
                            )
                         {
                             // This one will do reader.Read() internally
-                            XmlNode result = workingDocument.ReadNode(reader);
+                            XmlNode? result = workingDocument.ReadNode(reader);
                             WriteObject(result);
                         }
                         else
@@ -248,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
             return xrs;
         }
 
-        private static bool TryConvertToXml(string xml, out object doc, ref Exception exRef)
+        private static bool TryConvertToXml(string xml, [NotNullWhen(true)] out object? doc, ref Exception? exRef)
         {
             try
             {
@@ -270,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
             return doc != null;
         }
 
-        private static bool TryConvertToJson(string json, out object obj, ref Exception exRef)
+        private static bool TryConvertToJson(string json, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
         {
             bool converted = false;
             try
@@ -325,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Json return type.
             /// </summary>
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
             Json,
 
             /// <summary>
