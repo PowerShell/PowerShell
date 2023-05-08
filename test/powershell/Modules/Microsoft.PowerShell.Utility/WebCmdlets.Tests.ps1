@@ -2157,6 +2157,48 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $jsonResult = $result.output.Content | ConvertFrom-Json
             $jsonResult.SessionId | Should -BeExactly $sessionId
         }
+
+        It "Invoke-WebRequest respects the Retry-After header value in 429 status" {
+
+            $Query = @{
+                statusCode     = 429
+                reposnsephrase = 'Too Many Requests'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            # Measure processing time
+            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+            $commandStr = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 3 -SkipHttpErrorCheck"
+            $result = ExecuteWebCommand -command $commandStr
+            $stopWatch.Stop()
+
+            # If it is working correctly, the process takes about 2.x seconds to complete (Retry-After:1 * MaximumRetryCount:2)
+            # otherwise it takes >6 seconds (RetryIntervalSec:3 * MaximumRetryCount:2)
+            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+        }
+
+        It "Invoke-WebRequest ignores the Retry-After header value NOT in 429 status" {
+
+            $Query = @{
+                statusCode     = 409
+                reposnsephrase = 'Conflict'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"4"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            # Measure processing time
+            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+            $commandStr = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -SkipHttpErrorCheck"
+            $result = ExecuteWebCommand -command $commandStr
+            $stopWatch.Stop()
+
+            # If it is working correctly, the process takes about 2.x seconds to complete (RetryIntervalSec:1 * MaximumRetryCount:2)
+            # otherwise it takes >8 seconds (Retry-After:4 * MaximumRetryCount:2)
+            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+        }
     }
 
     Context "Regex Parsing" {
@@ -4046,6 +4088,48 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $result.output.failureResponsesSent | Should -Be 1
             $result.output.sessionId | Should -BeExactly $sessionId
+        }
+
+        It "Invoke-RestMethod respects the Retry-After header value in 429 status" {
+
+            $Query = @{
+                statusCode     = 429
+                reposnsephrase = 'Too Many Requests'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            # Measure processing time
+            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+            $commandStr = "Invoke-RestMethod -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 3 -SkipHttpErrorCheck"
+            $result = ExecuteWebCommand -command $commandStr
+            $stopWatch.Stop()
+
+            # If it is working correctly, the process takes about 2.x seconds to complete (Retry-After:1 * MaximumRetryCount:2)
+            # otherwise it takes >6 seconds (RetryIntervalSec:3 * MaximumRetryCount:2)
+            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+        }
+
+        It "Invoke-RestMethod ignores the Retry-After header value NOT in 429 status" {
+
+            $Query = @{
+                statusCode     = 409
+                reposnsephrase = 'Conflict'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"4"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            # Measure processing time
+            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+            $commandStr = "Invoke-RestMethod -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -SkipHttpErrorCheck"
+            $result = ExecuteWebCommand -command $commandStr
+            $stopWatch.Stop()
+
+            # If it is working correctly, the process takes about 2.x seconds to complete (RetryIntervalSec:1 * MaximumRetryCount:2)
+            # otherwise it takes >8 seconds (Retry-After:4 * MaximumRetryCount:2)
+            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
         }
     }
 }
